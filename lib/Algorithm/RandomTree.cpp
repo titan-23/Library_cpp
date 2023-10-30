@@ -24,6 +24,8 @@ namespace titan23 {
     }
 
     vector<pair<int, int>> gen_random() {
+      // https://speakerdeck.com/tsutaj/beerbash-lt-230711?slide=27
+      
       assert(n >= 0);
       vector<pair<int, int>> edges;
       if (n <= 1) {
