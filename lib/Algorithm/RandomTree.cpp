@@ -24,7 +24,11 @@ namespace titan23 {
     }
 
     vector<pair<int, int>> gen_random() {
+      assert(n >= 0);
       vector<pair<int, int>> edges;
+      if (n <= 1) {
+        return edges;
+      }
       edges.reserve(n-1);
       vector<int> D(n, 1);
       vector<int> A(n-2, 0);
@@ -54,8 +58,8 @@ namespace titan23 {
       D[u]--;
       int v = indx(D, 1);
       edges.emplace_back(u, v);
+      assert(edges.size() == n-1);
       return edges;
     }
-
   };
 } // namespace titan23
