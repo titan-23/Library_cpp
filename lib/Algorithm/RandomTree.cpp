@@ -16,6 +16,14 @@ namespace titan23 {
       return begin + rand() % (end - begin);
     }
 
+    void shuffle(vector<int> &a) {
+      int n = (int)a.size();
+      for (int i = 0; i < n-1; ++i) {
+        int j = randrange(i, n);
+        swap(a[i], a[j]);
+      }
+    }
+
     int indx(vector<int> &a, int x) {
       for (int i = 0; i < (int)a.size(); ++i) {
         if (a[i] == x) return i;
@@ -61,6 +69,20 @@ namespace titan23 {
       int v = indx(D, 1);
       edges.emplace_back(u, v);
       assert(edges.size() == n-1);
+      return edges;
+    }
+
+    vector<pair<int, int>> gen_path() {
+      // ホントにランダム一葉???
+      vector<int> p(n);
+      for (int i = 0; i < n; ++i) {
+        p[i] = i;
+      }
+      shuffle(p);
+      vector<pair<int, int>> edges(n-1);
+      for (int i = 0; i < n-1; ++i) {
+        edges[i] = {p[i], p[i+1]};
+      }
       return edges;
     }
   };
