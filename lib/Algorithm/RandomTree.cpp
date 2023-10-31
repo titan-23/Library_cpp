@@ -2,6 +2,7 @@
 #include <vector>
 #include <set>
 #include <cassert>
+#include "./Random.cpp"
 using namespace std;
 
 namespace titan23 {
@@ -10,19 +11,6 @@ namespace titan23 {
     int n;
 
     RandomTree(int n) : n(n) {}
-
-    int randrange(int begin, int end) {
-      assert(begin < end);
-      return begin + rand() % (end - begin);
-    }
-
-    void shuffle(vector<int> &a) {
-      int n = (int)a.size();
-      for (int i = 0; i < n-1; ++i) {
-        int j = randrange(i, n);
-        swap(a[i], a[j]);
-      }
-    }
 
     int indx(vector<int> &a, int x) {
       for (int i = 0; i < (int)a.size(); ++i) {
@@ -47,21 +35,21 @@ namespace titan23 {
         D[v]++;
         A[i] = v;
       }
-      multiset<pair<int, int>> mst;
+      set<pair<int, int>> st;
       for (int i = 0; i < n; ++i) {
-        mst.insert({D[i], i});
+        st.insert({D[i], i});
       }
       for (const int &a: A) {
-        auto it = mst.begin();
+        auto it = st.begin();
         int d = it->first, v = it->second;
-        mst.erase(it);
+        st.erase(it);
         assert(d == 1);
         edges.emplace_back(v, a);
         D[v]--;
-        mst.erase({D[a], a});
+        st.erase({D[a], a});
         D[a]--;
         if (D[a] >= 1) {
-          mst.insert({D[a], a});
+          st.insert({D[a], a});
         }
       }
       int u = indx(D, 1);
@@ -73,7 +61,7 @@ namespace titan23 {
     }
 
     vector<pair<int, int>> gen_path() {
-      // ホントにランダム一葉???
+      // ホントにランダム一様???
       vector<int> p(n);
       for (int i = 0; i < n; ++i) {
         p[i] = i;
