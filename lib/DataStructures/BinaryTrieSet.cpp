@@ -312,5 +312,4 @@ namespace titan23 {
       return size[_root];
     }
   };
-} // namespace titan23
-
+}  // namespace titan23

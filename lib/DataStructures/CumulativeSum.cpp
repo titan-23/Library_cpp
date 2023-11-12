@@ -45,5 +45,4 @@ namespace titan23 {
       cout << _acc.back() << ']' << endl;
     }
   };
-} // namespace titan23
-
+}  // namespace titan23

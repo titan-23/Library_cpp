@@ -13,6 +13,8 @@ namespace titan23 {
     int _n, _size, _log;
     vector<T> _data;
 
+    SegmentTree() {}
+
     SegmentTree(const int n) {
       _build(n);
     }
@@ -143,5 +145,4 @@ namespace titan23 {
       cout << ']' << endl;
     }
   };
-} // namespace titan23
-
+}  // namespace titan23

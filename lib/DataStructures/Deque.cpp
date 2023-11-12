@@ -130,5 +130,4 @@ namespace titan23 {
       cout << "])\n";
     }
   };
-} // namespace titan23
-
+}  // namespace titan23

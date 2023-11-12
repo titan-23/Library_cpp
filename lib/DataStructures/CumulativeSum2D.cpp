@@ -25,5 +25,4 @@ namespace titan23 {
       return _acc[h2*(_w+1)+w2] - _acc[h2*(_w+1)+w1] - _acc[h1*(_w+1)+w2] + _acc[h1*(_w+1)+w1];
     }
   };
-} // namespace titan23
-
+}  // namespace titan23

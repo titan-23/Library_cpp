@@ -1,3 +1,6 @@
+#include <vector>
+using namespace std;
+
 struct RootedTree {
   vector<vector<pair<int, int>>> G;
   int root;

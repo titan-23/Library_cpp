@@ -74,6 +74,4 @@ namespace titan23 {
       return path[st.prod(l, r+1)&msk];
     }
   };
-
 } // namspace titan23
-
