@@ -277,8 +277,8 @@ namespace titan23 {
     void cut(int u, int v) {
       reroot(v);
       reroot(u);
-      NodePtr uv_node = ptr_edge.pop((long long)u*n+v);
-      NodePtr vu_node = ptr_edge.pop((long long)v*n+u);
+      NodePtr uv_node = ptr_edge.erase((long long)u*n+v);
+      NodePtr vu_node = ptr_edge.erase((long long)v*n+u);
       NodePtr a, c, _;
       tie(a, _) = _split_left(uv_node);
       tie(_, c) = _split_right(vu_node);
