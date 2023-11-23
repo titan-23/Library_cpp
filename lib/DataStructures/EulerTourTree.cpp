@@ -15,6 +15,9 @@ namespace titan23 {
   struct EulerTourTree {
     struct Node;
     using NodePtr = Node*;
+    int n, group_numbers;
+    vector<NodePtr> ptr_vertex;
+    unordered_map<long long, NodePtr> ptr_edge;
 
     struct Node {
       long long indx;
@@ -24,19 +27,15 @@ namespace titan23 {
 
       Node() {}
 
-      Node(long long indx, T key, F lazy) : indx(indx),
-                                      key(key),
-                                      data(key),
-                                      lazy(lazy),
-                                      par(nullptr),
-                                      left(nullptr),
-                                      right(nullptr)
-                                    {}
+      Node(long long indx, T key, F lazy) : 
+        indx(indx),
+        key(key),
+        data(key),
+        lazy(lazy),
+        par(nullptr),
+        left(nullptr),
+        right(nullptr) {}
     };
-
-    int n, group_numbers;
-    vector<NodePtr> ptr_vertex;
-    unordered_map<long long, NodePtr> ptr_edge;
 
     EulerTourTree(int n) : n(n), group_numbers(n) {
       vector<T> a(n, e());
