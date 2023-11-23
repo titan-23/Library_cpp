@@ -10,6 +10,8 @@ namespace titan23 {
     T _e;
     vector<T> _acc;
 
+    CumulativeSum2D() {}
+
     CumulativeSum2D(int h, int w, vector<vector<T>> &a, T e) {
       _h = h;
       _w = w;
