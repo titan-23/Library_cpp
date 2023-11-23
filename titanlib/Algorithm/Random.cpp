@@ -1,4 +1,5 @@
 #include <cassert>
+#include <vector>
 using namespace std;
 
 namespace titan23 {
@@ -36,7 +37,8 @@ namespace titan23 {
       return begin + _xor128() % (end - begin);
     }
 
-    void shuffle(vector<int> &a) {
+    template <typename T>
+    void shuffle(vector<T> &a) {
       int n = (int)a.size();
       for (int i = 0; i < n-1; ++i) {
         int j = randrange(i, n);

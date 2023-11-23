@@ -2,7 +2,7 @@
 #include <vector>
 #include <cassert>
 #include <stack>
-#include "../DataStructures/SparseTable.cpp"
+#include "titanlib/DataStructures/SparseTable.cpp"
 using namespace std;
 
 namespace titan23 {

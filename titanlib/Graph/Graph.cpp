@@ -46,8 +46,9 @@ namespace titan23 {
       return true;
     }
 
-    vector<int> bfs(const int start) {
-      vector<int> dist(n, -1);
+    template <typename T>
+    vector<T> bfs(const int start) {
+      vector<T> dist(n, -1);
       queue<int> qu;
       qu.push(start);
       dist[start] = 0;
