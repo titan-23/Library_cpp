@@ -13,7 +13,7 @@ namespace titan23 {
       front.resize(0);
       back.resize(0);
     }
-    
+
     Deque(vector<T> a) {
       front.resize(0);
       back = a;
