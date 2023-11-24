@@ -15,9 +15,7 @@ namespace titan23 {
 
     SparseTable() {}
 
-    SparseTable(vector<T> a) {
-      this->a = a;
-      this->size = (int)a.size();
+    SparseTable(vector<T> a) : a(a), size((int)a.size()) {
       build();
     }
 
@@ -38,7 +36,7 @@ namespace titan23 {
       }
     }
 
-    T prod(int l, int r) const {
+    T prod(const int l, const int r) const {
       assert(0 <= l && l <= r && r < size);
       if (l == r) {
         return e();
@@ -47,7 +45,7 @@ namespace titan23 {
       return op(data[u][l], data[u][r-(1<<u)]);
     }
 
-    T get(int k) const {
+    T get(const int k) const {
       assert(0 <= k && k < size);
       return data[0][k];
     }
@@ -67,5 +65,4 @@ namespace titan23 {
       cout << ']' << endl;
     }
   };
-} // namespace titan23
-
+}  // namespace titan23
