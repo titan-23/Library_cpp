@@ -1,7 +1,8 @@
 #include <bits/stdc++.h>
 
+namespace titan23 {
 
+  struct SA {
 
-int main() {
-
-}
+  };
+} // namespace titan23
