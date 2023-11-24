@@ -20,15 +20,13 @@ namespace titan23 {
     unordered_map<long long, NodePtr> ptr_edge;
 
     struct Node {
-      long long indx;
       T key, data;
       F lazy;
       NodePtr par, left, right;
 
       Node() {}
 
-      Node(long long indx, T key, F lazy) : 
-        indx(indx),
+      Node(T key, F lazy) : 
         key(key),
         data(key),
         lazy(lazy),
@@ -49,54 +47,7 @@ namespace titan23 {
     void _init_build(vector<T> &a) {
       ptr_vertex.resize(n);
       for (int i = 0; i < n; ++i) {
-        ptr_vertex[i] = new Node((long long)i*n+i, a[i], id());
-      }
-    }
-
-    void build(vector<vector<int>> &G) {
-      vector<int> seen(n, 0);
-      vector<long long> a;
-      vector<NodePtr> pool;
-
-      auto dfs = [&] (auto &&dfs, int v, int p) -> void {
-        a.emplace_back((long long)v*n+v);
-        for (const int &x: G[v]) {
-          if (x == p) continue;
-          a.emplace_back((long long)v*n+x);
-          dfs(dfs, x, v);
-          a.emplace_back((long long)x*n+v);
-        }
-      };
-
-      auto rec = [&] (auto &&rec, int l, int r) -> NodePtr {
-        int mid = (l + r) >> 1;
-        int u = a[mid]/n, v = a[mid]%n;
-        NodePtr node;
-        if (u == v) {
-          node = ptr_vertex[u];
-          seen[u] = 1;
-        } else {
-          node = new Node(a[mid], e(), id());
-          ptr_edge[a[mid]] = node;
-        }
-
-        if (l != mid) {
-          node->left = rec(rec, l, mid);
-          node->left->par = node;
-        }
-        if (mid+1 != r) {
-          node->right = rec(rec, mid+1, r);
-          node->right->par = node;
-        }
-        _update(node);
-        return node;
-      };
-
-      for (int root = 0; root < n; ++root) {
-        if (seen[root]) continue;
-        a.clear();
-        dfs(dfs, root, -1);
-        rec(rec, 0, (int)a.size());
+        ptr_vertex[i] = new Node(a[i], id());
       }
     }
 
@@ -259,11 +210,60 @@ namespace titan23 {
       if (node->right) node->data = op(node->data, node->right->data);
     }
 
-    void link(int u, int v) {
+    // 隣接リストGから構築
+    void build(vector<vector<int>> &G) {
+      vector<int> seen(n, 0);
+      vector<long long> a;
+      vector<NodePtr> pool;
+
+      auto dfs = [&] (auto &&dfs, int v, int p) -> void {
+        a.emplace_back((long long)v*n+v);
+        for (const int &x: G[v]) {
+          if (x == p) continue;
+          a.emplace_back((long long)v*n+x);
+          dfs(dfs, x, v);
+          a.emplace_back((long long)x*n+v);
+        }
+      };
+
+      auto rec = [&] (auto &&rec, int l, int r) -> NodePtr {
+        int mid = (l + r) >> 1;
+        int u = a[mid]/n, v = a[mid]%n;
+        NodePtr node;
+        if (u == v) {
+          node = ptr_vertex[u];
+          seen[u] = 1;
+        } else {
+          node = new Node(e(), id());
+          ptr_edge[a[mid]] = node;
+        }
+
+        if (l != mid) {
+          node->left = rec(rec, l, mid);
+          node->left->par = node;
+        }
+        if (mid+1 != r) {
+          node->right = rec(rec, mid+1, r);
+          node->right->par = node;
+        }
+        _update(node);
+        return node;
+      };
+
+      for (int root = 0; root < n; ++root) {
+        if (seen[root]) continue;
+        a.clear();
+        dfs(dfs, root, -1);
+        rec(rec, 0, (int)a.size());
+      }
+    }
+
+    // 辺{u, v}を追加する
+    void link(const int u, const int v) {
       reroot(u);
       reroot(v);
-      NodePtr uv_node = Node((long long)u*n+v, e(), id());
-      NodePtr vu_node = Node((long long)v*n+u, e(), id());
+      NodePtr uv_node = new Node(e(), id());
+      NodePtr vu_node = new Node(e(), id());
       ptr_edge[(long long)u*n+v] = uv_node;
       ptr_edge[(long long)v*n+u] = vu_node;
       NodePtr u_node = ptr_vertex[u];
@@ -274,11 +274,14 @@ namespace titan23 {
       --group_numbers;
     }
 
-    void cut(int u, int v) {
+    // 辺{u, v}を削除する
+    void cut(const int u, const int v) {
       reroot(v);
       reroot(u);
-      NodePtr uv_node = ptr_edge.erase((long long)u*n+v);
-      NodePtr vu_node = ptr_edge.erase((long long)v*n+u);
+      NodePtr uv_node = ptr_edge[(long long)u*n+v];
+      NodePtr vu_node = ptr_edge[(long long)v*n+u];
+      ptr_edge.erase((long long)u*n+v);
+      ptr_edge.erase((long long)v*n+u);
       NodePtr a, c, _;
       tie(a, _) = _split_left(uv_node);
       tie(_, c) = _split_right(vu_node);
@@ -288,30 +291,35 @@ namespace titan23 {
       ++group_numbers;
     }
 
-    bool merge(int u, int v) {
+    // 辺{u, v}がなければ追加する
+    bool merge(const int u, const int v) {
       if (same(u, v)) return false;
       link(u, v);
       return true;
     }
 
-    bool split(int u, int v) {
+    // 辺{u, v}があれば削除する
+    bool split(const int u, const int v) {
       if (ptr_edge.find((long long)u*n+v) == ptr_edge.end() || ptr_edge.find((long long)v*n+n) == ptr_edge.end()) return false;
       cut(u, v);
       return true;
     }
 
-    NodePtr leader(int v) {
+    // 代表元？
+    NodePtr leader(const int v) {
       return _left_splay(ptr_vertex[v]);
     }
 
-    void reroot(int v) {
+    // 根をvにする
+    void reroot(const int v) {
       NodePtr node = ptr_vertex[v];
       auto[x, y] = _split_right(node);
       _merge(y, x);
       _splay(node);
     }
 
-    bool same(int u, int v) {
+    // 連結判定
+    bool same(const int u, const int v) {
       NodePtr u_node = ptr_vertex[u];
       NodePtr v_node = ptr_vertex[v];
       _splay(u_node);
@@ -319,18 +327,18 @@ namespace titan23 {
       return (u_node->par != nullptr || u_node == v_node);
     }
 
-    void subtree_apply(int v, int p, F f) {
+    // vを根とする部分木にfを作用、ただしvの親はp(or -1)
+    void subtree_apply(const int v, const int p, const F f) {
+      NodePtr v_node = ptr_vertex[v];
+      reroot(v);
       if (p == -1) {
-        NodePtr v_node = ptr_vertex[v];
         _splay(v_node);
         v_node->key = mapping(f, v_node->key);
         v_node->data = mapping(f, v_node->data);
         v_node->lazy = composition(f, v_node->lazy);
         return;
       }
-      reroot(v);
       reroot(p);
-      NodePtr v_node = ptr_vertex[v];
       NodePtr a, b, d;
       tie(a, b) = _split_right(ptr_edge[(long long)p*n+v]);
       tie(b, d) = _split_left(ptr_edge[(long long)v*n+p]);
@@ -343,15 +351,15 @@ namespace titan23 {
       _merge(b, d);
     }
 
-    T subtree_sum(int v, int p) {
+    // vを根とする部分木の総和、ただしvの親はp(or -1)
+    T subtree_sum(const int v, const int p) {
+      NodePtr v_node = ptr_vertex[v];
+      reroot(v);
       if (p == -1) {
-        NodePtr v_node = ptr_vertex[v];
         _splay(v_node);
         return v_node->data;
       }
-      reroot(v);
       reroot(p);
-      NodePtr v_node = ptr_vertex[v];
       NodePtr a, b, d;
       tie(a, b) = _split_right(ptr_edge[(long long)p*n+v]);
       tie(b, d) = _split_left(ptr_edge[(long long)v*n+p]);
@@ -362,17 +370,20 @@ namespace titan23 {
       return res;
     }
 
-    int group_count() {
+    // 連結成分の個数を返す
+    int group_count() const {
       return group_numbers;
     }
 
-    T get_vertex(int v) {
+    // vの値を取得
+    T get_vertex(const int v) {
       NodePtr node = ptr_vertex[v];
       _splay(node);
       return node->key;
     }
 
-    void set_vertex(int v, T val) {
+    // vの値をvalに変更
+    void set_vertex(const int v, const T val) {
       NodePtr node = ptr_vertex[v];
       _splay(node);
       node->key = val;
@@ -380,4 +391,3 @@ namespace titan23 {
     }
   };
 }  // namespace titan23
-
