@@ -49,16 +49,16 @@ namespace titan23 {
       F nlazy = lazy[node];
       int lnode = arr[node<<2], rnode = arr[node<<2|1];
       if (lnode != n) {
-        data[lnode<<1] = _mapping(nlazy, data[lnode<<1]);
-        data[lnode<<1|1] = _mapping(nlazy, data[lnode<<1|1]);
-        key[lnode] = _mapping(nlazy, key[lnode]);
-        lazy[lnode] = _composition(nlazy, lazy[lnode]);
+        data[lnode<<1] = mapping(nlazy, data[lnode<<1]);
+        data[lnode<<1|1] = mapping(nlazy, data[lnode<<1|1]);
+        key[lnode] = mapping(nlazy, key[lnode]);
+        lazy[lnode] = composition(nlazy, lazy[lnode]);
       }
       if (rnode != n) {
-        data[rnode<<1] = _mapping(nlazy, data[rnode<<1]);
-        data[rnode<<1|1] = _mapping(nlazy, data[rnode<<1|1]);
-        key[rnode] = _mapping(nlazy, key[rnode]);
-        lazy[rnode] = _composition(nlazy, lazy[rnode]);
+        data[rnode<<1] = mapping(nlazy, data[rnode<<1]);
+        data[rnode<<1|1] = mapping(nlazy, data[rnode<<1|1]);
+        key[rnode] = mapping(nlazy, key[rnode]);
+        lazy[rnode] = composition(nlazy, lazy[rnode]);
       }
       lazy[node] = id();
     }
@@ -68,8 +68,12 @@ namespace titan23 {
       int ln = arr[node<<2], rn =  arr[node<<2|1];
       _propagate(ln);
       _propagate(rn);
-      data[node<<1] = _op(_op(data[ln<<1], key[node]), data[rn<<1]);
-      data[node<<1|1] = _op(_op(data[rn<<1|1], key[node]), data[ln<<1|1]);
+      data[node<<1] = 
+      op(
+        op(data[ln<<1], key[node]), data[rn<<1]);
+      data[node<<1|1] = 
+      op(
+        op(data[rn<<1|1], key[node]), data[ln<<1|1]);
       size[node] = 1 + size[ln] + size[rn];
     }
 
@@ -81,11 +85,19 @@ namespace titan23 {
       _propagate(ly);
       _propagate(ry);
       data[z<<1] = data[x<<1];
-      data[x<<1] = _op(_op(data[lx<<1], key[x]), data[rx<<1]);
-      data[y<<1] = _op(_op(data[ly<<1], key[y]), data[ry<<1]);
+      data[x<<1] = 
+      op(
+        op(data[lx<<1], key[x]), data[rx<<1]);
+      data[y<<1] = 
+      op(
+        op(data[ly<<1], key[y]), data[ry<<1]);
       data[z<<1|1] = data[x<<1|1];
-      data[x<<1|1] = _op(_op(data[rx<<1|1], key[x]), data[lx<<1|1]);
-      data[y<<1|1] = _op(_op(data[ry<<1|1], key[y]), data[ly<<1|1]);
+      data[x<<1|1] = 
+      op(
+        op(data[rx<<1|1], key[x]), data[lx<<1|1]);
+      data[y<<1|1] = 
+      op(
+        op(data[ry<<1|1], key[y]), data[ly<<1|1]);
       size[z] = size[x];
       size[x] = 1 + size[lx] + size[rx];
       size[y] = 1 + size[ly] + size[ry];
@@ -96,9 +108,13 @@ namespace titan23 {
       _propagate(lx);
       _propagate(rx);
       data[y<<1] = data[x<<1];
-      data[x<<1] = _op(_op(data[lx<<1], key[x]), data[rx<<1]);
+      data[x<<1] = 
+      op(
+        op(data[lx<<1], key[x]), data[rx<<1]);
       data[y<<1|1] = data[x<<1|1];
-      data[x<<1|1] = _op(_op(data[rx<<1|1], key[x]), data[lx<<1|1]);
+      data[x<<1|1] = 
+      op(
+        op(data[rx<<1|1], key[x]), data[lx<<1|1]);
       size[y] = size[x];
       size[x] = 1 + size[lx] + size[rx];
     }
@@ -163,14 +179,13 @@ namespace titan23 {
       return pre;
     }
 
-    int lca(const int root, const int u, const int v) {
-      evert(root);
+    int lca(const int u, const int v, int root=-1) {
+      if (root != -1) evert(root);
       expose(u);
       return expose(v);
     }
 
     void link(const int c, const int p) {
-      // assert(!same(c, p))
       expose(c);
       expose(p);
       arr[c<<2|2] = p;
@@ -221,10 +236,10 @@ namespace titan23 {
     void path_apply(const int u, const int v, F f) {
       evert(u);
       expose(v);
-      key[v] = _mapping(f, key[v]);
-      data[v<<1] = _mapping(f, data[v<<1]);
-      data[v<<1|1] = _mapping(f, data[v<<1|1]);
-      lazy[v] = lazy[v] == id? f : _composition(f, lazy[v]);
+      key[v] = mapping(f, key[v]);
+      data[v<<1] = mapping(f, data[v<<1]);
+      data[v<<1|1] = mapping(f, data[v<<1|1]);
+      lazy[v] = lazy[v] == id? f : composition(f, lazy[v]);
       _propagate(v);
     }
 
@@ -251,7 +266,7 @@ namespace titan23 {
       return true;
     }
 
-    int path_kthelm(int s, int t, int k) {
+    int path_kth_elm(int s, int t, int k) {
       evert(s);
       expose(t);
       if (size[t] <= k) return -1;
@@ -280,4 +295,4 @@ namespace titan23 {
       _update(k);
     }
   };
-} // namespace titan23
+}  // namespace titan23

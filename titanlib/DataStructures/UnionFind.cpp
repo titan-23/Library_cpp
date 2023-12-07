@@ -47,16 +47,16 @@ namespace titan23 {
       return root(x) == root(y);
     }
 
-    set<int> members(int x) {
+    set<int> members(const int x) {
       set<int> seen;
-      seen.insert(x);
+      seen.emplace(x);
       vector<int> todo = {x};
       while (!todo.empty()) {
         int v = todo.back(); todo.pop_back();
-        for (int &x: G[v]) {
+        for (const int &x: G[v]) {
           if (seen.count(x)) continue;
           todo.emplace_back(x);
-          seen.insert(x);
+          seen.emplace(x);
         }
       }
       return seen;
@@ -64,6 +64,7 @@ namespace titan23 {
 
     vector<int> all_roots() const {
       vector<int> res;
+      res.reserve(group_numbers);
       for (int i = 0; i < n; ++i) {
         if (par[i] < 0) res.emplace_back(i);
       }
@@ -90,12 +91,12 @@ namespace titan23 {
       printf("<UnionFind>\n");
       for (auto &[key, val]: group_members) {
         printf(" %d:", key);
-        for (int &v: val) {
+        for (const int &v: val) {
           printf(" %d", v);
         }
         cout << endl;
       }
     }
   };
-} // namespace titan23
+}  // namespace titan23
 

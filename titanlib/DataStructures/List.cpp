@@ -13,7 +13,7 @@ namespace titan23 {
 
     List() {}
 
-    List(int n) {
+    List(const int n) {
       assert(n >= 0);
       a.resize(n);
     }
@@ -24,8 +24,8 @@ namespace titan23 {
     }
 
     List(const vector<T> &v) {
-      a.resize((int)v.size());
-      for (int i = 0; i < (int)v.size(); ++i) {
+      a.resize(v.size());
+      for (int i = 0; i < v.size(); ++i) {
         a[i] = v[i];
       }
     };
@@ -60,20 +60,16 @@ namespace titan23 {
       }
     }
     
-    int index(T key) {
+    int index(const T key) const {
       for (int i = 0; i < len(); ++i) {
         if (a[i] == key) return i;
       }
       return -1;
     }
 
-    int count(const T key, int start=-1, int stop=-1) const {
-      start = start == -1? 0 : start;
-      stop = stop == -1? len() : stop;
-      if (start < 0) start = 0;
-      if (stop > len()) start = len();
+    int count(const T key) const {
       int res = 0;
-      for (int i = start; i < stop; ++i) {
+      for (int i = 0; i < len(); ++i) {
         if (a[i] == key) ++res;
       }
       return res;
@@ -99,7 +95,7 @@ namespace titan23 {
     }
 
     void reverse() {
-      int n = len()/2;
+      int n = len() >> 1;
       for (int i = 0; i < n; ++i) {
         swap(a[i], a[n-i-1]);
       }
@@ -152,4 +148,4 @@ namespace titan23 {
       cout << end;
     }
   };
-} // namespace titan23
+}  // namespace titan23

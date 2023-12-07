@@ -12,7 +12,7 @@ namespace titan23 {
 
     FenwickTree(const int n) {
       _n = n;
-      _s = 1 << (32 - __builtin_clz(_n-1));
+      _s = 1 << (32 - __builtin_clz(_n));
       _tree.resize(n+1, 0);
     }
 

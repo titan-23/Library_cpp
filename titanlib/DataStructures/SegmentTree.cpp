@@ -32,7 +32,7 @@ namespace titan23 {
 
     void _build(const int n) {
       this->_n = n;
-      this->_log = 32 - __builtin_clz(_n-1);
+      this->_log = 32 - __builtin_clz(_n);
       this->_size = 1 << _log;
       this->_data.resize(_size << 1, _e());
     }
