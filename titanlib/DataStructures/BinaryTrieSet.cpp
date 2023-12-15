@@ -7,10 +7,10 @@ namespace titan23 {
   template<typename T>
   struct BinaryTrieSet {
     vector<unsigned int> left, right, par, size;
-    int _end, _root, _bit;
+    unsigned int _end, _root, _bit;
     T _lim, _xor_val;
 
-    BinaryTrieSet(int bit) {
+    BinaryTrieSet(unsigned int bit) {
       _end = 2;
       _bit = bit;
       _root = 1;
@@ -22,6 +22,13 @@ namespace titan23 {
       size.resize(2);
     }
 
+    void reserve(const int n) {
+      left.reserve(n);
+      right.reserve(n);
+      par.reserve(n);
+      size.reserve(n);
+    }
+
     int _make_node() {
       if (_end >= (int)left.size()) {
         left.emplace_back(0);
@@ -29,13 +36,12 @@ namespace titan23 {
         par.emplace_back(0);
         size.emplace_back(0);
       }
-      ++_end;
-      return _end-1;
+      return _end++;
     }
 
-    int _find(T key) {
+    int _find(T key) const {
       key ^= _xor_val;
-      int node = _root;
+      unsigned int node = _root;
       for (int i = _bit-1; i >= 0; --i) {
         if ((key >> i) & 1) {
           if (!right[node]) return -1;
@@ -50,18 +56,18 @@ namespace titan23 {
 
     bool add(T key) {
       key ^= _xor_val;
-      int node = _root;
+      unsigned int node = _root;
       for (int i = _bit-1; i >= 0; --i) {
         if ((key >> i) & 1) {
           if (!right[node]) {
-            int new_node = _make_node();
+            unsigned int new_node = _make_node();
             right[node] = new_node;
             par[right[node]] = node;
           }
           node = right[node];
         } else {
           if (!left[node]) {
-            int new_node = _make_node();
+            unsigned int new_node = _make_node();
             left[node] = new_node;
             par[left[node]] = node;
           }
@@ -77,11 +83,11 @@ namespace titan23 {
       return true;
     }
 
-    bool contains(const T key) {
+    bool contains(const T key) const {
       return _find(key) != -1;
     }
 
-    void _discard(int node) {
+    void _discard(unsigned int node) {
       for (int i = 0; i < _bit; ++i) {
         size[node] -= 1;
         if (left[par[node]] == node) {
@@ -101,7 +107,7 @@ namespace titan23 {
     }
 
     bool discard(T key) {
-      int node = _find(key);
+      unsigned int node = _find(key);
       if (node == -1) return false;
       _discard(node);
       return true;
@@ -112,26 +118,17 @@ namespace titan23 {
       int node = _root;
       T res = 0;
       for (int i = _bit-1; i >= 0; --i) {
-        int b = (_xor_val >> i) & 1;
-        if (b) swap(left, right);
-        int t = size[left[node]];
+        if ((_xor_val >> i) & 1) swap(left, right);
+        unsigned int t = size[left[node]];
         res <<= 1;
-        if (!left[node]) {
-          node = right[node];
+        if (t <= k) {
+          k -= t;
           res |= 1;
-        } else if (!right[node]) {
-          node = left[node];
+          node = right[node];
         } else {
-          t = size[left[node]];
-          if (t <= k) {
-            k -= t;
-            res |= 1;
-            node = right[node];
-          } else {
-            node = left[node];
-          }
+          node = left[node];
         }
-        if (b) swap(left, right);
+        if ((_xor_val >> i) & 1) swap(left, right);
       }
       _discard(node);
       return res ^ _xor_val;
@@ -152,7 +149,7 @@ namespace titan23 {
     T get_min() const {
       T key = _xor_val;
       T ans = 0;
-      int node = _root;
+      unsigned int node = _root;
       for (int i = _bit-1; i >= 0; --i) {
         ans <<= 1;
         if ((key >> i) & 1) {
@@ -177,7 +174,7 @@ namespace titan23 {
     T get_max() const {
       T key = _xor_val;
       T ans = 0;
-      int node = _root;
+      unsigned int node = _root;
       for (int i = _bit-1; i >= 0; --i) {
         ans <<= 1;
         if ((key >> i) & 1) {
@@ -201,7 +198,7 @@ namespace titan23 {
 
     int index(T key) const {
       int k = 0;
-      int node = _root;
+      unsigned int node = _root;
       key ^= _xor_val;
       for (int i = _bit-1; i >= 0; --i) {
         if ((key >> i) & 1) {
@@ -217,7 +214,7 @@ namespace titan23 {
 
     int index_right(T key) const {
       int k = 0;
-      int node = _root;
+      unsigned int node = _root;
       key ^= _xor_val;
       for (int i = _bit-1; i >= 0; --i) {
         if ((key >> i) & 1) {
@@ -232,23 +229,43 @@ namespace titan23 {
       return k;
     }
 
-    T gt(T key) const {
-      int i = index_right(key);
-      return (i >= size[_root]? -1 : kth_elm(i));
+    T kth_elm(int k) {
+      if (k < 0) k += len();
+      unsigned int node = _root;
+      T res = 0;
+      for (int i = _bit-1; i >= 0; --i) {
+        if ((_xor_val >> i) & 1) swap(left, right);
+        unsigned int t = size[left[node]];
+        res <<= 1;
+        if (t <= k) {
+          k -= t;
+          res |= 1;
+          node = right[node];
+        } else {
+          node = left[node];
+        }
+        if ((_xor_val >> i) & 1) swap(left, right);
+      }
+      return res;
     }
 
-    T lt(T key) const {
+    T gt(T key) {
+      int i = index_right(key);
+      return (i >= size[_root]? (-1) : kth_elm(i));
+    }
+
+    T lt(T key) {
       int i = index(key) - 1;
       return (i < 0? -1 : kth_elm(i));
     }
 
-    T ge(T key) const {
+    T ge(T key) {
       if (key == 0) return (len()? get_min() : -1);
       int i = index_right(key - 1);
       return (i >= size[_root]? -1 : kth_elm(i));
     }
 
-    T le(T key) const {
+    T le(T key) {
       int i = index(key + 1) - 1;
       return (i < 0? -1 : kth_elm(i));
     }
@@ -257,41 +274,11 @@ namespace titan23 {
       vector<T> a;
       if (!len()) return a;
       a.reserve(len());
-      T val = get_min();
-      while (val != -1) {
-        a.emplace_back(val);
-        val = gt(val);
+      for (int i = 0; i < len(); ++i) {
+        T e = kth_elm(i);
+        a.emplace_back(e);
       }
       return a;
-    }
-
-    T kth_elm(int k) {
-      if (k < 0) k += len();
-      int node = _root;
-      T res = 0;
-      for (int i = _bit-1; i >= 0; --i) {
-        int b = ((_xor_val >> i) & 1);
-        if (b) swap(left, right);
-        int t = size[left[node]];
-        res <<= 1;
-        if (!left[node]) {
-          node = right[node];
-          res |= 1;
-        } else if (!right[node]) {
-          node = left[node];
-        } else {
-          t = size[left[node]];
-          if (t <= k) {
-            k -= t;
-            res |= 1;
-            node = right[node];
-          } else {
-            node = left[node];
-          }
-        }
-        if (b) swap(left, right);
-      }
-      return res;
     }
 
     bool empty() const {
@@ -304,7 +291,9 @@ namespace titan23 {
       for (int i = 0; i < len()-1; ++i) {
         cout << a[i] << ", ";
       }
-      cout << a.back();
+      if (!a.empty()) {
+        cout << a.back();
+      }
       cout << "}" << endl;
     }
 
