@@ -84,7 +84,7 @@ namespace titan23 {
     }
 
     template<typename T>
-    vector<T> build_list(vector<T> a) {
+    vector<T> build_list(vector<T> a) const {
       vector<T> res(a.size());
       for (int i = 0; i < n; ++i) {
         res[i] = a[hld[i]];
@@ -92,7 +92,7 @@ namespace titan23 {
       return res;
     }
 
-    int lca(int u, int v) {
+    int lca(int u, int v) const {
       while (true) {
         if (nodein[u] > nodein[v]) {
           swap(u, v);

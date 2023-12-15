@@ -25,7 +25,7 @@ namespace titan23 {
       this->seg = seg;
     }
 
-    T path_prod(int u, int v) {
+    T path_prod(int u, int v) const {
       T res = e();
       while (hld.head[u] != hld.head[v]) {
         if (hld.dep[hld.head[u]] < hld.dep[hld.head[v]]) {
@@ -40,15 +40,15 @@ namespace titan23 {
       return op(res, seg.prod(hld.nodein[v], hld.nodein[u]+1));
     }
 
-    T get(int k) {
+    T get(const int k) const {
       return seg.get(hld.nodein[k]);
     }
 
-    void set(int k, T v) {
+    void set(const int k, const T v) {
       seg.set(hld.nodein[k], v);
     }
 
-    T subtree_prod(int v) {
+    T subtree_prod(const int v) const {
       return seg.prod(hld.nodein[v], hld.nodeout[v]);
     }
   };
