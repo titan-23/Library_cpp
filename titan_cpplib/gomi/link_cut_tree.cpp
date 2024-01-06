@@ -30,7 +30,7 @@ namespace titan23 {
       group_cnt = n;
     }
 
-    bool _is_root(const int node) {
+    bool _is_root(const int node) const {
       return arr[node<<2|2] == n || !((arr[arr[node<<2|2]<<2] == node) || (arr[arr[node<<2|2]<<2|1] == node));
     }
 
@@ -68,12 +68,8 @@ namespace titan23 {
       int ln = arr[node<<2], rn =  arr[node<<2|1];
       _propagate(ln);
       _propagate(rn);
-      data[node<<1] = 
-      op(
-        op(data[ln<<1], key[node]), data[rn<<1]);
-      data[node<<1|1] = 
-      op(
-        op(data[rn<<1|1], key[node]), data[ln<<1|1]);
+      data[node<<1] = op(op(data[ln<<1], key[node]), data[rn<<1]);
+      data[node<<1|1] = op(op(data[rn<<1|1], key[node]), data[ln<<1|1]);
       size[node] = 1 + size[ln] + size[rn];
     }
 

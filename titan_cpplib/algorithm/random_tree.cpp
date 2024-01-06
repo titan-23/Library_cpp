@@ -2,7 +2,7 @@
 #include <vector>
 #include <set>
 #include <cassert>
-#include "titanlib/Algorithm/Random.cpp"
+#include "titan_cpplib/algorithm/random.cpp"
 using namespace std;
 
 namespace titan23 {
