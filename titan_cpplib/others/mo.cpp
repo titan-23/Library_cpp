@@ -11,7 +11,7 @@ namespace titan23 {
     long long max_n;
     vector<int> _l, _r;
 
-    Mo(int n, int q) {
+    Mo(const int n, const int q) {
       this->max_n = 1 << 25;
       this->query_count = 0;
       this->_l.reserve(q);
@@ -20,7 +20,7 @@ namespace titan23 {
       this->q = q;
     }
 
-    long long hilbertorder(int x, int y) {
+    long long hilbertorder(int x, int y) const {
       long long rx, ry, d = 0;
       for (long long s = max_n>>1ll; s; s >>= 1ll) {
         rx = (x & s) > 0, ry = (y & s) > 0;
@@ -35,7 +35,7 @@ namespace titan23 {
       return d;
     }
 
-    void add_query(const int l, const int r) {
+    void add_query(const int &l, const int &r) {
       ++query_count;
       _l.emplace_back(l);
       _r.emplace_back(r);
@@ -51,7 +51,7 @@ namespace titan23 {
       for (int i = 0; i < q; ++i) {
         eval[i] = hilbertorder(_l[i], _r[i]);
       }
-      sort(qi.begin(), qi.end(), [&](const int i, const int j) {
+      sort(qi.begin(), qi.end(), [&] (const int &i, const int &j) {
         return eval[i] < eval[j];
       });
       int nl = 0, nr = 0;
@@ -66,3 +66,4 @@ namespace titan23 {
     }
   };
 }  // namespace titan23
+

@@ -444,5 +444,5 @@ namespace titan23 {
       cerr << "height=" << h << endl;
     }
   };
-} // namespace titan23
+}  // namespace titan23
 

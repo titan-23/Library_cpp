@@ -5,6 +5,7 @@
 #include <set>
 using namespace std;
 
+// UnionFind
 namespace titan23 {
 
   struct UnionFind {
@@ -54,7 +55,7 @@ namespace titan23 {
       while (!todo.empty()) {
         int v = todo.back(); todo.pop_back();
         for (const int &x: G[v]) {
-          if (seen.count(x)) continue;
+          if (seen.find(x) != seen.end()) continue;
           todo.emplace_back(x);
           seen.emplace(x);
         }
@@ -82,7 +83,9 @@ namespace titan23 {
 
     map<int, vector<int>> all_group_members() {
       map<int, vector<int>> res;
-      for (int i = 0; i < n; ++i) res[root(i)].emplace_back(i);
+      for (int i = 0; i < n; ++i) {
+        res[root(i)].emplace_back(i);
+      }
       return res;
     }
 

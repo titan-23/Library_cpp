@@ -1,11 +1,13 @@
 #include <cassert>
 #include <vector>
+
 using namespace std;
 
+// Random
 namespace titan23 {
 
   struct Random {
-    int _x, _y, _z, _w;
+    unsigned int _x, _y, _z, _w;
 
     Random() {
       _x = 123456789;
@@ -14,8 +16,8 @@ namespace titan23 {
       _w = 88675123;
     }
 
-    int _xor128() {
-      int t = _x ^ (_x << 11);
+    unsigned int _xor128() {
+      unsigned int t = _x ^ (_x << 11);
       _x = _y;
       _y = _z;
       _z = _w;
@@ -44,6 +46,39 @@ namespace titan23 {
         int j = randrange(i, n);
         swap(a[i], a[j]);
       }
+    }
+
+    template <typename T>
+    T choice(const vector<T> &a) {
+      int i = randrange(0, a.size());
+      return a[i];
+    }
+
+    template <typename T>
+    T choice(const vector<T> &a, const vector<int> &w, bool normal) {
+      assert(normal == false);
+      assert(a.size() == w.size());
+      double sum = 0.0;
+      for (const int &x: w) sum += x;
+      assert(sum > 0);
+      vector<double> x(w.size());
+      for (int i = 0; i < x.size(); ++i) {
+        x[i] = (double)w[i] / sum;
+        if (i-1 >= 0) x[i] += x[i-1];
+      }
+      return choice(a, x);
+    }
+
+    template <typename T>
+    T choice(const vector<T> &a, const vector<double> &w) {
+      double i = random();
+      int l = -1, r = a.size()-1;
+      while (r - l > 1) {
+        int mid = (l + r) / 2;
+        if (w[mid] <= i) l = mid;
+        else r = mid;
+      }
+      return a[r];
     }
   };
 } // namespace titan23

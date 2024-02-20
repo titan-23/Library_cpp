@@ -7,90 +7,89 @@ using namespace std;
 namespace titan23 {
 
   template<typename T>
-  struct List {
-
+  struct Array {
     vector<T> a;
 
-    List() {}
+    Array() {}
 
-    List(const int n) {
+    Array(const int &n) {
       assert(n >= 0);
       a.resize(n);
     }
 
-    List(const int n, const T key) {
+    Array(const int &n, const T &key) {
       assert(n >= 0);
       a.resize(n, key);
     }
 
-    List(const vector<T> &v) {
+    Array(const vector<T> &v) {
       a.resize(v.size());
       for (int i = 0; i < v.size(); ++i) {
         a[i] = v[i];
       }
     };
 
-    void append(const T key) {
+    void emplace_back(const T key) {
       a.emplace_back(key);
     }
 
-    void resize(const int n, const T e) {
+    void resize(const int &n, const T &e) {
       assert(n >= 0);
       a.resize(n, e);
     }
 
-    void reserve(const int n) {
+    void reserve(int n) {
       assert(n >= 0);
       a.reserve(n);
     }
 
-    T sum(const T e) const {
+    T sum(T e) const{
       T res = e;
-      for (int i = 0; i < len(); ++i) {
-        res += a[i];
+      for (const T &x: a) {
+        res += x;
       }
       return res;
     }
 
-    void sort(const bool reverse=false) {
+    void sort(bool reverse=false) {
       if (reverse) {
         std::sort(a.rbegin(), a.rend());
       } else {
         std::sort(a.begin(), a.end());
       }
     }
-    
-    int index(const T key) const {
+
+    int index(T &key) const {
       for (int i = 0; i < len(); ++i) {
         if (a[i] == key) return i;
       }
       return -1;
     }
 
-    int count(const T key) const {
-      int res = 0;
-      for (int i = 0; i < len(); ++i) {
-        if (a[i] == key) ++res;
+    int count(const T &key) const {
+      int cnt = 0;
+      for (const T &x: a) {
+        if (x == key) ++cnt;
       }
-      return res;
+      return cnt;
     }
 
     void clear() {
       a.clear();
     }
 
-    void insert(const int i, const T key) {
+    void insert(const int &i, const T &key) {
       assert(0 <= i && i <= len());
       a.insert(a.begin()+i, key);
     }
 
-    T pop(const int i=-1) {
+    T pop(int i=-1) {
       T key = a[i<0? i+len(): i];
       remove(key);
       return key;
     }
 
-    void remove(const T key) {
+    void remove(T &key) {
       std::remove(a.begin(), a.end(), key);
     }
 
@@ -101,9 +100,47 @@ namespace titan23 {
       }
     }
 
-    bool contains(const T key) const {
-      for (int i = 0; i < len(); ++i) {
-        if (a[i] == key) return true;
+    void reverse(const int &l, const int &r) {
+      // reverse([l, r))
+      int n = len();
+      assert(0 <= l && l <= r && r <= n);
+      --r;
+      for (int i = 0; i < ((r+1-l)>>1); ++i) {
+        swap(a[l+i], a[r-i]);
+      }
+    }
+
+    void swap(const int &i, const int &j) {
+      assert(0 <= i < len());
+      assert(0 <= j < len());
+      swap(a[i], a[j]);
+    }
+
+    void swap_range(int l0, int r0, int l1, int r1) {
+      // swap([l0, r0), [l1, r1))
+      // O(n)
+      if (r0 > l1) {
+        swap(l0, l1);
+        swap(r0, r1);
+      }
+      assert(l0 <= r0);
+      assert(r0 <= l1);
+      assert(l1 <= r1);
+      vector<T> b = a;
+      a.erase(a.begin()+l1, a.begin()+r1);
+      a.erase(a.begin()+l0, a.begin()+r0);
+      a.insert(a.begin()+l0, b.begin()+l1, b.begin()+r1);
+      a.insert(a.begin()+r1-(r0-l0), b.begin()+l0, b.begin()+r0);
+    }
+
+    Array<T> copy() const {
+      Array<T> res(a);
+      return res;
+    }
+
+    bool contain(T &key) const {
+      for (T &x: a) {
+        if (x == key) return true;
       }
       return false;
     }
@@ -118,16 +155,16 @@ namespace titan23 {
       return a[i<0? i+len(): i];
     }
 
-    int len() const {
+    int len() {
       return (int)a.size();
     }
 
-    vector<T> tovector() const {
+    vector<T> tovector() {
       vector<T> res = a;
       return res;
     }
 
-    void print() const {
+    void print() {
       cout << "[";
       for (int i = 0; i < len()-1; ++i) {
         cout << a[i] << ", ";
@@ -138,7 +175,7 @@ namespace titan23 {
       cout << "]\n";
     }
 
-    void pprint(string sep=" ", string end="\n") const {
+    void pprint(string sep=" ", string end="\n") {
       for (int i = 0; i < len()-1; ++i) {
         cout << a[i] << sep;
       }
@@ -149,3 +186,4 @@ namespace titan23 {
     }
   };
 }  // namespace titan23
+

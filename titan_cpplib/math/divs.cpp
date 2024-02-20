@@ -10,9 +10,7 @@ namespace titan23 {
     vector<int> min_factor;
 
     Osa_k(const int n) : n(n), min_factor(n+1) {
-      for (int i = 0; i <= n; ++i) {
-        min_factor[i] = i;
-      }
+      iota(min_factor.begin(), min_factor.end(), 0);
       for (int i = 2; i*i <= n; ++i) {
         if (min_factor[i] == i) {
           for (int j = 2; j <= n/i; ++j) {

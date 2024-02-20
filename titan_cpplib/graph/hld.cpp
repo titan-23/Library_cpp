@@ -7,22 +7,15 @@ namespace titan23 {
 
   struct HLD {
     vector<vector<int>> G;
-    vector<int> size, par, dep, nodein, nodeout, head, hld;
     int root, n;
+    vector<int> size, par, dep, nodein, nodeout, head, hld;
 
     HLD () {}
 
-    HLD(vector<vector<int>> G, int root) {
-      this->G = G;
-      this->root = root;
-      this->n = (int)G.size();
-      size.resize(n, 1);
-      par.resize(n, -1);
-      dep.resize(n, -1);
-      nodein.resize(n, -1);
-      nodeout.resize(n, -1);
-      head.resize(n, -1);
-      hld.resize(n, -1);
+    HLD(vector<vector<int>> G, int root) :
+        G(G), root(root), n(G.size()),
+        size(n, 1), par(n, -1), dep(n, -1),
+        nodein(n, -1), nodeout(n, -1), head(n, -1), hld(n, -1) {
       _dfs();
     }
 
@@ -94,12 +87,8 @@ namespace titan23 {
 
     int lca(int u, int v) const {
       while (true) {
-        if (nodein[u] > nodein[v]) {
-          swap(u, v);
-        }
-        if (head[u] == head[v]) {
-          return u;
-        }
+        if (nodein[u] > nodein[v]) swap(u, v);
+        if (head[u] == head[v]) return 0;
         v = par[head[v]];
       }
     }
