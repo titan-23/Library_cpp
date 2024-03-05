@@ -5,7 +5,7 @@
 // Timer
 namespace titan23 {
   class Timer {
-  public:
+   public:
     Timer() : start_timepoint(std::chrono::high_resolution_clock::now()) {}
 
     void reset() {
@@ -19,7 +19,7 @@ namespace titan23 {
       return (end - start) * 0.001; // ミリ秒単位で経過時間を返す
     }
     
-  private:
+   private:
     std::chrono::time_point<std::chrono::high_resolution_clock> start_timepoint;
   };
 }
