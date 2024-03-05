@@ -18,7 +18,7 @@ namespace titan23 {
     template<typename T>
     vector<T> dijkstra(const int start, const T INF) {
       vector<T> dist(n, INF);
-      priority_queue<pair<T, int>> hq;
+      priority_queue<pair<T, int>, vector<pair<T, int>>, greater<pair<T, int>>> hq;
       hq.push({0, start});
       dist[start] = 0;
       while (!hq.empty()) {

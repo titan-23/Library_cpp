@@ -79,6 +79,7 @@ namespace titan23 {
     void clear() {
       group_numbers = n;
       for (int i = 0; i < n; ++i) par[i] = -1;
+      for (int i = 0; i < n; ++i) G[i].clear();
     }
 
     map<int, vector<int>> all_group_members() {

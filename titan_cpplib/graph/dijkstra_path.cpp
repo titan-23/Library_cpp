@@ -1,0 +1,50 @@
+#include <vector>
+#include <queue>
+using namespace std;
+
+// dijkstra_path
+namespace titan23 {
+  template<typename T>
+  struct dijkstra_path {
+    vector<int> prev;
+    vector<T> dist;
+    T INF;
+
+    dijkstra_path() {}
+    dijkstra_path(vector<vector<pair<int, T>>> &G, int s, T INF) : INF(INF) {
+      int n = G.size();
+      prev.resize(n, -1);
+      dist.resize(n, INF);
+      dist[s] = 0;
+      priority_queue<pair<T, int>, vector<pair<T, int>>, greater<pair<T, int>>> hq;
+      hq.emplace(0, s);
+      while (!hq.empty()) {
+        auto [d, v] = hq.top();
+        hq.pop();
+        if (dist[v] < d) continue;
+        for (const auto &[x, c]: G[v]) {
+          if (dist[x] > d + c) {
+            dist[x] = d + c;
+            prev[x] = v;
+            hq.emplace(d+c, x);
+          }
+        }
+      }
+    }
+
+    T get_dist(int t) { return dist[t]; }
+
+    vector<int> get_path(int t) {
+      vector<int> path;
+      if (dist[t] == INF) { return path; }
+      while (prev[t] != -1) {
+        path.emplace_back(t);
+        t = prev[t];
+      }
+      path.emplace_back(t);
+      reverse(path.begin(), path.end());
+      return path;
+    }
+  };
+}
+
