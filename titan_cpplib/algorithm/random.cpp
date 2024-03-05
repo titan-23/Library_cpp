@@ -7,17 +7,12 @@ using namespace std;
 namespace titan23 {
 
   struct Random {
+
+   private:
     unsigned int _x, _y, _z, _w;
 
-    Random() {
-      _x = 123456789;
-      _y = 362436069;
-      _z = 521288629;
-      _w = 88675123;
-    }
-
     unsigned int _xor128() {
-      unsigned int t = _x ^ (_x << 11);
+      const unsigned int t = _x ^ (_x << 11);
       _x = _y;
       _y = _z;
       _z = _w;
@@ -25,18 +20,37 @@ namespace titan23 {
       return _w;
     }
 
-    double random() {
-      return (double)(_xor128()) / 0xFFFFFFFF;
-    }
+   public:
+    Random() : _x(123456789),
+               _y(362436069),
+               _z(521288629),
+               _w(88675123) {}
 
-    int randint(int begin, int end) {
+    double random() { return (double)(_xor128()) / 0xFFFFFFFF; }
+
+    int randint(const int end) {
+      assert(0 <= end);
+      return (((unsigned long long)_xor128() * (end+1)) >> 32);
+    }
+    
+    int randint(const int begin, const int end) {
       assert(begin <= end);
-      return begin + _xor128() % (end - begin + 1);
+      return begin + (((unsigned long long)_xor128() * (end-begin+1)) >> 32);
+    }
+    
+    int randrange(const int end) {
+      assert(0 < end);
+      return (((unsigned long long)_xor128() * end) >> 32);
+    }
+    
+    int randrange(const int begin, const int end) {
+      assert(begin < end);
+      return begin + (((unsigned long long)_xor128() * (end-begin)) >> 32);
     }
 
-    int randrange(int begin, int end) {
+    double randdouble(const double begin, const double end) {
       assert(begin < end);
-      return begin + _xor128() % (end - begin);
+      return begin + random() * (end-begin);
     }
 
     template <typename T>
