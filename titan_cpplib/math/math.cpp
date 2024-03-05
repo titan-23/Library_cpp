@@ -1,5 +1,5 @@
 // pow ----------------
-long long pow_mod(long long a, long long b, long long mod) {
+long long pow_mod(long long a, long long b, const long long mod) {
   long long res = 1ll;
   while (b) {
     if (b & 1ll) {
