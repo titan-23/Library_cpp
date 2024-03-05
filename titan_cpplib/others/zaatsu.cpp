@@ -3,16 +3,23 @@ using namespace std;
 
 // Zaatsu
 namespace titan23 {
-    
+
   template<typename T>
   struct Zaatsu {
+   private:
     vector<T> _to_origin;
+    int _n;
 
+   public:
     Zaatsu(vector<T> &used_items) {
       _to_origin = used_items;
       sort(_to_origin.begin(), _to_origin.end());
       _to_origin.erase(unique(_to_origin.begin(), _to_origin.end()), _to_origin.end());
-      int n = (int)_to_origin.size();
+      _n = (int)_to_origin.size();
+    }
+
+    int len() const {
+      return _n;
     }
 
     int to_zaatsu(const T &x) const {
@@ -24,4 +31,3 @@ namespace titan23 {
     }
   };
 }  // namespace titan23
-
