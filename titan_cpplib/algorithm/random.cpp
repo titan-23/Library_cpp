@@ -1,6 +1,6 @@
 #include <cassert>
+#include <unordered_set>
 #include <vector>
-
 using namespace std;
 
 // Random
@@ -32,17 +32,17 @@ namespace titan23 {
       assert(0 <= end);
       return (((unsigned long long)_xor128() * (end+1)) >> 32);
     }
-    
+
     int randint(const int begin, const int end) {
       assert(begin <= end);
       return begin + (((unsigned long long)_xor128() * (end-begin+1)) >> 32);
     }
-    
+
     int randrange(const int end) {
       assert(0 < end);
       return (((unsigned long long)_xor128() * end) >> 32);
     }
-    
+
     int randrange(const int begin, const int end) {
       assert(begin < end);
       return begin + (((unsigned long long)_xor128() * (end-begin)) >> 32);
@@ -63,9 +63,22 @@ namespace titan23 {
     }
 
     template <typename T>
+    vector<T> choices(const vector<T> &a, const int k) {
+      assert(a.size() >= k);
+      vector<T> r(k);
+      unordered_set<int> seen;
+      for (int i = 0; i < k; ++i) {
+        int x = randrange(a.size());
+        while (seen.find(x) != seen.end()) x = randrange(a.size());
+        seen.insert(x);
+        r[i] = a[x];
+      }
+      return r;
+    }
+
+    template <typename T>
     T choice(const vector<T> &a) {
-      int i = randrange(0, a.size());
-      return a[i];
+      return a[randrange(a.size())];
     }
 
     template <typename T>

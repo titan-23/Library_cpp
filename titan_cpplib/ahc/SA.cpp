@@ -1,7 +1,7 @@
 #include <vector>
 #include <cmath>
-#include "../ahc/timer.cpp"
-#include "../algorithm/random.cpp"
+#include "titan_cpplib/ahc/timer.cpp"
+#include "titan_cpplib/algorithm/random.cpp"
 
 using namespace std;
 
@@ -21,16 +21,15 @@ namespace sa {
 
   struct State {
     Score score;
-
     State() : score(0.0) {}
 
-    void init() {
-    }
+    void init() {}
 
     Score get_score() const { return score; }
 
     // TODO: 遷移
-    Changed modify() {
+    // thresholdを超えたら、だめ
+    Changed modify(const Score threshold) {
       Changed changed(score);
       return changed;
     }
@@ -58,7 +57,7 @@ namespace sa {
     State best_ans = ans;
     Score score = ans.get_score();
     Score best_score = score;
-    float now_time;
+    double now_time;
 
     int cnt = 0;
     while (true) {
@@ -66,10 +65,10 @@ namespace sa {
       now_time = sa_timer.elapsed();
       if (now_time > TIME_LIMIT) break;
       ++cnt;
-      Changed changed = ans.modify();
+      Score threshold = score - (START_TEMP-TEMP_VAL*now_time) * log(sa_random.random());
+      Changed changed = ans.modify(threshold);
       Score new_score = ans.get_score();
-      Score arg = score - new_score;
-      if (arg >= 0 || exp(arg/(START_TEMP-TEMP_VAL*now_time)) > sa_random.random()) {
+      if (new_score <= threshold) {
         score = new_score;
         if (score < best_score) {
           best_score = score;

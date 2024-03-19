@@ -1,37 +1,28 @@
 #include <vector>
 #include <set>
-#include "../algorithm/random.cpp"
+#include "titan_cpplib/algorithm/random.cpp"
 using namespace std;
 
 // Kmeans
 namespace titan23 {
 
-  using D = pair<int, int>;
-
-  struct Kmeans {
+  template <class T,
+            int (*dist)(const T&, const T&),
+            T (*mean)(const vector<T>&)>
+  class Kmeans {
+   private:
     int k, max_iter;
     titan23::Random my_random;
 
+   public:
+    Kmeans() : k(0), max_iter() {}
     Kmeans(int k, int max_iter) : k(k), max_iter(max_iter) {}
 
-    int dist(const D &s, const D &t) const {
-      return abs(s.first-t.first) + abs(s.second-t.second);
-    }
-
-    pair<int, int> mean(const vector<D> &L) const {
-      int sx = 0, sy = 0;
-      for (const auto &[x, y]: L) {
-        sx += x;
-        sy += y;
-      }
-      return {sx/L.size(), sy/L.size()};
-    }
-
-    pair<vector<int>, vector<D>> fit(const vector<D> &X) {
+    pair<vector<int>, vector<T>> fit(const vector<T> &X) {
       int n = (int)X.size();
       assert(k <= n);
-      vector<D> first_cluster = {my_random.choice(X)};
-      set<D> cluster_set;
+      vector<T> first_cluster = {my_random.choice(X)};
+      set<T> cluster_set;
       cluster_set.insert(first_cluster[0]);
 
       while (first_cluster.size() < k) {
@@ -48,13 +39,13 @@ namespace titan23 {
           }
         }
         assert(flag);
-        D tmpk = my_random.choice(X, p_f, false);
+        T tmpk = my_random.choice(X, p_f, false);
         assert(cluster_set.find(tmpk) == cluster_set.end());
         first_cluster.emplace_back(tmpk);
         cluster_set.insert(tmpk); // iranai
       }
 
-      vector<D> cluster_centers = first_cluster;
+      vector<T> cluster_centers = first_cluster;
       vector<int> labels(n, -1);
       for (int i = 0; i < n; ++i) {
         int d = dist(X[i], first_cluster[0]);
@@ -68,7 +59,7 @@ namespace titan23 {
       }
 
       for (int _ = 0; _ < max_iter; ++_) {
-        vector<vector<D>> syuukei(k);
+        vector<vector<T>> syuukei(k);
         for (int i = 0; i < n; ++i) {
           syuukei[labels[i]].emplace_back(X[i]);
         }
@@ -92,3 +83,13 @@ namespace titan23 {
   };
 }
 
+
+/*
+using T = pair<int, int>;
+int dist(const T &s, const T &t) {
+  return abs(s.first-t.first) + abs(s.second-t.second);
+}
+T mean(const vector<T> &L) {
+  return {0, 0};
+}
+*/
