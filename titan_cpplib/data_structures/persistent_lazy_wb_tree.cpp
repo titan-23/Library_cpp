@@ -16,7 +16,7 @@ namespace titan23 {
             F (*id)()>
   class PersistentLazyWBTree {
 
-  private:
+   private:
     class Node;
     using NodePtr = shared_ptr<Node>;
     using MyPersistentLazyWBTree = PersistentLazyWBTree<T, F, op, mapping, composition, e, id>;
@@ -25,7 +25,7 @@ namespace titan23 {
 
     class Node {
 
-    public:
+     public:
       T key, data;
       NodePtr left;
       NodePtr right;
@@ -48,7 +48,7 @@ namespace titan23 {
         return ((left ? left->size : 0) + 1.0) / (size + 1.0);
       }
 
-      void _propagate() {
+      void propagate() {
         if (rev) {
           NodePtr l = (left)? left->copy(): nullptr;
           NodePtr r = (right)? right->copy(): nullptr;
@@ -75,7 +75,7 @@ namespace titan23 {
         }
       }
 
-      void _update() {
+      void update() {
         size = 1;
         data = key;
         if (left) {
@@ -104,7 +104,7 @@ namespace titan23 {
         NodePtr node = make_shared<Node>(a[mid], id());
         if (l != mid) node->left = build(build, l, mid);
         if (mid+1 != r) node->right = build(build, mid+1, r);
-        _update(node);
+        node->update();
         return node;
       };
       root = build(build, 0, (int)a.size());
@@ -114,8 +114,8 @@ namespace titan23 {
       NodePtr u = node->left->copy();
       node->left = u->right;
       u->right = node;
-      _update(node);
-      _update(u);
+      node->update();
+      u->update();
       return u;
     }
 
@@ -123,17 +123,17 @@ namespace titan23 {
       NodePtr u = node->right->copy();
       node->right = u->left;
       u->left = node;
-      _update(node);
-      _update(u);
+      node->update();
+      u->update();
       return u;
     }
 
     NodePtr _balance_left(NodePtr &node) {
-      _propagate(node->right);
+      node->right->propagate();
       node->right = node->right->copy();
       NodePtr u = node->right;
       if (u->balance() >= BETA) {
-        _propagate(u->left);
+        u->left->propagate();
         node->right = _rotate_right(u);
       }
       u = _rotate_left(node);
@@ -141,11 +141,11 @@ namespace titan23 {
     }
 
     NodePtr _balance_right(NodePtr &node) {
-      _propagate(node->left);
+      node->left->propagate();
       node->left = node->left->copy();
       NodePtr u = node->left;
       if (u->balance() <= 1.0 - BETA) {
-        _propagate(u->right);
+        u->right->propagate();
         node->left = _rotate_left(u);
       }
       u = _rotate_right(node);
@@ -157,20 +157,20 @@ namespace titan23 {
       int rs = r? r->size: 0;
       double diff = (double)(ls+1.0) / (ls+rs+2.0);
       if (diff > 1.0-ALPHA) {
-        _propagate(l);
+        l->propagate();
         l = l->copy();
         l->right = _merge_with_root(l->right, root, r);
-        _update(l);
+        l->update();
         if (!(ALPHA <= l->balance() && l->balance() <= 1.0-ALPHA)) {
           return _balance_left(l);
         }
         return l;
       }
       if (diff < ALPHA) {
-        _propagate(r);
+        r->propagate();
         r = r->copy();
         r->left = _merge_with_root(l, root, r->left);
-        _update(r);
+        r->update();
         if (!(ALPHA <= r->balance() && r->balance() <= 1.0-ALPHA)) {
           return _balance_right(r);
         }
@@ -179,18 +179,18 @@ namespace titan23 {
       root = root->copy();
       root->left = l;
       root->right = r;
-      _update(root);
+      root->update();
       return root;
     }
 
     pair<NodePtr, NodePtr> _pop_right(NodePtr &node) {
       vector<NodePtr> path;
-      _propagate(node);
+      node->propagate();
       node = node->copy();
       NodePtr mx = node;
       while (node->right) {
         path.emplace_back(node);
-        _propagate(node->right);
+        node->right->propagate();
         node = node->right->copy();
         mx = node;
       }
@@ -200,7 +200,7 @@ namespace titan23 {
         path.pop_back();
         if (!node) {
           path.back()->right = nullptr;
-          _update(path.back());
+          path.back()->update();
           continue;
         }
         double b = node->balance();
@@ -211,7 +211,7 @@ namespace titan23 {
         } else {
           path.back()->right = _balance_left(node);
         }
-        _update(path.back());
+        path.back()->update();
       }
       if (path[0]) {
         double b = path[0]->balance();
@@ -222,7 +222,7 @@ namespace titan23 {
         }
       }
       mx->left = nullptr;
-      _update(mx);
+      mx->update();
       return {path[0], mx};
     }
 
@@ -238,7 +238,7 @@ namespace titan23 {
 
     pair<NodePtr, NodePtr> _split_node(NodePtr &node, int k) {
       if (!node) {return {nullptr, nullptr};}
-      _propagate(node);
+      node->propagate();
       int tmp = node->left? k-node->left->size: k;
       if (tmp == 0) {
         return {node->left, _merge_with_root(nullptr, node, node->right)};
@@ -256,15 +256,14 @@ namespace titan23 {
       return p;
     }
 
-  public:
+    PersistentLazyWBTree(NodePtr root) : root(root) {}
 
+   public:
     NodePtr root;
 
     PersistentLazyWBTree() : root(nullptr) {}
 
-    PersistentLazyWBTree(NodePtr root) : root(root) {}
-
-    PersistentLazyWBTree(vector<T> const &a) {_build(a);}
+    PersistentLazyWBTree(vector<T> &a) { _build(a); }
 
     MyPersistentLazyWBTree merge(MyPersistentLazyWBTree other) {
       NodePtr root = _merge_node(this->root, other.root);
@@ -277,37 +276,51 @@ namespace titan23 {
     }
 
     MyPersistentLazyWBTree apply(int l, int r, F f) {
-      if (l >= r) {
-        return _new(this->root? root->copy(): nullptr);
-      }
-      auto [s_, t] = _split_node(root, r);
-      auto [u, s] = _split_node(s_, l);
-      s->key = mapping(f, s->key);
-      s->data = mapping(f, s->data);
-      s->lazy = composition(f, s->lazy);
-      root = _merge_node(_merge_node(u, s), t);
-      return _new(root);
+      if (l >= r) return _new(this->root ? root->copy() : nullptr);
+      auto dfs = [&] (auto &&dfs, NodePtr node, int left, int right) -> NodePtr {
+        if (right <= l || r <= left) return node;
+        node->propagate();
+        NodePtr nnode = node->copy();
+        if (l <= left && right < r) {
+          nnode->key = mapping(f, nnode->key);
+          nnode->data = mapping(f, nnode->data);
+          nnode->lazy = composition(f, nnode->lazy);
+          return nnode;
+        }
+        int lsize = nnode->left ? nnode->left->size : 0;
+        if (nnode->left) nnode->left = dfs(dfs, nnode->left, left, left+lsize);
+        if (l <= left+lsize && left+lsize < r) nnode->key = mapping(f, nnode->key);;
+        if (nnode->right) nnode->right = dfs(dfs, nnode->right, left+lsize+1, right);
+        nnode->update();
+        return nnode;
+      };
+      return _new(dfs(dfs, root, 0, len()));
     }
 
     T prod(int l, int r) {
       if (l >= r) return e();
-      auto [s_, t] = _split_node(root, r);
-      auto [u, s] = _split_node(s_, l);
-      T res = s->data;
-      this->root = _merge_node(_merge_node(u, s), t);
-      return res;
+      auto dfs = [&] (auto &&dfs, NodePtr node, int left, int right) -> T {
+        if (right <= l || r <= left) return e();
+        node->propagate();
+        if (l <= left && right < r) return node->data;
+        int lsize = node->left ? node->left->size : 0;
+        T res = e();
+        if (node->left) res = dfs(dfs, node->left, left, left+lsize);
+        if (l <= left+lsize && left+lsize < r) res = op(res, node->key);
+        if (node->right) res = op(res, dfs(dfs, node->right, left+lsize+1, right));
+        return res;
+      };
+      return dfs(dfs, root, 0, len());
     }
 
-    MyPersistentLazyWBTree insert(const int k, const T key) {
-      if (k < 0) k += len();
-      assert(0 <= k && k < len());
+    MyPersistentLazyWBTree insert(int k, T key) {
+      assert(0 <= k && k <= len());
       auto [s, t] = _split_node(root, k);
       NodePtr new_node = make_shared<Node>(key, id());
       return _new(_merge_with_root(s, new_node, t));
     }
 
-    pair<MyPersistentLazyWBTree, T> pop(const int k) {
-      if (k < 0) k += len();
+    pair<MyPersistentLazyWBTree, T> pop(int k) {
       assert(0 <= k && k < len());
       auto [s_, t] = _split_node(this->root, k+1);
       auto [s, tmp] = _pop_right(s_);
@@ -316,7 +329,7 @@ namespace titan23 {
     }
 
     MyPersistentLazyWBTree reverse(int l, int r) {
-      assert(0 <= l && l <= r && r < len());
+      assert(0 <= l && l <= r && r <= len());
       if (l >= r) return _new(root? root->copy(): nullptr);
       auto [s_, t] = _split_node(root, r);
       auto [u, s] = _split_node(s_, l);
@@ -332,7 +345,7 @@ namespace titan23 {
       a.reserve(len());
       while ((!stack.empty()) || node) {
         if (node) {
-          _propagate(node);
+          node->propagate();
           stack.emplace_back(node);
           node = node->left;
         } else {
@@ -358,7 +371,7 @@ namespace titan23 {
       int d = 0;
       vector<NodePtr> path = {node};
       while (1) {
-        _propagate(node);
+        node->propagate();
         int t = node->left? node->left->size: 0;
         if (t == k) {
           node = node->copy();
@@ -367,7 +380,7 @@ namespace titan23 {
           if (d) pnode->left = node;
           else pnode->right = node;
           while (!path.empty()) {
-            _update(path.back());
+            update(path.back());
             path.pop_back();
           }
           return _new(root);
@@ -392,7 +405,7 @@ namespace titan23 {
       assert(0 <= k && k < len());
       NodePtr node = root;
       while (1) {
-        _propagate(node);
+        node->propagate();
         int t = node->left? node->left->size: 0;
         if (t == k) {
           return node->key;
@@ -424,7 +437,7 @@ namespace titan23 {
       auto dfs = [&] (auto &dfs, NodePtr node) -> int {
         int h = 0;
         int s = 1;
-        _propagate(node);
+        node->propagate();
         if (node->left) {
           h = max(h, dfs(dfs, node->left));
           s += node->left->size;
