@@ -1,5 +1,6 @@
 #include <vector>
 #include <queue>
+#include <algorithm>
 using namespace std;
 
 // dijkstra_path
@@ -32,9 +33,9 @@ namespace titan23 {
       }
     }
 
-    T get_dist(int t) { return dist[t]; }
+    T get_dist(int t) const { return dist[t]; }
 
-    vector<int> get_path(int t) {
+    vector<int> get_path(int t) const {
       vector<int> path;
       if (dist[t] == INF) { return path; }
       while (prev[t] != -1) {
