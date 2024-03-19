@@ -3,6 +3,8 @@
 #include <stack>
 #include <cassert>
 #include <tuple>
+#include <nmmintrin.h>
+#include <stdint.h>
 using namespace std;
 
 // AVLTreeBitVector
@@ -11,16 +13,17 @@ namespace titan23 {
 class AVLTreeBitVector {
  private:
   using Node = int;
-  using ull = unsigned long long;
-  static constexpr const char _W = 63;
+  // using uint64 = unsigned long long;
+  // static constexpr const char _W = 63;
+  using uint128 = __uint128_t;
+  static constexpr const char _W = 127;
   Node _root, _end;
-  vector<ull> _key;
+  vector<uint128> _key;
   vector<Node> _left, _right;
   vector<int> _size, _total;
-  vector<char> _bit_len;
-  vector<char> _balance;
+  vector<char> _bit_len, _balance;
 
-  void _build(vector<bool> &a) {
+  void _build(vector<uint8_t> &a) {
     auto rec = [&] (auto &&rec, Node l, Node r) -> pair<Node, char> {
       Node mid = (l + r) >> 1;
       char hl = 0, hr = 0;
@@ -38,37 +41,34 @@ class AVLTreeBitVector {
       return {mid, (max(hl, hr)+1)};
     };
 
-    int n = a.size();
+    const int n = a.size();
     reserve(n);
     Node pre_end = _end;
     int indx = _end;
     for (int i = 0; i < n; i += _W) {
       int j = 0;
-      ull v = 0;
+      int pop = 0;
+      uint128 v = 0;
       while (j < _W && i + j < n) {
         v <<= 1;
-        v |= a[i+j];
+        if (a[i+j]) {
+          v |= a[i+j];
+          ++pop;
+        }
         j++;
       }
       _key[indx] = v;
       _bit_len[indx] = j;
       _size[indx] = j;
-      _total[indx] = _popcount(v);
-      indx++;
+      _total[indx] = pop;
+      ++indx;
     }
     this->_end = indx;
     this->_root = rec(rec, pre_end, _end).first;
   }
 
-  int bit_length(const int n) const {
-    return 32 - __builtin_clz(n);
-  }
-
-  int bit_length(const ull n) const {
-    return 64 - __builtin_clz(n);
-  }
-
-  int _popcount(const ull n) const {
+  int _popcount(const uint128 n) const {
+    return __builtin_popcountll(n >> 64) + __builtin_popcountll(n);
     return __builtin_popcountll(n);
   }
 
@@ -178,11 +178,11 @@ class AVLTreeBitVector {
   }
 
   Node _make_node(const bool new_key, const char new_bit_len) {
-    if (_end >= (int)_key.size()) {
+    if (_end >= _key.size()) {
       _key.emplace_back(new_key);
       _bit_len.emplace_back(new_bit_len);
       _size.emplace_back(new_bit_len);
-      _total.emplace_back(_popcount(new_key));
+      _total.emplace_back(new_key);
       _left.emplace_back(0);
       _right.emplace_back(0);
       _balance.emplace_back(0);
@@ -190,18 +190,17 @@ class AVLTreeBitVector {
       _key[_end] = new_key;
       _bit_len[_end] = new_bit_len;
       _size[_end] = new_bit_len;
-      _total[_end] = _popcount(new_key);
+      _total[_end] = new_key;
     }
-    ++_end;
-    return _end-1;
+    return _end++;
   }
 
-  ull _bit_insert(ull v, char bl, bool key) const {
-    return ((((v >> bl) << 1) | key) << bl) | (v & (((ull)1<<bl)-1));
+  uint128 _bit_insert(uint128 v, char bl, bool key) const {
+    return ((((v >> bl) << 1) | key) << bl) | (v & (((uint128)1<<bl)-1));
   }
 
-  ull _bit_pop(ull v, char bl) const {
-    return ((v >> bl) << ((bl-1))) | (v & (((ull)1<<(bl-1))-1));
+  uint128 _bit_pop(uint128 v, char bl) const {
+    return ((v >> bl) << ((bl-1))) | (v & (((uint128)1<<(bl-1))-1));
   }
 
   void _pop_under(stack<Node> &path, int d, Node node, int res) {
@@ -285,7 +284,7 @@ class AVLTreeBitVector {
         _bit_len(1, 0), _balance(1, 0) {
   }
 
-  AVLTreeBitVector (vector<bool> &a)
+  AVLTreeBitVector (vector<uint8_t> &a)
       : _root(0), _end(1),
         _key(1, 0),
         _left(1, 0), _right(1, 0),
@@ -296,7 +295,7 @@ class AVLTreeBitVector {
 
   void reserve(int n) {
     n = n / _W + 1;
-    _key.insert(_key.end(), n, (ull)0);
+    _key.insert(_key.end(), n, (uint128)0);
     _left.insert(_left.end(), n, 0);
     _right.insert(_right.end(), n, 0);
     _size.insert(_size.end(), n, 0);
@@ -327,7 +326,7 @@ class AVLTreeBitVector {
     }
     k -= _size[_left[node]];
     if (_bit_len[node] < _W) {
-      ull v = _key[node];
+      uint128 v = _key[node];
       char bl = _bit_len[node] - k;
       _key[node] = _bit_insert(v, bl, key);
       _bit_len[node]++;
@@ -338,12 +337,12 @@ class AVLTreeBitVector {
     path.emplace(node);
     _size[node]++;
     _total[node] += key;
-    ull v = _key[node];
+    uint128 v = _key[node];
     char bl = _W - k;
     v = _bit_insert(v, bl, key);
-    ull left_key = v >> _W;
+    uint128 left_key = v >> _W;
     char left_key_popcount = left_key & 1;
-    _key[node] = v & (((ull)1 << _W) - 1);
+    _key[node] = v & (((uint128)1 << _W) - 1);
     node = _left[node];
     d = (d << 1) | 1;
     if (!node) {
@@ -417,7 +416,7 @@ class AVLTreeBitVector {
       else k -= t;
     }
     k -= _size[_left[node]];
-    ull v = _key[node];
+    uint128 v = _key[node];
     bool res = (v >> (_bit_len[node] - k - 1)) & 1;
     if (_bit_len[node] == 1) {
       _pop_under(path, d, node, res);
@@ -444,9 +443,9 @@ class AVLTreeBitVector {
       if (t - _bit_len[node] <= k && k < t) {
         k -= _size[_left[node]];
         if (v) {
-          _key[node] |= (ull)1 << k;
+          _key[node] |= (uint128)1 << k;
         } else {
-          _key[node] &= ~((ull)1 << k);
+          _key[node] &= ~((uint128)1 << k);
         }
         break;
       }
@@ -463,14 +462,15 @@ class AVLTreeBitVector {
     }
   }
 
-  vector<bool> tovector() const {
-    vector<bool> a;
+  vector<uint8_t> tovector() const {
+    vector<uint8_t> a(len());
     if (!_root) return a;
-    a.reserve(len());
+    int indx = 0;
     auto rec = [&] (auto &&rec, Node node) -> void {
       if (_left[node]) rec(rec, _left[node]);
+      uint128 key = _key[node];
       for (int i = _bit_len[node]-1; i >= 0; --i) {
-        a.emplace_back((_key[node] >> i) & 1);
+        a[indx++] = key >> i & 1;
       }
       if (_right[node]) rec(rec, _right[node]);
     };
@@ -508,32 +508,54 @@ class AVLTreeBitVector {
   }
 
   int select0(int k) const {
-    if (k < 0 || rank0(len()) <= k) {
-      return -1;
-    }
-    int l = 0, r = len();
-    while (r - l > 1) {
-      int m = (l + r) >> 1;
-      if (m - _pref(m) > k) {
-        r = m;
+    Node node = _root;
+    int s = 0;
+    while (true) {
+      int t = _size[_left[node]] - _total[_left[node]];
+      if (k < t) {
+        node = _left[node];
+      } else if (k >= t + _bit_len[node] - _popcount(_key[node])) {
+        s += _size[_left[node]] + _bit_len[node];
+        k -= t + _bit_len[node] - _popcount(_key[node]);
+        node = _right[node];
       } else {
-        l = m;
+        k -= t;
+        char l = 0, r = _bit_len[node];
+        while (r - l > 1) {
+          char m = (l + r) >> 1;
+          if (m - _popcount(_key[node]>>(_bit_len[node]-m)) > k) r = m;
+          else l = m;
+        }
+        s += _size[_left[node]] + l;
+        break;
       }
     }
-    return l;
+    return s;
   }
 
   int select1(int k) const {
-    if (k < 0 || rank1(len()) <= k) {
-      return -1;
+    Node node = _root;
+    int s = 0;
+    while (true) {
+      if (k < _total[_left[node]]) {
+        node = _left[node];
+      } else if (k >= _total[_left[node]] + _popcount(_key[node])) {
+        s += _size[_left[node]] + _bit_len[node];
+        k -= _total[_left[node]] + _popcount(_key[node]);
+        node = _right[node];
+      } else {
+        k -= _total[_left[node]];
+        char l = 0, r = _bit_len[node];
+        while (r - l > 1) {
+          char m = (l + r) >> 1;
+          if (_popcount(_key[node]>>(_bit_len[node]-m)) > k) r = m;
+          else l = m;
+        }
+        s += _size[_left[node]] + l;
+        break;
+      }
     }
-    int l = 0, r = len();
-    while (r - l > 1) {
-      int m = (l + r) >> 1;
-      if (_pref(m) > k) r = m;
-      else l = m;
-    }
-    return l;
+    return s;
   }
 
   int select(int k, bool v) const {
@@ -567,7 +589,7 @@ class AVLTreeBitVector {
     k -= _size[_left[node]];
     s += _total[_left[node]] + _popcount(_key[node] >> (_bit_len[node] - k));
     if (_bit_len[node] < _W) {
-      ull v = _key[node];
+      uint128 v = _key[node];
       char bl = _bit_len[node] - k;
       _key[node] = _bit_insert(v, bl, key);
       _bit_len[node]++;
@@ -578,12 +600,12 @@ class AVLTreeBitVector {
     path.emplace(node);
     _size[node]++;
     _total[node] += key;
-    ull v = _key[node];
+    uint128 v = _key[node];
     char bl = _W - k;
     v = _bit_insert(v, bl, key);
-    ull left_key = v >> _W;
+    uint128 left_key = v >> _W;
     char left_key_popcount = left_key & 1;
-    _key[node] = v & (((ull)1 << _W) - 1);
+    _key[node] = v & (((uint128)1 << _W) - 1);
     node = _left[node];
     d = d << 1 | 1;
     if (!node) {
@@ -658,7 +680,7 @@ class AVLTreeBitVector {
     }
     k -= _size[_left[node]];
     s += _total[_left[node]] + _popcount(_key[node] >> (_bit_len[node] - k));
-    ull v = _key[node];
+    uint128 v = _key[node];
     bool res = v >> (_bit_len[node] - k - 1) & 1;
     if (_bit_len[node] == 1) {
       _pop_under(path, d, node, res);
@@ -676,8 +698,31 @@ class AVLTreeBitVector {
     return (s << 1) | res;
   }
 
+  pair<bool, int> _access_ans_rank1(int k) const {
+    Node node = _root;
+    int s = 0;
+    bool res;
+    while (true) {
+      int t = _size[_left[node]] + _bit_len[node];
+      if (t - _bit_len[node] <= k && k < t) {
+        k -= _size[_left[node]];
+        s += _total[_left[node]] + _popcount(_key[node] >> (_bit_len[node] - k));
+        res = (_key[node] >> (_bit_len[node] - k - 1)) & 1;
+        break;
+      }
+      if (t > k) {
+        node = _left[node];
+      } else {
+        s += _total[_left[node]] + _popcount(_key[node]);
+        node = _right[node];
+        k -= t;
+      }
+    }
+    return make_pair(res, s);
+  }
+
   void print() const {
-    vector<bool> a = tovector();
+    vector<uint8_t> a = tovector();
     int n = (int)a.size();
     cout << "[";
     for (int i = 0; i < n-1; ++i) {

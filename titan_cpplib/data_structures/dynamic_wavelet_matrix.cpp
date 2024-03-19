@@ -2,7 +2,7 @@
 #include <vector>
 #include <tuple>
 #include <queue>
-#include "./avl_tree_bit_vector.cpp"
+#include "titan_cpplib/data_structures/avl_tree_bit_vector.cpp"
 using namespace std;
 
 // DynamicWaveletMatrix
