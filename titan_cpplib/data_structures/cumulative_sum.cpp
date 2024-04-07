@@ -4,29 +4,28 @@ using namespace std;
 
 namespace titan23 {
   template<typename T>
-  struct CumulativeSum {
-    int _n;
-    T _e;
-    vector<T> _acc;
-
-    CumulativeSum(vector<T> &a, T e) {
-      _n = (int)a.size();
-      _acc.resize(_n+1, e);
-      for (int i = 0; i < _n; ++i) {
-        _acc[i+1] = _acc[i] + a[i];
+  class CumulativeSum {
+   private:
+    int n;
+    vector<T> acc;
+  
+   public:
+    CumulativeSum(vector<T> &a, T e) : n(a.size()), acc(n+1, e) {
+      for (int i = 0; i < n; ++i) {
+        acc[i+1] = acc[i] + a[i];
       }
     }
 
     T pref(const int r) const {
-      return _acc[r];
+      return acc[r];
     }
 
     T all_sum() const {
-      return _acc.back();
+      return acc.back();
     }
 
     T sum(const int l, const int r) const {
-      return _acc[r] - _acc[l];
+      return acc[r] - acc[l];
     }
 
     T prod(const int l, const int r) const {
@@ -39,10 +38,10 @@ namespace titan23 {
 
     void print() const {
       cout << '[';
-      for (int i = 0; i < _n; ++i) {
-        cout << _acc[i] << ", ";
+      for (int i = 0; i < n; ++i) {
+        cout << acc[i] << ", ";
       }
-      cout << _acc.back() << ']' << endl;
+      cout << acc.back() << ']' << endl;
     }
   };
 }  // namespace titan23
