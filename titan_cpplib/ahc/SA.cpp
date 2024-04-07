@@ -16,12 +16,14 @@ namespace sa {
   struct Changed {
     Score pre_score;
     Changed() {}
-    Changed(Score score) : pre_score(score) {}
   };
 
-  struct State {
+  Changed changed;
+
+  class State {
+   public:
     Score score;
-    State() : score(0.0) {}
+    State() {}
 
     void init() {}
 
@@ -29,14 +31,11 @@ namespace sa {
 
     // TODO: 遷移
     // thresholdを超えたら、だめ
-    Changed modify(const Score threshold) {
-      Changed changed(score);
-      return changed;
+    void modify(const Score threshold) {
     }
 
     // TODO: 遷移を戻す
-    void rollback(Changed &changed) {
-      score = changed.pre_score;
+    void rollback() {
     }
 
     // TODO: 表示する
@@ -45,7 +44,7 @@ namespace sa {
   };
 
   // TIME_LIMIT: ms
-  State run(const double TIME_LIMIT) {
+  static inline State run(const double TIME_LIMIT) {
     titan23::Timer sa_timer;
 
     const double START_TEMP = 100;  // TODO: 温度
@@ -66,17 +65,21 @@ namespace sa {
       if (now_time > TIME_LIMIT) break;
       ++cnt;
       Score threshold = score - (START_TEMP-TEMP_VAL*now_time) * log(sa_random.random());
-      Changed changed = ans.modify(threshold);
+
+      changed.pre_score = ans.score;
+      ans.modify(threshold);
+
       Score new_score = ans.get_score();
       if (new_score <= threshold) {
         score = new_score;
         if (score < best_score) {
           best_score = score;
           best_ans = ans;
-          // cerr << "score=" << best_score << endl;
+          cerr << "score=" << best_score << endl;
         }
       } else {
-        ans.rollback(changed);
+        ans.score = changed.pre_score;
+        ans.rollback();
       }
     }
     cerr << "cnt=" << cnt << endl;
@@ -84,4 +87,3 @@ namespace sa {
   }
 }
 }  // namespace titan23
-
