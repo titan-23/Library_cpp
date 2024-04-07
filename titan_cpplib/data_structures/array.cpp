@@ -7,48 +7,34 @@ using namespace std;
 namespace titan23 {
 
   template<typename T>
-  struct Array {
+  class Array {
+   private:
     vector<T> a;
 
+   public:
     Array() {}
-
-    Array(const int &n) {
-      assert(n >= 0);
-      a.resize(n);
-    }
-
-    Array(const int &n, const T &key) {
-      assert(n >= 0);
-      a.resize(n, key);
-    }
-
-    Array(const vector<T> &v) {
-      a.resize(v.size());
-      for (int i = 0; i < v.size(); ++i) {
-        a[i] = v[i];
-      }
-    };
+    Array(const int n) : a(n) {}
+    Array(const int n, const T &key) : a(n, key) {}
+    Array(const vector<T> &v) : a(v) {}
 
     void emplace_back(const T key) {
       a.emplace_back(key);
     }
 
-    void resize(const int &n, const T &e) {
+    void resize(const int n, const T &e) {
       assert(n >= 0);
       a.resize(n, e);
     }
 
-    void reserve(int n) {
+    void reserve(const int n) {
       assert(n >= 0);
       a.reserve(n);
     }
 
     T sum(T e) const{
-      T res = e;
-      for (const T &x: a) {
-        res += x;
-      }
-      return res;
+      T s = e;
+      for (const T &x: a) s += x;
+      return s;
     }
 
     void sort(bool reverse=false) {
@@ -78,14 +64,15 @@ namespace titan23 {
       a.clear();
     }
 
-    void insert(const int &i, const T &key) {
+    void insert(const int i, const T &key) {
       assert(0 <= i && i <= len());
       a.insert(a.begin()+i, key);
     }
 
     T pop(int i=-1) {
-      T key = a[i<0? i+len(): i];
-      remove(key);
+      if (i < 0) i += len();
+      T key = a[i];
+      a.erase(a.begin() + i);
       return key;
     }
 
@@ -100,7 +87,7 @@ namespace titan23 {
       }
     }
 
-    void reverse(const int &l, const int &r) {
+    void reverse(const int l, const int r) {
       // reverse([l, r))
       int n = len();
       assert(0 <= l && l <= r && r <= n);
@@ -110,7 +97,7 @@ namespace titan23 {
       }
     }
 
-    void swap(const int &i, const int &j) {
+    void swap(const int i, const int j) {
       assert(0 <= i < len());
       assert(0 <= j < len());
       swap(a[i], a[j]);
@@ -139,32 +126,32 @@ namespace titan23 {
     }
 
     bool contain(T &key) const {
-      for (T &x: a) {
+      for (const T &x: a) {
         if (x == key) return true;
       }
       return false;
     }
 
-    T& operator[] (int i) {
+    T& operator[] (const int i) {
       assert(-len() <= i && i < len());
       return a[i<0? i+len(): i];
     }
 
-    T operator[] (int i) const {
+    T operator[] (const int i) const {
       assert(-len() <= i && i < len());
       return a[i<0? i+len(): i];
     }
 
-    int len() {
+    int len() const {
       return (int)a.size();
     }
 
-    vector<T> tovector() {
+    vector<T> tovector() const {
       vector<T> res = a;
       return res;
     }
 
-    void print() {
+    void print() const {
       cout << "[";
       for (int i = 0; i < len()-1; ++i) {
         cout << a[i] << ", ";
@@ -186,4 +173,3 @@ namespace titan23 {
     }
   };
 }  // namespace titan23
-
