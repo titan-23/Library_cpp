@@ -30,7 +30,7 @@ namespace titan23 {
       return 32 - __builtin_clz(n);
     }
 
-    void _build(vector<T> &a) {
+    void _build(const vector<T> &a) {
       vector<int> buff0(a.size()), buff1;
       auto build = [&] (auto &&build,
                         int bit,
