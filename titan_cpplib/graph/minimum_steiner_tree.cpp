@@ -12,14 +12,15 @@ namespace titan23 {
    * ダイクストラをN回実行し、結果をすべて保存するのでメモリに注意 
    */
   template<typename T>
-  struct MinimumSteinerTree {
+  class MinimumSteinerTree {
+   private:
     int n;
-    vector<vector<pair<int, T>>> G;
     T INF;
     vector<titan23::dijkstra_path<T>> dist_path;
 
+   public:
     MinimumSteinerTree() {}
-    MinimumSteinerTree(vector<vector<pair<int, T>>> &G, T INF) : n((int)G.size()), G(G), INF(INF) {
+    MinimumSteinerTree(vector<vector<pair<int, T>>> &G, T INF) : n((int)G.size()), INF(INF) {
       dist_path.resize(n);
       for (int s = 0; s < n; ++s) {
         titan23::dijkstra_path<T> d(G, s, INF);
