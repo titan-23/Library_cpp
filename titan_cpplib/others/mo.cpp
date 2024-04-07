@@ -35,7 +35,7 @@ namespace titan23 {
       return d;
     }
 
-    void add_query(const int &l, const int &r) {
+    void add_query(const int l, const int r) {
       ++query_count;
       _l.emplace_back(l);
       _r.emplace_back(r);
@@ -66,4 +66,3 @@ namespace titan23 {
     }
   };
 }  // namespace titan23
-
