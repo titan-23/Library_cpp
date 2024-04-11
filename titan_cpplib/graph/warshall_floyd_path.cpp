@@ -14,9 +14,7 @@ namespace titan23 {
    public:
     warshall_floyd_path() {}
 
-    /**
-     * 時間 O(V^3), 空間 O(V^2)
-     */
+    // 時間 O(|V|^3), 空間 O(|V|^2)
     warshall_floyd_path(const vector<vector<pair<int, T>>> &G, const T INF) :
         n(G.size()), INF(INF), nxt(n*n), dist(n*n, INF) {
       for (int v = 0; v < n; ++v) {
@@ -43,13 +41,12 @@ namespace titan23 {
       }
     }
 
+    // O(1)
     T get_dist(const int s, const int t) const {
       return dist[s*n+t];
     }
 
-    /**
-     * @details O(|path|)
-     */
+    // O(|path|)
     vector<int> get_path(int s, int t) const {
       vector<int> path;
       if (dist[s*n+t] == INF) { return path; }
