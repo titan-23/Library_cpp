@@ -1,4 +1,5 @@
 #include <vector>
+#include <algorithm>
 using namespace std;
 
 // StaticSet
@@ -14,6 +15,17 @@ namespace titan23 {
       sort(data.begin(), data.end());
       data.erase(unique(data.begin(), data.end()), data.end());
       n = (int)data.size();
+    }
+
+    void print() const {
+      cout << "{";
+      for (int i = 0; i < n-1; ++i) {
+        cout << data[i] << ", ";
+      }
+      if (n > 0) {
+        cout << data.back();
+      }
+      cout << "}" << endl;
     }
 
     T get(const int i) const {
@@ -65,4 +77,3 @@ namespace titan23 {
     }
   };
 }
-
