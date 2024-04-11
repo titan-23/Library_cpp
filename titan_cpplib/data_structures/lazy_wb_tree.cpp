@@ -16,7 +16,7 @@ namespace titan23 {
             F (*id)()>
   class LazyWBTree {
 
-  private:
+   private:
     class Node;
     using NodePtr = Node*;
     using MyLazyWBTree = LazyWBTree<T, F, op, mapping, composition, e, id>;
@@ -25,7 +25,7 @@ namespace titan23 {
 
     class Node {
 
-    public:
+     public:
       T key, data;
       NodePtr left;
       NodePtr right;
@@ -233,15 +233,15 @@ namespace titan23 {
       return p;
     }
 
-  public:
+    LazyWBTree(NodePtr &root): root(root) {}
+
+   public:
 
     NodePtr root;
 
     LazyWBTree() : root(nullptr) {}
 
-    LazyWBTree(NodePtr &root): root(root) {}
-
-    LazyWBTree(vector<T> const &a) {_build(a);}
+    LazyWBTree(vector<T> const &a) { _build(a); }
 
     void merge(MyLazyWBTree &other) {
       this->root = _merge_node(this->root, other.root);
@@ -478,4 +478,3 @@ namespace titan23 {
     }
   };
 } // namespace titan23
-
