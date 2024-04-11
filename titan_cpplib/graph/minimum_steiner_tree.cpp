@@ -1,6 +1,7 @@
 #include <vector>
 #include <algorithm>
 #include "titan_cpplib/graph/dijkstra_path.cpp"
+#include "titan_cpplib/graph/warshall_floyd_path.cpp"
 using namespace std;
 
 // MinimumSteinerTree
@@ -9,25 +10,30 @@ namespace titan23 {
   /**
    * @brief 最小シュタイナー木など
    * @details プリム法を用いた近似解法の実装
-   * ダイクストラをN回実行し、結果をすべて保存するのでメモリに注意 
+   * 時間 O(V^3), 空間 O(V^2)
    */
   template<typename T>
   class MinimumSteinerTree {
    private:
     int n;
     T INF;
-    vector<titan23::dijkstra_path<T>> dist_path;
+    titan23::warshall_floyd_path<T> dist_path;
 
    public:
     MinimumSteinerTree() {}
-    MinimumSteinerTree(vector<vector<pair<int, T>>> &G, T INF) : n((int)G.size()), INF(INF) {
-      dist_path.resize(n);
-      for (int s = 0; s < n; ++s) {
-        titan23::dijkstra_path<T> d(G, s, INF);
-        dist_path[s] = d;
-      }
+
+    /**
+     * @brief Construct a new Minimum Steiner Tree object
+     * 時間 O(V^3), 空間 O(V^2)
+     */
+    MinimumSteinerTree(const vector<vector<pair<int, T>>> &G, const T INF) : 
+        n((int)G.size()), INF(INF) {
+      dist_path = titan23::warshall_floyd_path<T>(G, INF);
     }
 
+    /**
+     * @brief terminal を含むシュタイナー木の辺集合を返す
+     */
     vector<pair<int, int>> build_prim(vector<int> terminal) {
       if (terminal.empty()) return {};
       vector<int> used_vertex;
@@ -43,7 +49,7 @@ namespace titan23 {
         int min_terminal_indx = -1;
         for (const int v: used_vertex) {
           for (int i = 0; i < terminal.size(); ++i) {
-            T c = dist_path[v].get_dist(terminal[i]);
+            T c = dist_path.get_dist(v, terminal[i]);
             if (c < min_dist) {
               min_dist = c;
               min_tree_indx = v;
@@ -53,7 +59,7 @@ namespace titan23 {
         }
         int min_terminal = terminal[min_terminal_indx];
         terminal.erase(terminal.begin() + min_terminal_indx);
-        vector<int> &path = dist_path[min_tree_indx].get_path(min_terminal);
+        const vector<int> &path = dist_path.get_path(min_tree_indx, min_terminal);
         for (int i = 0; i < path.size(); ++i) {
           auto it = find(terminal.begin(), terminal.end(), path[i]);
           if (it != terminal.end()) terminal.erase(it);
