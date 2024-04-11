@@ -44,5 +44,4 @@ namespace titan23 {
       return path;
     }
   };
-}
-
+}  // namespace titan23
