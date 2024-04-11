@@ -48,7 +48,7 @@ namespace titan23 {
       return root(x) == root(y);
     }
 
-    set<int> members(const int x) {
+    set<int> members(const int x) const {
       set<int> seen;
       seen.emplace(x);
       vector<int> todo = {x};
