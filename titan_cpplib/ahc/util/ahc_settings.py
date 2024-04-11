@@ -26,8 +26,8 @@ class AHCSettings():
   # direction: minimize / maximize
   direction = 'maximize'
 
-  # multi_run の cpu_count
-  n_jobs_multi_run = 10
+  # parallel_tester の cpu_count
+  n_jobs_parallel_tester = 10
 
   # optuna の試行回数
   n_trials = 50

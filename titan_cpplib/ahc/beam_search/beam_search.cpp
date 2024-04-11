@@ -195,9 +195,7 @@ namespace beam_search {
       const int beam_depth = param.get_beam_depth(turn);
       const int beam_width = param.get_beam_width(turn);
       int done_depth = 0;
-      vector<int> keep;
-      int state0 = pool.copy(best_state);
-      keep.emplace_back(state0);
+      vector<int> keep = {pool.copy(best_state)};
       for (int beam_turn = 0; beam_turn < beam_depth; ++beam_turn, ++done_depth) {
         __gnu_pbds::gp_hash_table<HashType, uint8_t> seen;
         vector<int> score_keep;
@@ -275,9 +273,7 @@ namespace beam_search {
       const int beam_depth = param.get_beam_depth(turn);
       const int beam_width = param.get_beam_width(turn);
       int done_depth = 0;
-      vector<int> keep;
-      int state0 = pool.copy(best_state);
-      keep.emplace_back(state0);
+      vector<int> keep = {pool.copy(best_state)};
       for (int beam_turn = 0; beam_turn < beam_depth; ++beam_turn, ++done_depth) {
         __gnu_pbds::gp_hash_table<HashType, uint8_t> seen;
         vector<int> keep_new;

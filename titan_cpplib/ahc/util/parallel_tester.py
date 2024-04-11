@@ -21,7 +21,7 @@ class ParallelTester():
     Args:
       compile_command (str): コンパイルコマンドです。
       execute_command (str): 実行コマンドです。
-                             実行時引数は ``append_execute_command`` メソッドで指定することも可能です。
+                             実行時引数は ``append_execute_command()`` メソッドで指定することも可能です。
       input_file_names (List[str]): 入力ファイル名のリストです。
       cpu_count (int): CPU数です。
       verbose (bool): ログを表示します。
@@ -43,14 +43,12 @@ class ParallelTester():
     return score
 
   def append_execute_command(self, args: Iterable[str]) -> None:
-    """コマンドライン引数を追加します。
-    """
+    """コマンドライン引数を追加します。"""
     for arg in args:
       self.execute_command.append(str(arg))
 
   def compile(self) -> None:
-    """``compile_command`` よりコンパイルします。
-    """
+    """``compile_command`` よりコンパイルします。"""
     print('compiling...')
     subprocess.run(self.compile_command, stderr=subprocess.PIPE, stdout=subprocess.PIPE, text=True, check=True)
 
@@ -102,20 +100,30 @@ class ParallelTester():
                         type=int,
                         action='store',
                         default=1,
-                        help='set the number of cpu_count(). default is `1`.')
+                        help='set the number of cpu_count. default is `1`.')
     return parser.parse_args()
 
 
-def build_tester(njobs: int=1,
+def build_tester(settings: AHCSettings,
+                 njobs: int=1,
                  verbose: bool=False
                  ) -> ParallelTester:
+  """`ParallelTester` を返します
+
+  Args:
+    njobs (int, optional): cpu_count です。
+    verbose (bool, optional): ログを表示します。
+
+  Returns:
+    ParallelTester: テスターです。
+  """
   tester = ParallelTester(
-    compile_command=AHCSettings.compile_command,
-    execute_command=AHCSettings.execute_command,
-    input_file_names=AHCSettings.input_file_names,
+    compile_command=settings.compile_command,
+    execute_command=settings.execute_command,
+    input_file_names=settings.input_file_names,
     cpu_count=min(njobs, multiprocessing.cpu_count()-1),
     verbose=verbose,
-    get_score=AHCSettings.get_score,
+    get_score=settings.get_score,
   )
   return tester
 
@@ -125,7 +133,7 @@ def main():
   njobs = min(args.number_of_jobs, multiprocessing.cpu_count()-1)
   print(f'{njobs=}')
 
-  tester = build_tester(njobs, args.verbose)
+  tester = build_tester(AHCSettings, njobs, args.verbose)
 
   if args.compile:
     tester.compile()
