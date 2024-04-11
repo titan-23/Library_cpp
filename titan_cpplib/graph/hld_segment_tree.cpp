@@ -12,17 +12,14 @@ namespace titan23 {
     titan23::HLD hld;
     titan23::SegmentTree<T, op, e> seg;
 
-    HLDSegmentTree(titan23::HLD hld, int n) {
+    HLDSegmentTree(const titan23::HLD &hld) {
       this->hld = hld;
-      titan23::SegmentTree<T, op, e> seg(n);
-      this->seg = seg;
+      this->seg = titan23::SegmentTree<T, op, e>(hld.n);
     }
 
-    HLDSegmentTree(titan23::HLD hld, vector<T> a) {
+    HLDSegmentTree(const titan23::HLD &hld, constvector<T> &a) {
       this->hld = hld;
-      a = hld.build_list(a);
-      titan23::SegmentTree<T, op, e> seg(a);
-      this->seg = seg;
+      this->seg = titan23::SegmentTree<T, op, e>(hld.build_list(a));
     }
 
     T path_prod(int u, int v) const {

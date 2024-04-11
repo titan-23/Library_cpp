@@ -1,18 +1,18 @@
-#include <iostream>
 #include <vector>
 #include <stack>
 using namespace std;
 
+// HLD
 namespace titan23 {
 
   struct HLD {
+   public:
     vector<vector<int>> G;
     int root, n;
     vector<int> size, par, dep, nodein, nodeout, head, hld;
 
-    HLD () {}
-
-    HLD(vector<vector<int>> G, int root) :
+    HLD() {}
+    HLD(const vector<vector<int>> &G, const int root) :
         G(G), root(root), n(G.size()),
         size(n, 1), par(n, -1), dep(n, -1),
         nodein(n, -1), nodeout(n, -1), head(n, -1), hld(n, -1) {
@@ -22,7 +22,7 @@ namespace titan23 {
     void _dfs() {
       dep[root] = 0;
       stack<int> st;
-      st.push(root);
+      st.emplace(root);
       while (!st.empty()) {
         int v = st.top(); st.pop();
         if (v >= 0) {
@@ -30,8 +30,8 @@ namespace titan23 {
           for (const int x: G[v]) {
             if (dep[x] != -1) continue;
             dep[x] = dep_nxt;
-            st.push(~x);
-            st.push(x);
+            st.emplace(~x);
+            st.emplace(x);
           }
         } else {
           v = ~v;
@@ -50,8 +50,8 @@ namespace titan23 {
       }
 
       int curtime = 0;
-      st.push(~root);
-      st.push(root);
+      st.emplace(~root);
+      st.emplace(root);
       while (!st.empty()) {
         int v = st.top(); st.pop();
         if (v >= 0) {
@@ -67,8 +67,8 @@ namespace titan23 {
             int x = G[v][i];
             if (x == par[v]) continue;
             head[x] = (x == G_v0? head[v]: x);
-            st.push(~x); 
-            st.push(x); 
+            st.emplace(~x); 
+            st.emplace(x); 
           }
         } else {
           nodeout[~v] = curtime;          
