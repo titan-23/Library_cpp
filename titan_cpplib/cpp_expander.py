@@ -1,7 +1,12 @@
 # user settings --------------------------------------------------
+
+# for wsl
 SLASH = '/'
 LIB_PATH = '/mnt/c/Users/titan/source/Library_cpp'
+
+# for windows
 # LIB_PATH = 'C:\\Users\\titan\\source\\Library_cpp'
+
 TO_LIB_PATH = '.'
 #  ---------------------------------------------------------------
 
