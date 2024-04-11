@@ -3,44 +3,38 @@
 #include <cassert>
 using namespace std;
 
+// SparseTable
 namespace titan23 {
 
   template <class T,
-          T (*op)(T, T),
-          T (*e)()>
+           T (*op)(T, T),
+           T (*e)()>
   struct SparseTable {
-    vector<T> a;
+   private:
     int size;
     vector<vector<T>> data;
 
+   public:
     SparseTable() {}
-
-    SparseTable(vector<T> a) : a(a), size((int)a.size()) {
-      build();
-    }
-
-    void build() {
+    SparseTable(vector<T> &a) : size((int)a.size()) {
       int log = 32 - __builtin_clz(size) - 1;
       data.resize(log+1);
-      data[0].resize(size);
-      for (int i = 0; i < size; ++i) {
-        data[0][i] = a[i];
-      }
       data[0] = a;
       for (int i = 0; i < log; ++i) {
         int l = 1 << i;
-        data[i+1].resize(data[i].size()-l);
-        for (int j = 0; j < data[i].size()-l; ++j) {
-          data[i+1][j] = op(data[i][j], data[i][j+l]);
+        const vector<int> &pre = data[i];
+        vector<int> &nxt = data[i+1];
+        int s = pre.size();
+        nxt.resize(s-l);
+        for (int j = 0; j < s-l; ++j) {
+          nxt[j] = op(pre[j], pre[j+l]);
         }
       }
     }
 
     T prod(const int l, const int r) const {
       assert(0 <= l && l <= r && r < size);
-      if (l == r) {
-        return e();
-      }
+      if (l == r) return e();
       int u = 32 - __builtin_clz(r-l) - 1;
       return op(data[u][l], data[u][r-(1<<u)]);
     }

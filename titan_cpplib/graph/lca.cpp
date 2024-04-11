@@ -5,24 +5,23 @@
 #include "titan_cpplib/data_structures/sparse_table.cpp"
 using namespace std;
 
+// LCA
 namespace titan23 {
 
-  int __LCA_op(int s, int t) { return min(s, t); }
-
-  int __LCA_e() { return 1000000000; }
-
   struct LCA {
+   private:
+    static int __LCA_op(int s, int t) { return min(s, t); }
+    static int __LCA_e() { return 2e9; }
     int n;
     vector<int> path, nodein, par;
     SparseTable<int, __LCA_op, __LCA_e> st;
-
+  
+   public:
     LCA() {}
-
-    LCA(const vector<vector<int>> &G, int root) {
-      n = (int)G.size();
-      path.resize(n);
-      nodein.resize(n, -1);
-      par.resize(n, -1);
+    LCA(const vector<vector<int>> &G, const int root) : n(G.size()),
+                                                        path(n),
+                                                        nodein(n, -1),
+                                                        par(n, -1) {
       int time = -1, ptr = 0;
       int s[n];
       s[ptr++] = root;
@@ -43,8 +42,7 @@ namespace titan23 {
       for (int i = 0; i < n; ++i) {
         a[i] = nodein[path[i]];
       }
-      SparseTable<int, __LCA_op, __LCA_e> st(a);
-      this->st = st;
+      st = SparseTable<int, __LCA_op, __LCA_e>(a);
     }
     
     int lca(const int u, const int v) const {
