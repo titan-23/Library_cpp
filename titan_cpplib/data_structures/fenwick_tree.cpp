@@ -16,10 +16,9 @@ namespace titan23 {
       _tree.resize(n+1, 0);
     }
 
-    FenwickTree(const vector<T> &a) {
-      _n = (int)a.size();
-      _s = 1 << (32 - __builtin_clz(_n-1));
-      _tree.resize(_n+1, 0);
+    FenwickTree(const vector<T> &a) : _n(a.size()),
+                                      _s(1 << (32 - __builtin_clz(_n-1))),
+                                      _tree(_n+1, 0) {
       for (int i = 1; i <= _n; ++i) _tree[i] = a[i-1];
       for (int i = 1; i < _n; ++i) {
         if (i + (i & (-i)) <= _n) {
