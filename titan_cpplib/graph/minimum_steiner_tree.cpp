@@ -53,7 +53,7 @@ namespace titan23 {
         }
         int min_terminal = terminal[min_terminal_indx];
         terminal.erase(terminal.begin() + min_terminal_indx);
-        vector<int> path = dist_path[min_tree_indx].get_path(min_terminal);
+        vector<int> &path = dist_path[min_tree_indx].get_path(min_terminal);
         for (int i = 0; i < path.size(); ++i) {
           auto it = find(terminal.begin(), terminal.end(), path[i]);
           if (it != terminal.end()) terminal.erase(it);
