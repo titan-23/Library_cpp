@@ -22,14 +22,12 @@ namespace titan23 {
     MinimumSteinerTree() {}
 
     // 時間 O(|V|^3), 空間 O(|V|^2)
-    MinimumSteinerTree(const vector<vector<pair<int, T>>> &G, const T INF) : 
+    MinimumSteinerTree(const vector<vector<pair<int, T>>> &G, const T INF) :
         n((int)G.size()), INF(INF) {
       dist_path = titan23::warshall_floyd_path<T>(G, INF);
     }
 
-    /**
-     * @brief terminal を含むシュタイナー木の辺集合を返す
-     */
+    // terminal を含むシュタイナー木の辺集合を返す
     vector<pair<int, int>> build_prim(vector<int> terminal) {
       if (terminal.empty()) return {};
       vector<int> used_vertex;
