@@ -2,6 +2,7 @@
 #include <vector>
 #include <cassert>
 #include <stack>
+#include <climits>
 #include "titan_cpplib/data_structures/sparse_table.cpp"
 using namespace std;
 
@@ -11,17 +12,15 @@ namespace titan23 {
   struct LCA {
    private:
     static int __LCA_op(int s, int t) { return min(s, t); }
-    static int __LCA_e() { return 2e9; }
+    static int __LCA_e() { return INT_MAX; }
     int n;
     vector<int> path, nodein, par;
     SparseTable<int, __LCA_op, __LCA_e> st;
-  
+
    public:
     LCA() {}
-    LCA(const vector<vector<int>> &G, const int root) : n(G.size()),
-                                                        path(n),
-                                                        nodein(n, -1),
-                                                        par(n, -1) {
+    LCA(const vector<vector<int>> &G, const int root) :
+        n((int)G.size()), path(n), nodein(n, -1), par(n, -1) {
       int time = -1, ptr = 0;
       int s[n];
       s[ptr++] = root;
@@ -44,7 +43,7 @@ namespace titan23 {
       }
       st = SparseTable<int, __LCA_op, __LCA_e>(a);
     }
-    
+
     int lca(const int u, const int v) const {
       int l = nodein[u], r = nodein[v];
       if (l > r) swap(l, r);
