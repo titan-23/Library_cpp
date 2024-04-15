@@ -20,8 +20,8 @@ namespace titan23 {
     class Node;
     using NodePtr = shared_ptr<Node>;
     using MyPersistentLazyWBTree = PersistentLazyWBTree<T, F, op, mapping, composition, e, id>;
-    static constexpr double ALPHA = 1 - sqrt(2) / 2;
-    static constexpr double BETA = (1 - 2 * ALPHA) / (1 - ALPHA);
+    static const constexpr double ALPHA = 1 - sqrt(2) / 2;
+    static const constexpr double BETA = (1 - 2 * ALPHA) / (1 - ALPHA);
 
     class Node {
 
@@ -87,7 +87,7 @@ namespace titan23 {
           data = op(data, right->data);
         }
       }
-    
+
       void print() const {
         cout << "this : key=" << key << ", size=" << size << endl;
         if (left)  cout << "to-left" << endl;

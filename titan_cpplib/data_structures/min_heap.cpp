@@ -5,18 +5,12 @@ using namespace std;
 namespace titan23 {
 
   template<typename T>
-  struct MinHeap {
+  class MinHeap {
+   private:
     vector<T> a;
 
-    MinHeap() {}
-
-    MinHeap(vector<T> &a) {
-      this->a = a;
-      _heapify();
-    }
-
     void _heapify() {
-      for (int i = a.size(); i >= 0; --i) {
+      for (int i = (int)a.size(); i >= 0; --i) {
         _down(i);
       }
     }
@@ -47,7 +41,13 @@ namespace titan23 {
       }
     }
 
-    T get_min() {
+   public:
+    MinHeap() {}
+    MinHeap(vector<T> &a) : a(a) {
+      _heapify();
+    }
+
+    T get_min() const {
       return a[0];
     }
 
@@ -59,12 +59,12 @@ namespace titan23 {
       return res;
     }
 
-    void push(T key) {
+    void push(const T &key) {
       a.emplace_back(key);
       _up(a.size() - 1);
     }
 
-    T pushpoop_min(T key) {
+    T pushpoop_min(const T &key) {
       if (a[0] >= key) return key;
       T res = a[0];
       a[0] = key;
@@ -72,24 +72,26 @@ namespace titan23 {
       return res;
     }
 
-    T replace_min(T key) {
+    T replace_min(const T &key) {
       T res = a[0];
       a[0] = key;
       _down(0);
       return res;
     }
 
-    int len() {
+    int len() const {
       return (int)a.size();
     }
 
-    void print() {
+    void print() const {
+      vector<T> b = a;
+      sort(b.begin(), b.end());
       cout << '[';
       for (int i = 0; i < len()-1; ++i) {
-        cout << i << ", ";
+        cout << b[i] << ", ";
       }
-      if (!a.empty()) {
-        cout << a.back();
+      if (!b.empty()) {
+        cout << b.back();
       }
       cout << ']' << endl;
     }
