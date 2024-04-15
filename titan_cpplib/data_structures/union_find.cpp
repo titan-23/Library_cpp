@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
+#include <stack>
 #include <map>
 #include <set>
 using namespace std;
@@ -9,11 +10,12 @@ using namespace std;
 namespace titan23 {
 
   struct UnionFind {
-
+   private:
     int n, group_numbers;
     vector<int> par;
     vector<vector<int>> G;
 
+   public:
     UnionFind(int n) : n(n), group_numbers(n), par(n, -1), G(n) {}
 
     int root(int x) {
@@ -51,12 +53,13 @@ namespace titan23 {
     set<int> members(const int x) const {
       set<int> seen;
       seen.emplace(x);
-      vector<int> todo = {x};
+      stack<int> todo;
+      todo.emplace(x);
       while (!todo.empty()) {
-        int v = todo.back(); todo.pop_back();
+        int v = todo.top(); todo.pop();
         for (const int &x: G[v]) {
           if (seen.find(x) != seen.end()) continue;
-          todo.emplace_back(x);
+          todo.emplace(x);
           seen.emplace(x);
         }
       }
@@ -103,4 +106,3 @@ namespace titan23 {
     }
   };
 }  // namespace titan23
-

@@ -9,10 +9,11 @@ namespace titan23 {
             T (*_op)(T, T),
             T (*_e)()>
   struct SegmentTree {
-    
-    int _n, _size, _log;
+   private:    
+    int n, _size, _log;
     vector<T> _data;
 
+   public:
     SegmentTree() {}
 
     SegmentTree(const int n) {
@@ -22,7 +23,7 @@ namespace titan23 {
     SegmentTree(const vector<T> &a) {
       int n = (int)a.size();
       _build(n);
-      for (int i = 0; i < _n; ++i) {
+      for (int i = 0; i < n; ++i) {
         _data[i+_size] = a[i];
       }
       for (int i = _size-1; i > 0; --i) {
@@ -31,18 +32,18 @@ namespace titan23 {
     }
 
     void _build(const int n) {
-      this->_n = n;
-      this->_log = 32 - __builtin_clz(_n);
+      this->n = n;
+      this->_log = 32 - __builtin_clz(n);
       this->_size = 1 << _log;
       this->_data.resize(_size << 1, _e());
     }
 
     T get(int const k) const {
-      return _data[(k<0? (k+_n+_size): (k+_size))];
+      return _data[(k<0? (k+n+_size): (k+_size))];
     }
 
     void set(int k, const T v) {
-      if (k < 0) k += _n;
+      if (k < 0) k += n;
       k += _size;
       _data[k] = v;
       for (int i = 0; i < _log; ++i) {
@@ -56,12 +57,8 @@ namespace titan23 {
       r += _size;
       T lres = _e(), rres = _e();
       while (l < r) {
-        if (l & 1) {
-          lres = _op(lres, _data[l++]);
-        }
-        if (r & 1) {
-          rres = _op(_data[r^1], rres);
-        }
+        if (l & 1) lres = _op(lres, _data[l++]);
+        if (r & 1) rres = _op(_data[r^1], rres);
         l >>= 1;
         r >>= 1;
       }
@@ -75,8 +72,8 @@ namespace titan23 {
     template<typename F>  // F: function<bool (T)> f
     int max_right(int l, F &&f) const {
       assert(0 <= l && l <= _size);
-      assert(f(_e()));
-      if (l == _n) return _n;
+      // assert(f(_e()));
+      if (l == n) return n;
       l += _size;
       T s = _e();
       while (1) {
@@ -97,13 +94,13 @@ namespace titan23 {
         ++l;
         if ((l & (-l)) == l) break;
       }
-      return _n;
+      return n;
     }
 
     template<typename F>  // F: function<bool (T)> f
     int min_left(int r, F &&f) const {
-      assert(0 <= r && r <= _n);
-      assert(f(_e()));
+      assert(0 <= r && r <= n);
+      // assert(f(_e()));
       if (r == 0) return 0;
       r += _size;
       T s = _e();
@@ -129,8 +126,8 @@ namespace titan23 {
     }
 
     vector<T> tovector() const {
-      vector<T> res(_n);
-      for (int i = 0; i < _n; ++i) {
+      vector<T> res(n);
+      for (int i = 0; i < n; ++i) {
         res[i] = get(i);
       }
       return res;
@@ -138,10 +135,10 @@ namespace titan23 {
 
     void print() const {
       cout << '[';
-      for (int i = 0; i < _n-1; ++i) {
+      for (int i = 0; i < n-1; ++i) {
         cout << get(i) << ", ";
       }
-      cout << get(_n-1);
+      if (n > 0) cout << get(n-1);
       cout << ']' << endl;
     }
   };
