@@ -92,5 +92,23 @@ namespace titan23 {
         v = par[head[v]];
       }
     }
+
+    // TODO: verify
+    int path_kth_elm(int s, int t, int k) {
+      int x = lca(s, t);
+      int d = dep[s] + dep[t] - 2*dep[x];
+      if (d < k) return -1;
+      if (dep[s] - dep[x] < k) {
+        s = t;
+        k = d - k;
+      }
+      int hs = head[s];
+      while (dep[s] - dep[hs] < k) {
+        k -= dep[s] - dep[hs] + 1;
+        s = par[hs];
+        hs = head[s];
+      }
+      return hld[nodein[s] - k];
+    }
   };
 }  // namespace titan23
