@@ -2,6 +2,7 @@
 #include <vector>
 using namespace std;
 
+// CumulativeSum
 namespace titan23 {
   template<typename T>
   class CumulativeSum {
@@ -10,7 +11,7 @@ namespace titan23 {
     vector<T> acc;
   
    public:
-    CumulativeSum(vector<T> &a, T e) : n(a.size()), acc(n+1, e) {
+    CumulativeSum(vector<T> &a, T e) : n((int)a.size()), acc(n+1, e) {
       for (int i = 0; i < n; ++i) {
         acc[i+1] = acc[i] + a[i];
       }

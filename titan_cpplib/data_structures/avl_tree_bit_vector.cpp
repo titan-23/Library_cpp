@@ -23,7 +23,7 @@ class AVLTreeBitVector {
   vector<int> _size, _total;
   vector<char> _bit_len, _balance;
 
-  void _build(vector<uint8_t> &a) {
+  void _build(const vector<uint8_t> &a) {
     auto rec = [&] (auto &&rec, Node l, Node r) -> pair<Node, char> {
       Node mid = (l + r) >> 1;
       char hl = 0, hr = 0;
@@ -284,7 +284,7 @@ class AVLTreeBitVector {
         _bit_len(1, 0), _balance(1, 0) {
   }
 
-  AVLTreeBitVector (vector<uint8_t> &a)
+  AVLTreeBitVector(const vector<uint8_t> &a)
       : _root(0), _end(1),
         _key(1, 0),
         _left(1, 0), _right(1, 0),

@@ -21,7 +21,7 @@ namespace titan23 {
       Node* par;
       AVLTreeBitVector v;
       Node() : left(nullptr), right(nullptr), par(nullptr) {}
-      Node(vector<uint8_t> &a) : left(nullptr), right(nullptr), par(nullptr) {
+      Node(const vector<uint8_t> &a) : left(nullptr), right(nullptr), par(nullptr) {
         v = AVLTreeBitVector(a);
       }
     };
@@ -80,6 +80,7 @@ namespace titan23 {
       _build(a);
     }
 
+    // O(log(n)log(σ))
     void insert(int k, T x) {
       assert(0 <= k && k <= len());
       Node* node = root;
@@ -103,6 +104,7 @@ namespace titan23 {
       _size++;
     }
 
+    // O(log(n)log(σ))
     T pop(int k) {
       Node* node = root;
       T ans = 0;
@@ -121,11 +123,13 @@ namespace titan23 {
       return ans;
     }
 
+    // O(log(n)log(σ))
     void update(int k, T x) {
       pop(k);
       insert(k, x);
     }
 
+    // O(log(n)log(σ))
     int rank(int r, T x) const {
       Node* node = root;
       int l = 0;
@@ -143,10 +147,12 @@ namespace titan23 {
       return r - l;
     }
 
+    // O(log(n)log(σ))
     int range_count(int l, int r, T x) const {
       return rank(r, x) - rank(l, x);
     }
 
+    // O(log(n)log(σ))
     T access(int k) const {
       assert(0 <= k && k < len());
       Node* node = root;
@@ -165,6 +171,7 @@ namespace titan23 {
       return s;
     }
 
+    // O(log(n)log(σ))
     T kth_smallest(int l, int r, int k) const {
       Node* node = root;
       T s = 0;
@@ -187,10 +194,12 @@ namespace titan23 {
       return s;
     }
 
+    // O(log(n)log(σ))
     T kth_largest(int l, int r, int k) const {
       return kth_smallest(l, r, r-l-k-1);
     }
 
+    // O(log(n)log(σ))
     int range_freq(int l, int r, T x) const {
       Node* node = root;
       int ans = 0;
@@ -211,10 +220,12 @@ namespace titan23 {
       return ans;
     }
 
+    // O(log(n)log(σ))
     int range_freq(int l, int r, int x, int y) const {
       return range_freq(l, r, y) - range_freq(l, r, x);
     }
 
+    // O(log(n)log(σ))
     int select(int k, T x) const {
       Node* node = root;
       for (int bit = _log-1; bit > 0; --bit) {
@@ -235,6 +246,7 @@ namespace titan23 {
       return k;
     }
 
+    // O(log(n)log(σ))
     int select_remove(int k, T x) {
       Node* node = root;
       for (int bit = _log-1; bit > 0; --bit) {
@@ -257,10 +269,13 @@ namespace titan23 {
       return k;
     }
 
+    // O(1)
     int len() const {
       return _size;
     }
 
+    // O(nlog(σ))
+    // (n 回 access するよりも高速)
     vector<T> tovector() const {
       vector<T> a(len(), 0);
       vector<int> buff0(a.size()), buff1;
@@ -275,7 +290,7 @@ namespace titan23 {
         int g = flag01 ? g1 : g0;
         if (s == g || bit < 0) return;
         vector<int> &vec = flag01 ? buff1 : buff0;
-        vector<uint8_t> v = node->v.tovector();
+        const vector<uint8_t> &v = node->v.tovector();
         int start_0 = buff0.size(), start_1 = buff1.size();
         for (int i = s; i < g; ++i) {
           if (v[i-s]) {
@@ -296,6 +311,7 @@ namespace titan23 {
       return a;
     }
 
+    // O(nlog(σ))
     void print() const {
       vector<T> a = tovector();
       int n = (int)a.size();
@@ -311,4 +327,3 @@ namespace titan23 {
     }
   };
 } // namespace titan23
-

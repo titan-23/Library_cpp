@@ -9,18 +9,19 @@ using namespace std;
 namespace titan23 {
 
   template<typename T>
-  struct OfflineDynamicConnectivitySum {
-
-    struct UndoableUnionFind {
+  class OfflineDynamicConnectivitySum {
+   public:
+    class UndoableUnionFindSum {
+     private:
       int _n, _group_count;
       T _e;
       vector<int> _parents;
       vector<T> _all_sum, _one_sum;
       vector<tuple<int, int, T>> _history;
 
-      UndoableUnionFind() {}
-
-      UndoableUnionFind(int n, T e) : _n(n),
+     public:
+      UndoableUnionFindSum() {}
+      UndoableUnionFindSum(int n, T e) : _n(n),
                                       _group_count(n),
                                       _e(e),
                                       _parents(n, -1),
@@ -97,15 +98,38 @@ namespace titan23 {
         return _one_sum[x] + _all_sum[x];
       }
     };
-    
+
+   private:
     int _n, _query_count, _size, _q;
     long long _bit, _msk;
     unordered_map<long long, pair<int, int>> start;
     vector<vector<long long>> data;
     vector<tuple<int, int, long long>> edge_data;
-    UndoableUnionFind uf;
 
-    OfflineDynamicConnectivitySum (int n, int q, T e) : 
+    int bit_length(const int n) const {
+      if (n == 0) return 0;
+      return 32 - __builtin_clz(n);
+    }
+
+    void _internal_add(int l, int r, const long long edge) {
+      l += _size;
+      r += _size;
+      while (l < r) {
+        if (l & 1) {
+          data[l++].emplace_back(edge);
+        }
+        if (r & 1) {
+          data[--r].emplace_back(edge);
+        }
+        l >>= 1;
+        r >>= 1;
+      }
+    }
+
+   public:
+    UndoableUnionFindSum uf;
+
+    OfflineDynamicConnectivitySum(const int n, const int q, const T e) :
         _n(n),
         _query_count(0),
         _size(1 << (bit_length(q-1))),
@@ -116,11 +140,6 @@ namespace titan23 {
         uf(n, e) {
       start.reserve(_q);
       edge_data.reserve(_q);
-    }
-
-    int bit_length(const int n) const {
-      if (n == 0) return 0;
-      return 32 - __builtin_clz(n);
     }
 
     void add_edge(const int u, const int v) {
@@ -144,21 +163,6 @@ namespace titan23 {
 
     void next_query() {
       ++_query_count;
-    }
-
-    void _internal_add(int l, int r, const long long edge) {
-      l += _size;
-      r += _size;
-      while (l < r) {
-        if (l & 1) {
-          data[l++].emplace_back(edge);
-        }
-        if (r & 1) {
-          data[--r].emplace_back(edge);
-        }
-        l >>= 1;
-        r >>= 1;
-      }
     }
 
     template<typename F> // out(k: int) -> None
@@ -190,7 +194,8 @@ namespace titan23 {
             out(v-_size);
           }
         } else {
-          for (const long long &_: data[~v]) {
+          int s = data[~v].size();
+          for (int i = 0; i < s; ++i) {
             uf.undo();
           }
         }

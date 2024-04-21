@@ -9,7 +9,6 @@ namespace titan23 {
   class HashDict {
    private:
     using u64 = unsigned long long;
-
     static constexpr const u64 k = 0x517cc1b727220a95;
     vector<u64> exist;
     vector<u64> keys;

@@ -11,39 +11,37 @@ namespace titan23 {
             F (*composition)(F, F),
             T (*e)(),
             F (*id)()>
-  struct LinkCutTree {
-
-  private:
+  class LinkCutTree {
+   private:
     class Node;
     using NodePtr = Node*;
     vector<NodePtr> pool;
 
     class Node {
-
-    public:
+     public:
       int index, size, rev;
       T key, data, rdata;
       F lazy;
       NodePtr left, right, par;
 
-      Node(int index, T key, F lazy)
-        : index(index), size(1), rev(0),
+      Node(const int index, const T key, const F lazy) :
+          index(index), size(1), rev(0),
           key(key), data(key), rdata(key),
           lazy(lazy),
           left(nullptr), right(nullptr), par(nullptr) {
       }
 
-      bool is_root() {
+      bool is_root() const {
         return (!par) || (!(par->left == this || par->right == this));
       }
     };
 
-    void _apply_rev(NodePtr node) {
+    void _apply_rev(const NodePtr node) {
       if (!node) return;
       node->rev ^= 1;
     }
 
-    void _apply_f(NodePtr node, F f) {
+    void _apply_f(const NodePtr node, const F f) {
       if (!node) return;
       node->key = mapping(f, node->key);
       node->data = mapping(f, node->data);
@@ -51,7 +49,7 @@ namespace titan23 {
       node->lazy = composition(f, node->lazy);
     }
 
-    void _propagate(NodePtr node) {
+    void _propagate(const NodePtr node) {
       if (!node) return;
       if (node->rev) {
         swap(node->data, node->rdata);
@@ -67,7 +65,7 @@ namespace titan23 {
       }
     }
 
-    void _update(NodePtr node) {
+    void _update(const NodePtr node) {
       if (!node) return;
       _propagate(node->left);
       _propagate(node->right);
@@ -86,9 +84,9 @@ namespace titan23 {
       }
     }
 
-    void _rotate(NodePtr node) {
-      NodePtr pnode = node->par;
-      NodePtr gnode = pnode->par;
+    void _rotate(const NodePtr node) {
+      const NodePtr pnode = node->par;
+      const NodePtr gnode = pnode->par;
       _propagate(pnode);
       _propagate(node);
       if (gnode) {
@@ -113,7 +111,7 @@ namespace titan23 {
       _update(node);
     }
 
-    void _splay(NodePtr node) {
+    void _splay(const NodePtr node) {
       while ((!node->is_root()) && (!node->par->is_root())) {
         if ((node->par->par->left == node->par) == (node->par->left == node)) {
           _rotate(node->par);
@@ -126,7 +124,7 @@ namespace titan23 {
       _propagate(node);
     }
 
-    void _link(NodePtr c, NodePtr p) {
+    void _link(const NodePtr c, const NodePtr p) {
       _expose(c);
       _expose(p);
       c->par = p;
@@ -134,14 +132,14 @@ namespace titan23 {
       _update(p);
     }
 
-    void _cut(NodePtr c) {
+    void _cut(const NodePtr c) {
       _expose(c);
       c->left->par = nullptr;
       c->left = nullptr;
       _update(c);
     }
 
-    NodePtr _expose(NodePtr node) {
+    NodePtr _expose(const NodePtr node) {
       NodePtr pre = node;
       while (node->par) {
         _splay(node);
@@ -175,8 +173,7 @@ namespace titan23 {
       _propagate(v);
     }
 
-  public:
-
+   public:
     LinkCutTree(int n) {
       pool.resize(n);
       for (int i = 0; i < n; ++i) {
@@ -273,4 +270,3 @@ namespace titan23 {
     }
   };
 }  // namespace titan23
-
