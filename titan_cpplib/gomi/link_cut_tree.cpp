@@ -81,17 +81,17 @@ namespace titan23 {
       _propagate(ly);
       _propagate(ry);
       data[z<<1] = data[x<<1];
-      data[x<<1] = 
+      data[x<<1] =
       op(
         op(data[lx<<1], key[x]), data[rx<<1]);
-      data[y<<1] = 
+      data[y<<1] =
       op(
         op(data[ly<<1], key[y]), data[ry<<1]);
       data[z<<1|1] = data[x<<1|1];
-      data[x<<1|1] = 
+      data[x<<1|1] =
       op(
         op(data[rx<<1|1], key[x]), data[lx<<1|1]);
-      data[y<<1|1] = 
+      data[y<<1|1] =
       op(
         op(data[ry<<1|1], key[y]), data[ly<<1|1]);
       size[z] = size[x];
@@ -104,11 +104,11 @@ namespace titan23 {
       _propagate(lx);
       _propagate(rx);
       data[y<<1] = data[x<<1];
-      data[x<<1] = 
+      data[x<<1] =
       op(
         op(data[lx<<1], key[x]), data[rx<<1]);
       data[y<<1|1] = data[x<<1|1];
-      data[x<<1|1] = 
+      data[x<<1|1] =
       op(
         op(data[rx<<1|1], key[x]), data[lx<<1|1]);
       size[y] = size[x];
