@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.9.1" xml:lang="en-US">
+  <compound refid="namespacecpp__expander" kind="namespace"><name>cpp_expander</name>
+    <member refid="cpp__expander_8py_1a1810d9cb1680837198ef8dad4c7d41db" kind="variable"><name>SLASH</name></member>
+    <member refid="cpp__expander_8py_1a1f3cbfa39fbd28f610e900cb5180e407" kind="variable"><name>LIB_PATH</name></member>
+    <member refid="cpp__expander_8py_1a2083df493f9b9dea768cc2f54e4703e6" kind="variable"><name>TO_LIB_PATH</name></member>
+    <member refid="cpp__expander_8py_1a2f59e0c03ced3ed59c24c8e7e5b01d1e" kind="variable"><name>input_filename</name></member>
+    <member refid="cpp__expander_8py_1a3ef0bb7ffe3c443fd186dc4335fe070d" kind="variable"><name>output_filename</name></member>
+    <member refid="cpp__expander_8py_1a93445dc00999173ed15a2d823fedd36c" kind="variable"><name>input_file</name></member>
+    <member refid="cpp__expander_8py_1a194033f10bfb3447aa614e8347a22058" kind="variable"><name>added_file</name></member>
+    <member refid="cpp__expander_8py_1a75e4f25b3f36e7234c22dea475af2e3f" kind="variable"><name>output</name></member>
+    <member refid="cpp__expander_8py_1a522e260e6b1da451754e94486a443d0e" kind="variable"><name>input_lines</name></member>
+    <member refid="cpp__expander_8py_1aeca245e0bfea61b420162d64660c271d" kind="variable"><name>is_input</name></member>
+    <member refid="cpp__expander_8py_1a148079f0d30b1902b3dcaa0b8ee0a51a" kind="variable"><name>output_file</name></member>
+    <member refid="cpp__expander_8py_1ac4de2c2af970416f41365e3d2e41b4b5" kind="variable"><name>file</name></member>
+    <member refid="cpp__expander_8py_1a5f8ffc517fa98ce1b4cce117b6da7f15" kind="function"><name>print_red</name></member>
+    <member refid="cpp__expander_8py_1a0513835913b4018430d30daeef940ade" kind="function"><name>get_code</name></member>
+  </compound>
+  <compound refid="cpp__expander_8py" kind="file"><name>cpp_expander.py</name>
+  </compound>
+  <compound refid="dir_1e69700284635ca6657b9517b39a5512" kind="dir"><name>titan_cpplib</name>
+  </compound>
+</doxygenindex>

@@ -1,0 +1,22 @@
+# Doxyfile
+
+# プロジェクト名
+PROJECT_NAME           = "titan_cpplib"
+
+# プロジェクトのバージョン
+PROJECT_NUMBER         = 0.1.0
+
+# 入力ソースディレクトリ
+INPUT                  = /mnt/c/Users/titan/source/Library_cpp/titan_cpplib/
+
+# ドキュメントの出力ディレクトリ
+OUTPUT_DIRECTORY       = /mnt/c/Users/titan/source/Library_cpp/_docs_cpp
+
+# ドキュメントの言語
+OPTIMIZE_OUTPUT_FOR_C  = YES
+
+# 出力形式
+GENERATE_HTML          = YES
+GENERATE_XML           = YES
+
+HTML_EXTRA_STYLESHEET = flat.css

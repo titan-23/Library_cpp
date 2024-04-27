@@ -1,0 +1,224 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="namespacecpp__expander" kind="namespace" language="Python">
+    <compoundname>cpp_expander</compoundname>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="cpp__expander_8py_1a1810d9cb1680837198ef8dad4c7d41db" prot="public" static="no" mutable="no">
+        <type>string</type>
+        <definition>string cpp_expander.SLASH</definition>
+        <argsstring></argsstring>
+        <name>SLASH</name>
+        <initializer>=  &apos;/&apos;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/cpp_expander.py" line="4" column="1" bodyfile="titan_cpplib/cpp_expander.py" bodystart="4" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="cpp__expander_8py_1a1f3cbfa39fbd28f610e900cb5180e407" prot="public" static="no" mutable="no">
+        <type>string</type>
+        <definition>string cpp_expander.LIB_PATH</definition>
+        <argsstring></argsstring>
+        <name>LIB_PATH</name>
+        <initializer>=  &apos;/mnt/c/Users/titan/source/Library_cpp&apos;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/cpp_expander.py" line="5" column="1" bodyfile="titan_cpplib/cpp_expander.py" bodystart="5" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="cpp__expander_8py_1a2083df493f9b9dea768cc2f54e4703e6" prot="public" static="no" mutable="no">
+        <type>string</type>
+        <definition>cpp_expander.TO_LIB_PATH</definition>
+        <argsstring></argsstring>
+        <name>TO_LIB_PATH</name>
+        <initializer>=  &apos;.&apos;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/cpp_expander.py" line="10" column="1" bodyfile="titan_cpplib/cpp_expander.py" bodystart="10" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="cpp__expander_8py_1a2f59e0c03ced3ed59c24c8e7e5b01d1e" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>cpp_expander.input_filename</definition>
+        <argsstring></argsstring>
+        <name>input_filename</name>
+        <initializer>=  sys.argv[1]</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/cpp_expander.py" line="52" column="1" bodyfile="titan_cpplib/cpp_expander.py" bodystart="52" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="cpp__expander_8py_1a3ef0bb7ffe3c443fd186dc4335fe070d" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>string cpp_expander::output_filename</definition>
+        <argsstring></argsstring>
+        <name>output_filename</name>
+        <initializer>=  3 else &apos;clip&apos;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/cpp_expander.py" line="53" column="1" bodyfile="titan_cpplib/cpp_expander.py" bodystart="53" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="cpp__expander_8py_1a93445dc00999173ed15a2d823fedd36c" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>cpp_expander.input_file</definition>
+        <argsstring></argsstring>
+        <name>input_file</name>
+        <initializer>=  open(input_filename, &apos;r&apos;, encoding=&apos;utf-8&apos;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/cpp_expander.py" line="54" column="1" bodyfile="titan_cpplib/cpp_expander.py" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="cpp__expander_8py_1a194033f10bfb3447aa614e8347a22058" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>cpp_expander.added_file</definition>
+        <argsstring></argsstring>
+        <name>added_file</name>
+        <initializer>=  set()</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/cpp_expander.py" line="56" column="1" bodyfile="titan_cpplib/cpp_expander.py" bodystart="56" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="cpp__expander_8py_1a75e4f25b3f36e7234c22dea475af2e3f" prot="public" static="no" mutable="no">
+        <type>string</type>
+        <definition>cpp_expander.output</definition>
+        <argsstring></argsstring>
+        <name>output</name>
+        <initializer>=  &apos;&apos;</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/cpp_expander.py" line="57" column="1" bodyfile="titan_cpplib/cpp_expander.py" bodystart="57" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="cpp__expander_8py_1a522e260e6b1da451754e94486a443d0e" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int cpp_expander.input_lines</definition>
+        <argsstring></argsstring>
+        <name>input_lines</name>
+        <initializer>=  0</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/cpp_expander.py" line="58" column="1" bodyfile="titan_cpplib/cpp_expander.py" bodystart="58" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="cpp__expander_8py_1aeca245e0bfea61b420162d64660c271d" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>cpp_expander.is_input</definition>
+        <argsstring></argsstring>
+        <name>is_input</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/cpp_expander.py" line="60" column="1" bodyfile="titan_cpplib/cpp_expander.py" bodystart="60" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="cpp__expander_8py_1a148079f0d30b1902b3dcaa0b8ee0a51a" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>cpp_expander.output_file</definition>
+        <argsstring></argsstring>
+        <name>output_file</name>
+        <initializer>=  open(output_filename, &apos;w&apos;, encoding=&apos;utf-8&apos;)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/cpp_expander.py" line="66" column="1" bodyfile="titan_cpplib/cpp_expander.py" bodystart="66" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="cpp__expander_8py_1ac4de2c2af970416f41365e3d2e41b4b5" prot="public" static="no" mutable="no">
+        <type></type>
+        <definition>cpp_expander.file</definition>
+        <argsstring></argsstring>
+        <name>file</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/cpp_expander.py" line="67" column="1" bodyfile="titan_cpplib/cpp_expander.py" bodystart="67" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="cpp__expander_8py_1a5f8ffc517fa98ce1b4cce117b6da7f15" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>def</type>
+        <definition>def cpp_expander.print_red</definition>
+        <argsstring>(arg)</argsstring>
+        <name>print_red</name>
+        <param>
+          <type>arg</type>
+          <defname>arg</defname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/cpp_expander.py" line="17" column="1" bodyfile="titan_cpplib/cpp_expander.py" bodystart="17" bodyend="19"/>
+      </memberdef>
+      <memberdef kind="function" id="cpp__expander_8py_1a0513835913b4018430d30daeef940ade" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>def</type>
+        <definition>def cpp_expander.get_code</definition>
+        <argsstring>(now_path, input_file, is_input=False)</argsstring>
+        <name>get_code</name>
+        <param>
+          <type>now_path</type>
+          <defname>now_path</defname>
+        </param>
+        <param>
+          <type>input_file</type>
+          <defname>input_file</defname>
+        </param>
+        <param>
+          <type>is_input</type>
+          <defname>is_input</defname>
+          <defval>False</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/cpp_expander.py" line="20" column="1" bodyfile="titan_cpplib/cpp_expander.py" bodystart="20" bodyend="49"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="titan_cpplib/cpp_expander.py" line="1" column="1"/>
+  </compounddef>
+</doxygen>
