@@ -1,9 +1,17 @@
 import optuna
 import time
+from logging import getLogger, basicConfig
 import os
 import multiprocessing
 from parallel_tester import ParallelTester, build_tester
 from ahc_settings import AHCSettings
+
+logger = getLogger(__name__)
+basicConfig(
+    format="%(asctime)s [%(levelname)s] : %(message)s",
+    datefmt="%H:%M:%S",
+    level=os.getenv("LOG_LEVEL", "INFO"),
+)
 
 
 class Optimizer:
@@ -46,16 +54,16 @@ class Optimizer:
             n_jobs=min(self.settings.n_jobs_optuna, multiprocessing.cpu_count() - 1),
         )
 
-        print(study.best_trial)
-        print("writing results ...")
+        logger.info(study.best_trial)
+        logger.info("writing results ...")
         self.output(study)
-        print(f"Finish parameter seraching. Time: {time.time() - start}sec.")
+        logger.info(f"Finish parameter seraching. Time: {time.time() - start}sec.")
 
     def output(self, study: optuna.Study) -> None:
         if not os.path.exists(self.path):
             os.makedirs(self.path)
         with open(f"{self.path}/result.txt", "w", encoding="utf-8") as f:
-            print(study.best_trial, file=f)
+            logger.info(study.best_trial, file=f)
 
         img_path = self.path + "/images"
         if not os.path.exists(img_path):

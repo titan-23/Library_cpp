@@ -1,10 +1,19 @@
 from typing import Iterable, Callable
 import argparse
+from logging import getLogger, basicConfig
 import subprocess
 import multiprocessing
 import time
+import os
 from functools import partial
 from ahc_settings import AHCSettings
+
+logger = getLogger(__name__)
+basicConfig(
+    format="%(asctime)s [%(levelname)s] : %(message)s",
+    datefmt="%H:%M:%S",
+    level=os.getenv("LOG_LEVEL", "INFO"),
+)
 
 
 class ParallelTester:
@@ -41,7 +50,7 @@ class ParallelTester:
         ついでに表示もします。
         """
         score = self.get_score(scores)
-        print(f"Pred Score= {score}")
+        logger.info(f"Pred Score= {score}")
         return score
 
     def append_execute_command(self, args: Iterable[str]) -> None:
@@ -51,7 +60,7 @@ class ParallelTester:
 
     def compile(self) -> None:
         """``compile_command`` よりコンパイルします。"""
-        print("compiling...")
+        logger.info("compiling...")
         subprocess.run(
             self.compile_command,
             stderr=subprocess.PIPE,
@@ -76,11 +85,11 @@ class ParallelTester:
             _, score = score_line.split(" = ")
             score = float(score)
             if self.verbose:
-                print(f"{input_file}: {score=}")
+                logger.info(f"{input_file}: {score=}")
             return score
         except Exception as e:
-            print(e)
-            print(f"Error occured in {input_file}")
+            logger.exception(e)
+            logger.error(f"Error occured in {input_file}")
             raise ValueError(input_file)
 
     def run(self) -> list[float]:
@@ -152,19 +161,19 @@ def main():
     """実行時引数をもとに、 ``tester`` を立ち上げ実行します。"""
     args = ParallelTester.get_args()
     njobs = min(args.number_of_jobs, multiprocessing.cpu_count() - 1)
-    print(f"{njobs=}")
+    logger.info(f"{njobs=}")
 
     tester = build_tester(AHCSettings, njobs, args.verbose)
 
     if args.compile:
         tester.compile()
 
-    print("start.")
+    logger.info("start.")
 
     start = time.time()
     scores = tester.run()
     score = tester.show_score(scores)
-    print(f"{time.time() - start:.4f}sec")
+    logger.info(f"{time.time() - start:.4f}sec")
     return score
 
 

@@ -1,7 +1,7 @@
 import optuna
 
 """example
-python3 ./parallel_tester.py -c -v -njobs 10
+python3 ./parallel_tester.py -c -v -njobs 127
 
 python3 ./oprimizer.py
 """
@@ -28,7 +28,7 @@ class AHCSettings:
     direction = "maximize"
 
     # parallel_tester の cpu_count
-    n_jobs_parallel_tester = 10
+    n_jobs_parallel_tester = 127
 
     # optuna の試行回数
     n_trials = 50
