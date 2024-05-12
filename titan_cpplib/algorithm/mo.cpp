@@ -58,8 +58,8 @@ namespace titan23 {
       for (const int &i: qi) {
         const int li = _l[i], ri = _r[i];
         while (nl > li) add_left(--nl);
-        while (nl < li) del_left(nl++);
         while (nr < ri) add_right(nr++);
+        while (nl < li) del_left(nl++);
         while (nr > ri) del_right(--nr);
         out(i);
       }
