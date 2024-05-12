@@ -9,8 +9,9 @@ namespace titan23 {
    private:
     int n;
     vector<T> acc;
-  
+
    public:
+    CumulativeSum() {}
     CumulativeSum(vector<T> &a, T e) : n((int)a.size()), acc(n+1, e) {
       for (int i = 0; i < n; ++i) {
         acc[i+1] = acc[i] + a[i];
@@ -39,10 +40,11 @@ namespace titan23 {
 
     void print() const {
       cout << '[';
-      for (int i = 0; i < n; ++i) {
+      for (int i = 0; i < n-1; ++i) {
         cout << acc[i] << ", ";
       }
-      cout << acc.back() << ']' << endl;
+      if (n > 0) cout << acc.back();
+      cout << ']' << endl;
     }
   };
 }  // namespace titan23
