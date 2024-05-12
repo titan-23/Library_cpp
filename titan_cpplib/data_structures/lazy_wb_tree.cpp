@@ -94,7 +94,7 @@ namespace titan23 {
       };
       root = build(build, 0, (int)a.size());
     }
-  
+
     NodePtr _rotate_right(NodePtr node) {
       NodePtr u = node->left;
       node->left = u->right;
