@@ -23,18 +23,17 @@ namespace titan23 {
     void build(vector<T> a) {
       for (int bit = log-1; bit >= 0; --bit) {
         vector<T> zero, one;
-        BitVector b(n);
+        v[bit] = BitVector(n);
         for (int i = 0; i < n; ++i) {
           if ((a[i] >> bit) & 1) {
-            b.set(i);
+            v[bit].set(i);
             one.emplace_back(a[i]);
           } else {
             zero.emplace_back(a[i]);
           }
         }
-        b.build();
+        v[bit].build();
         mid[bit] = zero.size();
-        v[bit] = b;
         a = zero;
         a.insert(a.end(), one.begin(), one.end());
         assert(a.size() == n);
