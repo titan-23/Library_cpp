@@ -300,7 +300,9 @@ namespace titan23 {
 
     // 辺{u, v}があれば削除する
     bool split(const int u, const int v) {
-      if (ptr_edge.find((long long)u*n+v) == ptr_edge.end() || ptr_edge.find((long long)v*n+n) == ptr_edge.end()) return false;
+      if (ptr_edge.find((long long)u*n+v) == ptr_edge.end() || ptr_edge.find((long long)v*n+u) == ptr_edge.end()) {
+        return false;
+      }
       cut(u, v);
       return true;
     }
