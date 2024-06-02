@@ -99,7 +99,7 @@ namespace beam_search {
     }
 
     void print() const {
-      for (Action action: history) {
+      for (const Action &action: history) {
         cout << action;
       }
       cout << endl;
