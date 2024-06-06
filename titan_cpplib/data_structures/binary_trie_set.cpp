@@ -29,7 +29,7 @@ namespace titan23 {
       size.reserve(n);
     }
 
-    int _make_node() {
+    unsigned int _make_node() {
       if (_end >= (int)left.size()) {
         left.emplace_back(0);
         right.emplace_back(0);
@@ -39,7 +39,7 @@ namespace titan23 {
       return _end++;
     }
 
-    int _find(T key) const {
+    unsigned int _find(T key) const {
       key ^= _xor_val;
       unsigned int node = _root;
       for (int i = _bit-1; i >= 0; --i) {
