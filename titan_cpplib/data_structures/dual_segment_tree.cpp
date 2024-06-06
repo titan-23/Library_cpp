@@ -3,6 +3,7 @@
 #include <cassert>
 using namespace std;
 
+// DualSegmentTree
 namespace titan23 {
 
   template <class T,
@@ -127,6 +128,7 @@ namespace titan23 {
 
     void set(int k, T v) {
       if (k < 0) k += _n;
+      k += _size;
       for (int i = _log; i > 0; --i) {
         _propagate(k>>i);
       }
