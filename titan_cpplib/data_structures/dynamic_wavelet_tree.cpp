@@ -84,7 +84,7 @@ namespace titan23 {
     void insert(int k, T x) {
       assert(0 <= k && k <= len());
       Node* node = root;
-      for (int bit = _log-1; node && bit >= 0; --bit) {
+      for (int bit = _log-1; bit >= 0; --bit) {
         if ((x >> bit) & 1) {
           k = node->v._insert_and_rank1(k, 1);
           if (!node->right) {
@@ -124,7 +124,7 @@ namespace titan23 {
     }
 
     // O(log(n)log(σ))
-    void update(int k, T x) {
+    void set(int k, T x) {
       pop(k);
       insert(k, x);
     }
