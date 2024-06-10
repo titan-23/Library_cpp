@@ -43,7 +43,7 @@ namespace titan23 {
 
    public:
     MinHeap() {}
-    MinHeap(vector<T> &a) : a(a) {
+    MinHeap(vector<T> a) : a(a) {
       _heapify();
     }
 
@@ -59,12 +59,12 @@ namespace titan23 {
       return res;
     }
 
-    void push(const T &key) {
+    void push(const T key) {
       a.emplace_back(key);
       _up(a.size() - 1);
     }
 
-    T pushpoop_min(const T &key) {
+    T pushpoop_min(const T key) {
       if (a[0] >= key) return key;
       T res = a[0];
       a[0] = key;
@@ -72,7 +72,7 @@ namespace titan23 {
       return res;
     }
 
-    T replace_min(const T &key) {
+    T replace_min(const T key) {
       T res = a[0];
       a[0] = key;
       _down(0);
