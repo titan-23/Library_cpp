@@ -6,6 +6,9 @@ using namespace std;
 // DualCommutativeSegmentTree
 namespace titan23 {
 
+  /**
+   * @brief 作用が可換な双対セグ木
+   */
   template <class T,
             class F,
             T (*mapping)(F, T),

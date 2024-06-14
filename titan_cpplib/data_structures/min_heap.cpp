@@ -64,6 +64,12 @@ namespace titan23 {
       _up(a.size() - 1);
     }
 
+    /**
+     * @brief pushしてpopします。
+     * 
+     * @param key 
+     * @return * T 
+     */
     T pushpoop_min(const T key) {
       if (a[0] >= key) return key;
       T res = a[0];
@@ -72,6 +78,13 @@ namespace titan23 {
       return res;
     }
 
+    /**
+     * @brief 最小の要素をpopして返し、新たにkeyを挿入します。
+     * pop -> push と同じです。
+     * 
+     * @param key 
+     * @return T 
+     */
     T replace_min(const T key) {
       T res = a[0];
       a[0] = key;
