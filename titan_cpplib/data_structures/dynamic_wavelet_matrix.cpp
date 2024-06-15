@@ -30,7 +30,8 @@ namespace titan23 {
     }
 
     void _build(vector<T> a) {
-      vector<bool> v(_size);
+      if (a.empty()) return;
+      vector<uint8_t> v(_size);
       for (int bit = _log-1; bit >= 0; --bit) {
         vector<T> zero, one;
         for (int i = 0; i < _size; ++i) {
@@ -96,7 +97,8 @@ namespace titan23 {
       return ans;
     }
 
-    void update(int k, T x) {
+    void set(int k, T x) {
+      assert(0 <= k && k < _size);
       pop(k);
       insert(k, x);
     }
