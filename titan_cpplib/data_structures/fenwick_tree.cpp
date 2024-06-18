@@ -3,10 +3,11 @@
 #include <cassert>
 using namespace std;
 
+// FenwickTree
 namespace titan23 {
+
   template<typename T>
   struct FenwickTree {
-
     int _n, _s;
     vector<T> _tree;
 
