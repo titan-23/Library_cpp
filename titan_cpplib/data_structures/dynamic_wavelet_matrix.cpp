@@ -30,6 +30,7 @@ namespace titan23 {
     }
 
     void _build(vector<T> a) {
+      if (a.empty()) return;
       vector<uint8_t> v(_size);
       for (int bit = _log-1; bit >= 0; --bit) {
         vector<T> zero, one;
