@@ -96,7 +96,8 @@ namespace titan23 {
       return ans;
     }
 
-    void update(int k, T x) {
+    void set(int k, T x) {
+      assert(0 <= k && k < _size);
       pop(k);
       insert(k, x);
     }
