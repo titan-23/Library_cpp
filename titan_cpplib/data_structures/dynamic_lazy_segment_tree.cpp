@@ -1,34 +1,21 @@
-#pragma GCC target("avx2")
-#pragma GCC optimize("O3")
-#pragma GCC optimize("unroll-loops")
-
-#include <bits/stdc++.h>
-using namespace std;
-
-#include <ext/pb_ds/assoc_container.hpp>
-
-#define rep(i, n) for (int i = 0; i < (n); ++i)
-
 #include <iostream>
 #include <cassert>
 #include <memory>
 using namespace std;
 
-int cnt = 0;
-
+// DynamicLazySegmentTree
 namespace titan23 {
 
     /**
-     * @brief 必要なところだけ作る遅延セグ木 / type: split
+     * @brief 必要なところだけ作る遅延セグ木
      *
      * [0, u)の列を管理
      *
-     * - apply : O(logu) time, O(logu) space
+     * - apply / set : O(logu) time, O(logu) space
      *
-     * - prod  : O(logu) time, O(1) space
+     * - prod  / get : O(logu) time, O(1) space
      *
-     * - get, set は未verify
-     *
+     * @tparam IndexType 添え字を表すインデックス long long を推奨 和がオーバーフローしないことが条件かな
      * @tparam T モノイドの型
      * @tparam (*op)(T, T) モノイドの2項演算
      * @tparam (*e)() モノイドの単位元
@@ -36,19 +23,17 @@ namespace titan23 {
      * @tparam (*mapping)(F, T) 遅延セグ木のアレ
      * @tparam (*composition)(F, F) 遅延セグ木のアレ
      * @tparam (*id)() 遅延セグ木のアレ
-     * @tparam (*pow)(T, long long) T=op(T,T)をk回繰り返した結果を返す関数
-     * @tparam (*split)(T) T=op(S,S)を満たすSを返す関数
+     * @tparam (*pow)(T, IndexType) T=op(T,T)をk回繰り返した結果を返す関数
      */
-    template <class T,
+    template <class IndexType,
+            class T,
             T (*op)(T, T),
             T (*e)(),
             class F,
             T (*mapping)(F, T),
             F (*composition)(F, F),
             F (*id)(),
-            T (*pow)(T, long long),
-            T (*split)(T),
-            bool use_split>
+            T (*pow)(T, IndexType)>
     class DynamicLazySegmentTree {
       private:
         static int bit_length(long long x) {
@@ -59,31 +44,21 @@ namespace titan23 {
         using NodePtr = Node*;
         // using NodePtr = shared_ptr<Node>;
         NodePtr root;
-        long long u;
+        IndexType u;
 
         struct Node {
             NodePtr left, right;
-            long long l, r;
-            T key, data; // 子がないときに限り、data=pow(key, r-l)が成り立つ
+            IndexType l, r;
+            T key, data; // 子がないとき、data=pow(key, r-l)が成り立つ
             F lazy;
 
             Node() {}
 
-            Node(long long l, long long r, T key) :
+            Node(IndexType l, IndexType r, T key) :
                     left(nullptr), right(nullptr),
                     l(l), r(r),
                     key(key), data(pow(key, r-l)) {
-                ++cnt;
                 assert(l < r);
-            }
-
-            Node(long long l, long long r, T key, T p_data) :
-                    left(nullptr), right(nullptr),
-                    l(l), r(r),
-                    key(key) {
-                ++cnt;
-                assert(l < r);
-                this->data = use_split ? split(p_data) : pow(key, r-l);
             }
 
             bool is_leaf() const {
@@ -102,12 +77,12 @@ namespace titan23 {
                 if (this->left) {
                     this->left->apply(this->lazy);
                 } else {
-                    this->left = new Node(l, mid(), this->key, this->data);
+                    this->left = new Node(l, mid(), this->key);
                 }
                 if (this->right) {
                     this->right->apply(this->lazy);
                 } else {
-                    this->right = new Node(mid(), r, this->key, this->data);
+                    this->right = new Node(mid(), r, this->key);
                 }
                 this->lazy = id();
             }
@@ -123,7 +98,7 @@ namespace titan23 {
                 }
             }
 
-            long long mid() const {
+            IndexType mid() const {
                 return (this->l + this->r) / 2;
             }
 
@@ -133,17 +108,10 @@ namespace titan23 {
         };
 
       private:
-        T inner_prod(NodePtr node, long long l, long long r) {
-            if (!node || l >= r || r <= node->l || node->r <= l) {
-                return e();
-            }
-            if (l <= node->l && node->r <= r) {
-                return node->data;
-            }
-            if ((!node->left) && (!node->right)) {
-                return pow(node->key, r - l);
-            }
-            assert(node->left && node->right);
+        T inner_prod(NodePtr node, IndexType l, IndexType r) {
+            if (!node || l >= r || r <= node->l || node->r <= l) return e();
+            if (l <= node->l && node->r <= r) return node->data;
+            if ((!node->left) && (!node->right)) return pow(node->key, r - l);
             node->propagate();
             return op(
                 inner_prod(node->left, l, min(r, node->mid())),
@@ -151,31 +119,28 @@ namespace titan23 {
             );
         }
 
-        void inner_apply(NodePtr node, long long l, long long r, F f) {
-            if (!node || l >= r || r <= node->l || node->r <= l) {
-                return;
-            }
+        void inner_apply(NodePtr node, IndexType l, IndexType r, F f) {
+            if (!node || l >= r || r <= node->l || node->r <= l) return;
             if (l <= node->l && node->r <= r) {
                 node->apply(f);
                 return;
             }
             node->propagate();
-            if (l < min(r, node->mid())) {
-                inner_apply(node->left, l, min(r, node->mid()), f);
-            }
-            if (max(l, node->mid()) < r) {
-                inner_apply(node->right, max(l, node->mid()), r, f);
-            }
+            inner_apply(node->left, l, min(r, node->mid()), f);
+            inner_apply(node->right, max(l, node->mid()), r, f);
             node->update();
         }
 
-        void inner_set(NodePtr node, long long k, T val) {
+        void inner_set(NodePtr node, IndexType k, T val) {
             assert(node);
-            node->propagate();
             if (node->is_leaf()) {
+                assert(node->l == k && node->r == k+1);
+                node->key = val;
                 node->data = val;
                 return;
             }
+            node->propagate();
+            assert(node->left && node->right);
             if (k < node->mid()) {
                 inner_set(node->left, k, val);
             } else {
@@ -184,148 +149,69 @@ namespace titan23 {
             node->update();
         }
 
-      public:
-
-        DynamicLazySegmentTree() : root(nullptr) {}
-
-        DynamicLazySegmentTree(const long long u_) : root(nullptr), u(1ll<<bit_length(u_)) {
-            root = new Node(0, u, e());
+        T inner_get(NodePtr node, IndexType k) {
+            assert(node);
+            while (true) {
+                if (node->is_leaf()) {
+                    assert(node->l == k && node->r == k+1);
+                    return node->key;
+                }
+                if (k < node->mid()) {
+                    if (!node->left) return node->key;
+                    node->propagate();
+                    node = node->left;
+                } else {
+                    if (!node->right) return node->key;
+                    node->propagate();
+                    node = node->right;
+                }
+            }
         }
 
-        DynamicLazySegmentTree(const long long u_, T init) : root(nullptr), u(1ll<<bit_length(u_)) {
-            root = new Node(0, u, init);
+      public:
+
+        DynamicLazySegmentTree() : root(nullptr), u(0) {}
+
+        DynamicLazySegmentTree(const IndexType u_) {
+            assert(u_ > 0);
+            this->u = 1ll << bit_length(u_);
+            this->root = new Node(0, this->u, e());
+        }
+
+        DynamicLazySegmentTree(const IndexType u_, const T init) {
+            assert(u_ > 0);
+            this->u = 1ll << bit_length(u_);
+            this->root = new Node(0, this->u, init);
         }
 
         // `[l, r)` の集約値を返す / `O(logu)` time, `O(1)` space
-        T prod(long long l, long long r) {
-            assert(0 <= l && l <= r && r < u);
-            return inner_prod(root, l, r);
+        T prod(IndexType l, IndexType r) {
+            assert(0 <= l && l <= r && r <= u);
+            return inner_prod(this->root, l, r);
         }
 
         // `[l, r)` に `f` を作用させる / `O(logu)` time, `O(logu)` space
-        void apply(long long l, long long r, F f) {
-            assert(0 <= l && l <= r && r < u);
-            inner_apply(root, l, r, f);
+        void apply(IndexType l, IndexType r, F f) {
+            assert(0 <= l && l <= r && r <= u);
+            inner_apply(this->root, l, r, f);
         }
 
-        T get(long long k) {
-            return prod(k, k+1);
+        // `k` 番目の値を取得する / `O(logu)` time, `O(1)` space
+        T get(IndexType k) {
+            return inner_get(this->root, k);
         }
 
-        void set(long long k, T val) {
-            inner_set(root, k, val);
+        // `k` 番目の値を `val` に更新する / `O(logu)` time, `O(logu)` space
+        void set(IndexType k, T val) {
+            assert(0 <= k && k < u);
+            inner_set(this->root, k, val);
         }
 
         void print() {
-            rep(i, u) cout << get(i) << ", ";
+            for (int i = 0; i < u; ++id) {
+                cout << get(i) << ", ";
+            }
             cout << endl;
         }
     };
 }  // namespace titan23
-
-
-vector<int> P[200000];
-
-using S = long long;
-using F = long long;
-
-const int bit = 30;
-const int msk = (1ll << bit) - 1;
-
-S op(S a, S b) {
-    long long a0 = a >> bit, a1 = a & msk;
-    long long b0 = b >> bit, b1 = b & msk;
-    return (a0 + b0) << bit | (a1 + b1);
-}
-
-S e() {
-    return 0;
-}
-
-S mapping(F f, S s) {
-    long long s0 = s >> bit, s1 = s & msk;
-    return (s0 + f*s1) << bit | s1;
-}
-
-F composition(F f, F g) {
-    return f + g;
-}
-
-F id() {
-    return 0;
-}
-
-S split(S s) {
-    assert(false);
-    // return {s.first / 2, s.second / 2};
-}
-
-S pow(S s, long long k) {
-    long long s0 = s >> bit, s1 = s & msk;
-    return (s0 * k) << bit | (s1 * k);
-}
-
-titan23::DynamicLazySegmentTree<S, op, e, F, mapping, composition, id, pow, split, false> PST[200000];
-
-int main() {
-  ios::sync_with_stdio(false);
-  cin.tie(0);
-
-  int n, m;
-  cin >> n >> m;
-  rep(i, m) {
-    int t, p;
-    cin >> t >> p;
-    --p;
-    P[p].emplace_back(t);
-  }
-
-  rep(i, n) {
-    PST[i] = titan23::DynamicLazySegmentTree<S, op, e, F, mapping, composition, id, pow, split, false>(1e9+1, 1);
-
-    bool is_valid = false;
-    rep(j, int(P[i].size())-1) {
-      is_valid = !is_valid;
-      if (!is_valid) continue;
-      int l = P[i][j], r = P[i][j+1];
-      PST[i].apply(l, r, 1);
-    }
-  }
-
-  int q;
-  cin >> q;
-  __gnu_pbds::gp_hash_table<long long, long long> memo;
-
-  rep(_, q) {
-    int a, b;
-    cin >> a >> b;
-    --a, --b;
-
-    auto solve = [&] (int a, int b) -> long long {
-      if (P[a].size() > P[b].size()) {
-        swap(a, b);
-      }
-
-      if (memo.find((long long)a * n + b) != memo.end()) {
-        return memo[(long long)a * n + b];
-      }
-
-      // a側を走査する
-      long long ans = 0;
-      bool is_valid_a = false;
-      rep(i, int(P[a].size())-1) {
-        is_valid_a = !is_valid_a;
-        if (!is_valid_a) continue;
-        ans += PST[b].prod(P[a][i], P[a][i+1]) >> bit;
-      }
-
-      return memo[(long long)a * n + b] = ans;
-    };
-
-    long long ans = solve(a, b);
-    cout << ans << '\n';
-  }
-
-  cerr << "cnt=" << cnt << endl;
-  return 0;
-}
