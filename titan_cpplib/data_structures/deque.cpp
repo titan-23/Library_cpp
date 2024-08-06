@@ -9,15 +9,9 @@ namespace titan23 {
   struct Deque {
     vector<T> front, back;
 
-    Deque() {
-      front.resize(0);
-      back.resize(0);
-    }
+    Deque() {}
 
-    Deque(vector<T> a) {
-      front.resize(0);
-      back = a;
-    }
+    Deque(vector<T> a) : back(a) {}
 
     void _rebuild() {
       int n = (int)(front.size() + back.size()) / 2;
