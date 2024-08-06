@@ -64,8 +64,8 @@ namespace titan23 {
       return s;
     }
 
+    // ``a[0, r)`` に含まれる ``x`` の個数を返します。
     int rank(int r, int x) const {
-      // ``a[0, r)`` に含まれる ``x`` の個数を返します。
       int l = 0;
       for (int bit = log-1; bit >= 0; --bit) {
         if ((x >> bit) & 1) {
@@ -79,8 +79,8 @@ namespace titan23 {
       return r - l;
     }
 
+    // ``k`` 番目の ``v`` のインデックスを返します。
     int select(int k, int x) const {
-      // ``k`` 番目の ``v`` のインデックスを返します。
       int s = 0;
       for (int bit = log-1; bit >= 0; --bit) {
         if ((x >> bit) & 1) {
@@ -100,8 +100,8 @@ namespace titan23 {
       return s;
     }
 
+    // ``a[l, r)`` の中で k 番目に **小さい** 値を返します。
     T kth_smallest(int l, int r, int k) const {
-      // ``a[l, r)`` の中で k 番目に **小さい** 値を返します。
       T s = 0;
       for (int bit = log-1; bit >= 0; --bit) {
         const int r0 = v[bit].rank0(r), l0 = v[bit].rank0(l);
@@ -123,8 +123,8 @@ namespace titan23 {
       return kth_smallest(l, r, r-l-k-1);
     }
 
+    //``a[l, r)`` の中で、要素を出現回数が多い順にその頻度とともに ``k`` 個返します。
     vector<pair<int, int>> topk(int l, int r, int k) {
-      //``a[l, r)`` の中で、要素を出現回数が多い順にその頻度とともに ``k`` 個返します。
       // heap[-length, x, l, bit]
       priority_queue<tuple<int, T, int, int>> hq;
       hq.emplace(r-l, 0, l, log-1);
@@ -158,8 +158,8 @@ namespace titan23 {
       return s;
     }
 
+    // a[l, r) で x 未満の要素の数を返す'''
     int range_freq(int l, int r, int x) const {
-      // a[l, r) で x 未満の要素の数を返す'''
       int ans = 0;
       for (int bit = log-1; bit >= 0; --bit) {
         int l0 = v[bit].rank0(l), r0 = v[bit].rank0(r);
@@ -175,13 +175,13 @@ namespace titan23 {
       return ans;
     }
 
+    //``a[l, r)`` に含まれる、 ``x`` 以上 ``y`` 未満である要素の個数を返します。
     int range_freq(int l, int r, int x, int y) const {
-      //``a[l, r)`` に含まれる、 ``x`` 以上 ``y`` 未満である要素の個数を返します。
       return range_freq(l, r, y) - range_freq(l, r, x);
     }
 
+    //``a[l, r)`` で、``x`` 以上 ``y`` 未満であるような要素のうち最大の要素を返します。
     T prev_value(int l, int r, int x) const {
-      //``a[l, r)`` で、``x`` 以上 ``y`` 未満であるような要素のうち最大の要素を返します。
       return kth_smallest(l, r, range_freq(l, r, x)-1);
     }
 
@@ -189,8 +189,8 @@ namespace titan23 {
       return kth_smallest(l, r, range_freq(l, r, x));
     }
 
+    //``a[l, r)`` に含まれる ``x`` の個数を返します。
     int range_count(int l, int r, int x) const {
-      //``a[l, r)`` に含まれる ``x`` の個数を返します。
       return rank(r, x) - rank(l, x);
     }
 
@@ -198,6 +198,15 @@ namespace titan23 {
       return n;
     }
 
-    void print() const {}
+    void print() const {
+      cout << "WaveletMatrix([";
+      for (int i = 0; i < len()-1; ++i) {
+        cout << access(i) << ", ";
+      }
+      if (len() > 0) {
+        cout << access(len()-1);
+      }
+      cout << "])" << endl;
+    }
   };
 }  // namespace titan23
