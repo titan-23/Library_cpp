@@ -110,7 +110,7 @@ namespace titan23 {
             _size++;
         }
 
-        // O(log(n)log(σ))
+        //! O(log(n)log(σ))
         T pop(int k) {
             Node* node = root;
             T ans = 0;
