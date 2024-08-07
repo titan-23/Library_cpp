@@ -1,0 +1,270 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structtitan23_1_1Deque" kind="struct" language="C++" prot="public">
+    <compoundname>titan23::Deque</compoundname>
+    <templateparamlist>
+      <param>
+        <type>typename T</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structtitan23_1_1Deque_1a067d0163aea92746bf17dd6f389eb141" prot="public" static="no" mutable="no">
+        <type>vector&lt; T &gt;</type>
+        <definition>vector&lt;T&gt; titan23::Deque&lt; T &gt;::front</definition>
+        <argsstring></argsstring>
+        <name>front</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/deque.cpp" line="10" column="12" bodyfile="titan_cpplib/data_structures/deque.cpp" bodystart="10" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtitan23_1_1Deque_1a855476b9e1141d6bc78db3fafbfe9bfe" prot="public" static="no" mutable="no">
+        <type>vector&lt; T &gt;</type>
+        <definition>vector&lt;T&gt; titan23::Deque&lt; T &gt;::back</definition>
+        <argsstring></argsstring>
+        <name>back</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/deque.cpp" line="10" column="18" bodyfile="titan_cpplib/data_structures/deque.cpp" bodystart="10" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structtitan23_1_1Deque_1a6c782662417727d9ac907f1310bf1eeb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::Deque&lt; T &gt;::Deque</definition>
+        <argsstring>()</argsstring>
+        <name>Deque</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/deque.cpp" line="12" column="5" bodyfile="titan_cpplib/data_structures/deque.cpp" bodystart="12" bodyend="12"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1Deque_1a7b60eb3a2a1a8fa6ea2259aa5a24e080" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::Deque&lt; T &gt;::Deque</definition>
+        <argsstring>(vector&lt; T &gt; a)</argsstring>
+        <name>Deque</name>
+        <param>
+          <type>vector&lt; T &gt;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/deque.cpp" line="14" column="5" bodyfile="titan_cpplib/data_structures/deque.cpp" bodystart="14" bodyend="14"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1Deque_1a4f8c76be641ed5d2ff9d065a93a88c99" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::Deque&lt; T &gt;::_rebuild</definition>
+        <argsstring>()</argsstring>
+        <name>_rebuild</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/deque.cpp" line="16" column="10" bodyfile="titan_cpplib/data_structures/deque.cpp" bodystart="16" bodyend="39"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1Deque_1a3593d1d892c42d563c7c5b9109621f68" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::Deque&lt; T &gt;::push_back</definition>
+        <argsstring>(const T v)</argsstring>
+        <name>push_back</name>
+        <param>
+          <type>const T</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/deque.cpp" line="41" column="10" bodyfile="titan_cpplib/data_structures/deque.cpp" bodystart="41" bodyend="43"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1Deque_1a75ab8669d2234e6d9ae61ca314c7d4f8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::Deque&lt; T &gt;::push_front</definition>
+        <argsstring>(const T v)</argsstring>
+        <name>push_front</name>
+        <param>
+          <type>const T</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/deque.cpp" line="45" column="10" bodyfile="titan_cpplib/data_structures/deque.cpp" bodystart="45" bodyend="47"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1Deque_1ae0f9041317c5a5d69b90f5593c309c9d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T titan23::Deque&lt; T &gt;::pop_back</definition>
+        <argsstring>()</argsstring>
+        <name>pop_back</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/deque.cpp" line="49" column="7" bodyfile="titan_cpplib/data_structures/deque.cpp" bodystart="49" bodyend="60"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1Deque_1a389eb54ce811ef38ab75984da6e0a019" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T titan23::Deque&lt; T &gt;::pop_front</definition>
+        <argsstring>()</argsstring>
+        <name>pop_front</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/deque.cpp" line="62" column="7" bodyfile="titan_cpplib/data_structures/deque.cpp" bodystart="62" bodyend="73"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1Deque_1aa9713a1918c6635ad92c4f9005cccc3c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>vector&lt; T &gt;</type>
+        <definition>vector&lt;T&gt; titan23::Deque&lt; T &gt;::tovector</definition>
+        <argsstring>() const</argsstring>
+        <name>tovector</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/deque.cpp" line="75" column="12" bodyfile="titan_cpplib/data_structures/deque.cpp" bodystart="75" bodyend="85"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1Deque_1a577e3789bdc0422c19662dfef3193ea9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>T &amp;</type>
+        <definition>T&amp; titan23::Deque&lt; T &gt;::operator[]</definition>
+        <argsstring>(int k)</argsstring>
+        <name>operator[]</name>
+        <param>
+          <type>int</type>
+          <declname>k</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/deque.cpp" line="87" column="7" bodyfile="titan_cpplib/data_structures/deque.cpp" bodystart="87" bodyend="90"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1Deque_1a43b7ca13508c3e365d967527ea188872" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const T &amp;</type>
+        <definition>const T&amp; titan23::Deque&lt; T &gt;::operator()</definition>
+        <argsstring>(int k) const</argsstring>
+        <name>operator()</name>
+        <param>
+          <type>int</type>
+          <declname>k</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/deque.cpp" line="92" column="13" bodyfile="titan_cpplib/data_structures/deque.cpp" bodystart="92" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1Deque_1a9c975a804cb5398f16f51e92008a6ce5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::Deque&lt; T &gt;::len</definition>
+        <argsstring>() const</argsstring>
+        <name>len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/deque.cpp" line="97" column="9" bodyfile="titan_cpplib/data_structures/deque.cpp" bodystart="97" bodyend="99"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1Deque_1a7f148f07cc70c131b403afd6b4aa5be4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool titan23::Deque&lt; T &gt;::empty</definition>
+        <argsstring>() const</argsstring>
+        <name>empty</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/deque.cpp" line="101" column="10" bodyfile="titan_cpplib/data_structures/deque.cpp" bodystart="101" bodyend="103"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1Deque_1a06f05091d62d979b3099f5c7e56d85ba" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool titan23::Deque&lt; T &gt;::contains</definition>
+        <argsstring>(const T v) const</argsstring>
+        <name>contains</name>
+        <param>
+          <type>const T</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/deque.cpp" line="105" column="10" bodyfile="titan_cpplib/data_structures/deque.cpp" bodystart="105" bodyend="113"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1Deque_1aa3a84071026bd117290d8e1f9eb8202e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::Deque&lt; T &gt;::print</definition>
+        <argsstring>() const</argsstring>
+        <name>print</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/deque.cpp" line="115" column="10" bodyfile="titan_cpplib/data_structures/deque.cpp" bodystart="115" bodyend="125"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="titan_cpplib/data_structures/deque.cpp" line="9" column="3" bodyfile="titan_cpplib/data_structures/deque.cpp" bodystart="9" bodyend="126"/>
+    <listofallmembers>
+      <member refid="structtitan23_1_1Deque_1a4f8c76be641ed5d2ff9d065a93a88c99" prot="public" virt="non-virtual"><scope>titan23::Deque</scope><name>_rebuild</name></member>
+      <member refid="structtitan23_1_1Deque_1a855476b9e1141d6bc78db3fafbfe9bfe" prot="public" virt="non-virtual"><scope>titan23::Deque</scope><name>back</name></member>
+      <member refid="structtitan23_1_1Deque_1a06f05091d62d979b3099f5c7e56d85ba" prot="public" virt="non-virtual"><scope>titan23::Deque</scope><name>contains</name></member>
+      <member refid="structtitan23_1_1Deque_1a6c782662417727d9ac907f1310bf1eeb" prot="public" virt="non-virtual"><scope>titan23::Deque</scope><name>Deque</name></member>
+      <member refid="structtitan23_1_1Deque_1a7b60eb3a2a1a8fa6ea2259aa5a24e080" prot="public" virt="non-virtual"><scope>titan23::Deque</scope><name>Deque</name></member>
+      <member refid="structtitan23_1_1Deque_1a7f148f07cc70c131b403afd6b4aa5be4" prot="public" virt="non-virtual"><scope>titan23::Deque</scope><name>empty</name></member>
+      <member refid="structtitan23_1_1Deque_1a067d0163aea92746bf17dd6f389eb141" prot="public" virt="non-virtual"><scope>titan23::Deque</scope><name>front</name></member>
+      <member refid="structtitan23_1_1Deque_1a9c975a804cb5398f16f51e92008a6ce5" prot="public" virt="non-virtual"><scope>titan23::Deque</scope><name>len</name></member>
+      <member refid="structtitan23_1_1Deque_1a43b7ca13508c3e365d967527ea188872" prot="public" virt="non-virtual"><scope>titan23::Deque</scope><name>operator()</name></member>
+      <member refid="structtitan23_1_1Deque_1a577e3789bdc0422c19662dfef3193ea9" prot="public" virt="non-virtual"><scope>titan23::Deque</scope><name>operator[]</name></member>
+      <member refid="structtitan23_1_1Deque_1ae0f9041317c5a5d69b90f5593c309c9d" prot="public" virt="non-virtual"><scope>titan23::Deque</scope><name>pop_back</name></member>
+      <member refid="structtitan23_1_1Deque_1a389eb54ce811ef38ab75984da6e0a019" prot="public" virt="non-virtual"><scope>titan23::Deque</scope><name>pop_front</name></member>
+      <member refid="structtitan23_1_1Deque_1aa3a84071026bd117290d8e1f9eb8202e" prot="public" virt="non-virtual"><scope>titan23::Deque</scope><name>print</name></member>
+      <member refid="structtitan23_1_1Deque_1a3593d1d892c42d563c7c5b9109621f68" prot="public" virt="non-virtual"><scope>titan23::Deque</scope><name>push_back</name></member>
+      <member refid="structtitan23_1_1Deque_1a75ab8669d2234e6d9ae61ca314c7d4f8" prot="public" virt="non-virtual"><scope>titan23::Deque</scope><name>push_front</name></member>
+      <member refid="structtitan23_1_1Deque_1aa9713a1918c6635ad92c4f9005cccc3c" prot="public" virt="non-virtual"><scope>titan23::Deque</scope><name>tovector</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

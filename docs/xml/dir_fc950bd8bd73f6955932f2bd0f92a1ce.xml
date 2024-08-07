@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_fc950bd8bd73f6955932f2bd0f92a1ce" kind="dir">
+    <compoundname>titan_cpplib/gomi</compoundname>
+    <innerfile refid="gomi_2link__cut__tree_8cpp">link_cut_tree.cpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="titan_cpplib/gomi/"/>
+  </compounddef>
+</doxygen>

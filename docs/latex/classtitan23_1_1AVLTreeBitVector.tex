@@ -1,0 +1,67 @@
+\hypertarget{classtitan23_1_1AVLTreeBitVector}{}\doxysection{titan23\+::AVLTree\+Bit\+Vector Class Reference}
+\label{classtitan23_1_1AVLTreeBitVector}\index{titan23::AVLTreeBitVector@{titan23::AVLTreeBitVector}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classtitan23_1_1AVLTreeBitVector_ac51123af31270a35375c883efd1253de}\label{classtitan23_1_1AVLTreeBitVector_ac51123af31270a35375c883efd1253de}} 
+{\bfseries AVLTree\+Bit\+Vector} (const vector$<$ uint8\+\_\+t $>$ \&a)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1AVLTreeBitVector_a9fb6da96c9eee7ce0d71d94f2e954f10}\label{classtitan23_1_1AVLTreeBitVector_a9fb6da96c9eee7ce0d71d94f2e954f10}} 
+void {\bfseries reserve} (int n)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1AVLTreeBitVector_ad7e68f4e8f630bfb97a9f9187284643d}\label{classtitan23_1_1AVLTreeBitVector_ad7e68f4e8f630bfb97a9f9187284643d}} 
+void {\bfseries insert} (int k, bool key)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1AVLTreeBitVector_a82e109827a48041446851e3c4d7e5f8f}\label{classtitan23_1_1AVLTreeBitVector_a82e109827a48041446851e3c4d7e5f8f}} 
+bool {\bfseries pop} (int k)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1AVLTreeBitVector_a217caf3f2c2bf866fc95a6d5bca713c0}\label{classtitan23_1_1AVLTreeBitVector_a217caf3f2c2bf866fc95a6d5bca713c0}} 
+void {\bfseries set} (int k, bool v)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1AVLTreeBitVector_a9c6450a157f4772b354233de2c43383c}\label{classtitan23_1_1AVLTreeBitVector_a9c6450a157f4772b354233de2c43383c}} 
+vector$<$ uint8\+\_\+t $>$ {\bfseries tovector} () const
+\item 
+\mbox{\Hypertarget{classtitan23_1_1AVLTreeBitVector_ab3ead37f005e465bc35f9a7f4323d354}\label{classtitan23_1_1AVLTreeBitVector_ab3ead37f005e465bc35f9a7f4323d354}} 
+bool {\bfseries access} (int k) const
+\item 
+\mbox{\Hypertarget{classtitan23_1_1AVLTreeBitVector_ab670685b529c10f037ce27870ad68079}\label{classtitan23_1_1AVLTreeBitVector_ab670685b529c10f037ce27870ad68079}} 
+int {\bfseries rank0} (int r) const
+\item 
+\mbox{\Hypertarget{classtitan23_1_1AVLTreeBitVector_abd1ab07feee878a7800473666a29d889}\label{classtitan23_1_1AVLTreeBitVector_abd1ab07feee878a7800473666a29d889}} 
+int {\bfseries rank1} (int r) const
+\item 
+\mbox{\Hypertarget{classtitan23_1_1AVLTreeBitVector_a22c1085c2a88f9e4f51cfeb1e73c3a6a}\label{classtitan23_1_1AVLTreeBitVector_a22c1085c2a88f9e4f51cfeb1e73c3a6a}} 
+int {\bfseries rank} (int r, bool v) const
+\item 
+\mbox{\Hypertarget{classtitan23_1_1AVLTreeBitVector_a54f6b1e482654db1a170662fceeb9b0e}\label{classtitan23_1_1AVLTreeBitVector_a54f6b1e482654db1a170662fceeb9b0e}} 
+int {\bfseries select0} (int k) const
+\item 
+\mbox{\Hypertarget{classtitan23_1_1AVLTreeBitVector_a3bea18e9be799cc765f958033c684aad}\label{classtitan23_1_1AVLTreeBitVector_a3bea18e9be799cc765f958033c684aad}} 
+int {\bfseries select1} (int k) const
+\item 
+\mbox{\Hypertarget{classtitan23_1_1AVLTreeBitVector_a6ed8caf281f54e2c072c523ce13016ae}\label{classtitan23_1_1AVLTreeBitVector_a6ed8caf281f54e2c072c523ce13016ae}} 
+int {\bfseries select} (int k, bool v) const
+\item 
+\mbox{\Hypertarget{classtitan23_1_1AVLTreeBitVector_a2866195da572c3229480d6f7ee9a5a12}\label{classtitan23_1_1AVLTreeBitVector_a2866195da572c3229480d6f7ee9a5a12}} 
+int {\bfseries \+\_\+insert\+\_\+and\+\_\+rank1} (int k, bool key)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1AVLTreeBitVector_aed4a34632f525c41097ebe2ed4880fd0}\label{classtitan23_1_1AVLTreeBitVector_aed4a34632f525c41097ebe2ed4880fd0}} 
+int {\bfseries \+\_\+access\+\_\+pop\+\_\+and\+\_\+rank1} (int k)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1AVLTreeBitVector_aa813de9fd828a694f3a1c642aa412fef}\label{classtitan23_1_1AVLTreeBitVector_aa813de9fd828a694f3a1c642aa412fef}} 
+pair$<$ bool, int $>$ {\bfseries \+\_\+access\+\_\+ans\+\_\+rank1} (int k) const
+\item 
+\mbox{\Hypertarget{classtitan23_1_1AVLTreeBitVector_a4390935c2ccbf67028e4b5a915e1bf9d}\label{classtitan23_1_1AVLTreeBitVector_a4390935c2ccbf67028e4b5a915e1bf9d}} 
+void {\bfseries print} () const
+\item 
+\mbox{\Hypertarget{classtitan23_1_1AVLTreeBitVector_aaaba0c03aefb1065d43868563efafd97}\label{classtitan23_1_1AVLTreeBitVector_aaaba0c03aefb1065d43868563efafd97}} 
+bool {\bfseries empty} () const
+\item 
+\mbox{\Hypertarget{classtitan23_1_1AVLTreeBitVector_a77833e4a50756086f85eb002d092846e}\label{classtitan23_1_1AVLTreeBitVector_a77833e4a50756086f85eb002d092846e}} 
+int {\bfseries len} () const
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+titan\+\_\+cpplib/data\+\_\+structures/avl\+\_\+tree\+\_\+bit\+\_\+vector.\+cpp\end{DoxyCompactItemize}

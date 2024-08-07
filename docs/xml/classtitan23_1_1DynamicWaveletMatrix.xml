@@ -1,0 +1,588 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classtitan23_1_1DynamicWaveletMatrix" kind="class" language="C++" prot="public">
+    <compoundname>titan23::DynamicWaveletMatrix</compoundname>
+    <templateparamlist>
+      <param>
+        <type>typename T</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classtitan23_1_1DynamicWaveletMatrix_1add6389ce0cd34681d951734592612b19" prot="private" static="no" mutable="no">
+        <type>T</type>
+        <definition>T titan23::DynamicWaveletMatrix&lt; T &gt;::_sigma</definition>
+        <argsstring></argsstring>
+        <name>_sigma</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" line="14" column="7" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" bodystart="14" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1DynamicWaveletMatrix_1a2ae162d83c4cbdea36385d2347ebd7f3" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int titan23::DynamicWaveletMatrix&lt; T &gt;::_log</definition>
+        <argsstring></argsstring>
+        <name>_log</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" line="15" column="9" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" bodystart="15" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1DynamicWaveletMatrix_1aef1eb47cb758656027803f345b6a6735" prot="private" static="no" mutable="no">
+        <type>vector&lt; <ref refid="classtitan23_1_1AVLTreeBitVector" kindref="compound">AVLTreeBitVector</ref> &gt;</type>
+        <definition>vector&lt;AVLTreeBitVector&gt; titan23::DynamicWaveletMatrix&lt; T &gt;::_v</definition>
+        <argsstring></argsstring>
+        <name>_v</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" line="16" column="12" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" bodystart="16" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1DynamicWaveletMatrix_1a127f574c8a006edbb81c350a2cb25448" prot="private" static="no" mutable="no">
+        <type>vector&lt; int &gt;</type>
+        <definition>vector&lt;int&gt; titan23::DynamicWaveletMatrix&lt; T &gt;::_mid</definition>
+        <argsstring></argsstring>
+        <name>_mid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" line="17" column="12" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" bodystart="17" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1DynamicWaveletMatrix_1a320c85590d6acbce74de92085e31cfd8" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int titan23::DynamicWaveletMatrix&lt; T &gt;::_size</definition>
+        <argsstring></argsstring>
+        <name>_size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" line="18" column="9" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" bodystart="18" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classtitan23_1_1DynamicWaveletMatrix_1a88dc9c03fa7059c9bd18a490339581b8" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::DynamicWaveletMatrix&lt; T &gt;::bit_length</definition>
+        <argsstring>(const int n) const</argsstring>
+        <name>bit_length</name>
+        <param>
+          <type>const int</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" line="20" column="9" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" bodystart="20" bodyend="22"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1DynamicWaveletMatrix_1ae79dc8e594f725410a95546447027f32" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::DynamicWaveletMatrix&lt; T &gt;::bit_length</definition>
+        <argsstring>(const long long n) const</argsstring>
+        <name>bit_length</name>
+        <param>
+          <type>const long long</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" line="24" column="9" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" bodystart="24" bodyend="26"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1DynamicWaveletMatrix_1a4f4f35c599b3bff26323899af0d68e4f" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::DynamicWaveletMatrix&lt; T &gt;::bit_length</definition>
+        <argsstring>(const unsigned long long n) const</argsstring>
+        <name>bit_length</name>
+        <param>
+          <type>const unsigned long long</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" line="28" column="9" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" bodystart="28" bodyend="30"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1DynamicWaveletMatrix_1a7da61353c736a49c439fe547c9a90907" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::DynamicWaveletMatrix&lt; T &gt;::_build</definition>
+        <argsstring>(vector&lt; T &gt; a)</argsstring>
+        <name>_build</name>
+        <param>
+          <type>vector&lt; T &gt;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" line="32" column="10" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" bodystart="32" bodyend="51"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classtitan23_1_1DynamicWaveletMatrix_1a19b3e27e22d15f6934a0e816e0e36a74" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::DynamicWaveletMatrix&lt; T &gt;::DynamicWaveletMatrix</definition>
+        <argsstring>(const T sigma)</argsstring>
+        <name>DynamicWaveletMatrix</name>
+        <param>
+          <type>const T</type>
+          <declname>sigma</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" line="54" column="5" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" bodystart="54" bodyend="56"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1DynamicWaveletMatrix_1a4a43093cf01e9d5d92a953dce34c75b8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::DynamicWaveletMatrix&lt; T &gt;::DynamicWaveletMatrix</definition>
+        <argsstring>(const T sigma, vector&lt; T &gt; &amp;a)</argsstring>
+        <name>DynamicWaveletMatrix</name>
+        <param>
+          <type>const T</type>
+          <declname>sigma</declname>
+        </param>
+        <param>
+          <type>vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" line="58" column="5" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" bodystart="58" bodyend="61"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1DynamicWaveletMatrix_1adbc229b6cc004c1caf834d0929ee5d66" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::DynamicWaveletMatrix&lt; T &gt;::reserve</definition>
+        <argsstring>(const int n)</argsstring>
+        <name>reserve</name>
+        <param>
+          <type>const int</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" line="63" column="10" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" bodystart="63" bodyend="67"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1DynamicWaveletMatrix_1a7fa6378da76833701eac7fe3c9010d2b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::DynamicWaveletMatrix&lt; T &gt;::insert</definition>
+        <argsstring>(int k, T x)</argsstring>
+        <name>insert</name>
+        <param>
+          <type>int</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>T</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" line="69" column="10" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" bodystart="69" bodyend="81"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1DynamicWaveletMatrix_1a85c695d5736562bbd62b4e5000e673b4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T titan23::DynamicWaveletMatrix&lt; T &gt;::pop</definition>
+        <argsstring>(int k)</argsstring>
+        <name>pop</name>
+        <param>
+          <type>int</type>
+          <declname>k</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" line="83" column="7" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" bodystart="83" bodyend="98"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1DynamicWaveletMatrix_1a41312ed00a495e2b00f2812e2214c7fb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::DynamicWaveletMatrix&lt; T &gt;::set</definition>
+        <argsstring>(int k, T x)</argsstring>
+        <name>set</name>
+        <param>
+          <type>int</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>T</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" line="100" column="10" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" bodystart="100" bodyend="104"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1DynamicWaveletMatrix_1a54614a321eb63cd4e0a52bf5fb6a6254" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::DynamicWaveletMatrix&lt; T &gt;::rank</definition>
+        <argsstring>(int r, T x) const</argsstring>
+        <name>rank</name>
+        <param>
+          <type>int</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>T</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" line="106" column="9" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" bodystart="106" bodyend="118"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1DynamicWaveletMatrix_1a786b9c513d4ab7560458302b4c01f59e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T titan23::DynamicWaveletMatrix&lt; T &gt;::access</definition>
+        <argsstring>(int k) const</argsstring>
+        <name>access</name>
+        <param>
+          <type>int</type>
+          <declname>k</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" line="120" column="7" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" bodystart="120" bodyend="131"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1DynamicWaveletMatrix_1aab3c77f58d97588eee7cf5a6938b98aa" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T titan23::DynamicWaveletMatrix&lt; T &gt;::kth_smallest</definition>
+        <argsstring>(int l, int r, int k) const</argsstring>
+        <name>kth_smallest</name>
+        <param>
+          <type>int</type>
+          <declname>l</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>k</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" line="133" column="7" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" bodystart="133" bodyend="150"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1DynamicWaveletMatrix_1ad5cd99b644116b45079c616b02d41c4c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T titan23::DynamicWaveletMatrix&lt; T &gt;::kth_largest</definition>
+        <argsstring>(int l, int r, int k) const</argsstring>
+        <name>kth_largest</name>
+        <param>
+          <type>int</type>
+          <declname>l</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>k</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" line="152" column="7" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" bodystart="152" bodyend="154"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1DynamicWaveletMatrix_1ae3aee7b82259578060ca69a45fab032a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>vector&lt; pair&lt; T, int &gt; &gt;</type>
+        <definition>vector&lt;pair&lt;T, int&gt; &gt; titan23::DynamicWaveletMatrix&lt; T &gt;::topk</definition>
+        <argsstring>(int l, int r, int k)</argsstring>
+        <name>topk</name>
+        <param>
+          <type>int</type>
+          <declname>l</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>k</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" line="156" column="12" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" bodystart="156" bodyend="178"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1DynamicWaveletMatrix_1a968554371dbfdce320a27c46533bbce0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::DynamicWaveletMatrix&lt; T &gt;::select</definition>
+        <argsstring>(int k, T x) const</argsstring>
+        <name>select</name>
+        <param>
+          <type>int</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>T</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" line="180" column="9" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" bodystart="180" bodyend="198"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1DynamicWaveletMatrix_1a8043f60ef49567bf22d359bf3f1ce551" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::DynamicWaveletMatrix&lt; T &gt;::range_freq</definition>
+        <argsstring>(int l, int r, T x) const</argsstring>
+        <name>range_freq</name>
+        <param>
+          <type>int</type>
+          <declname>l</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>T</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" line="200" column="9" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" bodystart="200" bodyend="215"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1DynamicWaveletMatrix_1adcff73c1b3a222a7a62f47030229045b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::DynamicWaveletMatrix&lt; T &gt;::range_freq</definition>
+        <argsstring>(int l, int r, int x, int y) const</argsstring>
+        <name>range_freq</name>
+        <param>
+          <type>int</type>
+          <declname>l</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" line="217" column="9" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" bodystart="217" bodyend="219"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1DynamicWaveletMatrix_1ad4852d3945d3777a782d601fc816592b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T titan23::DynamicWaveletMatrix&lt; T &gt;::prev_value</definition>
+        <argsstring>(int l, int r, T x) const</argsstring>
+        <name>prev_value</name>
+        <param>
+          <type>int</type>
+          <declname>l</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>T</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" line="221" column="7" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" bodystart="221" bodyend="223"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1DynamicWaveletMatrix_1ac595115adcbca0e7d2578c5e30c0416d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T titan23::DynamicWaveletMatrix&lt; T &gt;::next_value</definition>
+        <argsstring>(int l, int r, T x) const</argsstring>
+        <name>next_value</name>
+        <param>
+          <type>int</type>
+          <declname>l</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>T</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" line="225" column="7" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" bodystart="225" bodyend="227"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1DynamicWaveletMatrix_1aa227285e35b52d8bc4600460fe85e7e0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::DynamicWaveletMatrix&lt; T &gt;::range_count</definition>
+        <argsstring>(int l, int r, T x) const</argsstring>
+        <name>range_count</name>
+        <param>
+          <type>int</type>
+          <declname>l</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>T</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" line="229" column="9" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" bodystart="229" bodyend="231"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1DynamicWaveletMatrix_1aa64aa137d2f7c820613dd81d6d0c9c79" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>vector&lt; T &gt;</type>
+        <definition>vector&lt;T&gt; titan23::DynamicWaveletMatrix&lt; T &gt;::tovector</definition>
+        <argsstring>() const</argsstring>
+        <name>tovector</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" line="233" column="12" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" bodystart="233" bodyend="239"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1DynamicWaveletMatrix_1aa9cbe0de898e814373973456b4b48694" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::DynamicWaveletMatrix&lt; T &gt;::print</definition>
+        <argsstring>() const</argsstring>
+        <name>print</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" line="241" column="10" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" bodystart="241" bodyend="253"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" line="12" column="3" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp" bodystart="12" bodyend="254"/>
+    <listofallmembers>
+      <member refid="classtitan23_1_1DynamicWaveletMatrix_1a7da61353c736a49c439fe547c9a90907" prot="private" virt="non-virtual"><scope>titan23::DynamicWaveletMatrix</scope><name>_build</name></member>
+      <member refid="classtitan23_1_1DynamicWaveletMatrix_1a2ae162d83c4cbdea36385d2347ebd7f3" prot="private" virt="non-virtual"><scope>titan23::DynamicWaveletMatrix</scope><name>_log</name></member>
+      <member refid="classtitan23_1_1DynamicWaveletMatrix_1a127f574c8a006edbb81c350a2cb25448" prot="private" virt="non-virtual"><scope>titan23::DynamicWaveletMatrix</scope><name>_mid</name></member>
+      <member refid="classtitan23_1_1DynamicWaveletMatrix_1add6389ce0cd34681d951734592612b19" prot="private" virt="non-virtual"><scope>titan23::DynamicWaveletMatrix</scope><name>_sigma</name></member>
+      <member refid="classtitan23_1_1DynamicWaveletMatrix_1a320c85590d6acbce74de92085e31cfd8" prot="private" virt="non-virtual"><scope>titan23::DynamicWaveletMatrix</scope><name>_size</name></member>
+      <member refid="classtitan23_1_1DynamicWaveletMatrix_1aef1eb47cb758656027803f345b6a6735" prot="private" virt="non-virtual"><scope>titan23::DynamicWaveletMatrix</scope><name>_v</name></member>
+      <member refid="classtitan23_1_1DynamicWaveletMatrix_1a786b9c513d4ab7560458302b4c01f59e" prot="public" virt="non-virtual"><scope>titan23::DynamicWaveletMatrix</scope><name>access</name></member>
+      <member refid="classtitan23_1_1DynamicWaveletMatrix_1a88dc9c03fa7059c9bd18a490339581b8" prot="private" virt="non-virtual"><scope>titan23::DynamicWaveletMatrix</scope><name>bit_length</name></member>
+      <member refid="classtitan23_1_1DynamicWaveletMatrix_1ae79dc8e594f725410a95546447027f32" prot="private" virt="non-virtual"><scope>titan23::DynamicWaveletMatrix</scope><name>bit_length</name></member>
+      <member refid="classtitan23_1_1DynamicWaveletMatrix_1a4f4f35c599b3bff26323899af0d68e4f" prot="private" virt="non-virtual"><scope>titan23::DynamicWaveletMatrix</scope><name>bit_length</name></member>
+      <member refid="classtitan23_1_1DynamicWaveletMatrix_1a19b3e27e22d15f6934a0e816e0e36a74" prot="public" virt="non-virtual"><scope>titan23::DynamicWaveletMatrix</scope><name>DynamicWaveletMatrix</name></member>
+      <member refid="classtitan23_1_1DynamicWaveletMatrix_1a4a43093cf01e9d5d92a953dce34c75b8" prot="public" virt="non-virtual"><scope>titan23::DynamicWaveletMatrix</scope><name>DynamicWaveletMatrix</name></member>
+      <member refid="classtitan23_1_1DynamicWaveletMatrix_1a7fa6378da76833701eac7fe3c9010d2b" prot="public" virt="non-virtual"><scope>titan23::DynamicWaveletMatrix</scope><name>insert</name></member>
+      <member refid="classtitan23_1_1DynamicWaveletMatrix_1ad5cd99b644116b45079c616b02d41c4c" prot="public" virt="non-virtual"><scope>titan23::DynamicWaveletMatrix</scope><name>kth_largest</name></member>
+      <member refid="classtitan23_1_1DynamicWaveletMatrix_1aab3c77f58d97588eee7cf5a6938b98aa" prot="public" virt="non-virtual"><scope>titan23::DynamicWaveletMatrix</scope><name>kth_smallest</name></member>
+      <member refid="classtitan23_1_1DynamicWaveletMatrix_1ac595115adcbca0e7d2578c5e30c0416d" prot="public" virt="non-virtual"><scope>titan23::DynamicWaveletMatrix</scope><name>next_value</name></member>
+      <member refid="classtitan23_1_1DynamicWaveletMatrix_1a85c695d5736562bbd62b4e5000e673b4" prot="public" virt="non-virtual"><scope>titan23::DynamicWaveletMatrix</scope><name>pop</name></member>
+      <member refid="classtitan23_1_1DynamicWaveletMatrix_1ad4852d3945d3777a782d601fc816592b" prot="public" virt="non-virtual"><scope>titan23::DynamicWaveletMatrix</scope><name>prev_value</name></member>
+      <member refid="classtitan23_1_1DynamicWaveletMatrix_1aa9cbe0de898e814373973456b4b48694" prot="public" virt="non-virtual"><scope>titan23::DynamicWaveletMatrix</scope><name>print</name></member>
+      <member refid="classtitan23_1_1DynamicWaveletMatrix_1aa227285e35b52d8bc4600460fe85e7e0" prot="public" virt="non-virtual"><scope>titan23::DynamicWaveletMatrix</scope><name>range_count</name></member>
+      <member refid="classtitan23_1_1DynamicWaveletMatrix_1a8043f60ef49567bf22d359bf3f1ce551" prot="public" virt="non-virtual"><scope>titan23::DynamicWaveletMatrix</scope><name>range_freq</name></member>
+      <member refid="classtitan23_1_1DynamicWaveletMatrix_1adcff73c1b3a222a7a62f47030229045b" prot="public" virt="non-virtual"><scope>titan23::DynamicWaveletMatrix</scope><name>range_freq</name></member>
+      <member refid="classtitan23_1_1DynamicWaveletMatrix_1a54614a321eb63cd4e0a52bf5fb6a6254" prot="public" virt="non-virtual"><scope>titan23::DynamicWaveletMatrix</scope><name>rank</name></member>
+      <member refid="classtitan23_1_1DynamicWaveletMatrix_1adbc229b6cc004c1caf834d0929ee5d66" prot="public" virt="non-virtual"><scope>titan23::DynamicWaveletMatrix</scope><name>reserve</name></member>
+      <member refid="classtitan23_1_1DynamicWaveletMatrix_1a968554371dbfdce320a27c46533bbce0" prot="public" virt="non-virtual"><scope>titan23::DynamicWaveletMatrix</scope><name>select</name></member>
+      <member refid="classtitan23_1_1DynamicWaveletMatrix_1a41312ed00a495e2b00f2812e2214c7fb" prot="public" virt="non-virtual"><scope>titan23::DynamicWaveletMatrix</scope><name>set</name></member>
+      <member refid="classtitan23_1_1DynamicWaveletMatrix_1ae3aee7b82259578060ca69a45fab032a" prot="public" virt="non-virtual"><scope>titan23::DynamicWaveletMatrix</scope><name>topk</name></member>
+      <member refid="classtitan23_1_1DynamicWaveletMatrix_1aa64aa137d2f7c820613dd81d6d0c9c79" prot="public" virt="non-virtual"><scope>titan23::DynamicWaveletMatrix</scope><name>tovector</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

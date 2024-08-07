@@ -1,0 +1,154 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structtitan23_1_1dijkstra__path" kind="struct" language="C++" prot="public">
+    <compoundname>titan23::dijkstra_path</compoundname>
+    <templateparamlist>
+      <param>
+        <type>typename T</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structtitan23_1_1dijkstra__path_1a52b8925dc4f8dfd3b59e07f26e177927" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int titan23::dijkstra_path&lt; T &gt;::n</definition>
+        <argsstring></argsstring>
+        <name>n</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/dijkstra_path.cpp" line="10" column="9" bodyfile="titan_cpplib/graph/dijkstra_path.cpp" bodystart="10" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtitan23_1_1dijkstra__path_1ae439462f14154cc33ffe6beca0f2190b" prot="public" static="no" mutable="no">
+        <type>T</type>
+        <definition>T titan23::dijkstra_path&lt; T &gt;::INF</definition>
+        <argsstring></argsstring>
+        <name>INF</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/dijkstra_path.cpp" line="11" column="7" bodyfile="titan_cpplib/graph/dijkstra_path.cpp" bodystart="11" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtitan23_1_1dijkstra__path_1a78faae756d226e611664d64181ba7822" prot="public" static="no" mutable="no">
+        <type>vector&lt; int &gt;</type>
+        <definition>vector&lt;int&gt; titan23::dijkstra_path&lt; T &gt;::prev</definition>
+        <argsstring></argsstring>
+        <name>prev</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/dijkstra_path.cpp" line="12" column="12" bodyfile="titan_cpplib/graph/dijkstra_path.cpp" bodystart="12" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtitan23_1_1dijkstra__path_1a21b8d5c986f82b2487a9c207c100d1d8" prot="public" static="no" mutable="no">
+        <type>vector&lt; T &gt;</type>
+        <definition>vector&lt;T&gt; titan23::dijkstra_path&lt; T &gt;::dist</definition>
+        <argsstring></argsstring>
+        <name>dist</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/dijkstra_path.cpp" line="13" column="12" bodyfile="titan_cpplib/graph/dijkstra_path.cpp" bodystart="13" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structtitan23_1_1dijkstra__path_1a71821f8ed558c36572cfa1b0402338a0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::dijkstra_path&lt; T &gt;::dijkstra_path</definition>
+        <argsstring>()</argsstring>
+        <name>dijkstra_path</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/dijkstra_path.cpp" line="15" column="5" bodyfile="titan_cpplib/graph/dijkstra_path.cpp" bodystart="15" bodyend="15"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1dijkstra__path_1a00aca72037c35e46e2db954ac50c3dd7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::dijkstra_path&lt; T &gt;::dijkstra_path</definition>
+        <argsstring>(vector&lt; vector&lt; pair&lt; int, T &gt;&gt;&gt; &amp;G, int s, T INF)</argsstring>
+        <name>dijkstra_path</name>
+        <param>
+          <type>vector&lt; vector&lt; pair&lt; int, T &gt;&gt;&gt; &amp;</type>
+          <declname>G</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>s</declname>
+        </param>
+        <param>
+          <type>T</type>
+          <declname>INF</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/dijkstra_path.cpp" line="16" column="5" bodyfile="titan_cpplib/graph/dijkstra_path.cpp" bodystart="16" bodyend="33"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1dijkstra__path_1a9bff0cd607491a19d162034e9ac1e590" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T titan23::dijkstra_path&lt; T &gt;::get_dist</definition>
+        <argsstring>(int t) const</argsstring>
+        <name>get_dist</name>
+        <param>
+          <type>int</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/dijkstra_path.cpp" line="35" column="7" bodyfile="titan_cpplib/graph/dijkstra_path.cpp" bodystart="35" bodyend="35"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1dijkstra__path_1a7a6425799e456d2d20cf1fbf90b5151e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>vector&lt; int &gt;</type>
+        <definition>vector&lt;int&gt; titan23::dijkstra_path&lt; T &gt;::get_path</definition>
+        <argsstring>(int t) const</argsstring>
+        <name>get_path</name>
+        <param>
+          <type>int</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/dijkstra_path.cpp" line="37" column="12" bodyfile="titan_cpplib/graph/dijkstra_path.cpp" bodystart="37" bodyend="47"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="titan_cpplib/graph/dijkstra_path.cpp" line="9" column="3" bodyfile="titan_cpplib/graph/dijkstra_path.cpp" bodystart="9" bodyend="48"/>
+    <listofallmembers>
+      <member refid="structtitan23_1_1dijkstra__path_1a71821f8ed558c36572cfa1b0402338a0" prot="public" virt="non-virtual"><scope>titan23::dijkstra_path</scope><name>dijkstra_path</name></member>
+      <member refid="structtitan23_1_1dijkstra__path_1a00aca72037c35e46e2db954ac50c3dd7" prot="public" virt="non-virtual"><scope>titan23::dijkstra_path</scope><name>dijkstra_path</name></member>
+      <member refid="structtitan23_1_1dijkstra__path_1a21b8d5c986f82b2487a9c207c100d1d8" prot="public" virt="non-virtual"><scope>titan23::dijkstra_path</scope><name>dist</name></member>
+      <member refid="structtitan23_1_1dijkstra__path_1a9bff0cd607491a19d162034e9ac1e590" prot="public" virt="non-virtual"><scope>titan23::dijkstra_path</scope><name>get_dist</name></member>
+      <member refid="structtitan23_1_1dijkstra__path_1a7a6425799e456d2d20cf1fbf90b5151e" prot="public" virt="non-virtual"><scope>titan23::dijkstra_path</scope><name>get_path</name></member>
+      <member refid="structtitan23_1_1dijkstra__path_1ae439462f14154cc33ffe6beca0f2190b" prot="public" virt="non-virtual"><scope>titan23::dijkstra_path</scope><name>INF</name></member>
+      <member refid="structtitan23_1_1dijkstra__path_1a52b8925dc4f8dfd3b59e07f26e177927" prot="public" virt="non-virtual"><scope>titan23::dijkstra_path</scope><name>n</name></member>
+      <member refid="structtitan23_1_1dijkstra__path_1a78faae756d226e611664d64181ba7822" prot="public" virt="non-virtual"><scope>titan23::dijkstra_path</scope><name>prev</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

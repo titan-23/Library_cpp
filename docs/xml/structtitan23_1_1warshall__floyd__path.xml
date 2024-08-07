@@ -1,0 +1,158 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structtitan23_1_1warshall__floyd__path" kind="struct" language="C++" prot="public">
+    <compoundname>titan23::warshall_floyd_path</compoundname>
+    <templateparamlist>
+      <param>
+        <type>typename T</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="structtitan23_1_1warshall__floyd__path_1a077758674e0d9b6a9be0b67897a1137b" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int titan23::warshall_floyd_path&lt; T &gt;::n</definition>
+        <argsstring></argsstring>
+        <name>n</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/warshall_floyd_path.cpp" line="9" column="9" bodyfile="titan_cpplib/graph/warshall_floyd_path.cpp" bodystart="9" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtitan23_1_1warshall__floyd__path_1a95bfe3aff2d4fc9307a9aac49f3af9a0" prot="private" static="no" mutable="no">
+        <type>T</type>
+        <definition>T titan23::warshall_floyd_path&lt; T &gt;::INF</definition>
+        <argsstring></argsstring>
+        <name>INF</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/warshall_floyd_path.cpp" line="10" column="7" bodyfile="titan_cpplib/graph/warshall_floyd_path.cpp" bodystart="10" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtitan23_1_1warshall__floyd__path_1a59e53cf725ae37e24886feb46751df4d" prot="private" static="no" mutable="no">
+        <type>vector&lt; int &gt;</type>
+        <definition>vector&lt;int&gt; titan23::warshall_floyd_path&lt; T &gt;::nxt</definition>
+        <argsstring></argsstring>
+        <name>nxt</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/warshall_floyd_path.cpp" line="11" column="12" bodyfile="titan_cpplib/graph/warshall_floyd_path.cpp" bodystart="11" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtitan23_1_1warshall__floyd__path_1a1dc7a7f93059f1de5dc853bc4ad69298" prot="private" static="no" mutable="no">
+        <type>vector&lt; T &gt;</type>
+        <definition>vector&lt;T&gt; titan23::warshall_floyd_path&lt; T &gt;::dist</definition>
+        <argsstring></argsstring>
+        <name>dist</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/warshall_floyd_path.cpp" line="12" column="12" bodyfile="titan_cpplib/graph/warshall_floyd_path.cpp" bodystart="12" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structtitan23_1_1warshall__floyd__path_1aa6c10ef39eaa22d4f3a69e8c27499d28" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::warshall_floyd_path&lt; T &gt;::warshall_floyd_path</definition>
+        <argsstring>()</argsstring>
+        <name>warshall_floyd_path</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/warshall_floyd_path.cpp" line="15" column="5" bodyfile="titan_cpplib/graph/warshall_floyd_path.cpp" bodystart="15" bodyend="15"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1warshall__floyd__path_1aeddccbf9af9443bff00284e31d6ef2c2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::warshall_floyd_path&lt; T &gt;::warshall_floyd_path</definition>
+        <argsstring>(const vector&lt; vector&lt; pair&lt; int, T &gt;&gt;&gt; &amp;G, const T INF)</argsstring>
+        <name>warshall_floyd_path</name>
+        <param>
+          <type>const vector&lt; vector&lt; pair&lt; int, T &gt;&gt;&gt; &amp;</type>
+          <declname>G</declname>
+        </param>
+        <param>
+          <type>const T</type>
+          <declname>INF</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/warshall_floyd_path.cpp" line="18" column="5" bodyfile="titan_cpplib/graph/warshall_floyd_path.cpp" bodystart="18" bodyend="42"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1warshall__floyd__path_1a0db2d51ad5a067588a4a6bb4b9334d2c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T titan23::warshall_floyd_path&lt; T &gt;::get_dist</definition>
+        <argsstring>(const int s, const int t) const</argsstring>
+        <name>get_dist</name>
+        <param>
+          <type>const int</type>
+          <declname>s</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/warshall_floyd_path.cpp" line="45" column="7" bodyfile="titan_cpplib/graph/warshall_floyd_path.cpp" bodystart="45" bodyend="47"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1warshall__floyd__path_1a7bdfd432482360d8bf438577cc08ef8c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>vector&lt; int &gt;</type>
+        <definition>vector&lt;int&gt; titan23::warshall_floyd_path&lt; T &gt;::get_path</definition>
+        <argsstring>(int s, int t) const</argsstring>
+        <name>get_path</name>
+        <param>
+          <type>int</type>
+          <declname>s</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/warshall_floyd_path.cpp" line="50" column="12" bodyfile="titan_cpplib/graph/warshall_floyd_path.cpp" bodystart="50" bodyend="58"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="titan_cpplib/graph/warshall_floyd_path.cpp" line="7" column="3" bodyfile="titan_cpplib/graph/warshall_floyd_path.cpp" bodystart="7" bodyend="59"/>
+    <listofallmembers>
+      <member refid="structtitan23_1_1warshall__floyd__path_1a1dc7a7f93059f1de5dc853bc4ad69298" prot="private" virt="non-virtual"><scope>titan23::warshall_floyd_path</scope><name>dist</name></member>
+      <member refid="structtitan23_1_1warshall__floyd__path_1a0db2d51ad5a067588a4a6bb4b9334d2c" prot="public" virt="non-virtual"><scope>titan23::warshall_floyd_path</scope><name>get_dist</name></member>
+      <member refid="structtitan23_1_1warshall__floyd__path_1a7bdfd432482360d8bf438577cc08ef8c" prot="public" virt="non-virtual"><scope>titan23::warshall_floyd_path</scope><name>get_path</name></member>
+      <member refid="structtitan23_1_1warshall__floyd__path_1a95bfe3aff2d4fc9307a9aac49f3af9a0" prot="private" virt="non-virtual"><scope>titan23::warshall_floyd_path</scope><name>INF</name></member>
+      <member refid="structtitan23_1_1warshall__floyd__path_1a077758674e0d9b6a9be0b67897a1137b" prot="private" virt="non-virtual"><scope>titan23::warshall_floyd_path</scope><name>n</name></member>
+      <member refid="structtitan23_1_1warshall__floyd__path_1a59e53cf725ae37e24886feb46751df4d" prot="private" virt="non-virtual"><scope>titan23::warshall_floyd_path</scope><name>nxt</name></member>
+      <member refid="structtitan23_1_1warshall__floyd__path_1aa6c10ef39eaa22d4f3a69e8c27499d28" prot="public" virt="non-virtual"><scope>titan23::warshall_floyd_path</scope><name>warshall_floyd_path</name></member>
+      <member refid="structtitan23_1_1warshall__floyd__path_1aeddccbf9af9443bff00284e31d6ef2c2" prot="public" virt="non-virtual"><scope>titan23::warshall_floyd_path</scope><name>warshall_floyd_path</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,200 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structtitan23_1_1HLDSegmentTree" kind="struct" language="C++" prot="public">
+    <compoundname>titan23::HLDSegmentTree</compoundname>
+    <templateparamlist>
+      <param>
+        <type>class T</type>
+      </param>
+      <param>
+        <type>T(*)(T, T)</type>
+        <declname>op</declname>
+        <defname>op</defname>
+      </param>
+      <param>
+        <type>T(*)()</type>
+        <declname>e</declname>
+        <defname>e</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structtitan23_1_1HLDSegmentTree_1a9e991172237ba339e81c483c94f19f78" prot="public" static="no" mutable="no">
+        <type><ref refid="structtitan23_1_1HLD" kindref="compound">titan23::HLD</ref></type>
+        <definition>titan23::HLD titan23::HLDSegmentTree&lt; T, op, e &gt;::hld</definition>
+        <argsstring></argsstring>
+        <name>hld</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/hld_segment_tree.cpp" line="12" column="18" bodyfile="titan_cpplib/graph/hld_segment_tree.cpp" bodystart="12" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtitan23_1_1HLDSegmentTree_1a2f99b6fd857d1ffc519df1afb1983ac9" prot="public" static="no" mutable="no">
+        <type><ref refid="structtitan23_1_1SegmentTree" kindref="compound">titan23::SegmentTree</ref>&lt; T, op, e &gt;</type>
+        <definition>titan23::SegmentTree&lt;T, op, e&gt; titan23::HLDSegmentTree&lt; T, op, e &gt;::seg</definition>
+        <argsstring></argsstring>
+        <name>seg</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/hld_segment_tree.cpp" line="13" column="26" bodyfile="titan_cpplib/graph/hld_segment_tree.cpp" bodystart="13" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structtitan23_1_1HLDSegmentTree_1a52c5751ff848eb215e55c8ca2c9d4237" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::HLDSegmentTree&lt; T, op, e &gt;::HLDSegmentTree</definition>
+        <argsstring>(const titan23::HLD &amp;hld)</argsstring>
+        <name>HLDSegmentTree</name>
+        <param>
+          <type>const <ref refid="structtitan23_1_1HLD" kindref="compound">titan23::HLD</ref> &amp;</type>
+          <declname>hld</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/hld_segment_tree.cpp" line="15" column="5" bodyfile="titan_cpplib/graph/hld_segment_tree.cpp" bodystart="15" bodyend="18"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1HLDSegmentTree_1aec53af51dd366338de64e082f9c992f8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::HLDSegmentTree&lt; T, op, e &gt;::HLDSegmentTree</definition>
+        <argsstring>(const titan23::HLD &amp;hld, constvector&lt; T &gt; &amp;a)</argsstring>
+        <name>HLDSegmentTree</name>
+        <param>
+          <type>const <ref refid="structtitan23_1_1HLD" kindref="compound">titan23::HLD</ref> &amp;</type>
+          <declname>hld</declname>
+        </param>
+        <param>
+          <type>constvector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/hld_segment_tree.cpp" line="20" column="5" bodyfile="titan_cpplib/graph/hld_segment_tree.cpp" bodystart="20" bodyend="23"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1HLDSegmentTree_1a6b68c4cf878416e7ae21580f9a0796aa" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T titan23::HLDSegmentTree&lt; T, op, e &gt;::path_prod</definition>
+        <argsstring>(int u, int v) const</argsstring>
+        <name>path_prod</name>
+        <param>
+          <type>int</type>
+          <declname>u</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/hld_segment_tree.cpp" line="25" column="7" bodyfile="titan_cpplib/graph/hld_segment_tree.cpp" bodystart="25" bodyend="38"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1HLDSegmentTree_1a9fc2fd79b4380f32843ba25ad98b2a54" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T titan23::HLDSegmentTree&lt; T, op, e &gt;::get</definition>
+        <argsstring>(const int k) const</argsstring>
+        <name>get</name>
+        <param>
+          <type>const int</type>
+          <declname>k</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/hld_segment_tree.cpp" line="40" column="7" bodyfile="titan_cpplib/graph/hld_segment_tree.cpp" bodystart="40" bodyend="42"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1HLDSegmentTree_1a58d615e822081f63575bae71c59e8f5f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::HLDSegmentTree&lt; T, op, e &gt;::set</definition>
+        <argsstring>(const int k, const T v)</argsstring>
+        <name>set</name>
+        <param>
+          <type>const int</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>const T</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/hld_segment_tree.cpp" line="44" column="10" bodyfile="titan_cpplib/graph/hld_segment_tree.cpp" bodystart="44" bodyend="46"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1HLDSegmentTree_1aa0293295506cd28d17fc3563c92390fb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T titan23::HLDSegmentTree&lt; T, op, e &gt;::subtree_prod</definition>
+        <argsstring>(const int v) const</argsstring>
+        <name>subtree_prod</name>
+        <param>
+          <type>const int</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/hld_segment_tree.cpp" line="48" column="7" bodyfile="titan_cpplib/graph/hld_segment_tree.cpp" bodystart="48" bodyend="50"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>titan23::SegmentTree&lt; T, op, e &gt;</label>
+        <link refid="structtitan23_1_1SegmentTree"/>
+      </node>
+      <node id="1">
+        <label>titan23::HLDSegmentTree&lt; T, op, e &gt;</label>
+        <link refid="structtitan23_1_1HLDSegmentTree"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>seg</edgelabel>
+        </childnode>
+        <childnode refid="3" relation="usage">
+          <edgelabel>hld</edgelabel>
+        </childnode>
+      </node>
+      <node id="3">
+        <label>titan23::HLD</label>
+        <link refid="structtitan23_1_1HLD"/>
+      </node>
+    </collaborationgraph>
+    <location file="titan_cpplib/graph/hld_segment_tree.cpp" line="11" column="3" bodyfile="titan_cpplib/graph/hld_segment_tree.cpp" bodystart="11" bodyend="51"/>
+    <listofallmembers>
+      <member refid="structtitan23_1_1HLDSegmentTree_1a9fc2fd79b4380f32843ba25ad98b2a54" prot="public" virt="non-virtual"><scope>titan23::HLDSegmentTree</scope><name>get</name></member>
+      <member refid="structtitan23_1_1HLDSegmentTree_1a9e991172237ba339e81c483c94f19f78" prot="public" virt="non-virtual"><scope>titan23::HLDSegmentTree</scope><name>hld</name></member>
+      <member refid="structtitan23_1_1HLDSegmentTree_1a52c5751ff848eb215e55c8ca2c9d4237" prot="public" virt="non-virtual"><scope>titan23::HLDSegmentTree</scope><name>HLDSegmentTree</name></member>
+      <member refid="structtitan23_1_1HLDSegmentTree_1aec53af51dd366338de64e082f9c992f8" prot="public" virt="non-virtual"><scope>titan23::HLDSegmentTree</scope><name>HLDSegmentTree</name></member>
+      <member refid="structtitan23_1_1HLDSegmentTree_1a6b68c4cf878416e7ae21580f9a0796aa" prot="public" virt="non-virtual"><scope>titan23::HLDSegmentTree</scope><name>path_prod</name></member>
+      <member refid="structtitan23_1_1HLDSegmentTree_1a2f99b6fd857d1ffc519df1afb1983ac9" prot="public" virt="non-virtual"><scope>titan23::HLDSegmentTree</scope><name>seg</name></member>
+      <member refid="structtitan23_1_1HLDSegmentTree_1a58d615e822081f63575bae71c59e8f5f" prot="public" virt="non-virtual"><scope>titan23::HLDSegmentTree</scope><name>set</name></member>
+      <member refid="structtitan23_1_1HLDSegmentTree_1aa0293295506cd28d17fc3563c92390fb" prot="public" virt="non-virtual"><scope>titan23::HLDSegmentTree</scope><name>subtree_prod</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

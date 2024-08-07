@@ -1,0 +1,190 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classtitan23_1_1CumulativeSum" kind="class" language="C++" prot="public">
+    <compoundname>titan23::CumulativeSum</compoundname>
+    <templateparamlist>
+      <param>
+        <type>typename T</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classtitan23_1_1CumulativeSum_1a08617ffbd37ac1061725b15dad0e865b" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int titan23::CumulativeSum&lt; T &gt;::n</definition>
+        <argsstring></argsstring>
+        <name>n</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/cumulative_sum.cpp" line="10" column="9" bodyfile="titan_cpplib/data_structures/cumulative_sum.cpp" bodystart="10" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1CumulativeSum_1a6af3dd06288b281a2bc0f37e170d1ab2" prot="private" static="no" mutable="no">
+        <type>vector&lt; T &gt;</type>
+        <definition>vector&lt;T&gt; titan23::CumulativeSum&lt; T &gt;::acc</definition>
+        <argsstring></argsstring>
+        <name>acc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/cumulative_sum.cpp" line="11" column="12" bodyfile="titan_cpplib/data_structures/cumulative_sum.cpp" bodystart="11" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classtitan23_1_1CumulativeSum_1ae93b4c3409de384ae2fdfec825797451" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::CumulativeSum&lt; T &gt;::CumulativeSum</definition>
+        <argsstring>()</argsstring>
+        <name>CumulativeSum</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/cumulative_sum.cpp" line="14" column="5" bodyfile="titan_cpplib/data_structures/cumulative_sum.cpp" bodystart="14" bodyend="14"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1CumulativeSum_1a606f3a2cf4cef31ad24e429a25838012" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::CumulativeSum&lt; T &gt;::CumulativeSum</definition>
+        <argsstring>(vector&lt; T &gt; &amp;a, T e)</argsstring>
+        <name>CumulativeSum</name>
+        <param>
+          <type>vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>T</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/cumulative_sum.cpp" line="15" column="5" bodyfile="titan_cpplib/data_structures/cumulative_sum.cpp" bodystart="15" bodyend="19"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1CumulativeSum_1a5fa037f2920ab329f1c8668598363b52" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T titan23::CumulativeSum&lt; T &gt;::pref</definition>
+        <argsstring>(const int r) const</argsstring>
+        <name>pref</name>
+        <param>
+          <type>const int</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/cumulative_sum.cpp" line="21" column="7" bodyfile="titan_cpplib/data_structures/cumulative_sum.cpp" bodystart="21" bodyend="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1CumulativeSum_1a5bc1d4a5dea0cfe6a4c026f1fccfa8ef" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T titan23::CumulativeSum&lt; T &gt;::all_sum</definition>
+        <argsstring>() const</argsstring>
+        <name>all_sum</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/cumulative_sum.cpp" line="25" column="7" bodyfile="titan_cpplib/data_structures/cumulative_sum.cpp" bodystart="25" bodyend="27"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1CumulativeSum_1ac12d01787658e6e91fa3d471eae03864" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T titan23::CumulativeSum&lt; T &gt;::sum</definition>
+        <argsstring>(const int l, const int r) const</argsstring>
+        <name>sum</name>
+        <param>
+          <type>const int</type>
+          <declname>l</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/cumulative_sum.cpp" line="29" column="7" bodyfile="titan_cpplib/data_structures/cumulative_sum.cpp" bodystart="29" bodyend="31"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1CumulativeSum_1a9dd78ace7793f96da84a34f8d79fa8bf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T titan23::CumulativeSum&lt; T &gt;::prod</definition>
+        <argsstring>(const int l, const int r) const</argsstring>
+        <name>prod</name>
+        <param>
+          <type>const int</type>
+          <declname>l</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/cumulative_sum.cpp" line="33" column="7" bodyfile="titan_cpplib/data_structures/cumulative_sum.cpp" bodystart="33" bodyend="35"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1CumulativeSum_1a9844d6f91be1582781dc7af97b57b77a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T titan23::CumulativeSum&lt; T &gt;::all_prod</definition>
+        <argsstring>() const</argsstring>
+        <name>all_prod</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/cumulative_sum.cpp" line="37" column="7" bodyfile="titan_cpplib/data_structures/cumulative_sum.cpp" bodystart="37" bodyend="39"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1CumulativeSum_1af5d879656e99410be8f1ac3a6159bfb7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::CumulativeSum&lt; T &gt;::print</definition>
+        <argsstring>() const</argsstring>
+        <name>print</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/cumulative_sum.cpp" line="41" column="10" bodyfile="titan_cpplib/data_structures/cumulative_sum.cpp" bodystart="41" bodyend="48"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="titan_cpplib/data_structures/cumulative_sum.cpp" line="8" column="3" bodyfile="titan_cpplib/data_structures/cumulative_sum.cpp" bodystart="8" bodyend="49"/>
+    <listofallmembers>
+      <member refid="classtitan23_1_1CumulativeSum_1a6af3dd06288b281a2bc0f37e170d1ab2" prot="private" virt="non-virtual"><scope>titan23::CumulativeSum</scope><name>acc</name></member>
+      <member refid="classtitan23_1_1CumulativeSum_1a9844d6f91be1582781dc7af97b57b77a" prot="public" virt="non-virtual"><scope>titan23::CumulativeSum</scope><name>all_prod</name></member>
+      <member refid="classtitan23_1_1CumulativeSum_1a5bc1d4a5dea0cfe6a4c026f1fccfa8ef" prot="public" virt="non-virtual"><scope>titan23::CumulativeSum</scope><name>all_sum</name></member>
+      <member refid="classtitan23_1_1CumulativeSum_1ae93b4c3409de384ae2fdfec825797451" prot="public" virt="non-virtual"><scope>titan23::CumulativeSum</scope><name>CumulativeSum</name></member>
+      <member refid="classtitan23_1_1CumulativeSum_1a606f3a2cf4cef31ad24e429a25838012" prot="public" virt="non-virtual"><scope>titan23::CumulativeSum</scope><name>CumulativeSum</name></member>
+      <member refid="classtitan23_1_1CumulativeSum_1a08617ffbd37ac1061725b15dad0e865b" prot="private" virt="non-virtual"><scope>titan23::CumulativeSum</scope><name>n</name></member>
+      <member refid="classtitan23_1_1CumulativeSum_1a5fa037f2920ab329f1c8668598363b52" prot="public" virt="non-virtual"><scope>titan23::CumulativeSum</scope><name>pref</name></member>
+      <member refid="classtitan23_1_1CumulativeSum_1af5d879656e99410be8f1ac3a6159bfb7" prot="public" virt="non-virtual"><scope>titan23::CumulativeSum</scope><name>print</name></member>
+      <member refid="classtitan23_1_1CumulativeSum_1a9dd78ace7793f96da84a34f8d79fa8bf" prot="public" virt="non-virtual"><scope>titan23::CumulativeSum</scope><name>prod</name></member>
+      <member refid="classtitan23_1_1CumulativeSum_1ac12d01787658e6e91fa3d471eae03864" prot="public" virt="non-virtual"><scope>titan23::CumulativeSum</scope><name>sum</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

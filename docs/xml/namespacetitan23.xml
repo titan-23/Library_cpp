@@ -1,0 +1,162 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="namespacetitan23" kind="namespace" language="C++">
+    <compoundname>titan23</compoundname>
+    <innerclass refid="classtitan23_1_1Kmeans" prot="public">titan23::Kmeans</innerclass>
+    <innerclass refid="classtitan23_1_1StatePool" prot="public">titan23::StatePool</innerclass>
+    <innerclass refid="classtitan23_1_1Timer" prot="public">titan23::Timer</innerclass>
+    <innerclass refid="structtitan23_1_1Mo" prot="public">titan23::Mo</innerclass>
+    <innerclass refid="structtitan23_1_1Random" prot="public">titan23::Random</innerclass>
+    <innerclass refid="structtitan23_1_1RandomTree" prot="public">titan23::RandomTree</innerclass>
+    <innerclass refid="structtitan23_1_1Zaatsu" prot="public">titan23::Zaatsu</innerclass>
+    <innerclass refid="classtitan23_1_1Array" prot="public">titan23::Array</innerclass>
+    <innerclass refid="classtitan23_1_1AVLTreeBitVector" prot="public">titan23::AVLTreeBitVector</innerclass>
+    <innerclass refid="classtitan23_1_1AVLTreeMultiset" prot="public">titan23::AVLTreeMultiset</innerclass>
+    <innerclass refid="classtitan23_1_1AVLTreeSet" prot="public">titan23::AVLTreeSet</innerclass>
+    <innerclass refid="classtitan23_1_1BBSTNode" prot="public">titan23::BBSTNode</innerclass>
+    <innerclass refid="classtitan23_1_1BinaryTrieMultiset" prot="public">titan23::BinaryTrieMultiset</innerclass>
+    <innerclass refid="structtitan23_1_1BinaryTrieSet" prot="public">titan23::BinaryTrieSet</innerclass>
+    <innerclass refid="classtitan23_1_1BitVector" prot="public">titan23::BitVector</innerclass>
+    <innerclass refid="classtitan23_1_1CumulativeSum" prot="public">titan23::CumulativeSum</innerclass>
+    <innerclass refid="classtitan23_1_1CumulativeSum2D" prot="public">titan23::CumulativeSum2D</innerclass>
+    <innerclass refid="structtitan23_1_1Deque" prot="public">titan23::Deque</innerclass>
+    <innerclass refid="classtitan23_1_1DualCommutativeSegmentTree" prot="public">titan23::DualCommutativeSegmentTree</innerclass>
+    <innerclass refid="structtitan23_1_1DualSegmentTree" prot="public">titan23::DualSegmentTree</innerclass>
+    <innerclass refid="classtitan23_1_1DynamicBitVector" prot="public">titan23::DynamicBitVector</innerclass>
+    <innerclass refid="structtitan23_1_1DynamicFenwickTree2D" prot="public">titan23::DynamicFenwickTree2D</innerclass>
+    <innerclass refid="classtitan23_1_1DynamicLazySegmentTree" prot="public">titan23::DynamicLazySegmentTree</innerclass>
+    <innerclass refid="classtitan23_1_1DynamicSegmentTree" prot="public">titan23::DynamicSegmentTree</innerclass>
+    <innerclass refid="classtitan23_1_1DynamicWaveletMatrix" prot="public">titan23::DynamicWaveletMatrix</innerclass>
+    <innerclass refid="classtitan23_1_1DynamicWaveletTree" prot="public">titan23::DynamicWaveletTree</innerclass>
+    <innerclass refid="structtitan23_1_1EulerTourTree" prot="public">titan23::EulerTourTree</innerclass>
+    <innerclass refid="structtitan23_1_1FenwickTree" prot="public">titan23::FenwickTree</innerclass>
+    <innerclass refid="structtitan23_1_1FenwickTree2D" prot="public">titan23::FenwickTree2D</innerclass>
+    <innerclass refid="classtitan23_1_1HashDict" prot="public">titan23::HashDict</innerclass>
+    <innerclass refid="classtitan23_1_1LazyWBTree" prot="public">titan23::LazyWBTree</innerclass>
+    <innerclass refid="classtitan23_1_1LinkCutTree" prot="public">titan23::LinkCutTree</innerclass>
+    <innerclass refid="classtitan23_1_1MinHeap" prot="public">titan23::MinHeap</innerclass>
+    <innerclass refid="classtitan23_1_1OfflineDynamicConnectivity" prot="public">titan23::OfflineDynamicConnectivity</innerclass>
+    <innerclass refid="classtitan23_1_1OfflineDynamicConnectivitySum" prot="public">titan23::OfflineDynamicConnectivitySum</innerclass>
+    <innerclass refid="classtitan23_1_1PersistentLazyWBTree" prot="public">titan23::PersistentLazyWBTree</innerclass>
+    <innerclass refid="classtitan23_1_1PersistentStack" prot="public">titan23::PersistentStack</innerclass>
+    <innerclass refid="structtitan23_1_1SegmentTree" prot="public">titan23::SegmentTree</innerclass>
+    <innerclass refid="structtitan23_1_1SparseTable" prot="public">titan23::SparseTable</innerclass>
+    <innerclass refid="structtitan23_1_1StaticMultiset" prot="public">titan23::StaticMultiset</innerclass>
+    <innerclass refid="structtitan23_1_1StaticSet" prot="public">titan23::StaticSet</innerclass>
+    <innerclass refid="classtitan23_1_1UndoableUnionFind" prot="public">titan23::UndoableUnionFind</innerclass>
+    <innerclass refid="classtitan23_1_1UndoableUnionFindSum" prot="public">titan23::UndoableUnionFindSum</innerclass>
+    <innerclass refid="structtitan23_1_1UnionFind" prot="public">titan23::UnionFind</innerclass>
+    <innerclass refid="classtitan23_1_1WaveletMatrix" prot="public">titan23::WaveletMatrix</innerclass>
+    <innerclass refid="classtitan23_1_1WaveletMatrixCumulativeSum" prot="public">titan23::WaveletMatrixCumulativeSum</innerclass>
+    <innerclass refid="structtitan23_1_1dijkstra__path" prot="public">titan23::dijkstra_path</innerclass>
+    <innerclass refid="structtitan23_1_1Graph" prot="public">titan23::Graph</innerclass>
+    <innerclass refid="structtitan23_1_1HLD" prot="public">titan23::HLD</innerclass>
+    <innerclass refid="structtitan23_1_1HLDSegmentTree" prot="public">titan23::HLDSegmentTree</innerclass>
+    <innerclass refid="structtitan23_1_1LCA" prot="public">titan23::LCA</innerclass>
+    <innerclass refid="classtitan23_1_1MaximumIndependentSet" prot="public">titan23::MaximumIndependentSet</innerclass>
+    <innerclass refid="classtitan23_1_1MinimumSteinerTree" prot="public">titan23::MinimumSteinerTree</innerclass>
+    <innerclass refid="structtitan23_1_1warshall__floyd__path" prot="public">titan23::warshall_floyd_path</innerclass>
+    <innerclass refid="structtitan23_1_1Osa__k" prot="public">titan23::Osa_k</innerclass>
+    <innerclass refid="classtitan23_1_1HashStringBase" prot="public">titan23::HashStringBase</innerclass>
+    <innerclass refid="classtitan23_1_1HashString" prot="public">titan23::HashString</innerclass>
+    <innernamespace refid="namespacetitan23_1_1beam__search">titan23::beam_search</innernamespace>
+    <innernamespace refid="namespacetitan23_1_1sa">titan23::sa</innernamespace>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="rle_8cpp_1aee6946adffc59c5143383e161388ec05" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>vector&lt; pair&lt; T, int &gt; &gt;</type>
+        <definition>vector&lt;pair&lt;T, int&gt; &gt; titan23::rle</definition>
+        <argsstring>(vector&lt; T &gt; &amp;a)</argsstring>
+        <name>rle</name>
+        <param>
+          <type>vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/algorithm/rle.cpp" line="8" column="10" bodyfile="titan_cpplib/algorithm/rle.cpp" bodystart="8" bodyend="22"/>
+      </memberdef>
+      <memberdef kind="function" id="dijkstra_8cpp_1ab251234ad8d8ec46f738e259a2c45f11" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>vector&lt; T &gt;</type>
+        <definition>vector&lt;T&gt; titan23::dijkstra</definition>
+        <argsstring>(const vector&lt; vector&lt; pair&lt; int, T &gt;&gt;&gt; &amp;G, const int start, const T INF)</argsstring>
+        <name>dijkstra</name>
+        <param>
+          <type>const vector&lt; vector&lt; pair&lt; int, T &gt;&gt;&gt; &amp;</type>
+          <declname>G</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>start</declname>
+        </param>
+        <param>
+          <type>const T</type>
+          <declname>INF</declname>
+        </param>
+        <briefdescription>
+<para>dijkstra </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>weight type </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>G</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>weighted graph </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>start</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>start </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>INF</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>inf </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>vector&lt;T&gt; dist from start </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/dijkstra.cpp" line="17" column="10" bodyfile="titan_cpplib/graph/dijkstra.cpp" bodystart="17" bodyend="36"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="titan_cpplib/ahc/beam_search/action.cpp" line="6" column="1"/>
+  </compounddef>
+</doxygen>

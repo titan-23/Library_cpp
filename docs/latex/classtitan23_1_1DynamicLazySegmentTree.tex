@@ -1,0 +1,73 @@
+\hypertarget{classtitan23_1_1DynamicLazySegmentTree}{}\doxysection{titan23\+::Dynamic\+Lazy\+Segment\+Tree$<$ Index\+Type, T, op, e, F, mapping, composition, id, pow $>$ Class Template Reference}
+\label{classtitan23_1_1DynamicLazySegmentTree}\index{titan23::DynamicLazySegmentTree$<$ IndexType, T, op, e, F, mapping, composition, id, pow $>$@{titan23::DynamicLazySegmentTree$<$ IndexType, T, op, e, F, mapping, composition, id, pow $>$}}
+
+
+必要なところだけ作る遅延セグ木  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classtitan23_1_1DynamicLazySegmentTree_ac731f105e49158960c839b7b08cab6c8}\label{classtitan23_1_1DynamicLazySegmentTree_ac731f105e49158960c839b7b08cab6c8}} 
+{\bfseries Dynamic\+Lazy\+Segment\+Tree} (const Index\+Type u\+\_\+)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1DynamicLazySegmentTree_aa2effc7768b5a0d0756e1a5ae193d9e1}\label{classtitan23_1_1DynamicLazySegmentTree_aa2effc7768b5a0d0756e1a5ae193d9e1}} 
+{\bfseries Dynamic\+Lazy\+Segment\+Tree} (const Index\+Type u\+\_\+, const T init)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1DynamicLazySegmentTree_ae1495e133409e2bf892949a32c4b5c3f}\label{classtitan23_1_1DynamicLazySegmentTree_ae1495e133409e2bf892949a32c4b5c3f}} 
+T {\bfseries prod} (Index\+Type l, Index\+Type r)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1DynamicLazySegmentTree_a8a9d9bb560f5079aabc97246d97472a9}\label{classtitan23_1_1DynamicLazySegmentTree_a8a9d9bb560f5079aabc97246d97472a9}} 
+void {\bfseries apply} (Index\+Type l, Index\+Type r, F f)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1DynamicLazySegmentTree_ade68f18b226ef8fbd3bf3945c8a6d887}\label{classtitan23_1_1DynamicLazySegmentTree_ade68f18b226ef8fbd3bf3945c8a6d887}} 
+T {\bfseries get} (Index\+Type k)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1DynamicLazySegmentTree_a536dbb44d97de5ebecf0f80b06508337}\label{classtitan23_1_1DynamicLazySegmentTree_a536dbb44d97de5ebecf0f80b06508337}} 
+void {\bfseries set} (Index\+Type k, T val)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1DynamicLazySegmentTree_a45950f749b0699d98f134a32487326b9}\label{classtitan23_1_1DynamicLazySegmentTree_a45950f749b0699d98f134a32487326b9}} 
+void {\bfseries print} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$class Index\+Type, class T, T($\ast$)(\+T, T) op, T($\ast$)() e, class F, T($\ast$)(\+F, T) mapping, F($\ast$)(\+F, F) composition, F($\ast$)() id, T($\ast$)(\+T, Index\+Type) pow$>$\newline
+class titan23\+::\+Dynamic\+Lazy\+Segment\+Tree$<$ Index\+Type, T, op, e, F, mapping, composition, id, pow $>$}
+
+必要なところだけ作る遅延セグ木 
+
+\mbox{[}0, u)の列を管理
+
+
+\begin{DoxyItemize}
+\item apply / set \+: O(logu) time, O(logu) space
+\item prod / get \+: O(logu) time, O(1) space
+\end{DoxyItemize}
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Index\+Type} & 添え字を表すインデックス long long を推奨 和がオーバーフローしないことが条件かな \\
+\hline
+{\em T} & モノイドの型 \\
+\hline
+{\em ($\ast$op)(T,T)} & モノイドの2項演算 \\
+\hline
+{\em ($\ast$e)()} & モノイドの単位元 \\
+\hline
+{\em F} & 作用素の型 \\
+\hline
+{\em ($\ast$mapping)(F,T)} & 遅延セグ木のアレ \\
+\hline
+{\em ($\ast$composition)(F,F)} & 遅延セグ木のアレ \\
+\hline
+{\em ($\ast$id)()} & 遅延セグ木のアレ \\
+\hline
+{\em ($\ast$pow)(T,Index\+Type)} & T=op(\+T,\+T)をk回繰り返した結果を返す関数 \\
+\hline
+\end{DoxyTemplParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+titan\+\_\+cpplib/data\+\_\+structures/dynamic\+\_\+lazy\+\_\+segment\+\_\+tree.\+cpp\end{DoxyCompactItemize}

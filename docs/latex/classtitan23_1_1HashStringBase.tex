@@ -1,0 +1,73 @@
+\hypertarget{classtitan23_1_1HashStringBase}{}\doxysection{titan23\+::Hash\+String\+Base Class Reference}
+\label{classtitan23_1_1HashStringBase}\index{titan23::HashStringBase@{titan23::HashStringBase}}
+\doxysubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classtitan23_1_1HashStringBase_a48cdd8e230d535984107a03d77ac9129}\label{classtitan23_1_1HashStringBase_a48cdd8e230d535984107a03d77ac9129}} 
+using {\bfseries u64} = unsigned long long
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classtitan23_1_1HashStringBase_a1dc1c94b8dbc89474111a648b51fb09b}\label{classtitan23_1_1HashStringBase_a1dc1c94b8dbc89474111a648b51fb09b}} 
+u64 {\bfseries pow\+\_\+mod} (u64 a, u64 b, const u64 mod)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1HashStringBase_a3c5984fcd38991814b838f43f0d295f8}\label{classtitan23_1_1HashStringBase_a3c5984fcd38991814b838f43f0d295f8}} 
+{\bfseries Hash\+String\+Base} (int n=0)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1HashStringBase_a570e695598fb538fe5e10d2567165fa3}\label{classtitan23_1_1HashStringBase_a570e695598fb538fe5e10d2567165fa3}} 
+void {\bfseries extend} (const int cap)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1HashStringBase_a17a33c34c0c1d1290dcc49f6f7a02f75}\label{classtitan23_1_1HashStringBase_a17a33c34c0c1d1290dcc49f6f7a02f75}} 
+int {\bfseries get\+\_\+cap} () const
+\item 
+\mbox{\Hypertarget{classtitan23_1_1HashStringBase_a261eff8017f0434c3dfdc7ce0c9151a8}\label{classtitan23_1_1HashStringBase_a261eff8017f0434c3dfdc7ce0c9151a8}} 
+u64 {\bfseries unite} (u64 h1, u64 h2, int k)
+\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classtitan23_1_1HashStringBase_a0565706e90af3ec0bd66bb79887f4910}\label{classtitan23_1_1HashStringBase_a0565706e90af3ec0bd66bb79887f4910}} 
+static u64 {\bfseries get\+\_\+mul} (u64 a, u64 b)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1HashStringBase_a3fd647a32b437bfcb4e41b7e90d2018c}\label{classtitan23_1_1HashStringBase_a3fd647a32b437bfcb4e41b7e90d2018c}} 
+static u64 {\bfseries get\+\_\+mod} (u64 x)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classtitan23_1_1HashStringBase_adc3c3f9b3518be9849b89bcb6712218c}\label{classtitan23_1_1HashStringBase_adc3c3f9b3518be9849b89bcb6712218c}} 
+int {\bfseries n}
+\item 
+\mbox{\Hypertarget{classtitan23_1_1HashStringBase_a2d2b9070c1db7589a18063e41742ae3c}\label{classtitan23_1_1HashStringBase_a2d2b9070c1db7589a18063e41742ae3c}} 
+u64 {\bfseries base}
+\item 
+\mbox{\Hypertarget{classtitan23_1_1HashStringBase_ae7d4fe365670bf1402cd8e8b2629d445}\label{classtitan23_1_1HashStringBase_ae7d4fe365670bf1402cd8e8b2629d445}} 
+u64 {\bfseries invpow}
+\item 
+\mbox{\Hypertarget{classtitan23_1_1HashStringBase_a44b6180db6c9a9c6cad02a093b09265e}\label{classtitan23_1_1HashStringBase_a44b6180db6c9a9c6cad02a093b09265e}} 
+vector$<$ u64 $>$ {\bfseries powb}
+\item 
+\mbox{\Hypertarget{classtitan23_1_1HashStringBase_a8b289f5f048854f14692bd5e97c91359}\label{classtitan23_1_1HashStringBase_a8b289f5f048854f14692bd5e97c91359}} 
+vector$<$ u64 $>$ {\bfseries invb}
+\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classtitan23_1_1HashStringBase_a7dabece4161424f65151fd6939d785be}\label{classtitan23_1_1HashStringBase_a7dabece4161424f65151fd6939d785be}} 
+static constexpr const u64 {\bfseries MASK31} = (1ULL $<$$<$ 31) -\/ 1
+\item 
+\mbox{\Hypertarget{classtitan23_1_1HashStringBase_a50bf387004d8f9afc8dac945fff1b5b9}\label{classtitan23_1_1HashStringBase_a50bf387004d8f9afc8dac945fff1b5b9}} 
+static constexpr const u64 {\bfseries MASK30} = (1ULL $<$$<$ 30) -\/ 1
+\item 
+\mbox{\Hypertarget{classtitan23_1_1HashStringBase_ac15af4432aa9d256600cb260048af40e}\label{classtitan23_1_1HashStringBase_ac15af4432aa9d256600cb260048af40e}} 
+static constexpr const u64 {\bfseries MOD} = (1ULL $<$$<$ 61) -\/ 1
+\item 
+\mbox{\Hypertarget{classtitan23_1_1HashStringBase_a310c14a63735781524c0f92187c1948e}\label{classtitan23_1_1HashStringBase_a310c14a63735781524c0f92187c1948e}} 
+static constexpr const u64 {\bfseries MASK61} = (1ULL $<$$<$ 61) -\/ 1
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+titan\+\_\+cpplib/string/hash\+\_\+string.\+cpp\end{DoxyCompactItemize}

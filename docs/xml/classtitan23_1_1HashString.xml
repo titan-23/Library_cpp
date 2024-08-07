@@ -1,0 +1,161 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classtitan23_1_1HashString" kind="class" language="C++" prot="public">
+    <compoundname>titan23::HashString</compoundname>
+      <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="classtitan23_1_1HashString_1a2bce353df65db146772c9b075429ab53" prot="private" static="no">
+        <type>unsigned long long</type>
+        <definition>using titan23::HashString::u64 =  unsigned long long</definition>
+        <argsstring></argsstring>
+        <name>u64</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/string/hash_string.cpp" line="89" column="5" bodyfile="titan_cpplib/string/hash_string.cpp" bodystart="89" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classtitan23_1_1HashString_1a2b40cd8613130d5dff473e1ea288944b" prot="private" static="no" mutable="no">
+        <type><ref refid="classtitan23_1_1HashStringBase" kindref="compound">HashStringBase</ref> *</type>
+        <definition>HashStringBase* titan23::HashString::hsb</definition>
+        <argsstring></argsstring>
+        <name>hsb</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/string/hash_string.cpp" line="90" column="20" bodyfile="titan_cpplib/string/hash_string.cpp" bodystart="90" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1HashString_1a1255a7508c42238318e74de39794257f" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int titan23::HashString::n</definition>
+        <argsstring></argsstring>
+        <name>n</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/string/hash_string.cpp" line="91" column="9" bodyfile="titan_cpplib/string/hash_string.cpp" bodystart="91" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1HashString_1a5d298ee1fa2a42b8cb51c13132513afe" prot="private" static="no" mutable="no">
+        <type>vector&lt; u64 &gt;</type>
+        <definition>vector&lt;u64&gt; titan23::HashString::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/string/hash_string.cpp" line="92" column="12" bodyfile="titan_cpplib/string/hash_string.cpp" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1HashString_1aa606e62c00f6f81e26283b3da80dbaac" prot="private" static="no" mutable="no">
+        <type>vector&lt; u64 &gt;</type>
+        <definition>vector&lt;u64&gt; titan23::HashString::acc</definition>
+        <argsstring></argsstring>
+        <name>acc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/string/hash_string.cpp" line="92" column="17" bodyfile="titan_cpplib/string/hash_string.cpp" bodystart="92" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classtitan23_1_1HashString_1a45b7b66c92144d04078ab9fd9cca6926" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::HashString::HashString</definition>
+        <argsstring>()</argsstring>
+        <name>HashString</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/string/hash_string.cpp" line="95" column="5" bodyfile="titan_cpplib/string/hash_string.cpp" bodystart="95" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1HashString_1a977c3531814fc9dae9f5d203df06ca9c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::HashString::HashString</definition>
+        <argsstring>(HashStringBase &amp;hsb, string &amp;s)</argsstring>
+        <name>HashString</name>
+        <param>
+          <type><ref refid="classtitan23_1_1HashStringBase" kindref="compound">HashStringBase</ref> &amp;</type>
+          <declname>hsb</declname>
+        </param>
+        <param>
+          <type>string &amp;</type>
+          <declname>s</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/string/hash_string.cpp" line="96" column="5" bodyfile="titan_cpplib/string/hash_string.cpp" bodystart="96" bodyend="104"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1HashString_1a2b7cd5afa925576a8e7cdac6e541a1b0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>u64</type>
+        <definition>u64 titan23::HashString::get</definition>
+        <argsstring>(int l, int r) const</argsstring>
+        <name>get</name>
+        <param>
+          <type>int</type>
+          <declname>l</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/string/hash_string.cpp" line="106" column="9" bodyfile="titan_cpplib/string/hash_string.cpp" bodystart="106" bodyend="109"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1HashString_1a3309091829c17be68d645853803c79bf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>vector&lt; int &gt;</type>
+        <definition>vector&lt;int&gt; titan23::HashString::get_lcp</definition>
+        <argsstring>() const</argsstring>
+        <name>get_lcp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/string/hash_string.cpp" line="111" column="12" bodyfile="titan_cpplib/string/hash_string.cpp" bodystart="111" bodyend="122"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="titan_cpplib/string/hash_string.cpp" line="87" column="3" bodyfile="titan_cpplib/string/hash_string.cpp" bodystart="87" bodyend="123"/>
+    <listofallmembers>
+      <member refid="classtitan23_1_1HashString_1aa606e62c00f6f81e26283b3da80dbaac" prot="private" virt="non-virtual"><scope>titan23::HashString</scope><name>acc</name></member>
+      <member refid="classtitan23_1_1HashString_1a5d298ee1fa2a42b8cb51c13132513afe" prot="private" virt="non-virtual"><scope>titan23::HashString</scope><name>data</name></member>
+      <member refid="classtitan23_1_1HashString_1a2b7cd5afa925576a8e7cdac6e541a1b0" prot="public" virt="non-virtual"><scope>titan23::HashString</scope><name>get</name></member>
+      <member refid="classtitan23_1_1HashString_1a3309091829c17be68d645853803c79bf" prot="public" virt="non-virtual"><scope>titan23::HashString</scope><name>get_lcp</name></member>
+      <member refid="classtitan23_1_1HashString_1a45b7b66c92144d04078ab9fd9cca6926" prot="public" virt="non-virtual"><scope>titan23::HashString</scope><name>HashString</name></member>
+      <member refid="classtitan23_1_1HashString_1a977c3531814fc9dae9f5d203df06ca9c" prot="public" virt="non-virtual"><scope>titan23::HashString</scope><name>HashString</name></member>
+      <member refid="classtitan23_1_1HashString_1a2b40cd8613130d5dff473e1ea288944b" prot="private" virt="non-virtual"><scope>titan23::HashString</scope><name>hsb</name></member>
+      <member refid="classtitan23_1_1HashString_1a1255a7508c42238318e74de39794257f" prot="private" virt="non-virtual"><scope>titan23::HashString</scope><name>n</name></member>
+      <member refid="classtitan23_1_1HashString_1a2bce353df65db146772c9b075429ab53" prot="private" virt="non-virtual"><scope>titan23::HashString</scope><name>u64</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>
