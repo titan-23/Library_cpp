@@ -82,8 +82,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aafce2f74ed8745a0e630edf9e10a145a"><td class="memItemLeft" align="right" valign="top"><a id="aafce2f74ed8745a0e630edf9e10a145a"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>DynamicWaveletTree</b> (const T sigma, vector&lt; T &gt; &amp;a)</td></tr>
 <tr class="separator:aafce2f74ed8745a0e630edf9e10a145a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa937f107de268e68a549990f32b122a2"><td class="memItemLeft" align="right" valign="top"><a id="aa937f107de268e68a549990f32b122a2"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>insert</b> (int k, T x)</td></tr>
+<tr class="memitem:aa937f107de268e68a549990f32b122a2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicWaveletTree.html#aa937f107de268e68a549990f32b122a2">insert</a> (int k, T x)</td></tr>
+<tr class="memdesc:aa937f107de268e68a549990f32b122a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">位置 <code>k</code> に <code>x</code> を挿入する / <code>O(log(n)log(σ))</code>  <a href="classtitan23_1_1DynamicWaveletTree.html#aa937f107de268e68a549990f32b122a2">More...</a><br /></td></tr>
 <tr class="separator:aa937f107de268e68a549990f32b122a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a64c5dab88069e66dcd6cdf966ebae201"><td class="memItemLeft" align="right" valign="top"><a id="a64c5dab88069e66dcd6cdf966ebae201"></a>
 T&#160;</td><td class="memItemRight" valign="bottom"><b>pop</b> (int k)</td></tr>
@@ -128,6 +128,54 @@ vector&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>tovector
 void&#160;</td><td class="memItemRight" valign="bottom"><b>print</b> () const</td></tr>
 <tr class="separator:a493a7366918605a89480509e2d0c307e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="aa937f107de268e68a549990f32b122a2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa937f107de268e68a549990f32b122a2">&#9670;&nbsp;</a></span>insert()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classtitan23_1_1DynamicWaveletTree.html">titan23::DynamicWaveletTree</a>&lt; T &gt;::insert </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>k</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">T&#160;</td>
+          <td class="paramname"><em>x</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>位置 <code>k</code> に <code>x</code> を挿入する / <code>O(log(n)log(σ))</code> </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">k</td><td>インデックス <code>0 &lt;= k &lt;= n</code> </td></tr>
+    <tr><td class="paramname">x</td><td>値 <code>0 &lt;= x &lt; sigma</code> </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>titan_cpplib/data_structures/dynamic_wavelet_tree.cpp</li>
 </ul>

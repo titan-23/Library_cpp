@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['kmeans_32',['Kmeans',['../classtitan23_1_1Kmeans.html',1,'titan23']]]
+  ['insert_32',['insert',['../classtitan23_1_1DynamicWaveletTree.html#aa937f107de268e68a549990f32b122a2',1,'titan23::DynamicWaveletTree']]]
 ];

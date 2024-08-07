@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['maximumindependentset_36',['MaximumIndependentSet',['../classtitan23_1_1MaximumIndependentSet.html',1,'titan23']]],
-  ['minheap_37',['MinHeap',['../classtitan23_1_1MinHeap.html',1,'titan23']]],
-  ['minimumsteinertree_38',['MinimumSteinerTree',['../classtitan23_1_1MinimumSteinerTree.html',1,'titan23']]],
-  ['mo_39',['Mo',['../structtitan23_1_1Mo.html',1,'titan23']]]
+  ['lazywbtree_34',['LazyWBTree',['../classtitan23_1_1LazyWBTree.html',1,'titan23']]],
+  ['lca_35',['LCA',['../structtitan23_1_1LCA.html',1,'titan23']]],
+  ['linkcuttree_36',['LinkCutTree',['../classtitan23_1_1LinkCutTree.html',1,'titan23']]]
 ];

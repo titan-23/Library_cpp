@@ -1,8 +1,7 @@
 var searchData=
 [
-  ['random_48',['Random',['../structtitan23_1_1Random.html',1,'titan23']]],
-  ['randomtree_49',['RandomTree',['../structtitan23_1_1RandomTree.html',1,'titan23']]],
-  ['replace_5fmin_50',['replace_min',['../classtitan23_1_1MinHeap.html#a9bea6b27e1d97e378adfa8a0fc5d278c',1,'titan23::MinHeap']]],
-  ['result_51',['Result',['../structtitan23_1_1beam__search_1_1Result.html',1,'titan23::beam_search']]],
-  ['rootedtree_52',['RootedTree',['../structRootedTree.html',1,'']]]
+  ['param_45',['Param',['../classtitan23_1_1beam__search_1_1Param.html#a0c3a6e8fea8a24824e930893714bbda8',1,'titan23::beam_search::Param::Param()'],['../classtitan23_1_1beam__search_1_1Param.html',1,'titan23::beam_search::Param'],['../structtitan23_1_1sa_1_1Param.html',1,'titan23::sa::Param']]],
+  ['persistentlazywbtree_46',['PersistentLazyWBTree',['../classtitan23_1_1PersistentLazyWBTree.html',1,'titan23']]],
+  ['persistentstack_47',['PersistentStack',['../classtitan23_1_1PersistentStack.html',1,'titan23']]],
+  ['pushpoop_5fmin_48',['pushpoop_min',['../classtitan23_1_1MinHeap.html#a782af426c2870fef4c14aa6546676e85',1,'titan23::MinHeap']]]
 ];

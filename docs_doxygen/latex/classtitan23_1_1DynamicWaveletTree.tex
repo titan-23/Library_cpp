@@ -9,9 +9,8 @@
 \mbox{\Hypertarget{classtitan23_1_1DynamicWaveletTree_aafce2f74ed8745a0e630edf9e10a145a}\label{classtitan23_1_1DynamicWaveletTree_aafce2f74ed8745a0e630edf9e10a145a}} 
 {\bfseries Dynamic\+Wavelet\+Tree} (const T sigma, vector$<$ T $>$ \&a)
 \item 
-\mbox{\Hypertarget{classtitan23_1_1DynamicWaveletTree_aa937f107de268e68a549990f32b122a2}\label{classtitan23_1_1DynamicWaveletTree_aa937f107de268e68a549990f32b122a2}} 
-void {\bfseries insert} (int k, T x)
-\item 
+void \mbox{\hyperlink{classtitan23_1_1DynamicWaveletTree_aa937f107de268e68a549990f32b122a2}{insert}} (int k, T x)
+\begin{DoxyCompactList}\small\item\em 位置 {\ttfamily k} に {\ttfamily x} を挿入する / {\ttfamily O(log(n)log(σ))} \end{DoxyCompactList}\item 
 \mbox{\Hypertarget{classtitan23_1_1DynamicWaveletTree_a64c5dab88069e66dcd6cdf966ebae201}\label{classtitan23_1_1DynamicWaveletTree_a64c5dab88069e66dcd6cdf966ebae201}} 
 T {\bfseries pop} (int k)
 \item 
@@ -54,6 +53,27 @@ vector$<$ T $>$ {\bfseries tovector} () const
 \mbox{\Hypertarget{classtitan23_1_1DynamicWaveletTree_a493a7366918605a89480509e2d0c307e}\label{classtitan23_1_1DynamicWaveletTree_a493a7366918605a89480509e2d0c307e}} 
 void {\bfseries print} () const
 \end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classtitan23_1_1DynamicWaveletTree_aa937f107de268e68a549990f32b122a2}\label{classtitan23_1_1DynamicWaveletTree_aa937f107de268e68a549990f32b122a2}} 
+\index{titan23::DynamicWaveletTree$<$ T $>$@{titan23::DynamicWaveletTree$<$ T $>$}!insert@{insert}}
+\index{insert@{insert}!titan23::DynamicWaveletTree$<$ T $>$@{titan23::DynamicWaveletTree$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{insert()}{insert()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+void \mbox{\hyperlink{classtitan23_1_1DynamicWaveletTree}{titan23\+::\+Dynamic\+Wavelet\+Tree}}$<$ T $>$\+::insert (\begin{DoxyParamCaption}\item[{int}]{k,  }\item[{T}]{x }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+位置 {\ttfamily k} に {\ttfamily x} を挿入する / {\ttfamily O(log(n)log(σ))} 
+
+
+\begin{DoxyParams}{Parameters}
+{\em k} & インデックス {\ttfamily 0 $<$= k $<$= n} \\
+\hline
+{\em x} & 値 {\ttfamily 0 $<$= x $<$ sigma} \\
+\hline
+\end{DoxyParams}
 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
