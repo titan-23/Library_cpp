@@ -1,0 +1,207 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classtitan23_1_1LinkCutTree_1_1Node" kind="class" language="C++" prot="private">
+    <compoundname>titan23::LinkCutTree::Node</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="classtitan23_1_1LinkCutTree_1_1Node_1afdb4356a94684a359e9a0333b1141af2" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int titan23::LinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::Node::index</definition>
+        <argsstring></argsstring>
+        <name>index</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="22" column="11" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1LinkCutTree_1_1Node_1a1a2ea3d2717249eaf189d3ec2500d918" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int titan23::LinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::Node::size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="22" column="17" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1LinkCutTree_1_1Node_1a2a798d7981e9e7e00888f6ba3cd3ad4f" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int titan23::LinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::Node::rev</definition>
+        <argsstring></argsstring>
+        <name>rev</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="22" column="22" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1LinkCutTree_1_1Node_1a358017e84ac886b9f8ecd9fbd7c11b98" prot="public" static="no" mutable="no">
+        <type>T</type>
+        <definition>T titan23::LinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::Node::key</definition>
+        <argsstring></argsstring>
+        <name>key</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="23" column="9" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1LinkCutTree_1_1Node_1ad27714aef60f2a3dde37edb35011ad98" prot="public" static="no" mutable="no">
+        <type>T</type>
+        <definition>T titan23::LinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::Node::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="23" column="13" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1LinkCutTree_1_1Node_1a6f09fbfe1f1648f6605e30f26d3b5a0a" prot="public" static="no" mutable="no">
+        <type>T</type>
+        <definition>T titan23::LinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::Node::rdata</definition>
+        <argsstring></argsstring>
+        <name>rdata</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="23" column="18" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1LinkCutTree_1_1Node_1a01d52d8d2b4faafd8e55f4485560549b" prot="public" static="no" mutable="no">
+        <type>F</type>
+        <definition>F titan23::LinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::Node::lazy</definition>
+        <argsstring></argsstring>
+        <name>lazy</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="24" column="9" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1LinkCutTree_1_1Node_1a7046a0d2622cb7df702e59e804bb4e11" prot="public" static="no" mutable="no">
+        <type>NodePtr</type>
+        <definition>NodePtr titan23::LinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::Node::left</definition>
+        <argsstring></argsstring>
+        <name>left</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="25" column="15" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1LinkCutTree_1_1Node_1a19f8b172257c4dff35afc207a306fbd0" prot="public" static="no" mutable="no">
+        <type>NodePtr</type>
+        <definition>NodePtr titan23::LinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::Node::right</definition>
+        <argsstring></argsstring>
+        <name>right</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="25" column="20" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1LinkCutTree_1_1Node_1a6f7bf19506adce57884a944a0e25eeb1" prot="public" static="no" mutable="no">
+        <type>NodePtr</type>
+        <definition>NodePtr titan23::LinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::Node::par</definition>
+        <argsstring></argsstring>
+        <name>par</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="25" column="26" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1_1Node_1aca307529fb1ffc51e0124a3766fb32a0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::LinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::Node::Node</definition>
+        <argsstring>(const int index, const T key, const F lazy)</argsstring>
+        <name>Node</name>
+        <param>
+          <type>const int</type>
+          <declname>index</declname>
+        </param>
+        <param>
+          <type>const T</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>const F</type>
+          <declname>lazy</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="27" column="7" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="27" bodyend="32"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1_1Node_1a93598f7b7e27ee114456ae0006c5f51a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool titan23::LinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::Node::is_root</definition>
+        <argsstring>() const</argsstring>
+        <name>is_root</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="34" column="12" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="34" bodyend="36"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="1">
+        <label>titan23::LinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::Node</label>
+        <childnode refid="1" relation="usage">
+          <edgelabel>left</edgelabel>
+          <edgelabel>par</edgelabel>
+          <edgelabel>right</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="20" column="5" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="20" bodyend="37"/>
+    <listofallmembers>
+      <member refid="classtitan23_1_1LinkCutTree_1_1Node_1ad27714aef60f2a3dde37edb35011ad98" prot="public" virt="non-virtual"><scope>titan23::LinkCutTree::Node</scope><name>data</name></member>
+      <member refid="classtitan23_1_1LinkCutTree_1_1Node_1afdb4356a94684a359e9a0333b1141af2" prot="public" virt="non-virtual"><scope>titan23::LinkCutTree::Node</scope><name>index</name></member>
+      <member refid="classtitan23_1_1LinkCutTree_1_1Node_1a93598f7b7e27ee114456ae0006c5f51a" prot="public" virt="non-virtual"><scope>titan23::LinkCutTree::Node</scope><name>is_root</name></member>
+      <member refid="classtitan23_1_1LinkCutTree_1_1Node_1a358017e84ac886b9f8ecd9fbd7c11b98" prot="public" virt="non-virtual"><scope>titan23::LinkCutTree::Node</scope><name>key</name></member>
+      <member refid="classtitan23_1_1LinkCutTree_1_1Node_1a01d52d8d2b4faafd8e55f4485560549b" prot="public" virt="non-virtual"><scope>titan23::LinkCutTree::Node</scope><name>lazy</name></member>
+      <member refid="classtitan23_1_1LinkCutTree_1_1Node_1a7046a0d2622cb7df702e59e804bb4e11" prot="public" virt="non-virtual"><scope>titan23::LinkCutTree::Node</scope><name>left</name></member>
+      <member refid="classtitan23_1_1LinkCutTree_1_1Node_1aca307529fb1ffc51e0124a3766fb32a0" prot="public" virt="non-virtual"><scope>titan23::LinkCutTree::Node</scope><name>Node</name></member>
+      <member refid="classtitan23_1_1LinkCutTree_1_1Node_1a6f7bf19506adce57884a944a0e25eeb1" prot="public" virt="non-virtual"><scope>titan23::LinkCutTree::Node</scope><name>par</name></member>
+      <member refid="classtitan23_1_1LinkCutTree_1_1Node_1a6f09fbfe1f1648f6605e30f26d3b5a0a" prot="public" virt="non-virtual"><scope>titan23::LinkCutTree::Node</scope><name>rdata</name></member>
+      <member refid="classtitan23_1_1LinkCutTree_1_1Node_1a2a798d7981e9e7e00888f6ba3cd3ad4f" prot="public" virt="non-virtual"><scope>titan23::LinkCutTree::Node</scope><name>rev</name></member>
+      <member refid="classtitan23_1_1LinkCutTree_1_1Node_1a19f8b172257c4dff35afc207a306fbd0" prot="public" virt="non-virtual"><scope>titan23::LinkCutTree::Node</scope><name>right</name></member>
+      <member refid="classtitan23_1_1LinkCutTree_1_1Node_1a1a2ea3d2717249eaf189d3ec2500d918" prot="public" virt="non-virtual"><scope>titan23::LinkCutTree::Node</scope><name>size</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

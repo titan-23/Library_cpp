@@ -1,0 +1,632 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="dual commutative segment tree" href="dual_commutative_segment_tree_cpp.html" /><link rel="prev" title="binary trie set" href="binary_trie_set_cpp.html" />
+
+    <!-- Generated with Sphinx 7.3.7 and Furo 2024.01.29 -->
+        <title>link cut tree - titan_cpplib documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=36a5483c" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">titan_cpplib  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  
+  <span class="sidebar-brand-text">titan_cpplib  documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../ahc/index.html">ahc</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of ahc</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../ahc/kmeans_cpp.html">kmeans</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ahc/sa_cpp.html">sa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ahc/timer_cpp.html">timer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ahc/state_pool_cpp.html">state pool</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">data_structures</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of data_structures</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="dynamic_fenwick_tree_2D_cpp.html">dynamic fenwick tree 2D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lazy_wb_tree_cpp.html">lazy wb tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="static_set_cpp.html">static set</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sparse_table_cpp.html">sparse table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fenwick_tree_2D_cpp.html">fenwick tree 2D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_wavelet_matrix_cpp.html">dynamic wavelet matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="persistent_lazy_wb_tree_cpp.html">persistent lazy wb tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="persistent_stack_cpp.html">persistent stack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bit_vector_cpp.html">bit vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="segment_tree_cpp.html">segment tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="avl_tree_bit_vector_cpp.html">avl tree bit vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_segment_tree_cpp.html">dynamic segment tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="avl_tree_multiset_cpp.html">avl tree multiset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wavelet_matrix_cumulative_sum_cpp.html">wavelet matrix cumulative sum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="avl_tree_set_cpp.html">avl tree set</a></li>
+<li class="toctree-l2"><a class="reference internal" href="deque_cpp.html">deque</a></li>
+<li class="toctree-l2"><a class="reference internal" href="offline_dynamic_connectivity_cpp.html">offline dynamic connectivity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cumulative_sum_cpp.html">cumulative sum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="binary_trie_set_cpp.html">binary trie set</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">link cut tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dual_commutative_segment_tree_cpp.html">dual commutative segment tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dual_segment_tree_cpp.html">dual segment tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="segment_quadratic_division_cpp.html">segment quadratic division</a></li>
+<li class="toctree-l2"><a class="reference internal" href="undoable_union_find_cpp.html">undoable union find</a></li>
+<li class="toctree-l2"><a class="reference internal" href="euler_tour_tree_cpp.html">euler tour tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cumulative_sum_2D_cpp.html">cumulative sum 2D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_wavelet_tree_cpp.html">dynamic wavelet tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wavelet_matrix_cpp.html">wavelet matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hash_dict_cpp.html">hash dict</a></li>
+<li class="toctree-l2"><a class="reference internal" href="binary_trie_multiset_cpp.html">binary trie multiset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="static_multiset_cpp.html">static multiset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_lazy_segment_tree_cpp.html">dynamic lazy segment tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="undoable_union_find_sum_cpp.html">undoable union find sum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="array_cpp.html">array</a></li>
+<li class="toctree-l2"><a class="reference internal" href="offline_dynamic_connectivity_sum_cpp.html">offline dynamic connectivity sum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="min_heap_cpp.html">min heap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fenwick_tree_cpp.html">fenwick tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="union_find_cpp.html">union find</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_bit_vector_cpp.html">dynamic bit vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bbst_node_cpp.html">bbst node</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../graph/index.html">graph</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of graph</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../graph/lca_cpp.html">lca</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../graph/hld_segment_tree_cpp.html">hld segment tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../graph/warshall_floyd_path_cpp.html">warshall floyd path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../graph/rooted_tree_cpp.html">rooted tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../graph/dijkstra_path_cpp.html">dijkstra path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../graph/graph_cpp.html">graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../graph/minimum_steiner_tree_cpp.html">minimum steiner tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../graph/hld_cpp.html">hld</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../graph/dijkstra_cpp.html">dijkstra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../graph/maximum_independent_set_cpp.html">maximum independent set</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../math/index.html">math</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of math</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../math/divs_cpp.html">divs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../math/math_cpp.html">math</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../math/make_primelist_cpp.html">make primelist</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../others/index.html">others</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of others</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../others/print_cpp.html">print</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../others/other_cpp.html">other</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../string/index.html">string</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of string</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../string/hash_string_cpp.html">hash string</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../string/is_kaibun_cpp.html">is kaibun</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="link-cut-tree">
+<h1>link cut tree<a class="headerlink" href="#link-cut-tree" title="Link to this heading">¶</a></h1>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv47titan23">
+<span id="_CPPv37titan23"></span><span id="_CPPv27titan23"></span><span id="titan23"></span><span class="target" id="namespacetitan23"></span><span class="k"><span class="pre">namespace</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">titan23</span></span></span><br /></dt>
+<dd><dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4I00_PF1T1T1TE_PF1T1F1TE_PF1F1F1FE_PF1TvE_PF1FvEEN7titan2311LinkCutTreeE">
+<span id="_CPPv3I00_PF1T1T1TE_PF1T1F1TE_PF1F1F1FE_PF1TvE_PF1FvEEN7titan2311LinkCutTreeE"></span><span id="_CPPv2I00_PF1T1T1TE_PF1T1F1TE_PF1F1F1FE_PF1TvE_PF1FvEEN7titan2311LinkCutTreeE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">F</span></span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00_PF1T1T1TE_PF1T1F1TE_PF1F1F1FE_PF1TvE_PF1FvEEN7titan2311LinkCutTreeE" title="titan23::LinkCutTree::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">op</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><a class="reference internal" href="#_CPPv4I00_PF1T1T1TE_PF1T1F1TE_PF1F1F1FE_PF1TvE_PF1FvEEN7titan2311LinkCutTreeE" title="titan23::LinkCutTree::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00_PF1T1T1TE_PF1T1F1TE_PF1F1F1FE_PF1TvE_PF1FvEEN7titan2311LinkCutTreeE" title="titan23::LinkCutTree::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00_PF1T1T1TE_PF1T1F1TE_PF1F1F1FE_PF1TvE_PF1FvEEN7titan2311LinkCutTreeE" title="titan23::LinkCutTree::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">mapping</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><a class="reference internal" href="#_CPPv4I00_PF1T1T1TE_PF1T1F1TE_PF1F1F1FE_PF1TvE_PF1FvEEN7titan2311LinkCutTreeE" title="titan23::LinkCutTree::F"><span class="n"><span class="pre">F</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00_PF1T1T1TE_PF1T1F1TE_PF1F1F1FE_PF1TvE_PF1FvEEN7titan2311LinkCutTreeE" title="titan23::LinkCutTree::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00_PF1T1T1TE_PF1T1F1TE_PF1F1F1FE_PF1TvE_PF1FvEEN7titan2311LinkCutTreeE" title="titan23::LinkCutTree::F"><span class="n"><span class="pre">F</span></span></a><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">composition</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><a class="reference internal" href="#_CPPv4I00_PF1T1T1TE_PF1T1F1TE_PF1F1F1FE_PF1TvE_PF1FvEEN7titan2311LinkCutTreeE" title="titan23::LinkCutTree::F"><span class="n"><span class="pre">F</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00_PF1T1T1TE_PF1T1F1TE_PF1F1F1FE_PF1TvE_PF1FvEEN7titan2311LinkCutTreeE" title="titan23::LinkCutTree::F"><span class="n"><span class="pre">F</span></span></a><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00_PF1T1T1TE_PF1T1F1TE_PF1F1F1FE_PF1TvE_PF1FvEEN7titan2311LinkCutTreeE" title="titan23::LinkCutTree::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">e</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00_PF1T1T1TE_PF1T1F1TE_PF1F1F1FE_PF1TvE_PF1FvEEN7titan2311LinkCutTreeE" title="titan23::LinkCutTree::F"><span class="n"><span class="pre">F</span></span></a><span class="w"> </span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">id</span></span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">(</span></span><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classtitan23_1_1LinkCutTree"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">LinkCutTree</span></span></span><a class="headerlink" href="#_CPPv4I00_PF1T1T1TE_PF1T1F1TE_PF1F1F1FE_PF1TvE_PF1FvEEN7titan2311LinkCutTreeE" title="Link to this definition">¶</a><br /></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree11LinkCutTreeEi">
+<span id="_CPPv3N7titan2311LinkCutTree11LinkCutTreeEi"></span><span id="_CPPv2N7titan2311LinkCutTree11LinkCutTreeEi"></span><span id="titan23::LinkCutTree::LinkCutTree__i"></span><span class="target" id="classtitan23_1_1LinkCutTree_1a2ce71449a3b3830be756a8b3990fb383"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">LinkCutTree</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">n</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree11LinkCutTreeEi" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree6exposeEi">
+<span id="_CPPv3N7titan2311LinkCutTree6exposeEi"></span><span id="_CPPv2N7titan2311LinkCutTree6exposeEi"></span><span id="titan23::LinkCutTree::expose__i"></span><span class="target" id="classtitan23_1_1LinkCutTree_1ab02a905fafdeeaf4bd8f137ad83288c1"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">expose</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">v</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree6exposeEi" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree3lcaEiii">
+<span id="_CPPv3N7titan2311LinkCutTree3lcaEiii"></span><span id="_CPPv2N7titan2311LinkCutTree3lcaEiii"></span><span id="titan23::LinkCutTree::lca__i.i.i"></span><span class="target" id="classtitan23_1_1LinkCutTree_1a6f3ea7a33c4147af032ccabcdfdd22ff"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">lca</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">u</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">v</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">root</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree3lcaEiii" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree4linkEii">
+<span id="_CPPv3N7titan2311LinkCutTree4linkEii"></span><span id="_CPPv2N7titan2311LinkCutTree4linkEii"></span><span id="titan23::LinkCutTree::link__i.i"></span><span class="target" id="classtitan23_1_1LinkCutTree_1a32448bc75e933ea9c78060931f6e2f69"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">link</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">c</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">p</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree4linkEii" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree3cutEi">
+<span id="_CPPv3N7titan2311LinkCutTree3cutEi"></span><span id="_CPPv2N7titan2311LinkCutTree3cutEi"></span><span id="titan23::LinkCutTree::cut__i"></span><span class="target" id="classtitan23_1_1LinkCutTree_1a71881643479715aa9acf1b81acd086f7"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cut</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">c</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree3cutEi" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree4rootEi">
+<span id="_CPPv3N7titan2311LinkCutTree4rootEi"></span><span id="_CPPv2N7titan2311LinkCutTree4rootEi"></span><span id="titan23::LinkCutTree::root__i"></span><span class="target" id="classtitan23_1_1LinkCutTree_1ad50f980adf46cefa18901963a1490259"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">root</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">v</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree4rootEi" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree4sameEii">
+<span id="_CPPv3N7titan2311LinkCutTree4sameEii"></span><span id="_CPPv2N7titan2311LinkCutTree4sameEii"></span><span id="titan23::LinkCutTree::same__i.i"></span><span class="target" id="classtitan23_1_1LinkCutTree_1a98fffe099393ce18dac56add1edf7f8e"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">same</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">u</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">v</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree4sameEii" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree5evertEi">
+<span id="_CPPv3N7titan2311LinkCutTree5evertEi"></span><span id="_CPPv2N7titan2311LinkCutTree5evertEi"></span><span id="titan23::LinkCutTree::evert__i"></span><span class="target" id="classtitan23_1_1LinkCutTree_1ac50c3e15df35759dacd9b571b90757e1"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">evert</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">v</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree5evertEi" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree9path_prodEii">
+<span id="_CPPv3N7titan2311LinkCutTree9path_prodEii"></span><span id="_CPPv2N7titan2311LinkCutTree9path_prodEii"></span><span id="titan23::LinkCutTree::path_prod__i.i"></span><span class="target" id="classtitan23_1_1LinkCutTree_1a55e6c93ad9baa7b73583d155522f96de"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00_PF1T1T1TE_PF1T1F1TE_PF1F1F1FE_PF1TvE_PF1FvEEN7titan2311LinkCutTreeE" title="titan23::LinkCutTree::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">path_prod</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">u</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">v</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree9path_prodEii" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree10path_applyEii1F">
+<span id="_CPPv3N7titan2311LinkCutTree10path_applyEii1F"></span><span id="_CPPv2N7titan2311LinkCutTree10path_applyEii1F"></span><span id="titan23::LinkCutTree::path_apply__i.i.F"></span><span class="target" id="classtitan23_1_1LinkCutTree_1a9fc256cc02d54aea274dad1eaff6008b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">path_apply</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">u</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">v</span></span>, <a class="reference internal" href="#_CPPv4I00_PF1T1T1TE_PF1T1F1TE_PF1F1F1FE_PF1TvE_PF1FvEEN7titan2311LinkCutTreeE" title="titan23::LinkCutTree::F"><span class="n"><span class="pre">F</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">f</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree10path_applyEii1F" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree5mergeEii">
+<span id="_CPPv3N7titan2311LinkCutTree5mergeEii"></span><span id="_CPPv2N7titan2311LinkCutTree5mergeEii"></span><span id="titan23::LinkCutTree::merge__i.i"></span><span class="target" id="classtitan23_1_1LinkCutTree_1af7983214cd7954283e90de6a0e45c4c2"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">merge</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">u</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">v</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree5mergeEii" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree5splitEii">
+<span id="_CPPv3N7titan2311LinkCutTree5splitEii"></span><span id="_CPPv2N7titan2311LinkCutTree5splitEii"></span><span id="titan23::LinkCutTree::split__i.i"></span><span class="target" id="classtitan23_1_1LinkCutTree_1a7a4806f31c01a2950a3619d6b053f9bd"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">split</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">u</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">v</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree5splitEii" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree3getEi">
+<span id="_CPPv3N7titan2311LinkCutTree3getEi"></span><span id="_CPPv2N7titan2311LinkCutTree3getEi"></span><span id="titan23::LinkCutTree::get__i"></span><span class="target" id="classtitan23_1_1LinkCutTree_1afa2e76aa7ae5f23db4b3ccd4322fc477"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00_PF1T1T1TE_PF1T1F1TE_PF1F1F1FE_PF1TvE_PF1FvEEN7titan2311LinkCutTreeE" title="titan23::LinkCutTree::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">get</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">k</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree3getEi" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree3setEi1T">
+<span id="_CPPv3N7titan2311LinkCutTree3setEi1T"></span><span id="_CPPv2N7titan2311LinkCutTree3setEi1T"></span><span id="titan23::LinkCutTree::set__i.T"></span><span class="target" id="classtitan23_1_1LinkCutTree_1a784bcd65097d8eb94fad54eba03d1583"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">set</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">k</span></span>, <a class="reference internal" href="#_CPPv4I00_PF1T1T1TE_PF1T1F1TE_PF1F1F1FE_PF1TvE_PF1FvEEN7titan2311LinkCutTreeE" title="titan23::LinkCutTree::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">v</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree3setEi1T" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree12path_kth_elmEiii">
+<span id="_CPPv3N7titan2311LinkCutTree12path_kth_elmEiii"></span><span id="_CPPv2N7titan2311LinkCutTree12path_kth_elmEiii"></span><span id="titan23::LinkCutTree::path_kth_elm__i.i.i"></span><span class="target" id="classtitan23_1_1LinkCutTree_1ab7a1112db3bf507c16032160959f9e41"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">path_kth_elm</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">s</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">t</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">k</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree12path_kth_elmEiii" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-types">Private Types</p>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree7NodePtrE">
+<span id="_CPPv3N7titan2311LinkCutTree7NodePtrE"></span><span id="_CPPv2N7titan2311LinkCutTree7NodePtrE"></span><span class="target" id="classtitan23_1_1LinkCutTree_1ad5352834e9bbb9b8ccbfe061fec1d29d"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NodePtr</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree4NodeE" title="titan23::LinkCutTree::Node"><span class="n"><span class="pre">Node</span></span></a><span class="p"><span class="pre">*</span></span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree7NodePtrE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree10_apply_revEK7NodePtr">
+<span id="_CPPv3N7titan2311LinkCutTree10_apply_revEK7NodePtr"></span><span id="_CPPv2N7titan2311LinkCutTree10_apply_revEK7NodePtr"></span><span id="titan23::LinkCutTree::_apply_rev__NodePtrC"></span><span class="target" id="classtitan23_1_1LinkCutTree_1a538afbe256eabc9d2d982b1a79b57aa7"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_apply_rev</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree7NodePtrE" title="titan23::LinkCutTree::NodePtr"><span class="n"><span class="pre">NodePtr</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">node</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree10_apply_revEK7NodePtr" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree8_apply_fEK7NodePtrK1F">
+<span id="_CPPv3N7titan2311LinkCutTree8_apply_fEK7NodePtrK1F"></span><span id="_CPPv2N7titan2311LinkCutTree8_apply_fEK7NodePtrK1F"></span><span id="titan23::LinkCutTree::_apply_f__NodePtrC.FC"></span><span class="target" id="classtitan23_1_1LinkCutTree_1a64e9e57eee6efa99415c938f72731e51"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_apply_f</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree7NodePtrE" title="titan23::LinkCutTree::NodePtr"><span class="n"><span class="pre">NodePtr</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">node</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00_PF1T1T1TE_PF1T1F1TE_PF1F1F1FE_PF1TvE_PF1FvEEN7titan2311LinkCutTreeE" title="titan23::LinkCutTree::F"><span class="n"><span class="pre">F</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">f</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree8_apply_fEK7NodePtrK1F" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree10_propagateEK7NodePtr">
+<span id="_CPPv3N7titan2311LinkCutTree10_propagateEK7NodePtr"></span><span id="_CPPv2N7titan2311LinkCutTree10_propagateEK7NodePtr"></span><span id="titan23::LinkCutTree::_propagate__NodePtrC"></span><span class="target" id="classtitan23_1_1LinkCutTree_1a663be1063c8dd9dddd2a6dea59e737f1"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_propagate</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree7NodePtrE" title="titan23::LinkCutTree::NodePtr"><span class="n"><span class="pre">NodePtr</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">node</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree10_propagateEK7NodePtr" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree7_updateEK7NodePtr">
+<span id="_CPPv3N7titan2311LinkCutTree7_updateEK7NodePtr"></span><span id="_CPPv2N7titan2311LinkCutTree7_updateEK7NodePtr"></span><span id="titan23::LinkCutTree::_update__NodePtrC"></span><span class="target" id="classtitan23_1_1LinkCutTree_1a108c9e039f3be678b00494160a241cd3"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_update</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree7NodePtrE" title="titan23::LinkCutTree::NodePtr"><span class="n"><span class="pre">NodePtr</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">node</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree7_updateEK7NodePtr" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree7_rotateEK7NodePtr">
+<span id="_CPPv3N7titan2311LinkCutTree7_rotateEK7NodePtr"></span><span id="_CPPv2N7titan2311LinkCutTree7_rotateEK7NodePtr"></span><span id="titan23::LinkCutTree::_rotate__NodePtrC"></span><span class="target" id="classtitan23_1_1LinkCutTree_1a3a2bdd9feb48c82a70b0ff7491a37fc1"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_rotate</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree7NodePtrE" title="titan23::LinkCutTree::NodePtr"><span class="n"><span class="pre">NodePtr</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">node</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree7_rotateEK7NodePtr" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree6_splayEK7NodePtr">
+<span id="_CPPv3N7titan2311LinkCutTree6_splayEK7NodePtr"></span><span id="_CPPv2N7titan2311LinkCutTree6_splayEK7NodePtr"></span><span id="titan23::LinkCutTree::_splay__NodePtrC"></span><span class="target" id="classtitan23_1_1LinkCutTree_1a0c81aca07cef4b988ef1c8119426274f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_splay</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree7NodePtrE" title="titan23::LinkCutTree::NodePtr"><span class="n"><span class="pre">NodePtr</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">node</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree6_splayEK7NodePtr" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree5_linkEK7NodePtrK7NodePtr">
+<span id="_CPPv3N7titan2311LinkCutTree5_linkEK7NodePtrK7NodePtr"></span><span id="_CPPv2N7titan2311LinkCutTree5_linkEK7NodePtrK7NodePtr"></span><span id="titan23::LinkCutTree::_link__NodePtrC.NodePtrC"></span><span class="target" id="classtitan23_1_1LinkCutTree_1a71855f7b2935319a2ac2f110655838ee"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_link</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree7NodePtrE" title="titan23::LinkCutTree::NodePtr"><span class="n"><span class="pre">NodePtr</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">c</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree7NodePtrE" title="titan23::LinkCutTree::NodePtr"><span class="n"><span class="pre">NodePtr</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">p</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree5_linkEK7NodePtrK7NodePtr" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree4_cutEK7NodePtr">
+<span id="_CPPv3N7titan2311LinkCutTree4_cutEK7NodePtr"></span><span id="_CPPv2N7titan2311LinkCutTree4_cutEK7NodePtr"></span><span id="titan23::LinkCutTree::_cut__NodePtrC"></span><span class="target" id="classtitan23_1_1LinkCutTree_1a464b81015e6152ca84e94e30b492770b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_cut</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree7NodePtrE" title="titan23::LinkCutTree::NodePtr"><span class="n"><span class="pre">NodePtr</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">c</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree4_cutEK7NodePtr" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree7_exposeEK7NodePtr">
+<span id="_CPPv3N7titan2311LinkCutTree7_exposeEK7NodePtr"></span><span id="_CPPv2N7titan2311LinkCutTree7_exposeEK7NodePtr"></span><span id="titan23::LinkCutTree::_expose__NodePtrC"></span><span class="target" id="classtitan23_1_1LinkCutTree_1acea69388b0599d2ebcc50ad381854da7"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree7NodePtrE" title="titan23::LinkCutTree::NodePtr"><span class="n"><span class="pre">NodePtr</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_expose</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree7NodePtrE" title="titan23::LinkCutTree::NodePtr"><span class="n"><span class="pre">NodePtr</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">node</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree7_exposeEK7NodePtr" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree5_rootE7NodePtr">
+<span id="_CPPv3N7titan2311LinkCutTree5_rootE7NodePtr"></span><span id="_CPPv2N7titan2311LinkCutTree5_rootE7NodePtr"></span><span id="titan23::LinkCutTree::_root__NodePtr"></span><span class="target" id="classtitan23_1_1LinkCutTree_1ac98b769653471030fba7636612cac04e"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree7NodePtrE" title="titan23::LinkCutTree::NodePtr"><span class="n"><span class="pre">NodePtr</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_root</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree7NodePtrE" title="titan23::LinkCutTree::NodePtr"><span class="n"><span class="pre">NodePtr</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">v</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree5_rootE7NodePtr" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree6_evertE7NodePtr">
+<span id="_CPPv3N7titan2311LinkCutTree6_evertE7NodePtr"></span><span id="_CPPv2N7titan2311LinkCutTree6_evertE7NodePtr"></span><span id="titan23::LinkCutTree::_evert__NodePtr"></span><span class="target" id="classtitan23_1_1LinkCutTree_1a2782f1092cc0dafdbe593a73a48dda76"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_evert</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree7NodePtrE" title="titan23::LinkCutTree::NodePtr"><span class="n"><span class="pre">NodePtr</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">v</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree6_evertE7NodePtr" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree4poolE">
+<span id="_CPPv3N7titan2311LinkCutTree4poolE"></span><span id="_CPPv2N7titan2311LinkCutTree4poolE"></span><span id="titan23::LinkCutTree::pool__vector:NodePtr:"></span><span class="target" id="classtitan23_1_1LinkCutTree_1a9074e355538fa421a5df169616231017"></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree7NodePtrE" title="titan23::LinkCutTree::NodePtr"><span class="n"><span class="pre">NodePtr</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pool</span></span></span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree4poolE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree4NodeE">
+<span id="_CPPv3N7titan2311LinkCutTree4NodeE"></span><span id="_CPPv2N7titan2311LinkCutTree4NodeE"></span><span id="titan23::LinkCutTree::Node"></span><span class="target" id="classtitan23_1_1LinkCutTree_1_1Node"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Node</span></span></span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree4NodeE" title="Link to this definition">¶</a><br /></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree4Node4NodeEKiK1TK1F">
+<span id="_CPPv3N7titan2311LinkCutTree4Node4NodeEKiK1TK1F"></span><span id="_CPPv2N7titan2311LinkCutTree4Node4NodeEKiK1TK1F"></span><span id="titan23::LinkCutTree::Node::Node__iC.TC.FC"></span><span class="target" id="classtitan23_1_1LinkCutTree_1_1Node_1aca307529fb1ffc51e0124a3766fb32a0"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Node</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">index</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00_PF1T1T1TE_PF1T1F1TE_PF1F1F1FE_PF1TvE_PF1FvEEN7titan2311LinkCutTreeE" title="titan23::LinkCutTree::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">key</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00_PF1T1T1TE_PF1T1F1TE_PF1F1F1FE_PF1TvE_PF1FvEEN7titan2311LinkCutTreeE" title="titan23::LinkCutTree::F"><span class="n"><span class="pre">F</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">lazy</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree4Node4NodeEKiK1TK1F" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK7titan2311LinkCutTree4Node7is_rootEv">
+<span id="_CPPv3NK7titan2311LinkCutTree4Node7is_rootEv"></span><span id="_CPPv2NK7titan2311LinkCutTree4Node7is_rootEv"></span><span id="titan23::LinkCutTree::Node::is_rootC"></span><span class="target" id="classtitan23_1_1LinkCutTree_1_1Node_1a93598f7b7e27ee114456ae0006c5f51a"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">is_root</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK7titan2311LinkCutTree4Node7is_rootEv" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree4Node5indexE">
+<span id="_CPPv3N7titan2311LinkCutTree4Node5indexE"></span><span id="_CPPv2N7titan2311LinkCutTree4Node5indexE"></span><span id="titan23::LinkCutTree::Node::index__i"></span><span class="target" id="classtitan23_1_1LinkCutTree_1_1Node_1afdb4356a94684a359e9a0333b1141af2"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">index</span></span></span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree4Node5indexE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree4Node4sizeE">
+<span id="_CPPv3N7titan2311LinkCutTree4Node4sizeE"></span><span id="_CPPv2N7titan2311LinkCutTree4Node4sizeE"></span><span id="titan23::LinkCutTree::Node::size__i"></span><span class="target" id="classtitan23_1_1LinkCutTree_1_1Node_1a1a2ea3d2717249eaf189d3ec2500d918"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">size</span></span></span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree4Node4sizeE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree4Node3revE">
+<span id="_CPPv3N7titan2311LinkCutTree4Node3revE"></span><span id="_CPPv2N7titan2311LinkCutTree4Node3revE"></span><span id="titan23::LinkCutTree::Node::rev__i"></span><span class="target" id="classtitan23_1_1LinkCutTree_1_1Node_1a2a798d7981e9e7e00888f6ba3cd3ad4f"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rev</span></span></span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree4Node3revE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree4Node3keyE">
+<span id="_CPPv3N7titan2311LinkCutTree4Node3keyE"></span><span id="_CPPv2N7titan2311LinkCutTree4Node3keyE"></span><span id="titan23::LinkCutTree::Node::key__T"></span><span class="target" id="classtitan23_1_1LinkCutTree_1_1Node_1a358017e84ac886b9f8ecd9fbd7c11b98"></span><a class="reference internal" href="#_CPPv4I00_PF1T1T1TE_PF1T1F1TE_PF1F1F1FE_PF1TvE_PF1FvEEN7titan2311LinkCutTreeE" title="titan23::LinkCutTree::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">key</span></span></span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree4Node3keyE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree4Node4dataE">
+<span id="_CPPv3N7titan2311LinkCutTree4Node4dataE"></span><span id="_CPPv2N7titan2311LinkCutTree4Node4dataE"></span><span id="titan23::LinkCutTree::Node::data__T"></span><span class="target" id="classtitan23_1_1LinkCutTree_1_1Node_1ad27714aef60f2a3dde37edb35011ad98"></span><a class="reference internal" href="#_CPPv4I00_PF1T1T1TE_PF1T1F1TE_PF1F1F1FE_PF1TvE_PF1FvEEN7titan2311LinkCutTreeE" title="titan23::LinkCutTree::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">data</span></span></span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree4Node4dataE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree4Node5rdataE">
+<span id="_CPPv3N7titan2311LinkCutTree4Node5rdataE"></span><span id="_CPPv2N7titan2311LinkCutTree4Node5rdataE"></span><span id="titan23::LinkCutTree::Node::rdata__T"></span><span class="target" id="classtitan23_1_1LinkCutTree_1_1Node_1a6f09fbfe1f1648f6605e30f26d3b5a0a"></span><a class="reference internal" href="#_CPPv4I00_PF1T1T1TE_PF1T1F1TE_PF1F1F1FE_PF1TvE_PF1FvEEN7titan2311LinkCutTreeE" title="titan23::LinkCutTree::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rdata</span></span></span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree4Node5rdataE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree4Node4lazyE">
+<span id="_CPPv3N7titan2311LinkCutTree4Node4lazyE"></span><span id="_CPPv2N7titan2311LinkCutTree4Node4lazyE"></span><span id="titan23::LinkCutTree::Node::lazy__F"></span><span class="target" id="classtitan23_1_1LinkCutTree_1_1Node_1a01d52d8d2b4faafd8e55f4485560549b"></span><a class="reference internal" href="#_CPPv4I00_PF1T1T1TE_PF1T1F1TE_PF1F1F1FE_PF1TvE_PF1FvEEN7titan2311LinkCutTreeE" title="titan23::LinkCutTree::F"><span class="n"><span class="pre">F</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">lazy</span></span></span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree4Node4lazyE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree4Node4leftE">
+<span id="_CPPv3N7titan2311LinkCutTree4Node4leftE"></span><span id="_CPPv2N7titan2311LinkCutTree4Node4leftE"></span><span id="titan23::LinkCutTree::Node::left__NodePtr"></span><span class="target" id="classtitan23_1_1LinkCutTree_1_1Node_1a7046a0d2622cb7df702e59e804bb4e11"></span><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree7NodePtrE" title="titan23::LinkCutTree::NodePtr"><span class="n"><span class="pre">NodePtr</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">left</span></span></span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree4Node4leftE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree4Node5rightE">
+<span id="_CPPv3N7titan2311LinkCutTree4Node5rightE"></span><span id="_CPPv2N7titan2311LinkCutTree4Node5rightE"></span><span id="titan23::LinkCutTree::Node::right__NodePtr"></span><span class="target" id="classtitan23_1_1LinkCutTree_1_1Node_1a19f8b172257c4dff35afc207a306fbd0"></span><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree7NodePtrE" title="titan23::LinkCutTree::NodePtr"><span class="n"><span class="pre">NodePtr</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">right</span></span></span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree4Node5rightE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2311LinkCutTree4Node3parE">
+<span id="_CPPv3N7titan2311LinkCutTree4Node3parE"></span><span id="_CPPv2N7titan2311LinkCutTree4Node3parE"></span><span id="titan23::LinkCutTree::Node::par__NodePtr"></span><span class="target" id="classtitan23_1_1LinkCutTree_1_1Node_1a6f7bf19506adce57884a944a0e25eeb1"></span><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree7NodePtrE" title="titan23::LinkCutTree::NodePtr"><span class="n"><span class="pre">NodePtr</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">par</span></span></span><a class="headerlink" href="#_CPPv4N7titan2311LinkCutTree4Node3parE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="dual_commutative_segment_tree_cpp.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">dual commutative segment tree</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="binary_trie_set_cpp.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">binary trie set</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024, titan23
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">link cut tree</a><ul>
+<li><a class="reference internal" href="#_CPPv47titan23"><code class="docutils literal notranslate"><span class="pre">titan23</span></code></a><ul>
+<li><a class="reference internal" href="#_CPPv4I00_PF1T1T1TE_PF1T1F1TE_PF1F1F1FE_PF1TvE_PF1FvEEN7titan2311LinkCutTreeE"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree</span></code></a><ul>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree11LinkCutTreeEi"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::LinkCutTree()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree6exposeEi"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::expose()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree3lcaEiii"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::lca()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree4linkEii"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::link()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree3cutEi"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::cut()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree4rootEi"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::root()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree4sameEii"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::same()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree5evertEi"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::evert()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree9path_prodEii"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::path_prod()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree10path_applyEii1F"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::path_apply()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree5mergeEii"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::merge()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree5splitEii"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::split()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree3getEi"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::get()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree3setEi1T"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::set()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree12path_kth_elmEiii"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::path_kth_elm()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree7NodePtrE"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::NodePtr</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree10_apply_revEK7NodePtr"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::_apply_rev()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree8_apply_fEK7NodePtrK1F"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::_apply_f()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree10_propagateEK7NodePtr"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::_propagate()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree7_updateEK7NodePtr"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::_update()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree7_rotateEK7NodePtr"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::_rotate()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree6_splayEK7NodePtr"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::_splay()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree5_linkEK7NodePtrK7NodePtr"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::_link()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree4_cutEK7NodePtr"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::_cut()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree7_exposeEK7NodePtr"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::_expose()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree5_rootE7NodePtr"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::_root()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree6_evertE7NodePtr"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::_evert()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree4poolE"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::pool</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree4NodeE"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::Node</span></code></a><ul>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree4Node4NodeEKiK1TK1F"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::Node::Node()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4NK7titan2311LinkCutTree4Node7is_rootEv"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::Node::is_root()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree4Node5indexE"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::Node::index</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree4Node4sizeE"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::Node::size</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree4Node3revE"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::Node::rev</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree4Node3keyE"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::Node::key</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree4Node4dataE"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::Node::data</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree4Node5rdataE"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::Node::rdata</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree4Node4lazyE"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::Node::lazy</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree4Node4leftE"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::Node::left</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree4Node5rightE"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::Node::right</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2311LinkCutTree4Node3parE"><code class="docutils literal notranslate"><span class="pre">titan23::LinkCutTree::Node::par</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/furo.js?v=32e29ea5"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    </body>
+</html>

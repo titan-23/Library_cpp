@@ -1,0 +1,111 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="other_8cpp" kind="file" language="C++">
+    <compoundname>other.cpp</compoundname>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="other_8cpp_1a78455f40470eb87aab0c1dfbd8f4b7f3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+          <param>
+            <type>typename S</type>
+          </param>
+        </templateparamlist>
+        <type>T</type>
+        <definition>T abs</definition>
+        <argsstring>(const T &amp;a, const S &amp;b)</argsstring>
+        <name>abs</name>
+        <param>
+          <type>const T &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const S &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/others/other.cpp" line="2" column="3" bodyfile="titan_cpplib/others/other.cpp" bodystart="2" bodyend="2"/>
+      </memberdef>
+      <memberdef kind="function" id="other_8cpp_1a54b0a9f652dba577e009f5ae6d460e0b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+          <param>
+            <type>typename S</type>
+          </param>
+        </templateparamlist>
+        <type>T</type>
+        <definition>T max</definition>
+        <argsstring>(const T &amp;a, const S &amp;b)</argsstring>
+        <name>max</name>
+        <param>
+          <type>const T &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const S &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/others/other.cpp" line="5" column="3" bodyfile="titan_cpplib/others/other.cpp" bodystart="5" bodyend="5"/>
+      </memberdef>
+      <memberdef kind="function" id="other_8cpp_1a2cbf9c1f93c8cd1298a5fa6935df3b50" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+          <param>
+            <type>typename S</type>
+          </param>
+        </templateparamlist>
+        <type>T</type>
+        <definition>T min</definition>
+        <argsstring>(const T &amp;a, const S &amp;b)</argsstring>
+        <name>min</name>
+        <param>
+          <type>const T &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const S &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/others/other.cpp" line="8" column="3" bodyfile="titan_cpplib/others/other.cpp" bodystart="8" bodyend="8"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <programlisting>
+<codeline lineno="1"><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>S&gt;</highlight></codeline>
+<codeline lineno="2"><highlight class="normal">T<sp/>abs(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>T<sp/>&amp;a,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>S<sp/>&amp;b)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>a&lt;b?<sp/>b-a:<sp/>a-b;<sp/>}</highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>S&gt;</highlight></codeline>
+<codeline lineno="5"><highlight class="normal">T<sp/>max(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>T<sp/>&amp;a,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>S<sp/>&amp;b)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>a&lt;b?<sp/>b:<sp/>a;<sp/>}</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"></highlight></codeline>
+<codeline lineno="7"><highlight class="normal"></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T,<sp/></highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>S&gt;</highlight></codeline>
+<codeline lineno="8"><highlight class="normal">T<sp/>min(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>T<sp/>&amp;a,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>S<sp/>&amp;b)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>a&lt;b?<sp/>a:<sp/>b;<sp/>}</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+    </programlisting>
+    <location file="titan_cpplib/others/other.cpp"/>
+  </compounddef>
+</doxygen>

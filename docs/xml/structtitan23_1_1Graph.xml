@@ -1,0 +1,178 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structtitan23_1_1Graph" kind="struct" language="C++" prot="public">
+    <compoundname>titan23::Graph</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structtitan23_1_1Graph_1a13493d461c25e53d36be64c10c72caee" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int titan23::Graph::n</definition>
+        <argsstring></argsstring>
+        <name>n</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/graph.cpp" line="9" column="9" bodyfile="titan_cpplib/graph/graph.cpp" bodystart="9" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtitan23_1_1Graph_1a5a786ec8cf25e9e6369c473d91bae6e6" prot="public" static="no" mutable="no">
+        <type>vector&lt; vector&lt; int &gt; &gt;</type>
+        <definition>vector&lt;vector&lt;int&gt; &gt; titan23::Graph::G</definition>
+        <argsstring></argsstring>
+        <name>G</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/graph.cpp" line="10" column="12" bodyfile="titan_cpplib/graph/graph.cpp" bodystart="10" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structtitan23_1_1Graph_1aa990085e1e3a6b5111554f00c6e07386" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::Graph::Graph</definition>
+        <argsstring>()</argsstring>
+        <name>Graph</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/graph.cpp" line="12" column="5" bodyfile="titan_cpplib/graph/graph.cpp" bodystart="12" bodyend="12"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1Graph_1a8a9ba0a2950eeaeb3002c20d56a3f5b7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::Graph::Graph</definition>
+        <argsstring>(int n)</argsstring>
+        <name>Graph</name>
+        <param>
+          <type>int</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/graph.cpp" line="14" column="5" bodyfile="titan_cpplib/graph/graph.cpp" bodystart="14" bodyend="14"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1Graph_1aad1998365bb0a168ec0b14a0a758c5a1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::Graph::add_edge</definition>
+        <argsstring>(const int u, const int v)</argsstring>
+        <name>add_edge</name>
+        <param>
+          <type>const int</type>
+          <declname>u</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/graph.cpp" line="16" column="10" bodyfile="titan_cpplib/graph/graph.cpp" bodystart="16" bodyend="18"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1Graph_1a8c34afe1df34cceeced99a811f2580bb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool titan23::Graph::is_bipartite</definition>
+        <argsstring>()</argsstring>
+        <name>is_bipartite</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/graph.cpp" line="20" column="10" bodyfile="titan_cpplib/graph/graph.cpp" bodystart="20" bodyend="47"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1Graph_1a448eb0c09469aa3af3f74b179767f1ff" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>vector&lt; T &gt;</type>
+        <definition>vector&lt;T&gt; titan23::Graph::bfs</definition>
+        <argsstring>(const int start)</argsstring>
+        <name>bfs</name>
+        <param>
+          <type>const int</type>
+          <declname>start</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/graph.cpp" line="50" column="12" bodyfile="titan_cpplib/graph/graph.cpp" bodystart="50" bodyend="66"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1Graph_1ab06d822888079256f09152f5eae2e611" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::Graph::len</definition>
+        <argsstring>() const</argsstring>
+        <name>len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/graph.cpp" line="68" column="9" bodyfile="titan_cpplib/graph/graph.cpp" bodystart="68" bodyend="70"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1Graph_1af03afc8221e8ad2b7f3861e999ca55f4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>vector&lt; int &gt;</type>
+        <definition>vector&lt;int&gt; titan23::Graph::topological_sort</definition>
+        <argsstring>()</argsstring>
+        <name>topological_sort</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/graph.cpp" line="72" column="12" bodyfile="titan_cpplib/graph/graph.cpp" bodystart="72" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1Graph_1a51bf7de17e9703e26daa197200fe9766" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>vector&lt; vector&lt; int &gt; &gt;</type>
+        <definition>vector&lt;vector&lt;int&gt; &gt; titan23::Graph::get_scc</definition>
+        <argsstring>()</argsstring>
+        <name>get_scc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/graph.cpp" line="97" column="12" bodyfile="titan_cpplib/graph/graph.cpp" bodystart="97" bodyend="147"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="titan_cpplib/graph/graph.cpp" line="8" column="3" bodyfile="titan_cpplib/graph/graph.cpp" bodystart="8" bodyend="148"/>
+    <listofallmembers>
+      <member refid="structtitan23_1_1Graph_1aad1998365bb0a168ec0b14a0a758c5a1" prot="public" virt="non-virtual"><scope>titan23::Graph</scope><name>add_edge</name></member>
+      <member refid="structtitan23_1_1Graph_1a448eb0c09469aa3af3f74b179767f1ff" prot="public" virt="non-virtual"><scope>titan23::Graph</scope><name>bfs</name></member>
+      <member refid="structtitan23_1_1Graph_1a5a786ec8cf25e9e6369c473d91bae6e6" prot="public" virt="non-virtual"><scope>titan23::Graph</scope><name>G</name></member>
+      <member refid="structtitan23_1_1Graph_1a51bf7de17e9703e26daa197200fe9766" prot="public" virt="non-virtual"><scope>titan23::Graph</scope><name>get_scc</name></member>
+      <member refid="structtitan23_1_1Graph_1aa990085e1e3a6b5111554f00c6e07386" prot="public" virt="non-virtual"><scope>titan23::Graph</scope><name>Graph</name></member>
+      <member refid="structtitan23_1_1Graph_1a8a9ba0a2950eeaeb3002c20d56a3f5b7" prot="public" virt="non-virtual"><scope>titan23::Graph</scope><name>Graph</name></member>
+      <member refid="structtitan23_1_1Graph_1a8c34afe1df34cceeced99a811f2580bb" prot="public" virt="non-virtual"><scope>titan23::Graph</scope><name>is_bipartite</name></member>
+      <member refid="structtitan23_1_1Graph_1ab06d822888079256f09152f5eae2e611" prot="public" virt="non-virtual"><scope>titan23::Graph</scope><name>len</name></member>
+      <member refid="structtitan23_1_1Graph_1a13493d461c25e53d36be64c10c72caee" prot="public" virt="non-virtual"><scope>titan23::Graph</scope><name>n</name></member>
+      <member refid="structtitan23_1_1Graph_1af03afc8221e8ad2b7f3861e999ca55f4" prot="public" virt="non-virtual"><scope>titan23::Graph</scope><name>topological_sort</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

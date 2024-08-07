@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_df5b5eb2e4fbbc504307147de4724ea1" kind="dir">
+    <compoundname>titan_cpplib/algorithm</compoundname>
+    <innerfile refid="mo_8cpp">mo.cpp</innerfile>
+    <innerfile refid="random_8cpp">random.cpp</innerfile>
+    <innerfile refid="random__tree_8cpp">random_tree.cpp</innerfile>
+    <innerfile refid="rle_8cpp">rle.cpp</innerfile>
+    <innerfile refid="zaatsu_8cpp">zaatsu.cpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="titan_cpplib/algorithm/"/>
+  </compounddef>
+</doxygen>

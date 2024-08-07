@@ -1,0 +1,148 @@
+\hypertarget{classtitan23_1_1LinkCutTree}{}\doxysection{titan23\+::Link\+Cut\+Tree$<$ T, F, op, mapping, composition, e, id $>$ Struct Template Reference}
+\label{classtitan23_1_1LinkCutTree}\index{titan23::LinkCutTree$<$ T, F, op, mapping, composition, e, id $>$@{titan23::LinkCutTree$<$ T, F, op, mapping, composition, e, id $>$}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_a2ce71449a3b3830be756a8b3990fb383}\label{classtitan23_1_1LinkCutTree_a2ce71449a3b3830be756a8b3990fb383}} 
+{\bfseries Link\+Cut\+Tree} (int n)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_ab02a905fafdeeaf4bd8f137ad83288c1}\label{classtitan23_1_1LinkCutTree_ab02a905fafdeeaf4bd8f137ad83288c1}} 
+int {\bfseries expose} (int v)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_a6f3ea7a33c4147af032ccabcdfdd22ff}\label{classtitan23_1_1LinkCutTree_a6f3ea7a33c4147af032ccabcdfdd22ff}} 
+int {\bfseries lca} (int u, int v, int root=-\/1)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_a32448bc75e933ea9c78060931f6e2f69}\label{classtitan23_1_1LinkCutTree_a32448bc75e933ea9c78060931f6e2f69}} 
+void {\bfseries link} (int c, int p)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_a71881643479715aa9acf1b81acd086f7}\label{classtitan23_1_1LinkCutTree_a71881643479715aa9acf1b81acd086f7}} 
+void {\bfseries cut} (int c)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_ad50f980adf46cefa18901963a1490259}\label{classtitan23_1_1LinkCutTree_ad50f980adf46cefa18901963a1490259}} 
+int {\bfseries root} (int v)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_a98fffe099393ce18dac56add1edf7f8e}\label{classtitan23_1_1LinkCutTree_a98fffe099393ce18dac56add1edf7f8e}} 
+bool {\bfseries same} (int u, int v)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_ac50c3e15df35759dacd9b571b90757e1}\label{classtitan23_1_1LinkCutTree_ac50c3e15df35759dacd9b571b90757e1}} 
+void {\bfseries evert} (int v)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_a55e6c93ad9baa7b73583d155522f96de}\label{classtitan23_1_1LinkCutTree_a55e6c93ad9baa7b73583d155522f96de}} 
+T {\bfseries path\+\_\+prod} (int u, int v)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_a9fc256cc02d54aea274dad1eaff6008b}\label{classtitan23_1_1LinkCutTree_a9fc256cc02d54aea274dad1eaff6008b}} 
+void {\bfseries path\+\_\+apply} (int u, int v, F f)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_af7983214cd7954283e90de6a0e45c4c2}\label{classtitan23_1_1LinkCutTree_af7983214cd7954283e90de6a0e45c4c2}} 
+bool {\bfseries merge} (int u, int v)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_a7a4806f31c01a2950a3619d6b053f9bd}\label{classtitan23_1_1LinkCutTree_a7a4806f31c01a2950a3619d6b053f9bd}} 
+void {\bfseries split} (int u, int v)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_afa2e76aa7ae5f23db4b3ccd4322fc477}\label{classtitan23_1_1LinkCutTree_afa2e76aa7ae5f23db4b3ccd4322fc477}} 
+T {\bfseries get} (int k)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_a784bcd65097d8eb94fad54eba03d1583}\label{classtitan23_1_1LinkCutTree_a784bcd65097d8eb94fad54eba03d1583}} 
+void {\bfseries set} (int k, T v)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_ab7a1112db3bf507c16032160959f9e41}\label{classtitan23_1_1LinkCutTree_ab7a1112db3bf507c16032160959f9e41}} 
+int {\bfseries path\+\_\+kth\+\_\+elm} (int s, int t, int k)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_a95a95e025ef84750f04e0b98726e3163}\label{classtitan23_1_1LinkCutTree_a95a95e025ef84750f04e0b98726e3163}} 
+{\bfseries Link\+Cut\+Tree} (int \+\_\+n)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_ac840b54909126bab46d86ef888072ca4}\label{classtitan23_1_1LinkCutTree_ac840b54909126bab46d86ef888072ca4}} 
+bool {\bfseries \+\_\+is\+\_\+root} (const int node) const
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_a1d05f4e6cda1960d4d1733cd05dd5c34}\label{classtitan23_1_1LinkCutTree_a1d05f4e6cda1960d4d1733cd05dd5c34}} 
+void {\bfseries \+\_\+propagate} (const int node)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_a10a09330e8e1c80668e3e5c06522f662}\label{classtitan23_1_1LinkCutTree_a10a09330e8e1c80668e3e5c06522f662}} 
+void {\bfseries \+\_\+update} (const int node)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_a2ddf1c87c82689268a08642081485586}\label{classtitan23_1_1LinkCutTree_a2ddf1c87c82689268a08642081485586}} 
+void {\bfseries \+\_\+update\+\_\+triple} (const int x, const int y, const int z)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_a68e6c258a5ba031dc200c72d49a02623}\label{classtitan23_1_1LinkCutTree_a68e6c258a5ba031dc200c72d49a02623}} 
+void {\bfseries \+\_\+update\+\_\+double} (const int x, const int y)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_ac23660c1ca11e4de33e8268e1479bd88}\label{classtitan23_1_1LinkCutTree_ac23660c1ca11e4de33e8268e1479bd88}} 
+void {\bfseries \+\_\+splay} (const int node)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_a57a37f895a5129c2b9f759290d262b73}\label{classtitan23_1_1LinkCutTree_a57a37f895a5129c2b9f759290d262b73}} 
+int {\bfseries expose} (const int v)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_a23af434a5b11baae11649bb71fa86130}\label{classtitan23_1_1LinkCutTree_a23af434a5b11baae11649bb71fa86130}} 
+int {\bfseries lca} (const int u, const int v, int root=-\/1)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_a22d3dcb13f4306bf814bcb8abd97ed8f}\label{classtitan23_1_1LinkCutTree_a22d3dcb13f4306bf814bcb8abd97ed8f}} 
+void {\bfseries link} (const int c, const int p)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_a1ba2be63aa396c6faa62d921706871c8}\label{classtitan23_1_1LinkCutTree_a1ba2be63aa396c6faa62d921706871c8}} 
+void {\bfseries cut} (const int c)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_ac3d07c34e96618b782f20d3e1e27367d}\label{classtitan23_1_1LinkCutTree_ac3d07c34e96618b782f20d3e1e27367d}} 
+int {\bfseries group\+\_\+count} () const
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_ad50f980adf46cefa18901963a1490259}\label{classtitan23_1_1LinkCutTree_ad50f980adf46cefa18901963a1490259}} 
+int {\bfseries root} (int v)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_ac9a0049c47a91de84009e12b6ebf864a}\label{classtitan23_1_1LinkCutTree_ac9a0049c47a91de84009e12b6ebf864a}} 
+bool {\bfseries same} (const int u, const int v)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_a870752797edb7456bf25aa042e7ec9f5}\label{classtitan23_1_1LinkCutTree_a870752797edb7456bf25aa042e7ec9f5}} 
+void {\bfseries evert} (const int v)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_a9a36617c94d26074ed44449f60de476a}\label{classtitan23_1_1LinkCutTree_a9a36617c94d26074ed44449f60de476a}} 
+T {\bfseries path\+\_\+prod} (const int u, const int v)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_ae5cce6d11ef9a22ad3e284a3b20823cf}\label{classtitan23_1_1LinkCutTree_ae5cce6d11ef9a22ad3e284a3b20823cf}} 
+void {\bfseries path\+\_\+apply} (const int u, const int v, F f)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_aba0dd444f84e7a54579d7cbd6cbdf638}\label{classtitan23_1_1LinkCutTree_aba0dd444f84e7a54579d7cbd6cbdf638}} 
+int {\bfseries path\+\_\+length} (const int u, const int v)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_ae1744dca1e84fa1bbb60b3d658950f32}\label{classtitan23_1_1LinkCutTree_ae1744dca1e84fa1bbb60b3d658950f32}} 
+bool {\bfseries merge} (const int u, const int v)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_acd0cf091659be0cdc25b8c13da5bfaed}\label{classtitan23_1_1LinkCutTree_acd0cf091659be0cdc25b8c13da5bfaed}} 
+bool {\bfseries split} (const int u, const int v)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_ab7a1112db3bf507c16032160959f9e41}\label{classtitan23_1_1LinkCutTree_ab7a1112db3bf507c16032160959f9e41}} 
+int {\bfseries path\+\_\+kth\+\_\+elm} (int s, int t, int k)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_a7f05bc78458f805d7707ac09ef8444c5}\label{classtitan23_1_1LinkCutTree_a7f05bc78458f805d7707ac09ef8444c5}} 
+T {\bfseries get} (const int k)
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_a5e23828c5ed2e71ffa2a5766979e6446}\label{classtitan23_1_1LinkCutTree_a5e23828c5ed2e71ffa2a5766979e6446}} 
+void {\bfseries set} (const int k, const T v)
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_ae4eb68415e809fbed995815def5276b7}\label{classtitan23_1_1LinkCutTree_ae4eb68415e809fbed995815def5276b7}} 
+int {\bfseries n}
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_a312a69a289d6a12da93902b19d36c0f0}\label{classtitan23_1_1LinkCutTree_a312a69a289d6a12da93902b19d36c0f0}} 
+int {\bfseries group\+\_\+cnt}
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_ac83410b9ba9d0d463541ed49638e7fb0}\label{classtitan23_1_1LinkCutTree_ac83410b9ba9d0d463541ed49638e7fb0}} 
+vector$<$ int $>$ {\bfseries arr}
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_a70781190042ba4534ecd146dabdf5ba4}\label{classtitan23_1_1LinkCutTree_a70781190042ba4534ecd146dabdf5ba4}} 
+vector$<$ int $>$ {\bfseries size}
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_a4c00b2137fea9b07b8d365d3ba2c7904}\label{classtitan23_1_1LinkCutTree_a4c00b2137fea9b07b8d365d3ba2c7904}} 
+vector$<$ T $>$ {\bfseries key}
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_ae0609ce7ed2454af2a07583fef8313c5}\label{classtitan23_1_1LinkCutTree_ae0609ce7ed2454af2a07583fef8313c5}} 
+vector$<$ T $>$ {\bfseries data}
+\item 
+\mbox{\Hypertarget{classtitan23_1_1LinkCutTree_a50c2f79183a7e7c5f65ce099493027b2}\label{classtitan23_1_1LinkCutTree_a50c2f79183a7e7c5f65ce099493027b2}} 
+vector$<$ F $>$ {\bfseries lazy}
+\end{DoxyCompactItemize}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+titan\+\_\+cpplib/data\+\_\+structures/link\+\_\+cut\+\_\+tree.\+cpp\end{DoxyCompactItemize}

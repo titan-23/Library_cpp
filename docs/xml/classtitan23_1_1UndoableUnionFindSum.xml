@@ -1,0 +1,326 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classtitan23_1_1UndoableUnionFindSum" kind="class" language="C++" prot="public">
+    <compoundname>titan23::UndoableUnionFindSum</compoundname>
+    <templateparamlist>
+      <param>
+        <type>typename T</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classtitan23_1_1UndoableUnionFindSum_1a9a4a45fcad95c9abe4db21f42a9cf1b9" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int titan23::UndoableUnionFindSum&lt; T &gt;::_n</definition>
+        <argsstring></argsstring>
+        <name>_n</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/undoable_union_find_sum.cpp" line="10" column="11" bodyfile="titan_cpplib/data_structures/undoable_union_find_sum.cpp" bodystart="10" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1UndoableUnionFindSum_1a2d510113d85b117f5f4b5c9f20dcd07d" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int titan23::UndoableUnionFindSum&lt; T &gt;::_group_count</definition>
+        <argsstring></argsstring>
+        <name>_group_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/undoable_union_find_sum.cpp" line="10" column="14" bodyfile="titan_cpplib/data_structures/undoable_union_find_sum.cpp" bodystart="10" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1UndoableUnionFindSum_1af290c54d5a19f85d5eeaf1759299fa73" prot="private" static="no" mutable="no">
+        <type>T</type>
+        <definition>T titan23::UndoableUnionFindSum&lt; T &gt;::_e</definition>
+        <argsstring></argsstring>
+        <name>_e</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/undoable_union_find_sum.cpp" line="11" column="9" bodyfile="titan_cpplib/data_structures/undoable_union_find_sum.cpp" bodystart="11" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1UndoableUnionFindSum_1a1ea050f325e904fc4f8d965987e1dea7" prot="private" static="no" mutable="no">
+        <type>vector&lt; int &gt;</type>
+        <definition>vector&lt;int&gt; titan23::UndoableUnionFindSum&lt; T &gt;::_parents</definition>
+        <argsstring></argsstring>
+        <name>_parents</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/undoable_union_find_sum.cpp" line="12" column="14" bodyfile="titan_cpplib/data_structures/undoable_union_find_sum.cpp" bodystart="12" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1UndoableUnionFindSum_1a5a29e13dc51e8b2d6c3cd15541f1ceb9" prot="private" static="no" mutable="no">
+        <type>vector&lt; T &gt;</type>
+        <definition>vector&lt;T&gt; titan23::UndoableUnionFindSum&lt; T &gt;::_all_sum</definition>
+        <argsstring></argsstring>
+        <name>_all_sum</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/undoable_union_find_sum.cpp" line="13" column="14" bodyfile="titan_cpplib/data_structures/undoable_union_find_sum.cpp" bodystart="13" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1UndoableUnionFindSum_1aeebae734da097f799b219da31cf49f2a" prot="private" static="no" mutable="no">
+        <type>vector&lt; T &gt;</type>
+        <definition>vector&lt;T&gt; titan23::UndoableUnionFindSum&lt; T &gt;::_one_sum</definition>
+        <argsstring></argsstring>
+        <name>_one_sum</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/undoable_union_find_sum.cpp" line="13" column="23" bodyfile="titan_cpplib/data_structures/undoable_union_find_sum.cpp" bodystart="13" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1UndoableUnionFindSum_1a65de6a67b8fadcc96c5983bd499235ae" prot="private" static="no" mutable="no">
+        <type>vector&lt; tuple&lt; int, int, T &gt; &gt;</type>
+        <definition>vector&lt;tuple&lt;int, int, T&gt; &gt; titan23::UndoableUnionFindSum&lt; T &gt;::_history</definition>
+        <argsstring></argsstring>
+        <name>_history</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/undoable_union_find_sum.cpp" line="14" column="14" bodyfile="titan_cpplib/data_structures/undoable_union_find_sum.cpp" bodystart="14" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classtitan23_1_1UndoableUnionFindSum_1a6d4194451d80a7fec85542bc2c338ca4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::UndoableUnionFindSum&lt; T &gt;::UndoableUnionFindSum</definition>
+        <argsstring>()</argsstring>
+        <name>UndoableUnionFindSum</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/undoable_union_find_sum.cpp" line="17" column="7" bodyfile="titan_cpplib/data_structures/undoable_union_find_sum.cpp" bodystart="17" bodyend="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1UndoableUnionFindSum_1abde12287aa21e90237da81a405fc66f4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::UndoableUnionFindSum&lt; T &gt;::UndoableUnionFindSum</definition>
+        <argsstring>(int n, T e)</argsstring>
+        <name>UndoableUnionFindSum</name>
+        <param>
+          <type>int</type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>T</type>
+          <declname>e</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/undoable_union_find_sum.cpp" line="18" column="7" bodyfile="titan_cpplib/data_structures/undoable_union_find_sum.cpp" bodystart="18" bodyend="25"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1UndoableUnionFindSum_1af3aa72c53cef5f81a27ddd4c923510a1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::UndoableUnionFindSum&lt; T &gt;::undo</definition>
+        <argsstring>()</argsstring>
+        <name>undo</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/undoable_union_find_sum.cpp" line="27" column="12" bodyfile="titan_cpplib/data_structures/undoable_union_find_sum.cpp" bodystart="27" bodyend="40"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1UndoableUnionFindSum_1ad16499becf5def4fb47b0a080fd70f48" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::UndoableUnionFindSum&lt; T &gt;::root</definition>
+        <argsstring>(int x) const</argsstring>
+        <name>root</name>
+        <param>
+          <type>int</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/undoable_union_find_sum.cpp" line="42" column="11" bodyfile="titan_cpplib/data_structures/undoable_union_find_sum.cpp" bodystart="42" bodyend="47"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1UndoableUnionFindSum_1a91070aae2ae5f0e54ec48441b85fdf9d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool titan23::UndoableUnionFindSum&lt; T &gt;::unite</definition>
+        <argsstring>(int x, int y)</argsstring>
+        <name>unite</name>
+        <param>
+          <type>int</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/undoable_union_find_sum.cpp" line="49" column="12" bodyfile="titan_cpplib/data_structures/undoable_union_find_sum.cpp" bodystart="49" bodyend="65"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1UndoableUnionFindSum_1a1834f4c8901d92a0204338aeb94d624c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::UndoableUnionFindSum&lt; T &gt;::size</definition>
+        <argsstring>(const int x) const</argsstring>
+        <name>size</name>
+        <param>
+          <type>const int</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/undoable_union_find_sum.cpp" line="67" column="11" bodyfile="titan_cpplib/data_structures/undoable_union_find_sum.cpp" bodystart="67" bodyend="69"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1UndoableUnionFindSum_1ac5b85c9c2a153313e94b55716d51a8dd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool titan23::UndoableUnionFindSum&lt; T &gt;::same</definition>
+        <argsstring>(const int x, const int y) const</argsstring>
+        <name>same</name>
+        <param>
+          <type>const int</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/undoable_union_find_sum.cpp" line="71" column="12" bodyfile="titan_cpplib/data_structures/undoable_union_find_sum.cpp" bodystart="71" bodyend="73"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1UndoableUnionFindSum_1a0820367b28f6103ff8cdc70f668a3063" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::UndoableUnionFindSum&lt; T &gt;::add_point</definition>
+        <argsstring>(int x, const T v)</argsstring>
+        <name>add_point</name>
+        <param>
+          <type>int</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>const T</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/undoable_union_find_sum.cpp" line="75" column="12" bodyfile="titan_cpplib/data_structures/undoable_union_find_sum.cpp" bodystart="75" bodyend="80"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1UndoableUnionFindSum_1a037f44429b6058c5d220dbadc61b3bf0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::UndoableUnionFindSum&lt; T &gt;::add_group</definition>
+        <argsstring>(int x, const T v)</argsstring>
+        <name>add_group</name>
+        <param>
+          <type>int</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>const T</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/undoable_union_find_sum.cpp" line="82" column="12" bodyfile="titan_cpplib/data_structures/undoable_union_find_sum.cpp" bodystart="82" bodyend="85"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1UndoableUnionFindSum_1aa1aa58fbffbd36916654f40276f78d73" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::UndoableUnionFindSum&lt; T &gt;::group_count</definition>
+        <argsstring>() const</argsstring>
+        <name>group_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/undoable_union_find_sum.cpp" line="87" column="11" bodyfile="titan_cpplib/data_structures/undoable_union_find_sum.cpp" bodystart="87" bodyend="89"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1UndoableUnionFindSum_1aafcf9484dd729e8fc6e03a9a2979e34c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T titan23::UndoableUnionFindSum&lt; T &gt;::group_sum</definition>
+        <argsstring>(int x) const</argsstring>
+        <name>group_sum</name>
+        <param>
+          <type>int</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/undoable_union_find_sum.cpp" line="91" column="9" bodyfile="titan_cpplib/data_structures/undoable_union_find_sum.cpp" bodystart="91" bodyend="94"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="titan_cpplib/data_structures/undoable_union_find_sum.cpp" line="8" column="5" bodyfile="titan_cpplib/data_structures/undoable_union_find_sum.cpp" bodystart="8" bodyend="95"/>
+    <listofallmembers>
+      <member refid="classtitan23_1_1UndoableUnionFindSum_1a5a29e13dc51e8b2d6c3cd15541f1ceb9" prot="private" virt="non-virtual"><scope>titan23::UndoableUnionFindSum</scope><name>_all_sum</name></member>
+      <member refid="classtitan23_1_1UndoableUnionFindSum_1af290c54d5a19f85d5eeaf1759299fa73" prot="private" virt="non-virtual"><scope>titan23::UndoableUnionFindSum</scope><name>_e</name></member>
+      <member refid="classtitan23_1_1UndoableUnionFindSum_1a2d510113d85b117f5f4b5c9f20dcd07d" prot="private" virt="non-virtual"><scope>titan23::UndoableUnionFindSum</scope><name>_group_count</name></member>
+      <member refid="classtitan23_1_1UndoableUnionFindSum_1a65de6a67b8fadcc96c5983bd499235ae" prot="private" virt="non-virtual"><scope>titan23::UndoableUnionFindSum</scope><name>_history</name></member>
+      <member refid="classtitan23_1_1UndoableUnionFindSum_1a9a4a45fcad95c9abe4db21f42a9cf1b9" prot="private" virt="non-virtual"><scope>titan23::UndoableUnionFindSum</scope><name>_n</name></member>
+      <member refid="classtitan23_1_1UndoableUnionFindSum_1aeebae734da097f799b219da31cf49f2a" prot="private" virt="non-virtual"><scope>titan23::UndoableUnionFindSum</scope><name>_one_sum</name></member>
+      <member refid="classtitan23_1_1UndoableUnionFindSum_1a1ea050f325e904fc4f8d965987e1dea7" prot="private" virt="non-virtual"><scope>titan23::UndoableUnionFindSum</scope><name>_parents</name></member>
+      <member refid="classtitan23_1_1UndoableUnionFindSum_1a037f44429b6058c5d220dbadc61b3bf0" prot="public" virt="non-virtual"><scope>titan23::UndoableUnionFindSum</scope><name>add_group</name></member>
+      <member refid="classtitan23_1_1UndoableUnionFindSum_1a0820367b28f6103ff8cdc70f668a3063" prot="public" virt="non-virtual"><scope>titan23::UndoableUnionFindSum</scope><name>add_point</name></member>
+      <member refid="classtitan23_1_1UndoableUnionFindSum_1aa1aa58fbffbd36916654f40276f78d73" prot="public" virt="non-virtual"><scope>titan23::UndoableUnionFindSum</scope><name>group_count</name></member>
+      <member refid="classtitan23_1_1UndoableUnionFindSum_1aafcf9484dd729e8fc6e03a9a2979e34c" prot="public" virt="non-virtual"><scope>titan23::UndoableUnionFindSum</scope><name>group_sum</name></member>
+      <member refid="classtitan23_1_1UndoableUnionFindSum_1ad16499becf5def4fb47b0a080fd70f48" prot="public" virt="non-virtual"><scope>titan23::UndoableUnionFindSum</scope><name>root</name></member>
+      <member refid="classtitan23_1_1UndoableUnionFindSum_1ac5b85c9c2a153313e94b55716d51a8dd" prot="public" virt="non-virtual"><scope>titan23::UndoableUnionFindSum</scope><name>same</name></member>
+      <member refid="classtitan23_1_1UndoableUnionFindSum_1a1834f4c8901d92a0204338aeb94d624c" prot="public" virt="non-virtual"><scope>titan23::UndoableUnionFindSum</scope><name>size</name></member>
+      <member refid="classtitan23_1_1UndoableUnionFindSum_1af3aa72c53cef5f81a27ddd4c923510a1" prot="public" virt="non-virtual"><scope>titan23::UndoableUnionFindSum</scope><name>undo</name></member>
+      <member refid="classtitan23_1_1UndoableUnionFindSum_1a6d4194451d80a7fec85542bc2c338ca4" prot="public" virt="non-virtual"><scope>titan23::UndoableUnionFindSum</scope><name>UndoableUnionFindSum</name></member>
+      <member refid="classtitan23_1_1UndoableUnionFindSum_1abde12287aa21e90237da81a405fc66f4" prot="public" virt="non-virtual"><scope>titan23::UndoableUnionFindSum</scope><name>UndoableUnionFindSum</name></member>
+      <member refid="classtitan23_1_1UndoableUnionFindSum_1a91070aae2ae5f0e54ec48441b85fdf9d" prot="public" virt="non-virtual"><scope>titan23::UndoableUnionFindSum</scope><name>unite</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

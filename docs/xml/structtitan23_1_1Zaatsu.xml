@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structtitan23_1_1Zaatsu" kind="struct" language="C++" prot="public">
+    <compoundname>titan23::Zaatsu</compoundname>
+    <templateparamlist>
+      <param>
+        <type>typename T</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="structtitan23_1_1Zaatsu_1a81dfc2394c13283f510823e071f94903" prot="private" static="no" mutable="no">
+        <type>vector&lt; T &gt;</type>
+        <definition>vector&lt;T&gt; titan23::Zaatsu&lt; T &gt;::_to_origin</definition>
+        <argsstring></argsstring>
+        <name>_to_origin</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/algorithm/zaatsu.cpp" line="10" column="12" bodyfile="titan_cpplib/algorithm/zaatsu.cpp" bodystart="10" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structtitan23_1_1Zaatsu_1a04a5f195ce43ce165feb98501b7dade7" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int titan23::Zaatsu&lt; T &gt;::_n</definition>
+        <argsstring></argsstring>
+        <name>_n</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/algorithm/zaatsu.cpp" line="11" column="9" bodyfile="titan_cpplib/algorithm/zaatsu.cpp" bodystart="11" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structtitan23_1_1Zaatsu_1a6f2d95a2e3911e01b264a99b4083b93d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::Zaatsu&lt; T &gt;::Zaatsu</definition>
+        <argsstring>(vector&lt; T &gt; &amp;used_items)</argsstring>
+        <name>Zaatsu</name>
+        <param>
+          <type>vector&lt; T &gt; &amp;</type>
+          <declname>used_items</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/algorithm/zaatsu.cpp" line="14" column="5" bodyfile="titan_cpplib/algorithm/zaatsu.cpp" bodystart="14" bodyend="19"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1Zaatsu_1ae2eeb830f7e9a40a6b8a7fc368bfeaa2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::Zaatsu&lt; T &gt;::len</definition>
+        <argsstring>() const</argsstring>
+        <name>len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/algorithm/zaatsu.cpp" line="21" column="9" bodyfile="titan_cpplib/algorithm/zaatsu.cpp" bodystart="21" bodyend="23"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1Zaatsu_1aef4f09458e4d96ad4c56c8d379e7cf15" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::Zaatsu&lt; T &gt;::to_zaatsu</definition>
+        <argsstring>(const T &amp;x) const</argsstring>
+        <name>to_zaatsu</name>
+        <param>
+          <type>const T &amp;</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/algorithm/zaatsu.cpp" line="25" column="9" bodyfile="titan_cpplib/algorithm/zaatsu.cpp" bodystart="25" bodyend="27"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1Zaatsu_1a78c5cf1c779aa7407a1b1819ff3cb3bb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T titan23::Zaatsu&lt; T &gt;::to_origin</definition>
+        <argsstring>(const int &amp;x) const</argsstring>
+        <name>to_origin</name>
+        <param>
+          <type>const int &amp;</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/algorithm/zaatsu.cpp" line="29" column="7" bodyfile="titan_cpplib/algorithm/zaatsu.cpp" bodystart="29" bodyend="31"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="titan_cpplib/algorithm/zaatsu.cpp" line="8" column="3" bodyfile="titan_cpplib/algorithm/zaatsu.cpp" bodystart="8" bodyend="32"/>
+    <listofallmembers>
+      <member refid="structtitan23_1_1Zaatsu_1a04a5f195ce43ce165feb98501b7dade7" prot="private" virt="non-virtual"><scope>titan23::Zaatsu</scope><name>_n</name></member>
+      <member refid="structtitan23_1_1Zaatsu_1a81dfc2394c13283f510823e071f94903" prot="private" virt="non-virtual"><scope>titan23::Zaatsu</scope><name>_to_origin</name></member>
+      <member refid="structtitan23_1_1Zaatsu_1ae2eeb830f7e9a40a6b8a7fc368bfeaa2" prot="public" virt="non-virtual"><scope>titan23::Zaatsu</scope><name>len</name></member>
+      <member refid="structtitan23_1_1Zaatsu_1a78c5cf1c779aa7407a1b1819ff3cb3bb" prot="public" virt="non-virtual"><scope>titan23::Zaatsu</scope><name>to_origin</name></member>
+      <member refid="structtitan23_1_1Zaatsu_1aef4f09458e4d96ad4c56c8d379e7cf15" prot="public" virt="non-virtual"><scope>titan23::Zaatsu</scope><name>to_zaatsu</name></member>
+      <member refid="structtitan23_1_1Zaatsu_1a6f2d95a2e3911e01b264a99b4083b93d" prot="public" virt="non-virtual"><scope>titan23::Zaatsu</scope><name>Zaatsu</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

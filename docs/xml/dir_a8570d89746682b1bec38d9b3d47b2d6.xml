@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_a8570d89746682b1bec38d9b3d47b2d6" kind="dir">
+    <compoundname>titan_cpplib/string</compoundname>
+    <innerfile refid="hash__string_8cpp">hash_string.cpp</innerfile>
+    <innerfile refid="is__kaibun_8cpp">is_kaibun.cpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="titan_cpplib/string/"/>
+  </compounddef>
+</doxygen>

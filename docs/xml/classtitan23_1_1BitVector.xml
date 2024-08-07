@@ -1,0 +1,315 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classtitan23_1_1BitVector" kind="class" language="C++" prot="public">
+    <compoundname>titan23::BitVector</compoundname>
+      <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="classtitan23_1_1BitVector_1aa108efd820b5fd7b13ee2d06d9731b63" prot="private" static="no">
+        <type>unsigned long long</type>
+        <definition>using titan23::BitVector::u64 =  unsigned long long</definition>
+        <argsstring></argsstring>
+        <name>u64</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="12" column="5" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="12" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classtitan23_1_1BitVector_1a312910140bd0f85becf4061ab878b495" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int titan23::BitVector::n</definition>
+        <argsstring></argsstring>
+        <name>n</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="13" column="9" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="13" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1BitVector_1a49a9be63ca17e03c557bbf4dee1df252" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int titan23::BitVector::bsize</definition>
+        <argsstring></argsstring>
+        <name>bsize</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="13" column="11" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="13" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1BitVector_1a9d868861d85a8fb02b44bfddceac8c4a" prot="private" static="no" mutable="no">
+        <type>vector&lt; u64 &gt;</type>
+        <definition>vector&lt;u64&gt; titan23::BitVector::bit</definition>
+        <argsstring></argsstring>
+        <name>bit</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="14" column="12" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="14" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1BitVector_1acc3bd601b520157351a87a331fb0c866" prot="private" static="no" mutable="no">
+        <type>vector&lt; u64 &gt;</type>
+        <definition>vector&lt;u64&gt; titan23::BitVector::acc</definition>
+        <argsstring></argsstring>
+        <name>acc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="14" column="16" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="14" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classtitan23_1_1BitVector_1aa1d6b3738cc1d4455d1f8a8aef2a9cf7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::BitVector::BitVector</definition>
+        <argsstring>()</argsstring>
+        <name>BitVector</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="17" column="5" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="17" bodyend="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1BitVector_1a37bcd12aa086ffb16f805e3c063fb14b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::BitVector::BitVector</definition>
+        <argsstring>(const int n)</argsstring>
+        <name>BitVector</name>
+        <param>
+          <type>const int</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="18" column="5" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="18" bodyend="19"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1BitVector_1ab405031fbc228b63b5faa92172a2754e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::BitVector::set</definition>
+        <argsstring>(const int k)</argsstring>
+        <name>set</name>
+        <param>
+          <type>const int</type>
+          <declname>k</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="21" column="10" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="21" bodyend="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1BitVector_1a5b9e6b7b05372e57d05822879de94c29" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::BitVector::build</definition>
+        <argsstring>()</argsstring>
+        <name>build</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="25" column="10" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="25" bodyend="29"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1BitVector_1afd3a5c642e1a4b44762e0969ead84221" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool titan23::BitVector::access</definition>
+        <argsstring>(const int k) const</argsstring>
+        <name>access</name>
+        <param>
+          <type>const int</type>
+          <declname>k</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="31" column="10" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="31" bodyend="33"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1BitVector_1adf16fccca98ce9079636908ebb18ed2f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::BitVector::rank0</definition>
+        <argsstring>(const int r) const</argsstring>
+        <name>rank0</name>
+        <param>
+          <type>const int</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="35" column="9" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="35" bodyend="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1BitVector_1a7ef3fd030dd94b4a39567bc29f3619fa" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::BitVector::rank1</definition>
+        <argsstring>(const int r) const</argsstring>
+        <name>rank1</name>
+        <param>
+          <type>const int</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="39" column="9" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="39" bodyend="41"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1BitVector_1ab4fbe0b75be5c828b8ba19b6a48e1db2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::BitVector::rank</definition>
+        <argsstring>(const int r, const bool v) const</argsstring>
+        <name>rank</name>
+        <param>
+          <type>const int</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="43" column="9" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="43" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1BitVector_1a64886a714d8feef073f014a01e84a4ef" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::BitVector::select0</definition>
+        <argsstring>(int k) const</argsstring>
+        <name>select0</name>
+        <param>
+          <type>int</type>
+          <declname>k</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="47" column="9" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="47" bodyend="70"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1BitVector_1acb00472a3ace765cb6e5a0239ae23b29" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::BitVector::select1</definition>
+        <argsstring>(int k) const</argsstring>
+        <name>select1</name>
+        <param>
+          <type>int</type>
+          <declname>k</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="72" column="9" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="72" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1BitVector_1a8af0b37bba0cbdae4ed402a2d597879d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::BitVector::select</definition>
+        <argsstring>(const int k, const int v) const</argsstring>
+        <name>select</name>
+        <param>
+          <type>const int</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="97" column="9" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="97" bodyend="99"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1BitVector_1a549e1e72f1f5450cc6cb5995bf0081ca" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::BitVector::len</definition>
+        <argsstring>() const</argsstring>
+        <name>len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="101" column="9" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="101" bodyend="103"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1BitVector_1a61ed6fd8862fbf0b8d49cb417c81f78d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::BitVector::print</definition>
+        <argsstring>() const</argsstring>
+        <name>print</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="105" column="10" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="105" bodyend="114"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="titan_cpplib/data_structures/bit_vector.cpp" line="10" column="3" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="10" bodyend="115"/>
+    <listofallmembers>
+      <member refid="classtitan23_1_1BitVector_1acc3bd601b520157351a87a331fb0c866" prot="private" virt="non-virtual"><scope>titan23::BitVector</scope><name>acc</name></member>
+      <member refid="classtitan23_1_1BitVector_1afd3a5c642e1a4b44762e0969ead84221" prot="public" virt="non-virtual"><scope>titan23::BitVector</scope><name>access</name></member>
+      <member refid="classtitan23_1_1BitVector_1a9d868861d85a8fb02b44bfddceac8c4a" prot="private" virt="non-virtual"><scope>titan23::BitVector</scope><name>bit</name></member>
+      <member refid="classtitan23_1_1BitVector_1aa1d6b3738cc1d4455d1f8a8aef2a9cf7" prot="public" virt="non-virtual"><scope>titan23::BitVector</scope><name>BitVector</name></member>
+      <member refid="classtitan23_1_1BitVector_1a37bcd12aa086ffb16f805e3c063fb14b" prot="public" virt="non-virtual"><scope>titan23::BitVector</scope><name>BitVector</name></member>
+      <member refid="classtitan23_1_1BitVector_1a49a9be63ca17e03c557bbf4dee1df252" prot="private" virt="non-virtual"><scope>titan23::BitVector</scope><name>bsize</name></member>
+      <member refid="classtitan23_1_1BitVector_1a5b9e6b7b05372e57d05822879de94c29" prot="public" virt="non-virtual"><scope>titan23::BitVector</scope><name>build</name></member>
+      <member refid="classtitan23_1_1BitVector_1a549e1e72f1f5450cc6cb5995bf0081ca" prot="public" virt="non-virtual"><scope>titan23::BitVector</scope><name>len</name></member>
+      <member refid="classtitan23_1_1BitVector_1a312910140bd0f85becf4061ab878b495" prot="private" virt="non-virtual"><scope>titan23::BitVector</scope><name>n</name></member>
+      <member refid="classtitan23_1_1BitVector_1a61ed6fd8862fbf0b8d49cb417c81f78d" prot="public" virt="non-virtual"><scope>titan23::BitVector</scope><name>print</name></member>
+      <member refid="classtitan23_1_1BitVector_1ab4fbe0b75be5c828b8ba19b6a48e1db2" prot="public" virt="non-virtual"><scope>titan23::BitVector</scope><name>rank</name></member>
+      <member refid="classtitan23_1_1BitVector_1adf16fccca98ce9079636908ebb18ed2f" prot="public" virt="non-virtual"><scope>titan23::BitVector</scope><name>rank0</name></member>
+      <member refid="classtitan23_1_1BitVector_1a7ef3fd030dd94b4a39567bc29f3619fa" prot="public" virt="non-virtual"><scope>titan23::BitVector</scope><name>rank1</name></member>
+      <member refid="classtitan23_1_1BitVector_1a8af0b37bba0cbdae4ed402a2d597879d" prot="public" virt="non-virtual"><scope>titan23::BitVector</scope><name>select</name></member>
+      <member refid="classtitan23_1_1BitVector_1a64886a714d8feef073f014a01e84a4ef" prot="public" virt="non-virtual"><scope>titan23::BitVector</scope><name>select0</name></member>
+      <member refid="classtitan23_1_1BitVector_1acb00472a3ace765cb6e5a0239ae23b29" prot="public" virt="non-virtual"><scope>titan23::BitVector</scope><name>select1</name></member>
+      <member refid="classtitan23_1_1BitVector_1ab405031fbc228b63b5faa92172a2754e" prot="public" virt="non-virtual"><scope>titan23::BitVector</scope><name>set</name></member>
+      <member refid="classtitan23_1_1BitVector_1aa108efd820b5fd7b13ee2d06d9731b63" prot="private" virt="non-virtual"><scope>titan23::BitVector</scope><name>u64</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>
