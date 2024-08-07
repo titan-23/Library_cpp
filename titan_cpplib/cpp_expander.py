@@ -14,12 +14,17 @@ TO_LIB_PATH = "."
 
 import sys
 import pyperclip
-import re
+import shutil
 
 
 def print_red(arg):
     print(f"\u001b[31m{arg}\u001b[0m")
 
+def init_clipboard():
+    for command in ["wl-clipboard", "xclip", "xsel"]:
+        if shutil.which(command):
+            pyperclip.set_clipboard(command)
+            break
 
 def get_code(now_path, input_file, is_input=False):
     global input_lines, output
@@ -53,6 +58,7 @@ def get_code(now_path, input_file, is_input=False):
 
 
 if __name__ == "__main__":
+    init_clipboard()
 
     input_filename = sys.argv[1]
     output_filename = sys.argv[2] if len(sys.argv) == 3 else "clip"
