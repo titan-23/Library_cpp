@@ -1,9 +1,0 @@
-math
-====
-
-.. toctree::
-   :maxdepth: 2
-
-   divs_cpp.rst
-   math_cpp.rst
-   make_primelist_cpp.rst
