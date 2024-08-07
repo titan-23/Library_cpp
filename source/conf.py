@@ -17,8 +17,8 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath("."))
-sys.path.insert(0, os.path.abspath("./../docs/"))
-sys.path.insert(0, os.path.abspath("./../docs/xml"))
+sys.path.insert(0, os.path.abspath("./../docs_doxygen/"))
+sys.path.insert(0, os.path.abspath("./../docs_doxygen/xml"))
 sys.path.insert(0, os.path.abspath("./../"))
 
 autodoc_typehints = "signature"  # 型ヒントを有効
@@ -41,7 +41,7 @@ extensions = [
     "sphinx_copybutton",
 ]
 
-breathe_projects = {"titan_cpplib": os.path.abspath("./../docs/xml")}
+breathe_projects = {"titan_cpplib": os.path.abspath("./../docs_doxygen/xml")}
 breathe_default_project = "titan_cpplib"
 
 templates_path = ["_templates"]
