@@ -43,6 +43,7 @@ extensions = [
 
 breathe_projects = {"titan_cpplib": os.path.abspath("./../docs_doxygen/xml")}
 breathe_default_project = "titan_cpplib"
+breathe_default_members = ('members',)
 
 templates_path = ["_templates"]
 exclude_patterns = []
