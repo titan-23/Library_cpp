@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classtitan23_1_1RandomTree" kind="class" language="C++" prot="public">
+    <compoundname>titan23::RandomTree</compoundname>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classtitan23_1_1RandomTree_1a4087cf5a4222bc10823d02ab1fd96f98" prot="private" static="no" mutable="no">
+        <type><ref refid="classtitan23_1_1Random" kindref="compound">titan23::Random</ref></type>
+        <definition>titan23::Random titan23::RandomTree::random</definition>
+        <argsstring></argsstring>
+        <name>random</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/algorithm/random_tree.cpp" line="15" column="25" bodyfile="titan_cpplib/algorithm/random_tree.cpp" bodystart="15" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1RandomTree_1adc4daff8c45869642d4f8d7c0e7ba29c" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int titan23::RandomTree::n</definition>
+        <argsstring></argsstring>
+        <name>n</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/algorithm/random_tree.cpp" line="16" column="13" bodyfile="titan_cpplib/algorithm/random_tree.cpp" bodystart="16" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classtitan23_1_1RandomTree_1aaaebc6c6b529d7e18879207ebc7d8c9f" prot="private" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int titan23::RandomTree::_indx</definition>
+        <argsstring>(vector&lt; int &gt; &amp;a, int x)</argsstring>
+        <name>_indx</name>
+        <param>
+          <type>vector&lt; int &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/algorithm/random_tree.cpp" line="18" column="20" bodyfile="titan_cpplib/algorithm/random_tree.cpp" bodystart="18" bodyend="23"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classtitan23_1_1RandomTree_1a27b996bf5fca9ce88e2b201e6476d578" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::RandomTree::RandomTree</definition>
+        <argsstring>(int n)</argsstring>
+        <name>RandomTree</name>
+        <param>
+          <type>int</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/algorithm/random_tree.cpp" line="26" column="9" bodyfile="titan_cpplib/algorithm/random_tree.cpp" bodystart="26" bodyend="26"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1RandomTree_1aceec8348fe6a69c57d5d8505bf229d29" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>vector&lt; pair&lt; int, int &gt; &gt;</type>
+        <definition>vector&lt;pair&lt;int, int&gt; &gt; titan23::RandomTree::gen_random</definition>
+        <argsstring>()</argsstring>
+        <name>gen_random</name>
+        <briefdescription>
+<para>ランダムな木の辺集合を返す / <computeroutput>O(nlogn)</computeroutput> </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/algorithm/random_tree.cpp" line="29" column="16" bodyfile="titan_cpplib/algorithm/random_tree.cpp" bodystart="29" bodyend="68"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1RandomTree_1ae415f7dad6d7e3647551539089243a11" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>vector&lt; pair&lt; int, int &gt; &gt;</type>
+        <definition>vector&lt;pair&lt;int, int&gt; &gt; titan23::RandomTree::gen_path</definition>
+        <argsstring>()</argsstring>
+        <name>gen_path</name>
+        <briefdescription>
+<para>ランダムな木(パスグラフ)の辺集合を返す / <computeroutput>O(nlogn)</computeroutput> </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/algorithm/random_tree.cpp" line="71" column="16" bodyfile="titan_cpplib/algorithm/random_tree.cpp" bodystart="71" bodyend="87"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>ランダムな木のジェネレータ </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="titan_cpplib/algorithm/random_tree.cpp" line="13" column="5" bodyfile="titan_cpplib/algorithm/random_tree.cpp" bodystart="13" bodyend="88"/>
+    <listofallmembers>
+      <member refid="classtitan23_1_1RandomTree_1aaaebc6c6b529d7e18879207ebc7d8c9f" prot="private" virt="non-virtual"><scope>titan23::RandomTree</scope><name>_indx</name></member>
+      <member refid="classtitan23_1_1RandomTree_1ae415f7dad6d7e3647551539089243a11" prot="public" virt="non-virtual"><scope>titan23::RandomTree</scope><name>gen_path</name></member>
+      <member refid="classtitan23_1_1RandomTree_1aceec8348fe6a69c57d5d8505bf229d29" prot="public" virt="non-virtual"><scope>titan23::RandomTree</scope><name>gen_random</name></member>
+      <member refid="classtitan23_1_1RandomTree_1adc4daff8c45869642d4f8d7c0e7ba29c" prot="private" virt="non-virtual"><scope>titan23::RandomTree</scope><name>n</name></member>
+      <member refid="classtitan23_1_1RandomTree_1a4087cf5a4222bc10823d02ab1fd96f98" prot="private" virt="non-virtual"><scope>titan23::RandomTree</scope><name>random</name></member>
+      <member refid="classtitan23_1_1RandomTree_1a27b996bf5fca9ce88e2b201e6476d578" prot="public" virt="non-virtual"><scope>titan23::RandomTree</scope><name>RandomTree</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

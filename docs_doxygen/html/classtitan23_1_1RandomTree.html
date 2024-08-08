@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>titan_cpplib: titan23::RandomTree Struct Reference</title>
+<title>titan_cpplib: titan23::RandomTree Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -61,52 +61,40 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>titan23</b></li><li class="navelem"><a class="el" href="structtitan23_1_1RandomTree.html">RandomTree</a></li>  </ul>
+<li class="navelem"><b>titan23</b></li><li class="navelem"><a class="el" href="classtitan23_1_1RandomTree.html">RandomTree</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="structtitan23_1_1RandomTree-members.html">List of all members</a>  </div>
+<a href="classtitan23_1_1RandomTree-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">titan23::RandomTree Struct Reference</div>  </div>
+<div class="title">titan23::RandomTree Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="dynheader">
-Collaboration diagram for titan23::RandomTree:</div>
-<div class="dyncontent">
-<div class="center"><img src="structtitan23_1_1RandomTree__coll__graph.png" border="0" usemap="#atitan23_1_1RandomTree_coll__map" alt="Collaboration graph"/></div>
-<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
+
+<p>ランダムな木のジェネレータ  
+ <a href="classtitan23_1_1RandomTree.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a27b996bf5fca9ce88e2b201e6476d578"><td class="memItemLeft" align="right" valign="top"><a id="a27b996bf5fca9ce88e2b201e6476d578"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>RandomTree</b> (int n)</td></tr>
 <tr class="separator:a27b996bf5fca9ce88e2b201e6476d578"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ac44456dd65a600ceda08a41379f5df"><td class="memItemLeft" align="right" valign="top"><a id="a0ac44456dd65a600ceda08a41379f5df"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>_indx</b> (vector&lt; int &gt; &amp;a, int x)</td></tr>
-<tr class="separator:a0ac44456dd65a600ceda08a41379f5df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aceec8348fe6a69c57d5d8505bf229d29"><td class="memItemLeft" align="right" valign="top"><a id="aceec8348fe6a69c57d5d8505bf229d29"></a>
-vector&lt; pair&lt; int, int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>gen_random</b> ()</td></tr>
+vector&lt; pair&lt; int, int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1RandomTree.html#aceec8348fe6a69c57d5d8505bf229d29">gen_random</a> ()</td></tr>
+<tr class="memdesc:aceec8348fe6a69c57d5d8505bf229d29"><td class="mdescLeft">&#160;</td><td class="mdescRight">ランダムな木の辺集合を返す / <code>O(nlogn)</code> <br /></td></tr>
 <tr class="separator:aceec8348fe6a69c57d5d8505bf229d29"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae415f7dad6d7e3647551539089243a11"><td class="memItemLeft" align="right" valign="top"><a id="ae415f7dad6d7e3647551539089243a11"></a>
-vector&lt; pair&lt; int, int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>gen_path</b> ()</td></tr>
+vector&lt; pair&lt; int, int &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1RandomTree.html#ae415f7dad6d7e3647551539089243a11">gen_path</a> ()</td></tr>
+<tr class="memdesc:ae415f7dad6d7e3647551539089243a11"><td class="mdescLeft">&#160;</td><td class="mdescRight">ランダムな木(パスグラフ)の辺集合を返す / <code>O(nlogn)</code> <br /></td></tr>
 <tr class="separator:ae415f7dad6d7e3647551539089243a11"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a4087cf5a4222bc10823d02ab1fd96f98"><td class="memItemLeft" align="right" valign="top"><a id="a4087cf5a4222bc10823d02ab1fd96f98"></a>
-<a class="el" href="structtitan23_1_1Random.html">titan23::Random</a>&#160;</td><td class="memItemRight" valign="bottom"><b>random</b></td></tr>
-<tr class="separator:a4087cf5a4222bc10823d02ab1fd96f98"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc4daff8c45869642d4f8d7c0e7ba29c"><td class="memItemLeft" align="right" valign="top"><a id="adc4daff8c45869642d4f8d7c0e7ba29c"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>n</b></td></tr>
-<tr class="separator:adc4daff8c45869642d4f8d7c0e7ba29c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock">
-<p class="definition">Definition at line <a class="el" href="random__tree_8cpp_source.html#l00010">10</a> of file <a class="el" href="random__tree_8cpp_source.html">random_tree.cpp</a>.</p>
-</div><hr/>The documentation for this struct was generated from the following file:<ul>
+<div class="textblock"><p>ランダムな木のジェネレータ </p>
+
+<p class="definition">Definition at line <a class="el" href="random__tree_8cpp_source.html#l00013">13</a> of file <a class="el" href="random__tree_8cpp_source.html">random_tree.cpp</a>.</p>
+</div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>titan_cpplib/algorithm/<a class="el" href="random__tree_8cpp_source.html">random_tree.cpp</a></li>
 </ul>
 </div><!-- contents -->

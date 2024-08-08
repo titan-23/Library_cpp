@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['zaatsu_153',['Zaatsu',['../structtitan23_1_1Zaatsu.html',1,'titan23']]]
+  ['zaatsu_168',['Zaatsu',['../classtitan23_1_1Zaatsu.html',1,'titan23']]]
 ];

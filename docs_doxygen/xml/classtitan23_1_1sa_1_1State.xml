@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/sa.cpp" line="30" column="15" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="30" bodyend="-1"/>
+        <location file="titan_cpplib/ahc/sa.cpp" line="30" column="19" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="30" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -29,7 +29,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/sa.cpp" line="31" column="5" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="31" bodyend="31"/>
+        <location file="titan_cpplib/ahc/sa.cpp" line="31" column="9" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="31" bodyend="31"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1sa_1_1State_1ad633f79ef1a232c4e3acc8198e919a2d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -42,7 +42,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/sa.cpp" line="33" column="10" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="33" bodyend="34"/>
+        <location file="titan_cpplib/ahc/sa.cpp" line="33" column="14" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="33" bodyend="34"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1sa_1_1State_1aaa524f239b8da0356da8a04ce06f0182" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>ScoreType</type>
@@ -55,7 +55,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/sa.cpp" line="36" column="15" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="36" bodyend="36"/>
+        <location file="titan_cpplib/ahc/sa.cpp" line="36" column="19" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="36" bodyend="36"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1sa_1_1State_1af26d2e4b247d4c85f32af243a179a778" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>ScoreType</type>
@@ -68,7 +68,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/sa.cpp" line="37" column="15" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="37" bodyend="37"/>
+        <location file="titan_cpplib/ahc/sa.cpp" line="37" column="19" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="37" bodyend="37"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1sa_1_1State_1a82fe204e2e7552755d7bfec87db739df" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -85,7 +85,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/sa.cpp" line="40" column="10" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="40" bodyend="41"/>
+        <location file="titan_cpplib/ahc/sa.cpp" line="40" column="14" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="40" bodyend="41"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1sa_1_1State_1a82d9203577e2e76ba5b6de5a63cb4142" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -98,7 +98,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/sa.cpp" line="43" column="10" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="43" bodyend="44"/>
+        <location file="titan_cpplib/ahc/sa.cpp" line="43" column="14" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="43" bodyend="44"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1sa_1_1State_1abdb76f55ddc61240c267f508e1efe807" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -111,7 +111,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/sa.cpp" line="46" column="10" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="46" bodyend="47"/>
+        <location file="titan_cpplib/ahc/sa.cpp" line="46" column="14" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="46" bodyend="47"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1sa_1_1State_1a368891e5cbfae0fd1119f7fa1c92775a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -124,14 +124,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/sa.cpp" line="49" column="10" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="49" bodyend="50"/>
+        <location file="titan_cpplib/ahc/sa.cpp" line="49" column="14" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="49" bodyend="50"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/ahc/sa.cpp" line="28" column="3" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="28" bodyend="51"/>
+    <location file="titan_cpplib/ahc/sa.cpp" line="28" column="5" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="28" bodyend="51"/>
     <listofallmembers>
       <member refid="classtitan23_1_1sa_1_1State_1abdb76f55ddc61240c267f508e1efe807" prot="public" virt="non-virtual"><scope>titan23::sa::State</scope><name>advance</name></member>
       <member refid="classtitan23_1_1sa_1_1State_1aaa524f239b8da0356da8a04ce06f0182" prot="public" virt="non-virtual"><scope>titan23::sa::State</scope><name>get_score</name></member>

@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['kth_5flargest_157',['kth_largest',['../classtitan23_1_1DynamicWaveletTree.html#adbd2d18e73422ccaa2f9c6f044483f2f',1,'titan23::DynamicWaveletTree']]],
-  ['kth_5fsmallest_158',['kth_smallest',['../classtitan23_1_1DynamicWaveletTree.html#af8417ad41638516396e6c9e6c98ddbc3',1,'titan23::DynamicWaveletTree']]]
+  ['gen_5fpath_173',['gen_path',['../classtitan23_1_1RandomTree.html#ae415f7dad6d7e3647551539089243a11',1,'titan23::RandomTree']]],
+  ['gen_5frandom_174',['gen_random',['../classtitan23_1_1RandomTree.html#aceec8348fe6a69c57d5d8505bf229d29',1,'titan23::RandomTree']]]
 ];

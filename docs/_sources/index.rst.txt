@@ -43,7 +43,7 @@ comming soon ...
 """"""""""""
 
 オンラインジャッジに提出するときは、適切なパスを設定した上で
-`expander.py <https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/cpp_expander.py>`_
+`cpp_expander.py <https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/cpp_expander.py>`_
 を使用してください。
 
 より詳細な機能は comming soon ...

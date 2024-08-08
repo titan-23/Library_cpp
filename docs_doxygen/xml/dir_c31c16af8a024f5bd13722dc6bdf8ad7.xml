@@ -19,6 +19,7 @@
     <innerfile refid="dynamic__fenwick__tree__2D_8cpp">dynamic_fenwick_tree_2D.cpp</innerfile>
     <innerfile refid="dynamic__lazy__segment__tree_8cpp">dynamic_lazy_segment_tree.cpp</innerfile>
     <innerfile refid="dynamic__segment__tree_8cpp">dynamic_segment_tree.cpp</innerfile>
+    <innerfile refid="dynamic__segment__tree__init_8cpp">dynamic_segment_tree_init.cpp</innerfile>
     <innerfile refid="dynamic__wavelet__matrix_8cpp">dynamic_wavelet_matrix.cpp</innerfile>
     <innerfile refid="dynamic__wavelet__tree_8cpp">dynamic_wavelet_tree.cpp</innerfile>
     <innerfile refid="euler__tour__tree_8cpp">euler_tour_tree.cpp</innerfile>

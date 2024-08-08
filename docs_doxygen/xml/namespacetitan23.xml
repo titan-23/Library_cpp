@@ -5,10 +5,10 @@
     <innerclass refid="classtitan23_1_1Kmeans" prot="public">titan23::Kmeans</innerclass>
     <innerclass refid="classtitan23_1_1StatePool" prot="public">titan23::StatePool</innerclass>
     <innerclass refid="classtitan23_1_1Timer" prot="public">titan23::Timer</innerclass>
-    <innerclass refid="structtitan23_1_1Mo" prot="public">titan23::Mo</innerclass>
-    <innerclass refid="structtitan23_1_1Random" prot="public">titan23::Random</innerclass>
-    <innerclass refid="structtitan23_1_1RandomTree" prot="public">titan23::RandomTree</innerclass>
-    <innerclass refid="structtitan23_1_1Zaatsu" prot="public">titan23::Zaatsu</innerclass>
+    <innerclass refid="classtitan23_1_1Mo" prot="public">titan23::Mo</innerclass>
+    <innerclass refid="classtitan23_1_1Random" prot="public">titan23::Random</innerclass>
+    <innerclass refid="classtitan23_1_1RandomTree" prot="public">titan23::RandomTree</innerclass>
+    <innerclass refid="classtitan23_1_1Zaatsu" prot="public">titan23::Zaatsu</innerclass>
     <innerclass refid="classtitan23_1_1Array" prot="public">titan23::Array</innerclass>
     <innerclass refid="classtitan23_1_1AVLTreeBitVector" prot="public">titan23::AVLTreeBitVector</innerclass>
     <innerclass refid="classtitan23_1_1AVLTreeMultiset" prot="public">titan23::AVLTreeMultiset</innerclass>
@@ -26,6 +26,7 @@
     <innerclass refid="structtitan23_1_1DynamicFenwickTree2D" prot="public">titan23::DynamicFenwickTree2D</innerclass>
     <innerclass refid="classtitan23_1_1DynamicLazySegmentTree" prot="public">titan23::DynamicLazySegmentTree</innerclass>
     <innerclass refid="classtitan23_1_1DynamicSegmentTree" prot="public">titan23::DynamicSegmentTree</innerclass>
+    <innerclass refid="classtitan23_1_1DynamicSegmentTreeInit" prot="public">titan23::DynamicSegmentTreeInit</innerclass>
     <innerclass refid="classtitan23_1_1DynamicWaveletMatrix" prot="public">titan23::DynamicWaveletMatrix</innerclass>
     <innerclass refid="classtitan23_1_1DynamicWaveletTree" prot="public">titan23::DynamicWaveletTree</innerclass>
     <innerclass refid="structtitan23_1_1EulerTourTree" prot="public">titan23::EulerTourTree</innerclass>
@@ -82,7 +83,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/rle.cpp" line="8" column="10" bodyfile="titan_cpplib/algorithm/rle.cpp" bodystart="8" bodyend="22"/>
+        <location file="titan_cpplib/algorithm/rle.cpp" line="7" column="12" bodyfile="titan_cpplib/algorithm/rle.cpp" bodystart="7" bodyend="21"/>
       </memberdef>
       <memberdef kind="function" id="dijkstra_8cpp_1ab251234ad8d8ec46f738e259a2c45f11" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>

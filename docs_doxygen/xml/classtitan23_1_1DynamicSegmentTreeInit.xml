@@ -1,0 +1,285 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classtitan23_1_1DynamicSegmentTreeInit" kind="class" language="C++" prot="public">
+    <compoundname>titan23::DynamicSegmentTreeInit</compoundname>
+    <innerclass refid="structtitan23_1_1DynamicSegmentTreeInit_1_1Node" prot="private">titan23::DynamicSegmentTreeInit::Node</innerclass>
+    <templateparamlist>
+      <param>
+        <type>class IndexType</type>
+      </param>
+      <param>
+        <type>class T</type>
+      </param>
+      <param>
+        <type>T(*)(T, T)</type>
+        <declname>op</declname>
+        <defname>op</defname>
+      </param>
+      <param>
+        <type>T(*)()</type>
+        <declname>e</declname>
+        <defname>e</defname>
+      </param>
+      <param>
+        <type>T(*)(T, IndexType)</type>
+        <declname>pow</declname>
+        <defname>pow</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="classtitan23_1_1DynamicSegmentTreeInit_1a58ec8b42ff68b7efa73638d9272126ed" prot="private" static="no">
+        <type>Node *</type>
+        <definition>using titan23::DynamicSegmentTreeInit&lt; IndexType, T, op, e, pow &gt;::NodePtr =  Node*</definition>
+        <argsstring></argsstring>
+        <name>NodePtr</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_segment_tree_init.cpp" line="20" column="9" bodyfile="titan_cpplib/data_structures/dynamic_segment_tree_init.cpp" bodystart="20" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classtitan23_1_1DynamicSegmentTreeInit_1a443ce981780aacb4a56641070b66c6af" prot="private" static="no" mutable="no">
+        <type>NodePtr</type>
+        <definition>NodePtr titan23::DynamicSegmentTreeInit&lt; IndexType, T, op, e, pow &gt;::root</definition>
+        <argsstring></argsstring>
+        <name>root</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_segment_tree_init.cpp" line="21" column="17" bodyfile="titan_cpplib/data_structures/dynamic_segment_tree_init.cpp" bodystart="21" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1DynamicSegmentTreeInit_1a194f52fa8921a1733c7be73118dbd86c" prot="private" static="no" mutable="no">
+        <type>IndexType</type>
+        <definition>IndexType titan23::DynamicSegmentTreeInit&lt; IndexType, T, op, e, pow &gt;::u</definition>
+        <argsstring></argsstring>
+        <name>u</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_segment_tree_init.cpp" line="22" column="19" bodyfile="titan_cpplib/data_structures/dynamic_segment_tree_init.cpp" bodystart="22" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1DynamicSegmentTreeInit_1a3faeaf5f1c128fcc3cd2d97140f1ae16" prot="private" static="no" mutable="no">
+        <type>T</type>
+        <definition>T titan23::DynamicSegmentTreeInit&lt; IndexType, T, op, e, pow &gt;::init_val</definition>
+        <argsstring></argsstring>
+        <name>init_val</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_segment_tree_init.cpp" line="23" column="11" bodyfile="titan_cpplib/data_structures/dynamic_segment_tree_init.cpp" bodystart="23" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classtitan23_1_1DynamicSegmentTreeInit_1aa1c78a8ae9747abe4d9e08cb9a7adb72" prot="private" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>static int titan23::DynamicSegmentTreeInit&lt; IndexType, T, op, e, pow &gt;::bit_length</definition>
+        <argsstring>(IndexType x)</argsstring>
+        <name>bit_length</name>
+        <param>
+          <type>IndexType</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_segment_tree_init.cpp" line="15" column="20" bodyfile="titan_cpplib/data_structures/dynamic_segment_tree_init.cpp" bodystart="15" bodyend="17"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classtitan23_1_1DynamicSegmentTreeInit_1aaadc9ce698c022cdb2918823b62657df" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T titan23::DynamicSegmentTreeInit&lt; IndexType, T, op, e, pow &gt;::inner_prod</definition>
+        <argsstring>(NodePtr node, IndexType l, IndexType r) const</argsstring>
+        <name>inner_prod</name>
+        <param>
+          <type>NodePtr</type>
+          <declname>node</declname>
+        </param>
+        <param>
+          <type>IndexType</type>
+          <declname>l</declname>
+        </param>
+        <param>
+          <type>IndexType</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_segment_tree_init.cpp" line="64" column="11" bodyfile="titan_cpplib/data_structures/dynamic_segment_tree_init.cpp" bodystart="64" bodyend="77"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1DynamicSegmentTreeInit_1a8e694cc9b0b4eba610c2a1227328b793" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::DynamicSegmentTreeInit&lt; IndexType, T, op, e, pow &gt;::inner_set</definition>
+        <argsstring>(NodePtr node, IndexType k, T val)</argsstring>
+        <name>inner_set</name>
+        <param>
+          <type>NodePtr</type>
+          <declname>node</declname>
+        </param>
+        <param>
+          <type>IndexType</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>T</type>
+          <declname>val</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_segment_tree_init.cpp" line="79" column="14" bodyfile="titan_cpplib/data_structures/dynamic_segment_tree_init.cpp" bodystart="79" bodyend="92"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classtitan23_1_1DynamicSegmentTreeInit_1a8b3b5fd6cacab1a06d7905c10509a408" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::DynamicSegmentTreeInit&lt; IndexType, T, op, e, pow &gt;::DynamicSegmentTreeInit</definition>
+        <argsstring>()</argsstring>
+        <name>DynamicSegmentTreeInit</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_segment_tree_init.cpp" line="96" column="9" bodyfile="titan_cpplib/data_structures/dynamic_segment_tree_init.cpp" bodystart="96" bodyend="96"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1DynamicSegmentTreeInit_1a5cb859f21848534d4e562bdeb149208c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::DynamicSegmentTreeInit&lt; IndexType, T, op, e, pow &gt;::DynamicSegmentTreeInit</definition>
+        <argsstring>(const IndexType u_, T init)</argsstring>
+        <name>DynamicSegmentTreeInit</name>
+        <param>
+          <type>const IndexType</type>
+          <declname>u_</declname>
+        </param>
+        <param>
+          <type>T</type>
+          <declname>init</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_segment_tree_init.cpp" line="98" column="9" bodyfile="titan_cpplib/data_structures/dynamic_segment_tree_init.cpp" bodystart="98" bodyend="103"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1DynamicSegmentTreeInit_1a9629870f40185779614a717244d1e901" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T titan23::DynamicSegmentTreeInit&lt; IndexType, T, op, e, pow &gt;::prod</definition>
+        <argsstring>(IndexType l, IndexType r) const</argsstring>
+        <name>prod</name>
+        <param>
+          <type>IndexType</type>
+          <declname>l</declname>
+        </param>
+        <param>
+          <type>IndexType</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_segment_tree_init.cpp" line="105" column="11" bodyfile="titan_cpplib/data_structures/dynamic_segment_tree_init.cpp" bodystart="105" bodyend="107"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1DynamicSegmentTreeInit_1a4d0c0b86a169cd14315837bfcd4ad7f2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T titan23::DynamicSegmentTreeInit&lt; IndexType, T, op, e, pow &gt;::get</definition>
+        <argsstring>(IndexType k) const</argsstring>
+        <name>get</name>
+        <param>
+          <type>IndexType</type>
+          <declname>k</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_segment_tree_init.cpp" line="109" column="11" bodyfile="titan_cpplib/data_structures/dynamic_segment_tree_init.cpp" bodystart="109" bodyend="123"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1DynamicSegmentTreeInit_1a3bc696d8af6c58370d3fcdc1dc020c64" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::DynamicSegmentTreeInit&lt; IndexType, T, op, e, pow &gt;::set</definition>
+        <argsstring>(IndexType k, T val)</argsstring>
+        <name>set</name>
+        <param>
+          <type>IndexType</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>T</type>
+          <declname>val</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_segment_tree_init.cpp" line="125" column="14" bodyfile="titan_cpplib/data_structures/dynamic_segment_tree_init.cpp" bodystart="125" bodyend="127"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1DynamicSegmentTreeInit_1a3c96a531e6baf65556f5881b60f7f5df" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::DynamicSegmentTreeInit&lt; IndexType, T, op, e, pow &gt;::print</definition>
+        <argsstring>()</argsstring>
+        <name>print</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/dynamic_segment_tree_init.cpp" line="129" column="14" bodyfile="titan_cpplib/data_structures/dynamic_segment_tree_init.cpp" bodystart="129" bodyend="134"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="titan_cpplib/data_structures/dynamic_segment_tree_init.cpp" line="13" column="5" bodyfile="titan_cpplib/data_structures/dynamic_segment_tree_init.cpp" bodystart="13" bodyend="135"/>
+    <listofallmembers>
+      <member refid="classtitan23_1_1DynamicSegmentTreeInit_1aa1c78a8ae9747abe4d9e08cb9a7adb72" prot="private" virt="non-virtual"><scope>titan23::DynamicSegmentTreeInit</scope><name>bit_length</name></member>
+      <member refid="classtitan23_1_1DynamicSegmentTreeInit_1a8b3b5fd6cacab1a06d7905c10509a408" prot="public" virt="non-virtual"><scope>titan23::DynamicSegmentTreeInit</scope><name>DynamicSegmentTreeInit</name></member>
+      <member refid="classtitan23_1_1DynamicSegmentTreeInit_1a5cb859f21848534d4e562bdeb149208c" prot="public" virt="non-virtual"><scope>titan23::DynamicSegmentTreeInit</scope><name>DynamicSegmentTreeInit</name></member>
+      <member refid="classtitan23_1_1DynamicSegmentTreeInit_1a4d0c0b86a169cd14315837bfcd4ad7f2" prot="public" virt="non-virtual"><scope>titan23::DynamicSegmentTreeInit</scope><name>get</name></member>
+      <member refid="classtitan23_1_1DynamicSegmentTreeInit_1a3faeaf5f1c128fcc3cd2d97140f1ae16" prot="private" virt="non-virtual"><scope>titan23::DynamicSegmentTreeInit</scope><name>init_val</name></member>
+      <member refid="classtitan23_1_1DynamicSegmentTreeInit_1aaadc9ce698c022cdb2918823b62657df" prot="private" virt="non-virtual"><scope>titan23::DynamicSegmentTreeInit</scope><name>inner_prod</name></member>
+      <member refid="classtitan23_1_1DynamicSegmentTreeInit_1a8e694cc9b0b4eba610c2a1227328b793" prot="private" virt="non-virtual"><scope>titan23::DynamicSegmentTreeInit</scope><name>inner_set</name></member>
+      <member refid="classtitan23_1_1DynamicSegmentTreeInit_1a58ec8b42ff68b7efa73638d9272126ed" prot="private" virt="non-virtual"><scope>titan23::DynamicSegmentTreeInit</scope><name>NodePtr</name></member>
+      <member refid="classtitan23_1_1DynamicSegmentTreeInit_1a3c96a531e6baf65556f5881b60f7f5df" prot="public" virt="non-virtual"><scope>titan23::DynamicSegmentTreeInit</scope><name>print</name></member>
+      <member refid="classtitan23_1_1DynamicSegmentTreeInit_1a9629870f40185779614a717244d1e901" prot="public" virt="non-virtual"><scope>titan23::DynamicSegmentTreeInit</scope><name>prod</name></member>
+      <member refid="classtitan23_1_1DynamicSegmentTreeInit_1a443ce981780aacb4a56641070b66c6af" prot="private" virt="non-virtual"><scope>titan23::DynamicSegmentTreeInit</scope><name>root</name></member>
+      <member refid="classtitan23_1_1DynamicSegmentTreeInit_1a3bc696d8af6c58370d3fcdc1dc020c64" prot="public" virt="non-virtual"><scope>titan23::DynamicSegmentTreeInit</scope><name>set</name></member>
+      <member refid="classtitan23_1_1DynamicSegmentTreeInit_1a194f52fa8921a1733c7be73118dbd86c" prot="private" virt="non-virtual"><scope>titan23::DynamicSegmentTreeInit</scope><name>u</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

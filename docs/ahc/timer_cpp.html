@@ -182,6 +182,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../data_structures/dynamic_fenwick_tree_2D_cpp.html">dynamic fenwick tree 2D</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_structures/dynamic_lazy_segment_tree_cpp.html">dynamic lazy segment tree</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_structures/dynamic_segment_tree_cpp.html">dynamic segment tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/dynamic_segment_tree_init_cpp.html">dynamic segment tree init</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_structures/dynamic_wavelet_matrix_cpp.html">dynamic wavelet matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_structures/dynamic_wavelet_tree_cpp.html">dynamic wavelet tree</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_structures/euler_tour_tree_cpp.html">euler tour tree</a></li>
@@ -283,30 +284,30 @@
 <span class="linenos"> 7</span><span class="c1">// Timer</span>
 <span class="linenos"> 8</span><span class="k">namespace</span><span class="w"> </span><span class="nn">titan23</span><span class="w"> </span><span class="p">{</span>
 <span class="linenos"> 9</span>
-<span class="linenos">10</span><span class="w">  </span><span class="cm">/**</span>
-<span class="linenos">11</span><span class="cm">   * @brief 時間計測クラス</span>
-<span class="linenos">12</span><span class="cm">   */</span>
-<span class="linenos">13</span><span class="w">  </span><span class="k">class</span><span class="w"> </span><span class="nc">Timer</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">14</span><span class="w">   </span><span class="k">private</span><span class="o">:</span>
-<span class="linenos">15</span><span class="w">    </span><span class="n">chrono</span><span class="o">::</span><span class="n">time_point</span><span class="o">&lt;</span><span class="n">chrono</span><span class="o">::</span><span class="n">high_resolution_clock</span><span class="o">&gt;</span><span class="w"> </span><span class="n">start_timepoint</span><span class="p">;</span>
+<span class="linenos">10</span><span class="w">    </span><span class="cm">/**</span>
+<span class="linenos">11</span><span class="cm">     * @brief 時間計測クラス</span>
+<span class="linenos">12</span><span class="cm">     */</span>
+<span class="linenos">13</span><span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="nc">Timer</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">14</span><span class="w">      </span><span class="k">private</span><span class="o">:</span>
+<span class="linenos">15</span><span class="w">        </span><span class="n">chrono</span><span class="o">::</span><span class="n">time_point</span><span class="o">&lt;</span><span class="n">chrono</span><span class="o">::</span><span class="n">high_resolution_clock</span><span class="o">&gt;</span><span class="w"> </span><span class="n">start_timepoint</span><span class="p">;</span>
 <span class="linenos">16</span>
-<span class="linenos">17</span><span class="w">   </span><span class="k">public</span><span class="o">:</span>
-<span class="linenos">18</span><span class="w">    </span><span class="n">Timer</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">start_timepoint</span><span class="p">(</span><span class="n">chrono</span><span class="o">::</span><span class="n">high_resolution_clock</span><span class="o">::</span><span class="n">now</span><span class="p">())</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">17</span><span class="w">      </span><span class="k">public</span><span class="o">:</span>
+<span class="linenos">18</span><span class="w">        </span><span class="n">Timer</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">start_timepoint</span><span class="p">(</span><span class="n">chrono</span><span class="o">::</span><span class="n">high_resolution_clock</span><span class="o">::</span><span class="n">now</span><span class="p">())</span><span class="w"> </span><span class="p">{}</span>
 <span class="linenos">19</span>
-<span class="linenos">20</span><span class="w">    </span><span class="c1">// リセットする</span>
-<span class="linenos">21</span><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">reset</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">22</span><span class="w">      </span><span class="n">start_timepoint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">chrono</span><span class="o">::</span><span class="n">high_resolution_clock</span><span class="o">::</span><span class="n">now</span><span class="p">();</span>
-<span class="linenos">23</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">20</span><span class="w">        </span><span class="c1">//! リセットする</span>
+<span class="linenos">21</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">reset</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">22</span><span class="w">            </span><span class="n">start_timepoint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">chrono</span><span class="o">::</span><span class="n">high_resolution_clock</span><span class="o">::</span><span class="n">now</span><span class="p">();</span>
+<span class="linenos">23</span><span class="w">        </span><span class="p">}</span>
 <span class="linenos">24</span>
-<span class="linenos">25</span><span class="w">    </span><span class="c1">// 経過時間[ms]を返す</span>
-<span class="linenos">26</span><span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">elapsed</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">27</span><span class="w">      </span><span class="k">auto</span><span class="w"> </span><span class="n">end_timepoint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">chrono</span><span class="o">::</span><span class="n">high_resolution_clock</span><span class="o">::</span><span class="n">now</span><span class="p">();</span>
-<span class="linenos">28</span><span class="w">      </span><span class="k">auto</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">chrono</span><span class="o">::</span><span class="n">time_point_cast</span><span class="o">&lt;</span><span class="n">chrono</span><span class="o">::</span><span class="n">microseconds</span><span class="o">&gt;</span><span class="p">(</span><span class="n">start_timepoint</span><span class="p">).</span><span class="n">time_since_epoch</span><span class="p">().</span><span class="n">count</span><span class="p">();</span>
-<span class="linenos">29</span><span class="w">      </span><span class="k">auto</span><span class="w"> </span><span class="n">end</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">chrono</span><span class="o">::</span><span class="n">time_point_cast</span><span class="o">&lt;</span><span class="n">chrono</span><span class="o">::</span><span class="n">microseconds</span><span class="o">&gt;</span><span class="p">(</span><span class="n">end_timepoint</span><span class="p">).</span><span class="n">time_since_epoch</span><span class="p">().</span><span class="n">count</span><span class="p">();</span>
-<span class="linenos">30</span><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">end</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">0.001</span><span class="p">;</span>
-<span class="linenos">31</span><span class="w">    </span><span class="p">}</span>
-<span class="linenos">32</span><span class="w">  </span><span class="p">};</span>
-<span class="linenos">33</span><span class="p">}</span>
+<span class="linenos">25</span><span class="w">        </span><span class="c1">//! 経過時間[ms]を返す</span>
+<span class="linenos">26</span><span class="w">        </span><span class="kt">double</span><span class="w"> </span><span class="n">elapsed</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">27</span><span class="w">            </span><span class="k">auto</span><span class="w"> </span><span class="n">end_timepoint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">chrono</span><span class="o">::</span><span class="n">high_resolution_clock</span><span class="o">::</span><span class="n">now</span><span class="p">();</span>
+<span class="linenos">28</span><span class="w">            </span><span class="k">auto</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">chrono</span><span class="o">::</span><span class="n">time_point_cast</span><span class="o">&lt;</span><span class="n">chrono</span><span class="o">::</span><span class="n">microseconds</span><span class="o">&gt;</span><span class="p">(</span><span class="n">start_timepoint</span><span class="p">).</span><span class="n">time_since_epoch</span><span class="p">().</span><span class="n">count</span><span class="p">();</span>
+<span class="linenos">29</span><span class="w">            </span><span class="k">auto</span><span class="w"> </span><span class="n">end</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">chrono</span><span class="o">::</span><span class="n">time_point_cast</span><span class="o">&lt;</span><span class="n">chrono</span><span class="o">::</span><span class="n">microseconds</span><span class="o">&gt;</span><span class="p">(</span><span class="n">end_timepoint</span><span class="p">).</span><span class="n">time_since_epoch</span><span class="p">().</span><span class="n">count</span><span class="p">();</span>
+<span class="linenos">30</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">end</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">0.001</span><span class="p">;</span>
+<span class="linenos">31</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">32</span><span class="w">    </span><span class="p">};</span>
+<span class="linenos">33</span><span class="p">}</span><span class="w">  </span><span class="c1">// namespace titan23</span>
 </pre></div>
 </div>
 </section>
@@ -329,12 +330,14 @@
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4N7titan235Timer5resetEv">
 <span id="_CPPv3N7titan235Timer5resetEv"></span><span id="_CPPv2N7titan235Timer5resetEv"></span><span id="titan23::Timer::reset"></span><span class="target" id="classtitan23_1_1Timer_1a9b138c885ca8956bfa5d73a628698c3d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">reset</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan235Timer5resetEv" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
+<dd><p>リセットする </p>
+</dd></dl>
 
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4NK7titan235Timer7elapsedEv">
 <span id="_CPPv3NK7titan235Timer7elapsedEv"></span><span id="_CPPv2NK7titan235Timer7elapsedEv"></span><span id="titan23::Timer::elapsedC"></span><span class="target" id="classtitan23_1_1Timer_1adb30bc0ad576c57bf6410294d3099e26"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">elapsed</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK7titan235Timer7elapsedEv" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
+<dd><p>経過時間[ms]を返す </p>
+</dd></dl>
 
 </div>
 <div class="breathe-sectiondef docutils container">

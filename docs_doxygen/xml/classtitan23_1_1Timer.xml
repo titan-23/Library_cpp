@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/timer.cpp" line="15" column="24" bodyfile="titan_cpplib/ahc/timer.cpp" bodystart="15" bodyend="-1"/>
+        <location file="titan_cpplib/ahc/timer.cpp" line="15" column="28" bodyfile="titan_cpplib/ahc/timer.cpp" bodystart="15" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -29,7 +29,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/timer.cpp" line="18" column="5" bodyfile="titan_cpplib/ahc/timer.cpp" bodystart="18" bodyend="18"/>
+        <location file="titan_cpplib/ahc/timer.cpp" line="18" column="9" bodyfile="titan_cpplib/ahc/timer.cpp" bodystart="18" bodyend="18"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Timer_1a9b138c885ca8956bfa5d73a628698c3d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -37,12 +37,13 @@
         <argsstring>()</argsstring>
         <name>reset</name>
         <briefdescription>
+<para>リセットする </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/timer.cpp" line="21" column="10" bodyfile="titan_cpplib/ahc/timer.cpp" bodystart="21" bodyend="23"/>
+        <location file="titan_cpplib/ahc/timer.cpp" line="21" column="14" bodyfile="titan_cpplib/ahc/timer.cpp" bodystart="21" bodyend="23"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Timer_1adb30bc0ad576c57bf6410294d3099e26" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>double</type>
@@ -50,12 +51,13 @@
         <argsstring>() const</argsstring>
         <name>elapsed</name>
         <briefdescription>
+<para>経過時間[ms]を返す </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/timer.cpp" line="26" column="12" bodyfile="titan_cpplib/ahc/timer.cpp" bodystart="26" bodyend="31"/>
+        <location file="titan_cpplib/ahc/timer.cpp" line="26" column="16" bodyfile="titan_cpplib/ahc/timer.cpp" bodystart="26" bodyend="31"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -63,7 +65,7 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/ahc/timer.cpp" line="13" column="3" bodyfile="titan_cpplib/ahc/timer.cpp" bodystart="13" bodyend="32"/>
+    <location file="titan_cpplib/ahc/timer.cpp" line="13" column="5" bodyfile="titan_cpplib/ahc/timer.cpp" bodystart="13" bodyend="32"/>
     <listofallmembers>
       <member refid="classtitan23_1_1Timer_1adb30bc0ad576c57bf6410294d3099e26" prot="public" virt="non-virtual"><scope>titan23::Timer</scope><name>elapsed</name></member>
       <member refid="classtitan23_1_1Timer_1a9b138c885ca8956bfa5d73a628698c3d" prot="public" virt="non-virtual"><scope>titan23::Timer</scope><name>reset</name></member>

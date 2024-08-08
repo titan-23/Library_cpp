@@ -440,6 +440,21 @@
     <member refid="classtitan23_1_1DynamicSegmentTree_1afa82bb62c05179bfd7bdf9a7be1ac312" kind="function"><name>set</name></member>
     <member refid="classtitan23_1_1DynamicSegmentTree_1a333e30bfaf77159e0acbc3ba460b10a4" kind="function"><name>print</name></member>
   </compound>
+  <compound refid="classtitan23_1_1DynamicSegmentTreeInit" kind="class"><name>titan23::DynamicSegmentTreeInit</name>
+    <member refid="classtitan23_1_1DynamicSegmentTreeInit_1a58ec8b42ff68b7efa73638d9272126ed" kind="typedef"><name>NodePtr</name></member>
+    <member refid="classtitan23_1_1DynamicSegmentTreeInit_1a443ce981780aacb4a56641070b66c6af" kind="variable"><name>root</name></member>
+    <member refid="classtitan23_1_1DynamicSegmentTreeInit_1a194f52fa8921a1733c7be73118dbd86c" kind="variable"><name>u</name></member>
+    <member refid="classtitan23_1_1DynamicSegmentTreeInit_1a3faeaf5f1c128fcc3cd2d97140f1ae16" kind="variable"><name>init_val</name></member>
+    <member refid="classtitan23_1_1DynamicSegmentTreeInit_1aa1c78a8ae9747abe4d9e08cb9a7adb72" kind="function"><name>bit_length</name></member>
+    <member refid="classtitan23_1_1DynamicSegmentTreeInit_1aaadc9ce698c022cdb2918823b62657df" kind="function"><name>inner_prod</name></member>
+    <member refid="classtitan23_1_1DynamicSegmentTreeInit_1a8e694cc9b0b4eba610c2a1227328b793" kind="function"><name>inner_set</name></member>
+    <member refid="classtitan23_1_1DynamicSegmentTreeInit_1a8b3b5fd6cacab1a06d7905c10509a408" kind="function"><name>DynamicSegmentTreeInit</name></member>
+    <member refid="classtitan23_1_1DynamicSegmentTreeInit_1a5cb859f21848534d4e562bdeb149208c" kind="function"><name>DynamicSegmentTreeInit</name></member>
+    <member refid="classtitan23_1_1DynamicSegmentTreeInit_1a9629870f40185779614a717244d1e901" kind="function"><name>prod</name></member>
+    <member refid="classtitan23_1_1DynamicSegmentTreeInit_1a4d0c0b86a169cd14315837bfcd4ad7f2" kind="function"><name>get</name></member>
+    <member refid="classtitan23_1_1DynamicSegmentTreeInit_1a3bc696d8af6c58370d3fcdc1dc020c64" kind="function"><name>set</name></member>
+    <member refid="classtitan23_1_1DynamicSegmentTreeInit_1a3c96a531e6baf65556f5881b60f7f5df" kind="function"><name>print</name></member>
+  </compound>
   <compound refid="classtitan23_1_1DynamicWaveletMatrix" kind="class"><name>titan23::DynamicWaveletMatrix</name>
     <member refid="classtitan23_1_1DynamicWaveletMatrix_1add6389ce0cd34681d951734592612b19" kind="variable"><name>_sigma</name></member>
     <member refid="classtitan23_1_1DynamicWaveletMatrix_1a2ae162d83c4cbdea36385d2347ebd7f3" kind="variable"><name>_log</name></member>
@@ -724,6 +739,7 @@
     <member refid="classtitan23_1_1LinkCutTree_1acea69388b0599d2ebcc50ad381854da7" kind="function"><name>_expose</name></member>
     <member refid="classtitan23_1_1LinkCutTree_1ac98b769653471030fba7636612cac04e" kind="function"><name>_root</name></member>
     <member refid="classtitan23_1_1LinkCutTree_1a2782f1092cc0dafdbe593a73a48dda76" kind="function"><name>_evert</name></member>
+    <member refid="classtitan23_1_1LinkCutTree_1a1e23d80e0da8658ac1e41986318d0ae8" kind="function"><name>LinkCutTree</name></member>
     <member refid="classtitan23_1_1LinkCutTree_1a2ce71449a3b3830be756a8b3990fb383" kind="function"><name>LinkCutTree</name></member>
     <member refid="classtitan23_1_1LinkCutTree_1ab02a905fafdeeaf4bd8f137ad83288c1" kind="function"><name>expose</name></member>
     <member refid="classtitan23_1_1LinkCutTree_1a6f3ea7a33c4147af032ccabcdfdd22ff" kind="function"><name>lca</name></member>
@@ -794,17 +810,17 @@
     <member refid="classtitan23_1_1MinimumSteinerTree_1a635bb936a9f46a896e0e7575e3d60c57" kind="function"><name>MinimumSteinerTree</name></member>
     <member refid="classtitan23_1_1MinimumSteinerTree_1af533407a00a9b1a72ce3e9e59fe54a4e" kind="function"><name>build_prim</name></member>
   </compound>
-  <compound refid="structtitan23_1_1Mo" kind="struct"><name>titan23::Mo</name>
-    <member refid="structtitan23_1_1Mo_1ac527a137cd44aae834c7c6aa6c29b9d2" kind="variable"><name>n</name></member>
-    <member refid="structtitan23_1_1Mo_1a22ffa6c58864c30734a7a27d435f7f68" kind="variable"><name>q</name></member>
-    <member refid="structtitan23_1_1Mo_1aed61f62e4d91b2ae48fd46d86bbdac04" kind="variable"><name>query_count</name></member>
-    <member refid="structtitan23_1_1Mo_1ab800b0e2191565e5608b619886040174" kind="variable"><name>max_n</name></member>
-    <member refid="structtitan23_1_1Mo_1a729bbea79db6169cdc8c07ac9a6a4b53" kind="variable"><name>_l</name></member>
-    <member refid="structtitan23_1_1Mo_1a07a50d014028118fbf7aba89fdfc5179" kind="variable"><name>_r</name></member>
-    <member refid="structtitan23_1_1Mo_1ad0726adf798babd8b03c80bf16622346" kind="function"><name>Mo</name></member>
-    <member refid="structtitan23_1_1Mo_1a8500b4073b17a238993e783e538180d3" kind="function"><name>hilbertorder</name></member>
-    <member refid="structtitan23_1_1Mo_1a7fe90f7c932a83840a2bdb87ddb0cb3c" kind="function"><name>add_query</name></member>
-    <member refid="structtitan23_1_1Mo_1a6c69e464cefbf474e9cb65c9f2ab5a18" kind="function"><name>run</name></member>
+  <compound refid="classtitan23_1_1Mo" kind="class"><name>titan23::Mo</name>
+    <member refid="classtitan23_1_1Mo_1ac527a137cd44aae834c7c6aa6c29b9d2" kind="variable"><name>n</name></member>
+    <member refid="classtitan23_1_1Mo_1aed61f62e4d91b2ae48fd46d86bbdac04" kind="variable"><name>query_count</name></member>
+    <member refid="classtitan23_1_1Mo_1ab800b0e2191565e5608b619886040174" kind="variable"><name>max_n</name></member>
+    <member refid="classtitan23_1_1Mo_1a729bbea79db6169cdc8c07ac9a6a4b53" kind="variable"><name>_l</name></member>
+    <member refid="classtitan23_1_1Mo_1a07a50d014028118fbf7aba89fdfc5179" kind="variable"><name>_r</name></member>
+    <member refid="classtitan23_1_1Mo_1a8500b4073b17a238993e783e538180d3" kind="function"><name>hilbertorder</name></member>
+    <member refid="classtitan23_1_1Mo_1a892968a4f71a348895f08ac7d606aa82" kind="function"><name>Mo</name></member>
+    <member refid="classtitan23_1_1Mo_1a3fbf2ab6d9e98a252c81f13521ad4373" kind="function"><name>Mo</name></member>
+    <member refid="classtitan23_1_1Mo_1a7fe90f7c932a83840a2bdb87ddb0cb3c" kind="function"><name>add_query</name></member>
+    <member refid="classtitan23_1_1Mo_1a6c69e464cefbf474e9cb65c9f2ab5a18" kind="function"><name>run</name></member>
   </compound>
   <compound refid="structtitan23_1_1DynamicLazySegmentTree_1_1Node" kind="struct"><name>titan23::DynamicLazySegmentTree::Node</name>
     <member refid="structtitan23_1_1DynamicLazySegmentTree_1_1Node_1a4d275ea7c4eb5052013afec5ab111245" kind="variable"><name>left</name></member>
@@ -834,6 +850,19 @@
     <member refid="structtitan23_1_1DynamicSegmentTree_1_1Node_1ae2285d88802b45c03d54e94af1320a99" kind="function"><name>is_leaf</name></member>
     <member refid="structtitan23_1_1DynamicSegmentTree_1_1Node_1ae25f5d3db97480c6ef2d83c45698f38a" kind="function"><name>update</name></member>
     <member refid="structtitan23_1_1DynamicSegmentTree_1_1Node_1a9394fcf09392747861d9698ca2e61fee" kind="function"><name>mid</name></member>
+  </compound>
+  <compound refid="structtitan23_1_1DynamicSegmentTreeInit_1_1Node" kind="struct"><name>titan23::DynamicSegmentTreeInit::Node</name>
+    <member refid="structtitan23_1_1DynamicSegmentTreeInit_1_1Node_1aed6829c5e1be181cb8dcad175f6544ae" kind="variable"><name>dseg</name></member>
+    <member refid="structtitan23_1_1DynamicSegmentTreeInit_1_1Node_1a1f4ae23381b41aca14db9f9c3b7577b6" kind="variable"><name>left</name></member>
+    <member refid="structtitan23_1_1DynamicSegmentTreeInit_1_1Node_1a33429bd209916ad10dbb84b5e02c3cdb" kind="variable"><name>right</name></member>
+    <member refid="structtitan23_1_1DynamicSegmentTreeInit_1_1Node_1a5b592763b4daf4ac0abfc0daaf64dada" kind="variable"><name>l</name></member>
+    <member refid="structtitan23_1_1DynamicSegmentTreeInit_1_1Node_1a3041767a403aec8f64d045fa3c14b0d1" kind="variable"><name>r</name></member>
+    <member refid="structtitan23_1_1DynamicSegmentTreeInit_1_1Node_1aef8ac933f50e436b5650bb9e352dc0c4" kind="variable"><name>data</name></member>
+    <member refid="structtitan23_1_1DynamicSegmentTreeInit_1_1Node_1a01aca49c931ccb578a2de48511454159" kind="function"><name>Node</name></member>
+    <member refid="structtitan23_1_1DynamicSegmentTreeInit_1_1Node_1a00b57609ae196a989b83327283b162e5" kind="function"><name>Node</name></member>
+    <member refid="structtitan23_1_1DynamicSegmentTreeInit_1_1Node_1a61ea01f79824ccf189d3c16491ce1bd5" kind="function"><name>is_leaf</name></member>
+    <member refid="structtitan23_1_1DynamicSegmentTreeInit_1_1Node_1ad5b44ce9e5f7d02a631ef3d353bf870d" kind="function"><name>update</name></member>
+    <member refid="structtitan23_1_1DynamicSegmentTreeInit_1_1Node_1a4abdf05742fdb05f78bb6034f1640519" kind="function"><name>mid</name></member>
   </compound>
   <compound refid="structtitan23_1_1DynamicWaveletTree_1_1Node" kind="struct"><name>titan23::DynamicWaveletTree::Node</name>
     <member refid="structtitan23_1_1DynamicWaveletTree_1_1Node_1a0db227494df2c79e0dc1ba2fc9ea70a9" kind="variable"><name>left</name></member>
@@ -867,19 +896,19 @@
     <member refid="classtitan23_1_1LazyWBTree_1_1Node_1aff3c7e707750af41f2821e7d8170f149" kind="function"><name>_propagate</name></member>
     <member refid="classtitan23_1_1LazyWBTree_1_1Node_1ae1137264e620cf05898f0b30ae4c7251" kind="function"><name>print</name></member>
   </compound>
-  <compound refid="classtitan23_1_1LinkCutTree_1_1Node" kind="class"><name>titan23::LinkCutTree::Node</name>
-    <member refid="classtitan23_1_1LinkCutTree_1_1Node_1afdb4356a94684a359e9a0333b1141af2" kind="variable"><name>index</name></member>
-    <member refid="classtitan23_1_1LinkCutTree_1_1Node_1a1a2ea3d2717249eaf189d3ec2500d918" kind="variable"><name>size</name></member>
-    <member refid="classtitan23_1_1LinkCutTree_1_1Node_1a2a798d7981e9e7e00888f6ba3cd3ad4f" kind="variable"><name>rev</name></member>
-    <member refid="classtitan23_1_1LinkCutTree_1_1Node_1a358017e84ac886b9f8ecd9fbd7c11b98" kind="variable"><name>key</name></member>
-    <member refid="classtitan23_1_1LinkCutTree_1_1Node_1ad27714aef60f2a3dde37edb35011ad98" kind="variable"><name>data</name></member>
-    <member refid="classtitan23_1_1LinkCutTree_1_1Node_1a6f09fbfe1f1648f6605e30f26d3b5a0a" kind="variable"><name>rdata</name></member>
-    <member refid="classtitan23_1_1LinkCutTree_1_1Node_1a01d52d8d2b4faafd8e55f4485560549b" kind="variable"><name>lazy</name></member>
-    <member refid="classtitan23_1_1LinkCutTree_1_1Node_1a7046a0d2622cb7df702e59e804bb4e11" kind="variable"><name>left</name></member>
-    <member refid="classtitan23_1_1LinkCutTree_1_1Node_1a19f8b172257c4dff35afc207a306fbd0" kind="variable"><name>right</name></member>
-    <member refid="classtitan23_1_1LinkCutTree_1_1Node_1a6f7bf19506adce57884a944a0e25eeb1" kind="variable"><name>par</name></member>
-    <member refid="classtitan23_1_1LinkCutTree_1_1Node_1aca307529fb1ffc51e0124a3766fb32a0" kind="function"><name>Node</name></member>
-    <member refid="classtitan23_1_1LinkCutTree_1_1Node_1a93598f7b7e27ee114456ae0006c5f51a" kind="function"><name>is_root</name></member>
+  <compound refid="structtitan23_1_1LinkCutTree_1_1Node" kind="struct"><name>titan23::LinkCutTree::Node</name>
+    <member refid="structtitan23_1_1LinkCutTree_1_1Node_1afdb4356a94684a359e9a0333b1141af2" kind="variable"><name>index</name></member>
+    <member refid="structtitan23_1_1LinkCutTree_1_1Node_1a1a2ea3d2717249eaf189d3ec2500d918" kind="variable"><name>size</name></member>
+    <member refid="structtitan23_1_1LinkCutTree_1_1Node_1a2a798d7981e9e7e00888f6ba3cd3ad4f" kind="variable"><name>rev</name></member>
+    <member refid="structtitan23_1_1LinkCutTree_1_1Node_1a358017e84ac886b9f8ecd9fbd7c11b98" kind="variable"><name>key</name></member>
+    <member refid="structtitan23_1_1LinkCutTree_1_1Node_1ad27714aef60f2a3dde37edb35011ad98" kind="variable"><name>data</name></member>
+    <member refid="structtitan23_1_1LinkCutTree_1_1Node_1a6f09fbfe1f1648f6605e30f26d3b5a0a" kind="variable"><name>rdata</name></member>
+    <member refid="structtitan23_1_1LinkCutTree_1_1Node_1a01d52d8d2b4faafd8e55f4485560549b" kind="variable"><name>lazy</name></member>
+    <member refid="structtitan23_1_1LinkCutTree_1_1Node_1a7046a0d2622cb7df702e59e804bb4e11" kind="variable"><name>left</name></member>
+    <member refid="structtitan23_1_1LinkCutTree_1_1Node_1a19f8b172257c4dff35afc207a306fbd0" kind="variable"><name>right</name></member>
+    <member refid="structtitan23_1_1LinkCutTree_1_1Node_1a6f7bf19506adce57884a944a0e25eeb1" kind="variable"><name>par</name></member>
+    <member refid="structtitan23_1_1LinkCutTree_1_1Node_1aca307529fb1ffc51e0124a3766fb32a0" kind="function"><name>Node</name></member>
+    <member refid="structtitan23_1_1LinkCutTree_1_1Node_1a93598f7b7e27ee114456ae0006c5f51a" kind="function"><name>is_root</name></member>
   </compound>
   <compound refid="classtitan23_1_1PersistentLazyWBTree_1_1Node" kind="class"><name>titan23::PersistentLazyWBTree::Node</name>
     <member refid="classtitan23_1_1PersistentLazyWBTree_1_1Node_1a913dd98c9b618bc618854518c02f8c1a" kind="variable"><name>key</name></member>
@@ -1019,32 +1048,32 @@
     <member refid="classtitan23_1_1PersistentStack_1a5cff809ff652c8516e96461a3a6cc0ff" kind="function"><name>push</name></member>
     <member refid="classtitan23_1_1PersistentStack_1a8e8b0ce9dd5e543863dae53e5eb42602" kind="function"><name>tovector</name></member>
   </compound>
-  <compound refid="structtitan23_1_1Random" kind="struct"><name>titan23::Random</name>
-    <member refid="structtitan23_1_1Random_1a7466d0ca186123e768892d715882ce21" kind="variable"><name>_x</name></member>
-    <member refid="structtitan23_1_1Random_1aa5f712efb2d57476cc84742f093e7396" kind="variable"><name>_y</name></member>
-    <member refid="structtitan23_1_1Random_1acb24fee459a4ddbd9242d234ff709f1f" kind="variable"><name>_z</name></member>
-    <member refid="structtitan23_1_1Random_1a1e0bac744adc61aaaae98259e8da5cf7" kind="variable"><name>_w</name></member>
-    <member refid="structtitan23_1_1Random_1a8bb331ebcba2e050292022b1394526e5" kind="function"><name>_xor128</name></member>
-    <member refid="structtitan23_1_1Random_1ade5caf3ad830145699118032b77b85db" kind="function"><name>Random</name></member>
-    <member refid="structtitan23_1_1Random_1a4191c342de62979837ea89fbceeb3631" kind="function"><name>random</name></member>
-    <member refid="structtitan23_1_1Random_1a60524b9288bf9dde85b6f200272528c5" kind="function"><name>randint</name></member>
-    <member refid="structtitan23_1_1Random_1af912a2c0ed6a29669290f43d2e7c8ea4" kind="function"><name>randint</name></member>
-    <member refid="structtitan23_1_1Random_1a6b72ec5b19b8fbbeef8acd5ff2eb5bda" kind="function"><name>randrange</name></member>
-    <member refid="structtitan23_1_1Random_1a01aa00958ee23afc95c6e66d6a55f03c" kind="function"><name>randrange</name></member>
-    <member refid="structtitan23_1_1Random_1a74dc79ed9aa5dee428a782eca49407ee" kind="function"><name>randdouble</name></member>
-    <member refid="structtitan23_1_1Random_1a8a3e5ca699ccd75cff80a8939b89a91d" kind="function"><name>shuffle</name></member>
-    <member refid="structtitan23_1_1Random_1aa14fa9b38502d5be75bdc09cfea5ce12" kind="function"><name>choices</name></member>
-    <member refid="structtitan23_1_1Random_1a6e5323152fa179e6ce198965ef84bc83" kind="function"><name>choice</name></member>
-    <member refid="structtitan23_1_1Random_1a09fa8bb8f81eabfca9e4d0bc3bc34ece" kind="function"><name>choice</name></member>
-    <member refid="structtitan23_1_1Random_1ae72775efea327eabef4283b9fa47f5d2" kind="function"><name>choice</name></member>
+  <compound refid="classtitan23_1_1Random" kind="class"><name>titan23::Random</name>
+    <member refid="classtitan23_1_1Random_1a7466d0ca186123e768892d715882ce21" kind="variable"><name>_x</name></member>
+    <member refid="classtitan23_1_1Random_1aa5f712efb2d57476cc84742f093e7396" kind="variable"><name>_y</name></member>
+    <member refid="classtitan23_1_1Random_1acb24fee459a4ddbd9242d234ff709f1f" kind="variable"><name>_z</name></member>
+    <member refid="classtitan23_1_1Random_1a1e0bac744adc61aaaae98259e8da5cf7" kind="variable"><name>_w</name></member>
+    <member refid="classtitan23_1_1Random_1a8bb331ebcba2e050292022b1394526e5" kind="function"><name>_xor128</name></member>
+    <member refid="classtitan23_1_1Random_1ade5caf3ad830145699118032b77b85db" kind="function"><name>Random</name></member>
+    <member refid="classtitan23_1_1Random_1a4191c342de62979837ea89fbceeb3631" kind="function"><name>random</name></member>
+    <member refid="classtitan23_1_1Random_1a60524b9288bf9dde85b6f200272528c5" kind="function"><name>randint</name></member>
+    <member refid="classtitan23_1_1Random_1af912a2c0ed6a29669290f43d2e7c8ea4" kind="function"><name>randint</name></member>
+    <member refid="classtitan23_1_1Random_1a6b72ec5b19b8fbbeef8acd5ff2eb5bda" kind="function"><name>randrange</name></member>
+    <member refid="classtitan23_1_1Random_1a01aa00958ee23afc95c6e66d6a55f03c" kind="function"><name>randrange</name></member>
+    <member refid="classtitan23_1_1Random_1a74dc79ed9aa5dee428a782eca49407ee" kind="function"><name>randdouble</name></member>
+    <member refid="classtitan23_1_1Random_1a8a3e5ca699ccd75cff80a8939b89a91d" kind="function"><name>shuffle</name></member>
+    <member refid="classtitan23_1_1Random_1aa14fa9b38502d5be75bdc09cfea5ce12" kind="function"><name>choices</name></member>
+    <member refid="classtitan23_1_1Random_1a6e5323152fa179e6ce198965ef84bc83" kind="function"><name>choice</name></member>
+    <member refid="classtitan23_1_1Random_1a09fa8bb8f81eabfca9e4d0bc3bc34ece" kind="function"><name>choice</name></member>
+    <member refid="classtitan23_1_1Random_1ae72775efea327eabef4283b9fa47f5d2" kind="function"><name>choice</name></member>
   </compound>
-  <compound refid="structtitan23_1_1RandomTree" kind="struct"><name>titan23::RandomTree</name>
-    <member refid="structtitan23_1_1RandomTree_1a4087cf5a4222bc10823d02ab1fd96f98" kind="variable"><name>random</name></member>
-    <member refid="structtitan23_1_1RandomTree_1adc4daff8c45869642d4f8d7c0e7ba29c" kind="variable"><name>n</name></member>
-    <member refid="structtitan23_1_1RandomTree_1a27b996bf5fca9ce88e2b201e6476d578" kind="function"><name>RandomTree</name></member>
-    <member refid="structtitan23_1_1RandomTree_1a0ac44456dd65a600ceda08a41379f5df" kind="function"><name>_indx</name></member>
-    <member refid="structtitan23_1_1RandomTree_1aceec8348fe6a69c57d5d8505bf229d29" kind="function"><name>gen_random</name></member>
-    <member refid="structtitan23_1_1RandomTree_1ae415f7dad6d7e3647551539089243a11" kind="function"><name>gen_path</name></member>
+  <compound refid="classtitan23_1_1RandomTree" kind="class"><name>titan23::RandomTree</name>
+    <member refid="classtitan23_1_1RandomTree_1a4087cf5a4222bc10823d02ab1fd96f98" kind="variable"><name>random</name></member>
+    <member refid="classtitan23_1_1RandomTree_1adc4daff8c45869642d4f8d7c0e7ba29c" kind="variable"><name>n</name></member>
+    <member refid="classtitan23_1_1RandomTree_1aaaebc6c6b529d7e18879207ebc7d8c9f" kind="function"><name>_indx</name></member>
+    <member refid="classtitan23_1_1RandomTree_1a27b996bf5fca9ce88e2b201e6476d578" kind="function"><name>RandomTree</name></member>
+    <member refid="classtitan23_1_1RandomTree_1aceec8348fe6a69c57d5d8505bf229d29" kind="function"><name>gen_random</name></member>
+    <member refid="classtitan23_1_1RandomTree_1ae415f7dad6d7e3647551539089243a11" kind="function"><name>gen_path</name></member>
   </compound>
   <compound refid="structtitan23_1_1beam__search_1_1Result" kind="struct"><name>titan23::beam_search::Result</name>
     <member refid="structtitan23_1_1beam__search_1_1Result_1af1dc2e9d4b02eadaede1e6e8b42a8b70" kind="variable"><name>history</name></member>
@@ -1292,13 +1321,13 @@
     <member refid="classtitan23_1_1WaveletMatrixCumulativeSum_1aeff28916b6a32166245cba263ebc3760" kind="function"><name>build</name></member>
     <member refid="classtitan23_1_1WaveletMatrixCumulativeSum_1ab7c3df6066265829c027bb79b4f70a7a" kind="function"><name>sum</name></member>
   </compound>
-  <compound refid="structtitan23_1_1Zaatsu" kind="struct"><name>titan23::Zaatsu</name>
-    <member refid="structtitan23_1_1Zaatsu_1a81dfc2394c13283f510823e071f94903" kind="variable"><name>_to_origin</name></member>
-    <member refid="structtitan23_1_1Zaatsu_1a04a5f195ce43ce165feb98501b7dade7" kind="variable"><name>_n</name></member>
-    <member refid="structtitan23_1_1Zaatsu_1a6f2d95a2e3911e01b264a99b4083b93d" kind="function"><name>Zaatsu</name></member>
-    <member refid="structtitan23_1_1Zaatsu_1ae2eeb830f7e9a40a6b8a7fc368bfeaa2" kind="function"><name>len</name></member>
-    <member refid="structtitan23_1_1Zaatsu_1aef4f09458e4d96ad4c56c8d379e7cf15" kind="function"><name>to_zaatsu</name></member>
-    <member refid="structtitan23_1_1Zaatsu_1a78c5cf1c779aa7407a1b1819ff3cb3bb" kind="function"><name>to_origin</name></member>
+  <compound refid="classtitan23_1_1Zaatsu" kind="class"><name>titan23::Zaatsu</name>
+    <member refid="classtitan23_1_1Zaatsu_1a81dfc2394c13283f510823e071f94903" kind="variable"><name>_to_origin</name></member>
+    <member refid="classtitan23_1_1Zaatsu_1a04a5f195ce43ce165feb98501b7dade7" kind="variable"><name>_n</name></member>
+    <member refid="classtitan23_1_1Zaatsu_1a6f2d95a2e3911e01b264a99b4083b93d" kind="function"><name>Zaatsu</name></member>
+    <member refid="classtitan23_1_1Zaatsu_1ae2eeb830f7e9a40a6b8a7fc368bfeaa2" kind="function"><name>len</name></member>
+    <member refid="classtitan23_1_1Zaatsu_1aef4f09458e4d96ad4c56c8d379e7cf15" kind="function"><name>to_zaatsu</name></member>
+    <member refid="classtitan23_1_1Zaatsu_1a78c5cf1c779aa7407a1b1819ff3cb3bb" kind="function"><name>to_origin</name></member>
   </compound>
   <compound refid="namespacestd" kind="namespace"><name>std</name>
   </compound>
@@ -1382,6 +1411,8 @@
   <compound refid="dynamic__lazy__segment__tree_8cpp" kind="file"><name>dynamic_lazy_segment_tree.cpp</name>
   </compound>
   <compound refid="dynamic__segment__tree_8cpp" kind="file"><name>dynamic_segment_tree.cpp</name>
+  </compound>
+  <compound refid="dynamic__segment__tree__init_8cpp" kind="file"><name>dynamic_segment_tree_init.cpp</name>
   </compound>
   <compound refid="dynamic__wavelet__matrix_8cpp" kind="file"><name>dynamic_wavelet_matrix.cpp</name>
   </compound>

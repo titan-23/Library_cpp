@@ -21,6 +21,7 @@ data_structures
    dynamic_fenwick_tree_2D_cpp.rst
    dynamic_lazy_segment_tree_cpp.rst
    dynamic_segment_tree_cpp.rst
+   dynamic_segment_tree_init_cpp.rst
    dynamic_wavelet_matrix_cpp.rst
    dynamic_wavelet_tree_cpp.rst
    euler_tour_tree_cpp.rst

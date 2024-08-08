@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['insert_33',['insert',['../classtitan23_1_1DynamicWaveletTree.html#aa937f107de268e68a549990f32b122a2',1,'titan23::DynamicWaveletTree']]]
+  ['insert_38',['insert',['../classtitan23_1_1DynamicWaveletTree.html#aa937f107de268e68a549990f32b122a2',1,'titan23::DynamicWaveletTree']]]
 ];
