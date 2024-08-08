@@ -28,6 +28,24 @@
         <label>iostream</label>
       </node>
     </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>titan_cpplib/data_structures/bit_vector.cpp</label>
+        <link refid="bit__vector_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>titan_cpplib/data_structures/wavelet_matrix_cumulative_sum.cpp</label>
+        <link refid="wavelet__matrix__cumulative__sum_8cpp_source"/>
+      </node>
+      <node id="2">
+        <label>titan_cpplib/data_structures/wavelet_matrix.cpp</label>
+        <link refid="wavelet__matrix_8cpp_source"/>
+      </node>
+    </invincdepgraph>
     <innerclass refid="classtitan23_1_1BitVector" prot="public">titan23::BitVector</innerclass>
     <innernamespace refid="namespacetitan23">titan23</innernamespace>
     <briefdescription>

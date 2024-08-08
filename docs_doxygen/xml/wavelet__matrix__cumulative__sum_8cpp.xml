@@ -7,8 +7,32 @@
     <includes refid="bit__vector_8cpp" local="yes">titan_cpplib/data_structures/bit_vector.cpp</includes>
     <includes refid="cumulative__sum_8cpp" local="yes">titan_cpplib/data_structures/cumulative_sum.cpp</includes>
     <incdepgraph>
+      <node id="4">
+        <label>titan_cpplib/data_structures/bit_vector.cpp</label>
+        <link refid="bit__vector_8cpp_source"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>cassert</label>
+      </node>
       <node id="2">
         <label>vector</label>
+      </node>
+      <node id="5">
+        <label>iostream</label>
+      </node>
+      <node id="7">
+        <label>titan_cpplib/data_structures/cumulative_sum.cpp</label>
+        <link refid="cumulative__sum_8cpp_source"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
       </node>
       <node id="1">
         <label>titan_cpplib/data_structures/wavelet_matrix_cumulative_sum.cpp</label>
@@ -16,6 +40,10 @@
         <childnode refid="2" relation="include">
         </childnode>
         <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
         </childnode>
       </node>
       <node id="3">

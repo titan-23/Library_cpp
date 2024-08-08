@@ -1,0 +1,4 @@
+/* コードブロックのスタイル */
+pre {
+  max-height: 20em !important; /* 適切な高さに調整 */
+}

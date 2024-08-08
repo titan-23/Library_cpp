@@ -28,6 +28,24 @@
         <label>thread</label>
       </node>
     </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>titan_cpplib/ahc/beam_search/beam_search.cpp</label>
+        <link refid="beam__search_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>titan_cpplib/ahc/timer.cpp</label>
+        <link refid="timer_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>titan_cpplib/ahc/sa.cpp</label>
+        <link refid="sa_8cpp_source"/>
+      </node>
+    </invincdepgraph>
     <innerclass refid="classtitan23_1_1Timer" prot="public">titan23::Timer</innerclass>
     <innernamespace refid="namespacetitan23">titan23</innernamespace>
     <briefdescription>

@@ -2,7 +2,7 @@ graph
 =====
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    dijkstra_cpp.rst
    dijkstra_path_cpp.rst

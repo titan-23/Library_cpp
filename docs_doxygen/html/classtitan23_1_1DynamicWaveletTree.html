@@ -73,64 +73,95 @@ $(function() {
 <div class="title">titan23::DynamicWaveletTree&lt; T &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>動的ウェーブレット木  
+ <a href="classtitan23_1_1DynamicWaveletTree.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a1c4dd73c9377a8670c127287d0860e46"><td class="memItemLeft" align="right" valign="top"><a id="a1c4dd73c9377a8670c127287d0860e46"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>DynamicWaveletTree</b> (const T sigma)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicWaveletTree.html#a1c4dd73c9377a8670c127287d0860e46">DynamicWaveletTree</a> (const T sigma)</td></tr>
+<tr class="memdesc:a1c4dd73c9377a8670c127287d0860e46"><td class="mdescLeft">&#160;</td><td class="mdescRight">各要素が <code>[0, sigma)</code> の <code><a class="el" href="classtitan23_1_1DynamicWaveletTree.html" title="動的ウェーブレット木">DynamicWaveletTree</a></code> を作成する / <code>O(1)</code> <br /></td></tr>
 <tr class="separator:a1c4dd73c9377a8670c127287d0860e46"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aafce2f74ed8745a0e630edf9e10a145a"><td class="memItemLeft" align="right" valign="top"><a id="aafce2f74ed8745a0e630edf9e10a145a"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>DynamicWaveletTree</b> (const T sigma, vector&lt; T &gt; &amp;a)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicWaveletTree.html#aafce2f74ed8745a0e630edf9e10a145a">DynamicWaveletTree</a> (const T sigma, vector&lt; T &gt; &amp;a)</td></tr>
+<tr class="memdesc:aafce2f74ed8745a0e630edf9e10a145a"><td class="mdescLeft">&#160;</td><td class="mdescRight">各要素が <code>[0, sigma)</code> の <code><a class="el" href="classtitan23_1_1DynamicWaveletTree.html" title="動的ウェーブレット木">DynamicWaveletTree</a></code> を作成する / <code>O(nlog(σ))</code> <br /></td></tr>
 <tr class="separator:aafce2f74ed8745a0e630edf9e10a145a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa937f107de268e68a549990f32b122a2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicWaveletTree.html#aa937f107de268e68a549990f32b122a2">insert</a> (int k, T x)</td></tr>
-<tr class="memdesc:aa937f107de268e68a549990f32b122a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">位置 <code>k</code> に <code>x</code> を挿入する / <code>O(log(n)log(σ))</code>  <a href="classtitan23_1_1DynamicWaveletTree.html#aa937f107de268e68a549990f32b122a2">More...</a><br /></td></tr>
+<tr class="memitem:aa937f107de268e68a549990f32b122a2"><td class="memItemLeft" align="right" valign="top"><a id="aa937f107de268e68a549990f32b122a2"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicWaveletTree.html#aa937f107de268e68a549990f32b122a2">insert</a> (int k, T x)</td></tr>
+<tr class="memdesc:aa937f107de268e68a549990f32b122a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">位置 <code>k</code> に <code>x</code> を挿入する / <code>O(log(n)log(σ))</code> <br /></td></tr>
 <tr class="separator:aa937f107de268e68a549990f32b122a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a64c5dab88069e66dcd6cdf966ebae201"><td class="memItemLeft" align="right" valign="top"><a id="a64c5dab88069e66dcd6cdf966ebae201"></a>
-T&#160;</td><td class="memItemRight" valign="bottom"><b>pop</b> (int k)</td></tr>
+T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicWaveletTree.html#a64c5dab88069e66dcd6cdf966ebae201">pop</a> (int k)</td></tr>
+<tr class="memdesc:a64c5dab88069e66dcd6cdf966ebae201"><td class="mdescLeft">&#160;</td><td class="mdescRight">位置 <code>k</code> の値を削除して返す / <code>O(log(n)log(σ))</code> <br /></td></tr>
 <tr class="separator:a64c5dab88069e66dcd6cdf966ebae201"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac81b6567f3719b5f8e3120850e92a648"><td class="memItemLeft" align="right" valign="top"><a id="ac81b6567f3719b5f8e3120850e92a648"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>set</b> (int k, T x)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicWaveletTree.html#ac81b6567f3719b5f8e3120850e92a648">set</a> (int k, T x)</td></tr>
+<tr class="memdesc:ac81b6567f3719b5f8e3120850e92a648"><td class="mdescLeft">&#160;</td><td class="mdescRight">位置 <code>k</code> の値を <code>x</code> に更新する / <code>O(log(n)log(σ))</code> <br /></td></tr>
 <tr class="separator:ac81b6567f3719b5f8e3120850e92a648"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a5940cf0aa3074ee756188401aaa3d5"><td class="memItemLeft" align="right" valign="top"><a id="a6a5940cf0aa3074ee756188401aaa3d5"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>rank</b> (int r, T x) const</td></tr>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicWaveletTree.html#a6a5940cf0aa3074ee756188401aaa3d5">rank</a> (int r, T x) const</td></tr>
+<tr class="memdesc:a6a5940cf0aa3074ee756188401aaa3d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">区間 <code>[0, r)</code> の <code>x</code> の個数を返す / <code>O(log(n)log(σ))</code> <br /></td></tr>
 <tr class="separator:a6a5940cf0aa3074ee756188401aaa3d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a854d3d9efdd90ba3ce16ea44b6a5878c"><td class="memItemLeft" align="right" valign="top"><a id="a854d3d9efdd90ba3ce16ea44b6a5878c"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>range_count</b> (int l, int r, T x) const</td></tr>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicWaveletTree.html#a854d3d9efdd90ba3ce16ea44b6a5878c">range_count</a> (int l, int r, T x) const</td></tr>
+<tr class="memdesc:a854d3d9efdd90ba3ce16ea44b6a5878c"><td class="mdescLeft">&#160;</td><td class="mdescRight">区間 <code>[l, r)</code> の <code>x</code> の個数を返す / <code>O(log(n)log(σ))</code>O(log(n)log(σ)) <br /></td></tr>
 <tr class="separator:a854d3d9efdd90ba3ce16ea44b6a5878c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6b2040b5f979e6aa664b7e6454461153"><td class="memItemLeft" align="right" valign="top"><a id="a6b2040b5f979e6aa664b7e6454461153"></a>
-T&#160;</td><td class="memItemRight" valign="bottom"><b>access</b> (int k) const</td></tr>
+T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicWaveletTree.html#a6b2040b5f979e6aa664b7e6454461153">access</a> (int k) const</td></tr>
+<tr class="memdesc:a6b2040b5f979e6aa664b7e6454461153"><td class="mdescLeft">&#160;</td><td class="mdescRight"><code>k</code> 番目の要素を返す / <code>O(log(n)log(σ))</code> <br /></td></tr>
 <tr class="separator:a6b2040b5f979e6aa664b7e6454461153"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af8417ad41638516396e6c9e6c98ddbc3"><td class="memItemLeft" align="right" valign="top"><a id="af8417ad41638516396e6c9e6c98ddbc3"></a>
-T&#160;</td><td class="memItemRight" valign="bottom"><b>kth_smallest</b> (int l, int r, int k) const</td></tr>
+T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicWaveletTree.html#af8417ad41638516396e6c9e6c98ddbc3">kth_smallest</a> (int l, int r, int k) const</td></tr>
+<tr class="memdesc:af8417ad41638516396e6c9e6c98ddbc3"><td class="mdescLeft">&#160;</td><td class="mdescRight">区間 <code>[l, r)</code> で <code>k</code> 番目に小さい値を返す / <code>O(log(n)log(σ))</code> <br /></td></tr>
 <tr class="separator:af8417ad41638516396e6c9e6c98ddbc3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adbd2d18e73422ccaa2f9c6f044483f2f"><td class="memItemLeft" align="right" valign="top"><a id="adbd2d18e73422ccaa2f9c6f044483f2f"></a>
-T&#160;</td><td class="memItemRight" valign="bottom"><b>kth_largest</b> (int l, int r, int k) const</td></tr>
+T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicWaveletTree.html#adbd2d18e73422ccaa2f9c6f044483f2f">kth_largest</a> (int l, int r, int k) const</td></tr>
+<tr class="memdesc:adbd2d18e73422ccaa2f9c6f044483f2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">区間 <code>[l, r)</code> で <code>k</code> 番目に大きい値を返す / <code>O(log(n)log(σ))</code> <br /></td></tr>
 <tr class="separator:adbd2d18e73422ccaa2f9c6f044483f2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af9177c036552364b76fa638c66911a7b"><td class="memItemLeft" align="right" valign="top"><a id="af9177c036552364b76fa638c66911a7b"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>range_freq</b> (int l, int r, T x) const</td></tr>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicWaveletTree.html#af9177c036552364b76fa638c66911a7b">range_freq</a> (int l, int r, T x) const</td></tr>
+<tr class="memdesc:af9177c036552364b76fa638c66911a7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">区間 <code>[l, r)</code> で <code>x</code> 未満の要素の個数を返す / <code>O(log(n)log(σ))</code> <br /></td></tr>
 <tr class="separator:af9177c036552364b76fa638c66911a7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a384869dd7bd88e7732cd4c4fc3dd05c5"><td class="memItemLeft" align="right" valign="top"><a id="a384869dd7bd88e7732cd4c4fc3dd05c5"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>range_freq</b> (int l, int r, int x, int y) const</td></tr>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicWaveletTree.html#a384869dd7bd88e7732cd4c4fc3dd05c5">range_freq</a> (int l, int r, int x, int y) const</td></tr>
+<tr class="memdesc:a384869dd7bd88e7732cd4c4fc3dd05c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">区間 <code>[l, r)</code> で <code>x</code> 以上 <code>y</code> 未満の要素の個数を返す / <code>O(log(n)log(σ))</code> <br /></td></tr>
 <tr class="separator:a384869dd7bd88e7732cd4c4fc3dd05c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af18d74f4c9fd01ae68197b31b34057d0"><td class="memItemLeft" align="right" valign="top"><a id="af18d74f4c9fd01ae68197b31b34057d0"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>select</b> (int k, T x) const</td></tr>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicWaveletTree.html#af18d74f4c9fd01ae68197b31b34057d0">select</a> (int k, T x) const</td></tr>
+<tr class="memdesc:af18d74f4c9fd01ae68197b31b34057d0"><td class="mdescLeft">&#160;</td><td class="mdescRight"><code>k</code> 番目の <code>x</code> の位置を返す / <code>O(log(n)log(σ))</code> <br /></td></tr>
 <tr class="separator:af18d74f4c9fd01ae68197b31b34057d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a654f65c518ca7c8a58a59b2893770d23"><td class="memItemLeft" align="right" valign="top"><a id="a654f65c518ca7c8a58a59b2893770d23"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>select_remove</b> (int k, T x)</td></tr>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicWaveletTree.html#a654f65c518ca7c8a58a59b2893770d23">select_remove</a> (int k, T x)</td></tr>
+<tr class="memdesc:a654f65c518ca7c8a58a59b2893770d23"><td class="mdescLeft">&#160;</td><td class="mdescRight"><code>k</code> 番目の <code>x</code> の位置を返して削除する / <code>O(log(n)log(σ))</code> <br /></td></tr>
 <tr class="separator:a654f65c518ca7c8a58a59b2893770d23"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7be1bb911b0c138a4b3cbb591c9ca1c8"><td class="memItemLeft" align="right" valign="top"><a id="a7be1bb911b0c138a4b3cbb591c9ca1c8"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>len</b> () const</td></tr>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicWaveletTree.html#a7be1bb911b0c138a4b3cbb591c9ca1c8">len</a> () const</td></tr>
+<tr class="memdesc:a7be1bb911b0c138a4b3cbb591c9ca1c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">要素数を返す / <code>O(1)</code> <br /></td></tr>
 <tr class="separator:a7be1bb911b0c138a4b3cbb591c9ca1c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a717f0d589b9c57ed4387d052465a86fa"><td class="memItemLeft" align="right" valign="top"><a id="a717f0d589b9c57ed4387d052465a86fa"></a>
-vector&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>tovector</b> () const</td></tr>
+<tr class="memitem:a717f0d589b9c57ed4387d052465a86fa"><td class="memItemLeft" align="right" valign="top">vector&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicWaveletTree.html#a717f0d589b9c57ed4387d052465a86fa">tovector</a> () const</td></tr>
 <tr class="separator:a717f0d589b9c57ed4387d052465a86fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a493a7366918605a89480509e2d0c307e"><td class="memItemLeft" align="right" valign="top"><a id="a493a7366918605a89480509e2d0c307e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>print</b> () const</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicWaveletTree.html#a493a7366918605a89480509e2d0c307e">print</a> () const</td></tr>
+<tr class="memdesc:a493a7366918605a89480509e2d0c307e"><td class="mdescLeft">&#160;</td><td class="mdescRight">表示する / <code>O(nlog(σ))</code> <br /></td></tr>
 <tr class="separator:a493a7366918605a89480509e2d0c307e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="aa937f107de268e68a549990f32b122a2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa937f107de268e68a549990f32b122a2">&#9670;&nbsp;</a></span>insert()</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;typename T&gt;<br />
+class titan23::DynamicWaveletTree&lt; T &gt;</h3>
+
+<p>動的ウェーブレット木 </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>値の型 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="dynamic__wavelet__tree_8cpp_source.html#l00015">15</a> of file <a class="el" href="dynamic__wavelet__tree_8cpp_source.html">dynamic_wavelet_tree.cpp</a>.</p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a717f0d589b9c57ed4387d052465a86fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a717f0d589b9c57ed4387d052465a86fa">&#9670;&nbsp;</a></span>tovector()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -141,21 +172,10 @@ template&lt;typename T &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classtitan23_1_1DynamicWaveletTree.html">titan23::DynamicWaveletTree</a>&lt; T &gt;::insert </td>
+          <td class="memname">vector&lt;T&gt; <a class="el" href="classtitan23_1_1DynamicWaveletTree.html">titan23::DynamicWaveletTree</a>&lt; T &gt;::tovector </td>
           <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>k</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">T&#160;</td>
-          <td class="paramname"><em>x</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
         </tr>
       </table>
   </td>
@@ -164,20 +184,49 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+<p><code>vector</code> にして返す / <code>O(nlog(σ))</code> (n 回 access するよりも高速) </p>
 
-<p>位置 <code>k</code> に <code>x</code> を挿入する / <code>O(log(n)log(σ))</code> </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">k</td><td>インデックス <code>0 &lt;= k &lt;= n</code> </td></tr>
-    <tr><td class="paramname">x</td><td>値 <code>0 &lt;= x &lt; sigma</code> </td></tr>
-  </table>
-  </dd>
-</dl>
-
+<p class="definition">Definition at line <a class="el" href="dynamic__wavelet__tree_8cpp_source.html#l00287">287</a> of file <a class="el" href="dynamic__wavelet__tree_8cpp_source.html">dynamic_wavelet_tree.cpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;                                   {</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;            vector&lt;T&gt; a(<a class="code" href="classtitan23_1_1DynamicWaveletTree.html#a7be1bb911b0c138a4b3cbb591c9ca1c8">len</a>(), 0);</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;            vector&lt;int&gt; buff0(a.size()), buff1;</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;            <span class="keyword">auto</span> dfs = [&amp;] (<span class="keyword">auto</span> &amp;&amp;dfs,</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;                                            Node* node,</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;                                            <span class="keywordtype">int</span> bit,</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;                                            <span class="keywordtype">bool</span> flag01,</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;                                            <span class="keywordtype">int</span> s0, <span class="keywordtype">int</span> g0,</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;                                            <span class="keywordtype">int</span> s1, <span class="keywordtype">int</span> g1</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;                                            ) -&gt; <span class="keywordtype">void</span> {</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;                <span class="keywordtype">int</span> s = flag01 ? s1 : s0;</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;                <span class="keywordtype">int</span> g = flag01 ? g1 : g0;</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;                <span class="keywordflow">if</span> (s == g || bit &lt; 0) <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;                vector&lt;int&gt; &amp;vec = flag01 ? buff1 : buff0;</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;                <span class="keyword">const</span> vector&lt;uint8_t&gt; &amp;v = node-&gt;v.tovector();</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;                <span class="keywordtype">int</span> start_0 = buff0.size(), start_1 = buff1.size();</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;                <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = s; i &lt; g; ++i) {</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;                    <span class="keywordflow">if</span> (v[i-s]) {</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;                        a[vec[i]] |= (T)1 &lt;&lt; bit;</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;                        buff1.emplace_back(vec[i]);</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;                    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;                        buff0.emplace_back(vec[i]);</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;                    }</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;                }</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;                <span class="keywordtype">int</span> end_0 = buff0.size(), end_1 = buff1.size();</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;                dfs(dfs, node-&gt;left,  bit-1, 0, start_0, end_0, start_1, end_1);</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;                dfs(dfs, node-&gt;right, bit-1, 1, start_0, end_0, start_1, end_1);</div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;            };</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; a.size(); ++i) {</div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;                buff0[i] = i;</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;            }</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;            dfs(dfs, this-&gt;root, _log-1, 0, 0, a.size(), 0, 0);</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;            <span class="keywordflow">return</span> a;</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;        }</div>
+<div class="ttc" id="aclasstitan23_1_1DynamicWaveletTree_html_a7be1bb911b0c138a4b3cbb591c9ca1c8"><div class="ttname"><a href="classtitan23_1_1DynamicWaveletTree.html#a7be1bb911b0c138a4b3cbb591c9ca1c8">titan23::DynamicWaveletTree::len</a></div><div class="ttdeci">int len() const</div><div class="ttdoc">要素数を返す / O(1)</div><div class="ttdef"><b>Definition:</b> <a href="dynamic__wavelet__tree_8cpp_source.html#l00281">dynamic_wavelet_tree.cpp:281</a></div></div>
+</div><!-- fragment -->
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>titan_cpplib/data_structures/dynamic_wavelet_tree.cpp</li>
+<li>titan_cpplib/data_structures/<a class="el" href="dynamic__wavelet__tree_8cpp_source.html">dynamic_wavelet_tree.cpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

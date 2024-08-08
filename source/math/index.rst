@@ -2,7 +2,7 @@ math
 ====
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    divs_cpp.rst
    make_primelist_cpp.rst

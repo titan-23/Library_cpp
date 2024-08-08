@@ -11,9 +11,40 @@
         <link refid="hld__segment__tree_8cpp"/>
         <childnode refid="2" relation="include">
         </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>cassert</label>
+      </node>
+      <node id="5">
+        <label>titan_cpplib/data_structures/segment_tree.cpp</label>
+        <link refid="segment__tree_8cpp_source"/>
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>stack</label>
       </node>
       <node id="2">
         <label>vector</label>
+      </node>
+      <node id="6">
+        <label>iostream</label>
+      </node>
+      <node id="3">
+        <label>titan_cpplib/graph/hld.cpp</label>
+        <link refid="hld_8cpp_source"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
       </node>
     </incdepgraph>
     <innerclass refid="structtitan23_1_1HLDSegmentTree" prot="public">titan23::HLDSegmentTree</innerclass>

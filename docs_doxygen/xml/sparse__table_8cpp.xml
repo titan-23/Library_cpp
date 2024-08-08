@@ -27,6 +27,18 @@
         <label>iostream</label>
       </node>
     </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>titan_cpplib/graph/lca.cpp</label>
+        <link refid="lca_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>titan_cpplib/data_structures/sparse_table.cpp</label>
+        <link refid="sparse__table_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
     <innerclass refid="structtitan23_1_1SparseTable" prot="public">titan23::SparseTable</innerclass>
     <innernamespace refid="namespacetitan23">titan23</innernamespace>
     <briefdescription>

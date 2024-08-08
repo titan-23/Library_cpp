@@ -7,17 +7,18 @@
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.01.29 -->
         <title>maximum independent set - titan_cpplib documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=36a5483c" />
+    <link rel="stylesheet" type="text/css" href="../_static/_static/style.css" />
     
     
 
 
 <style>
   body {
-    --color-code-background: #f8f8f8;
+    --color-code-background: #eeffcc;
   --color-code-foreground: black;
   
   }
@@ -271,6 +272,58 @@
         <article role="main">
           <section id="maximum-independent-set">
 <h1>maximum independent set<a class="headerlink" href="#maximum-independent-set" title="Link to this heading">¶</a></h1>
+<section id="id1">
+<h2>ソースコード<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+<span class="linenos"> 2</span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span><span class="c1">// MaximumIndependentSet</span>
+<span class="linenos"> 5</span><span class="k">namespace</span><span class="w"> </span><span class="nn">titan23</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 6</span><span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="nc">MaximumIndependentSet</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 7</span><span class="w">      </span><span class="k">private</span><span class="o">:</span>
+<span class="linenos"> 8</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">;</span>
+<span class="linenos"> 9</span><span class="w">        </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">G</span><span class="p">;</span>
+<span class="linenos">10</span>
+<span class="linenos">11</span><span class="w">      </span><span class="k">public</span><span class="o">:</span>
+<span class="linenos">12</span><span class="w">        </span><span class="n">MaximumIndependentSet</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">n</span><span class="p">(</span><span class="mi">-1</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">13</span><span class="w">        </span><span class="n">MaximumIndependentSet</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">n</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">G</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">))</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">14</span>
+<span class="linenos">15</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">add_edge</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">u</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">v</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">16</span><span class="w">            </span><span class="n">G</span><span class="p">[</span><span class="n">u</span><span class="p">][</span><span class="n">v</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="linenos">17</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">18</span>
+<span class="linenos">19</span><span class="w">        </span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_maximum_independent_set</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">20</span><span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="o">/</span><span class="mi">2</span><span class="p">;</span>
+<span class="linenos">21</span>
+<span class="linenos">22</span><span class="w">            </span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">dp_s1</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="linenos">23</span><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">m</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">24</span><span class="w">                </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">m</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">25</span><span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">G</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">])</span><span class="w"> </span><span class="n">dp_s1</span><span class="p">[(</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="n">i</span><span class="p">)</span><span class="o">|</span><span class="p">(</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="n">j</span><span class="p">)]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="linenos">26</span><span class="w">                </span><span class="p">}</span>
+<span class="linenos">27</span><span class="w">            </span><span class="p">}</span>
+<span class="linenos">28</span><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="n">m</span><span class="p">);</span><span class="w"> </span><span class="o">++</span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">29</span><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">dp_s1</span><span class="p">[</span><span class="n">s</span><span class="p">])</span><span class="w"> </span><span class="k">continue</span><span class="p">;</span>
+<span class="linenos">30</span><span class="w">                </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">m</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">31</span><span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">s</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">continue</span><span class="p">;</span>
+<span class="linenos">32</span><span class="w">                    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">m</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">j</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">33</span><span class="w">                        </span><span class="n">dp_s1</span><span class="p">[</span><span class="n">s</span><span class="o">|</span><span class="p">(</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="n">j</span><span class="p">)]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="linenos">34</span><span class="w">                    </span><span class="p">}</span>
+<span class="linenos">35</span><span class="w">                </span><span class="p">}</span>
+<span class="linenos">36</span><span class="w">            </span><span class="p">}</span>
+<span class="linenos">37</span>
+<span class="linenos">38</span><span class="w">            </span>
+<span class="linenos">39</span>
+<span class="linenos">40</span><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">s1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">s1</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="n">m</span><span class="p">);</span><span class="w"> </span><span class="o">++</span><span class="n">s1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">41</span>
+<span class="linenos">42</span><span class="w">            </span><span class="p">}</span>
+<span class="linenos">43</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">44</span><span class="w">    </span><span class="p">};</span>
+<span class="linenos">45</span><span class="p">}</span><span class="w"> </span><span class="c1">// namespace titan23</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2>仕様<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
 <dl class="cpp type">
 <dt class="sig sig-object cpp" id="_CPPv47titan23">
 <span id="_CPPv37titan23"></span><span id="_CPPv27titan23"></span><span id="titan23"></span><span class="target" id="namespacetitan23"></span><span class="k"><span class="pre">namespace</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">titan23</span></span></span><br /></dt>
@@ -317,6 +370,7 @@
 
 </dd></dl>
 
+</section>
 </section>
 
         </article>
@@ -375,6 +429,8 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">maximum independent set</a><ul>
+<li><a class="reference internal" href="#id1">ソースコード</a></li>
+<li><a class="reference internal" href="#id2">仕様</a><ul>
 <li><a class="reference internal" href="#_CPPv47titan23"><code class="docutils literal notranslate"><span class="pre">titan23</span></code></a><ul>
 <li><a class="reference internal" href="#_CPPv4N7titan2321MaximumIndependentSetE"><code class="docutils literal notranslate"><span class="pre">titan23::MaximumIndependentSet</span></code></a><ul>
 <li><a class="reference internal" href="#_CPPv4N7titan2321MaximumIndependentSet21MaximumIndependentSetEv"><code class="docutils literal notranslate"><span class="pre">titan23::MaximumIndependentSet::MaximumIndependentSet()</span></code></a></li>
@@ -383,6 +439,8 @@
 <li><a class="reference internal" href="#_CPPv4NK7titan2321MaximumIndependentSet27get_maximum_independent_setEv"><code class="docutils literal notranslate"><span class="pre">titan23::MaximumIndependentSet::get_maximum_independent_set()</span></code></a></li>
 <li><a class="reference internal" href="#_CPPv4N7titan2321MaximumIndependentSet1nE"><code class="docutils literal notranslate"><span class="pre">titan23::MaximumIndependentSet::n</span></code></a></li>
 <li><a class="reference internal" href="#_CPPv4N7titan2321MaximumIndependentSet1GE"><code class="docutils literal notranslate"><span class="pre">titan23::MaximumIndependentSet::G</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

@@ -2,7 +2,7 @@ others
 ======
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    other_cpp.rst
    print_cpp.rst

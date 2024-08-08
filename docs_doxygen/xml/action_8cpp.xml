@@ -21,6 +21,18 @@
         <label>iostream</label>
       </node>
     </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>titan_cpplib/ahc/beam_search/beam_search.cpp</label>
+        <link refid="beam__search_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>titan_cpplib/ahc/beam_search/action.cpp</label>
+        <link refid="action_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
     <innernamespace refid="namespacetitan23">titan23</innernamespace>
     <innernamespace refid="namespacetitan23_1_1beam__search">titan23::beam_search</innernamespace>
     <innernamespace refid="namespacestd">std</innernamespace>

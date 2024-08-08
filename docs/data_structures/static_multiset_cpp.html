@@ -7,17 +7,18 @@
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.01.29 -->
         <title>static multiset - titan_cpplib documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=36a5483c" />
+    <link rel="stylesheet" type="text/css" href="../_static/_static/style.css" />
     
     
 
 
 <style>
   body {
-    --color-code-background: #f8f8f8;
+    --color-code-background: #eeffcc;
   --color-code-foreground: black;
   
   }
@@ -271,6 +272,91 @@
         <article role="main">
           <section id="static-multiset">
 <h1>static multiset<a class="headerlink" href="#static-multiset" title="Link to this heading">¶</a></h1>
+<section id="id1">
+<h2>ソースコード<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+<span class="linenos"> 2</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;algorithm&gt;</span>
+<span class="linenos"> 3</span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="c1">// StaticMultiset</span>
+<span class="linenos"> 6</span><span class="k">namespace</span><span class="w"> </span><span class="nn">titan23</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="w">  </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<span class="linenos"> 9</span><span class="w">  </span><span class="k">struct</span><span class="w"> </span><span class="nc">StaticMultiset</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">10</span><span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">data</span><span class="p">;</span>
+<span class="linenos">11</span><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">;</span>
+<span class="linenos">12</span>
+<span class="linenos">13</span><span class="w">    </span><span class="n">StaticMultiset</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">14</span><span class="w">    </span><span class="n">StaticMultiset</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">data</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">15</span><span class="w">      </span><span class="n">sort</span><span class="p">(</span><span class="n">data</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">data</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+<span class="linenos">16</span><span class="w">      </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">data</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+<span class="linenos">17</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">18</span>
+<span class="linenos">19</span><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">print</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">20</span><span class="w">      </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;{&quot;</span><span class="p">;</span>
+<span class="linenos">21</span><span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="mi">-1</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">22</span><span class="w">        </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;, &quot;</span><span class="p">;</span>
+<span class="linenos">23</span><span class="w">      </span><span class="p">}</span>
+<span class="linenos">24</span><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">25</span><span class="w">        </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">data</span><span class="p">.</span><span class="n">back</span><span class="p">();</span>
+<span class="linenos">26</span><span class="w">      </span><span class="p">}</span>
+<span class="linenos">27</span><span class="w">      </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;}&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="linenos">28</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">29</span>
+<span class="linenos">30</span><span class="w">    </span><span class="n">T</span><span class="w"> </span><span class="n">get</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">31</span><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="linenos">32</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">33</span>
+<span class="linenos">34</span><span class="w">    </span><span class="c1">// key以上で最小</span>
+<span class="linenos">35</span><span class="w">    </span><span class="n">optional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ge</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&amp;</span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">36</span><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">key</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">data</span><span class="p">.</span><span class="n">back</span><span class="p">())</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">nullopt</span><span class="p">;</span>
+<span class="linenos">37</span><span class="w">      </span><span class="kt">int</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="mi">-1</span><span class="p">;</span>
+<span class="linenos">38</span><span class="w">      </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">39</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">mid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">l</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="linenos">40</span><span class="w">        </span><span class="p">((</span><span class="n">data</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="o">?</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">l</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mid</span><span class="p">;</span>
+<span class="linenos">41</span><span class="w">      </span><span class="p">}</span>
+<span class="linenos">42</span><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="n">r</span><span class="p">];</span>
+<span class="linenos">43</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">44</span>
+<span class="linenos">45</span><span class="w">    </span><span class="c1">// keyより大きくて最小</span>
+<span class="linenos">46</span><span class="w">    </span><span class="n">optional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">gt</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&amp;</span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">47</span><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">key</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">data</span><span class="p">.</span><span class="n">back</span><span class="p">())</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">nullopt</span><span class="p">;</span>
+<span class="linenos">48</span><span class="w">      </span><span class="kt">int</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="mi">-1</span><span class="p">;</span>
+<span class="linenos">49</span><span class="w">      </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">50</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">mid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">l</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="linenos">51</span><span class="w">        </span><span class="p">((</span><span class="n">data</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="o">?</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">l</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mid</span><span class="p">;</span>
+<span class="linenos">52</span><span class="w">      </span><span class="p">}</span>
+<span class="linenos">53</span><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="n">r</span><span class="p">];</span>
+<span class="linenos">54</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">55</span>
+<span class="linenos">56</span><span class="w">    </span><span class="c1">// key以下で最大</span>
+<span class="linenos">57</span><span class="w">    </span><span class="n">optional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">le</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&amp;</span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">58</span><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">key</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">nullopt</span><span class="p">;</span>
+<span class="linenos">59</span><span class="w">      </span><span class="kt">int</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="p">;</span>
+<span class="linenos">60</span><span class="w">      </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">61</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">mid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">l</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="linenos">62</span><span class="w">        </span><span class="p">((</span><span class="n">data</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="o">?</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mid</span><span class="p">;</span>
+<span class="linenos">63</span><span class="w">      </span><span class="p">}</span>
+<span class="linenos">64</span><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="n">l</span><span class="p">];</span>
+<span class="linenos">65</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">66</span>
+<span class="linenos">67</span><span class="w">    </span><span class="c1">// key未満で最大</span>
+<span class="linenos">68</span><span class="w">    </span><span class="n">optional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lt</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&amp;</span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">69</span><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">key</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">nullopt</span><span class="p">;</span>
+<span class="linenos">70</span><span class="w">      </span><span class="kt">int</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="p">;</span>
+<span class="linenos">71</span><span class="w">      </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">72</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">mid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">l</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="linenos">73</span><span class="w">        </span><span class="p">((</span><span class="n">data</span><span class="p">[</span><span class="n">mid</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="o">?</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mid</span><span class="p">;</span>
+<span class="linenos">74</span><span class="w">      </span><span class="p">}</span>
+<span class="linenos">75</span><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="n">l</span><span class="p">];</span>
+<span class="linenos">76</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">77</span><span class="w">  </span><span class="p">};</span>
+<span class="linenos">78</span><span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2>仕様<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
 <dl class="cpp type">
 <dt class="sig sig-object cpp" id="_CPPv47titan23">
 <span id="_CPPv37titan23"></span><span id="_CPPv27titan23"></span><span id="titan23"></span><span class="target" id="namespacetitan23"></span><span class="k"><span class="pre">namespace</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">titan23</span></span></span><br /></dt>
@@ -338,6 +424,7 @@
 </dd></dl>
 
 </section>
+</section>
 
         </article>
       </div>
@@ -395,6 +482,8 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">static multiset</a><ul>
+<li><a class="reference internal" href="#id1">ソースコード</a></li>
+<li><a class="reference internal" href="#id2">仕様</a><ul>
 <li><a class="reference internal" href="#_CPPv47titan23"><code class="docutils literal notranslate"><span class="pre">titan23</span></code></a><ul>
 <li><a class="reference internal" href="#_CPPv4I0EN7titan2314StaticMultisetE"><code class="docutils literal notranslate"><span class="pre">titan23::StaticMultiset</span></code></a><ul>
 <li><a class="reference internal" href="#_CPPv4N7titan2314StaticMultiset14StaticMultisetEv"><code class="docutils literal notranslate"><span class="pre">titan23::StaticMultiset::StaticMultiset()</span></code></a></li>
@@ -407,6 +496,8 @@
 <li><a class="reference internal" href="#_CPPv4NK7titan2314StaticMultiset2ltERK1T"><code class="docutils literal notranslate"><span class="pre">titan23::StaticMultiset::lt()</span></code></a></li>
 <li><a class="reference internal" href="#_CPPv4N7titan2314StaticMultiset4dataE"><code class="docutils literal notranslate"><span class="pre">titan23::StaticMultiset::data</span></code></a></li>
 <li><a class="reference internal" href="#_CPPv4N7titan2314StaticMultiset1nE"><code class="docutils literal notranslate"><span class="pre">titan23::StaticMultiset::n</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

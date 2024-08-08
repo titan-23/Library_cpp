@@ -50,6 +50,8 @@ exclude_patterns = []
 
 language = "en"
 
+pygments_style = 'sphinx'
+
 # Napoleon settings
 napoleon_google_docstring = True
 napoleon_include_init_with_doc = False
@@ -68,6 +70,6 @@ napoleon_attr_annotations = True
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-# html_theme = "alabaster"
 html_theme = "furo"
 html_static_path = ["_static"]
+html_css_files = ["_static/style.css"]

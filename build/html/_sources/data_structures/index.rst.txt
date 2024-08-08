@@ -2,7 +2,7 @@ data_structures
 ===============
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    array_cpp.rst
    avl_tree_bit_vector_cpp.rst

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['replace_5fmin_144',['replace_min',['../classtitan23_1_1MinHeap.html#a9bea6b27e1d97e378adfa8a0fc5d278c',1,'titan23::MinHeap']]]
+  ['insert_156',['insert',['../classtitan23_1_1DynamicWaveletTree.html#aa937f107de268e68a549990f32b122a2',1,'titan23::DynamicWaveletTree']]]
 ];

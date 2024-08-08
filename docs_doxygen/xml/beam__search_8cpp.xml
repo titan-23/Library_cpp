@@ -27,6 +27,12 @@
         </childnode>
         <childnode refid="7" relation="include">
         </childnode>
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="11" relation="include">
+        </childnode>
+        <childnode refid="12" relation="include">
+        </childnode>
       </node>
       <node id="4">
         <label>cassert</label>
@@ -34,8 +40,29 @@
       <node id="6">
         <label>ext/pb_ds/assoc_container.hpp</label>
       </node>
+      <node id="8">
+        <label>titan_cpplib/ahc/timer.cpp</label>
+        <link refid="timer_8cpp_source"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
       <node id="7">
         <label>ext/pb_ds/hash_policy.hpp</label>
+      </node>
+      <node id="11">
+        <label>titan_cpplib/ahc/beam_search/action.cpp</label>
+        <link refid="action_8cpp_source"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>stack</label>
       </node>
       <node id="3">
         <label>vector</label>
@@ -43,8 +70,29 @@
       <node id="2">
         <label>iostream</label>
       </node>
+      <node id="12">
+        <label>titan_cpplib/ahc/state_pool.cpp</label>
+        <link refid="state__pool_8cpp_source"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="13" relation="include">
+        </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+        <childnode refid="14" relation="include">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>chrono</label>
+      </node>
+      <node id="10">
+        <label>thread</label>
+      </node>
       <node id="5">
         <label>algorithm</label>
+      </node>
+      <node id="13">
+        <label>memory</label>
       </node>
     </incdepgraph>
     <innerclass refid="classtitan23_1_1beam__search_1_1State" prot="public">titan23::beam_search::State</innerclass>
@@ -187,7 +235,7 @@
 <codeline lineno="126"><highlight class="normal"><sp/><sp/><sp/></highlight><highlight class="keyword">public</highlight><highlight class="normal">:</highlight></codeline>
 <codeline lineno="127"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtitan23_1_1beam__search_1_1Param" kindref="compound">Param</ref>()<sp/>{}</highlight></codeline>
 <codeline lineno="128"><highlight class="normal"></highlight></codeline>
-<codeline lineno="138"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtitan23_1_1beam__search_1_1Param" kindref="compound">Param</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>time_limit,</highlight></codeline>
+<codeline lineno="138" refid="classtitan23_1_1beam__search_1_1Param_1a0c3a6e8fea8a24824e930893714bbda8" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classtitan23_1_1beam__search_1_1Param_1a0c3a6e8fea8a24824e930893714bbda8" kindref="member">Param</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">double</highlight><highlight class="normal"><sp/>time_limit,</highlight></codeline>
 <codeline lineno="139"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>max_turn,</highlight></codeline>
 <codeline lineno="140"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>decide_turn,</highlight></codeline>
 <codeline lineno="141"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>beam_depth_base,</highlight></codeline>

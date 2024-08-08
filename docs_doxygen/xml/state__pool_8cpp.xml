@@ -33,6 +33,18 @@
         <label>memory</label>
       </node>
     </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>titan_cpplib/ahc/beam_search/beam_search.cpp</label>
+        <link refid="beam__search_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>titan_cpplib/ahc/state_pool.cpp</label>
+        <link refid="state__pool_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
     <innerclass refid="classtitan23_1_1StatePool" prot="public">titan23::StatePool</innerclass>
     <innernamespace refid="namespacetitan23">titan23</innernamespace>
     <briefdescription>

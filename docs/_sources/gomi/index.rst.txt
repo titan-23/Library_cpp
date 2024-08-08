@@ -2,6 +2,6 @@ gomi
 ====
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    link_cut_tree_cpp.rst

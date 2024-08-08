@@ -20,7 +20,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="13" column="14" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="12" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="18" column="14" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="17" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1DynamicWaveletTree_1af10e35ca9553379b8c5a3a82221b6052" prot="private" static="no" mutable="no">
         <type>T</type>
@@ -33,7 +33,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="14" column="11" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="14" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="19" column="11" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="19" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1DynamicWaveletTree_1a5233e8ff07513ed1b04a50140e8b5fff" prot="private" static="no" mutable="no">
         <type>int</type>
@@ -46,7 +46,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="15" column="13" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="15" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="20" column="13" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="20" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1DynamicWaveletTree_1aa3f0589358998d35f424c948c82ac943" prot="private" static="no" mutable="no">
         <type>int</type>
@@ -59,7 +59,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="16" column="13" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="16" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="21" column="13" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="21" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -78,7 +78,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="29" column="13" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="29" bodyend="31"/>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="34" column="13" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="34" bodyend="36"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1aec84e1e06c510937a49dc9e59b68ee52" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -95,7 +95,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="33" column="14" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="33" bodyend="70"/>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="38" column="14" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="38" bodyend="75"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -109,12 +109,13 @@
           <declname>sigma</declname>
         </param>
         <briefdescription>
+<para>各要素が <computeroutput>[0, sigma)</computeroutput> の <computeroutput><ref refid="classtitan23_1_1DynamicWaveletTree" kindref="compound">DynamicWaveletTree</ref></computeroutput> を作成する / <computeroutput>O(1)</computeroutput> </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="73" column="9" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="73" bodyend="76"/>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="79" column="9" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="79" bodyend="82"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1aafce2f74ed8745a0e630edf9e10a145a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -130,12 +131,13 @@
           <declname>a</declname>
         </param>
         <briefdescription>
+<para>各要素が <computeroutput>[0, sigma)</computeroutput> の <computeroutput><ref refid="classtitan23_1_1DynamicWaveletTree" kindref="compound">DynamicWaveletTree</ref></computeroutput> を作成する / <computeroutput>O(nlog(σ))</computeroutput> </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="78" column="9" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="78" bodyend="81"/>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="85" column="9" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="85" bodyend="88"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1aa937f107de268e68a549990f32b122a2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -154,28 +156,10 @@
 <para>位置 <computeroutput>k</computeroutput> に <computeroutput>x</computeroutput> を挿入する / <computeroutput>O(log(n)log(σ))</computeroutput> </para>
         </briefdescription>
         <detaileddescription>
-<para><parameterlist kind="param"><parameteritem>
-<parameternamelist>
-<parametername>k</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>インデックス <computeroutput>0 &lt;= k &lt;= n</computeroutput> </para>
-</parameterdescription>
-</parameteritem>
-<parameteritem>
-<parameternamelist>
-<parametername>x</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>値 <computeroutput>0 &lt;= x &lt; sigma</computeroutput> </para>
-</parameterdescription>
-</parameteritem>
-</parameterlist>
-</para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="89" column="14" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="89" bodyend="111"/>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="91" column="14" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="91" bodyend="113"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1a64c5dab88069e66dcd6cdf966ebae201" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -187,12 +171,13 @@
           <declname>k</declname>
         </param>
         <briefdescription>
+<para>位置 <computeroutput>k</computeroutput> の値を削除して返す / <computeroutput>O(log(n)log(σ))</computeroutput> </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="114" column="11" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="114" bodyend="130"/>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="116" column="11" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="116" bodyend="132"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1ac81b6567f3719b5f8e3120850e92a648" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -208,12 +193,13 @@
           <declname>x</declname>
         </param>
         <briefdescription>
+<para>位置 <computeroutput>k</computeroutput> の値を <computeroutput>x</computeroutput> に更新する / <computeroutput>O(log(n)log(σ))</computeroutput> </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="133" column="14" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="133" bodyend="136"/>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="135" column="14" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="135" bodyend="138"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1a6a5940cf0aa3074ee756188401aaa3d5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -229,12 +215,13 @@
           <declname>x</declname>
         </param>
         <briefdescription>
+<para>区間 <computeroutput>[0, r)</computeroutput> の <computeroutput>x</computeroutput> の個数を返す / <computeroutput>O(log(n)log(σ))</computeroutput> </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="139" column="13" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="139" bodyend="154"/>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="141" column="13" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="141" bodyend="156"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1a854d3d9efdd90ba3ce16ea44b6a5878c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -254,12 +241,13 @@
           <declname>x</declname>
         </param>
         <briefdescription>
+<para>区間 <computeroutput>[l, r)</computeroutput> の <computeroutput>x</computeroutput> の個数を返す / <computeroutput>O(log(n)log(σ))</computeroutput>O(log(n)log(σ)) </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="157" column="13" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="157" bodyend="159"/>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="159" column="13" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="159" bodyend="161"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1a6b2040b5f979e6aa664b7e6454461153" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -271,12 +259,13 @@
           <declname>k</declname>
         </param>
         <briefdescription>
+<para><computeroutput>k</computeroutput> 番目の要素を返す / <computeroutput>O(log(n)log(σ))</computeroutput> </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="162" column="11" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="162" bodyend="178"/>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="164" column="11" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="164" bodyend="180"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1af8417ad41638516396e6c9e6c98ddbc3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -296,12 +285,13 @@
           <declname>k</declname>
         </param>
         <briefdescription>
+<para>区間 <computeroutput>[l, r)</computeroutput> で <computeroutput>k</computeroutput> 番目に小さい値を返す / <computeroutput>O(log(n)log(σ))</computeroutput> </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="181" column="11" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="181" bodyend="201"/>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="183" column="11" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="183" bodyend="203"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1adbd2d18e73422ccaa2f9c6f044483f2f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -321,12 +311,13 @@
           <declname>k</declname>
         </param>
         <briefdescription>
+<para>区間 <computeroutput>[l, r)</computeroutput> で <computeroutput>k</computeroutput> 番目に大きい値を返す / <computeroutput>O(log(n)log(σ))</computeroutput> </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="204" column="11" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="204" bodyend="206"/>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="206" column="11" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="206" bodyend="208"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1af9177c036552364b76fa638c66911a7b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -346,12 +337,13 @@
           <declname>x</declname>
         </param>
         <briefdescription>
+<para>区間 <computeroutput>[l, r)</computeroutput> で <computeroutput>x</computeroutput> 未満の要素の個数を返す / <computeroutput>O(log(n)log(σ))</computeroutput> </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="209" column="13" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="209" bodyend="227"/>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="211" column="13" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="211" bodyend="229"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1a384869dd7bd88e7732cd4c4fc3dd05c5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -375,12 +367,13 @@
           <declname>y</declname>
         </param>
         <briefdescription>
+<para>区間 <computeroutput>[l, r)</computeroutput> で <computeroutput>x</computeroutput> 以上 <computeroutput>y</computeroutput> 未満の要素の個数を返す / <computeroutput>O(log(n)log(σ))</computeroutput> </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="230" column="13" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="230" bodyend="232"/>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="232" column="13" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="232" bodyend="234"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1af18d74f4c9fd01ae68197b31b34057d0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -396,12 +389,13 @@
           <declname>x</declname>
         </param>
         <briefdescription>
+<para><computeroutput>k</computeroutput> 番目の <computeroutput>x</computeroutput> の位置を返す / <computeroutput>O(log(n)log(σ))</computeroutput> </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="235" column="13" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="235" bodyend="253"/>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="237" column="13" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="237" bodyend="255"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1a654f65c518ca7c8a58a59b2893770d23" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -417,12 +411,13 @@
           <declname>x</declname>
         </param>
         <briefdescription>
+<para><computeroutput>k</computeroutput> 番目の <computeroutput>x</computeroutput> の位置を返して削除する / <computeroutput>O(log(n)log(σ))</computeroutput> </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="256" column="13" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="256" bodyend="276"/>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="258" column="13" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="258" bodyend="278"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1a7be1bb911b0c138a4b3cbb591c9ca1c8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -430,12 +425,13 @@
         <argsstring>() const</argsstring>
         <name>len</name>
         <briefdescription>
+<para>要素数を返す / <computeroutput>O(1)</computeroutput> </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="279" column="13" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="279" bodyend="281"/>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="281" column="13" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="281" bodyend="283"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1a717f0d589b9c57ed4387d052465a86fa" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>vector&lt; T &gt;</type>
@@ -445,10 +441,11 @@
         <briefdescription>
         </briefdescription>
         <detaileddescription>
+<para><computeroutput>vector</computeroutput> にして返す / <computeroutput>O(nlog(σ))</computeroutput> (n 回 access するよりも高速) </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="285" column="16" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="285" bodyend="318"/>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="287" column="16" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="287" bodyend="320"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1a493a7366918605a89480509e2d0c307e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -456,19 +453,31 @@
         <argsstring>() const</argsstring>
         <name>print</name>
         <briefdescription>
+<para>表示する / <computeroutput>O(nlog(σ))</computeroutput> </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="321" column="14" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="321" bodyend="333"/>
+        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="323" column="14" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="323" bodyend="335"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
+<para>動的ウェーブレット木 </para>
     </briefdescription>
     <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>値の型 </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
     </detaileddescription>
-    <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="10" column="5" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="10" bodyend="334"/>
+    <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="15" column="5" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="15" bodyend="336"/>
     <listofallmembers>
       <member refid="classtitan23_1_1DynamicWaveletTree_1aec84e1e06c510937a49dc9e59b68ee52" prot="private" virt="non-virtual"><scope>titan23::DynamicWaveletTree</scope><name>_build</name></member>
       <member refid="classtitan23_1_1DynamicWaveletTree_1a5233e8ff07513ed1b04a50140e8b5fff" prot="private" virt="non-virtual"><scope>titan23::DynamicWaveletTree</scope><name>_log</name></member>

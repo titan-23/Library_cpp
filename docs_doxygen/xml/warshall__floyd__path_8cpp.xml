@@ -15,6 +15,18 @@
         </childnode>
       </node>
     </incdepgraph>
+    <invincdepgraph>
+      <node id="2">
+        <label>titan_cpplib/graph/minimum_steiner_tree.cpp</label>
+        <link refid="minimum__steiner__tree_8cpp_source"/>
+      </node>
+      <node id="1">
+        <label>titan_cpplib/graph/warshall_floyd_path.cpp</label>
+        <link refid="warshall__floyd__path_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+    </invincdepgraph>
     <innerclass refid="structtitan23_1_1warshall__floyd__path" prot="public">titan23::warshall_floyd_path</innerclass>
     <innernamespace refid="namespacetitan23">titan23</innernamespace>
     <briefdescription>

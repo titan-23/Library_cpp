@@ -93,7 +93,7 @@
 <codeline lineno="64"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>_up(a.size()<sp/>-<sp/>1);</highlight></codeline>
 <codeline lineno="65"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="66"><highlight class="normal"></highlight></codeline>
-<codeline lineno="73"><highlight class="normal"><sp/><sp/><sp/><sp/>T<sp/>pushpoop_min(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>T<sp/>key)<sp/>{</highlight></codeline>
+<codeline lineno="73" refid="classtitan23_1_1MinHeap_1a782af426c2870fef4c14aa6546676e85" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>T<sp/><ref refid="classtitan23_1_1MinHeap_1a782af426c2870fef4c14aa6546676e85" kindref="member">pushpoop_min</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>T<sp/>key)<sp/>{</highlight></codeline>
 <codeline lineno="74"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(a[0]<sp/>&gt;=<sp/>key)<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>key;</highlight></codeline>
 <codeline lineno="75"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>T<sp/>res<sp/>=<sp/>a[0];</highlight></codeline>
 <codeline lineno="76"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>a[0]<sp/>=<sp/>key;</highlight></codeline>
@@ -101,7 +101,7 @@
 <codeline lineno="78"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>res;</highlight></codeline>
 <codeline lineno="79"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline lineno="80"><highlight class="normal"></highlight></codeline>
-<codeline lineno="88"><highlight class="normal"><sp/><sp/><sp/><sp/>T<sp/>replace_min(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>T<sp/>key)<sp/>{</highlight></codeline>
+<codeline lineno="88" refid="classtitan23_1_1MinHeap_1a9bea6b27e1d97e378adfa8a0fc5d278c" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/>T<sp/><ref refid="classtitan23_1_1MinHeap_1a9bea6b27e1d97e378adfa8a0fc5d278c" kindref="member">replace_min</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>T<sp/>key)<sp/>{</highlight></codeline>
 <codeline lineno="89"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>T<sp/>res<sp/>=<sp/>a[0];</highlight></codeline>
 <codeline lineno="90"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>a[0]<sp/>=<sp/>key;</highlight></codeline>
 <codeline lineno="91"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/>_down(0);</highlight></codeline>

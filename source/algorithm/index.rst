@@ -2,7 +2,7 @@ algorithm
 =========
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    mo_cpp.rst
    random_cpp.rst

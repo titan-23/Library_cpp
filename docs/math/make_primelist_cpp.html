@@ -7,17 +7,18 @@
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.01.29 -->
         <title>make primelist - titan_cpplib documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=36a5483c" />
+    <link rel="stylesheet" type="text/css" href="../_static/_static/style.css" />
     
     
 
 
 <style>
   body {
-    --color-code-background: #f8f8f8;
+    --color-code-background: #eeffcc;
   --color-code-foreground: black;
   
   }
@@ -271,6 +272,52 @@
         <article role="main">
           <section id="make-primelist">
 <h1>make primelist<a class="headerlink" href="#make-primelist" title="Link to this heading">¶</a></h1>
+<section id="id1">
+<h2>ソースコード<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">MAX</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">31624</span><span class="p">;</span><span class="w">  </span><span class="c1">// 必要な最大数の平方根</span>
+<span class="linenos"> 2</span><span class="kt">int</span><span class="w"> </span><span class="n">is_prime</span><span class="p">[</span><span class="n">MAX</span><span class="p">];</span>
+<span class="linenos"> 3</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">primelist</span><span class="p">;</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="kt">void</span><span class="w"> </span><span class="nf">make_primelist</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 6</span><span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">MAX</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 7</span><span class="w">    </span><span class="n">is_prime</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="linenos"> 8</span><span class="w">  </span><span class="p">}</span>
+<span class="linenos"> 9</span><span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">*</span><span class="n">i</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">MAX</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">10</span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">is_prime</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="w"> </span><span class="k">continue</span><span class="p">;</span>
+<span class="linenos">11</span><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="o">+</span><span class="n">i</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">MAX</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">12</span><span class="w">      </span><span class="n">is_prime</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="linenos">13</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">14</span><span class="w">  </span><span class="p">}</span>
+<span class="linenos">15</span><span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">MAX</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">16</span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">is_prime</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">17</span><span class="w">      </span><span class="n">primelist</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+<span class="linenos">18</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">19</span><span class="w">  </span><span class="p">}</span>
+<span class="linenos">20</span><span class="w">  </span><span class="k">return</span><span class="p">;</span>
+<span class="linenos">21</span><span class="p">}</span>
+<span class="linenos">22</span>
+<span class="linenos">23</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">factorization</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">24</span><span class="w">  </span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">res</span><span class="p">;</span>
+<span class="linenos">25</span><span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">primelist</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">26</span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">p</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="k">break</span><span class="p">;</span>
+<span class="linenos">27</span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">28</span><span class="w">      </span><span class="n">n</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="n">p</span><span class="p">;</span>
+<span class="linenos">29</span><span class="w">      </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">30</span><span class="w">        </span><span class="n">n</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="n">p</span><span class="p">;</span>
+<span class="linenos">31</span><span class="w">      </span><span class="p">}</span>
+<span class="linenos">32</span><span class="w">      </span><span class="n">res</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+<span class="linenos">33</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">34</span><span class="w">  </span><span class="p">}</span>
+<span class="linenos">35</span><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">36</span><span class="w">    </span><span class="n">res</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+<span class="linenos">37</span><span class="w">  </span><span class="p">}</span>
+<span class="linenos">38</span><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">res</span><span class="p">;</span>
+<span class="linenos">39</span><span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2>仕様<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
 <dl class="cpp function">
@@ -302,6 +349,7 @@
 <dd></dd></dl>
 
 </div>
+</section>
 </section>
 
         </article>
@@ -360,11 +408,15 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">make primelist</a><ul>
+<li><a class="reference internal" href="#id1">ソースコード</a></li>
+<li><a class="reference internal" href="#id2">仕様</a><ul>
 <li><a class="reference internal" href="#_CPPv414make_primelistv"><code class="docutils literal notranslate"><span class="pre">make_primelist()</span></code></a></li>
 <li><a class="reference internal" href="#_CPPv413factorizationi"><code class="docutils literal notranslate"><span class="pre">factorization()</span></code></a></li>
 <li><a class="reference internal" href="#_CPPv43MAX"><code class="docutils literal notranslate"><span class="pre">MAX</span></code></a></li>
 <li><a class="reference internal" href="#_CPPv48is_prime"><code class="docutils literal notranslate"><span class="pre">is_prime</span></code></a></li>
 <li><a class="reference internal" href="#_CPPv49primelist"><code class="docutils literal notranslate"><span class="pre">primelist</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

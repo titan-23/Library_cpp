@@ -6,6 +6,11 @@ using namespace std;
 // DynamicWaveletTree
 namespace titan23 {
 
+    /**
+     * @brief 動的ウェーブレット木
+     * 
+     * @tparam T 値の型
+     */
     template<typename T>
     class DynamicWaveletTree {
       private:
@@ -70,22 +75,19 @@ namespace titan23 {
         }
 
       public:
+        //! 各要素が `[0, sigma)` の `DynamicWaveletTree` を作成する / `O(1)`
         DynamicWaveletTree(const T sigma)
                 : _sigma(sigma), _log(bit_length(sigma)), _size(0) {
             root = new Node();
         }
 
+        //! 各要素が `[0, sigma)` の `DynamicWaveletTree` を作成する / `O(nlog(σ))`
         DynamicWaveletTree(const T sigma, vector<T> &a)
                 : _sigma(sigma), _log(bit_length(sigma)), _size(a.size()) {
             _build(a);
         }
 
-        /**
-         * @brief 位置 `k` に `x` を挿入する / `O(log(n)log(σ))`
-         * 
-         * @param k インデックス `0 <= k <= n`
-         * @param x 値 `0 <= x < sigma`
-         */
+        //! 位置 `k` に `x` を挿入する / `O(log(n)log(σ))`
         void insert(int k, T x) {
             assert(0 <= k && k <= len());
             assert(0 <= x && x < sigma);
@@ -110,7 +112,7 @@ namespace titan23 {
             _size++;
         }
 
-        // O(log(n)log(σ))
+        //! 位置 `k` の値を削除して返す / `O(log(n)log(σ))`
         T pop(int k) {
             Node* node = root;
             T ans = 0;
@@ -129,13 +131,13 @@ namespace titan23 {
             return ans;
         }
 
-        // O(log(n)log(σ))
+        //! 位置 `k` の値を `x` に更新する / `O(log(n)log(σ))`
         void set(int k, T x) {
             pop(k);
             insert(k, x);
         }
 
-        // O(log(n)log(σ))
+        //! 区間 `[0, r)` の `x` の個数を返す / `O(log(n)log(σ))`
         int rank(int r, T x) const {
             Node* node = root;
             int l = 0;
@@ -153,12 +155,12 @@ namespace titan23 {
             return r - l;
         }
 
-        // O(log(n)log(σ))
+        //! 区間 `[l, r)` の `x` の個数を返す / `O(log(n)log(σ))`O(log(n)log(σ))
         int range_count(int l, int r, T x) const {
             return rank(r, x) - rank(l, x);
         }
 
-        // O(log(n)log(σ))
+        //! `k` 番目の要素を返す / `O(log(n)log(σ))`
         T access(int k) const {
             assert(0 <= k && k < len());
             Node* node = root;
@@ -177,7 +179,7 @@ namespace titan23 {
             return s;
         }
 
-        // O(log(n)log(σ))
+        //! 区間 `[l, r)` で `k` 番目に小さい値を返す / `O(log(n)log(σ))`
         T kth_smallest(int l, int r, int k) const {
             Node* node = root;
             T s = 0;
@@ -200,12 +202,12 @@ namespace titan23 {
             return s;
         }
 
-        // O(log(n)log(σ))
+        //! 区間 `[l, r)` で `k` 番目に大きい値を返す / `O(log(n)log(σ))`
         T kth_largest(int l, int r, int k) const {
             return kth_smallest(l, r, r-l-k-1);
         }
 
-        // O(log(n)log(σ))
+        //! 区間 `[l, r)` で `x` 未満の要素の個数を返す / `O(log(n)log(σ))`
         int range_freq(int l, int r, T x) const {
             Node* node = root;
             int ans = 0;
@@ -226,12 +228,12 @@ namespace titan23 {
             return ans;
         }
 
-        // O(log(n)log(σ))
+        //! 区間 `[l, r)` で `x` 以上 `y` 未満の要素の個数を返す / `O(log(n)log(σ))`
         int range_freq(int l, int r, int x, int y) const {
             return range_freq(l, r, y) - range_freq(l, r, x);
         }
 
-        // O(log(n)log(σ))
+        //! `k` 番目の `x` の位置を返す / `O(log(n)log(σ))`
         int select(int k, T x) const {
             Node* node = root;
             for (int bit = _log-1; bit > 0; --bit) {
@@ -252,7 +254,7 @@ namespace titan23 {
             return k;
         }
 
-        // O(log(n)log(σ))
+        //! `k` 番目の `x` の位置を返して削除する / `O(log(n)log(σ))`
         int select_remove(int k, T x) {
             Node* node = root;
             for (int bit = _log-1; bit > 0; --bit) {
@@ -275,13 +277,13 @@ namespace titan23 {
             return k;
         }
 
-        // O(1)
+        //! 要素数を返す / `O(1)`
         int len() const {
             return _size;
         }
 
-        // O(nlog(σ))
-        // (n 回 access するよりも高速)
+        //! `vector` にして返す / `O(nlog(σ))`
+        //! (n 回 access するよりも高速)
         vector<T> tovector() const {
             vector<T> a(len(), 0);
             vector<int> buff0(a.size()), buff1;
@@ -317,7 +319,7 @@ namespace titan23 {
             return a;
         }
 
-        // O(nlog(σ))
+        //! 表示する / `O(nlog(σ))`
         void print() const {
             vector<T> a = tovector();
             int n = (int)a.size();

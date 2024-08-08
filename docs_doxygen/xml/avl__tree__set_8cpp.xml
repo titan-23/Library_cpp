@@ -25,6 +25,8 @@
         </childnode>
         <childnode refid="6" relation="include">
         </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
       </node>
       <node id="5">
         <label>optional</label>
@@ -37,6 +39,10 @@
       </node>
       <node id="3">
         <label>algorithm</label>
+      </node>
+      <node id="7">
+        <label>titan_cpplib/data_structures/bbst_node.cpp</label>
+        <link refid="bbst__node_8cpp_source"/>
       </node>
     </incdepgraph>
     <innerclass refid="classtitan23_1_1AVLTreeSet" prot="public">titan23::AVLTreeSet</innerclass>

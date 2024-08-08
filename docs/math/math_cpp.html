@@ -7,17 +7,18 @@
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.01.29 -->
         <title>math - titan_cpplib documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=36a5483c" />
+    <link rel="stylesheet" type="text/css" href="../_static/_static/style.css" />
     
     
 
 
 <style>
   body {
-    --color-code-background: #f8f8f8;
+    --color-code-background: #eeffcc;
   --color-code-foreground: black;
   
   }
@@ -271,6 +272,88 @@
         <article role="main">
           <section id="math">
 <h1>math<a class="headerlink" href="#math" title="Link to this heading">¶</a></h1>
+<section id="id1">
+<h2>ソースコード<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c1">// pow ----------------</span>
+<span class="linenos"> 2</span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="nf">pow_mod</span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">mod</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 3</span><span class="w">  </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1l</span><span class="n">l</span><span class="p">;</span>
+<span class="linenos"> 4</span><span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 5</span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">b</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mf">1l</span><span class="n">l</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 6</span><span class="w">      </span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">mod</span><span class="p">;</span>
+<span class="linenos"> 7</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos"> 8</span><span class="w">    </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">mod</span><span class="p">;</span>
+<span class="linenos"> 9</span><span class="w">    </span><span class="n">b</span><span class="w"> </span><span class="o">&gt;&gt;=</span><span class="w"> </span><span class="mf">1l</span><span class="n">l</span><span class="p">;</span>
+<span class="linenos">10</span><span class="w">  </span><span class="p">}</span>
+<span class="linenos">11</span><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">res</span><span class="p">;</span>
+<span class="linenos">12</span><span class="p">}</span>
+<span class="linenos">13</span>
+<span class="linenos">14</span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="nf">pow</span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">15</span><span class="w">  </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1l</span><span class="n">l</span><span class="p">;</span>
+<span class="linenos">16</span><span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">17</span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">b</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mf">1l</span><span class="n">l</span><span class="p">)</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">*=</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
+<span class="linenos">18</span><span class="w">    </span><span class="n">a</span><span class="w"> </span><span class="o">*=</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
+<span class="linenos">19</span><span class="w">    </span><span class="n">b</span><span class="w"> </span><span class="o">&gt;&gt;=</span><span class="w"> </span><span class="mf">1l</span><span class="n">l</span><span class="p">;</span>
+<span class="linenos">20</span><span class="w">  </span><span class="p">}</span>
+<span class="linenos">21</span><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">res</span><span class="p">;</span>
+<span class="linenos">22</span><span class="p">}</span>
+<span class="linenos">23</span><span class="c1">// pow ----------------</span>
+<span class="linenos">24</span>
+<span class="linenos">25</span><span class="c1">// factorial -----------------</span>
+<span class="linenos">26</span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="nf">factorial</span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">27</span><span class="w">  </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="linenos">28</span><span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1l</span><span class="n">l</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">x</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">29</span><span class="w">    </span><span class="n">res</span><span class="w"> </span><span class="o">*=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
+<span class="linenos">30</span><span class="w">  </span><span class="p">}</span>
+<span class="linenos">31</span><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">res</span><span class="p">;</span>
+<span class="linenos">32</span><span class="p">}</span>
+<span class="linenos">33</span><span class="c1">// factorial -----------------</span>
+<span class="linenos">34</span>
+<span class="linenos">35</span><span class="c1">// get_primelist -----------------</span>
+<span class="linenos">36</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_primelist</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">MAX</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">37</span><span class="w">  </span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">is_prime</span><span class="p">(</span><span class="n">MAX</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="linenos">38</span><span class="w">  </span><span class="n">is_prime</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="linenos">39</span><span class="w">  </span><span class="n">is_prime</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="linenos">40</span><span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">sqrt</span><span class="p">(</span><span class="n">MAX</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">41</span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">is_prime</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="w"> </span><span class="k">continue</span><span class="p">;</span>
+<span class="linenos">42</span><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="o">+</span><span class="n">i</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">MAX</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">j</span><span class="o">+=</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">43</span><span class="w">      </span><span class="n">is_prime</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="linenos">44</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">45</span><span class="w">  </span><span class="p">}</span>
+<span class="linenos">46</span><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="n">is_prime</span><span class="p">;</span>
+<span class="linenos">47</span><span class="p">}</span>
+<span class="linenos">48</span><span class="c1">// get_primelist -----------------</span>
+<span class="linenos">49</span>
+<span class="linenos">50</span>
+<span class="linenos">51</span><span class="kt">bool</span><span class="w"> </span><span class="n">is_primell</span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">52</span><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="linenos">53</span><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="linenos">54</span><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mf">1l</span><span class="n">l</span><span class="p">))</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="linenos">55</span><span class="w">  </span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="o">&gt;</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">,</span><span class="w"> </span><span class="mi">61</span><span class="p">,</span><span class="w"> </span><span class="mi">325</span><span class="p">,</span><span class="w"> </span><span class="mi">9375</span><span class="p">,</span><span class="w"> </span><span class="mi">28178</span><span class="p">,</span><span class="w"> </span><span class="mi">450775</span><span class="p">,</span><span class="w"> </span><span class="mi">9780504</span><span class="p">,</span><span class="w"> </span><span class="mi">1795265022</span><span class="p">};</span>
+<span class="linenos">56</span><span class="w">  </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="linenos">57</span><span class="w">  </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">dd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">(</span><span class="o">-</span><span class="n">d</span><span class="p">);</span>
+<span class="linenos">58</span><span class="w">  </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">cnt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="linenos">59</span><span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">dd</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">60</span><span class="w">    </span><span class="o">++</span><span class="n">cnt</span><span class="p">;</span>
+<span class="linenos">61</span><span class="w">    </span><span class="n">dd</span><span class="w"> </span><span class="o">&gt;&gt;=</span><span class="w"> </span><span class="mf">1l</span><span class="n">l</span><span class="p">;</span>
+<span class="linenos">62</span><span class="w">  </span><span class="p">}</span>
+<span class="linenos">63</span><span class="w">  </span><span class="n">d</span><span class="w"> </span><span class="o">&gt;&gt;=</span><span class="w"> </span><span class="n">cnt</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">1l</span><span class="n">l</span><span class="p">;</span>
+<span class="linenos">64</span><span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">65</span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">a</span><span class="p">)</span><span class="w"> </span><span class="k">break</span><span class="p">;</span>
+<span class="linenos">66</span><span class="w">    </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d</span><span class="p">;</span>
+<span class="linenos">67</span><span class="w">    </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pow_mod</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">t</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">);</span>
+<span class="linenos">68</span><span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">t</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">n</span><span class="mi">-1ll</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mf">1l</span><span class="n">l</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">n</span><span class="mi">-1ll</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">69</span><span class="w">      </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pow_mod</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="mf">2l</span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">);</span>
+<span class="linenos">70</span><span class="w">      </span><span class="n">t</span><span class="w"> </span><span class="o">&lt;&lt;=</span><span class="w"> </span><span class="mf">1l</span><span class="n">l</span><span class="p">;</span>
+<span class="linenos">71</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">72</span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">n</span><span class="mi">-1ll</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="n">t</span><span class="o">&amp;</span><span class="mf">1l</span><span class="n">l</span><span class="p">)))</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="linenos">73</span><span class="w">  </span><span class="p">}</span>
+<span class="linenos">74</span><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="linenos">75</span><span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2>仕様<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
 <dl class="cpp function">
@@ -299,6 +382,7 @@
 <dd></dd></dl>
 
 </div>
+</section>
 </section>
 
         </article>
@@ -357,11 +441,15 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">math</a><ul>
+<li><a class="reference internal" href="#id1">ソースコード</a></li>
+<li><a class="reference internal" href="#id2">仕様</a><ul>
 <li><a class="reference internal" href="#_CPPv47pow_modxxKx"><code class="docutils literal notranslate"><span class="pre">pow_mod()</span></code></a></li>
 <li><a class="reference internal" href="#_CPPv43powxx"><code class="docutils literal notranslate"><span class="pre">pow()</span></code></a></li>
 <li><a class="reference internal" href="#_CPPv49factorialx"><code class="docutils literal notranslate"><span class="pre">factorial()</span></code></a></li>
 <li><a class="reference internal" href="#_CPPv413get_primelisti"><code class="docutils literal notranslate"><span class="pre">get_primelist()</span></code></a></li>
 <li><a class="reference internal" href="#_CPPv410is_primellx"><code class="docutils literal notranslate"><span class="pre">is_primell()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

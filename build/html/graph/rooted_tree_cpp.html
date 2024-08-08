@@ -7,17 +7,18 @@
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.01.29 -->
         <title>rooted tree - titan_cpplib documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=36a5483c" />
+    <link rel="stylesheet" type="text/css" href="../_static/_static/style.css" />
     
     
 
 
 <style>
   body {
-    --color-code-background: #f8f8f8;
+    --color-code-background: #eeffcc;
   --color-code-foreground: black;
   
   }
@@ -271,6 +272,30 @@
         <article role="main">
           <section id="rooted-tree">
 <h1>rooted tree<a class="headerlink" href="#rooted-tree" title="Link to this heading">¶</a></h1>
+<section id="id1">
+<h2>ソースコード<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+<span class="linenos"> 2</span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span><span class="k">struct</span><span class="w"> </span><span class="nc">RootedTree</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 5</span><span class="w">  </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">pair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">G</span><span class="p">;</span>
+<span class="linenos"> 6</span><span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">root</span><span class="p">;</span>
+<span class="linenos"> 7</span><span class="w">  </span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_dist</span><span class="p">;</span>
+<span class="linenos"> 8</span>
+<span class="linenos"> 9</span><span class="w">  </span><span class="n">RootedTree</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">pair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">G</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">root</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">10</span><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">G</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">G</span><span class="p">;</span>
+<span class="linenos">11</span><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">root</span><span class="p">;</span>
+<span class="linenos">12</span><span class="w">  </span><span class="p">}</span>
+<span class="linenos">13</span>
+<span class="linenos">14</span><span class="w">  </span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_dist</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">15</span>
+<span class="linenos">16</span><span class="w">  </span><span class="p">}</span>
+<span class="linenos">17</span><span class="p">};</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2>仕様<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
 <dl class="cpp struct">
 <dt class="sig sig-object cpp" id="_CPPv410RootedTree">
 <span id="_CPPv310RootedTree"></span><span id="_CPPv210RootedTree"></span><span id="RootedTree"></span><span class="target" id="structRootedTree"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">RootedTree</span></span></span><a class="headerlink" href="#_CPPv410RootedTree" title="Link to this definition">¶</a><br /></dt>
@@ -307,6 +332,7 @@
 </div>
 </dd></dl>
 
+</section>
 </section>
 
         </article>
@@ -365,12 +391,16 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">rooted tree</a><ul>
+<li><a class="reference internal" href="#id1">ソースコード</a></li>
+<li><a class="reference internal" href="#id2">仕様</a><ul>
 <li><a class="reference internal" href="#_CPPv410RootedTree"><code class="docutils literal notranslate"><span class="pre">RootedTree</span></code></a><ul>
 <li><a class="reference internal" href="#_CPPv4N10RootedTree10RootedTreeE6vectorI6vectorI4pairIiiEEEi"><code class="docutils literal notranslate"><span class="pre">RootedTree::RootedTree()</span></code></a></li>
 <li><a class="reference internal" href="#_CPPv4N10RootedTree8get_distEv"><code class="docutils literal notranslate"><span class="pre">RootedTree::get_dist()</span></code></a></li>
 <li><a class="reference internal" href="#_CPPv4N10RootedTree1GE"><code class="docutils literal notranslate"><span class="pre">RootedTree::G</span></code></a></li>
 <li><a class="reference internal" href="#_CPPv4N10RootedTree4rootE"><code class="docutils literal notranslate"><span class="pre">RootedTree::root</span></code></a></li>
 <li><a class="reference internal" href="#_CPPv4N10RootedTree5_distE"><code class="docutils literal notranslate"><span class="pre">RootedTree::_dist</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

@@ -15,6 +15,18 @@
         <label>vector</label>
       </node>
     </incdepgraph>
+    <invincdepgraph>
+      <node id="1">
+        <label>titan_cpplib/data_structures/undoable_union_find.cpp</label>
+        <link refid="undoable__union__find_8cpp"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>titan_cpplib/data_structures/offline_dynamic_connectivity.cpp</label>
+        <link refid="offline__dynamic__connectivity_8cpp_source"/>
+      </node>
+    </invincdepgraph>
     <innerclass refid="classtitan23_1_1UndoableUnionFind" prot="public">titan23::UndoableUnionFind</innerclass>
     <innernamespace refid="namespacetitan23">titan23</innernamespace>
     <briefdescription>

@@ -2,7 +2,7 @@ ahc
 ===
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    kmeans_cpp.rst
    sa_cpp.rst

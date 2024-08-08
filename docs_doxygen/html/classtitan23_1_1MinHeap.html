@@ -100,7 +100,13 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>len</b> () const</td><
 void&#160;</td><td class="memItemRight" valign="bottom"><b>print</b> () const</td></tr>
 <tr class="separator:a85379658724f0fac100148a6b35e3183"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;typename T&gt;<br />
+class titan23::MinHeap&lt; T &gt;</h3>
+
+
+<p class="definition">Definition at line <a class="el" href="min__heap_8cpp_source.html#l00008">8</a> of file <a class="el" href="min__heap_8cpp_source.html">min_heap.cpp</a>.</p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a782af426c2870fef4c14aa6546676e85"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a782af426c2870fef4c14aa6546676e85">&#9670;&nbsp;</a></span>pushpoop_min()</h2>
 
@@ -136,6 +142,15 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>* T </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="min__heap_8cpp_source.html#l00073">73</a> of file <a class="el" href="min__heap_8cpp_source.html">min_heap.cpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;                                {</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;      <span class="keywordflow">if</span> (a[0] &gt;= key) <span class="keywordflow">return</span> key;</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;      T res = a[0];</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;      a[0] = key;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;      _down(0);</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;      <span class="keywordflow">return</span> res;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    }</div>
+</div><!-- fragment -->
 </div>
 </div>
 <a id="a9bea6b27e1d97e378adfa8a0fc5d278c"></a>
@@ -173,10 +188,18 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>T </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="min__heap_8cpp_source.html#l00088">88</a> of file <a class="el" href="min__heap_8cpp_source.html">min_heap.cpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;                               {</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;      T res = a[0];</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;      a[0] = key;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;      _down(0);</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;      <span class="keywordflow">return</span> res;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    }</div>
+</div><!-- fragment -->
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>titan_cpplib/data_structures/min_heap.cpp</li>
+<li>titan_cpplib/data_structures/<a class="el" href="min__heap_8cpp_source.html">min_heap.cpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
