@@ -19,6 +19,7 @@ namespace sa {
     using ScoreType = double;
 
     struct Changed {
+        int type;
         ScoreType pre_score;
         Changed() {}
     };
@@ -26,7 +27,7 @@ namespace sa {
     Changed changed;
 
     class State {
-     public:
+      public:
         ScoreType score;
         State() {}
 
@@ -51,7 +52,8 @@ namespace sa {
     };
 
     // TIME_LIMIT: ms
-    static inline State run(const double TIME_LIMIT) {
+    template<typename StateType>
+    StateType sa_run(const double TIME_LIMIT) {
         titan23::Timer sa_timer;
 
         // const double START_TEMP = param.start_temp;
@@ -60,14 +62,15 @@ namespace sa {
         const double END_TEMP   = 1;
         const double TEMP_VAL = (START_TEMP - END_TEMP) / TIME_LIMIT;
 
-        State ans;
+        StateType ans;
         ans.init();
-        State best_ans = ans;
+        StateType best_ans = ans;
         ScoreType score = ans.get_score();
         ScoreType best_score = score;
         double now_time;
 
         int cnt = 0;
+        int upd_cnt = 0;
         while (true) {
             // if ((cnt & 31) == 0) now_time = sa_timer.elapsed();
             now_time = sa_timer.elapsed();
@@ -78,6 +81,7 @@ namespace sa {
             ans.modify(threshold);
             ScoreType new_score = ans.get_score();
             if (new_score <= threshold) {
+                ++upd_cnt;
                 ans.advance();
                 score = new_score;
                 if (score < best_score) {
@@ -90,6 +94,7 @@ namespace sa {
                 ans.rollback();
             }
         }
+        cerr << "upd=" << upd_cnt << endl;
         cerr << "cnt=" << cnt << endl;
         return best_ans;
     }

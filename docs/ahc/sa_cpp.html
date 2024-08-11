@@ -275,103 +275,108 @@
 <h1>sa<a class="headerlink" href="#sa" title="Link to this heading">¶</a></h1>
 <section id="id1">
 <h2>ソースコード<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
-<span class="linenos"> 2</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cmath&gt;</span>
-<span class="linenos"> 3</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;titan_cpplib/ahc/timer.cpp&quot;</span>
-<span class="linenos"> 4</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;titan_cpplib/algorithm/random.cpp&quot;</span>
-<span class="linenos"> 5</span>
-<span class="linenos"> 6</span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
-<span class="linenos"> 7</span>
-<span class="linenos"> 8</span><span class="c1">// sa 最小化</span>
-<span class="linenos"> 9</span><span class="k">namespace</span><span class="w"> </span><span class="nn">titan23</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">10</span>
-<span class="linenos">11</span><span class="k">namespace</span><span class="w"> </span><span class="nn">sa</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">12</span>
-<span class="linenos">13</span><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">Param</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">14</span><span class="w">        </span><span class="kt">double</span><span class="w"> </span><span class="n">start_temp</span><span class="p">,</span><span class="w"> </span><span class="n">end_temp</span><span class="p">;</span>
-<span class="linenos">15</span><span class="w">    </span><span class="p">};</span>
-<span class="linenos">16</span>
-<span class="linenos">17</span><span class="w">    </span><span class="n">Param</span><span class="w"> </span><span class="n">param</span><span class="p">;</span>
-<span class="linenos">18</span><span class="w">    </span><span class="n">titan23</span><span class="o">::</span><span class="n">Random</span><span class="w"> </span><span class="n">sa_random</span><span class="p">;</span>
-<span class="linenos">19</span><span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">ScoreType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">double</span><span class="p">;</span>
-<span class="linenos">20</span>
-<span class="linenos">21</span><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">Changed</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">22</span><span class="w">        </span><span class="n">ScoreType</span><span class="w"> </span><span class="n">pre_score</span><span class="p">;</span>
-<span class="linenos">23</span><span class="w">        </span><span class="n">Changed</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
-<span class="linenos">24</span><span class="w">    </span><span class="p">};</span>
-<span class="linenos">25</span>
-<span class="linenos">26</span><span class="w">    </span><span class="n">Changed</span><span class="w"> </span><span class="n">changed</span><span class="p">;</span>
-<span class="linenos">27</span>
-<span class="linenos">28</span><span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="nc">State</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">29</span><span class="w">     </span><span class="k">public</span><span class="o">:</span>
-<span class="linenos">30</span><span class="w">        </span><span class="n">ScoreType</span><span class="w"> </span><span class="n">score</span><span class="p">;</span>
-<span class="linenos">31</span><span class="w">        </span><span class="n">State</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
-<span class="linenos">32</span>
-<span class="linenos">33</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">init</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">34</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">35</span>
-<span class="linenos">36</span><span class="w">        </span><span class="n">ScoreType</span><span class="w"> </span><span class="n">get_score</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">score</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="linenos">37</span><span class="w">        </span><span class="n">ScoreType</span><span class="w"> </span><span class="n">get_true_score</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">score</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="linenos">38</span>
-<span class="linenos">39</span><span class="w">        </span><span class="c1">// thresholdを超えたら、だめ</span>
-<span class="linenos">40</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">modify</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ScoreType</span><span class="w"> </span><span class="n">threshold</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">41</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">42</span>
-<span class="linenos">43</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">rollback</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">44</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">45</span>
-<span class="linenos">46</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">advance</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">47</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">48</span>
-<span class="linenos">49</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">print</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">50</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">51</span><span class="w">    </span><span class="p">};</span>
-<span class="linenos">52</span>
-<span class="linenos">53</span><span class="w">    </span><span class="c1">// TIME_LIMIT: ms</span>
-<span class="linenos">54</span><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">State</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">TIME_LIMIT</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">55</span><span class="w">        </span><span class="n">titan23</span><span class="o">::</span><span class="n">Timer</span><span class="w"> </span><span class="n">sa_timer</span><span class="p">;</span>
-<span class="linenos">56</span>
-<span class="linenos">57</span><span class="w">        </span><span class="c1">// const double START_TEMP = param.start_temp;</span>
-<span class="linenos">58</span><span class="w">        </span><span class="c1">// const double END_TEMP   = param.end_temp;</span>
-<span class="linenos">59</span><span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">START_TEMP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1000</span><span class="p">;</span>
-<span class="linenos">60</span><span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">END_TEMP</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
-<span class="linenos">61</span><span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">TEMP_VAL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">START_TEMP</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">END_TEMP</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">TIME_LIMIT</span><span class="p">;</span>
-<span class="linenos">62</span>
-<span class="linenos">63</span><span class="w">        </span><span class="n">State</span><span class="w"> </span><span class="n">ans</span><span class="p">;</span>
-<span class="linenos">64</span><span class="w">        </span><span class="n">ans</span><span class="p">.</span><span class="n">init</span><span class="p">();</span>
-<span class="linenos">65</span><span class="w">        </span><span class="n">State</span><span class="w"> </span><span class="n">best_ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ans</span><span class="p">;</span>
-<span class="linenos">66</span><span class="w">        </span><span class="n">ScoreType</span><span class="w"> </span><span class="n">score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ans</span><span class="p">.</span><span class="n">get_score</span><span class="p">();</span>
-<span class="linenos">67</span><span class="w">        </span><span class="n">ScoreType</span><span class="w"> </span><span class="n">best_score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">score</span><span class="p">;</span>
-<span class="linenos">68</span><span class="w">        </span><span class="kt">double</span><span class="w"> </span><span class="n">now_time</span><span class="p">;</span>
-<span class="linenos">69</span>
-<span class="linenos">70</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">cnt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="linenos">71</span><span class="w">        </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">72</span><span class="w">            </span><span class="c1">// if ((cnt &amp; 31) == 0) now_time = sa_timer.elapsed();</span>
-<span class="linenos">73</span><span class="w">            </span><span class="n">now_time</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sa_timer</span><span class="p">.</span><span class="n">elapsed</span><span class="p">();</span>
-<span class="linenos">74</span><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">now_time</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">TIME_LIMIT</span><span class="p">)</span><span class="w"> </span><span class="k">break</span><span class="p">;</span>
-<span class="linenos">75</span><span class="w">            </span><span class="o">++</span><span class="n">cnt</span><span class="p">;</span>
-<span class="linenos">76</span><span class="w">            </span><span class="n">ScoreType</span><span class="w"> </span><span class="n">threshold</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">score</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">START_TEMP</span><span class="o">-</span><span class="n">TEMP_VAL</span><span class="o">*</span><span class="n">now_time</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">log</span><span class="p">(</span><span class="n">sa_random</span><span class="p">.</span><span class="n">random</span><span class="p">());</span>
-<span class="linenos">77</span><span class="w">            </span><span class="n">changed</span><span class="p">.</span><span class="n">pre_score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ans</span><span class="p">.</span><span class="n">score</span><span class="p">;</span>
-<span class="linenos">78</span><span class="w">            </span><span class="n">ans</span><span class="p">.</span><span class="n">modify</span><span class="p">(</span><span class="n">threshold</span><span class="p">);</span>
-<span class="linenos">79</span><span class="w">            </span><span class="n">ScoreType</span><span class="w"> </span><span class="n">new_score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ans</span><span class="p">.</span><span class="n">get_score</span><span class="p">();</span>
-<span class="linenos">80</span><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">new_score</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">threshold</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">81</span><span class="w">                </span><span class="n">ans</span><span class="p">.</span><span class="n">advance</span><span class="p">();</span>
-<span class="linenos">82</span><span class="w">                </span><span class="n">score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new_score</span><span class="p">;</span>
-<span class="linenos">83</span><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">score</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">best_score</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">84</span><span class="w">                    </span><span class="n">best_score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">score</span><span class="p">;</span>
-<span class="linenos">85</span><span class="w">                    </span><span class="n">best_ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ans</span><span class="p">;</span>
-<span class="linenos">86</span><span class="w">                    </span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;score=&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">best_score</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
-<span class="linenos">87</span><span class="w">                </span><span class="p">}</span>
-<span class="linenos">88</span><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">89</span><span class="w">                </span><span class="n">ans</span><span class="p">.</span><span class="n">score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">changed</span><span class="p">.</span><span class="n">pre_score</span><span class="p">;</span>
-<span class="linenos">90</span><span class="w">                </span><span class="n">ans</span><span class="p">.</span><span class="n">rollback</span><span class="p">();</span>
-<span class="linenos">91</span><span class="w">            </span><span class="p">}</span>
-<span class="linenos">92</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">93</span><span class="w">        </span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;cnt=&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">cnt</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
-<span class="linenos">94</span><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">best_ans</span><span class="p">;</span>
-<span class="linenos">95</span><span class="w">    </span><span class="p">}</span>
-<span class="linenos">96</span><span class="p">}</span>
-<span class="linenos">97</span><span class="p">}</span><span class="w">  </span><span class="c1">// namespace titan23</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="linenos">  1</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+<span class="linenos">  2</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cmath&gt;</span>
+<span class="linenos">  3</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;titan_cpplib/ahc/timer.cpp&quot;</span>
+<span class="linenos">  4</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;titan_cpplib/algorithm/random.cpp&quot;</span>
+<span class="linenos">  5</span>
+<span class="linenos">  6</span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
+<span class="linenos">  7</span>
+<span class="linenos">  8</span><span class="c1">// sa 最小化</span>
+<span class="linenos">  9</span><span class="k">namespace</span><span class="w"> </span><span class="nn">titan23</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 10</span>
+<span class="linenos"> 11</span><span class="k">namespace</span><span class="w"> </span><span class="nn">sa</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 12</span>
+<span class="linenos"> 13</span><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">Param</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 14</span><span class="w">        </span><span class="kt">double</span><span class="w"> </span><span class="n">start_temp</span><span class="p">,</span><span class="w"> </span><span class="n">end_temp</span><span class="p">;</span>
+<span class="linenos"> 15</span><span class="w">    </span><span class="p">};</span>
+<span class="linenos"> 16</span>
+<span class="linenos"> 17</span><span class="w">    </span><span class="n">Param</span><span class="w"> </span><span class="n">param</span><span class="p">;</span>
+<span class="linenos"> 18</span><span class="w">    </span><span class="n">titan23</span><span class="o">::</span><span class="n">Random</span><span class="w"> </span><span class="n">sa_random</span><span class="p">;</span>
+<span class="linenos"> 19</span><span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">ScoreType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">double</span><span class="p">;</span>
+<span class="linenos"> 20</span>
+<span class="linenos"> 21</span><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">Changed</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 22</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">type</span><span class="p">;</span>
+<span class="linenos"> 23</span><span class="w">        </span><span class="n">ScoreType</span><span class="w"> </span><span class="n">pre_score</span><span class="p">;</span>
+<span class="linenos"> 24</span><span class="w">        </span><span class="n">Changed</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 25</span><span class="w">    </span><span class="p">};</span>
+<span class="linenos"> 26</span>
+<span class="linenos"> 27</span><span class="w">    </span><span class="n">Changed</span><span class="w"> </span><span class="n">changed</span><span class="p">;</span>
+<span class="linenos"> 28</span>
+<span class="linenos"> 29</span><span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="nc">State</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 30</span><span class="w">      </span><span class="k">public</span><span class="o">:</span>
+<span class="linenos"> 31</span><span class="w">        </span><span class="n">ScoreType</span><span class="w"> </span><span class="n">score</span><span class="p">;</span>
+<span class="linenos"> 32</span><span class="w">        </span><span class="n">State</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 33</span>
+<span class="linenos"> 34</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">init</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 35</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos"> 36</span>
+<span class="linenos"> 37</span><span class="w">        </span><span class="n">ScoreType</span><span class="w"> </span><span class="n">get_score</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">score</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 38</span><span class="w">        </span><span class="n">ScoreType</span><span class="w"> </span><span class="n">get_true_score</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">score</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 39</span>
+<span class="linenos"> 40</span><span class="w">        </span><span class="c1">// thresholdを超えたら、だめ</span>
+<span class="linenos"> 41</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">modify</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ScoreType</span><span class="w"> </span><span class="n">threshold</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 42</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos"> 43</span>
+<span class="linenos"> 44</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">rollback</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 45</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos"> 46</span>
+<span class="linenos"> 47</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">advance</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 48</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos"> 49</span>
+<span class="linenos"> 50</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">print</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 51</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos"> 52</span><span class="w">    </span><span class="p">};</span>
+<span class="linenos"> 53</span>
+<span class="linenos"> 54</span><span class="w">    </span><span class="c1">// TIME_LIMIT: ms</span>
+<span class="linenos"> 55</span><span class="w">    </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">StateType</span><span class="o">&gt;</span>
+<span class="linenos"> 56</span><span class="w">    </span><span class="n">StateType</span><span class="w"> </span><span class="n">sa_run</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">TIME_LIMIT</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 57</span><span class="w">        </span><span class="n">titan23</span><span class="o">::</span><span class="n">Timer</span><span class="w"> </span><span class="n">sa_timer</span><span class="p">;</span>
+<span class="linenos"> 58</span>
+<span class="linenos"> 59</span><span class="w">        </span><span class="c1">// const double START_TEMP = param.start_temp;</span>
+<span class="linenos"> 60</span><span class="w">        </span><span class="c1">// const double END_TEMP   = param.end_temp;</span>
+<span class="linenos"> 61</span><span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">START_TEMP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1000</span><span class="p">;</span>
+<span class="linenos"> 62</span><span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">END_TEMP</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="linenos"> 63</span><span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">TEMP_VAL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">START_TEMP</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">END_TEMP</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">TIME_LIMIT</span><span class="p">;</span>
+<span class="linenos"> 64</span>
+<span class="linenos"> 65</span><span class="w">        </span><span class="n">StateType</span><span class="w"> </span><span class="n">ans</span><span class="p">;</span>
+<span class="linenos"> 66</span><span class="w">        </span><span class="n">ans</span><span class="p">.</span><span class="n">init</span><span class="p">();</span>
+<span class="linenos"> 67</span><span class="w">        </span><span class="n">StateType</span><span class="w"> </span><span class="n">best_ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ans</span><span class="p">;</span>
+<span class="linenos"> 68</span><span class="w">        </span><span class="n">ScoreType</span><span class="w"> </span><span class="n">score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ans</span><span class="p">.</span><span class="n">get_score</span><span class="p">();</span>
+<span class="linenos"> 69</span><span class="w">        </span><span class="n">ScoreType</span><span class="w"> </span><span class="n">best_score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">score</span><span class="p">;</span>
+<span class="linenos"> 70</span><span class="w">        </span><span class="kt">double</span><span class="w"> </span><span class="n">now_time</span><span class="p">;</span>
+<span class="linenos"> 71</span>
+<span class="linenos"> 72</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">cnt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="linenos"> 73</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">upd_cnt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="linenos"> 74</span><span class="w">        </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 75</span><span class="w">            </span><span class="c1">// if ((cnt &amp; 31) == 0) now_time = sa_timer.elapsed();</span>
+<span class="linenos"> 76</span><span class="w">            </span><span class="n">now_time</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sa_timer</span><span class="p">.</span><span class="n">elapsed</span><span class="p">();</span>
+<span class="linenos"> 77</span><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">now_time</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">TIME_LIMIT</span><span class="p">)</span><span class="w"> </span><span class="k">break</span><span class="p">;</span>
+<span class="linenos"> 78</span><span class="w">            </span><span class="o">++</span><span class="n">cnt</span><span class="p">;</span>
+<span class="linenos"> 79</span><span class="w">            </span><span class="n">ScoreType</span><span class="w"> </span><span class="n">threshold</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">score</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">START_TEMP</span><span class="o">-</span><span class="n">TEMP_VAL</span><span class="o">*</span><span class="n">now_time</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">log</span><span class="p">(</span><span class="n">sa_random</span><span class="p">.</span><span class="n">random</span><span class="p">());</span>
+<span class="linenos"> 80</span><span class="w">            </span><span class="n">changed</span><span class="p">.</span><span class="n">pre_score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ans</span><span class="p">.</span><span class="n">score</span><span class="p">;</span>
+<span class="linenos"> 81</span><span class="w">            </span><span class="n">ans</span><span class="p">.</span><span class="n">modify</span><span class="p">(</span><span class="n">threshold</span><span class="p">);</span>
+<span class="linenos"> 82</span><span class="w">            </span><span class="n">ScoreType</span><span class="w"> </span><span class="n">new_score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ans</span><span class="p">.</span><span class="n">get_score</span><span class="p">();</span>
+<span class="linenos"> 83</span><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">new_score</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">threshold</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 84</span><span class="w">                </span><span class="o">++</span><span class="n">upd_cnt</span><span class="p">;</span>
+<span class="linenos"> 85</span><span class="w">                </span><span class="n">ans</span><span class="p">.</span><span class="n">advance</span><span class="p">();</span>
+<span class="linenos"> 86</span><span class="w">                </span><span class="n">score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new_score</span><span class="p">;</span>
+<span class="linenos"> 87</span><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">score</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">best_score</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 88</span><span class="w">                    </span><span class="n">best_score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">score</span><span class="p">;</span>
+<span class="linenos"> 89</span><span class="w">                    </span><span class="n">best_ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ans</span><span class="p">;</span>
+<span class="linenos"> 90</span><span class="w">                    </span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;score=&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">best_score</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="linenos"> 91</span><span class="w">                </span><span class="p">}</span>
+<span class="linenos"> 92</span><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 93</span><span class="w">                </span><span class="n">ans</span><span class="p">.</span><span class="n">score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">changed</span><span class="p">.</span><span class="n">pre_score</span><span class="p">;</span>
+<span class="linenos"> 94</span><span class="w">                </span><span class="n">ans</span><span class="p">.</span><span class="n">rollback</span><span class="p">();</span>
+<span class="linenos"> 95</span><span class="w">            </span><span class="p">}</span>
+<span class="linenos"> 96</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos"> 97</span><span class="w">        </span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;upd=&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">upd_cnt</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="linenos"> 98</span><span class="w">        </span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;cnt=&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">cnt</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="linenos"> 99</span><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">best_ans</span><span class="p">;</span>
+<span class="linenos">100</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">101</span><span class="p">}</span>
+<span class="linenos">102</span><span class="p">}</span><span class="w">  </span><span class="c1">// namespace titan23</span>
 </pre></div>
 </div>
 </section>
@@ -394,8 +399,8 @@
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
 <dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan232sa3runEKd">
-<span id="_CPPv3N7titan232sa3runEKd"></span><span id="_CPPv2N7titan232sa3runEKd"></span><span id="titan23::sa::run__doubleC"></span><span class="target" id="sa_8cpp_1ad090416be60c18dce66a732bce072504"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N7titan232sa5StateE" title="titan23::sa::State"><span class="n"><span class="pre">State</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">run</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">TIME_LIMIT</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan232sa3runEKd" title="Link to this definition">¶</a><br /></dt>
+<dt class="sig sig-object cpp" id="_CPPv4I0EN7titan232sa6sa_runE9StateTypeKd">
+<span id="_CPPv3I0EN7titan232sa6sa_runEKd"></span><span id="_CPPv2I0EN7titan232sa6sa_runEKd"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StateType</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="sa_8cpp_1abfb9d6f0fd5d81b6906691cdcc26418d"></span><a class="reference internal" href="#_CPPv4I0EN7titan232sa6sa_runE9StateTypeKd" title="titan23::sa::sa_run::StateType"><span class="n"><span class="pre">StateType</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sa_run</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">TIME_LIMIT</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN7titan232sa6sa_runE9StateTypeKd" title="Link to this definition">¶</a><br /></dt>
 <dd></dd></dl>
 
 </div>
@@ -448,6 +453,11 @@
 </div>
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan232sa7Changed4typeE">
+<span id="_CPPv3N7titan232sa7Changed4typeE"></span><span id="_CPPv2N7titan232sa7Changed4typeE"></span><span id="titan23::sa::Changed::type__i"></span><span class="target" id="structtitan23_1_1sa_1_1Changed_1a61c046074f332871b42adecb519f8f47"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">type</span></span></span><a class="headerlink" href="#_CPPv4N7titan232sa7Changed4typeE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
 <dl class="cpp var">
 <dt class="sig sig-object cpp" id="_CPPv4N7titan232sa7Changed9pre_scoreE">
 <span id="_CPPv3N7titan232sa7Changed9pre_scoreE"></span><span id="_CPPv2N7titan232sa7Changed9pre_scoreE"></span><span id="titan23::sa::Changed::pre_score__ScoreType"></span><span class="target" id="structtitan23_1_1sa_1_1Changed_1a92eb93a5ca18fcea94adb95a09b5779c"></span><a class="reference internal" href="#_CPPv4N7titan232sa9ScoreTypeE" title="titan23::sa::ScoreType"><span class="n"><span class="pre">ScoreType</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pre_score</span></span></span><a class="headerlink" href="#_CPPv4N7titan232sa7Changed9pre_scoreE" title="Link to this definition">¶</a><br /></dt>
@@ -580,7 +590,7 @@
 <li><a class="reference internal" href="#_CPPv47titan23"><code class="docutils literal notranslate"><span class="pre">titan23</span></code></a><ul>
 <li><a class="reference internal" href="#_CPPv4N7titan232saE"><code class="docutils literal notranslate"><span class="pre">titan23::sa</span></code></a><ul>
 <li><a class="reference internal" href="#_CPPv4N7titan232sa9ScoreTypeE"><code class="docutils literal notranslate"><span class="pre">titan23::sa::ScoreType</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan232sa3runEKd"><code class="docutils literal notranslate"><span class="pre">titan23::sa::run()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4I0EN7titan232sa6sa_runE9StateTypeKd"><code class="docutils literal notranslate"><span class="pre">titan23::sa::sa_run()</span></code></a></li>
 <li><a class="reference internal" href="#_CPPv4N7titan232sa5paramE"><code class="docutils literal notranslate"><span class="pre">titan23::sa::param</span></code></a></li>
 <li><a class="reference internal" href="#_CPPv4N7titan232sa9sa_randomE"><code class="docutils literal notranslate"><span class="pre">titan23::sa::sa_random</span></code></a></li>
 <li><a class="reference internal" href="#_CPPv4N7titan232sa7changedE"><code class="docutils literal notranslate"><span class="pre">titan23::sa::changed</span></code></a></li>
@@ -591,6 +601,7 @@
 </li>
 <li><a class="reference internal" href="#_CPPv4N7titan232sa7ChangedE"><code class="docutils literal notranslate"><span class="pre">titan23::sa::Changed</span></code></a><ul>
 <li><a class="reference internal" href="#_CPPv4N7titan232sa7Changed7ChangedEv"><code class="docutils literal notranslate"><span class="pre">titan23::sa::Changed::Changed()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan232sa7Changed4typeE"><code class="docutils literal notranslate"><span class="pre">titan23::sa::Changed::type</span></code></a></li>
 <li><a class="reference internal" href="#_CPPv4N7titan232sa7Changed9pre_scoreE"><code class="docutils literal notranslate"><span class="pre">titan23::sa::Changed::pre_score</span></code></a></li>
 </ul>
 </li>

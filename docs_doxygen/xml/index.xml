@@ -274,6 +274,7 @@
     <member refid="classtitan23_1_1BitVector_1a61ed6fd8862fbf0b8d49cb417c81f78d" kind="function"><name>print</name></member>
   </compound>
   <compound refid="structtitan23_1_1sa_1_1Changed" kind="struct"><name>titan23::sa::Changed</name>
+    <member refid="structtitan23_1_1sa_1_1Changed_1a61c046074f332871b42adecb519f8f47" kind="variable"><name>type</name></member>
     <member refid="structtitan23_1_1sa_1_1Changed_1a92eb93a5ca18fcea94adb95a09b5779c" kind="variable"><name>pre_score</name></member>
     <member refid="structtitan23_1_1sa_1_1Changed_1af88e3ad43a8b279c6f870d28a2e84e4e" kind="function"><name>Changed</name></member>
   </compound>
@@ -1354,7 +1355,7 @@
     <member refid="sa_8cpp_1af8cf41e1fd65455a97d75e65a4b72200" kind="variable"><name>param</name></member>
     <member refid="sa_8cpp_1a4ec31ed0575745aa0dc80ac47ebc1e2a" kind="variable"><name>sa_random</name></member>
     <member refid="sa_8cpp_1ab01a31ad677c65a02b88ce25d0138480" kind="variable"><name>changed</name></member>
-    <member refid="sa_8cpp_1ad090416be60c18dce66a732bce072504" kind="function"><name>run</name></member>
+    <member refid="sa_8cpp_1abfb9d6f0fd5d81b6906691cdcc26418d" kind="function"><name>sa_run</name></member>
   </compound>
   <compound refid="action_8cpp" kind="file"><name>action.cpp</name>
   </compound>

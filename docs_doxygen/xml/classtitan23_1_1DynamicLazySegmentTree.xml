@@ -56,7 +56,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" line="44" column="9" bodyfile="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" bodystart="44" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" line="42" column="9" bodyfile="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" bodystart="42" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-attrib">
@@ -71,7 +71,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" line="46" column="17" bodyfile="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" bodystart="46" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" line="44" column="17" bodyfile="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" bodystart="44" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1DynamicLazySegmentTree_1a00848ecda4f0d22e1e6c8251c046ea4d" prot="private" static="no" mutable="no">
         <type>IndexType</type>
@@ -84,7 +84,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" line="47" column="19" bodyfile="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" bodystart="47" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" line="45" column="19" bodyfile="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" bodystart="45" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-static-func">
@@ -103,7 +103,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" line="39" column="20" bodyfile="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" bodystart="39" bodyend="41"/>
+        <location file="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" line="37" column="20" bodyfile="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" bodystart="37" bodyend="39"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -130,7 +130,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" line="111" column="11" bodyfile="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" bodystart="111" bodyend="120"/>
+        <location file="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" line="109" column="11" bodyfile="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" bodystart="109" bodyend="118"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicLazySegmentTree_1a115f0726a3b11c5e225717d299bb2d2d" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -159,7 +159,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" line="122" column="14" bodyfile="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" bodystart="122" bodyend="132"/>
+        <location file="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" line="120" column="14" bodyfile="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" bodystart="120" bodyend="130"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicLazySegmentTree_1aba6e553be0cdceab9ee00746c4c57685" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -184,7 +184,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" line="134" column="14" bodyfile="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" bodystart="134" bodyend="150"/>
+        <location file="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" line="132" column="14" bodyfile="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" bodystart="132" bodyend="148"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicLazySegmentTree_1ae0e559d6844106b2f6cb9bdff464fa78" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -205,7 +205,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" line="152" column="11" bodyfile="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" bodystart="152" bodyend="169"/>
+        <location file="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" line="150" column="11" bodyfile="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" bodystart="150" bodyend="167"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -220,7 +220,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" line="173" column="9" bodyfile="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" bodystart="173" bodyend="173"/>
+        <location file="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" line="171" column="9" bodyfile="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" bodystart="171" bodyend="171"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicLazySegmentTree_1ac731f105e49158960c839b7b08cab6c8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -232,12 +232,13 @@
           <declname>u_</declname>
         </param>
         <briefdescription>
+<para>初期値 <computeroutput>e()</computeroutput> , <computeroutput>[0, u)</computeroutput> の区間を管理する <computeroutput><ref refid="classtitan23_1_1DynamicLazySegmentTree" kindref="compound">DynamicLazySegmentTree</ref></computeroutput> を作成する </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" line="175" column="9" bodyfile="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" bodystart="175" bodyend="179"/>
+        <location file="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" line="174" column="9" bodyfile="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" bodystart="174" bodyend="178"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicLazySegmentTree_1aa2effc7768b5a0d0756e1a5ae193d9e1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -253,6 +254,7 @@
           <declname>init</declname>
         </param>
         <briefdescription>
+<para>初期値 <computeroutput>init</computeroutput> , <computeroutput>[0, u)</computeroutput> の区間を管理する <computeroutput><ref refid="classtitan23_1_1DynamicLazySegmentTree" kindref="compound">DynamicLazySegmentTree</ref></computeroutput> を作成する </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
@@ -274,6 +276,7 @@
           <declname>r</declname>
         </param>
         <briefdescription>
+<para><computeroutput>[l, r)</computeroutput> の集約値を返す / <computeroutput>O(logu)</computeroutput> time, <computeroutput>O(1)</computeroutput> space </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
@@ -299,6 +302,7 @@
           <declname>f</declname>
         </param>
         <briefdescription>
+<para><computeroutput>[l, r)</computeroutput> に <computeroutput>f</computeroutput> を作用させる / <computeroutput>O(logu)</computeroutput> time, <computeroutput>O(logu)</computeroutput> space </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
@@ -316,6 +320,7 @@
           <declname>k</declname>
         </param>
         <briefdescription>
+<para><computeroutput>k</computeroutput> 番目の値を取得する / <computeroutput>O(logu)</computeroutput> time, <computeroutput>O(1)</computeroutput> space </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
@@ -337,6 +342,7 @@
           <declname>val</declname>
         </param>
         <briefdescription>
+<para><computeroutput>k</computeroutput> 番目の値を <computeroutput>val</computeroutput> に更新する / <computeroutput>O(logu)</computeroutput> time, <computeroutput>O(logu)</computeroutput> space </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
@@ -350,22 +356,22 @@
         <argsstring>()</argsstring>
         <name>print</name>
         <briefdescription>
+<para>適当に表示する </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" line="210" column="14" bodyfile="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" bodystart="210" bodyend="215"/>
+        <location file="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" line="211" column="14" bodyfile="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" bodystart="211" bodyend="216"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
-<para>必要なところだけ作る遅延セグ木 </para>
+<para><computeroutput>[0, u)</computeroutput> の列を管理する、必要なところだけ作る遅延セグ木 </para>
     </briefdescription>
     <detaileddescription>
-<para>[0, u)の列を管理</para>
 <para><itemizedlist>
-<listitem><para>apply / set : O(logu) time, O(logu) space</para>
-</listitem><listitem><para>prod / get : O(logu) time, O(1) space</para>
+<listitem><para>apply / set : <computeroutput>O(logu)</computeroutput> time, <computeroutput>O(logu)</computeroutput> space</para>
+</listitem><listitem><para>prod / get : <computeroutput>O(logu)</computeroutput> time, <computeroutput>O(1)</computeroutput> space</para>
 </listitem></itemizedlist>
 </para>
 <para><parameterlist kind="templateparam"><parameteritem>
@@ -447,7 +453,7 @@
 </parameterlist>
 </para>
     </detaileddescription>
-    <location file="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" line="37" column="5" bodyfile="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" bodystart="37" bodyend="216"/>
+    <location file="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" line="35" column="5" bodyfile="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" bodystart="35" bodyend="217"/>
     <listofallmembers>
       <member refid="classtitan23_1_1DynamicLazySegmentTree_1a8a9d9bb560f5079aabc97246d97472a9" prot="public" virt="non-virtual"><scope>titan23::DynamicLazySegmentTree</scope><name>apply</name></member>
       <member refid="classtitan23_1_1DynamicLazySegmentTree_1a2eb981d9be76d9c8cb67d375ab79c38b" prot="private" virt="non-virtual"><scope>titan23::DynamicLazySegmentTree</scope><name>bit_length</name></member>

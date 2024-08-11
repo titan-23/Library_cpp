@@ -7,13 +7,11 @@ using namespace std;
 namespace titan23 {
 
     /**
-     * @brief 必要なところだけ作る遅延セグ木
+     * @brief `[0, u)` の列を管理する、必要なところだけ作る遅延セグ木
      *
-     * [0, u)の列を管理
+     * - apply / set : `O(logu)` time, `O(logu)` space
      *
-     * - apply / set : O(logu) time, O(logu) space
-     *
-     * - prod  / get : O(logu) time, O(1) space
+     * - prod  / get : `O(logu)` time, `O(1)` space
      *
      * @tparam IndexType 添え字を表すインデックス long long を推奨 和がオーバーフローしないことが条件かな
      * @tparam T モノイドの型
@@ -172,41 +170,44 @@ namespace titan23 {
 
         DynamicLazySegmentTree() : root(nullptr), u(0) {}
 
+        //! 初期値 `e()` , `[0, u)` の区間を管理する `DynamicLazySegmentTree` を作成する
         DynamicLazySegmentTree(const IndexType u_) {
             assert(u_ > 0);
             this->u = 1ll << bit_length(u_);
             this->root = new Node(0, this->u, e());
         }
 
+        //! 初期値 `init` , `[0, u)` の区間を管理する `DynamicLazySegmentTree` を作成する
         DynamicLazySegmentTree(const IndexType u_, const T init) {
             assert(u_ > 0);
             this->u = 1ll << bit_length(u_);
             this->root = new Node(0, this->u, init);
         }
 
-        // `[l, r)` の集約値を返す / `O(logu)` time, `O(1)` space
+        //! `[l, r)` の集約値を返す / `O(logu)` time, `O(1)` space
         T prod(IndexType l, IndexType r) {
             assert(0 <= l && l <= r && r <= u);
             return inner_prod(this->root, l, r);
         }
 
-        // `[l, r)` に `f` を作用させる / `O(logu)` time, `O(logu)` space
+        //! `[l, r)` に `f` を作用させる / `O(logu)` time, `O(logu)` space
         void apply(IndexType l, IndexType r, F f) {
             assert(0 <= l && l <= r && r <= u);
             inner_apply(this->root, l, r, f);
         }
 
-        // `k` 番目の値を取得する / `O(logu)` time, `O(1)` space
+        //! `k` 番目の値を取得する / `O(logu)` time, `O(1)` space
         T get(IndexType k) {
             return inner_get(this->root, k);
         }
 
-        // `k` 番目の値を `val` に更新する / `O(logu)` time, `O(logu)` space
+        //! `k` 番目の値を `val` に更新する / `O(logu)` time, `O(logu)` space
         void set(IndexType k, T val) {
             assert(0 <= k && k < u);
             inner_set(this->root, k, val);
         }
 
+        //! 適当に表示する
         void print() {
             for (int i = 0; i < u; ++id) {
                 cout << get(i) << ", ";

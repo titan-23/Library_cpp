@@ -74,42 +74,48 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>必要なところだけ作る遅延セグ木  
+<p><code>[0, u)</code> の列を管理する、必要なところだけ作る遅延セグ木  
  <a href="classtitan23_1_1DynamicLazySegmentTree.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ac731f105e49158960c839b7b08cab6c8"><td class="memItemLeft" align="right" valign="top"><a id="ac731f105e49158960c839b7b08cab6c8"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>DynamicLazySegmentTree</b> (const IndexType u_)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicLazySegmentTree.html#ac731f105e49158960c839b7b08cab6c8">DynamicLazySegmentTree</a> (const IndexType u_)</td></tr>
+<tr class="memdesc:ac731f105e49158960c839b7b08cab6c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">初期値 <code>e()</code> , <code>[0, u)</code> の区間を管理する <code><a class="el" href="classtitan23_1_1DynamicLazySegmentTree.html" title="[0, u) の列を管理する、必要なところだけ作る遅延セグ木">DynamicLazySegmentTree</a></code> を作成する <br /></td></tr>
 <tr class="separator:ac731f105e49158960c839b7b08cab6c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa2effc7768b5a0d0756e1a5ae193d9e1"><td class="memItemLeft" align="right" valign="top"><a id="aa2effc7768b5a0d0756e1a5ae193d9e1"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>DynamicLazySegmentTree</b> (const IndexType u_, const T init)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicLazySegmentTree.html#aa2effc7768b5a0d0756e1a5ae193d9e1">DynamicLazySegmentTree</a> (const IndexType u_, const T init)</td></tr>
+<tr class="memdesc:aa2effc7768b5a0d0756e1a5ae193d9e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">初期値 <code>init</code> , <code>[0, u)</code> の区間を管理する <code><a class="el" href="classtitan23_1_1DynamicLazySegmentTree.html" title="[0, u) の列を管理する、必要なところだけ作る遅延セグ木">DynamicLazySegmentTree</a></code> を作成する <br /></td></tr>
 <tr class="separator:aa2effc7768b5a0d0756e1a5ae193d9e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae1495e133409e2bf892949a32c4b5c3f"><td class="memItemLeft" align="right" valign="top"><a id="ae1495e133409e2bf892949a32c4b5c3f"></a>
-T&#160;</td><td class="memItemRight" valign="bottom"><b>prod</b> (IndexType l, IndexType r)</td></tr>
+T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicLazySegmentTree.html#ae1495e133409e2bf892949a32c4b5c3f">prod</a> (IndexType l, IndexType r)</td></tr>
+<tr class="memdesc:ae1495e133409e2bf892949a32c4b5c3f"><td class="mdescLeft">&#160;</td><td class="mdescRight"><code>[l, r)</code> の集約値を返す / <code>O(logu)</code> time, <code>O(1)</code> space <br /></td></tr>
 <tr class="separator:ae1495e133409e2bf892949a32c4b5c3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8a9d9bb560f5079aabc97246d97472a9"><td class="memItemLeft" align="right" valign="top"><a id="a8a9d9bb560f5079aabc97246d97472a9"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>apply</b> (IndexType l, IndexType r, F f)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicLazySegmentTree.html#a8a9d9bb560f5079aabc97246d97472a9">apply</a> (IndexType l, IndexType r, F f)</td></tr>
+<tr class="memdesc:a8a9d9bb560f5079aabc97246d97472a9"><td class="mdescLeft">&#160;</td><td class="mdescRight"><code>[l, r)</code> に <code>f</code> を作用させる / <code>O(logu)</code> time, <code>O(logu)</code> space <br /></td></tr>
 <tr class="separator:a8a9d9bb560f5079aabc97246d97472a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ade68f18b226ef8fbd3bf3945c8a6d887"><td class="memItemLeft" align="right" valign="top"><a id="ade68f18b226ef8fbd3bf3945c8a6d887"></a>
-T&#160;</td><td class="memItemRight" valign="bottom"><b>get</b> (IndexType k)</td></tr>
+T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicLazySegmentTree.html#ade68f18b226ef8fbd3bf3945c8a6d887">get</a> (IndexType k)</td></tr>
+<tr class="memdesc:ade68f18b226ef8fbd3bf3945c8a6d887"><td class="mdescLeft">&#160;</td><td class="mdescRight"><code>k</code> 番目の値を取得する / <code>O(logu)</code> time, <code>O(1)</code> space <br /></td></tr>
 <tr class="separator:ade68f18b226ef8fbd3bf3945c8a6d887"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a536dbb44d97de5ebecf0f80b06508337"><td class="memItemLeft" align="right" valign="top"><a id="a536dbb44d97de5ebecf0f80b06508337"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>set</b> (IndexType k, T val)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicLazySegmentTree.html#a536dbb44d97de5ebecf0f80b06508337">set</a> (IndexType k, T val)</td></tr>
+<tr class="memdesc:a536dbb44d97de5ebecf0f80b06508337"><td class="mdescLeft">&#160;</td><td class="mdescRight"><code>k</code> 番目の値を <code>val</code> に更新する / <code>O(logu)</code> time, <code>O(logu)</code> space <br /></td></tr>
 <tr class="separator:a536dbb44d97de5ebecf0f80b06508337"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a45950f749b0699d98f134a32487326b9"><td class="memItemLeft" align="right" valign="top"><a id="a45950f749b0699d98f134a32487326b9"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>print</b> ()</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicLazySegmentTree.html#a45950f749b0699d98f134a32487326b9">print</a> ()</td></tr>
+<tr class="memdesc:a45950f749b0699d98f134a32487326b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">適当に表示する <br /></td></tr>
 <tr class="separator:a45950f749b0699d98f134a32487326b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;class IndexType, class T, T(*)(T, T) op, T(*)() e, class F, T(*)(F, T) mapping, F(*)(F, F) composition, F(*)() id, T(*)(T, IndexType) pow&gt;<br />
 class titan23::DynamicLazySegmentTree&lt; IndexType, T, op, e, F, mapping, composition, id, pow &gt;</h3>
 
-<p>必要なところだけ作る遅延セグ木 </p>
-<p>[0, u)の列を管理</p>
+<p><code>[0, u)</code> の列を管理する、必要なところだけ作る遅延セグ木 </p>
 <ul>
-<li>apply / set : O(logu) time, O(logu) space</li>
-<li>prod / get : O(logu) time, O(1) space</li>
+<li>apply / set : <code>O(logu)</code> time, <code>O(logu)</code> space</li>
+<li>prod / get : <code>O(logu)</code> time, <code>O(1)</code> space</li>
 </ul>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
@@ -126,7 +132,7 @@ class titan23::DynamicLazySegmentTree&lt; IndexType, T, op, e, F, mapping, compo
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="dynamic__lazy__segment__tree_8cpp_source.html#l00037">37</a> of file <a class="el" href="dynamic__lazy__segment__tree_8cpp_source.html">dynamic_lazy_segment_tree.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dynamic__lazy__segment__tree_8cpp_source.html#l00035">35</a> of file <a class="el" href="dynamic__lazy__segment__tree_8cpp_source.html">dynamic_lazy_segment_tree.cpp</a>.</p>
 </div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>titan_cpplib/data_structures/<a class="el" href="dynamic__lazy__segment__tree_8cpp_source.html">dynamic_lazy_segment_tree.cpp</a></li>
 </ul>

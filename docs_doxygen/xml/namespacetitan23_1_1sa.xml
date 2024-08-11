@@ -58,15 +58,20 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/sa.cpp" line="26" column="13" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="26" bodyend="-1"/>
+        <location file="titan_cpplib/ahc/sa.cpp" line="27" column="13" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="27" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="func">
-      <memberdef kind="function" id="sa_8cpp_1ad090416be60c18dce66a732bce072504" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
-        <type><ref refid="classtitan23_1_1sa_1_1State" kindref="compound">State</ref></type>
-        <definition>static State titan23::sa::run</definition>
+      <memberdef kind="function" id="sa_8cpp_1abfb9d6f0fd5d81b6906691cdcc26418d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename StateType</type>
+          </param>
+        </templateparamlist>
+        <type>StateType</type>
+        <definition>StateType titan23::sa::sa_run</definition>
         <argsstring>(const double TIME_LIMIT)</argsstring>
-        <name>run</name>
+        <name>sa_run</name>
         <param>
           <type>const double</type>
           <declname>TIME_LIMIT</declname>
@@ -77,7 +82,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/sa.cpp" line="54" column="25" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="54" bodyend="95"/>
+        <location file="titan_cpplib/ahc/sa.cpp" line="56" column="15" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="56" bodyend="100"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
