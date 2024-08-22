@@ -40,10 +40,6 @@
         <childnode refid="4" relation="include">
         </childnode>
       </node>
-      <node id="4">
-        <label>titan_cpplib/algorithm/random_tree.cpp</label>
-        <link refid="random__tree_8cpp_source"/>
-      </node>
       <node id="3">
         <label>titan_cpplib/ahc/sa.cpp</label>
         <link refid="sa_8cpp_source"/>
@@ -51,6 +47,10 @@
       <node id="2">
         <label>titan_cpplib/ahc/kmeans.cpp</label>
         <link refid="kmeans_8cpp_source"/>
+      </node>
+      <node id="4">
+        <label>titan_cpplib/algorithm/random_tree.cpp</label>
+        <link refid="random__tree_8cpp_source"/>
       </node>
     </invincdepgraph>
     <innerclass refid="classtitan23_1_1Random" prot="public">titan23::Random</innerclass>

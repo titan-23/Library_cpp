@@ -8,9 +8,6 @@
       <node id="3">
         <label>queue</label>
       </node>
-      <node id="2">
-        <label>vector</label>
-      </node>
       <node id="1">
         <label>titan_cpplib/graph/dijkstra.cpp</label>
         <link refid="dijkstra_8cpp"/>
@@ -18,6 +15,9 @@
         </childnode>
         <childnode refid="3" relation="include">
         </childnode>
+      </node>
+      <node id="2">
+        <label>vector</label>
       </node>
     </incdepgraph>
     <innernamespace refid="namespacetitan23">titan23</innernamespace>

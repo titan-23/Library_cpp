@@ -17,9 +17,6 @@
       <node id="3">
         <label>vector</label>
       </node>
-      <node id="2">
-        <label>iostream</label>
-      </node>
       <node id="1">
         <label>titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp</label>
         <link refid="persistent__lazy__wb__tree_8cpp"/>
@@ -33,6 +30,9 @@
         </childnode>
         <childnode refid="6" relation="include">
         </childnode>
+      </node>
+      <node id="2">
+        <label>iostream</label>
       </node>
       <node id="6">
         <label>memory</label>

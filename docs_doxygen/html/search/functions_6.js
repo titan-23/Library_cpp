@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['len_184',['len',['../classtitan23_1_1Zaatsu.html#ae2eeb830f7e9a40a6b8a7fc368bfeaa2',1,'titan23::Zaatsu::len()'],['../classtitan23_1_1DynamicWaveletTree.html#a7be1bb911b0c138a4b3cbb591c9ca1c8',1,'titan23::DynamicWaveletTree::len()']]]
+  ['kth_5flargest_203',['kth_largest',['../classtitan23_1_1DynamicWaveletTree.html#adbd2d18e73422ccaa2f9c6f044483f2f',1,'titan23::DynamicWaveletTree']]],
+  ['kth_5fsmallest_204',['kth_smallest',['../classtitan23_1_1DynamicWaveletTree.html#af8417ad41638516396e6c9e6c98ddbc3',1,'titan23::DynamicWaveletTree']]]
 ];

@@ -105,7 +105,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <tr class="separator:a6a5940cf0aa3074ee756188401aaa3d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a854d3d9efdd90ba3ce16ea44b6a5878c"><td class="memItemLeft" align="right" valign="top"><a id="a854d3d9efdd90ba3ce16ea44b6a5878c"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicWaveletTree.html#a854d3d9efdd90ba3ce16ea44b6a5878c">range_count</a> (int l, int r, T x) const</td></tr>
-<tr class="memdesc:a854d3d9efdd90ba3ce16ea44b6a5878c"><td class="mdescLeft">&#160;</td><td class="mdescRight">区間 <code>[l, r)</code> の <code>x</code> の個数を返す / <code>O(log(n)log(σ))</code>O(log(n)log(σ)) <br /></td></tr>
+<tr class="memdesc:a854d3d9efdd90ba3ce16ea44b6a5878c"><td class="mdescLeft">&#160;</td><td class="mdescRight">区間 <code>[l, r)</code> の <code>x</code> の個数を返す / <code>O(log(n)log(σ))</code> <br /></td></tr>
 <tr class="separator:a854d3d9efdd90ba3ce16ea44b6a5878c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6b2040b5f979e6aa664b7e6454461153"><td class="memItemLeft" align="right" valign="top"><a id="a6b2040b5f979e6aa664b7e6454461153"></a>
 T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicWaveletTree.html#a6b2040b5f979e6aa664b7e6454461153">access</a> (int k) const</td></tr>
@@ -113,11 +113,11 @@ T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classti
 <tr class="separator:a6b2040b5f979e6aa664b7e6454461153"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af8417ad41638516396e6c9e6c98ddbc3"><td class="memItemLeft" align="right" valign="top"><a id="af8417ad41638516396e6c9e6c98ddbc3"></a>
 T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicWaveletTree.html#af8417ad41638516396e6c9e6c98ddbc3">kth_smallest</a> (int l, int r, int k) const</td></tr>
-<tr class="memdesc:af8417ad41638516396e6c9e6c98ddbc3"><td class="mdescLeft">&#160;</td><td class="mdescRight">区間 <code>[l, r)</code> で <code>k</code> 番目に小さい値を返す / <code>O(log(n)log(σ))</code> <br /></td></tr>
+<tr class="memdesc:af8417ad41638516396e6c9e6c98ddbc3"><td class="mdescLeft">&#160;</td><td class="mdescRight">区間 <code>[l, r)</code> で昇順 <code>k</code> 番目の値を返す / <code>O(log(n)log(σ))</code> <br /></td></tr>
 <tr class="separator:af8417ad41638516396e6c9e6c98ddbc3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adbd2d18e73422ccaa2f9c6f044483f2f"><td class="memItemLeft" align="right" valign="top"><a id="adbd2d18e73422ccaa2f9c6f044483f2f"></a>
 T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicWaveletTree.html#adbd2d18e73422ccaa2f9c6f044483f2f">kth_largest</a> (int l, int r, int k) const</td></tr>
-<tr class="memdesc:adbd2d18e73422ccaa2f9c6f044483f2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">区間 <code>[l, r)</code> で <code>k</code> 番目に大きい値を返す / <code>O(log(n)log(σ))</code> <br /></td></tr>
+<tr class="memdesc:adbd2d18e73422ccaa2f9c6f044483f2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">区間 <code>[l, r)</code> で降順 <code>k</code> 番目の値を返す / <code>O(log(n)log(σ))</code> <br /></td></tr>
 <tr class="separator:adbd2d18e73422ccaa2f9c6f044483f2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af9177c036552364b76fa638c66911a7b"><td class="memItemLeft" align="right" valign="top"><a id="af9177c036552364b76fa638c66911a7b"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1DynamicWaveletTree.html#af9177c036552364b76fa638c66911a7b">range_freq</a> (int l, int r, T x) const</td></tr>
@@ -191,12 +191,12 @@ template&lt;typename T &gt; </div>
 <div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;            vector&lt;T&gt; a(<a class="code" href="classtitan23_1_1DynamicWaveletTree.html#a7be1bb911b0c138a4b3cbb591c9ca1c8">len</a>(), 0);</div>
 <div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;            vector&lt;int&gt; buff0(a.size()), buff1;</div>
 <div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;            <span class="keyword">auto</span> dfs = [&amp;] (<span class="keyword">auto</span> &amp;&amp;dfs,</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;                                            Node* node,</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;                                            <span class="keywordtype">int</span> bit,</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;                                            <span class="keywordtype">bool</span> flag01,</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;                                            <span class="keywordtype">int</span> s0, <span class="keywordtype">int</span> g0,</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;                                            <span class="keywordtype">int</span> s1, <span class="keywordtype">int</span> g1</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;                                            ) -&gt; <span class="keywordtype">void</span> {</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;                            Node* node,</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;                            <span class="keywordtype">int</span> bit,</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;                            <span class="keywordtype">bool</span> flag01,</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;                            <span class="keywordtype">int</span> s0, <span class="keywordtype">int</span> g0,</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;                            <span class="keywordtype">int</span> s1, <span class="keywordtype">int</span> g1</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;                            ) -&gt; <span class="keywordtype">void</span> {</div>
 <div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;                <span class="keywordtype">int</span> s = flag01 ? s1 : s0;</div>
 <div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;                <span class="keywordtype">int</span> g = flag01 ? g1 : g0;</div>
 <div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;                <span class="keywordflow">if</span> (s == g || bit &lt; 0) <span class="keywordflow">return</span>;</div>

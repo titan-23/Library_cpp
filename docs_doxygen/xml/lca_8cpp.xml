@@ -28,6 +28,12 @@
         <childnode refid="7" relation="include">
         </childnode>
       </node>
+      <node id="5">
+        <label>stack</label>
+      </node>
+      <node id="3">
+        <label>vector</label>
+      </node>
       <node id="7">
         <label>titan_cpplib/data_structures/sparse_table.cpp</label>
         <link refid="sparse__table_8cpp_source"/>
@@ -37,12 +43,6 @@
         </childnode>
         <childnode refid="4" relation="include">
         </childnode>
-      </node>
-      <node id="5">
-        <label>stack</label>
-      </node>
-      <node id="3">
-        <label>vector</label>
       </node>
       <node id="2">
         <label>iostream</label>

@@ -241,7 +241,7 @@
           <declname>x</declname>
         </param>
         <briefdescription>
-<para>区間 <computeroutput>[l, r)</computeroutput> の <computeroutput>x</computeroutput> の個数を返す / <computeroutput>O(log(n)log(σ))</computeroutput>O(log(n)log(σ)) </para>
+<para>区間 <computeroutput>[l, r)</computeroutput> の <computeroutput>x</computeroutput> の個数を返す / <computeroutput>O(log(n)log(σ))</computeroutput> </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
@@ -285,7 +285,7 @@
           <declname>k</declname>
         </param>
         <briefdescription>
-<para>区間 <computeroutput>[l, r)</computeroutput> で <computeroutput>k</computeroutput> 番目に小さい値を返す / <computeroutput>O(log(n)log(σ))</computeroutput> </para>
+<para>区間 <computeroutput>[l, r)</computeroutput> で昇順 <computeroutput>k</computeroutput> 番目の値を返す / <computeroutput>O(log(n)log(σ))</computeroutput> </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
@@ -311,7 +311,7 @@
           <declname>k</declname>
         </param>
         <briefdescription>
-<para>区間 <computeroutput>[l, r)</computeroutput> で <computeroutput>k</computeroutput> 番目に大きい値を返す / <computeroutput>O(log(n)log(σ))</computeroutput> </para>
+<para>区間 <computeroutput>[l, r)</computeroutput> で降順 <computeroutput>k</computeroutput> 番目の値を返す / <computeroutput>O(log(n)log(σ))</computeroutput> </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>

@@ -203,19 +203,6 @@
         </inbodydescription>
         <location file="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" line="99" column="23" bodyfile="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" bodystart="99" bodyend="101"/>
       </memberdef>
-      <memberdef kind="function" id="structtitan23_1_1DynamicLazySegmentTree_1_1Node_1aa6b6606a37a76bcbc91e54fadef69c9a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
-        <type>void</type>
-        <definition>void titan23::DynamicLazySegmentTree&lt; IndexType, T, op, e, F, mapping, composition, id, pow &gt;::Node::print</definition>
-        <argsstring>() const</argsstring>
-        <name>print</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" line="103" column="18" bodyfile="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" bodystart="103" bodyend="105"/>
-      </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
@@ -230,7 +217,7 @@
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" line="47" column="9" bodyfile="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" bodystart="47" bodyend="106"/>
+    <location file="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" line="47" column="9" bodyfile="titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp" bodystart="47" bodyend="102"/>
     <listofallmembers>
       <member refid="structtitan23_1_1DynamicLazySegmentTree_1_1Node_1ab4719e78f0217e5a1ef4ce857ed027d2" prot="public" virt="non-virtual"><scope>titan23::DynamicLazySegmentTree::Node</scope><name>apply</name></member>
       <member refid="structtitan23_1_1DynamicLazySegmentTree_1_1Node_1a242e02096efc3252b01556d8775f968b" prot="public" virt="non-virtual"><scope>titan23::DynamicLazySegmentTree::Node</scope><name>data</name></member>
@@ -242,7 +229,6 @@
       <member refid="structtitan23_1_1DynamicLazySegmentTree_1_1Node_1abf08d05b66f4b510761f447e6af5c917" prot="public" virt="non-virtual"><scope>titan23::DynamicLazySegmentTree::Node</scope><name>mid</name></member>
       <member refid="structtitan23_1_1DynamicLazySegmentTree_1_1Node_1af2b8c5fd903285f9c2fdaacffc6bf2d3" prot="public" virt="non-virtual"><scope>titan23::DynamicLazySegmentTree::Node</scope><name>Node</name></member>
       <member refid="structtitan23_1_1DynamicLazySegmentTree_1_1Node_1a00f1c7a0d1333ad05d670e28221535f0" prot="public" virt="non-virtual"><scope>titan23::DynamicLazySegmentTree::Node</scope><name>Node</name></member>
-      <member refid="structtitan23_1_1DynamicLazySegmentTree_1_1Node_1aa6b6606a37a76bcbc91e54fadef69c9a" prot="public" virt="non-virtual"><scope>titan23::DynamicLazySegmentTree::Node</scope><name>print</name></member>
       <member refid="structtitan23_1_1DynamicLazySegmentTree_1_1Node_1a50e956700acc5e841431769ca8c4cadf" prot="public" virt="non-virtual"><scope>titan23::DynamicLazySegmentTree::Node</scope><name>propagate</name></member>
       <member refid="structtitan23_1_1DynamicLazySegmentTree_1_1Node_1a798ccb30e08588e0052ac702417d95e8" prot="public" virt="non-virtual"><scope>titan23::DynamicLazySegmentTree::Node</scope><name>r</name></member>
       <member refid="structtitan23_1_1DynamicLazySegmentTree_1_1Node_1a8ccc5ef6b22aa6cac81fcceaad775192" prot="public" virt="non-virtual"><scope>titan23::DynamicLazySegmentTree::Node</scope><name>right</name></member>

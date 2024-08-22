@@ -5,14 +5,6 @@
     <includedby refid="avl__tree__multiset_8cpp" local="yes">titan_cpplib/data_structures/avl_tree_multiset.cpp</includedby>
     <includedby refid="avl__tree__set_8cpp" local="yes">titan_cpplib/data_structures/avl_tree_set.cpp</includedby>
     <invincdepgraph>
-      <node id="3">
-        <label>titan_cpplib/data_structures/avl_tree_set.cpp</label>
-        <link refid="avl__tree__set_8cpp_source"/>
-      </node>
-      <node id="2">
-        <label>titan_cpplib/data_structures/avl_tree_multiset.cpp</label>
-        <link refid="avl__tree__multiset_8cpp_source"/>
-      </node>
       <node id="1">
         <label>titan_cpplib/data_structures/bbst_node.cpp</label>
         <link refid="bbst__node_8cpp"/>
@@ -20,6 +12,14 @@
         </childnode>
         <childnode refid="3" relation="include">
         </childnode>
+      </node>
+      <node id="3">
+        <label>titan_cpplib/data_structures/avl_tree_set.cpp</label>
+        <link refid="avl__tree__set_8cpp_source"/>
+      </node>
+      <node id="2">
+        <label>titan_cpplib/data_structures/avl_tree_multiset.cpp</label>
+        <link refid="avl__tree__multiset_8cpp_source"/>
       </node>
     </invincdepgraph>
     <innerclass refid="classtitan23_1_1BBSTNode" prot="public">titan23::BBSTNode</innerclass>

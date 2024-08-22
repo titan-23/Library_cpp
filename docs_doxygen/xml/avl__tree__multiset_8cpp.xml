@@ -9,8 +9,21 @@
     <includes local="no">cassert</includes>
     <includes refid="bbst__node_8cpp" local="yes">titan_cpplib/data_structures/bbst_node.cpp</includes>
     <incdepgraph>
+      <node id="7">
+        <label>titan_cpplib/data_structures/bbst_node.cpp</label>
+        <link refid="bbst__node_8cpp_source"/>
+      </node>
       <node id="6">
         <label>cassert</label>
+      </node>
+      <node id="5">
+        <label>optional</label>
+      </node>
+      <node id="4">
+        <label>vector</label>
+      </node>
+      <node id="2">
+        <label>iostream</label>
       </node>
       <node id="1">
         <label>titan_cpplib/data_structures/avl_tree_multiset.cpp</label>
@@ -28,21 +41,8 @@
         <childnode refid="7" relation="include">
         </childnode>
       </node>
-      <node id="5">
-        <label>optional</label>
-      </node>
-      <node id="4">
-        <label>vector</label>
-      </node>
-      <node id="2">
-        <label>iostream</label>
-      </node>
       <node id="3">
         <label>algorithm</label>
-      </node>
-      <node id="7">
-        <label>titan_cpplib/data_structures/bbst_node.cpp</label>
-        <link refid="bbst__node_8cpp_source"/>
       </node>
     </incdepgraph>
     <innerclass refid="classtitan23_1_1AVLTreeMultiset" prot="public">titan23::AVLTreeMultiset</innerclass>

@@ -99,10 +99,6 @@ namespace titan23 {
             IndexType mid() const {
                 return (this->l + this->r) / 2;
             }
-
-            void print() const {
-                printf("  node : [%lld, %lld), data.val=%lld, lazy=%d\n", l, r, data.val, lazy);
-            }
         };
 
       private:
@@ -209,7 +205,7 @@ namespace titan23 {
 
         //! 適当に表示する
         void print() {
-            for (int i = 0; i < u; ++id) {
+            for (IndexType i = 0; i < u; ++id) {
                 cout << get(i) << ", ";
             }
             cout << endl;

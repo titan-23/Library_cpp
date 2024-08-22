@@ -288,6 +288,7 @@
     <member refid="classtitan23_1_1CumulativeSum_1ac12d01787658e6e91fa3d471eae03864" kind="function"><name>sum</name></member>
     <member refid="classtitan23_1_1CumulativeSum_1a9dd78ace7793f96da84a34f8d79fa8bf" kind="function"><name>prod</name></member>
     <member refid="classtitan23_1_1CumulativeSum_1a9844d6f91be1582781dc7af97b57b77a" kind="function"><name>all_prod</name></member>
+    <member refid="classtitan23_1_1CumulativeSum_1a914ff6bf10b5bfaffbde0b7a22707456" kind="function"><name>len</name></member>
     <member refid="classtitan23_1_1CumulativeSum_1af5d879656e99410be8f1ac3a6159bfb7" kind="function"><name>print</name></member>
   </compound>
   <compound refid="classtitan23_1_1CumulativeSum2D" kind="class"><name>titan23::CumulativeSum2D</name>
@@ -838,7 +839,6 @@
     <member refid="structtitan23_1_1DynamicLazySegmentTree_1_1Node_1a50e956700acc5e841431769ca8c4cadf" kind="function"><name>propagate</name></member>
     <member refid="structtitan23_1_1DynamicLazySegmentTree_1_1Node_1a5ff8139124f00c5335b152d839f97c6e" kind="function"><name>update</name></member>
     <member refid="structtitan23_1_1DynamicLazySegmentTree_1_1Node_1abf08d05b66f4b510761f447e6af5c917" kind="function"><name>mid</name></member>
-    <member refid="structtitan23_1_1DynamicLazySegmentTree_1_1Node_1aa6b6606a37a76bcbc91e54fadef69c9a" kind="function"><name>print</name></member>
   </compound>
   <compound refid="structtitan23_1_1DynamicSegmentTree_1_1Node" kind="struct"><name>titan23::DynamicSegmentTree::Node</name>
     <member refid="structtitan23_1_1DynamicSegmentTree_1_1Node_1a72159549d96ae14996a82e4923e62f25" kind="variable"><name>left</name></member>
@@ -1179,27 +1179,43 @@
   </compound>
   <compound refid="structtitan23_1_1StaticMultiset" kind="struct"><name>titan23::StaticMultiset</name>
     <member refid="structtitan23_1_1StaticMultiset_1a7b14a64c532f51f6d434c0e93ef84d7c" kind="variable"><name>data</name></member>
+    <member refid="structtitan23_1_1StaticMultiset_1ab8ec9ef571502f44b57e2499a3c49403" kind="variable"><name>missing</name></member>
     <member refid="structtitan23_1_1StaticMultiset_1ab23d3a583f741f5359a9cd29d70055d3" kind="variable"><name>n</name></member>
     <member refid="structtitan23_1_1StaticMultiset_1aae4d8eb6668bdfc22944ddb4862064d6" kind="function"><name>StaticMultiset</name></member>
-    <member refid="structtitan23_1_1StaticMultiset_1aaa3841f30642dff68e3621cad99f1018" kind="function"><name>StaticMultiset</name></member>
+    <member refid="structtitan23_1_1StaticMultiset_1acb1989a9b3c95d95a645e28e207e042f" kind="function"><name>StaticMultiset</name></member>
+    <member refid="structtitan23_1_1StaticMultiset_1ac1792fc44a8a6a009ab5ac2bc472cc74" kind="function"><name>StaticMultiset</name></member>
     <member refid="structtitan23_1_1StaticMultiset_1abc28f1f77c11af5de51c423ed5fffddb" kind="function"><name>print</name></member>
+    <member refid="structtitan23_1_1StaticMultiset_1ace6c918209ead7e9000450622a2163ba" kind="function"><name>len</name></member>
     <member refid="structtitan23_1_1StaticMultiset_1a4064ba61bf8967193ed269edb5dd4060" kind="function"><name>get</name></member>
-    <member refid="structtitan23_1_1StaticMultiset_1ad40f539f907d5d5d64f14fe9c5c95171" kind="function"><name>ge</name></member>
-    <member refid="structtitan23_1_1StaticMultiset_1ab2bea4b18104098bbc1d61ebc0aae53e" kind="function"><name>gt</name></member>
-    <member refid="structtitan23_1_1StaticMultiset_1a69773bf640b43b5fd84be7ec163b6b62" kind="function"><name>le</name></member>
-    <member refid="structtitan23_1_1StaticMultiset_1adcc1da02fe6c9a3d3d47ec0c2de6185c" kind="function"><name>lt</name></member>
+    <member refid="structtitan23_1_1StaticMultiset_1aeb2496fcb55cb018023ed52ca87736d8" kind="function"><name>ge</name></member>
+    <member refid="structtitan23_1_1StaticMultiset_1a9fa80119ceef2e80f03e12d7e465ba44" kind="function"><name>gt</name></member>
+    <member refid="structtitan23_1_1StaticMultiset_1af1dd98fcd6eb476bf42b58757b41104b" kind="function"><name>le</name></member>
+    <member refid="structtitan23_1_1StaticMultiset_1a701d7530b336075b9078b81ca8f3880e" kind="function"><name>lt</name></member>
+    <member refid="structtitan23_1_1StaticMultiset_1a9a66cdc3329d14f9e3682ef1c40d78cb" kind="function"><name>index</name></member>
+    <member refid="structtitan23_1_1StaticMultiset_1ac60ad00e67b0e9f9ce70a815209404f4" kind="function"><name>index_right</name></member>
+    <member refid="structtitan23_1_1StaticMultiset_1aac79b2bd53a0cd9318264cba64be58f7" kind="function"><name>count</name></member>
+    <member refid="structtitan23_1_1StaticMultiset_1a78c54385b1cde39cb012283f953a3f12" kind="function"><name>count_range</name></member>
+    <member refid="structtitan23_1_1StaticMultiset_1a2b82a7a55d1b66711365c0f3b793fbed" kind="function"><name>contains</name></member>
   </compound>
   <compound refid="structtitan23_1_1StaticSet" kind="struct"><name>titan23::StaticSet</name>
     <member refid="structtitan23_1_1StaticSet_1a13565dba0085039e149da1dc3edfd19f" kind="variable"><name>data</name></member>
+    <member refid="structtitan23_1_1StaticSet_1a9cd0932bad465eac99182bf50ca8bb73" kind="variable"><name>missing</name></member>
     <member refid="structtitan23_1_1StaticSet_1a81fc4514cdfc3cfe797005e27a7e6ce8" kind="variable"><name>n</name></member>
     <member refid="structtitan23_1_1StaticSet_1ae4a3e8e568369a7c4abb021952fb97db" kind="function"><name>StaticSet</name></member>
-    <member refid="structtitan23_1_1StaticSet_1a006df26154675b53f153403af3d5b4da" kind="function"><name>StaticSet</name></member>
+    <member refid="structtitan23_1_1StaticSet_1a8df98a07bfeadf507e641fd882d23e61" kind="function"><name>StaticSet</name></member>
+    <member refid="structtitan23_1_1StaticSet_1a0dab9edccbc7926c9260a85fe7fde351" kind="function"><name>StaticSet</name></member>
     <member refid="structtitan23_1_1StaticSet_1adf3d19e66f7f809ddabb90deaa12192d" kind="function"><name>print</name></member>
-    <member refid="structtitan23_1_1StaticSet_1a6e37c99e15125d7544a5428e4c453fd1" kind="function"><name>get</name></member>
-    <member refid="structtitan23_1_1StaticSet_1afb9cd6fc51a2f024c012c669922f8cad" kind="function"><name>ge</name></member>
-    <member refid="structtitan23_1_1StaticSet_1a39edff4a83b0a36b42986b252fb90f04" kind="function"><name>gt</name></member>
-    <member refid="structtitan23_1_1StaticSet_1af186428a67998fefa5ea1a45433ae1f7" kind="function"><name>le</name></member>
-    <member refid="structtitan23_1_1StaticSet_1a3d13d6af4afcb30a0a3da8deb22af9a6" kind="function"><name>lt</name></member>
+    <member refid="structtitan23_1_1StaticSet_1a805141fd65f0655899893923acba53b3" kind="function"><name>len</name></member>
+    <member refid="structtitan23_1_1StaticSet_1ac63810add486d2caceb893f8ca513bf3" kind="function"><name>get</name></member>
+    <member refid="structtitan23_1_1StaticSet_1ae16fe75766fd1a6485f795533e552d97" kind="function"><name>ge</name></member>
+    <member refid="structtitan23_1_1StaticSet_1ac96b0dd5cef5b74b89c75300dd932fac" kind="function"><name>gt</name></member>
+    <member refid="structtitan23_1_1StaticSet_1adf8326b017041cabf3314923fb951949" kind="function"><name>le</name></member>
+    <member refid="structtitan23_1_1StaticSet_1a0d5f87c1003f9b7260619bb59703ab2d" kind="function"><name>lt</name></member>
+    <member refid="structtitan23_1_1StaticSet_1a080d4b9a49bc98342b76b20902a139d3" kind="function"><name>index</name></member>
+    <member refid="structtitan23_1_1StaticSet_1a26bd7538968d546eaa982bada8816136" kind="function"><name>index_right</name></member>
+    <member refid="structtitan23_1_1StaticSet_1a125fed6c2c72d75fb9032b2c2a4de25f" kind="function"><name>count</name></member>
+    <member refid="structtitan23_1_1StaticSet_1accd4032543d90325ba90f889460220bd" kind="function"><name>count_range</name></member>
+    <member refid="structtitan23_1_1StaticSet_1accbe72e255023838a7edb9b5e456375d" kind="function"><name>contains</name></member>
   </compound>
   <compound refid="structtitan23_1_1beam__search_1_1SubState" kind="struct"><name>titan23::beam_search::SubState</name>
     <member refid="structtitan23_1_1beam__search_1_1SubState_1a837089ca5344854a2497bd5bf4d92116" kind="variable"><name>score</name></member>

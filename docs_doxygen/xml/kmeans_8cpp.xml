@@ -25,6 +25,9 @@
       <node id="2">
         <label>vector</label>
       </node>
+      <node id="3">
+        <label>set</label>
+      </node>
       <node id="1">
         <label>titan_cpplib/ahc/kmeans.cpp</label>
         <link refid="kmeans_8cpp"/>
@@ -34,9 +37,6 @@
         </childnode>
         <childnode refid="4" relation="include">
         </childnode>
-      </node>
-      <node id="3">
-        <label>set</label>
       </node>
     </incdepgraph>
     <innerclass refid="classtitan23_1_1Kmeans" prot="public">titan23::Kmeans</innerclass>

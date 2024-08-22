@@ -11,12 +11,6 @@
       <node id="2">
         <label>cassert</label>
       </node>
-      <node id="5">
-        <label>stack</label>
-      </node>
-      <node id="4">
-        <label>vector</label>
-      </node>
       <node id="1">
         <label>titan_cpplib/ahc/state_pool.cpp</label>
         <link refid="state__pool_8cpp"/>
@@ -28,6 +22,12 @@
         </childnode>
         <childnode refid="5" relation="include">
         </childnode>
+      </node>
+      <node id="5">
+        <label>stack</label>
+      </node>
+      <node id="4">
+        <label>vector</label>
       </node>
       <node id="3">
         <label>memory</label>
