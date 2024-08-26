@@ -15,8 +15,9 @@ namespace titan23 {
         vector<int> par;
         vector<vector<int>> G;
 
-      public:
-        UnionFind(int n) : n(n), group_numbers(n), par(n, -1), G(n) {}
+   public:
+    UnionFind() {}
+    UnionFind(int n) : n(n), group_numbers(n), par(n, -1), G(n) {}
 
         int root(int x) {
             int a = x, y;

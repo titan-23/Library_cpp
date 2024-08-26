@@ -155,7 +155,7 @@ namespace titan23 {
             return r - l;
         }
 
-        //! 区間 `[l, r)` の `x` の個数を返す / `O(log(n)log(σ))`O(log(n)log(σ))
+        //! 区間 `[l, r)` の `x` の個数を返す / `O(log(n)log(σ))`
         int range_count(int l, int r, T x) const {
             return rank(r, x) - rank(l, x);
         }
@@ -179,7 +179,7 @@ namespace titan23 {
             return s;
         }
 
-        //! 区間 `[l, r)` で `k` 番目に小さい値を返す / `O(log(n)log(σ))`
+        //! 区間 `[l, r)` で昇順 `k` 番目の値を返す / `O(log(n)log(σ))`
         T kth_smallest(int l, int r, int k) const {
             Node* node = root;
             T s = 0;
@@ -202,7 +202,7 @@ namespace titan23 {
             return s;
         }
 
-        //! 区間 `[l, r)` で `k` 番目に大きい値を返す / `O(log(n)log(σ))`
+        //! 区間 `[l, r)` で降順 `k` 番目の値を返す / `O(log(n)log(σ))`
         T kth_largest(int l, int r, int k) const {
             return kth_smallest(l, r, r-l-k-1);
         }
