@@ -22,7 +22,7 @@ namespace titan23 {
           nxt[v*n+x] = x;
         }
         for (const auto &[x, c]: G[v]) {
-          dist[v*n+x] = c;
+          dist[v*n+x] = min(dist[v*n+x], c);
         }
         dist[v*n+v] = 0;
       }
