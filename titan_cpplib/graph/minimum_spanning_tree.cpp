@@ -4,7 +4,9 @@
 using namespace std;
 
 namespace titan23 {
-    vector<pair<int, int>> minimum_spanning_tree(int n, vector<pair<int, int>> &E) {
+
+    //! 最小全域木の辺集合を返す
+    vector<pair<int, int>> minimum_spanning_tree(int n, const vector<pair<int, int>> &E) {
         titan23::UnionFind uf(n);
         vector<pair<int, int>> ans;
         for (auto [u, v] : E) {

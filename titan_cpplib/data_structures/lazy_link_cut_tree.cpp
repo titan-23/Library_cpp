@@ -2,10 +2,17 @@
 #include <cassert>
 using namespace std;
 
-// LinkCutTree
+// LazyLinkCutTree
 namespace titan23 {
 
-    class LinkCutTree {
+    template <class T,
+            class F,
+            T (*op)(T, T),
+            T (*mapping)(F, T),
+            F (*composition)(F, F),
+            T (*e)(),
+            F (*id)()>
+    class LazyLinkCutTree {
       private:
         struct Node;
         using NodePtr = Node*;
@@ -13,10 +20,14 @@ namespace titan23 {
 
         struct Node {
             int index, size, rev;
+            T key, data, rdata;
+            F lazy;
             NodePtr left, right, par;
 
-            Node(const int index) :
+            Node(const int index, const T key, const F lazy) :
                     index(index), size(1), rev(0),
+                    key(key), data(key), rdata(key),
+                    lazy(lazy),
                     left(nullptr), right(nullptr), par(nullptr) {
             }
 
@@ -30,13 +41,27 @@ namespace titan23 {
             node->rev ^= 1;
         }
 
+        void _apply_f(const NodePtr node, const F f) {
+            if (!node) return;
+            node->key = mapping(f, node->key);
+            node->data = mapping(f, node->data);
+            node->rdata = mapping(f, node->rdata);
+            node->lazy = composition(f, node->lazy);
+        }
+
         void _propagate(const NodePtr node) {
             if (!node) return;
             if (node->rev) {
+                swap(node->data, node->rdata);
                 swap(node->left, node->right);
                 _apply_rev(node->left);
                 _apply_rev(node->right);
                 node->rev = 0;
+            }
+            if (node->lazy != id()) {
+                _apply_f(node->left, node->lazy);
+                _apply_f(node->right, node->lazy);
+                node->lazy = id();
             }
         }
 
@@ -44,11 +69,17 @@ namespace titan23 {
             if (!node) return;
             _propagate(node->left);
             _propagate(node->right);
+            node->data = node->key;
+            node->rdata = node->key;
             node->size = 1;
             if (node->left) {
+                node->data = op(node->left->data, node->data);
+                node->rdata = op(node->rdata, node->left->rdata);
                 node->size += node->left->size;
             }
             if (node->right) {
+                node->data = op(node->data, node->right->data);
+                node->rdata = op(node->right->rdata, node->rdata);
                 node->size += node->right->size;
             }
         }
@@ -143,12 +174,12 @@ namespace titan23 {
         }
 
       public:
-        LinkCutTree() {}
+        LazyLinkCutTree() {}
 
-        LinkCutTree(int n) {
+        LazyLinkCutTree(int n) {
             pool.resize(n);
             for (int i = 0; i < n; ++i) {
-                pool[i] = new Node(i);
+                pool[i] = new Node(i, e(), id());
             }
         }
 
@@ -182,6 +213,19 @@ namespace titan23 {
             _evert(pool[v]);
         }
 
+        T path_prod(int u, int v) {
+            evert(u);
+            expose(v);
+            return pool[v]->data;
+        }
+
+        void path_apply(int u, int v, F f) {
+            evert(u);
+            expose(v);
+            _apply_f(pool[v], f);
+            _propagate(pool[v]);
+        }
+
         bool merge(int u, int v) {
             if (same(u, v)) return false;
             evert(u);
@@ -192,6 +236,18 @@ namespace titan23 {
         void split(int u, int v) {
             evert(u);
             cut(v);
+        }
+
+        T get(int k) {
+            _splay(pool[k]);
+            return pool[k]->key;
+        }
+
+        void set(int k, T v) {
+            NodePtr node = pool[k];
+            _splay(node);
+            node->key = v;
+            _update(node);
         }
 
         int path_kth_elm(int s, int t, int k) {
