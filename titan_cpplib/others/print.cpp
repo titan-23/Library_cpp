@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <set>
+#include <unordered_set>
 #include <map>
 using namespace std;
 
@@ -57,6 +58,19 @@ ostream& operator<<(ostream& os, const set<T>& a) {
     if (x != *(--a.end())) {
       os << ", ";
     }
+  }
+  os << "}";
+  return os;
+}
+
+// unordered_set<T>
+template <typename T>
+ostream& operator<<(ostream& os, const unordered_set<T>& a) {
+  int n = (int)a.size();
+  os << "{";
+  for (const T &x: a) {
+    os << x;
+    os << ", ";
   }
   os << "}";
   return os;

@@ -69,71 +69,77 @@ $(function() {
 <div class="title">lca.cpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &lt;iostream&gt;</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &lt;cassert&gt;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;stack&gt;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;climits&gt;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &quot;titan_cpplib/data_structures/sparse_table.cpp&quot;</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="keyword">using namespace </span>std;</div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment">// LCA</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="keyword">namespace </span>titan23 {</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
-<div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="structtitan23_1_1LCA.html">   12</a></span>&#160;  <span class="keyword">struct </span><a class="code" href="structtitan23_1_1LCA.html">LCA</a> {</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;   <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">int</span> __LCA_op(<span class="keywordtype">int</span> s, <span class="keywordtype">int</span> t) { <span class="keywordflow">return</span> min(s, t); }</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">int</span> __LCA_e() { <span class="keywordflow">return</span> INT_MAX; }</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    <span class="keywordtype">int</span> n;</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    vector&lt;int&gt; path, nodein, par;</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    <a class="code" href="structtitan23_1_1SparseTable.html">SparseTable&lt;int, __LCA_op, __LCA_e&gt;</a> st;</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;   <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    <a class="code" href="structtitan23_1_1LCA.html">LCA</a>() {}</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <a class="code" href="structtitan23_1_1LCA.html">LCA</a>(<span class="keyword">const</span> vector&lt;vector&lt;int&gt;&gt; &amp;G, <span class="keyword">const</span> <span class="keywordtype">int</span> root) :</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        n((<span class="keywordtype">int</span>)G.size()), path(n), nodein(n, -1), par(n, -1) {</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;      <span class="keywordtype">int</span> time = -1, ptr = 0;</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;      <span class="keywordtype">int</span> s[n];</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;      s[ptr++] = root;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;      <span class="keywordflow">while</span> (ptr) {</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        <span class="keywordtype">int</span> v = s[--ptr];</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <span class="keywordflow">if</span> (time &gt;= 0) {</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;          path[time] = par[v];</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        }</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        ++time;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        nodein[v] = time;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keywordtype">int</span> &amp;x: G[v]) {</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;          <span class="keywordflow">if</span> (nodein[x] != -1) <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;          par[x] = v;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;          s[ptr++] = x;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        }</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;      }</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;      vector&lt;int&gt; a(n);</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;      <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; n; ++i) {</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        a[i] = nodein[path[i]];</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;      }</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;      st = <a class="code" href="structtitan23_1_1SparseTable.html">SparseTable&lt;int, __LCA_op, __LCA_e&gt;</a>(a);</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    }</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keywordtype">int</span> lca(<span class="keyword">const</span> <span class="keywordtype">int</span> u, <span class="keyword">const</span> <span class="keywordtype">int</span> v)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;      <span class="keywordtype">int</span> l = nodein[u], r = nodein[v];</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;      <span class="keywordflow">if</span> (l &gt; r) swap(l, r);</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;      <span class="keywordflow">return</span> path[st.prod(l, r)];</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    }</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keywordtype">int</span> lca_mul(<span class="keyword">const</span> vector&lt;int&gt; &amp;a)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;      <span class="keywordtype">int</span> l = n*2+1;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;      <span class="keywordtype">int</span> r = -l;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;      <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keywordtype">int</span> &amp;e: a) {</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        <span class="keywordtype">int</span> x = nodein[e];</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        <span class="keywordflow">if</span> (l &gt; x) l = x;</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        <span class="keywordflow">if</span> (r &lt; x) r = x;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;      }</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;      <span class="keywordflow">return</span> path[st.prod(l, r)];</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    }</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  };</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;}  <span class="comment">// namspace titan23</span></div>
-<div class="ttc" id="astructtitan23_1_1LCA_html"><div class="ttname"><a href="structtitan23_1_1LCA.html">titan23::LCA</a></div><div class="ttdef"><b>Definition:</b> <a href="lca_8cpp_source.html#l00012">lca.cpp:12</a></div></div>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &lt;cassert&gt;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &lt;stack&gt;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;climits&gt;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &quot;titan_cpplib/data_structures/sparse_table.cpp&quot;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="keyword">using namespace </span>std;</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment">// LCA</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">namespace </span>titan23 {</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; </div>
+<div class="line"><a name="l00015"></a><span class="lineno"><a class="line" href="classtitan23_1_1LCA.html">   15</a></span>&#160;    <span class="keyword">class </span><a class="code" href="classtitan23_1_1LCA.html">LCA</a> {</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;      <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">int</span> __LCA_op(<span class="keywordtype">int</span> s, <span class="keywordtype">int</span> t) { <span class="keywordflow">return</span> min(s, t); }</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        <span class="keyword">static</span> <span class="keywordtype">int</span> __LCA_e() { <span class="keywordflow">return</span> INT_MAX; }</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        <span class="keywordtype">int</span> n;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        vector&lt;int&gt; path, nodein, par;</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <a class="code" href="structtitan23_1_1SparseTable.html">SparseTable&lt;int, __LCA_op, __LCA_e&gt;</a> st;</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;      <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        <a class="code" href="classtitan23_1_1LCA.html">LCA</a>() {}</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
+<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="classtitan23_1_1LCA.html#ad54cc0a876541a5eb907486b4782083c">   27</a></span>&#160;        <a class="code" href="classtitan23_1_1LCA.html#ad54cc0a876541a5eb907486b4782083c">LCA</a>(<span class="keyword">const</span> vector&lt;vector&lt;int&gt;&gt; &amp;G, <span class="keyword">const</span> <span class="keywordtype">int</span> root) :</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;                n((int)G.size()), path(n), nodein(n, -1), par(n, -1) {</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;            <span class="keywordtype">int</span> time = -1, ptr = 0;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;            <span class="keywordtype">int</span> s[n];</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;            s[ptr++] = root;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;            <span class="keywordflow">while</span> (ptr) {</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;                <span class="keywordtype">int</span> v = s[--ptr];</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;                <span class="keywordflow">if</span> (time &gt;= 0) {</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;                    path[time] = par[v];</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;                }</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;                ++time;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;                nodein[v] = time;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;                <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keywordtype">int</span> &amp;x: G[v]) {</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;                    <span class="keywordflow">if</span> (nodein[x] != -1) <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;                    par[x] = v;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;                    s[ptr++] = x;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;                }</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;            }</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;            vector&lt;int&gt; a(n);</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; n; ++i) {</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;                a[i] = nodein[path[i]];</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;            }</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;            st = <a class="code" href="structtitan23_1_1SparseTable.html">SparseTable&lt;int, __LCA_op, __LCA_e&gt;</a>(a);</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        }</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
+<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="classtitan23_1_1LCA.html#a161954869b0c81788e994afa8f248535">   53</a></span>&#160;        <span class="keywordtype">int</span> <a class="code" href="classtitan23_1_1LCA.html#a161954869b0c81788e994afa8f248535">lca</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> u, <span class="keyword">const</span> <span class="keywordtype">int</span> v)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;            <span class="keywordflow">if</span> (u == v) <span class="keywordflow">return</span> u;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;            <span class="keywordtype">int</span> l = nodein[u], r = nodein[v];</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;            <span class="keywordflow">if</span> (l &gt; r) swap(l, r);</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;            <span class="keywordflow">return</span> path[st.prod(l, r)];</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        }</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
+<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="classtitan23_1_1LCA.html#ab1924c1da3730a050151889407baad21">   61</a></span>&#160;        <span class="keywordtype">int</span> <a class="code" href="classtitan23_1_1LCA.html#ab1924c1da3730a050151889407baad21">lca_mul</a>(<span class="keyword">const</span> vector&lt;int&gt; &amp;a)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;            assert(!a.empty());</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;            <span class="keywordtype">int</span> l = n*2+1;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;            <span class="keywordtype">int</span> r = -l;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keywordtype">int</span> &amp;e: a) {</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;                <span class="keywordtype">int</span> x = nodein[e];</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;                <span class="keywordflow">if</span> (l &gt; x) l = x;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;                <span class="keywordflow">if</span> (r &lt; x) r = x;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;            }</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;            <span class="keywordflow">if</span> (l == r) <span class="keywordflow">return</span> a[0];</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;            <span class="keywordflow">return</span> path[st.prod(l, r)];</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        }</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    };</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;}  <span class="comment">// namspace titan23</span></div>
+<div class="ttc" id="aclasstitan23_1_1LCA_html"><div class="ttname"><a href="classtitan23_1_1LCA.html">titan23::LCA</a></div><div class="ttdoc">静的なグラフに対しLCAを求めるだけのライブラリ &lt;O(nlogn), O(1)&gt;</div><div class="ttdef"><b>Definition:</b> <a href="lca_8cpp_source.html#l00015">lca.cpp:15</a></div></div>
+<div class="ttc" id="aclasstitan23_1_1LCA_html_a161954869b0c81788e994afa8f248535"><div class="ttname"><a href="classtitan23_1_1LCA.html#a161954869b0c81788e994afa8f248535">titan23::LCA::lca</a></div><div class="ttdeci">int lca(const int u, const int v) const</div><div class="ttdoc">u, v の lca を求める / O(1)</div><div class="ttdef"><b>Definition:</b> <a href="lca_8cpp_source.html#l00053">lca.cpp:53</a></div></div>
+<div class="ttc" id="aclasstitan23_1_1LCA_html_ab1924c1da3730a050151889407baad21"><div class="ttname"><a href="classtitan23_1_1LCA.html#ab1924c1da3730a050151889407baad21">titan23::LCA::lca_mul</a></div><div class="ttdeci">int lca_mul(const vector&lt; int &gt; &amp;a) const</div><div class="ttdoc">頂点集合 a の lca を求める / O(|a|)</div><div class="ttdef"><b>Definition:</b> <a href="lca_8cpp_source.html#l00061">lca.cpp:61</a></div></div>
+<div class="ttc" id="aclasstitan23_1_1LCA_html_ad54cc0a876541a5eb907486b4782083c"><div class="ttname"><a href="classtitan23_1_1LCA.html#ad54cc0a876541a5eb907486b4782083c">titan23::LCA::LCA</a></div><div class="ttdeci">LCA(const vector&lt; vector&lt; int &gt;&gt; &amp;G, const int root)</div><div class="ttdoc">隣接リスト G 、根 root として前計算をする / O(nlogn)</div><div class="ttdef"><b>Definition:</b> <a href="lca_8cpp_source.html#l00027">lca.cpp:27</a></div></div>
 <div class="ttc" id="astructtitan23_1_1SparseTable_html"><div class="ttname"><a href="structtitan23_1_1SparseTable.html">titan23::SparseTable&lt; int, __LCA_op, __LCA_e &gt;</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

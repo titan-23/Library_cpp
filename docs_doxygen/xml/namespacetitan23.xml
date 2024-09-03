@@ -25,20 +25,24 @@
     <innerclass refid="classtitan23_1_1DynamicBitVector" prot="public">titan23::DynamicBitVector</innerclass>
     <innerclass refid="structtitan23_1_1DynamicFenwickTree2D" prot="public">titan23::DynamicFenwickTree2D</innerclass>
     <innerclass refid="classtitan23_1_1DynamicLazySegmentTree" prot="public">titan23::DynamicLazySegmentTree</innerclass>
+    <innerclass refid="classtitan23_1_1DynamicList" prot="public">titan23::DynamicList</innerclass>
     <innerclass refid="classtitan23_1_1DynamicSegmentTree" prot="public">titan23::DynamicSegmentTree</innerclass>
     <innerclass refid="classtitan23_1_1DynamicSegmentTreeInit" prot="public">titan23::DynamicSegmentTreeInit</innerclass>
     <innerclass refid="classtitan23_1_1DynamicWaveletMatrix" prot="public">titan23::DynamicWaveletMatrix</innerclass>
     <innerclass refid="classtitan23_1_1DynamicWaveletTree" prot="public">titan23::DynamicWaveletTree</innerclass>
-    <innerclass refid="structtitan23_1_1EulerTourTree" prot="public">titan23::EulerTourTree</innerclass>
+    <innerclass refid="classtitan23_1_1EulerTourTree" prot="public">titan23::EulerTourTree</innerclass>
     <innerclass refid="structtitan23_1_1FenwickTree" prot="public">titan23::FenwickTree</innerclass>
     <innerclass refid="structtitan23_1_1FenwickTree2D" prot="public">titan23::FenwickTree2D</innerclass>
     <innerclass refid="classtitan23_1_1HashDict" prot="public">titan23::HashDict</innerclass>
+    <innerclass refid="classtitan23_1_1LazyLinkCutTree" prot="public">titan23::LazyLinkCutTree</innerclass>
     <innerclass refid="classtitan23_1_1LazyWBTree" prot="public">titan23::LazyWBTree</innerclass>
     <innerclass refid="classtitan23_1_1LinkCutTree" prot="public">titan23::LinkCutTree</innerclass>
     <innerclass refid="classtitan23_1_1MinHeap" prot="public">titan23::MinHeap</innerclass>
     <innerclass refid="classtitan23_1_1OfflineDynamicConnectivity" prot="public">titan23::OfflineDynamicConnectivity</innerclass>
     <innerclass refid="classtitan23_1_1OfflineDynamicConnectivitySum" prot="public">titan23::OfflineDynamicConnectivitySum</innerclass>
+    <innerclass refid="classtitan23_1_1PersistentArray" prot="public">titan23::PersistentArray</innerclass>
     <innerclass refid="classtitan23_1_1PersistentLazyWBTree" prot="public">titan23::PersistentLazyWBTree</innerclass>
+    <innerclass refid="classtitan23_1_1PersistentSegmentTree" prot="public">titan23::PersistentSegmentTree</innerclass>
     <innerclass refid="classtitan23_1_1PersistentStack" prot="public">titan23::PersistentStack</innerclass>
     <innerclass refid="structtitan23_1_1SegmentTree" prot="public">titan23::SegmentTree</innerclass>
     <innerclass refid="structtitan23_1_1SparseTable" prot="public">titan23::SparseTable</innerclass>
@@ -46,14 +50,16 @@
     <innerclass refid="structtitan23_1_1StaticSet" prot="public">titan23::StaticSet</innerclass>
     <innerclass refid="classtitan23_1_1UndoableUnionFind" prot="public">titan23::UndoableUnionFind</innerclass>
     <innerclass refid="classtitan23_1_1UndoableUnionFindSum" prot="public">titan23::UndoableUnionFindSum</innerclass>
-    <innerclass refid="structtitan23_1_1UnionFind" prot="public">titan23::UnionFind</innerclass>
+    <innerclass refid="classtitan23_1_1UnionFind" prot="public">titan23::UnionFind</innerclass>
+    <innerclass refid="structtitan23_1_1UnionFindLight" prot="public">titan23::UnionFindLight</innerclass>
     <innerclass refid="classtitan23_1_1WaveletMatrix" prot="public">titan23::WaveletMatrix</innerclass>
     <innerclass refid="classtitan23_1_1WaveletMatrixCumulativeSum" prot="public">titan23::WaveletMatrixCumulativeSum</innerclass>
+    <innerclass refid="classtitan23_1_1WBTree" prot="public">titan23::WBTree</innerclass>
     <innerclass refid="structtitan23_1_1dijkstra__path" prot="public">titan23::dijkstra_path</innerclass>
     <innerclass refid="structtitan23_1_1Graph" prot="public">titan23::Graph</innerclass>
-    <innerclass refid="structtitan23_1_1HLD" prot="public">titan23::HLD</innerclass>
-    <innerclass refid="structtitan23_1_1HLDSegmentTree" prot="public">titan23::HLDSegmentTree</innerclass>
-    <innerclass refid="structtitan23_1_1LCA" prot="public">titan23::LCA</innerclass>
+    <innerclass refid="classtitan23_1_1HLD" prot="public">titan23::HLD</innerclass>
+    <innerclass refid="classtitan23_1_1HLDSegmentTree" prot="public">titan23::HLDSegmentTree</innerclass>
+    <innerclass refid="classtitan23_1_1LCA" prot="public">titan23::LCA</innerclass>
     <innerclass refid="classtitan23_1_1MaximumIndependentSet" prot="public">titan23::MaximumIndependentSet</innerclass>
     <innerclass refid="classtitan23_1_1MinimumSteinerTree" prot="public">titan23::MinimumSteinerTree</innerclass>
     <innerclass refid="structtitan23_1_1warshall__floyd__path" prot="public">titan23::warshall_floyd_path</innerclass>
@@ -62,6 +68,36 @@
     <innerclass refid="classtitan23_1_1HashString" prot="public">titan23::HashString</innerclass>
     <innernamespace refid="namespacetitan23_1_1beam__search">titan23::beam_search</innernamespace>
     <innernamespace refid="namespacetitan23_1_1sa">titan23::sa</innernamespace>
+      <sectiondef kind="var">
+      <memberdef kind="variable" id="wb__tree_8cpp_1adcc52e4ce69c9564b1354bc3e8ae1ab3" prot="public" static="no" mutable="no">
+        <type>const double</type>
+        <definition>const double titan23::ALPHA</definition>
+        <argsstring></argsstring>
+        <name>ALPHA</name>
+        <initializer>= 1 - sqrt(2) / 2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="9" column="22" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="9" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="wb__tree_8cpp_1ac279f95df35ca5f1a1c28c3f02cf3c04" prot="public" static="no" mutable="no">
+        <type>const double</type>
+        <definition>const double titan23::BETA</definition>
+        <argsstring></argsstring>
+        <name>BETA</name>
+        <initializer>= (1 - 2 * ALPHA) / (1 - ALPHA)</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="10" column="22" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="10" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
       <sectiondef kind="func">
       <memberdef kind="function" id="rle_8cpp_1aee6946adffc59c5143383e161388ec05" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -84,6 +120,31 @@
         <inbodydescription>
         </inbodydescription>
         <location file="titan_cpplib/algorithm/rle.cpp" line="7" column="12" bodyfile="titan_cpplib/algorithm/rle.cpp" bodystart="7" bodyend="21"/>
+      </memberdef>
+      <memberdef kind="function" id="bfs__path_8cpp_1afa769c61b59754c24bbf76a0bb50faab" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>vector&lt; int &gt;</type>
+        <definition>vector&lt;int&gt; titan23::bfs_path</definition>
+        <argsstring>(const vector&lt; vector&lt; int &gt;&gt; &amp;G, int s, int t)</argsstring>
+        <name>bfs_path</name>
+        <param>
+          <type>const vector&lt; vector&lt; int &gt;&gt; &amp;</type>
+          <declname>G</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>s</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>t</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/bfs_path.cpp" line="9" column="12" bodyfile="titan_cpplib/graph/bfs_path.cpp" bodystart="9" bodyend="39"/>
       </memberdef>
       <memberdef kind="function" id="dijkstra_8cpp_1ab251234ad8d8ec46f738e259a2c45f11" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <templateparamlist>
@@ -151,7 +212,29 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/dijkstra.cpp" line="17" column="10" bodyfile="titan_cpplib/graph/dijkstra.cpp" bodystart="17" bodyend="36"/>
+        <location file="titan_cpplib/graph/dijkstra.cpp" line="17" column="12" bodyfile="titan_cpplib/graph/dijkstra.cpp" bodystart="17" bodyend="37"/>
+      </memberdef>
+      <memberdef kind="function" id="minimum__spanning__tree_8cpp_1a1de19b7c70502b36b823d82cd99899a7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>vector&lt; pair&lt; int, int &gt; &gt;</type>
+        <definition>vector&lt;pair&lt;int, int&gt; &gt; titan23::minimum_spanning_tree</definition>
+        <argsstring>(int n, const vector&lt; pair&lt; int, int &gt;&gt; &amp;E)</argsstring>
+        <name>minimum_spanning_tree</name>
+        <param>
+          <type>int</type>
+          <declname>n</declname>
+        </param>
+        <param>
+          <type>const vector&lt; pair&lt; int, int &gt;&gt; &amp;</type>
+          <declname>E</declname>
+        </param>
+        <briefdescription>
+<para>最小全域木の辺集合を返す </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/graph/minimum_spanning_tree.cpp" line="9" column="12" bodyfile="titan_cpplib/graph/minimum_spanning_tree.cpp" bodystart="9" bodyend="18"/>
       </memberdef>
       </sectiondef>
     <briefdescription>

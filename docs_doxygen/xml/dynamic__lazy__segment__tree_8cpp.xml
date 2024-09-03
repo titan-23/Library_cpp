@@ -9,6 +9,9 @@
       <node id="3">
         <label>cassert</label>
       </node>
+      <node id="2">
+        <label>iostream</label>
+      </node>
       <node id="1">
         <label>titan_cpplib/data_structures/dynamic_lazy_segment_tree.cpp</label>
         <link refid="dynamic__lazy__segment__tree_8cpp"/>
@@ -18,9 +21,6 @@
         </childnode>
         <childnode refid="4" relation="include">
         </childnode>
-      </node>
-      <node id="2">
-        <label>iostream</label>
       </node>
       <node id="4">
         <label>memory</label>

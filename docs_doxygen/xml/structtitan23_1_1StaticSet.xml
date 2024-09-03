@@ -158,6 +158,20 @@
         </inbodydescription>
         <location file="titan_cpplib/data_structures/static_set.cpp" line="51" column="13" bodyfile="titan_cpplib/data_structures/static_set.cpp" bodystart="51" bodyend="53"/>
       </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1StaticSet_1a5e77d3a5a1e5e8f566b596a75cbb1485" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool titan23::StaticSet&lt; T &gt;::empty</definition>
+        <argsstring>() const</argsstring>
+        <name>empty</name>
+        <briefdescription>
+<para>空かどうか / <computeroutput>O(1)</computeroutput> </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/static_set.cpp" line="56" column="14" bodyfile="titan_cpplib/data_structures/static_set.cpp" bodystart="56" bodyend="58"/>
+      </memberdef>
       <memberdef kind="function" id="structtitan23_1_1StaticSet_1ac63810add486d2caceb893f8ca513bf3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
         <definition>T titan23::StaticSet&lt; T &gt;::get</definition>
@@ -174,7 +188,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/static_set.cpp" line="56" column="11" bodyfile="titan_cpplib/data_structures/static_set.cpp" bodystart="56" bodyend="59"/>
+        <location file="titan_cpplib/data_structures/static_set.cpp" line="61" column="11" bodyfile="titan_cpplib/data_structures/static_set.cpp" bodystart="61" bodyend="64"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1StaticSet_1ae16fe75766fd1a6485f795533e552d97" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -192,7 +206,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/static_set.cpp" line="62" column="11" bodyfile="titan_cpplib/data_structures/static_set.cpp" bodystart="62" bodyend="70"/>
+        <location file="titan_cpplib/data_structures/static_set.cpp" line="67" column="11" bodyfile="titan_cpplib/data_structures/static_set.cpp" bodystart="67" bodyend="75"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1StaticSet_1ac96b0dd5cef5b74b89c75300dd932fac" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -210,7 +224,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/static_set.cpp" line="73" column="11" bodyfile="titan_cpplib/data_structures/static_set.cpp" bodystart="73" bodyend="81"/>
+        <location file="titan_cpplib/data_structures/static_set.cpp" line="78" column="11" bodyfile="titan_cpplib/data_structures/static_set.cpp" bodystart="78" bodyend="86"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1StaticSet_1adf8326b017041cabf3314923fb951949" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -228,7 +242,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/static_set.cpp" line="84" column="11" bodyfile="titan_cpplib/data_structures/static_set.cpp" bodystart="84" bodyend="92"/>
+        <location file="titan_cpplib/data_structures/static_set.cpp" line="89" column="11" bodyfile="titan_cpplib/data_structures/static_set.cpp" bodystart="89" bodyend="97"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1StaticSet_1a0d5f87c1003f9b7260619bb59703ab2d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -246,7 +260,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/static_set.cpp" line="95" column="11" bodyfile="titan_cpplib/data_structures/static_set.cpp" bodystart="95" bodyend="103"/>
+        <location file="titan_cpplib/data_structures/static_set.cpp" line="100" column="11" bodyfile="titan_cpplib/data_structures/static_set.cpp" bodystart="100" bodyend="108"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1StaticSet_1a080d4b9a49bc98342b76b20902a139d3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -264,7 +278,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/static_set.cpp" line="106" column="13" bodyfile="titan_cpplib/data_structures/static_set.cpp" bodystart="106" bodyend="113"/>
+        <location file="titan_cpplib/data_structures/static_set.cpp" line="111" column="13" bodyfile="titan_cpplib/data_structures/static_set.cpp" bodystart="111" bodyend="118"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1StaticSet_1a26bd7538968d546eaa982bada8816136" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -282,7 +296,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/static_set.cpp" line="116" column="13" bodyfile="titan_cpplib/data_structures/static_set.cpp" bodystart="116" bodyend="123"/>
+        <location file="titan_cpplib/data_structures/static_set.cpp" line="121" column="13" bodyfile="titan_cpplib/data_structures/static_set.cpp" bodystart="121" bodyend="128"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1StaticSet_1a125fed6c2c72d75fb9032b2c2a4de25f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -300,7 +314,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/static_set.cpp" line="126" column="13" bodyfile="titan_cpplib/data_structures/static_set.cpp" bodystart="126" bodyend="128"/>
+        <location file="titan_cpplib/data_structures/static_set.cpp" line="131" column="13" bodyfile="titan_cpplib/data_structures/static_set.cpp" bodystart="131" bodyend="133"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1StaticSet_1accd4032543d90325ba90f889460220bd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -322,7 +336,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/static_set.cpp" line="131" column="13" bodyfile="titan_cpplib/data_structures/static_set.cpp" bodystart="131" bodyend="134"/>
+        <location file="titan_cpplib/data_structures/static_set.cpp" line="136" column="13" bodyfile="titan_cpplib/data_structures/static_set.cpp" bodystart="136" bodyend="139"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1StaticSet_1accbe72e255023838a7edb9b5e456375d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -334,13 +348,13 @@
           <declname>key</declname>
         </param>
         <briefdescription>
-<para><computeroutput>key</computeroutput> の存在判定 / <computeroutput>o(logn)</computeroutput> </para>
+<para><computeroutput>key</computeroutput> の存在判定 / <computeroutput>O(logn)</computeroutput> </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/static_set.cpp" line="137" column="14" bodyfile="titan_cpplib/data_structures/static_set.cpp" bodystart="137" bodyend="142"/>
+        <location file="titan_cpplib/data_structures/static_set.cpp" line="142" column="14" bodyfile="titan_cpplib/data_structures/static_set.cpp" bodystart="142" bodyend="148"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -348,12 +362,13 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/data_structures/static_set.cpp" line="12" column="5" bodyfile="titan_cpplib/data_structures/static_set.cpp" bodystart="12" bodyend="143"/>
+    <location file="titan_cpplib/data_structures/static_set.cpp" line="12" column="5" bodyfile="titan_cpplib/data_structures/static_set.cpp" bodystart="12" bodyend="149"/>
     <listofallmembers>
       <member refid="structtitan23_1_1StaticSet_1accbe72e255023838a7edb9b5e456375d" prot="public" virt="non-virtual"><scope>titan23::StaticSet</scope><name>contains</name></member>
       <member refid="structtitan23_1_1StaticSet_1a125fed6c2c72d75fb9032b2c2a4de25f" prot="public" virt="non-virtual"><scope>titan23::StaticSet</scope><name>count</name></member>
       <member refid="structtitan23_1_1StaticSet_1accd4032543d90325ba90f889460220bd" prot="public" virt="non-virtual"><scope>titan23::StaticSet</scope><name>count_range</name></member>
       <member refid="structtitan23_1_1StaticSet_1a13565dba0085039e149da1dc3edfd19f" prot="public" virt="non-virtual"><scope>titan23::StaticSet</scope><name>data</name></member>
+      <member refid="structtitan23_1_1StaticSet_1a5e77d3a5a1e5e8f566b596a75cbb1485" prot="public" virt="non-virtual"><scope>titan23::StaticSet</scope><name>empty</name></member>
       <member refid="structtitan23_1_1StaticSet_1ae16fe75766fd1a6485f795533e552d97" prot="public" virt="non-virtual"><scope>titan23::StaticSet</scope><name>ge</name></member>
       <member refid="structtitan23_1_1StaticSet_1ac63810add486d2caceb893f8ca513bf3" prot="public" virt="non-virtual"><scope>titan23::StaticSet</scope><name>get</name></member>
       <member refid="structtitan23_1_1StaticSet_1ac96b0dd5cef5b74b89c75300dd932fac" prot="public" virt="non-virtual"><scope>titan23::StaticSet</scope><name>gt</name></member>

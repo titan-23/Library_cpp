@@ -9,12 +9,6 @@
       <node id="4">
         <label>cassert</label>
       </node>
-      <node id="3">
-        <label>vector</label>
-      </node>
-      <node id="2">
-        <label>iostream</label>
-      </node>
       <node id="1">
         <label>titan_cpplib/data_structures/dual_commutative_segment_tree.cpp</label>
         <link refid="dual__commutative__segment__tree_8cpp"/>
@@ -24,6 +18,12 @@
         </childnode>
         <childnode refid="4" relation="include">
         </childnode>
+      </node>
+      <node id="3">
+        <label>vector</label>
+      </node>
+      <node id="2">
+        <label>iostream</label>
       </node>
     </incdepgraph>
     <innerclass refid="classtitan23_1_1DualCommutativeSegmentTree" prot="public">titan23::DualCommutativeSegmentTree</innerclass>

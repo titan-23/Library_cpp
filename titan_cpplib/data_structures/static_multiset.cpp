@@ -35,6 +35,11 @@ namespace titan23 {
             return n;
         }
 
+        //! 空かどうか / `O(1)`
+        bool empty() const {
+            return n == 0;
+        }
+
         //! 昇順 `k` 番目の要素を返す / `O(1)`
         T get(const int i) const {
             return data[i];
@@ -42,7 +47,7 @@ namespace titan23 {
 
         //! `key` 以上で最小 / `O(logn)`
         T ge(const T &key) const {
-            if (key > data.back()) return missing;
+            if (key > data.back() || empty()) return missing;
             int l = -1, r = n-1;
             while (r - l > 1) {
                 int mid = (l + r) >> 1;
@@ -53,7 +58,7 @@ namespace titan23 {
 
         //! `key` より大きくて最小 / `O(logn)`
         T gt(const T &key) const {
-            if (key >= data.back()) return missing;
+            if (key >= data.back() || empty()) return missing;
             int l = -1, r = n-1;
             while (r - l > 1) {
                 int mid = (l + r) >> 1;
@@ -64,7 +69,7 @@ namespace titan23 {
 
         //! `key` 以下で最大 / `O(logn)`
         T le(const T &key) const {
-            if (key < data[0]) return missing;
+            if (key < data[0] || empty()) return missing;
             int l = 0, r = n;
             while (r - l > 1) {
                 int mid = (l + r) >> 1;
@@ -75,7 +80,7 @@ namespace titan23 {
 
         //! `key` 未満で最大 / `O(logn)`
         T lt(const T &key) const {
-            if (key <= data[0]) return missing;
+            if (key <= data[0] || empty()) return missing;
             int l = 0, r = n;
             while (r - l > 1) {
                 int mid = (l + r) >> 1;
@@ -117,10 +122,11 @@ namespace titan23 {
 
         //! `key` の存在判定 / `o(logn)`
         bool contains(T key) const {
-            if (index_right(key) - index(key) > 0) {
-                return true;
+            int idx = index(key);
+            if (idx == (int)data.size()) {
+                return false;
             }
-            return false;
+            return data[idx] == key;
         }
     };
 }

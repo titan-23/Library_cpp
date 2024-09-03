@@ -16,21 +16,6 @@
       <node id="7">
         <label>ext/pb_ds/assoc_container.hpp</label>
       </node>
-      <node id="3">
-        <label>stack</label>
-      </node>
-      <node id="2">
-        <label>vector</label>
-      </node>
-      <node id="8">
-        <label>titan_cpplib/data_structures/undoable_union_find_sum.cpp</label>
-        <link refid="undoable__union__find__sum_8cpp_source"/>
-        <childnode refid="2" relation="include">
-        </childnode>
-      </node>
-      <node id="6">
-        <label>unordered_map</label>
-      </node>
       <node id="1">
         <label>titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp</label>
         <link refid="offline__dynamic__connectivity__sum_8cpp"/>
@@ -49,8 +34,23 @@
         <childnode refid="8" relation="include">
         </childnode>
       </node>
+      <node id="3">
+        <label>stack</label>
+      </node>
+      <node id="2">
+        <label>vector</label>
+      </node>
+      <node id="6">
+        <label>unordered_map</label>
+      </node>
       <node id="4">
         <label>algorithm</label>
+      </node>
+      <node id="8">
+        <label>titan_cpplib/data_structures/undoable_union_find_sum.cpp</label>
+        <link refid="undoable__union__find__sum_8cpp_source"/>
+        <childnode refid="2" relation="include">
+        </childnode>
       </node>
     </incdepgraph>
     <innerclass refid="classtitan23_1_1OfflineDynamicConnectivitySum" prot="public">titan23::OfflineDynamicConnectivitySum</innerclass>

@@ -26,9 +26,6 @@
       <node id="2">
         <label>vector</label>
       </node>
-      <node id="3">
-        <label>set</label>
-      </node>
       <node id="1">
         <label>titan_cpplib/algorithm/random_tree.cpp</label>
         <link refid="random__tree_8cpp"/>
@@ -40,6 +37,9 @@
         </childnode>
         <childnode refid="5" relation="include">
         </childnode>
+      </node>
+      <node id="3">
+        <label>set</label>
       </node>
     </incdepgraph>
     <innerclass refid="classtitan23_1_1RandomTree" prot="public">titan23::RandomTree</innerclass>

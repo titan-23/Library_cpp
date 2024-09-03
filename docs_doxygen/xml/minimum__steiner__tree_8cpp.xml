@@ -6,15 +6,6 @@
     <includes local="no">algorithm</includes>
     <includes refid="warshall__floyd__path_8cpp" local="yes">titan_cpplib/graph/warshall_floyd_path.cpp</includes>
     <incdepgraph>
-      <node id="4">
-        <label>titan_cpplib/graph/warshall_floyd_path.cpp</label>
-        <link refid="warshall__floyd__path_8cpp_source"/>
-        <childnode refid="2" relation="include">
-        </childnode>
-      </node>
-      <node id="2">
-        <label>vector</label>
-      </node>
       <node id="1">
         <label>titan_cpplib/graph/minimum_steiner_tree.cpp</label>
         <link refid="minimum__steiner__tree_8cpp"/>
@@ -23,6 +14,15 @@
         <childnode refid="3" relation="include">
         </childnode>
         <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>vector</label>
+      </node>
+      <node id="4">
+        <label>titan_cpplib/graph/warshall_floyd_path.cpp</label>
+        <link refid="warshall__floyd__path_8cpp_source"/>
+        <childnode refid="2" relation="include">
         </childnode>
       </node>
       <node id="3">

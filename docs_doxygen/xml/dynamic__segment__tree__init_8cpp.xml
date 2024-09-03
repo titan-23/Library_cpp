@@ -5,9 +5,6 @@
     <includes local="no">iostream</includes>
     <includes local="no">cassert</includes>
     <incdepgraph>
-      <node id="3">
-        <label>cassert</label>
-      </node>
       <node id="1">
         <label>titan_cpplib/data_structures/dynamic_segment_tree_init.cpp</label>
         <link refid="dynamic__segment__tree__init_8cpp"/>
@@ -15,6 +12,9 @@
         </childnode>
         <childnode refid="3" relation="include">
         </childnode>
+      </node>
+      <node id="3">
+        <label>cassert</label>
       </node>
       <node id="2">
         <label>iostream</label>

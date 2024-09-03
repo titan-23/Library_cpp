@@ -37,6 +37,10 @@ namespace titan23 {
       return s;
     }
 
+    bool empty() const {
+      return len() == 0;
+    }
+
     void sort(bool reverse=false) {
       if (reverse) {
         std::sort(a.rbegin(), a.rend());
@@ -87,7 +91,7 @@ namespace titan23 {
       }
     }
 
-    void reverse(const int l, const int r) {
+    void reverse(int l, int r) {
       // reverse([l, r))
       int n = len();
       assert(0 <= l && l <= r && r <= n);

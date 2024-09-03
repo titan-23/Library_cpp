@@ -104,11 +104,11 @@ $(function() {
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        <span class="keywordtype">void</span> _build(<span class="keyword">const</span> vector&lt;T&gt; &amp;a) {</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;            vector&lt;int&gt; buff0(a.size()), buff1;</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;            <span class="keyword">auto</span> build = [&amp;] (<span class="keyword">auto</span> &amp;&amp;build,</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;                                                <span class="keywordtype">int</span> bit,</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;                                                <span class="keywordtype">bool</span> flag01,</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;                                                <span class="keywordtype">int</span> s0, <span class="keywordtype">int</span> g0,</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;                                                <span class="keywordtype">int</span> s1, <span class="keywordtype">int</span> g1</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;                                                ) -&gt; Node* {</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;                            <span class="keywordtype">int</span> bit,</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;                            <span class="keywordtype">bool</span> flag01,</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;                            <span class="keywordtype">int</span> s0, <span class="keywordtype">int</span> g0,</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;                            <span class="keywordtype">int</span> s1, <span class="keywordtype">int</span> g1</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;                            ) -&gt; Node* {</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;                <span class="keywordtype">int</span> s = flag01 ? s1 : s0;</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;                <span class="keywordtype">int</span> g = flag01 ? g1 : g0;</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;                <span class="keywordflow">if</span> (s == g || bit &lt; 0) <span class="keywordflow">return</span> <span class="keyword">nullptr</span>;</div>

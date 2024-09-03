@@ -12,12 +12,6 @@
     <includedby refid="dynamic__wavelet__matrix_8cpp" local="yes">titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp</includedby>
     <includedby refid="dynamic__wavelet__tree_8cpp" local="yes">titan_cpplib/data_structures/dynamic_wavelet_tree.cpp</includedby>
     <incdepgraph>
-      <node id="8">
-        <label>stdint.h</label>
-      </node>
-      <node id="5">
-        <label>cassert</label>
-      </node>
       <node id="1">
         <label>titan_cpplib/data_structures/avl_tree_bit_vector.cpp</label>
         <link refid="avl__tree__bit__vector_8cpp"/>
@@ -35,6 +29,12 @@
         </childnode>
         <childnode refid="8" relation="include">
         </childnode>
+      </node>
+      <node id="8">
+        <label>stdint.h</label>
+      </node>
+      <node id="5">
+        <label>cassert</label>
       </node>
       <node id="6">
         <label>tuple</label>
@@ -61,13 +61,13 @@
         <childnode refid="3" relation="include">
         </childnode>
       </node>
-      <node id="2">
-        <label>titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp</label>
-        <link refid="dynamic__wavelet__matrix_8cpp_source"/>
-      </node>
       <node id="3">
         <label>titan_cpplib/data_structures/dynamic_wavelet_tree.cpp</label>
         <link refid="dynamic__wavelet__tree_8cpp_source"/>
+      </node>
+      <node id="2">
+        <label>titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp</label>
+        <link refid="dynamic__wavelet__matrix_8cpp_source"/>
       </node>
     </invincdepgraph>
     <innerclass refid="classtitan23_1_1AVLTreeBitVector" prot="public">titan23::AVLTreeBitVector</innerclass>

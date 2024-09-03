@@ -10,6 +10,7 @@
     <member refid="classtitan23_1_1Array_1afff6d51ec5b8b52ce0cdb7369a0bbc4a" kind="function"><name>resize</name></member>
     <member refid="classtitan23_1_1Array_1a7d52afdf22debf3a80bf33faee7a500b" kind="function"><name>reserve</name></member>
     <member refid="classtitan23_1_1Array_1aa3476b685402c6dea5899f544bbfcbd4" kind="function"><name>sum</name></member>
+    <member refid="classtitan23_1_1Array_1a927575c163eb2d6c0f504c91777d543d" kind="function"><name>empty</name></member>
     <member refid="classtitan23_1_1Array_1a768912601c13a7c762fc4f3f7470f37f" kind="function"><name>sort</name></member>
     <member refid="classtitan23_1_1Array_1a61987d4c8d0888850af4496747d77350" kind="function"><name>index</name></member>
     <member refid="classtitan23_1_1Array_1a3a066cb6a215790d033284d486a34a03" kind="function"><name>count</name></member>
@@ -18,7 +19,7 @@
     <member refid="classtitan23_1_1Array_1ae1c1dc0b6156bdfc5ad3c069b9481db0" kind="function"><name>pop</name></member>
     <member refid="classtitan23_1_1Array_1a8b7ae2faed800e20e90311fc674965ca" kind="function"><name>remove</name></member>
     <member refid="classtitan23_1_1Array_1a35a968b97910b7b4aa0816021a537c71" kind="function"><name>reverse</name></member>
-    <member refid="classtitan23_1_1Array_1a0d91ea4b7c5555e480c9f4a734a0bca4" kind="function"><name>reverse</name></member>
+    <member refid="classtitan23_1_1Array_1a497f2613b16d9703512197182a88f148" kind="function"><name>reverse</name></member>
     <member refid="classtitan23_1_1Array_1aa99af80e8dc13f0f426cabd87bbe350c" kind="function"><name>swap</name></member>
     <member refid="classtitan23_1_1Array_1ac5e6f6576c98d47c09d9e0c37ef2059a" kind="function"><name>swap_range</name></member>
     <member refid="classtitan23_1_1Array_1af19fa13dbdd8d87c5a46b9744dd53900" kind="function"><name>copy</name></member>
@@ -428,6 +429,24 @@
     <member refid="classtitan23_1_1DynamicLazySegmentTree_1a536dbb44d97de5ebecf0f80b06508337" kind="function"><name>set</name></member>
     <member refid="classtitan23_1_1DynamicLazySegmentTree_1a45950f749b0699d98f134a32487326b9" kind="function"><name>print</name></member>
   </compound>
+  <compound refid="classtitan23_1_1DynamicList" kind="class"><name>titan23::DynamicList</name>
+    <member refid="classtitan23_1_1DynamicList_1a2fad850cf1d4d3c25d33d0a2366176a0" kind="variable"><name>BUCKET_MAX</name></member>
+    <member refid="classtitan23_1_1DynamicList_1af3e0579ff8d14c1d4231b168a40db17a" kind="variable"><name>data</name></member>
+    <member refid="classtitan23_1_1DynamicList_1a671a3c60daeb0c846984277a5bd26a6f" kind="variable"><name>n</name></member>
+    <member refid="classtitan23_1_1DynamicList_1a88b8aa48e63f237a08de10176232e393" kind="function"><name>build</name></member>
+    <member refid="classtitan23_1_1DynamicList_1a61b6e84a6f1609c01b29b1dfe03e4387" kind="function"><name>get_bucket</name></member>
+    <member refid="classtitan23_1_1DynamicList_1a9d00a3ee68ec58ee4591953925232fd2" kind="function"><name>DynamicList</name></member>
+    <member refid="classtitan23_1_1DynamicList_1a5e44724399f46a3010944cbc039383d4" kind="function"><name>DynamicList</name></member>
+    <member refid="classtitan23_1_1DynamicList_1a25718b8968dbe6486903714ca78c1285" kind="function"><name>emplace_back</name></member>
+    <member refid="classtitan23_1_1DynamicList_1a6c377a3aa387f00b5add5291bb0039e5" kind="function"><name>insert</name></member>
+    <member refid="classtitan23_1_1DynamicList_1a06f89ab06b2ab6d8f21391dbb593031c" kind="function"><name>access</name></member>
+    <member refid="classtitan23_1_1DynamicList_1aaea7545c494400d8a304727aef43fbb4" kind="function"><name>pop</name></member>
+    <member refid="classtitan23_1_1DynamicList_1a35bf71ee6c4e9c2e14861863a10cfaec" kind="function"><name>set</name></member>
+    <member refid="classtitan23_1_1DynamicList_1a7d860353424aef52ab65fe948d40cf0f" kind="function"><name>tovector</name></member>
+    <member refid="classtitan23_1_1DynamicList_1a89bfa133bd1296fbf5824e92eddecf52" kind="function"><name>print</name></member>
+    <member refid="classtitan23_1_1DynamicList_1a5434618c4ce89c6f9d50f633c48800b0" kind="function"><name>empty</name></member>
+    <member refid="classtitan23_1_1DynamicList_1aabae2d121449683c5ba8714bcc95ca41" kind="function"><name>len</name></member>
+  </compound>
   <compound refid="classtitan23_1_1DynamicSegmentTree" kind="class"><name>titan23::DynamicSegmentTree</name>
     <member refid="classtitan23_1_1DynamicSegmentTree_1a4e94ab66c472180eeeb57a1a3ddac2a0" kind="typedef"><name>NodePtr</name></member>
     <member refid="classtitan23_1_1DynamicSegmentTree_1ae1e2a7291743534a4b86ebd28ce4aa48" kind="variable"><name>root</name></member>
@@ -512,38 +531,38 @@
     <member refid="classtitan23_1_1DynamicWaveletTree_1a717f0d589b9c57ed4387d052465a86fa" kind="function"><name>tovector</name></member>
     <member refid="classtitan23_1_1DynamicWaveletTree_1a493a7366918605a89480509e2d0c307e" kind="function"><name>print</name></member>
   </compound>
-  <compound refid="structtitan23_1_1EulerTourTree" kind="struct"><name>titan23::EulerTourTree</name>
-    <member refid="structtitan23_1_1EulerTourTree_1aaa841d4b8aa3ee5fbfbfce62d5adac44" kind="typedef"><name>NodePtr</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1a9e9113100ca8f5dd8696c81062264b4e" kind="variable"><name>n</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1af9ea342570f87d71f110e3114ad00756" kind="variable"><name>group_numbers</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1a21f7fc49e993907c3dfc78f1dd0f5dc5" kind="variable"><name>ptr_vertex</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1adad9e7022250419c0aa0501e9fdf26b0" kind="variable"><name>ptr_edge</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1ad7dbc80096d8a081ae5f267f6ba672f8" kind="function"><name>EulerTourTree</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1a34bf6e69370f2aa141e76a5535405d20" kind="function"><name>EulerTourTree</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1a687283991a7b9e85c82125542fb75018" kind="function"><name>_init_build</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1aa85d8ae7ffdecaca80605b7413fc859b" kind="function"><name>_popleft</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1a364612d7c51dd8936a8ebeb80d403135" kind="function"><name>_pop</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1aace4daba06cb3fcd6e606875e320a027" kind="function"><name>_split_left</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1aae543c8d6c17a59d1410f7a6be5abe47" kind="function"><name>_split_right</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1a6da39e99061514e6cd81de229f1c4bb8" kind="function"><name>_merge</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1a1548819410e4762faf342acf1ff5246e" kind="function"><name>_splay</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1aa08f363e2758e3f6520fc66b2875f038" kind="function"><name>_left_splay</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1affec84623f363bdb02f414160df50af2" kind="function"><name>_right_splay</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1a0a60192b52aa11181ec9a5a284f4d6a1" kind="function"><name>_propagate</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1a4c055667210d216d24d945e78fadd80c" kind="function"><name>_update</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1a4600c28781a27fabe7477012c7cd802d" kind="function"><name>build</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1ad577118b89cbe9bede2a5a8409dd2c84" kind="function"><name>link</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1a34096f65b38ec45b58a8177c9a699948" kind="function"><name>cut</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1abd54ff4df2977bc0fed6f10edb5419e8" kind="function"><name>merge</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1aff85df69bb6084c827e696e2f99ebb6e" kind="function"><name>split</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1af0bc2cd360e562fe4f6be5cf4ec27095" kind="function"><name>leader</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1ad0a9701736de957848ac1987e4d603d8" kind="function"><name>reroot</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1a096d5ff0e18a6166f726fd05477a849c" kind="function"><name>same</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1a239b1bb9367847ca30c84870ff62c5fe" kind="function"><name>subtree_apply</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1a918247f273058410edb793778242c8f2" kind="function"><name>subtree_sum</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1a9912ec2aa717ceb35bd44807c44fa767" kind="function"><name>group_count</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1a450729a72f9b22f79ea75b23e0f2ec88" kind="function"><name>get_vertex</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1a1408d6f069c2df7b690c369bc4ac38f2" kind="function"><name>set_vertex</name></member>
+  <compound refid="classtitan23_1_1EulerTourTree" kind="class"><name>titan23::EulerTourTree</name>
+    <member refid="classtitan23_1_1EulerTourTree_1a48a46c9bfbde062028aa185ad961f656" kind="typedef"><name>NodePtr</name></member>
+    <member refid="classtitan23_1_1EulerTourTree_1ab21b9f6aea3a6316acf5105af4b04fc4" kind="variable"><name>n</name></member>
+    <member refid="classtitan23_1_1EulerTourTree_1a84e149ccc7355dbbbb211f4e8238b18f" kind="variable"><name>group_numbers</name></member>
+    <member refid="classtitan23_1_1EulerTourTree_1a674ed1475e5de35d32aeff19cdf15053" kind="variable"><name>ptr_vertex</name></member>
+    <member refid="classtitan23_1_1EulerTourTree_1aa800a9a7e48d9c780a1c9bef1803a579" kind="variable"><name>ptr_edge</name></member>
+    <member refid="classtitan23_1_1EulerTourTree_1a86b296ed7564ddb59bb8f14390f10547" kind="function"><name>_init_build</name></member>
+    <member refid="classtitan23_1_1EulerTourTree_1a5373b698f860d298a8a5a9556c6872a8" kind="function"><name>_popleft</name></member>
+    <member refid="classtitan23_1_1EulerTourTree_1abd6e4733d9af80b4752de4f7e97193a2" kind="function"><name>_pop</name></member>
+    <member refid="classtitan23_1_1EulerTourTree_1a56c49a73c4d8ab781402f790876e6a6c" kind="function"><name>_split_left</name></member>
+    <member refid="classtitan23_1_1EulerTourTree_1adbf4f157202ce0cdfd45334705d4d297" kind="function"><name>_split_right</name></member>
+    <member refid="classtitan23_1_1EulerTourTree_1a8696e29b3c8c5f51aa1b06d43f499e73" kind="function"><name>_merge</name></member>
+    <member refid="classtitan23_1_1EulerTourTree_1abb9dda963479da7333dc6cb18b64e1b7" kind="function"><name>_splay</name></member>
+    <member refid="classtitan23_1_1EulerTourTree_1aab1180163623e65519d48e0328f2dd58" kind="function"><name>_left_splay</name></member>
+    <member refid="classtitan23_1_1EulerTourTree_1ab5a33006767c660e4a9fbc054910f83b" kind="function"><name>_right_splay</name></member>
+    <member refid="classtitan23_1_1EulerTourTree_1a33bd0f877b836304c86bd2bffa3485e0" kind="function"><name>_propagate</name></member>
+    <member refid="classtitan23_1_1EulerTourTree_1acefae03d017cea529bd18ed69928ae5c" kind="function"><name>_update</name></member>
+    <member refid="classtitan23_1_1EulerTourTree_1adb28938ad49dc0727f2432c514f86b5a" kind="function"><name>EulerTourTree</name></member>
+    <member refid="classtitan23_1_1EulerTourTree_1a05b4a3274aab526c45b3d525144bc193" kind="function"><name>EulerTourTree</name></member>
+    <member refid="classtitan23_1_1EulerTourTree_1a2d2083b021646fe1e64dbbd549aaa78e" kind="function"><name>build</name></member>
+    <member refid="classtitan23_1_1EulerTourTree_1a1e8d27f949063f3bf4c79d9ebfed09e1" kind="function"><name>link</name></member>
+    <member refid="classtitan23_1_1EulerTourTree_1a5930cb3c4b0bb48b3eaf5df93c78987e" kind="function"><name>cut</name></member>
+    <member refid="classtitan23_1_1EulerTourTree_1ac69f772f84c11ad21f9521fa8065dae3" kind="function"><name>merge</name></member>
+    <member refid="classtitan23_1_1EulerTourTree_1a377499626a4ea3108535c7dc087a50a2" kind="function"><name>split</name></member>
+    <member refid="classtitan23_1_1EulerTourTree_1afdfc36d3ea4d6e0481da70d7abf380b1" kind="function"><name>leader</name></member>
+    <member refid="classtitan23_1_1EulerTourTree_1a3aef6b791a7186021f7b1a1e99b97627" kind="function"><name>reroot</name></member>
+    <member refid="classtitan23_1_1EulerTourTree_1a21be4ce279a5a222764feac9c9abdef3" kind="function"><name>same</name></member>
+    <member refid="classtitan23_1_1EulerTourTree_1ae0c5c2644f0cef035c6c293c7f91e201" kind="function"><name>subtree_apply</name></member>
+    <member refid="classtitan23_1_1EulerTourTree_1a581bca5bb414ffe3d05139cff53e4b97" kind="function"><name>subtree_sum</name></member>
+    <member refid="classtitan23_1_1EulerTourTree_1ae910fb0f28e395e4d111cba92ee39102" kind="function"><name>group_count</name></member>
+    <member refid="classtitan23_1_1EulerTourTree_1a52cb8f17a4793aa0c6042a184ac66c1e" kind="function"><name>get_vertex</name></member>
+    <member refid="classtitan23_1_1EulerTourTree_1ab29dfec9d0bc8c179f1a5725351991dc" kind="function"><name>set_vertex</name></member>
   </compound>
   <compound refid="structtitan23_1_1FenwickTree" kind="struct"><name>titan23::FenwickTree</name>
     <member refid="structtitan23_1_1FenwickTree_1a18000c42ea4d617e72fcd3615ddaaea6" kind="variable"><name>_n</name></member>
@@ -638,33 +657,33 @@
     <member refid="classtitan23_1_1HashStringBase_1a17a33c34c0c1d1290dcc49f6f7a02f75" kind="function"><name>get_cap</name></member>
     <member refid="classtitan23_1_1HashStringBase_1a261eff8017f0434c3dfdc7ce0c9151a8" kind="function"><name>unite</name></member>
   </compound>
-  <compound refid="structtitan23_1_1HLD" kind="struct"><name>titan23::HLD</name>
-    <member refid="structtitan23_1_1HLD_1a703f067fdd9c686c82152db93d718bf6" kind="variable"><name>G</name></member>
-    <member refid="structtitan23_1_1HLD_1abc5700210b55d0d240d1fb2d2896aca1" kind="variable"><name>root</name></member>
-    <member refid="structtitan23_1_1HLD_1a0db20ef6bbe7d4d9c4ee0fc55acfed51" kind="variable"><name>n</name></member>
-    <member refid="structtitan23_1_1HLD_1a9d813e557dbe4647fa832bfe14e2c76e" kind="variable"><name>size</name></member>
-    <member refid="structtitan23_1_1HLD_1a9dfaf167a71aa226e2a501f9c2fe4168" kind="variable"><name>par</name></member>
-    <member refid="structtitan23_1_1HLD_1a95deec28974895f787e06432201910bf" kind="variable"><name>dep</name></member>
-    <member refid="structtitan23_1_1HLD_1aec3fc6cad353974373482cc0223a43c8" kind="variable"><name>nodein</name></member>
-    <member refid="structtitan23_1_1HLD_1ae4e43aa9f36079548b33b410a0a63482" kind="variable"><name>nodeout</name></member>
-    <member refid="structtitan23_1_1HLD_1a488c375acd20e43b39007845ad6d3c3e" kind="variable"><name>head</name></member>
-    <member refid="structtitan23_1_1HLD_1a60fb8caa0bb5a6363677626dc774e9a1" kind="variable"><name>hld</name></member>
-    <member refid="structtitan23_1_1HLD_1abc18a90e76018c5b9e22c66ec995f919" kind="function"><name>HLD</name></member>
-    <member refid="structtitan23_1_1HLD_1aa149e089ed04c99eb4ad21cdd7dbbc6f" kind="function"><name>HLD</name></member>
-    <member refid="structtitan23_1_1HLD_1a91ad3257975d735929bf47f39f7c6ee4" kind="function"><name>_dfs</name></member>
-    <member refid="structtitan23_1_1HLD_1aa284c506a754749ec8f6ef754742f41f" kind="function"><name>build_list</name></member>
-    <member refid="structtitan23_1_1HLD_1a60937a92ca64b98a8f2725b30c50d29a" kind="function"><name>lca</name></member>
-    <member refid="structtitan23_1_1HLD_1a7f8c3602e09ef9f3ce30a3f22ddbc48a" kind="function"><name>path_kth_elm</name></member>
+  <compound refid="classtitan23_1_1HLD" kind="class"><name>titan23::HLD</name>
+    <member refid="classtitan23_1_1HLD_1a703f067fdd9c686c82152db93d718bf6" kind="variable"><name>G</name></member>
+    <member refid="classtitan23_1_1HLD_1abc5700210b55d0d240d1fb2d2896aca1" kind="variable"><name>root</name></member>
+    <member refid="classtitan23_1_1HLD_1a0db20ef6bbe7d4d9c4ee0fc55acfed51" kind="variable"><name>n</name></member>
+    <member refid="classtitan23_1_1HLD_1a9d813e557dbe4647fa832bfe14e2c76e" kind="variable"><name>size</name></member>
+    <member refid="classtitan23_1_1HLD_1a9dfaf167a71aa226e2a501f9c2fe4168" kind="variable"><name>par</name></member>
+    <member refid="classtitan23_1_1HLD_1a95deec28974895f787e06432201910bf" kind="variable"><name>dep</name></member>
+    <member refid="classtitan23_1_1HLD_1aec3fc6cad353974373482cc0223a43c8" kind="variable"><name>nodein</name></member>
+    <member refid="classtitan23_1_1HLD_1ae4e43aa9f36079548b33b410a0a63482" kind="variable"><name>nodeout</name></member>
+    <member refid="classtitan23_1_1HLD_1a488c375acd20e43b39007845ad6d3c3e" kind="variable"><name>head</name></member>
+    <member refid="classtitan23_1_1HLD_1a60fb8caa0bb5a6363677626dc774e9a1" kind="variable"><name>hld</name></member>
+    <member refid="classtitan23_1_1HLD_1a91ad3257975d735929bf47f39f7c6ee4" kind="function"><name>_dfs</name></member>
+    <member refid="classtitan23_1_1HLD_1abc18a90e76018c5b9e22c66ec995f919" kind="function"><name>HLD</name></member>
+    <member refid="classtitan23_1_1HLD_1aa149e089ed04c99eb4ad21cdd7dbbc6f" kind="function"><name>HLD</name></member>
+    <member refid="classtitan23_1_1HLD_1aa284c506a754749ec8f6ef754742f41f" kind="function"><name>build_list</name></member>
+    <member refid="classtitan23_1_1HLD_1a60937a92ca64b98a8f2725b30c50d29a" kind="function"><name>lca</name></member>
+    <member refid="classtitan23_1_1HLD_1a7f8c3602e09ef9f3ce30a3f22ddbc48a" kind="function"><name>path_kth_elm</name></member>
   </compound>
-  <compound refid="structtitan23_1_1HLDSegmentTree" kind="struct"><name>titan23::HLDSegmentTree</name>
-    <member refid="structtitan23_1_1HLDSegmentTree_1a9e991172237ba339e81c483c94f19f78" kind="variable"><name>hld</name></member>
-    <member refid="structtitan23_1_1HLDSegmentTree_1a2f99b6fd857d1ffc519df1afb1983ac9" kind="variable"><name>seg</name></member>
-    <member refid="structtitan23_1_1HLDSegmentTree_1a52c5751ff848eb215e55c8ca2c9d4237" kind="function"><name>HLDSegmentTree</name></member>
-    <member refid="structtitan23_1_1HLDSegmentTree_1aec53af51dd366338de64e082f9c992f8" kind="function"><name>HLDSegmentTree</name></member>
-    <member refid="structtitan23_1_1HLDSegmentTree_1a6b68c4cf878416e7ae21580f9a0796aa" kind="function"><name>path_prod</name></member>
-    <member refid="structtitan23_1_1HLDSegmentTree_1a9fc2fd79b4380f32843ba25ad98b2a54" kind="function"><name>get</name></member>
-    <member refid="structtitan23_1_1HLDSegmentTree_1a58d615e822081f63575bae71c59e8f5f" kind="function"><name>set</name></member>
-    <member refid="structtitan23_1_1HLDSegmentTree_1aa0293295506cd28d17fc3563c92390fb" kind="function"><name>subtree_prod</name></member>
+  <compound refid="classtitan23_1_1HLDSegmentTree" kind="class"><name>titan23::HLDSegmentTree</name>
+    <member refid="classtitan23_1_1HLDSegmentTree_1a9e991172237ba339e81c483c94f19f78" kind="variable"><name>hld</name></member>
+    <member refid="classtitan23_1_1HLDSegmentTree_1a2f99b6fd857d1ffc519df1afb1983ac9" kind="variable"><name>seg</name></member>
+    <member refid="classtitan23_1_1HLDSegmentTree_1a52c5751ff848eb215e55c8ca2c9d4237" kind="function"><name>HLDSegmentTree</name></member>
+    <member refid="classtitan23_1_1HLDSegmentTree_1aec53af51dd366338de64e082f9c992f8" kind="function"><name>HLDSegmentTree</name></member>
+    <member refid="classtitan23_1_1HLDSegmentTree_1a6b68c4cf878416e7ae21580f9a0796aa" kind="function"><name>path_prod</name></member>
+    <member refid="classtitan23_1_1HLDSegmentTree_1a9fc2fd79b4380f32843ba25ad98b2a54" kind="function"><name>get</name></member>
+    <member refid="classtitan23_1_1HLDSegmentTree_1a58d615e822081f63575bae71c59e8f5f" kind="function"><name>set</name></member>
+    <member refid="classtitan23_1_1HLDSegmentTree_1aa0293295506cd28d17fc3563c92390fb" kind="function"><name>subtree_prod</name></member>
   </compound>
   <compound refid="classtitan23_1_1Kmeans" kind="class"><name>titan23::Kmeans</name>
     <member refid="classtitan23_1_1Kmeans_1a404601b71ecde422087fb5edcd835010" kind="variable"><name>k</name></member>
@@ -673,6 +692,37 @@
     <member refid="classtitan23_1_1Kmeans_1a3797ced63305d423760f77b892449e78" kind="function"><name>Kmeans</name></member>
     <member refid="classtitan23_1_1Kmeans_1adbc23a0b12914935ad36db9da93eff0b" kind="function"><name>Kmeans</name></member>
     <member refid="classtitan23_1_1Kmeans_1a3543ee0d316ad9133ff3aba2afbbdaed" kind="function"><name>fit</name></member>
+  </compound>
+  <compound refid="classtitan23_1_1LazyLinkCutTree" kind="class"><name>titan23::LazyLinkCutTree</name>
+    <member refid="classtitan23_1_1LazyLinkCutTree_1a22c9d5e1a3001d5fa4ad4c939fa566a2" kind="typedef"><name>NodePtr</name></member>
+    <member refid="classtitan23_1_1LazyLinkCutTree_1a0c55e6ced26564852545e79cfe00cb41" kind="variable"><name>pool</name></member>
+    <member refid="classtitan23_1_1LazyLinkCutTree_1ac8b3accd99cae9a9aeecdfe6cb67ba3f" kind="function"><name>_apply_rev</name></member>
+    <member refid="classtitan23_1_1LazyLinkCutTree_1a833c0305f9e4c85367db83bf44f3e57b" kind="function"><name>_apply_f</name></member>
+    <member refid="classtitan23_1_1LazyLinkCutTree_1a6cdde496f87f29709ef8f5768fd2e686" kind="function"><name>_propagate</name></member>
+    <member refid="classtitan23_1_1LazyLinkCutTree_1ae24df9c6d65a081873c57e64c975d392" kind="function"><name>_update</name></member>
+    <member refid="classtitan23_1_1LazyLinkCutTree_1a20ca47900e04f7ffa85b68b9edd7e9b5" kind="function"><name>_rotate</name></member>
+    <member refid="classtitan23_1_1LazyLinkCutTree_1ab0eb38348b9b33ff6df87581cccb810a" kind="function"><name>_splay</name></member>
+    <member refid="classtitan23_1_1LazyLinkCutTree_1a14b7968e4366b81f8bcc73c04a94e072" kind="function"><name>_link</name></member>
+    <member refid="classtitan23_1_1LazyLinkCutTree_1ab2fe7f65ee109a0ebe7f9b32052cc7d0" kind="function"><name>_cut</name></member>
+    <member refid="classtitan23_1_1LazyLinkCutTree_1a43cbadb7c591fe9fc1aa39d4b98a7b27" kind="function"><name>_expose</name></member>
+    <member refid="classtitan23_1_1LazyLinkCutTree_1a7b457e4328ca9c1e42acb8d00b8c0dde" kind="function"><name>_root</name></member>
+    <member refid="classtitan23_1_1LazyLinkCutTree_1a9f491c6bdba538eeef16a342132d7b59" kind="function"><name>_evert</name></member>
+    <member refid="classtitan23_1_1LazyLinkCutTree_1a566276e2313a199f1ae8fc5be87a2079" kind="function"><name>LazyLinkCutTree</name></member>
+    <member refid="classtitan23_1_1LazyLinkCutTree_1a326d0aeb98aab0cd3b425548b716a93d" kind="function"><name>LazyLinkCutTree</name></member>
+    <member refid="classtitan23_1_1LazyLinkCutTree_1acc5d82614e484540939b2731e8a9c280" kind="function"><name>expose</name></member>
+    <member refid="classtitan23_1_1LazyLinkCutTree_1a02f5b615983f9c8a63e0988cfcc3540b" kind="function"><name>lca</name></member>
+    <member refid="classtitan23_1_1LazyLinkCutTree_1a514033473f1c220d597dfc5aae7770df" kind="function"><name>link</name></member>
+    <member refid="classtitan23_1_1LazyLinkCutTree_1a2c2a5b3a2cb9d259c9105071ef694ccd" kind="function"><name>cut</name></member>
+    <member refid="classtitan23_1_1LazyLinkCutTree_1a690d7cd39863d1ce67d65dc275075ada" kind="function"><name>root</name></member>
+    <member refid="classtitan23_1_1LazyLinkCutTree_1a8fc111e798f2c7994db913ee2109dfcb" kind="function"><name>same</name></member>
+    <member refid="classtitan23_1_1LazyLinkCutTree_1a65ae229b28e5bb44f25ebb37437e295a" kind="function"><name>evert</name></member>
+    <member refid="classtitan23_1_1LazyLinkCutTree_1a915d8a4deb41a0506246d8a4a7fb2176" kind="function"><name>path_prod</name></member>
+    <member refid="classtitan23_1_1LazyLinkCutTree_1af10b7fc534f1796c821f7b2920fbddb4" kind="function"><name>path_apply</name></member>
+    <member refid="classtitan23_1_1LazyLinkCutTree_1a0e3e43428cdf95ea63a09e3a05119a69" kind="function"><name>merge</name></member>
+    <member refid="classtitan23_1_1LazyLinkCutTree_1ab6a73c84adc59385d32791ef483aaee6" kind="function"><name>split</name></member>
+    <member refid="classtitan23_1_1LazyLinkCutTree_1a349488ab82d7648a5bdc8b36f4178c1e" kind="function"><name>get</name></member>
+    <member refid="classtitan23_1_1LazyLinkCutTree_1a4e5e7309f5d4d0854fe85829ef88f83f" kind="function"><name>set</name></member>
+    <member refid="classtitan23_1_1LazyLinkCutTree_1aa8730089a70f2f0f2d76431d818188da" kind="function"><name>path_kth_elm</name></member>
   </compound>
   <compound refid="classtitan23_1_1LazyWBTree" kind="class"><name>titan23::LazyWBTree</name>
     <member refid="classtitan23_1_1LazyWBTree_1a7528d09e3e012e434e01a2e23b49f339" kind="typedef"><name>NodePtr</name></member>
@@ -707,18 +757,18 @@
     <member refid="classtitan23_1_1LazyWBTree_1a30e936f24ae6d6f848bdf8110b9edf40" kind="function"><name>len</name></member>
     <member refid="classtitan23_1_1LazyWBTree_1aa3e9dd8d1bbee5b10b12a3d72caabe69" kind="function"><name>isok</name></member>
   </compound>
-  <compound refid="structtitan23_1_1LCA" kind="struct"><name>titan23::LCA</name>
-    <member refid="structtitan23_1_1LCA_1a73271287b9651ca0ba7e5af5e206ef59" kind="variable"><name>n</name></member>
-    <member refid="structtitan23_1_1LCA_1a335efd3ebfeb251c0d9323b0580655bb" kind="variable"><name>path</name></member>
-    <member refid="structtitan23_1_1LCA_1ac8336079cdcde74eb6471b6ea8320330" kind="variable"><name>nodein</name></member>
-    <member refid="structtitan23_1_1LCA_1aceb54eef4f3cdf7e623dc4f0ee664c61" kind="variable"><name>par</name></member>
-    <member refid="structtitan23_1_1LCA_1ae582a345a2b152db7effb922c26d486f" kind="variable"><name>st</name></member>
-    <member refid="structtitan23_1_1LCA_1acfbf3e78281543c07655951f83468cc0" kind="function"><name>__LCA_op</name></member>
-    <member refid="structtitan23_1_1LCA_1a0673e7bf61b5e4626882e99ba13bd62b" kind="function"><name>__LCA_e</name></member>
-    <member refid="structtitan23_1_1LCA_1ac6b0cf138b9a77b1999826251c6d05a1" kind="function"><name>LCA</name></member>
-    <member refid="structtitan23_1_1LCA_1ad54cc0a876541a5eb907486b4782083c" kind="function"><name>LCA</name></member>
-    <member refid="structtitan23_1_1LCA_1a161954869b0c81788e994afa8f248535" kind="function"><name>lca</name></member>
-    <member refid="structtitan23_1_1LCA_1ab1924c1da3730a050151889407baad21" kind="function"><name>lca_mul</name></member>
+  <compound refid="classtitan23_1_1LCA" kind="class"><name>titan23::LCA</name>
+    <member refid="classtitan23_1_1LCA_1a73271287b9651ca0ba7e5af5e206ef59" kind="variable"><name>n</name></member>
+    <member refid="classtitan23_1_1LCA_1a335efd3ebfeb251c0d9323b0580655bb" kind="variable"><name>path</name></member>
+    <member refid="classtitan23_1_1LCA_1ac8336079cdcde74eb6471b6ea8320330" kind="variable"><name>nodein</name></member>
+    <member refid="classtitan23_1_1LCA_1aceb54eef4f3cdf7e623dc4f0ee664c61" kind="variable"><name>par</name></member>
+    <member refid="classtitan23_1_1LCA_1ae582a345a2b152db7effb922c26d486f" kind="variable"><name>st</name></member>
+    <member refid="classtitan23_1_1LCA_1acfbf3e78281543c07655951f83468cc0" kind="function"><name>__LCA_op</name></member>
+    <member refid="classtitan23_1_1LCA_1a0673e7bf61b5e4626882e99ba13bd62b" kind="function"><name>__LCA_e</name></member>
+    <member refid="classtitan23_1_1LCA_1ac6b0cf138b9a77b1999826251c6d05a1" kind="function"><name>LCA</name></member>
+    <member refid="classtitan23_1_1LCA_1ad54cc0a876541a5eb907486b4782083c" kind="function"><name>LCA</name></member>
+    <member refid="classtitan23_1_1LCA_1a161954869b0c81788e994afa8f248535" kind="function"><name>lca</name></member>
+    <member refid="classtitan23_1_1LCA_1ab1924c1da3730a050151889407baad21" kind="function"><name>lca_mul</name></member>
   </compound>
   <compound refid="classtitan23_1_1LinkCutTree" kind="struct"><name>titan23::LinkCutTree</name>
     <member refid="classtitan23_1_1LinkCutTree_1ad5352834e9bbb9b8ccbfe061fec1d29d" kind="typedef"><name>NodePtr</name></member>
@@ -731,7 +781,6 @@
     <member refid="classtitan23_1_1LinkCutTree_1ae0609ce7ed2454af2a07583fef8313c5" kind="variable"><name>data</name></member>
     <member refid="classtitan23_1_1LinkCutTree_1a50c2f79183a7e7c5f65ce099493027b2" kind="variable"><name>lazy</name></member>
     <member refid="classtitan23_1_1LinkCutTree_1a538afbe256eabc9d2d982b1a79b57aa7" kind="function"><name>_apply_rev</name></member>
-    <member refid="classtitan23_1_1LinkCutTree_1a64e9e57eee6efa99415c938f72731e51" kind="function"><name>_apply_f</name></member>
     <member refid="classtitan23_1_1LinkCutTree_1a663be1063c8dd9dddd2a6dea59e737f1" kind="function"><name>_propagate</name></member>
     <member refid="classtitan23_1_1LinkCutTree_1a108c9e039f3be678b00494160a241cd3" kind="function"><name>_update</name></member>
     <member refid="classtitan23_1_1LinkCutTree_1a3a2bdd9feb48c82a70b0ff7491a37fc1" kind="function"><name>_rotate</name></member>
@@ -750,12 +799,8 @@
     <member refid="classtitan23_1_1LinkCutTree_1ad50f980adf46cefa18901963a1490259" kind="function"><name>root</name></member>
     <member refid="classtitan23_1_1LinkCutTree_1a98fffe099393ce18dac56add1edf7f8e" kind="function"><name>same</name></member>
     <member refid="classtitan23_1_1LinkCutTree_1ac50c3e15df35759dacd9b571b90757e1" kind="function"><name>evert</name></member>
-    <member refid="classtitan23_1_1LinkCutTree_1a55e6c93ad9baa7b73583d155522f96de" kind="function"><name>path_prod</name></member>
-    <member refid="classtitan23_1_1LinkCutTree_1a9fc256cc02d54aea274dad1eaff6008b" kind="function"><name>path_apply</name></member>
     <member refid="classtitan23_1_1LinkCutTree_1af7983214cd7954283e90de6a0e45c4c2" kind="function"><name>merge</name></member>
     <member refid="classtitan23_1_1LinkCutTree_1a7a4806f31c01a2950a3619d6b053f9bd" kind="function"><name>split</name></member>
-    <member refid="classtitan23_1_1LinkCutTree_1afa2e76aa7ae5f23db4b3ccd4322fc477" kind="function"><name>get</name></member>
-    <member refid="classtitan23_1_1LinkCutTree_1a784bcd65097d8eb94fad54eba03d1583" kind="function"><name>set</name></member>
     <member refid="classtitan23_1_1LinkCutTree_1ab7a1112db3bf507c16032160959f9e41" kind="function"><name>path_kth_elm</name></member>
     <member refid="classtitan23_1_1LinkCutTree_1a95a95e025ef84750f04e0b98726e3163" kind="function"><name>LinkCutTree</name></member>
     <member refid="classtitan23_1_1LinkCutTree_1ac840b54909126bab46d86ef888072ca4" kind="function"><name>_is_root</name></member>
@@ -874,14 +919,28 @@
     <member refid="structtitan23_1_1DynamicWaveletTree_1_1Node_1a2967af23d6062f0765dc809e684ff511" kind="function"><name>Node</name></member>
   </compound>
   <compound refid="structtitan23_1_1EulerTourTree_1_1Node" kind="struct"><name>titan23::EulerTourTree::Node</name>
-    <member refid="structtitan23_1_1EulerTourTree_1_1Node_1ab20921cc529a3ec6bc83cbb867c37de9" kind="variable"><name>key</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1_1Node_1ac2e9c5f074b100b655fc2a75fee780c3" kind="variable"><name>data</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1_1Node_1a636dc3d272c1f4f84ad8c72c8a805d3f" kind="variable"><name>lazy</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1_1Node_1a648da5a1133c469665769392b8762b06" kind="variable"><name>par</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1_1Node_1aa9f431250c968b7a2288518fbf845fb1" kind="variable"><name>left</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1_1Node_1abb0d1e0020cd11ec17bac6d1339a3df8" kind="variable"><name>right</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1_1Node_1a4c3ed50fd98cc04f96dedf0cc0f06aba" kind="function"><name>Node</name></member>
-    <member refid="structtitan23_1_1EulerTourTree_1_1Node_1a871955fc2502018aaa23bd832b2c7e04" kind="function"><name>Node</name></member>
+    <member refid="structtitan23_1_1EulerTourTree_1_1Node_1a6c82695be6e3015cb9486dd6104de376" kind="variable"><name>key</name></member>
+    <member refid="structtitan23_1_1EulerTourTree_1_1Node_1adc3beea4e1b13426abf84b12fca1f5d6" kind="variable"><name>data</name></member>
+    <member refid="structtitan23_1_1EulerTourTree_1_1Node_1acfe563ede3a55fef9a7ea6201b90584e" kind="variable"><name>lazy</name></member>
+    <member refid="structtitan23_1_1EulerTourTree_1_1Node_1ac82f59e8b0ea6411be77cbdd59f3d4af" kind="variable"><name>par</name></member>
+    <member refid="structtitan23_1_1EulerTourTree_1_1Node_1ac32e70a2e521e0485a3a7f4f86aa4096" kind="variable"><name>left</name></member>
+    <member refid="structtitan23_1_1EulerTourTree_1_1Node_1a95e26eab9e84b3db73ea523f6f624718" kind="variable"><name>right</name></member>
+    <member refid="structtitan23_1_1EulerTourTree_1_1Node_1a3c97fe2234d3ee3abe5d0fcf2051dec4" kind="function"><name>Node</name></member>
+    <member refid="structtitan23_1_1EulerTourTree_1_1Node_1a4c7a265f024090ab13bc47935b4bf367" kind="function"><name>Node</name></member>
+  </compound>
+  <compound refid="structtitan23_1_1LazyLinkCutTree_1_1Node" kind="struct"><name>titan23::LazyLinkCutTree::Node</name>
+    <member refid="structtitan23_1_1LazyLinkCutTree_1_1Node_1a1b777b52e1f22e98ca3672f21e97653f" kind="variable"><name>index</name></member>
+    <member refid="structtitan23_1_1LazyLinkCutTree_1_1Node_1a4e95be7f1af7e233b94de4958713908f" kind="variable"><name>size</name></member>
+    <member refid="structtitan23_1_1LazyLinkCutTree_1_1Node_1a5f799f4497f4640573ed290c39025e27" kind="variable"><name>rev</name></member>
+    <member refid="structtitan23_1_1LazyLinkCutTree_1_1Node_1ae9cd5249930c5df16b872ed66ca5423e" kind="variable"><name>key</name></member>
+    <member refid="structtitan23_1_1LazyLinkCutTree_1_1Node_1a3c81cff8da9dc6ba70be1198161da9f4" kind="variable"><name>data</name></member>
+    <member refid="structtitan23_1_1LazyLinkCutTree_1_1Node_1a49263054d58e39f401605b53a607e9be" kind="variable"><name>rdata</name></member>
+    <member refid="structtitan23_1_1LazyLinkCutTree_1_1Node_1a5c1c1389744042aa4a139f8117e51e96" kind="variable"><name>lazy</name></member>
+    <member refid="structtitan23_1_1LazyLinkCutTree_1_1Node_1a12e299b9b75eb4334ff4c29dd9cfa28b" kind="variable"><name>left</name></member>
+    <member refid="structtitan23_1_1LazyLinkCutTree_1_1Node_1a3cd93f863d58e7c20bdea6b9df339be1" kind="variable"><name>right</name></member>
+    <member refid="structtitan23_1_1LazyLinkCutTree_1_1Node_1aa5d328ab816d9b48f933dd546ee1a703" kind="variable"><name>par</name></member>
+    <member refid="structtitan23_1_1LazyLinkCutTree_1_1Node_1aefaa40f2850983762f3ba05ef2a7b495" kind="function"><name>Node</name></member>
+    <member refid="structtitan23_1_1LazyLinkCutTree_1_1Node_1a05c35259b5de5facbf79b4eb6ede6fbe" kind="function"><name>is_root</name></member>
   </compound>
   <compound refid="classtitan23_1_1LazyWBTree_1_1Node" kind="class"><name>titan23::LazyWBTree::Node</name>
     <member refid="classtitan23_1_1LazyWBTree_1_1Node_1a500a46ed9d4f1e3f78bb126218f7eb88" kind="variable"><name>key</name></member>
@@ -901,15 +960,19 @@
     <member refid="structtitan23_1_1LinkCutTree_1_1Node_1afdb4356a94684a359e9a0333b1141af2" kind="variable"><name>index</name></member>
     <member refid="structtitan23_1_1LinkCutTree_1_1Node_1a1a2ea3d2717249eaf189d3ec2500d918" kind="variable"><name>size</name></member>
     <member refid="structtitan23_1_1LinkCutTree_1_1Node_1a2a798d7981e9e7e00888f6ba3cd3ad4f" kind="variable"><name>rev</name></member>
-    <member refid="structtitan23_1_1LinkCutTree_1_1Node_1a358017e84ac886b9f8ecd9fbd7c11b98" kind="variable"><name>key</name></member>
-    <member refid="structtitan23_1_1LinkCutTree_1_1Node_1ad27714aef60f2a3dde37edb35011ad98" kind="variable"><name>data</name></member>
-    <member refid="structtitan23_1_1LinkCutTree_1_1Node_1a6f09fbfe1f1648f6605e30f26d3b5a0a" kind="variable"><name>rdata</name></member>
-    <member refid="structtitan23_1_1LinkCutTree_1_1Node_1a01d52d8d2b4faafd8e55f4485560549b" kind="variable"><name>lazy</name></member>
     <member refid="structtitan23_1_1LinkCutTree_1_1Node_1a7046a0d2622cb7df702e59e804bb4e11" kind="variable"><name>left</name></member>
     <member refid="structtitan23_1_1LinkCutTree_1_1Node_1a19f8b172257c4dff35afc207a306fbd0" kind="variable"><name>right</name></member>
     <member refid="structtitan23_1_1LinkCutTree_1_1Node_1a6f7bf19506adce57884a944a0e25eeb1" kind="variable"><name>par</name></member>
-    <member refid="structtitan23_1_1LinkCutTree_1_1Node_1aca307529fb1ffc51e0124a3766fb32a0" kind="function"><name>Node</name></member>
+    <member refid="structtitan23_1_1LinkCutTree_1_1Node_1ad046d78d8d1255dd6fd8ab8160b3408a" kind="function"><name>Node</name></member>
     <member refid="structtitan23_1_1LinkCutTree_1_1Node_1a93598f7b7e27ee114456ae0006c5f51a" kind="function"><name>is_root</name></member>
+  </compound>
+  <compound refid="structtitan23_1_1PersistentArray_1_1Node" kind="struct"><name>titan23::PersistentArray::Node</name>
+    <member refid="structtitan23_1_1PersistentArray_1_1Node_1a4c5f90b9098d876d8456079c83493db7" kind="variable"><name>key</name></member>
+    <member refid="structtitan23_1_1PersistentArray_1_1Node_1a8993317c5ba5173fcefab4b1286133f7" kind="variable"><name>left</name></member>
+    <member refid="structtitan23_1_1PersistentArray_1_1Node_1acff4622f9b43251d893bdd09ddec9515" kind="variable"><name>right</name></member>
+    <member refid="structtitan23_1_1PersistentArray_1_1Node_1a4f6e2f6965186fef16664a09557c4c2f" kind="function"><name>Node</name></member>
+    <member refid="structtitan23_1_1PersistentArray_1_1Node_1add3444f7ed5ec15e444b98038399f89b" kind="function"><name>Node</name></member>
+    <member refid="structtitan23_1_1PersistentArray_1_1Node_1ae721d17ff5ab23bfa90995d6de9e76f0" kind="function"><name>copy</name></member>
   </compound>
   <compound refid="classtitan23_1_1PersistentLazyWBTree_1_1Node" kind="class"><name>titan23::PersistentLazyWBTree::Node</name>
     <member refid="classtitan23_1_1PersistentLazyWBTree_1_1Node_1a913dd98c9b618bc618854518c02f8c1a" kind="variable"><name>key</name></member>
@@ -926,12 +989,32 @@
     <member refid="classtitan23_1_1PersistentLazyWBTree_1_1Node_1a7fb1e405004889e522272831eec5df40" kind="function"><name>update</name></member>
     <member refid="classtitan23_1_1PersistentLazyWBTree_1_1Node_1aca57c457ca11af17ca7eeb466e7e8801" kind="function"><name>print</name></member>
   </compound>
+  <compound refid="structtitan23_1_1PersistentSegmentTree_1_1Node" kind="struct"><name>titan23::PersistentSegmentTree::Node</name>
+    <member refid="structtitan23_1_1PersistentSegmentTree_1_1Node_1a495b1367f90121f562ca00a63d84319c" kind="variable"><name>key</name></member>
+    <member refid="structtitan23_1_1PersistentSegmentTree_1_1Node_1a4a1c64a7b31f6584d179729207422c6c" kind="variable"><name>data</name></member>
+    <member refid="structtitan23_1_1PersistentSegmentTree_1_1Node_1a71cb0871406e44bfab364210cf528056" kind="variable"><name>size</name></member>
+    <member refid="structtitan23_1_1PersistentSegmentTree_1_1Node_1a9ccf07aa32192af859d20c60d914160a" kind="variable"><name>left</name></member>
+    <member refid="structtitan23_1_1PersistentSegmentTree_1_1Node_1a10c45859b513199821dbe98946ae4dc6" kind="variable"><name>right</name></member>
+    <member refid="structtitan23_1_1PersistentSegmentTree_1_1Node_1a176e24527c588949ae6c5f1cb6be5475" kind="function"><name>Node</name></member>
+    <member refid="structtitan23_1_1PersistentSegmentTree_1_1Node_1a69df7d5d130d56f79d247239cbb11314" kind="function"><name>Node</name></member>
+    <member refid="structtitan23_1_1PersistentSegmentTree_1_1Node_1ae4459ca4107052d16c40018e44c4a0da" kind="function"><name>copy</name></member>
+    <member refid="structtitan23_1_1PersistentSegmentTree_1_1Node_1ac670cefb1db80765f6958b55380e9257" kind="function"><name>update</name></member>
+  </compound>
   <compound refid="structtitan23_1_1PersistentStack_1_1Node" kind="struct"><name>titan23::PersistentStack::Node</name>
     <member refid="structtitan23_1_1PersistentStack_1_1Node_1a72b7841633b64b6f3d3805c8178619f8" kind="variable"><name>key</name></member>
     <member refid="structtitan23_1_1PersistentStack_1_1Node_1acb1b5dd413bfb466d1e1f05346ffc154" kind="variable"><name>prev</name></member>
     <member refid="structtitan23_1_1PersistentStack_1_1Node_1ac9ccf25bb4e0b63a7ab8e44cb7c842b7" kind="function"><name>Node</name></member>
     <member refid="structtitan23_1_1PersistentStack_1_1Node_1a0a329ae4b9fcdf781fcaa32b5b8c55a1" kind="function"><name>Node</name></member>
     <member refid="structtitan23_1_1PersistentStack_1_1Node_1a62076e16a88e3b8b0b4ef091ea8ed3d2" kind="function"><name>Node</name></member>
+  </compound>
+  <compound refid="classtitan23_1_1WBTree_1_1Node" kind="class"><name>titan23::WBTree::Node</name>
+    <member refid="classtitan23_1_1WBTree_1_1Node_1a36e1b76aabe4e17a4e2b7adcd96f7c2c" kind="variable"><name>key</name></member>
+    <member refid="classtitan23_1_1WBTree_1_1Node_1a5aa0aeeefcd94fe4b82aa7d7c0cd794b" kind="variable"><name>left</name></member>
+    <member refid="classtitan23_1_1WBTree_1_1Node_1afb606fb7b36361aebc87e0506a8bd952" kind="variable"><name>right</name></member>
+    <member refid="classtitan23_1_1WBTree_1_1Node_1a1da33dd4df9e4dbbb5a2c37c3e59dfe0" kind="variable"><name>size</name></member>
+    <member refid="classtitan23_1_1WBTree_1_1Node_1a2b0234fb8bd3ae058017b7fcdfaa6242" kind="function"><name>Node</name></member>
+    <member refid="classtitan23_1_1WBTree_1_1Node_1a7d8d2a11ff9bd028e7316716dc1dcda5" kind="function"><name>balance</name></member>
+    <member refid="classtitan23_1_1WBTree_1_1Node_1a860f9ee352f01302643ba000c21dbb9e" kind="function"><name>_update</name></member>
   </compound>
   <compound refid="classtitan23_1_1OfflineDynamicConnectivity" kind="class"><name>titan23::OfflineDynamicConnectivity</name>
     <member refid="classtitan23_1_1OfflineDynamicConnectivity_1a4b8b142bb8689e6165408ebee66ded4b" kind="variable"><name>_n</name></member>
@@ -1004,6 +1087,22 @@
     <member refid="structtitan23_1_1sa_1_1Param_1a08e8c732b33a2d58a3bbe88158413eb3" kind="variable"><name>start_temp</name></member>
     <member refid="structtitan23_1_1sa_1_1Param_1af0c5d5c41c7f56b8fcadc09f212be081" kind="variable"><name>end_temp</name></member>
   </compound>
+  <compound refid="classtitan23_1_1PersistentArray" kind="class"><name>titan23::PersistentArray</name>
+    <member refid="classtitan23_1_1PersistentArray_1a0b024fad8549f68a9af0f4b2734ba7f3" kind="typedef"><name>NodePtr</name></member>
+    <member refid="classtitan23_1_1PersistentArray_1a1b97da08aa2c8d0613e2bdcb715cb437" kind="variable"><name>root</name></member>
+    <member refid="classtitan23_1_1PersistentArray_1a964b87c19f8000c07c8a5f1dfb016ecb" kind="variable"><name>n</name></member>
+    <member refid="classtitan23_1_1PersistentArray_1a9ba07be9ae68ed21bb3368c1524549c9" kind="function"><name>bit_length</name></member>
+    <member refid="classtitan23_1_1PersistentArray_1a5d51d819794b562ac3f1d5f370a5793a" kind="function"><name>_build</name></member>
+    <member refid="classtitan23_1_1PersistentArray_1a517ecb3d22b3eff62a9ff73b3c12290d" kind="function"><name>_new</name></member>
+    <member refid="classtitan23_1_1PersistentArray_1a10c1803ea85c45b2a870496ff73620ba" kind="function"><name>PersistentArray</name></member>
+    <member refid="classtitan23_1_1PersistentArray_1a3cf4a03d4ef6635f1942342d20882584" kind="function"><name>PersistentArray</name></member>
+    <member refid="classtitan23_1_1PersistentArray_1a6fdc6eaa94c66b7a93aa9f65f2e8f15f" kind="function"><name>set</name></member>
+    <member refid="classtitan23_1_1PersistentArray_1ad84c2d3839850468b50570982cc6f966" kind="function"><name>get</name></member>
+    <member refid="classtitan23_1_1PersistentArray_1ad2a48c88084cf48c8c0c327b852570e0" kind="function"><name>copy</name></member>
+    <member refid="classtitan23_1_1PersistentArray_1ae9b025b9b3e216ae223d38c9f4b3f42d" kind="function"><name>tovector</name></member>
+    <member refid="classtitan23_1_1PersistentArray_1afce6b276d9abb23b3ea0d39ab4fc8208" kind="function"><name>len</name></member>
+    <member refid="classtitan23_1_1PersistentArray_1a230d2c3df6e2ab0fff7bc7e9e8295a5f" kind="function"><name>print</name></member>
+  </compound>
   <compound refid="classtitan23_1_1PersistentLazyWBTree" kind="class"><name>titan23::PersistentLazyWBTree</name>
     <member refid="classtitan23_1_1PersistentLazyWBTree_1a36fb333ad4b05e167a83c8712be3fa46" kind="typedef"><name>NodePtr</name></member>
     <member refid="classtitan23_1_1PersistentLazyWBTree_1abb4f40a163fd7a95762c4b8ac50e12f1" kind="typedef"><name>MyPersistentLazyWBTree</name></member>
@@ -1037,6 +1136,22 @@
     <member refid="classtitan23_1_1PersistentLazyWBTree_1a93f3c8b589602001c56c2ebfd255e2c1" kind="function"><name>print</name></member>
     <member refid="classtitan23_1_1PersistentLazyWBTree_1a2eaeb6a004bae14ad1061f270342bd6f" kind="function"><name>len</name></member>
     <member refid="classtitan23_1_1PersistentLazyWBTree_1add7b0ef8213f623d3f5bb139e3a86534" kind="function"><name>debug</name></member>
+  </compound>
+  <compound refid="classtitan23_1_1PersistentSegmentTree" kind="class"><name>titan23::PersistentSegmentTree</name>
+    <member refid="classtitan23_1_1PersistentSegmentTree_1ac67ddac1bffa586575411eb279b3f64c" kind="typedef"><name>NodePtr</name></member>
+    <member refid="classtitan23_1_1PersistentSegmentTree_1afd4ffa80496ee63aa929640847e3f1c2" kind="variable"><name>root</name></member>
+    <member refid="classtitan23_1_1PersistentSegmentTree_1aa532e10e55c01bb78e0cc658ea4d3c07" kind="function"><name>_build</name></member>
+    <member refid="classtitan23_1_1PersistentSegmentTree_1aaeb42d2806b230fc1d424e43fbf7671f" kind="function"><name>PersistentSegmentTree</name></member>
+    <member refid="classtitan23_1_1PersistentSegmentTree_1aa719aacf3c9e806e2cf5cabbb0483899" kind="function"><name>_new</name></member>
+    <member refid="classtitan23_1_1PersistentSegmentTree_1a5facc21ff1db7a6bf2d9bdff34f07ce4" kind="function"><name>PersistentSegmentTree</name></member>
+    <member refid="classtitan23_1_1PersistentSegmentTree_1a902626d207f343348d18de0b667083a0" kind="function"><name>PersistentSegmentTree</name></member>
+    <member refid="classtitan23_1_1PersistentSegmentTree_1adc9d41cc80de58fab75d18707888668f" kind="function"><name>prod</name></member>
+    <member refid="classtitan23_1_1PersistentSegmentTree_1a0660813b4b17ea1b9bd53d1415d6566d" kind="function"><name>set</name></member>
+    <member refid="classtitan23_1_1PersistentSegmentTree_1ad12e7a9104d72c5ad06bfffb79522077" kind="function"><name>get</name></member>
+    <member refid="classtitan23_1_1PersistentSegmentTree_1a0054296ce42b270e645b127085a4202c" kind="function"><name>copy</name></member>
+    <member refid="classtitan23_1_1PersistentSegmentTree_1aa9b28069de257215e9b44db127ae9fe1" kind="function"><name>tolist</name></member>
+    <member refid="classtitan23_1_1PersistentSegmentTree_1a0920040a90e9e347a7faf4b3d92b9a95" kind="function"><name>len</name></member>
+    <member refid="classtitan23_1_1PersistentSegmentTree_1adb704cedc9a26991014802f09b8eafec" kind="function"><name>print</name></member>
   </compound>
   <compound refid="classtitan23_1_1PersistentStack" kind="class"><name>titan23::PersistentStack</name>
     <member refid="classtitan23_1_1PersistentStack_1a62e5edee51ebf241915d78ae2fed5d3b" kind="typedef"><name>NodePtr</name></member>
@@ -1124,7 +1239,7 @@
     <member refid="structtitan23_1_1SegmentTree_1a801ad53a9baa69de17ec4a4c47b9eee4" kind="function"><name>print</name></member>
   </compound>
   <compound refid="structtitan23_1_1SparseTable" kind="struct"><name>titan23::SparseTable</name>
-    <member refid="structtitan23_1_1SparseTable_1a802c5f1534b09cd40153d0db3e32b515" kind="variable"><name>size</name></member>
+    <member refid="structtitan23_1_1SparseTable_1aae26aec993d654168bdc065828862580" kind="variable"><name>n</name></member>
     <member refid="structtitan23_1_1SparseTable_1a4808be2252a54bcde4d2553bbf059347" kind="variable"><name>data</name></member>
     <member refid="structtitan23_1_1SparseTable_1a9c0ad9dac49b4f6f8cd3f9244fd74a29" kind="function"><name>SparseTable</name></member>
     <member refid="structtitan23_1_1SparseTable_1a2fe72eca36ff2211f2e349f3f72b1071" kind="function"><name>SparseTable</name></member>
@@ -1186,6 +1301,7 @@
     <member refid="structtitan23_1_1StaticMultiset_1ac1792fc44a8a6a009ab5ac2bc472cc74" kind="function"><name>StaticMultiset</name></member>
     <member refid="structtitan23_1_1StaticMultiset_1abc28f1f77c11af5de51c423ed5fffddb" kind="function"><name>print</name></member>
     <member refid="structtitan23_1_1StaticMultiset_1ace6c918209ead7e9000450622a2163ba" kind="function"><name>len</name></member>
+    <member refid="structtitan23_1_1StaticMultiset_1aadc68bede35f5d231a1d6153cace7e8b" kind="function"><name>empty</name></member>
     <member refid="structtitan23_1_1StaticMultiset_1a4064ba61bf8967193ed269edb5dd4060" kind="function"><name>get</name></member>
     <member refid="structtitan23_1_1StaticMultiset_1aeb2496fcb55cb018023ed52ca87736d8" kind="function"><name>ge</name></member>
     <member refid="structtitan23_1_1StaticMultiset_1a9fa80119ceef2e80f03e12d7e465ba44" kind="function"><name>gt</name></member>
@@ -1206,6 +1322,7 @@
     <member refid="structtitan23_1_1StaticSet_1a0dab9edccbc7926c9260a85fe7fde351" kind="function"><name>StaticSet</name></member>
     <member refid="structtitan23_1_1StaticSet_1adf3d19e66f7f809ddabb90deaa12192d" kind="function"><name>print</name></member>
     <member refid="structtitan23_1_1StaticSet_1a805141fd65f0655899893923acba53b3" kind="function"><name>len</name></member>
+    <member refid="structtitan23_1_1StaticSet_1a5e77d3a5a1e5e8f566b596a75cbb1485" kind="function"><name>empty</name></member>
     <member refid="structtitan23_1_1StaticSet_1ac63810add486d2caceb893f8ca513bf3" kind="function"><name>get</name></member>
     <member refid="structtitan23_1_1StaticSet_1ae16fe75766fd1a6485f795533e552d97" kind="function"><name>ge</name></member>
     <member refid="structtitan23_1_1StaticSet_1ac96b0dd5cef5b74b89c75300dd932fac" kind="function"><name>gt</name></member>
@@ -1264,22 +1381,34 @@
     <member refid="classtitan23_1_1UndoableUnionFindSum_1aa1aa58fbffbd36916654f40276f78d73" kind="function"><name>group_count</name></member>
     <member refid="classtitan23_1_1UndoableUnionFindSum_1aafcf9484dd729e8fc6e03a9a2979e34c" kind="function"><name>group_sum</name></member>
   </compound>
-  <compound refid="structtitan23_1_1UnionFind" kind="struct"><name>titan23::UnionFind</name>
-    <member refid="structtitan23_1_1UnionFind_1a9643826bb9353b3ebe475c883b3327e5" kind="variable"><name>n</name></member>
-    <member refid="structtitan23_1_1UnionFind_1ae2418469221028c7971f859db782fb1f" kind="variable"><name>group_numbers</name></member>
-    <member refid="structtitan23_1_1UnionFind_1a7da4e59aef4df48de082a16d0b324e92" kind="variable"><name>par</name></member>
-    <member refid="structtitan23_1_1UnionFind_1ae4dd2542fe56eef2d6be5dc5595ca7a7" kind="variable"><name>G</name></member>
-    <member refid="structtitan23_1_1UnionFind_1a85c25164a09cd403f941fab9d74bff8f" kind="function"><name>UnionFind</name></member>
-    <member refid="structtitan23_1_1UnionFind_1acf9365b3b97d5d5c8a3a4cc0d92203f9" kind="function"><name>root</name></member>
-    <member refid="structtitan23_1_1UnionFind_1a1d3d13023a557d411c7bb6450ff2a141" kind="function"><name>unite</name></member>
-    <member refid="structtitan23_1_1UnionFind_1a0a4be76accf9f6e5909313c76d7b7928" kind="function"><name>size</name></member>
-    <member refid="structtitan23_1_1UnionFind_1ae23fd9d1572714d5805a846c51ae6eb4" kind="function"><name>same</name></member>
-    <member refid="structtitan23_1_1UnionFind_1af32e79150a28aa8a0d9291e0c4b6766d" kind="function"><name>members</name></member>
-    <member refid="structtitan23_1_1UnionFind_1a9eaa735e4984540a8d8ac7481a343c59" kind="function"><name>all_roots</name></member>
-    <member refid="structtitan23_1_1UnionFind_1a4f6f2889bb25af093ffefac801d02df8" kind="function"><name>group_count</name></member>
-    <member refid="structtitan23_1_1UnionFind_1ac951cdc927b0b2de5f340772778530b3" kind="function"><name>clear</name></member>
-    <member refid="structtitan23_1_1UnionFind_1af924219dafecda29a9c9984fe783662a" kind="function"><name>all_group_members</name></member>
-    <member refid="structtitan23_1_1UnionFind_1ab6a12f51739c13818591aabf8f71a847" kind="function"><name>print</name></member>
+  <compound refid="classtitan23_1_1UnionFind" kind="class"><name>titan23::UnionFind</name>
+    <member refid="classtitan23_1_1UnionFind_1a9643826bb9353b3ebe475c883b3327e5" kind="variable"><name>n</name></member>
+    <member refid="classtitan23_1_1UnionFind_1ae2418469221028c7971f859db782fb1f" kind="variable"><name>group_numbers</name></member>
+    <member refid="classtitan23_1_1UnionFind_1a7da4e59aef4df48de082a16d0b324e92" kind="variable"><name>par</name></member>
+    <member refid="classtitan23_1_1UnionFind_1ae4dd2542fe56eef2d6be5dc5595ca7a7" kind="variable"><name>G</name></member>
+    <member refid="classtitan23_1_1UnionFind_1a277b695039b93edf4c490f38f476002a" kind="function"><name>UnionFind</name></member>
+    <member refid="classtitan23_1_1UnionFind_1a85c25164a09cd403f941fab9d74bff8f" kind="function"><name>UnionFind</name></member>
+    <member refid="classtitan23_1_1UnionFind_1acf9365b3b97d5d5c8a3a4cc0d92203f9" kind="function"><name>root</name></member>
+    <member refid="classtitan23_1_1UnionFind_1a1d3d13023a557d411c7bb6450ff2a141" kind="function"><name>unite</name></member>
+    <member refid="classtitan23_1_1UnionFind_1a0a4be76accf9f6e5909313c76d7b7928" kind="function"><name>size</name></member>
+    <member refid="classtitan23_1_1UnionFind_1ae23fd9d1572714d5805a846c51ae6eb4" kind="function"><name>same</name></member>
+    <member refid="classtitan23_1_1UnionFind_1af32e79150a28aa8a0d9291e0c4b6766d" kind="function"><name>members</name></member>
+    <member refid="classtitan23_1_1UnionFind_1a9eaa735e4984540a8d8ac7481a343c59" kind="function"><name>all_roots</name></member>
+    <member refid="classtitan23_1_1UnionFind_1a4f6f2889bb25af093ffefac801d02df8" kind="function"><name>group_count</name></member>
+    <member refid="classtitan23_1_1UnionFind_1ac951cdc927b0b2de5f340772778530b3" kind="function"><name>clear</name></member>
+    <member refid="classtitan23_1_1UnionFind_1af924219dafecda29a9c9984fe783662a" kind="function"><name>all_group_members</name></member>
+    <member refid="classtitan23_1_1UnionFind_1ab6a12f51739c13818591aabf8f71a847" kind="function"><name>print</name></member>
+  </compound>
+  <compound refid="structtitan23_1_1UnionFindLight" kind="struct"><name>titan23::UnionFindLight</name>
+    <member refid="structtitan23_1_1UnionFindLight_1a159056cda29851e51b791f13ae813aca" kind="variable"><name>n</name></member>
+    <member refid="structtitan23_1_1UnionFindLight_1ae1bede49b52ece6c6387c833de4cf8fe" kind="variable"><name>par</name></member>
+    <member refid="structtitan23_1_1UnionFindLight_1a8d3e0b75f03ef0ebf130e98e042a62a3" kind="function"><name>UnionFindLight</name></member>
+    <member refid="structtitan23_1_1UnionFindLight_1ab362930aa7329a21b635766fdfbe0efa" kind="function"><name>UnionFindLight</name></member>
+    <member refid="structtitan23_1_1UnionFindLight_1a49ddfa26a6b08d1f8f041f8ee5a31393" kind="function"><name>root</name></member>
+    <member refid="structtitan23_1_1UnionFindLight_1ad0014708804320b8690e30160d5ae7a2" kind="function"><name>unite</name></member>
+    <member refid="structtitan23_1_1UnionFindLight_1a2d8251040e4d5fbbf48addf05b5dadb6" kind="function"><name>size</name></member>
+    <member refid="structtitan23_1_1UnionFindLight_1a7778c0582741830c18ae708f412cf1f5" kind="function"><name>same</name></member>
+    <member refid="structtitan23_1_1UnionFindLight_1afdbce1434398fd4db50e60034cfef476" kind="function"><name>clear</name></member>
   </compound>
   <compound refid="structtitan23_1_1warshall__floyd__path" kind="struct"><name>titan23::warshall_floyd_path</name>
     <member refid="structtitan23_1_1warshall__floyd__path_1a077758674e0d9b6a9be0b67897a1137b" kind="variable"><name>n</name></member>
@@ -1338,6 +1467,38 @@
     <member refid="classtitan23_1_1WaveletMatrixCumulativeSum_1aeff28916b6a32166245cba263ebc3760" kind="function"><name>build</name></member>
     <member refid="classtitan23_1_1WaveletMatrixCumulativeSum_1ab7c3df6066265829c027bb79b4f70a7a" kind="function"><name>sum</name></member>
   </compound>
+  <compound refid="classtitan23_1_1WBTree" kind="class"><name>titan23::WBTree</name>
+    <member refid="classtitan23_1_1WBTree_1acf5b5d044f00af24dddc2ee751471c90" kind="typedef"><name>NodePtr</name></member>
+    <member refid="classtitan23_1_1WBTree_1a1f924bcc1041e9a8af807686e19c3d6d" kind="typedef"><name>MyWBTree</name></member>
+    <member refid="classtitan23_1_1WBTree_1a49e1d5a30d86d3381e7d27cf591df6c5" kind="variable"><name>root</name></member>
+    <member refid="classtitan23_1_1WBTree_1a40fa5eb6c40564b95e6a83e2c8fa87b6" kind="function"><name>_build</name></member>
+    <member refid="classtitan23_1_1WBTree_1a1e22adcc6155295e2ff5198dca431cc5" kind="function"><name>_rotate_right</name></member>
+    <member refid="classtitan23_1_1WBTree_1a645bd4e856718242197da67792bb9bd5" kind="function"><name>_rotate_left</name></member>
+    <member refid="classtitan23_1_1WBTree_1a438dfdd247a0dd4b3342c45d1ade1d27" kind="function"><name>_balance_left</name></member>
+    <member refid="classtitan23_1_1WBTree_1aa2f918c2a9d8acdc872052f569df7b4c" kind="function"><name>_balance_right</name></member>
+    <member refid="classtitan23_1_1WBTree_1a21a00d850e77afa249e729b83fb72b94" kind="function"><name>_merge_with_root</name></member>
+    <member refid="classtitan23_1_1WBTree_1a14e14d0ead2b312fbefb3912dd43c817" kind="function"><name>_pop_right</name></member>
+    <member refid="classtitan23_1_1WBTree_1a57e9add593e2cbfc3ca533b1fc120bbb" kind="function"><name>_merge_node</name></member>
+    <member refid="classtitan23_1_1WBTree_1aa8dd96d9708f133ea33ea1413ee748c9" kind="function"><name>_split_node</name></member>
+    <member refid="classtitan23_1_1WBTree_1acb0bb047c84e81678d690c54a65df42a" kind="function"><name>_new</name></member>
+    <member refid="classtitan23_1_1WBTree_1a83a3e3021bd91064ae44bebfd68fa650" kind="function"><name>WBTree</name></member>
+    <member refid="classtitan23_1_1WBTree_1a6c1351d0bac3497b6574440a5bdf5d18" kind="function"><name>WBTree</name></member>
+    <member refid="classtitan23_1_1WBTree_1a2858a9418ebd2a947c401141e289ec13" kind="function"><name>WBTree</name></member>
+    <member refid="classtitan23_1_1WBTree_1a9bb1d244abdf5f95d7c7ec81ea7eeea7" kind="function"><name>build</name></member>
+    <member refid="classtitan23_1_1WBTree_1a3be148132eb6eedfa2721b847a385575" kind="function"><name>merge</name></member>
+    <member refid="classtitan23_1_1WBTree_1a0d52c232760ce578db3e2c42e7e07c79" kind="function"><name>split</name></member>
+    <member refid="classtitan23_1_1WBTree_1aacf4ebd1f322bf4c49eb2b6db3a55332" kind="function"><name>insert</name></member>
+    <member refid="classtitan23_1_1WBTree_1a62e62bfc9acafb39bad48157813d7176" kind="function"><name>emplace_back</name></member>
+    <member refid="classtitan23_1_1WBTree_1a859fd70463e4279ac59a491e9a880ecb" kind="function"><name>pop</name></member>
+    <member refid="classtitan23_1_1WBTree_1abc0a2cc3f362b5a541b404be1897d8f5" kind="function"><name>tovector</name></member>
+    <member refid="classtitan23_1_1WBTree_1a92443bc5122a1073a1c1f3bb511d3b2a" kind="function"><name>set</name></member>
+    <member refid="classtitan23_1_1WBTree_1ad8eb868c7de9435410bc8a742eca179c" kind="function"><name>operator[]</name></member>
+    <member refid="classtitan23_1_1WBTree_1a942e46b0b5bdec05b08d736fb2a3eb29" kind="function"><name>clear</name></member>
+    <member refid="classtitan23_1_1WBTree_1abc72ce5d91d023bf2070385cc87ea697" kind="function"><name>operator[]</name></member>
+    <member refid="classtitan23_1_1WBTree_1aab65097b02961c992315045ff0dea009" kind="function"><name>print</name></member>
+    <member refid="classtitan23_1_1WBTree_1a44f90ff85283de6d2e3678e4d6cf4294" kind="function"><name>len</name></member>
+    <member refid="classtitan23_1_1WBTree_1a841470971d96265ea55eb177c9b621ca" kind="function"><name>isok</name></member>
+  </compound>
   <compound refid="classtitan23_1_1Zaatsu" kind="class"><name>titan23::Zaatsu</name>
     <member refid="classtitan23_1_1Zaatsu_1a81dfc2394c13283f510823e071f94903" kind="variable"><name>_to_origin</name></member>
     <member refid="classtitan23_1_1Zaatsu_1a04a5f195ce43ce165feb98501b7dade7" kind="variable"><name>_n</name></member>
@@ -1349,8 +1510,12 @@
   <compound refid="namespacestd" kind="namespace"><name>std</name>
   </compound>
   <compound refid="namespacetitan23" kind="namespace"><name>titan23</name>
+    <member refid="wb__tree_8cpp_1adcc52e4ce69c9564b1354bc3e8ae1ab3" kind="variable"><name>ALPHA</name></member>
+    <member refid="wb__tree_8cpp_1ac279f95df35ca5f1a1c28c3f02cf3c04" kind="variable"><name>BETA</name></member>
     <member refid="rle_8cpp_1aee6946adffc59c5143383e161388ec05" kind="function"><name>rle</name></member>
+    <member refid="bfs__path_8cpp_1afa769c61b59754c24bbf76a0bb50faab" kind="function"><name>bfs_path</name></member>
     <member refid="dijkstra_8cpp_1ab251234ad8d8ec46f738e259a2c45f11" kind="function"><name>dijkstra</name></member>
+    <member refid="minimum__spanning__tree_8cpp_1a1de19b7c70502b36b823d82cd99899a7" kind="function"><name>minimum_spanning_tree</name></member>
   </compound>
   <compound refid="namespacetitan23_1_1beam__search" kind="namespace"><name>titan23::beam_search</name>
     <member refid="action_8cpp_1aefc1cd850772bb84f81737a57cc3e3e3" kind="enum"><name>Action</name></member>
@@ -1427,6 +1592,8 @@
   </compound>
   <compound refid="dynamic__lazy__segment__tree_8cpp" kind="file"><name>dynamic_lazy_segment_tree.cpp</name>
   </compound>
+  <compound refid="dynamic__list_8cpp" kind="file"><name>dynamic_list.cpp</name>
+  </compound>
   <compound refid="dynamic__segment__tree_8cpp" kind="file"><name>dynamic_segment_tree.cpp</name>
   </compound>
   <compound refid="dynamic__segment__tree__init_8cpp" kind="file"><name>dynamic_segment_tree_init.cpp</name>
@@ -1445,6 +1612,8 @@
     <member refid="hash__dict_8cpp_1afc28855f97302d38207feabfda45fc97" kind="define"><name>rep</name></member>
     <member refid="hash__dict_8cpp_1ae66f6b31b5ad750f1fe042a706a4e3d4" kind="function"><name>main</name></member>
   </compound>
+  <compound refid="lazy__link__cut__tree_8cpp" kind="file"><name>lazy_link_cut_tree.cpp</name>
+  </compound>
   <compound refid="lazy__wb__tree_8cpp" kind="file"><name>lazy_wb_tree.cpp</name>
   </compound>
   <compound refid="data__structures_2link__cut__tree_8cpp" kind="file"><name>link_cut_tree.cpp</name>
@@ -1457,7 +1626,11 @@
   </compound>
   <compound refid="offline__dynamic__connectivity__sum_8cpp" kind="file"><name>offline_dynamic_connectivity_sum.cpp</name>
   </compound>
+  <compound refid="persistent__array_8cpp" kind="file"><name>persistent_array.cpp</name>
+  </compound>
   <compound refid="persistent__lazy__wb__tree_8cpp" kind="file"><name>persistent_lazy_wb_tree.cpp</name>
+  </compound>
+  <compound refid="persistent__segment__tree_8cpp" kind="file"><name>persistent_segment_tree.cpp</name>
   </compound>
   <compound refid="persistent__stack_8cpp" kind="file"><name>persistent_stack.cpp</name>
   </compound>
@@ -1477,9 +1650,15 @@
   </compound>
   <compound refid="union__find_8cpp" kind="file"><name>union_find.cpp</name>
   </compound>
+  <compound refid="union__find__light_8cpp" kind="file"><name>union_find_light.cpp</name>
+  </compound>
   <compound refid="wavelet__matrix_8cpp" kind="file"><name>wavelet_matrix.cpp</name>
   </compound>
   <compound refid="wavelet__matrix__cumulative__sum_8cpp" kind="file"><name>wavelet_matrix_cumulative_sum.cpp</name>
+  </compound>
+  <compound refid="wb__tree_8cpp" kind="file"><name>wb_tree.cpp</name>
+  </compound>
+  <compound refid="bfs__path_8cpp" kind="file"><name>bfs_path.cpp</name>
   </compound>
   <compound refid="dijkstra_8cpp" kind="file"><name>dijkstra.cpp</name>
   </compound>
@@ -1494,6 +1673,8 @@
   <compound refid="lca_8cpp" kind="file"><name>lca.cpp</name>
   </compound>
   <compound refid="maximum__independent__set_8cpp" kind="file"><name>maximum_independent_set.cpp</name>
+  </compound>
+  <compound refid="minimum__spanning__tree_8cpp" kind="file"><name>minimum_spanning_tree.cpp</name>
   </compound>
   <compound refid="minimum__steiner__tree_8cpp" kind="file"><name>minimum_steiner_tree.cpp</name>
   </compound>
@@ -1528,6 +1709,7 @@
     <member refid="print_8cpp_1ace87e3a66bfd4831de373b69e94fb37e" kind="function"><name>operator&lt;&lt;</name></member>
     <member refid="print_8cpp_1a3b9e486b9795584e339b218debd9e242" kind="function"><name>operator&lt;&lt;</name></member>
     <member refid="print_8cpp_1a92d34c4ecc0675d7147d32ab8300c0b4" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="print_8cpp_1a4e265c41ffb51a68fa88ffb03af3d420" kind="function"><name>operator&lt;&lt;</name></member>
     <member refid="print_8cpp_1aac2ed171daee68304fbea4f161be914d" kind="function"><name>operator&lt;&lt;</name></member>
   </compound>
   <compound refid="hash__string_8cpp" kind="file"><name>hash_string.cpp</name>

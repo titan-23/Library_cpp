@@ -18,6 +18,7 @@
     <innerfile refid="dynamic__bit__vector_8cpp">dynamic_bit_vector.cpp</innerfile>
     <innerfile refid="dynamic__fenwick__tree__2D_8cpp">dynamic_fenwick_tree_2D.cpp</innerfile>
     <innerfile refid="dynamic__lazy__segment__tree_8cpp">dynamic_lazy_segment_tree.cpp</innerfile>
+    <innerfile refid="dynamic__list_8cpp">dynamic_list.cpp</innerfile>
     <innerfile refid="dynamic__segment__tree_8cpp">dynamic_segment_tree.cpp</innerfile>
     <innerfile refid="dynamic__segment__tree__init_8cpp">dynamic_segment_tree_init.cpp</innerfile>
     <innerfile refid="dynamic__wavelet__matrix_8cpp">dynamic_wavelet_matrix.cpp</innerfile>
@@ -26,12 +27,15 @@
     <innerfile refid="fenwick__tree_8cpp">fenwick_tree.cpp</innerfile>
     <innerfile refid="fenwick__tree__2D_8cpp">fenwick_tree_2D.cpp</innerfile>
     <innerfile refid="hash__dict_8cpp">hash_dict.cpp</innerfile>
+    <innerfile refid="lazy__link__cut__tree_8cpp">lazy_link_cut_tree.cpp</innerfile>
     <innerfile refid="lazy__wb__tree_8cpp">lazy_wb_tree.cpp</innerfile>
     <innerfile refid="data__structures_2link__cut__tree_8cpp">link_cut_tree.cpp</innerfile>
     <innerfile refid="min__heap_8cpp">min_heap.cpp</innerfile>
     <innerfile refid="offline__dynamic__connectivity_8cpp">offline_dynamic_connectivity.cpp</innerfile>
     <innerfile refid="offline__dynamic__connectivity__sum_8cpp">offline_dynamic_connectivity_sum.cpp</innerfile>
+    <innerfile refid="persistent__array_8cpp">persistent_array.cpp</innerfile>
     <innerfile refid="persistent__lazy__wb__tree_8cpp">persistent_lazy_wb_tree.cpp</innerfile>
+    <innerfile refid="persistent__segment__tree_8cpp">persistent_segment_tree.cpp</innerfile>
     <innerfile refid="persistent__stack_8cpp">persistent_stack.cpp</innerfile>
     <innerfile refid="segment__quadratic__division_8cpp">segment_quadratic_division.cpp</innerfile>
     <innerfile refid="segment__tree_8cpp">segment_tree.cpp</innerfile>
@@ -41,8 +45,10 @@
     <innerfile refid="undoable__union__find_8cpp">undoable_union_find.cpp</innerfile>
     <innerfile refid="undoable__union__find__sum_8cpp">undoable_union_find_sum.cpp</innerfile>
     <innerfile refid="union__find_8cpp">union_find.cpp</innerfile>
+    <innerfile refid="union__find__light_8cpp">union_find_light.cpp</innerfile>
     <innerfile refid="wavelet__matrix_8cpp">wavelet_matrix.cpp</innerfile>
     <innerfile refid="wavelet__matrix__cumulative__sum_8cpp">wavelet_matrix_cumulative_sum.cpp</innerfile>
+    <innerfile refid="wb__tree_8cpp">wb_tree.cpp</innerfile>
     <briefdescription>
     </briefdescription>
     <detaileddescription>

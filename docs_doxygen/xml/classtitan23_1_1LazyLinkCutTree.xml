@@ -1,0 +1,622 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classtitan23_1_1LazyLinkCutTree" kind="class" language="C++" prot="public">
+    <compoundname>titan23::LazyLinkCutTree</compoundname>
+    <innerclass refid="structtitan23_1_1LazyLinkCutTree_1_1Node" prot="private">titan23::LazyLinkCutTree::Node</innerclass>
+    <templateparamlist>
+      <param>
+        <type>class T</type>
+      </param>
+      <param>
+        <type>class F</type>
+      </param>
+      <param>
+        <type>T(*)(T, T)</type>
+        <declname>op</declname>
+        <defname>op</defname>
+      </param>
+      <param>
+        <type>T(*)(F, T)</type>
+        <declname>mapping</declname>
+        <defname>mapping</defname>
+      </param>
+      <param>
+        <type>F(*)(F, F)</type>
+        <declname>composition</declname>
+        <defname>composition</defname>
+      </param>
+      <param>
+        <type>T(*)()</type>
+        <declname>e</declname>
+        <defname>e</defname>
+      </param>
+      <param>
+        <type>F(*)()</type>
+        <declname>id</declname>
+        <defname>id</defname>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="classtitan23_1_1LazyLinkCutTree_1a22c9d5e1a3001d5fa4ad4c939fa566a2" prot="private" static="no">
+        <type>Node *</type>
+        <definition>using titan23::LazyLinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::NodePtr =  Node*</definition>
+        <argsstring></argsstring>
+        <name>NodePtr</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="18" column="9" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="18" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classtitan23_1_1LazyLinkCutTree_1a0c55e6ced26564852545e79cfe00cb41" prot="private" static="no" mutable="no">
+        <type>vector&lt; NodePtr &gt;</type>
+        <definition>vector&lt;NodePtr&gt; titan23::LazyLinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::pool</definition>
+        <argsstring></argsstring>
+        <name>pool</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="19" column="16" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1ac8b3accd99cae9a9aeecdfe6cb67ba3f" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::LazyLinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::_apply_rev</definition>
+        <argsstring>(const NodePtr node)</argsstring>
+        <name>_apply_rev</name>
+        <param>
+          <type>const NodePtr</type>
+          <declname>node</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="39" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="39" bodyend="42"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a833c0305f9e4c85367db83bf44f3e57b" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::LazyLinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::_apply_f</definition>
+        <argsstring>(const NodePtr node, const F f)</argsstring>
+        <name>_apply_f</name>
+        <param>
+          <type>const NodePtr</type>
+          <declname>node</declname>
+        </param>
+        <param>
+          <type>const F</type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="44" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="44" bodyend="50"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a6cdde496f87f29709ef8f5768fd2e686" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::LazyLinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::_propagate</definition>
+        <argsstring>(const NodePtr node)</argsstring>
+        <name>_propagate</name>
+        <param>
+          <type>const NodePtr</type>
+          <declname>node</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="52" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="52" bodyend="66"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1ae24df9c6d65a081873c57e64c975d392" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::LazyLinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::_update</definition>
+        <argsstring>(const NodePtr node)</argsstring>
+        <name>_update</name>
+        <param>
+          <type>const NodePtr</type>
+          <declname>node</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="68" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="68" bodyend="85"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a20ca47900e04f7ffa85b68b9edd7e9b5" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::LazyLinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::_rotate</definition>
+        <argsstring>(const NodePtr node)</argsstring>
+        <name>_rotate</name>
+        <param>
+          <type>const NodePtr</type>
+          <declname>node</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="87" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="87" bodyend="112"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1ab0eb38348b9b33ff6df87581cccb810a" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::LazyLinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::_splay</definition>
+        <argsstring>(const NodePtr node)</argsstring>
+        <name>_splay</name>
+        <param>
+          <type>const NodePtr</type>
+          <declname>node</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="114" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="114" bodyend="125"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a14b7968e4366b81f8bcc73c04a94e072" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::LazyLinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::_link</definition>
+        <argsstring>(const NodePtr c, const NodePtr p)</argsstring>
+        <name>_link</name>
+        <param>
+          <type>const NodePtr</type>
+          <declname>c</declname>
+        </param>
+        <param>
+          <type>const NodePtr</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="127" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="127" bodyend="133"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1ab2fe7f65ee109a0ebe7f9b32052cc7d0" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::LazyLinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::_cut</definition>
+        <argsstring>(const NodePtr c)</argsstring>
+        <name>_cut</name>
+        <param>
+          <type>const NodePtr</type>
+          <declname>c</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="135" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="135" bodyend="140"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a43cbadb7c591fe9fc1aa39d4b98a7b27" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>NodePtr</type>
+        <definition>NodePtr titan23::LazyLinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::_expose</definition>
+        <argsstring>(const NodePtr node)</argsstring>
+        <name>_expose</name>
+        <param>
+          <type>const NodePtr</type>
+          <declname>node</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="142" column="17" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="142" bodyend="157"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a7b457e4328ca9c1e42acb8d00b8c0dde" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>NodePtr</type>
+        <definition>NodePtr titan23::LazyLinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::_root</definition>
+        <argsstring>(NodePtr v)</argsstring>
+        <name>_root</name>
+        <param>
+          <type>NodePtr</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="159" column="17" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="159" bodyend="168"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a9f491c6bdba538eeef16a342132d7b59" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::LazyLinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::_evert</definition>
+        <argsstring>(NodePtr v)</argsstring>
+        <name>_evert</name>
+        <param>
+          <type>NodePtr</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="170" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="170" bodyend="174"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a566276e2313a199f1ae8fc5be87a2079" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::LazyLinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::LazyLinkCutTree</definition>
+        <argsstring>()</argsstring>
+        <name>LazyLinkCutTree</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="177" column="9" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="177" bodyend="177"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a326d0aeb98aab0cd3b425548b716a93d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::LazyLinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::LazyLinkCutTree</definition>
+        <argsstring>(int n)</argsstring>
+        <name>LazyLinkCutTree</name>
+        <param>
+          <type>int</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="179" column="9" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="179" bodyend="184"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1acc5d82614e484540939b2731e8a9c280" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::LazyLinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::expose</definition>
+        <argsstring>(int v)</argsstring>
+        <name>expose</name>
+        <param>
+          <type>int</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="186" column="13" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="186" bodyend="188"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a02f5b615983f9c8a63e0988cfcc3540b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::LazyLinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::lca</definition>
+        <argsstring>(int u, int v, int root=-1)</argsstring>
+        <name>lca</name>
+        <param>
+          <type>int</type>
+          <declname>u</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>v</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>root</declname>
+          <defval>-1</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="190" column="13" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="190" bodyend="194"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a514033473f1c220d597dfc5aae7770df" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::LazyLinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::link</definition>
+        <argsstring>(int c, int p)</argsstring>
+        <name>link</name>
+        <param>
+          <type>int</type>
+          <declname>c</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="196" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="196" bodyend="198"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a2c2a5b3a2cb9d259c9105071ef694ccd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::LazyLinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::cut</definition>
+        <argsstring>(int c)</argsstring>
+        <name>cut</name>
+        <param>
+          <type>int</type>
+          <declname>c</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="200" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="200" bodyend="202"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a690d7cd39863d1ce67d65dc275075ada" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::LazyLinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::root</definition>
+        <argsstring>(int v)</argsstring>
+        <name>root</name>
+        <param>
+          <type>int</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="204" column="13" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="204" bodyend="206"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a8fc111e798f2c7994db913ee2109dfcb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool titan23::LazyLinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::same</definition>
+        <argsstring>(int u, int v)</argsstring>
+        <name>same</name>
+        <param>
+          <type>int</type>
+          <declname>u</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="208" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="208" bodyend="210"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a65ae229b28e5bb44f25ebb37437e295a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::LazyLinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::evert</definition>
+        <argsstring>(int v)</argsstring>
+        <name>evert</name>
+        <param>
+          <type>int</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="212" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="212" bodyend="214"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a915d8a4deb41a0506246d8a4a7fb2176" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T titan23::LazyLinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::path_prod</definition>
+        <argsstring>(int u, int v)</argsstring>
+        <name>path_prod</name>
+        <param>
+          <type>int</type>
+          <declname>u</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="216" column="11" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="216" bodyend="220"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1af10b7fc534f1796c821f7b2920fbddb4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::LazyLinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::path_apply</definition>
+        <argsstring>(int u, int v, F f)</argsstring>
+        <name>path_apply</name>
+        <param>
+          <type>int</type>
+          <declname>u</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>v</declname>
+        </param>
+        <param>
+          <type>F</type>
+          <declname>f</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="222" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="222" bodyend="227"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a0e3e43428cdf95ea63a09e3a05119a69" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool titan23::LazyLinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::merge</definition>
+        <argsstring>(int u, int v)</argsstring>
+        <name>merge</name>
+        <param>
+          <type>int</type>
+          <declname>u</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="229" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="229" bodyend="234"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1ab6a73c84adc59385d32791ef483aaee6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::LazyLinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::split</definition>
+        <argsstring>(int u, int v)</argsstring>
+        <name>split</name>
+        <param>
+          <type>int</type>
+          <declname>u</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="236" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="236" bodyend="239"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a349488ab82d7648a5bdc8b36f4178c1e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T titan23::LazyLinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::get</definition>
+        <argsstring>(int k)</argsstring>
+        <name>get</name>
+        <param>
+          <type>int</type>
+          <declname>k</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="241" column="11" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="241" bodyend="244"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a4e5e7309f5d4d0854fe85829ef88f83f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::LazyLinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::set</definition>
+        <argsstring>(int k, T v)</argsstring>
+        <name>set</name>
+        <param>
+          <type>int</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>T</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="246" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="246" bodyend="251"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1aa8730089a70f2f0f2d76431d818188da" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::LazyLinkCutTree&lt; T, F, op, mapping, composition, e, id &gt;::path_kth_elm</definition>
+        <argsstring>(int s, int t, int k)</argsstring>
+        <name>path_kth_elm</name>
+        <param>
+          <type>int</type>
+          <declname>s</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>t</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>k</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="253" column="13" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="253" bodyend="272"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="15" column="5" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="15" bodyend="273"/>
+    <listofallmembers>
+      <member refid="classtitan23_1_1LazyLinkCutTree_1a833c0305f9e4c85367db83bf44f3e57b" prot="private" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>_apply_f</name></member>
+      <member refid="classtitan23_1_1LazyLinkCutTree_1ac8b3accd99cae9a9aeecdfe6cb67ba3f" prot="private" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>_apply_rev</name></member>
+      <member refid="classtitan23_1_1LazyLinkCutTree_1ab2fe7f65ee109a0ebe7f9b32052cc7d0" prot="private" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>_cut</name></member>
+      <member refid="classtitan23_1_1LazyLinkCutTree_1a9f491c6bdba538eeef16a342132d7b59" prot="private" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>_evert</name></member>
+      <member refid="classtitan23_1_1LazyLinkCutTree_1a43cbadb7c591fe9fc1aa39d4b98a7b27" prot="private" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>_expose</name></member>
+      <member refid="classtitan23_1_1LazyLinkCutTree_1a14b7968e4366b81f8bcc73c04a94e072" prot="private" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>_link</name></member>
+      <member refid="classtitan23_1_1LazyLinkCutTree_1a6cdde496f87f29709ef8f5768fd2e686" prot="private" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>_propagate</name></member>
+      <member refid="classtitan23_1_1LazyLinkCutTree_1a7b457e4328ca9c1e42acb8d00b8c0dde" prot="private" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>_root</name></member>
+      <member refid="classtitan23_1_1LazyLinkCutTree_1a20ca47900e04f7ffa85b68b9edd7e9b5" prot="private" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>_rotate</name></member>
+      <member refid="classtitan23_1_1LazyLinkCutTree_1ab0eb38348b9b33ff6df87581cccb810a" prot="private" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>_splay</name></member>
+      <member refid="classtitan23_1_1LazyLinkCutTree_1ae24df9c6d65a081873c57e64c975d392" prot="private" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>_update</name></member>
+      <member refid="classtitan23_1_1LazyLinkCutTree_1a2c2a5b3a2cb9d259c9105071ef694ccd" prot="public" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>cut</name></member>
+      <member refid="classtitan23_1_1LazyLinkCutTree_1a65ae229b28e5bb44f25ebb37437e295a" prot="public" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>evert</name></member>
+      <member refid="classtitan23_1_1LazyLinkCutTree_1acc5d82614e484540939b2731e8a9c280" prot="public" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>expose</name></member>
+      <member refid="classtitan23_1_1LazyLinkCutTree_1a349488ab82d7648a5bdc8b36f4178c1e" prot="public" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>get</name></member>
+      <member refid="classtitan23_1_1LazyLinkCutTree_1a566276e2313a199f1ae8fc5be87a2079" prot="public" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>LazyLinkCutTree</name></member>
+      <member refid="classtitan23_1_1LazyLinkCutTree_1a326d0aeb98aab0cd3b425548b716a93d" prot="public" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>LazyLinkCutTree</name></member>
+      <member refid="classtitan23_1_1LazyLinkCutTree_1a02f5b615983f9c8a63e0988cfcc3540b" prot="public" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>lca</name></member>
+      <member refid="classtitan23_1_1LazyLinkCutTree_1a514033473f1c220d597dfc5aae7770df" prot="public" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>link</name></member>
+      <member refid="classtitan23_1_1LazyLinkCutTree_1a0e3e43428cdf95ea63a09e3a05119a69" prot="public" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>merge</name></member>
+      <member refid="classtitan23_1_1LazyLinkCutTree_1a22c9d5e1a3001d5fa4ad4c939fa566a2" prot="private" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>NodePtr</name></member>
+      <member refid="classtitan23_1_1LazyLinkCutTree_1af10b7fc534f1796c821f7b2920fbddb4" prot="public" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>path_apply</name></member>
+      <member refid="classtitan23_1_1LazyLinkCutTree_1aa8730089a70f2f0f2d76431d818188da" prot="public" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>path_kth_elm</name></member>
+      <member refid="classtitan23_1_1LazyLinkCutTree_1a915d8a4deb41a0506246d8a4a7fb2176" prot="public" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>path_prod</name></member>
+      <member refid="classtitan23_1_1LazyLinkCutTree_1a0c55e6ced26564852545e79cfe00cb41" prot="private" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>pool</name></member>
+      <member refid="classtitan23_1_1LazyLinkCutTree_1a690d7cd39863d1ce67d65dc275075ada" prot="public" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>root</name></member>
+      <member refid="classtitan23_1_1LazyLinkCutTree_1a8fc111e798f2c7994db913ee2109dfcb" prot="public" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>same</name></member>
+      <member refid="classtitan23_1_1LazyLinkCutTree_1a4e5e7309f5d4d0854fe85829ef88f83f" prot="public" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>set</name></member>
+      <member refid="classtitan23_1_1LazyLinkCutTree_1ab6a73c84adc59385d32791ef483aaee6" prot="public" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>split</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

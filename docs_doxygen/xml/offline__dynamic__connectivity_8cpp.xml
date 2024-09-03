@@ -23,6 +23,9 @@
       <node id="2">
         <label>vector</label>
       </node>
+      <node id="4">
+        <label>unordered_map</label>
+      </node>
       <node id="1">
         <label>titan_cpplib/data_structures/offline_dynamic_connectivity.cpp</label>
         <link refid="offline__dynamic__connectivity_8cpp"/>
@@ -36,9 +39,6 @@
         </childnode>
         <childnode refid="6" relation="include">
         </childnode>
-      </node>
-      <node id="4">
-        <label>unordered_map</label>
       </node>
     </incdepgraph>
     <innerclass refid="classtitan23_1_1OfflineDynamicConnectivity" prot="public">titan23::OfflineDynamicConnectivity</innerclass>

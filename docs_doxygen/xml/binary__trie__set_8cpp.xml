@@ -5,9 +5,6 @@
     <includes local="no">iostream</includes>
     <includes local="no">vector</includes>
     <incdepgraph>
-      <node id="3">
-        <label>vector</label>
-      </node>
       <node id="1">
         <label>titan_cpplib/data_structures/binary_trie_set.cpp</label>
         <link refid="binary__trie__set_8cpp"/>
@@ -15,6 +12,9 @@
         </childnode>
         <childnode refid="3" relation="include">
         </childnode>
+      </node>
+      <node id="3">
+        <label>vector</label>
       </node>
       <node id="2">
         <label>iostream</label>

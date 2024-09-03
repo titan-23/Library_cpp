@@ -163,6 +163,19 @@
         </inbodydescription>
         <location file="titan_cpplib/data_structures/array.cpp" line="34" column="7" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="34" bodyend="38"/>
       </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Array_1a927575c163eb2d6c0f504c91777d543d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool titan23::Array&lt; T &gt;::empty</definition>
+        <argsstring>() const</argsstring>
+        <name>empty</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/array.cpp" line="40" column="10" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="40" bodyend="42"/>
+      </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Array_1a768912601c13a7c762fc4f3f7470f37f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
         <definition>void titan23::Array&lt; T &gt;::sort</definition>
@@ -179,7 +192,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/array.cpp" line="40" column="10" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="40" bodyend="46"/>
+        <location file="titan_cpplib/data_structures/array.cpp" line="44" column="10" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="44" bodyend="50"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Array_1a61987d4c8d0888850af4496747d77350" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -196,7 +209,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/array.cpp" line="48" column="9" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="48" bodyend="53"/>
+        <location file="titan_cpplib/data_structures/array.cpp" line="52" column="9" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="52" bodyend="57"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Array_1a3a066cb6a215790d033284d486a34a03" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -213,7 +226,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/array.cpp" line="55" column="9" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="55" bodyend="61"/>
+        <location file="titan_cpplib/data_structures/array.cpp" line="59" column="9" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="59" bodyend="65"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Array_1abb14b19eee00fcccbe15c92f283aff8d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -226,7 +239,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/array.cpp" line="63" column="10" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="63" bodyend="65"/>
+        <location file="titan_cpplib/data_structures/array.cpp" line="67" column="10" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="67" bodyend="69"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Array_1ac56780df6a1b95a8e192ed8867d96a38" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -247,7 +260,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/array.cpp" line="67" column="10" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="67" bodyend="70"/>
+        <location file="titan_cpplib/data_structures/array.cpp" line="71" column="10" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="71" bodyend="74"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Array_1ae1c1dc0b6156bdfc5ad3c069b9481db0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -265,7 +278,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/array.cpp" line="72" column="7" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="72" bodyend="77"/>
+        <location file="titan_cpplib/data_structures/array.cpp" line="76" column="7" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="76" bodyend="81"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Array_1a8b7ae2faed800e20e90311fc674965ca" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -282,7 +295,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/array.cpp" line="79" column="10" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="79" bodyend="81"/>
+        <location file="titan_cpplib/data_structures/array.cpp" line="83" column="10" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="83" bodyend="85"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Array_1a35a968b97910b7b4aa0816021a537c71" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -295,19 +308,19 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/array.cpp" line="83" column="10" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="83" bodyend="88"/>
+        <location file="titan_cpplib/data_structures/array.cpp" line="87" column="10" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="87" bodyend="92"/>
       </memberdef>
-      <memberdef kind="function" id="classtitan23_1_1Array_1a0d91ea4b7c5555e480c9f4a734a0bca4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="classtitan23_1_1Array_1a497f2613b16d9703512197182a88f148" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
         <definition>void titan23::Array&lt; T &gt;::reverse</definition>
-        <argsstring>(const int l, const int r)</argsstring>
+        <argsstring>(int l, int r)</argsstring>
         <name>reverse</name>
         <param>
-          <type>const int</type>
+          <type>int</type>
           <declname>l</declname>
         </param>
         <param>
-          <type>const int</type>
+          <type>int</type>
           <declname>r</declname>
         </param>
         <briefdescription>
@@ -316,7 +329,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/array.cpp" line="90" column="10" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="90" bodyend="98"/>
+        <location file="titan_cpplib/data_structures/array.cpp" line="94" column="10" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="94" bodyend="102"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Array_1aa99af80e8dc13f0f426cabd87bbe350c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -337,7 +350,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/array.cpp" line="100" column="10" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="100" bodyend="104"/>
+        <location file="titan_cpplib/data_structures/array.cpp" line="104" column="10" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="104" bodyend="108"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Array_1ac5e6f6576c98d47c09d9e0c37ef2059a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -366,7 +379,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/array.cpp" line="106" column="10" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="106" bodyend="121"/>
+        <location file="titan_cpplib/data_structures/array.cpp" line="110" column="10" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="110" bodyend="125"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Array_1af19fa13dbdd8d87c5a46b9744dd53900" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classtitan23_1_1Array" kindref="compound">Array</ref>&lt; T &gt;</type>
@@ -379,7 +392,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/array.cpp" line="123" column="11" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="123" bodyend="126"/>
+        <location file="titan_cpplib/data_structures/array.cpp" line="127" column="11" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="127" bodyend="130"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Array_1a3cff4f7a26ae176d54cb3e7b2d93a256" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -396,7 +409,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/array.cpp" line="128" column="10" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="128" bodyend="133"/>
+        <location file="titan_cpplib/data_structures/array.cpp" line="132" column="10" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="132" bodyend="137"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Array_1ac1fa5ef88b499c332031339a4c3b0992" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>T &amp;</type>
@@ -413,7 +426,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/array.cpp" line="135" column="7" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="135" bodyend="138"/>
+        <location file="titan_cpplib/data_structures/array.cpp" line="139" column="7" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="139" bodyend="142"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Array_1a3677a39f92f23ea116a3dba22c78993c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -430,7 +443,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/array.cpp" line="140" column="7" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="140" bodyend="143"/>
+        <location file="titan_cpplib/data_structures/array.cpp" line="144" column="7" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="144" bodyend="147"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Array_1afd358c83eb4d52e9a6d6f27703b966b7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -443,7 +456,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/array.cpp" line="145" column="9" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="145" bodyend="147"/>
+        <location file="titan_cpplib/data_structures/array.cpp" line="149" column="9" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="149" bodyend="151"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Array_1afbd05d8aea8383dff358ab3cefc66ddf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>vector&lt; T &gt;</type>
@@ -456,7 +469,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/array.cpp" line="149" column="12" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="149" bodyend="152"/>
+        <location file="titan_cpplib/data_structures/array.cpp" line="153" column="12" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="153" bodyend="156"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Array_1ae36998fead02b26eb3e0cac9c78e7d94" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -469,7 +482,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/array.cpp" line="154" column="10" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="154" bodyend="163"/>
+        <location file="titan_cpplib/data_structures/array.cpp" line="158" column="10" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="158" bodyend="167"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Array_1aa892b2eb481fb09daf44d86cece50f17" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -492,14 +505,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/array.cpp" line="165" column="10" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="165" bodyend="173"/>
+        <location file="titan_cpplib/data_structures/array.cpp" line="169" column="10" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="169" bodyend="177"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/data_structures/array.cpp" line="10" column="3" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="10" bodyend="174"/>
+    <location file="titan_cpplib/data_structures/array.cpp" line="10" column="3" bodyfile="titan_cpplib/data_structures/array.cpp" bodystart="10" bodyend="178"/>
     <listofallmembers>
       <member refid="classtitan23_1_1Array_1ac6489de83a427bc5725340a4a0f4d6d8" prot="private" virt="non-virtual"><scope>titan23::Array</scope><name>a</name></member>
       <member refid="classtitan23_1_1Array_1a2e02c73249832591fc87745f065d0564" prot="public" virt="non-virtual"><scope>titan23::Array</scope><name>Array</name></member>
@@ -511,6 +524,7 @@
       <member refid="classtitan23_1_1Array_1af19fa13dbdd8d87c5a46b9744dd53900" prot="public" virt="non-virtual"><scope>titan23::Array</scope><name>copy</name></member>
       <member refid="classtitan23_1_1Array_1a3a066cb6a215790d033284d486a34a03" prot="public" virt="non-virtual"><scope>titan23::Array</scope><name>count</name></member>
       <member refid="classtitan23_1_1Array_1a0e18247476d92c295214e8bf543b33e7" prot="public" virt="non-virtual"><scope>titan23::Array</scope><name>emplace_back</name></member>
+      <member refid="classtitan23_1_1Array_1a927575c163eb2d6c0f504c91777d543d" prot="public" virt="non-virtual"><scope>titan23::Array</scope><name>empty</name></member>
       <member refid="classtitan23_1_1Array_1a61987d4c8d0888850af4496747d77350" prot="public" virt="non-virtual"><scope>titan23::Array</scope><name>index</name></member>
       <member refid="classtitan23_1_1Array_1ac56780df6a1b95a8e192ed8867d96a38" prot="public" virt="non-virtual"><scope>titan23::Array</scope><name>insert</name></member>
       <member refid="classtitan23_1_1Array_1afd358c83eb4d52e9a6d6f27703b966b7" prot="public" virt="non-virtual"><scope>titan23::Array</scope><name>len</name></member>
@@ -523,7 +537,7 @@
       <member refid="classtitan23_1_1Array_1a7d52afdf22debf3a80bf33faee7a500b" prot="public" virt="non-virtual"><scope>titan23::Array</scope><name>reserve</name></member>
       <member refid="classtitan23_1_1Array_1afff6d51ec5b8b52ce0cdb7369a0bbc4a" prot="public" virt="non-virtual"><scope>titan23::Array</scope><name>resize</name></member>
       <member refid="classtitan23_1_1Array_1a35a968b97910b7b4aa0816021a537c71" prot="public" virt="non-virtual"><scope>titan23::Array</scope><name>reverse</name></member>
-      <member refid="classtitan23_1_1Array_1a0d91ea4b7c5555e480c9f4a734a0bca4" prot="public" virt="non-virtual"><scope>titan23::Array</scope><name>reverse</name></member>
+      <member refid="classtitan23_1_1Array_1a497f2613b16d9703512197182a88f148" prot="public" virt="non-virtual"><scope>titan23::Array</scope><name>reverse</name></member>
       <member refid="classtitan23_1_1Array_1a768912601c13a7c762fc4f3f7470f37f" prot="public" virt="non-virtual"><scope>titan23::Array</scope><name>sort</name></member>
       <member refid="classtitan23_1_1Array_1aa3476b685402c6dea5899f544bbfcbd4" prot="public" virt="non-virtual"><scope>titan23::Array</scope><name>sum</name></member>
       <member refid="classtitan23_1_1Array_1aa99af80e8dc13f0f426cabd87bbe350c" prot="public" virt="non-virtual"><scope>titan23::Array</scope><name>swap</name></member>

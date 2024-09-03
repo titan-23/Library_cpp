@@ -76,53 +76,59 @@ $(function() {
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; </div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="keyword">namespace </span>titan23 {</div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;  <span class="keyword">template</span> &lt;<span class="keyword">class </span>T,</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;            T (*op)(T, T),</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;            T (*e)()&gt;</div>
-<div class="line"><a name="l00011"></a><span class="lineno"><a class="line" href="structtitan23_1_1HLDSegmentTree.html">   11</a></span>&#160;  <span class="keyword">struct</span> <a class="code" href="structtitan23_1_1HLDSegmentTree.html">HLDSegmentTree</a> {</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    <a class="code" href="structtitan23_1_1HLD.html">titan23::HLD</a> hld;</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <a class="code" href="structtitan23_1_1SegmentTree.html">titan23::SegmentTree&lt;T, op, e&gt;</a> seg;</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <a class="code" href="structtitan23_1_1HLDSegmentTree.html">HLDSegmentTree</a>(<span class="keyword">const</span> <a class="code" href="structtitan23_1_1HLD.html">titan23::HLD</a> &amp;hld) {</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;      this-&gt;hld = hld;</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;      this-&gt;seg = <a class="code" href="structtitan23_1_1SegmentTree.html">titan23::SegmentTree&lt;T, op, e&gt;</a>(hld.n);</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    }</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    <a class="code" href="structtitan23_1_1HLDSegmentTree.html">HLDSegmentTree</a>(<span class="keyword">const</span> <a class="code" href="structtitan23_1_1HLD.html">titan23::HLD</a> &amp;hld, constvector&lt;T&gt; &amp;a) {</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;      this-&gt;hld = hld;</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;      this-&gt;seg = <a class="code" href="structtitan23_1_1SegmentTree.html">titan23::SegmentTree&lt;T, op, e&gt;</a>(hld.build_list(a));</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    }</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    T path_prod(<span class="keywordtype">int</span> u, <span class="keywordtype">int</span> v)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;      T res = e();</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;      <span class="keywordflow">while</span> (hld.head[u] != hld.head[v]) {</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        <span class="keywordflow">if</span> (hld.dep[hld.head[u]] &lt; hld.dep[hld.head[v]]) {</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;          swap(u, v);</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        }</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        res = op(res, seg.prod(hld.nodein[hld.head[u]], hld.nodein[u]+1));</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        u = hld.par[hld.head[u]];</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;      }</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;      <span class="keywordflow">if</span> (hld.dep[u] &lt; hld.dep[v]) {</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        swap(u, v);</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;      }</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;      <span class="keywordflow">return</span> op(res, seg.prod(hld.nodein[v], hld.nodein[u]+1));</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    }</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    T get(<span class="keyword">const</span> <span class="keywordtype">int</span> k)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;      <span class="keywordflow">return</span> seg.get(hld.nodein[k]);</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    }</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="keywordtype">void</span> set(<span class="keyword">const</span> <span class="keywordtype">int</span> k, <span class="keyword">const</span> T v) {</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;      seg.set(hld.nodein[k], v);</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    }</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    T subtree_prod(<span class="keyword">const</span> <span class="keywordtype">int</span> v)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;      <span class="keywordflow">return</span> seg.prod(hld.nodein[v], hld.nodeout[v]);</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    }</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  };</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;}  <span class="comment">// namespace titan23</span></div>
-<div class="ttc" id="astructtitan23_1_1HLDSegmentTree_html"><div class="ttname"><a href="structtitan23_1_1HLDSegmentTree.html">titan23::HLDSegmentTree</a></div><div class="ttdef"><b>Definition:</b> <a href="hld__segment__tree_8cpp_source.html#l00011">hld_segment_tree.cpp:11</a></div></div>
-<div class="ttc" id="astructtitan23_1_1HLD_html"><div class="ttname"><a href="structtitan23_1_1HLD.html">titan23::HLD</a></div><div class="ttdef"><b>Definition:</b> <a href="hld_8cpp_source.html#l00008">hld.cpp:8</a></div></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">class </span>T,</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;              T (*op)(T, T),</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;              T (*e)()&gt;</div>
+<div class="line"><a name="l00018"></a><span class="lineno"><a class="line" href="classtitan23_1_1HLDSegmentTree.html">   18</a></span>&#160;    <span class="keyword">class</span> <a class="code" href="classtitan23_1_1HLDSegmentTree.html">HLDSegmentTree</a> {</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;      <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        <a class="code" href="classtitan23_1_1HLD.html">titan23::HLD</a> hld;</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <a class="code" href="structtitan23_1_1SegmentTree.html">titan23::SegmentTree&lt;T, op, e&gt;</a> seg;</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;      <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        <a class="code" href="classtitan23_1_1HLDSegmentTree.html">HLDSegmentTree</a>(<span class="keyword">const</span> <a class="code" href="classtitan23_1_1HLD.html">titan23::HLD</a> &amp;hld) {</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;            this-&gt;hld = hld;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;            this-&gt;seg = <a class="code" href="structtitan23_1_1SegmentTree.html">titan23::SegmentTree&lt;T, op, e&gt;</a>(hld.n);</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        }</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <a class="code" href="classtitan23_1_1HLDSegmentTree.html">HLDSegmentTree</a>(<span class="keyword">const</span> <a class="code" href="classtitan23_1_1HLD.html">titan23::HLD</a> &amp;hld, constvector&lt;T&gt; &amp;a) {</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;            this-&gt;hld = hld;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;            this-&gt;seg = <a class="code" href="structtitan23_1_1SegmentTree.html">titan23::SegmentTree&lt;T, op, e&gt;</a>(hld.build_list(a));</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        }</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
+<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="classtitan23_1_1HLDSegmentTree.html#a6b68c4cf878416e7ae21580f9a0796aa">   35</a></span>&#160;        T <a class="code" href="classtitan23_1_1HLDSegmentTree.html#a6b68c4cf878416e7ae21580f9a0796aa">path_prod</a>(<span class="keywordtype">int</span> u, <span class="keywordtype">int</span> v)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;            T res = e();</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;            <span class="keywordflow">while</span> (hld.head[u] != hld.head[v]) {</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;                <span class="keywordflow">if</span> (hld.dep[hld.head[u]] &lt; hld.dep[hld.head[v]]) {</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;                    swap(u, v);</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;                }</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;                res = op(res, seg.prod(hld.nodein[hld.head[u]], hld.nodein[u]+1));</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;                u = hld.par[hld.head[u]];</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;            }</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;            <span class="keywordflow">if</span> (hld.dep[u] &lt; hld.dep[v]) {</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;                swap(u, v);</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;            }</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;            <span class="keywordflow">return</span> op(res, seg.prod(hld.nodein[v], hld.nodein[u]+1));</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        }</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
+<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="classtitan23_1_1HLDSegmentTree.html#a9fc2fd79b4380f32843ba25ad98b2a54">   51</a></span>&#160;        T <a class="code" href="classtitan23_1_1HLDSegmentTree.html#a9fc2fd79b4380f32843ba25ad98b2a54">get</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> k)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;            <span class="keywordflow">return</span> seg.get(hld.nodein[k]);</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        }</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
+<div class="line"><a name="l00056"></a><span class="lineno"><a class="line" href="classtitan23_1_1HLDSegmentTree.html#a58d615e822081f63575bae71c59e8f5f">   56</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classtitan23_1_1HLDSegmentTree.html#a58d615e822081f63575bae71c59e8f5f">set</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> k, <span class="keyword">const</span> T v) {</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;            seg.set(hld.nodein[k], v);</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        }</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
+<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="classtitan23_1_1HLDSegmentTree.html#aa0293295506cd28d17fc3563c92390fb">   61</a></span>&#160;        T <a class="code" href="classtitan23_1_1HLDSegmentTree.html#aa0293295506cd28d17fc3563c92390fb">subtree_prod</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> v)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;            <span class="keywordflow">return</span> seg.prod(hld.nodein[v], hld.nodeout[v]);</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        }</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    };</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;}  <span class="comment">// namespace titan23</span></div>
+<div class="ttc" id="aclasstitan23_1_1HLDSegmentTree_html"><div class="ttname"><a href="classtitan23_1_1HLDSegmentTree.html">titan23::HLDSegmentTree</a></div><div class="ttdoc">セグ木搭載HLD</div><div class="ttdef"><b>Definition:</b> <a href="hld__segment__tree_8cpp_source.html#l00018">hld_segment_tree.cpp:18</a></div></div>
+<div class="ttc" id="aclasstitan23_1_1HLDSegmentTree_html_a58d615e822081f63575bae71c59e8f5f"><div class="ttname"><a href="classtitan23_1_1HLDSegmentTree.html#a58d615e822081f63575bae71c59e8f5f">titan23::HLDSegmentTree::set</a></div><div class="ttdeci">void set(const int k, const T v)</div><div class="ttdoc">頂点 k の値を v に更新する / O(logn)</div><div class="ttdef"><b>Definition:</b> <a href="hld__segment__tree_8cpp_source.html#l00056">hld_segment_tree.cpp:56</a></div></div>
+<div class="ttc" id="aclasstitan23_1_1HLDSegmentTree_html_a6b68c4cf878416e7ae21580f9a0796aa"><div class="ttname"><a href="classtitan23_1_1HLDSegmentTree.html#a6b68c4cf878416e7ae21580f9a0796aa">titan23::HLDSegmentTree::path_prod</a></div><div class="ttdeci">T path_prod(int u, int v) const</div><div class="ttdoc">u から v へのパスの総積を返す / O(logn)</div><div class="ttdef"><b>Definition:</b> <a href="hld__segment__tree_8cpp_source.html#l00035">hld_segment_tree.cpp:35</a></div></div>
+<div class="ttc" id="aclasstitan23_1_1HLDSegmentTree_html_a9fc2fd79b4380f32843ba25ad98b2a54"><div class="ttname"><a href="classtitan23_1_1HLDSegmentTree.html#a9fc2fd79b4380f32843ba25ad98b2a54">titan23::HLDSegmentTree::get</a></div><div class="ttdeci">T get(const int k) const</div><div class="ttdoc">頂点 k の値を返す / O(1)</div><div class="ttdef"><b>Definition:</b> <a href="hld__segment__tree_8cpp_source.html#l00051">hld_segment_tree.cpp:51</a></div></div>
+<div class="ttc" id="aclasstitan23_1_1HLDSegmentTree_html_aa0293295506cd28d17fc3563c92390fb"><div class="ttname"><a href="classtitan23_1_1HLDSegmentTree.html#aa0293295506cd28d17fc3563c92390fb">titan23::HLDSegmentTree::subtree_prod</a></div><div class="ttdeci">T subtree_prod(const int v) const</div><div class="ttdoc">頂点 v の部分木の総積を返す / O(logn)</div><div class="ttdef"><b>Definition:</b> <a href="hld__segment__tree_8cpp_source.html#l00061">hld_segment_tree.cpp:61</a></div></div>
+<div class="ttc" id="aclasstitan23_1_1HLD_html"><div class="ttname"><a href="classtitan23_1_1HLD.html">titan23::HLD</a></div><div class="ttdef"><b>Definition:</b> <a href="hld_8cpp_source.html#l00008">hld.cpp:8</a></div></div>
 <div class="ttc" id="astructtitan23_1_1SegmentTree_html"><div class="ttname"><a href="structtitan23_1_1SegmentTree.html">titan23::SegmentTree&lt; T, op, e &gt;</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

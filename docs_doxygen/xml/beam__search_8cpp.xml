@@ -12,9 +12,6 @@
     <includes refid="action_8cpp" local="yes">titan_cpplib/ahc/beam_search/action.cpp</includes>
     <includes refid="state__pool_8cpp" local="yes">titan_cpplib/ahc/state_pool.cpp</includes>
     <incdepgraph>
-      <node id="4">
-        <label>cassert</label>
-      </node>
       <node id="1">
         <label>titan_cpplib/ahc/beam_search/beam_search.cpp</label>
         <link refid="beam__search_8cpp"/>
@@ -37,8 +34,41 @@
         <childnode refid="12" relation="include">
         </childnode>
       </node>
+      <node id="4">
+        <label>cassert</label>
+      </node>
       <node id="6">
         <label>ext/pb_ds/assoc_container.hpp</label>
+      </node>
+      <node id="8">
+        <label>titan_cpplib/ahc/timer.cpp</label>
+        <link refid="timer_8cpp_source"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
+        </childnode>
+        <childnode refid="10" relation="include">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>ext/pb_ds/hash_policy.hpp</label>
+      </node>
+      <node id="11">
+        <label>titan_cpplib/ahc/beam_search/action.cpp</label>
+        <link refid="action_8cpp_source"/>
+        <childnode refid="2" relation="include">
+        </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>stack</label>
+      </node>
+      <node id="3">
+        <label>vector</label>
+      </node>
+      <node id="2">
+        <label>iostream</label>
       </node>
       <node id="12">
         <label>titan_cpplib/ahc/state_pool.cpp</label>
@@ -52,41 +82,11 @@
         <childnode refid="14" relation="include">
         </childnode>
       </node>
-      <node id="7">
-        <label>ext/pb_ds/hash_policy.hpp</label>
-      </node>
-      <node id="14">
-        <label>stack</label>
-      </node>
-      <node id="3">
-        <label>vector</label>
-      </node>
-      <node id="11">
-        <label>titan_cpplib/ahc/beam_search/action.cpp</label>
-        <link refid="action_8cpp_source"/>
-        <childnode refid="2" relation="include">
-        </childnode>
-        <childnode refid="4" relation="include">
-        </childnode>
-      </node>
-      <node id="2">
-        <label>iostream</label>
-      </node>
       <node id="9">
         <label>chrono</label>
       </node>
       <node id="10">
         <label>thread</label>
-      </node>
-      <node id="8">
-        <label>titan_cpplib/ahc/timer.cpp</label>
-        <link refid="timer_8cpp_source"/>
-        <childnode refid="2" relation="include">
-        </childnode>
-        <childnode refid="9" relation="include">
-        </childnode>
-        <childnode refid="10" relation="include">
-        </childnode>
       </node>
       <node id="5">
         <label>algorithm</label>

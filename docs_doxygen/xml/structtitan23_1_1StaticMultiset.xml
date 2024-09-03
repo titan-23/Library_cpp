@@ -128,6 +128,20 @@
         </inbodydescription>
         <location file="titan_cpplib/data_structures/static_multiset.cpp" line="34" column="13" bodyfile="titan_cpplib/data_structures/static_multiset.cpp" bodystart="34" bodyend="36"/>
       </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1StaticMultiset_1aadc68bede35f5d231a1d6153cace7e8b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool titan23::StaticMultiset&lt; T &gt;::empty</definition>
+        <argsstring>() const</argsstring>
+        <name>empty</name>
+        <briefdescription>
+<para>空かどうか / <computeroutput>O(1)</computeroutput> </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/static_multiset.cpp" line="39" column="14" bodyfile="titan_cpplib/data_structures/static_multiset.cpp" bodystart="39" bodyend="41"/>
+      </memberdef>
       <memberdef kind="function" id="structtitan23_1_1StaticMultiset_1a4064ba61bf8967193ed269edb5dd4060" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
         <definition>T titan23::StaticMultiset&lt; T &gt;::get</definition>
@@ -144,7 +158,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/static_multiset.cpp" line="39" column="11" bodyfile="titan_cpplib/data_structures/static_multiset.cpp" bodystart="39" bodyend="41"/>
+        <location file="titan_cpplib/data_structures/static_multiset.cpp" line="44" column="11" bodyfile="titan_cpplib/data_structures/static_multiset.cpp" bodystart="44" bodyend="46"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1StaticMultiset_1aeb2496fcb55cb018023ed52ca87736d8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -162,7 +176,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/static_multiset.cpp" line="44" column="11" bodyfile="titan_cpplib/data_structures/static_multiset.cpp" bodystart="44" bodyend="52"/>
+        <location file="titan_cpplib/data_structures/static_multiset.cpp" line="49" column="11" bodyfile="titan_cpplib/data_structures/static_multiset.cpp" bodystart="49" bodyend="57"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1StaticMultiset_1a9fa80119ceef2e80f03e12d7e465ba44" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -180,7 +194,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/static_multiset.cpp" line="55" column="11" bodyfile="titan_cpplib/data_structures/static_multiset.cpp" bodystart="55" bodyend="63"/>
+        <location file="titan_cpplib/data_structures/static_multiset.cpp" line="60" column="11" bodyfile="titan_cpplib/data_structures/static_multiset.cpp" bodystart="60" bodyend="68"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1StaticMultiset_1af1dd98fcd6eb476bf42b58757b41104b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -198,7 +212,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/static_multiset.cpp" line="66" column="11" bodyfile="titan_cpplib/data_structures/static_multiset.cpp" bodystart="66" bodyend="74"/>
+        <location file="titan_cpplib/data_structures/static_multiset.cpp" line="71" column="11" bodyfile="titan_cpplib/data_structures/static_multiset.cpp" bodystart="71" bodyend="79"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1StaticMultiset_1a701d7530b336075b9078b81ca8f3880e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -216,7 +230,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/static_multiset.cpp" line="77" column="11" bodyfile="titan_cpplib/data_structures/static_multiset.cpp" bodystart="77" bodyend="85"/>
+        <location file="titan_cpplib/data_structures/static_multiset.cpp" line="82" column="11" bodyfile="titan_cpplib/data_structures/static_multiset.cpp" bodystart="82" bodyend="90"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1StaticMultiset_1a9a66cdc3329d14f9e3682ef1c40d78cb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -234,7 +248,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/static_multiset.cpp" line="88" column="13" bodyfile="titan_cpplib/data_structures/static_multiset.cpp" bodystart="88" bodyend="95"/>
+        <location file="titan_cpplib/data_structures/static_multiset.cpp" line="93" column="13" bodyfile="titan_cpplib/data_structures/static_multiset.cpp" bodystart="93" bodyend="100"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1StaticMultiset_1ac60ad00e67b0e9f9ce70a815209404f4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -252,7 +266,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/static_multiset.cpp" line="98" column="13" bodyfile="titan_cpplib/data_structures/static_multiset.cpp" bodystart="98" bodyend="105"/>
+        <location file="titan_cpplib/data_structures/static_multiset.cpp" line="103" column="13" bodyfile="titan_cpplib/data_structures/static_multiset.cpp" bodystart="103" bodyend="110"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1StaticMultiset_1aac79b2bd53a0cd9318264cba64be58f7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -270,7 +284,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/static_multiset.cpp" line="108" column="13" bodyfile="titan_cpplib/data_structures/static_multiset.cpp" bodystart="108" bodyend="110"/>
+        <location file="titan_cpplib/data_structures/static_multiset.cpp" line="113" column="13" bodyfile="titan_cpplib/data_structures/static_multiset.cpp" bodystart="113" bodyend="115"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1StaticMultiset_1a78c54385b1cde39cb012283f953a3f12" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -292,7 +306,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/static_multiset.cpp" line="113" column="13" bodyfile="titan_cpplib/data_structures/static_multiset.cpp" bodystart="113" bodyend="116"/>
+        <location file="titan_cpplib/data_structures/static_multiset.cpp" line="118" column="13" bodyfile="titan_cpplib/data_structures/static_multiset.cpp" bodystart="118" bodyend="121"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1StaticMultiset_1a2b82a7a55d1b66711365c0f3b793fbed" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -310,19 +324,20 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/static_multiset.cpp" line="119" column="14" bodyfile="titan_cpplib/data_structures/static_multiset.cpp" bodystart="119" bodyend="124"/>
+        <location file="titan_cpplib/data_structures/static_multiset.cpp" line="124" column="14" bodyfile="titan_cpplib/data_structures/static_multiset.cpp" bodystart="124" bodyend="130"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/data_structures/static_multiset.cpp" line="9" column="5" bodyfile="titan_cpplib/data_structures/static_multiset.cpp" bodystart="9" bodyend="125"/>
+    <location file="titan_cpplib/data_structures/static_multiset.cpp" line="9" column="5" bodyfile="titan_cpplib/data_structures/static_multiset.cpp" bodystart="9" bodyend="131"/>
     <listofallmembers>
       <member refid="structtitan23_1_1StaticMultiset_1a2b82a7a55d1b66711365c0f3b793fbed" prot="public" virt="non-virtual"><scope>titan23::StaticMultiset</scope><name>contains</name></member>
       <member refid="structtitan23_1_1StaticMultiset_1aac79b2bd53a0cd9318264cba64be58f7" prot="public" virt="non-virtual"><scope>titan23::StaticMultiset</scope><name>count</name></member>
       <member refid="structtitan23_1_1StaticMultiset_1a78c54385b1cde39cb012283f953a3f12" prot="public" virt="non-virtual"><scope>titan23::StaticMultiset</scope><name>count_range</name></member>
       <member refid="structtitan23_1_1StaticMultiset_1a7b14a64c532f51f6d434c0e93ef84d7c" prot="public" virt="non-virtual"><scope>titan23::StaticMultiset</scope><name>data</name></member>
+      <member refid="structtitan23_1_1StaticMultiset_1aadc68bede35f5d231a1d6153cace7e8b" prot="public" virt="non-virtual"><scope>titan23::StaticMultiset</scope><name>empty</name></member>
       <member refid="structtitan23_1_1StaticMultiset_1aeb2496fcb55cb018023ed52ca87736d8" prot="public" virt="non-virtual"><scope>titan23::StaticMultiset</scope><name>ge</name></member>
       <member refid="structtitan23_1_1StaticMultiset_1a4064ba61bf8967193ed269edb5dd4060" prot="public" virt="non-virtual"><scope>titan23::StaticMultiset</scope><name>get</name></member>
       <member refid="structtitan23_1_1StaticMultiset_1a9fa80119ceef2e80f03e12d7e465ba44" prot="public" virt="non-virtual"><scope>titan23::StaticMultiset</scope><name>gt</name></member>

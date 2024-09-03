@@ -1,0 +1,258 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classtitan23_1_1PersistentArray" kind="class" language="C++" prot="public">
+    <compoundname>titan23::PersistentArray</compoundname>
+    <innerclass refid="structtitan23_1_1PersistentArray_1_1Node" prot="private">titan23::PersistentArray::Node</innerclass>
+    <templateparamlist>
+      <param>
+        <type>typename T</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="classtitan23_1_1PersistentArray_1a0b024fad8549f68a9af0f4b2734ba7f3" prot="private" static="no">
+        <type>Node *</type>
+        <definition>using titan23::PersistentArray&lt; T &gt;::NodePtr =  Node*</definition>
+        <argsstring></argsstring>
+        <name>NodePtr</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/persistent_array.cpp" line="14" column="9" bodyfile="titan_cpplib/data_structures/persistent_array.cpp" bodystart="14" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classtitan23_1_1PersistentArray_1a1b97da08aa2c8d0613e2bdcb715cb437" prot="private" static="no" mutable="no">
+        <type>NodePtr</type>
+        <definition>NodePtr titan23::PersistentArray&lt; T &gt;::root</definition>
+        <argsstring></argsstring>
+        <name>root</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/persistent_array.cpp" line="16" column="17" bodyfile="titan_cpplib/data_structures/persistent_array.cpp" bodystart="16" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1PersistentArray_1a964b87c19f8000c07c8a5f1dfb016ecb" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int titan23::PersistentArray&lt; T &gt;::n</definition>
+        <argsstring></argsstring>
+        <name>n</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/persistent_array.cpp" line="17" column="13" bodyfile="titan_cpplib/data_structures/persistent_array.cpp" bodystart="17" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classtitan23_1_1PersistentArray_1a9ba07be9ae68ed21bb3368c1524549c9" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::PersistentArray&lt; T &gt;::bit_length</definition>
+        <argsstring>(const int n) const</argsstring>
+        <name>bit_length</name>
+        <param>
+          <type>const int</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/persistent_array.cpp" line="34" column="13" bodyfile="titan_cpplib/data_structures/persistent_array.cpp" bodystart="34" bodyend="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1PersistentArray_1a5d51d819794b562ac3f1d5f370a5793a" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::PersistentArray&lt; T &gt;::_build</definition>
+        <argsstring>(const vector&lt; T &gt; &amp;a)</argsstring>
+        <name>_build</name>
+        <param>
+          <type>const vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/persistent_array.cpp" line="38" column="14" bodyfile="titan_cpplib/data_structures/persistent_array.cpp" bodystart="38" bodyend="60"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1PersistentArray_1a517ecb3d22b3eff62a9ff73b3c12290d" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classtitan23_1_1PersistentArray" kindref="compound">PersistentArray</ref>&lt; T &gt;</type>
+        <definition>PersistentArray&lt;T&gt; titan23::PersistentArray&lt; T &gt;::_new</definition>
+        <argsstring>(NodePtr root) const</argsstring>
+        <name>_new</name>
+        <param>
+          <type>NodePtr</type>
+          <declname>root</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/persistent_array.cpp" line="62" column="25" bodyfile="titan_cpplib/data_structures/persistent_array.cpp" bodystart="62" bodyend="67"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classtitan23_1_1PersistentArray_1a10c1803ea85c45b2a870496ff73620ba" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::PersistentArray&lt; T &gt;::PersistentArray</definition>
+        <argsstring>()</argsstring>
+        <name>PersistentArray</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/persistent_array.cpp" line="70" column="9" bodyfile="titan_cpplib/data_structures/persistent_array.cpp" bodystart="70" bodyend="70"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1PersistentArray_1a3cf4a03d4ef6635f1942342d20882584" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::PersistentArray&lt; T &gt;::PersistentArray</definition>
+        <argsstring>(const vector&lt; T &gt; a)</argsstring>
+        <name>PersistentArray</name>
+        <param>
+          <type>const vector&lt; T &gt;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+<para>配列 <computeroutput>a</computeroutput> をもとに構築する / <computeroutput>O(n)</computeroutput> </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/persistent_array.cpp" line="73" column="9" bodyfile="titan_cpplib/data_structures/persistent_array.cpp" bodystart="73" bodyend="75"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1PersistentArray_1a6fdc6eaa94c66b7a93aa9f65f2e8f15f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classtitan23_1_1PersistentArray" kindref="compound">PersistentArray</ref>&lt; T &gt;</type>
+        <definition>PersistentArray&lt;T&gt; titan23::PersistentArray&lt; T &gt;::set</definition>
+        <argsstring>(int k, T v) const</argsstring>
+        <name>set</name>
+        <param>
+          <type>int</type>
+          <declname>k</declname>
+        </param>
+        <param>
+          <type>T</type>
+          <declname>v</declname>
+        </param>
+        <briefdescription>
+<para>位置 <computeroutput>k</computeroutput> を <computeroutput>v</computeroutput> に変更した永続配列を返す / <computeroutput>O(logn)</computeroutput> time, <computeroutput>O(logn)</computeroutput> space </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/persistent_array.cpp" line="78" column="25" bodyfile="titan_cpplib/data_structures/persistent_array.cpp" bodystart="78" bodyend="99"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1PersistentArray_1ad84c2d3839850468b50570982cc6f966" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T titan23::PersistentArray&lt; T &gt;::get</definition>
+        <argsstring>(int k) const</argsstring>
+        <name>get</name>
+        <param>
+          <type>int</type>
+          <declname>k</declname>
+        </param>
+        <briefdescription>
+<para>位置 <computeroutput>k</computeroutput> の値を返す / <computeroutput>O(logn)</computeroutput> time, <computeroutput>O(1)</computeroutput> space </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/persistent_array.cpp" line="102" column="11" bodyfile="titan_cpplib/data_structures/persistent_array.cpp" bodystart="102" bodyend="116"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1PersistentArray_1ad2a48c88084cf48c8c0c327b852570e0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classtitan23_1_1PersistentArray" kindref="compound">PersistentArray</ref>&lt; T &gt;</type>
+        <definition>PersistentArray&lt;T&gt; titan23::PersistentArray&lt; T &gt;::copy</definition>
+        <argsstring>() const</argsstring>
+        <name>copy</name>
+        <briefdescription>
+<para>永続配列全体をコピーして返す / <computeroutput>O(1)</computeroutput> time, <computeroutput>O(1)</computeroutput> space </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/persistent_array.cpp" line="119" column="25" bodyfile="titan_cpplib/data_structures/persistent_array.cpp" bodystart="119" bodyend="121"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1PersistentArray_1ae9b025b9b3e216ae223d38c9f4b3f42d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>vector&lt; T &gt;</type>
+        <definition>vector&lt;T&gt; titan23::PersistentArray&lt; T &gt;::tovector</definition>
+        <argsstring>() const</argsstring>
+        <name>tovector</name>
+        <briefdescription>
+<para><computeroutput>vector</computeroutput> にして返す / <computeroutput>O(n)</computeroutput> </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/persistent_array.cpp" line="124" column="16" bodyfile="titan_cpplib/data_structures/persistent_array.cpp" bodystart="124" bodyend="134"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1PersistentArray_1afce6b276d9abb23b3ea0d39ab4fc8208" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::PersistentArray&lt; T &gt;::len</definition>
+        <argsstring>() const</argsstring>
+        <name>len</name>
+        <briefdescription>
+<para>要素数を返す / <computeroutput>O(1)</computeroutput> </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/persistent_array.cpp" line="137" column="13" bodyfile="titan_cpplib/data_structures/persistent_array.cpp" bodystart="137" bodyend="139"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1PersistentArray_1a230d2c3df6e2ab0fff7bc7e9e8295a5f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::PersistentArray&lt; T &gt;::print</definition>
+        <argsstring>() const</argsstring>
+        <name>print</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/persistent_array.cpp" line="141" column="14" bodyfile="titan_cpplib/data_structures/persistent_array.cpp" bodystart="141" bodyend="151"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>永続配列 </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="titan_cpplib/data_structures/persistent_array.cpp" line="11" column="5" bodyfile="titan_cpplib/data_structures/persistent_array.cpp" bodystart="11" bodyend="152"/>
+    <listofallmembers>
+      <member refid="classtitan23_1_1PersistentArray_1a5d51d819794b562ac3f1d5f370a5793a" prot="private" virt="non-virtual"><scope>titan23::PersistentArray</scope><name>_build</name></member>
+      <member refid="classtitan23_1_1PersistentArray_1a517ecb3d22b3eff62a9ff73b3c12290d" prot="private" virt="non-virtual"><scope>titan23::PersistentArray</scope><name>_new</name></member>
+      <member refid="classtitan23_1_1PersistentArray_1a9ba07be9ae68ed21bb3368c1524549c9" prot="private" virt="non-virtual"><scope>titan23::PersistentArray</scope><name>bit_length</name></member>
+      <member refid="classtitan23_1_1PersistentArray_1ad2a48c88084cf48c8c0c327b852570e0" prot="public" virt="non-virtual"><scope>titan23::PersistentArray</scope><name>copy</name></member>
+      <member refid="classtitan23_1_1PersistentArray_1ad84c2d3839850468b50570982cc6f966" prot="public" virt="non-virtual"><scope>titan23::PersistentArray</scope><name>get</name></member>
+      <member refid="classtitan23_1_1PersistentArray_1afce6b276d9abb23b3ea0d39ab4fc8208" prot="public" virt="non-virtual"><scope>titan23::PersistentArray</scope><name>len</name></member>
+      <member refid="classtitan23_1_1PersistentArray_1a964b87c19f8000c07c8a5f1dfb016ecb" prot="private" virt="non-virtual"><scope>titan23::PersistentArray</scope><name>n</name></member>
+      <member refid="classtitan23_1_1PersistentArray_1a0b024fad8549f68a9af0f4b2734ba7f3" prot="private" virt="non-virtual"><scope>titan23::PersistentArray</scope><name>NodePtr</name></member>
+      <member refid="classtitan23_1_1PersistentArray_1a10c1803ea85c45b2a870496ff73620ba" prot="public" virt="non-virtual"><scope>titan23::PersistentArray</scope><name>PersistentArray</name></member>
+      <member refid="classtitan23_1_1PersistentArray_1a3cf4a03d4ef6635f1942342d20882584" prot="public" virt="non-virtual"><scope>titan23::PersistentArray</scope><name>PersistentArray</name></member>
+      <member refid="classtitan23_1_1PersistentArray_1a230d2c3df6e2ab0fff7bc7e9e8295a5f" prot="public" virt="non-virtual"><scope>titan23::PersistentArray</scope><name>print</name></member>
+      <member refid="classtitan23_1_1PersistentArray_1a1b97da08aa2c8d0613e2bdcb715cb437" prot="private" virt="non-virtual"><scope>titan23::PersistentArray</scope><name>root</name></member>
+      <member refid="classtitan23_1_1PersistentArray_1a6fdc6eaa94c66b7a93aa9f65f2e8f15f" prot="public" virt="non-virtual"><scope>titan23::PersistentArray</scope><name>set</name></member>
+      <member refid="classtitan23_1_1PersistentArray_1ae9b025b9b3e216ae223d38c9f4b3f42d" prot="public" virt="non-virtual"><scope>titan23::PersistentArray</scope><name>tovector</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

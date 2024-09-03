@@ -7,15 +7,6 @@
     <includes local="no">vector</includes>
     <includes local="no">map</includes>
     <incdepgraph>
-      <node id="5">
-        <label>map</label>
-      </node>
-      <node id="4">
-        <label>vector</label>
-      </node>
-      <node id="2">
-        <label>iostream</label>
-      </node>
       <node id="1">
         <label>titan_cpplib/math/divs.cpp</label>
         <link refid="divs_8cpp"/>
@@ -27,6 +18,15 @@
         </childnode>
         <childnode refid="5" relation="include">
         </childnode>
+      </node>
+      <node id="5">
+        <label>map</label>
+      </node>
+      <node id="4">
+        <label>vector</label>
+      </node>
+      <node id="2">
+        <label>iostream</label>
       </node>
       <node id="3">
         <label>set</label>

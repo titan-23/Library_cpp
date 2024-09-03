@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['undoableunionfind_108',['UndoableUnionFind',['../classtitan23_1_1UndoableUnionFind.html',1,'titan23']]],
-  ['undoableunionfindsum_109',['UndoableUnionFindSum',['../classtitan23_1_1UndoableUnionFindSum.html',1,'titan23']]],
-  ['unionfind_110',['UnionFind',['../structtitan23_1_1UnionFind.html',1,'titan23']]]
+  ['warshall_5ffloyd_5fpath_135',['warshall_floyd_path',['../structtitan23_1_1warshall__floyd__path.html',1,'titan23']]],
+  ['waveletmatrix_136',['WaveletMatrix',['../classtitan23_1_1WaveletMatrix.html',1,'titan23']]],
+  ['waveletmatrixcumulativesum_137',['WaveletMatrixCumulativeSum',['../classtitan23_1_1WaveletMatrixCumulativeSum.html',1,'titan23']]],
+  ['wbtree_138',['WBTree',['../classtitan23_1_1WBTree.html',1,'titan23']]]
 ];

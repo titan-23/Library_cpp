@@ -11,12 +11,6 @@
       <node id="5">
         <label>queue</label>
       </node>
-      <node id="10">
-        <label>stdint.h</label>
-      </node>
-      <node id="8">
-        <label>cassert</label>
-      </node>
       <node id="6">
         <label>titan_cpplib/data_structures/avl_tree_bit_vector.cpp</label>
         <link refid="avl__tree__bit__vector_8cpp_source"/>
@@ -35,14 +29,11 @@
         <childnode refid="10" relation="include">
         </childnode>
       </node>
-      <node id="4">
-        <label>tuple</label>
+      <node id="10">
+        <label>stdint.h</label>
       </node>
-      <node id="7">
-        <label>stack</label>
-      </node>
-      <node id="3">
-        <label>vector</label>
+      <node id="8">
+        <label>cassert</label>
       </node>
       <node id="1">
         <label>titan_cpplib/data_structures/dynamic_wavelet_matrix.cpp</label>
@@ -57,6 +48,15 @@
         </childnode>
         <childnode refid="6" relation="include">
         </childnode>
+      </node>
+      <node id="4">
+        <label>tuple</label>
+      </node>
+      <node id="7">
+        <label>stack</label>
+      </node>
+      <node id="3">
+        <label>vector</label>
       </node>
       <node id="2">
         <label>iostream</label>

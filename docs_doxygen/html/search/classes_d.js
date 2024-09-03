@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['param_160',['Param',['../classtitan23_1_1beam__search_1_1Param.html',1,'titan23::beam_search::Param'],['../structtitan23_1_1sa_1_1Param.html',1,'titan23::sa::Param']]],
-  ['persistentlazywbtree_161',['PersistentLazyWBTree',['../classtitan23_1_1PersistentLazyWBTree.html',1,'titan23']]],
-  ['persistentstack_162',['PersistentStack',['../classtitan23_1_1PersistentStack.html',1,'titan23']]]
+  ['random_191',['Random',['../classtitan23_1_1Random.html',1,'titan23']]],
+  ['randomtree_192',['RandomTree',['../classtitan23_1_1RandomTree.html',1,'titan23']]],
+  ['result_193',['Result',['../structtitan23_1_1beam__search_1_1Result.html',1,'titan23::beam_search']]],
+  ['rootedtree_194',['RootedTree',['../structRootedTree.html',1,'']]]
 ];
