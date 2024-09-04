@@ -7,8 +7,8 @@ using namespace std;
 namespace titan23 {
 
     template <class T,
-            T (*op)(T, T),
-            T (*e)()>
+              T (*op)(T, T),
+              T (*e)()>
     struct SparseTable {
       private:
         int n;
@@ -27,7 +27,7 @@ namespace titan23 {
                 int s = pre.size();
                 nxt.resize(s-l);
                 for (int j = 0; j < s-l; ++j) {
-                nxt[j] = op(pre[j], pre[j+l]);
+                    nxt[j] = op(pre[j], pre[j+l]);
                 }
             }
         }
