@@ -3,5 +3,6 @@
 __pycache__
 *.in
 *.out
+*.txt
 *.exe
 *.pyc
