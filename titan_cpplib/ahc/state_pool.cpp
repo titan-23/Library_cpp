@@ -10,16 +10,17 @@ namespace titan23 {
     // ノードプールクラス
     template<typename T>
     class StatePool {
-     private:
+      private:
         vector<T*> pool;
         stack<long long> unused_indx;
 
-     public:
+      public:
         StatePool() {}
         StatePool(const long long n) {
             init(n);
         }
 
+        // clear
         void clear() {
             while (!unused_indx.empty()) unused_indx.pop();
             for (long long i = (long long)pool.size()-1; i >= 0; --i) {
@@ -70,6 +71,7 @@ namespace titan23 {
             return new_id;
         }
 
+        //! 内部サイズを呼び出す
         long long get_size() const {
             return pool.size();
         }
