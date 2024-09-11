@@ -55,6 +55,10 @@ namespace titan23 {
             return begin + (((unsigned long long)_xor128() * (end-begin)) >> 32);
         }
 
+        unsigned long long rand_u64() {
+            return (unsigned long long)_xor128() << 32 | _xor128();
+        }
+
         //! `[begin, end)` の乱数を返す(実数)
         double randdouble(const double begin, const double end) {
             assert(begin < end);
