@@ -1,0 +1,9 @@
+digraph "beam_search_with_tree::TreeNode"
+{
+ // LATEX_PDF_SIZE
+  edge [fontname="Helvetica",fontsize="10",labelfontname="Helvetica",labelfontsize="10"];
+  node [fontname="Helvetica",fontsize="10",shape=record];
+  Node1 [label="beam_search_with_tree\l::TreeNode",height=0.2,width=0.4,color="black", fillcolor="grey75", style="filled", fontcolor="black",tooltip="ビームサーチの過程を表す木のノード"];
+  Node2 -> Node1 [dir="back",color="darkorchid3",fontsize="10",style="dashed",label=" pre_action" ,fontname="Helvetica"];
+  Node2 [label="beam_search_with_tree\l::Action",height=0.2,width=0.4,color="black", fillcolor="white", style="filled",URL="$structbeam__search__with__tree_1_1Action.html",tooltip=" "];
+}

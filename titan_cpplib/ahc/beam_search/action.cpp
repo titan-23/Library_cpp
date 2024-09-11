@@ -7,7 +7,6 @@ namespace titan23 {
 
 namespace beam_search {
 
-    // 自由に変更してください!
     enum class Action { U, R, D, L };
     ostream& operator<<(ostream& os, const Action &action) {
         switch (action) {

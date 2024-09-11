@@ -27,6 +27,7 @@
     <innerfile refid="fenwick__tree_8cpp">fenwick_tree.cpp</innerfile>
     <innerfile refid="fenwick__tree__2D_8cpp">fenwick_tree_2D.cpp</innerfile>
     <innerfile refid="hash__dict_8cpp">hash_dict.cpp</innerfile>
+    <innerfile refid="hash__set_8cpp">hash_set.cpp</innerfile>
     <innerfile refid="lazy__link__cut__tree_8cpp">lazy_link_cut_tree.cpp</innerfile>
     <innerfile refid="lazy__wb__tree_8cpp">lazy_wb_tree.cpp</innerfile>
     <innerfile refid="data__structures_2link__cut__tree_8cpp">link_cut_tree.cpp</innerfile>

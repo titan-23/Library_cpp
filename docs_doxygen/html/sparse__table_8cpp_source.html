@@ -78,8 +78,8 @@ $(function() {
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="keyword">namespace </span>titan23 {</div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; </div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">class </span>T,</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;            T (*op)(T, T),</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;            T (*e)()&gt;</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;              T (*op)(T, T),</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;              T (*e)()&gt;</div>
 <div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="structtitan23_1_1SparseTable.html">   12</a></span>&#160;    <span class="keyword">struct</span> <a class="code" href="structtitan23_1_1SparseTable.html">SparseTable</a> {</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;      <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        <span class="keywordtype">int</span> n;</div>
@@ -98,7 +98,7 @@ $(function() {
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;                <span class="keywordtype">int</span> s = pre.size();</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;                nxt.resize(s-l);</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;                <span class="keywordflow">for</span> (<span class="keywordtype">int</span> j = 0; j &lt; s-l; ++j) {</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;                nxt[j] = op(pre[j], pre[j+l]);</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;                    nxt[j] = op(pre[j], pre[j+l]);</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;                }</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;            }</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        }</div>

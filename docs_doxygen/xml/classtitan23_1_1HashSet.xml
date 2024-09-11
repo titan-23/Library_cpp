@@ -1,0 +1,320 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classtitan23_1_1HashSet" kind="class" language="C++" prot="public">
+    <compoundname>titan23::HashSet</compoundname>
+      <sectiondef kind="private-type">
+      <memberdef kind="typedef" id="classtitan23_1_1HashSet_1a1cd4ca6794b72461a5bc3856bb66ef3f" prot="private" static="no">
+        <type>unsigned long long</type>
+        <definition>using titan23::HashSet::u64 =  unsigned long long</definition>
+        <argsstring></argsstring>
+        <name>u64</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/hash_set.cpp" line="13" column="9" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="13" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-static-attrib">
+      <memberdef kind="variable" id="classtitan23_1_1HashSet_1ad30b20df89191f541d7dff42db0f4063" prot="private" static="yes" constexpr="yes" mutable="no">
+        <type>constexpr const u64</type>
+        <definition>constexpr const u64 titan23::HashSet::k</definition>
+        <argsstring></argsstring>
+        <name>k</name>
+        <initializer>= 0x517cc1b727220a95</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/hash_set.cpp" line="14" column="36" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="14" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1HashSet_1ad6f2accac3c957633c7408f4acc67987" prot="private" static="yes" constexpr="yes" mutable="no">
+        <type>constexpr const int</type>
+        <definition>constexpr const int titan23::HashSet::M</definition>
+        <argsstring></argsstring>
+        <name>M</name>
+        <initializer>= 2</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/hash_set.cpp" line="15" column="36" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="15" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classtitan23_1_1HashSet_1a68d3a80de5a4f76f5f808aa4bf4677c1" prot="private" static="no" mutable="no">
+        <type>vector&lt; u64 &gt;</type>
+        <definition>vector&lt;u64&gt; titan23::HashSet::exist</definition>
+        <argsstring></argsstring>
+        <name>exist</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/hash_set.cpp" line="16" column="16" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="16" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1HashSet_1af764951c2028447fff191cc2987fece6" prot="private" static="no" mutable="no">
+        <type>vector&lt; u64 &gt;</type>
+        <definition>vector&lt;u64&gt; titan23::HashSet::keys</definition>
+        <argsstring></argsstring>
+        <name>keys</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/hash_set.cpp" line="17" column="16" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="17" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1HashSet_1ad380bba8514b553649756505ae540d26" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int titan23::HashSet::msk</definition>
+        <argsstring></argsstring>
+        <name>msk</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/hash_set.cpp" line="18" column="13" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="18" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1HashSet_1a8d32e17d310a6c4b798442286ff4fe84" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int titan23::HashSet::xor_</definition>
+        <argsstring></argsstring>
+        <name>xor_</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/hash_set.cpp" line="18" column="17" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="18" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1HashSet_1acf25ff595f13fee085571c5106e6c9e2" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int titan23::HashSet::size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/hash_set.cpp" line="19" column="13" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="19" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classtitan23_1_1HashSet_1a6a676cf44c678ff191623aae25efca2b" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::HashSet::hash</definition>
+        <argsstring>(const u64 key) const</argsstring>
+        <name>hash</name>
+        <param>
+          <type>const u64</type>
+          <declname>key</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/hash_set.cpp" line="21" column="13" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="21" bodyend="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1HashSet_1a2e656377efd8ff9b30e17953bb5ce0af" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>pair&lt; int, bool &gt;</type>
+        <definition>pair&lt;int, bool&gt; titan23::HashSet::get_pos</definition>
+        <argsstring>(const u64 key) const</argsstring>
+        <name>get_pos</name>
+        <param>
+          <type>const u64</type>
+          <declname>key</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/hash_set.cpp" line="25" column="14" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="25" bodyend="33"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1HashSet_1addf60a589e33cf0edc156d6a84a952b3" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::HashSet::bit_length</definition>
+        <argsstring>(const int x) const</argsstring>
+        <name>bit_length</name>
+        <param>
+          <type>const int</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/hash_set.cpp" line="35" column="13" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="35" bodyend="38"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1HashSet_1ab7263d3eda110550567c95c09836cd5b" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::HashSet::rebuild</definition>
+        <argsstring>()</argsstring>
+        <name>rebuild</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/hash_set.cpp" line="40" column="14" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="40" bodyend="57"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classtitan23_1_1HashSet_1a3b4d87f26df307875773e8db189f41f0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::HashSet::HashSet</definition>
+        <argsstring>()</argsstring>
+        <name>HashSet</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/hash_set.cpp" line="60" column="9" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="60" bodyend="60"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1HashSet_1a0552d19e55ac037f5f7acf476c47e7df" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::HashSet::HashSet</definition>
+        <argsstring>(const int n)</argsstring>
+        <name>HashSet</name>
+        <param>
+          <type>const int</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/hash_set.cpp" line="62" column="9" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="62" bodyend="74"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1HashSet_1ab2478359682b1eb2924b6b339f9c535d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool titan23::HashSet::contains</definition>
+        <argsstring>(const u64 key) const</argsstring>
+        <name>contains</name>
+        <param>
+          <type>const u64</type>
+          <declname>key</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/hash_set.cpp" line="76" column="14" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="76" bodyend="78"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1HashSet_1a211fe70c6f8a1c8431e5b956cd60d019" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::HashSet::insert</definition>
+        <argsstring>(const u64 key)</argsstring>
+        <name>insert</name>
+        <param>
+          <type>const u64</type>
+          <declname>key</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/hash_set.cpp" line="80" column="14" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="80" bodyend="90"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1HashSet_1ade248abacd558d9f2ca00b51650bbb77" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool titan23::HashSet::contains_insert</definition>
+        <argsstring>(const u64 key)</argsstring>
+        <name>contains_insert</name>
+        <param>
+          <type>const u64</type>
+          <declname>key</declname>
+        </param>
+        <briefdescription>
+<para>keyがすでにあればtrue, なければ挿入してfalse </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/hash_set.cpp" line="93" column="14" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="93" bodyend="105"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1HashSet_1a9488d1fac8c23e8b880949900c6abb37" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::HashSet::clear</definition>
+        <argsstring>()</argsstring>
+        <name>clear</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/hash_set.cpp" line="107" column="14" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="107" bodyend="109"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1HashSet_1afda2be50d36589f09503460e6f3b389c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::HashSet::len</definition>
+        <argsstring>() const</argsstring>
+        <name>len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/hash_set.cpp" line="111" column="13" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="111" bodyend="113"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="titan_cpplib/data_structures/hash_set.cpp" line="11" column="5" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="11" bodyend="114"/>
+    <listofallmembers>
+      <member refid="classtitan23_1_1HashSet_1addf60a589e33cf0edc156d6a84a952b3" prot="private" virt="non-virtual"><scope>titan23::HashSet</scope><name>bit_length</name></member>
+      <member refid="classtitan23_1_1HashSet_1a9488d1fac8c23e8b880949900c6abb37" prot="public" virt="non-virtual"><scope>titan23::HashSet</scope><name>clear</name></member>
+      <member refid="classtitan23_1_1HashSet_1ab2478359682b1eb2924b6b339f9c535d" prot="public" virt="non-virtual"><scope>titan23::HashSet</scope><name>contains</name></member>
+      <member refid="classtitan23_1_1HashSet_1ade248abacd558d9f2ca00b51650bbb77" prot="public" virt="non-virtual"><scope>titan23::HashSet</scope><name>contains_insert</name></member>
+      <member refid="classtitan23_1_1HashSet_1a68d3a80de5a4f76f5f808aa4bf4677c1" prot="private" virt="non-virtual"><scope>titan23::HashSet</scope><name>exist</name></member>
+      <member refid="classtitan23_1_1HashSet_1a2e656377efd8ff9b30e17953bb5ce0af" prot="private" virt="non-virtual"><scope>titan23::HashSet</scope><name>get_pos</name></member>
+      <member refid="classtitan23_1_1HashSet_1a6a676cf44c678ff191623aae25efca2b" prot="private" virt="non-virtual"><scope>titan23::HashSet</scope><name>hash</name></member>
+      <member refid="classtitan23_1_1HashSet_1a3b4d87f26df307875773e8db189f41f0" prot="public" virt="non-virtual"><scope>titan23::HashSet</scope><name>HashSet</name></member>
+      <member refid="classtitan23_1_1HashSet_1a0552d19e55ac037f5f7acf476c47e7df" prot="public" virt="non-virtual"><scope>titan23::HashSet</scope><name>HashSet</name></member>
+      <member refid="classtitan23_1_1HashSet_1a211fe70c6f8a1c8431e5b956cd60d019" prot="public" virt="non-virtual"><scope>titan23::HashSet</scope><name>insert</name></member>
+      <member refid="classtitan23_1_1HashSet_1ad30b20df89191f541d7dff42db0f4063" prot="private" virt="non-virtual"><scope>titan23::HashSet</scope><name>k</name></member>
+      <member refid="classtitan23_1_1HashSet_1af764951c2028447fff191cc2987fece6" prot="private" virt="non-virtual"><scope>titan23::HashSet</scope><name>keys</name></member>
+      <member refid="classtitan23_1_1HashSet_1afda2be50d36589f09503460e6f3b389c" prot="public" virt="non-virtual"><scope>titan23::HashSet</scope><name>len</name></member>
+      <member refid="classtitan23_1_1HashSet_1ad6f2accac3c957633c7408f4acc67987" prot="private" virt="non-virtual"><scope>titan23::HashSet</scope><name>M</name></member>
+      <member refid="classtitan23_1_1HashSet_1ad380bba8514b553649756505ae540d26" prot="private" virt="non-virtual"><scope>titan23::HashSet</scope><name>msk</name></member>
+      <member refid="classtitan23_1_1HashSet_1ab7263d3eda110550567c95c09836cd5b" prot="private" virt="non-virtual"><scope>titan23::HashSet</scope><name>rebuild</name></member>
+      <member refid="classtitan23_1_1HashSet_1acf25ff595f13fee085571c5106e6c9e2" prot="private" virt="non-virtual"><scope>titan23::HashSet</scope><name>size</name></member>
+      <member refid="classtitan23_1_1HashSet_1a1cd4ca6794b72461a5bc3856bb66ef3f" prot="private" virt="non-virtual"><scope>titan23::HashSet</scope><name>u64</name></member>
+      <member refid="classtitan23_1_1HashSet_1a8d32e17d310a6c4b798442286ff4fe84" prot="private" virt="non-virtual"><scope>titan23::HashSet</scope><name>xor_</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

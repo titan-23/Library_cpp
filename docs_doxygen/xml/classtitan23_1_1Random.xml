@@ -179,6 +179,19 @@
         </inbodydescription>
         <location file="titan_cpplib/algorithm/random.cpp" line="53" column="13" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="53" bodyend="56"/>
       </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a8d608910d35516e0f7ba487aed47e55d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>unsigned long long</type>
+        <definition>unsigned long long titan23::Random::rand_u64</definition>
+        <argsstring>()</argsstring>
+        <name>rand_u64</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/algorithm/random.cpp" line="58" column="28" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="58" bodyend="60"/>
+      </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Random_1a74dc79ed9aa5dee428a782eca49407ee" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>double</type>
         <definition>double titan23::Random::randdouble</definition>
@@ -199,7 +212,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/random.cpp" line="59" column="16" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="59" bodyend="62"/>
+        <location file="titan_cpplib/algorithm/random.cpp" line="63" column="16" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="63" bodyend="66"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Random_1a8a3e5ca699ccd75cff80a8939b89a91d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -222,7 +235,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/random.cpp" line="66" column="14" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="66" bodyend="72"/>
+        <location file="titan_cpplib/algorithm/random.cpp" line="70" column="14" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="70" bodyend="76"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Random_1aa14fa9b38502d5be75bdc09cfea5ce12" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -248,7 +261,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/random.cpp" line="75" column="16" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="75" bodyend="86"/>
+        <location file="titan_cpplib/algorithm/random.cpp" line="79" column="16" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="79" bodyend="90"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Random_1a6e5323152fa179e6ce198965ef84bc83" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -270,7 +283,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/random.cpp" line="89" column="11" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="89" bodyend="91"/>
+        <location file="titan_cpplib/algorithm/random.cpp" line="93" column="11" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="93" bodyend="95"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Random_1a09fa8bb8f81eabfca9e4d0bc3bc34ece" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -300,7 +313,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/random.cpp" line="94" column="11" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="94" bodyend="106"/>
+        <location file="titan_cpplib/algorithm/random.cpp" line="98" column="11" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="98" bodyend="110"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Random_1ae72775efea327eabef4283b9fa47f5d2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -326,7 +339,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/random.cpp" line="109" column="11" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="109" bodyend="118"/>
+        <location file="titan_cpplib/algorithm/random.cpp" line="113" column="11" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="113" bodyend="122"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -334,7 +347,7 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/algorithm/random.cpp" line="12" column="5" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="12" bodyend="119"/>
+    <location file="titan_cpplib/algorithm/random.cpp" line="12" column="5" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="12" bodyend="123"/>
     <listofallmembers>
       <member refid="classtitan23_1_1Random_1a1e0bac744adc61aaaae98259e8da5cf7" prot="private" virt="non-virtual"><scope>titan23::Random</scope><name>_w</name></member>
       <member refid="classtitan23_1_1Random_1a7466d0ca186123e768892d715882ce21" prot="private" virt="non-virtual"><scope>titan23::Random</scope><name>_x</name></member>
@@ -345,6 +358,7 @@
       <member refid="classtitan23_1_1Random_1a09fa8bb8f81eabfca9e4d0bc3bc34ece" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>choice</name></member>
       <member refid="classtitan23_1_1Random_1ae72775efea327eabef4283b9fa47f5d2" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>choice</name></member>
       <member refid="classtitan23_1_1Random_1aa14fa9b38502d5be75bdc09cfea5ce12" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>choices</name></member>
+      <member refid="classtitan23_1_1Random_1a8d608910d35516e0f7ba487aed47e55d" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>rand_u64</name></member>
       <member refid="classtitan23_1_1Random_1a74dc79ed9aa5dee428a782eca49407ee" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randdouble</name></member>
       <member refid="classtitan23_1_1Random_1a60524b9288bf9dde85b6f200272528c5" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randint</name></member>
       <member refid="classtitan23_1_1Random_1af912a2c0ed6a29669290f43d2e7c8ea4" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randint</name></member>

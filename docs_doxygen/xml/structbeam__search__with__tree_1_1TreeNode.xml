@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structbeam__search__with__tree_1_1TreeNode" kind="struct" language="C++" prot="public">
+    <compoundname>beam_search_with_tree::TreeNode</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbeam__search__with__tree_1_1TreeNode_1a88717c4fe474a9358efb117e7ab72e5a" prot="public" static="no" mutable="no">
+        <type>TreeNodeID</type>
+        <definition>TreeNodeID beam_search_with_tree::TreeNode::par</definition>
+        <argsstring></argsstring>
+        <name>par</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="97" column="16" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="97" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbeam__search__with__tree_1_1TreeNode_1a01c7844ca39221dd977e15d3243e6fe8" prot="public" static="no" mutable="no">
+        <type><ref refid="structbeam__search__with__tree_1_1Action" kindref="compound">Action</ref></type>
+        <definition>Action beam_search_with_tree::TreeNode::pre_action</definition>
+        <argsstring></argsstring>
+        <name>pre_action</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="98" column="12" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="98" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbeam__search__with__tree_1_1TreeNode_1aa3b14db6f7c7f8f9ea4324003fbf9ab8" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool beam_search_with_tree::TreeNode::is_valid</definition>
+        <argsstring></argsstring>
+        <name>is_valid</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="99" column="10" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="99" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbeam__search__with__tree_1_1TreeNode_1afbc33a1e82c1ecac2fad1b015e45baba" prot="public" static="no" mutable="no">
+        <type>ScoreType</type>
+        <definition>ScoreType beam_search_with_tree::TreeNode::score</definition>
+        <argsstring></argsstring>
+        <name>score</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="100" column="15" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="100" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbeam__search__with__tree_1_1TreeNode_1a66f6b83a0cfc6d7c60bcb8753b9cd00a" prot="public" static="no" mutable="no">
+        <type>vector&lt; TreeNodeID &gt;</type>
+        <definition>vector&lt;TreeNodeID&gt; beam_search_with_tree::TreeNode::child</definition>
+        <argsstring></argsstring>
+        <name>child</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="101" column="12" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="101" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structbeam__search__with__tree_1_1TreeNode_1a1348233c4a72c3b589e1bfaa19198e70" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>beam_search_with_tree::TreeNode::TreeNode</definition>
+        <argsstring>()</argsstring>
+        <name>TreeNode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="103" column="5" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="103" bodyend="103"/>
+      </memberdef>
+      <memberdef kind="function" id="structbeam__search__with__tree_1_1TreeNode_1a2895570cd4b4a2add28b8ede87aa6bc6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool beam_search_with_tree::TreeNode::is_leaf</definition>
+        <argsstring>() const</argsstring>
+        <name>is_leaf</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="105" column="10" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="105" bodyend="107"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>ビームサーチの過程を表す木のノード </para>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="2">
+        <label>beam_search_with_tree::Action</label>
+        <link refid="structbeam__search__with__tree_1_1Action"/>
+      </node>
+      <node id="1">
+        <label>beam_search_with_tree::TreeNode</label>
+        <link refid="structbeam__search__with__tree_1_1TreeNode"/>
+        <childnode refid="2" relation="usage">
+          <edgelabel>pre_action</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="96" column="1" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="96" bodyend="108"/>
+    <listofallmembers>
+      <member refid="structbeam__search__with__tree_1_1TreeNode_1a66f6b83a0cfc6d7c60bcb8753b9cd00a" prot="public" virt="non-virtual"><scope>beam_search_with_tree::TreeNode</scope><name>child</name></member>
+      <member refid="structbeam__search__with__tree_1_1TreeNode_1a2895570cd4b4a2add28b8ede87aa6bc6" prot="public" virt="non-virtual"><scope>beam_search_with_tree::TreeNode</scope><name>is_leaf</name></member>
+      <member refid="structbeam__search__with__tree_1_1TreeNode_1aa3b14db6f7c7f8f9ea4324003fbf9ab8" prot="public" virt="non-virtual"><scope>beam_search_with_tree::TreeNode</scope><name>is_valid</name></member>
+      <member refid="structbeam__search__with__tree_1_1TreeNode_1a88717c4fe474a9358efb117e7ab72e5a" prot="public" virt="non-virtual"><scope>beam_search_with_tree::TreeNode</scope><name>par</name></member>
+      <member refid="structbeam__search__with__tree_1_1TreeNode_1a01c7844ca39221dd977e15d3243e6fe8" prot="public" virt="non-virtual"><scope>beam_search_with_tree::TreeNode</scope><name>pre_action</name></member>
+      <member refid="structbeam__search__with__tree_1_1TreeNode_1afbc33a1e82c1ecac2fad1b015e45baba" prot="public" virt="non-virtual"><scope>beam_search_with_tree::TreeNode</scope><name>score</name></member>
+      <member refid="structbeam__search__with__tree_1_1TreeNode_1a1348233c4a72c3b589e1bfaa19198e70" prot="public" virt="non-virtual"><scope>beam_search_with_tree::TreeNode</scope><name>TreeNode</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

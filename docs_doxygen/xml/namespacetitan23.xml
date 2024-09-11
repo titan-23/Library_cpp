@@ -34,6 +34,7 @@
     <innerclass refid="structtitan23_1_1FenwickTree" prot="public">titan23::FenwickTree</innerclass>
     <innerclass refid="structtitan23_1_1FenwickTree2D" prot="public">titan23::FenwickTree2D</innerclass>
     <innerclass refid="classtitan23_1_1HashDict" prot="public">titan23::HashDict</innerclass>
+    <innerclass refid="classtitan23_1_1HashSet" prot="public">titan23::HashSet</innerclass>
     <innerclass refid="classtitan23_1_1LazyLinkCutTree" prot="public">titan23::LazyLinkCutTree</innerclass>
     <innerclass refid="classtitan23_1_1LazyWBTree" prot="public">titan23::LazyWBTree</innerclass>
     <innerclass refid="classtitan23_1_1LinkCutTree" prot="public">titan23::LinkCutTree</innerclass>

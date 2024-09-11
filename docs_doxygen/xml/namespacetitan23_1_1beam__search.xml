@@ -45,7 +45,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search/action.cpp" line="11" column="5" bodyfile="titan_cpplib/ahc/beam_search/action.cpp" bodystart="11" bodyend="11"/>
+        <location file="titan_cpplib/ahc/beam_search/action.cpp" line="10" column="5" bodyfile="titan_cpplib/ahc/beam_search/action.cpp" bodystart="10" bodyend="10"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="typedef">
@@ -137,7 +137,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search/action.cpp" line="12" column="5" bodyfile="titan_cpplib/ahc/beam_search/action.cpp" bodystart="12" bodyend="21"/>
+        <location file="titan_cpplib/ahc/beam_search/action.cpp" line="11" column="5" bodyfile="titan_cpplib/ahc/beam_search/action.cpp" bodystart="11" bodyend="20"/>
       </memberdef>
       <memberdef kind="function" id="action_8cpp_1acd319e71a6f0774cda00d27f88de6269" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>Action</type>
@@ -154,7 +154,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search/action.cpp" line="23" column="12" bodyfile="titan_cpplib/ahc/beam_search/action.cpp" bodystart="23" bodyend="31"/>
+        <location file="titan_cpplib/ahc/beam_search/action.cpp" line="22" column="12" bodyfile="titan_cpplib/ahc/beam_search/action.cpp" bodystart="22" bodyend="30"/>
       </memberdef>
       </sectiondef>
     <briefdescription>

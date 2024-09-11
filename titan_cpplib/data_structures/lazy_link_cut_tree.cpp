@@ -6,12 +6,12 @@ using namespace std;
 namespace titan23 {
 
     template <class T,
-            class F,
-            T (*op)(T, T),
-            T (*mapping)(F, T),
-            F (*composition)(F, F),
-            T (*e)(),
-            F (*id)()>
+              class F,
+              T (*op)(T, T),
+              T (*mapping)(F, T),
+              F (*composition)(F, F),
+              T (*e)(),
+              F (*id)()>
     class LazyLinkCutTree {
       private:
         struct Node;

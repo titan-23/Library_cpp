@@ -6,3 +6,4 @@ ahc/beam_search
 
    action_cpp.rst
    beam_search_cpp.rst
+   beam_search_with_tree_cpp.rst

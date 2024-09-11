@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="lazy wb tree" href="lazy_wb_tree_cpp.html" /><link rel="prev" title="hash dict" href="hash_dict_cpp.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="lazy wb tree" href="lazy_wb_tree_cpp.html" /><link rel="prev" title="hash set" href="hash_set_cpp.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.01.29 -->
         <title>lazy link cut tree - titan_cpplib documentation</title>
@@ -190,6 +190,7 @@
 <li class="toctree-l2"><a class="reference internal" href="fenwick_tree_cpp.html">fenwick tree</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fenwick_tree_2D_cpp.html">fenwick tree 2D</a></li>
 <li class="toctree-l2"><a class="reference internal" href="hash_dict_cpp.html">hash dict</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hash_set_cpp.html">hash set</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">lazy link cut tree</a></li>
 <li class="toctree-l2"><a class="reference internal" href="lazy_wb_tree_cpp.html">lazy wb tree</a></li>
 <li class="toctree-l2"><a class="reference internal" href="link_cut_tree_cpp.html">link cut tree</a></li>
@@ -291,12 +292,12 @@
 <span class="linenos">  6</span><span class="k">namespace</span><span class="w"> </span><span class="nn">titan23</span><span class="w"> </span><span class="p">{</span>
 <span class="linenos">  7</span>
 <span class="linenos">  8</span><span class="w">    </span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">T</span><span class="p">,</span>
-<span class="linenos">  9</span><span class="w">            </span><span class="k">class</span><span class="w"> </span><span class="nc">F</span><span class="p">,</span>
-<span class="linenos"> 10</span><span class="w">            </span><span class="n">T</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">op</span><span class="p">)(</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="p">),</span>
-<span class="linenos"> 11</span><span class="w">            </span><span class="n">T</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">mapping</span><span class="p">)(</span><span class="n">F</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="p">),</span>
-<span class="linenos"> 12</span><span class="w">            </span><span class="n">F</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">composition</span><span class="p">)(</span><span class="n">F</span><span class="p">,</span><span class="w"> </span><span class="n">F</span><span class="p">),</span>
-<span class="linenos"> 13</span><span class="w">            </span><span class="n">T</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">e</span><span class="p">)(),</span>
-<span class="linenos"> 14</span><span class="w">            </span><span class="n">F</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">id</span><span class="p">)()</span><span class="o">&gt;</span>
+<span class="linenos">  9</span><span class="w">              </span><span class="k">class</span><span class="w"> </span><span class="nc">F</span><span class="p">,</span>
+<span class="linenos"> 10</span><span class="w">              </span><span class="n">T</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">op</span><span class="p">)(</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="p">),</span>
+<span class="linenos"> 11</span><span class="w">              </span><span class="n">T</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">mapping</span><span class="p">)(</span><span class="n">F</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="p">),</span>
+<span class="linenos"> 12</span><span class="w">              </span><span class="n">F</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">composition</span><span class="p">)(</span><span class="n">F</span><span class="p">,</span><span class="w"> </span><span class="n">F</span><span class="p">),</span>
+<span class="linenos"> 13</span><span class="w">              </span><span class="n">T</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">e</span><span class="p">)(),</span>
+<span class="linenos"> 14</span><span class="w">              </span><span class="n">F</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">id</span><span class="p">)()</span><span class="o">&gt;</span>
 <span class="linenos"> 15</span><span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="nc">LazyLinkCutTree</span><span class="w"> </span><span class="p">{</span>
 <span class="linenos"> 16</span><span class="w">      </span><span class="k">private</span><span class="o">:</span>
 <span class="linenos"> 17</span><span class="w">        </span><span class="k">struct</span><span class="w"> </span><span class="nc">Node</span><span class="p">;</span>
@@ -817,14 +818,14 @@
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="hash_dict_cpp.html">
+          <a class="prev-page" href="hash_set_cpp.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">hash dict</div>
+                <div class="title">hash set</div>
                 
               </div>
             </a>

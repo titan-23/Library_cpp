@@ -29,6 +29,7 @@ data_structures
    fenwick_tree_cpp.rst
    fenwick_tree_2D_cpp.rst
    hash_dict_cpp.rst
+   hash_set_cpp.rst
    lazy_link_cut_tree_cpp.rst
    lazy_wb_tree_cpp.rst
    link_cut_tree_cpp.rst

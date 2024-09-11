@@ -1,5 +1,9 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
 <doxygenindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="index.xsd" version="1.9.1" xml:lang="en-US">
+  <compound refid="structbeam__search__with__tree_1_1Action" kind="struct"><name>beam_search_with_tree::Action</name>
+    <member refid="structbeam__search__with__tree_1_1Action_1a35c1d1939dce9448a48765667c7a21d1" kind="function"><name>Action</name></member>
+    <member refid="structbeam__search__with__tree_1_1Action_1ade82c23a0d32fb8bcbe82cd1f5d0fbd1" kind="friend"><name>operator&lt;&lt;</name></member>
+  </compound>
   <compound refid="classtitan23_1_1Array" kind="class"><name>titan23::Array</name>
     <member refid="classtitan23_1_1Array_1ac6489de83a427bc5725340a4a0f4d6d8" kind="variable"><name>a</name></member>
     <member refid="classtitan23_1_1Array_1a2e02c73249832591fc87745f065d0564" kind="function"><name>Array</name></member>
@@ -177,6 +181,20 @@
     <member refid="classtitan23_1_1beam__search_1_1BeamSearch_1ad1537b7431a420959a295ca6dda22401" kind="function"><name>run_each_turn</name></member>
     <member refid="classtitan23_1_1beam__search_1_1BeamSearch_1a4c7569868d08bc63f745a9c25cac9702" kind="function"><name>run_normal</name></member>
     <member refid="classtitan23_1_1beam__search_1_1BeamSearch_1ab8587de383d98bbe5ca776d1adca55c9" kind="function"><name>run_complex</name></member>
+  </compound>
+  <compound refid="classbeam__search__with__tree_1_1BeamSearchWithTree" kind="class"><name>beam_search_with_tree::BeamSearchWithTree</name>
+    <member refid="classbeam__search__with__tree_1_1BeamSearchWithTree_1ac423ff40fa2cb5a602355057b0ef6098" kind="variable"><name>best_score</name></member>
+    <member refid="classbeam__search__with__tree_1_1BeamSearchWithTree_1a0db086f77d62f150ad2c067c0f109081" kind="variable"><name>best_id</name></member>
+    <member refid="classbeam__search__with__tree_1_1BeamSearchWithTree_1ab3523132ad8e837ff87fec6b2aa8beca" kind="variable"><name>seen</name></member>
+    <member refid="classbeam__search__with__tree_1_1BeamSearchWithTree_1ad2615a1dd778b65b3f6b280372894919" kind="function"><name>get_next_beam_recursion</name></member>
+    <member refid="classbeam__search__with__tree_1_1BeamSearchWithTree_1a5bfc55d276f958339ffd1047c2af790b" kind="function"><name>get_next_beam</name></member>
+    <member refid="classbeam__search__with__tree_1_1BeamSearchWithTree_1ac8d39852529561a70839bc54901cf9eb" kind="function"><name>get_par</name></member>
+    <member refid="classbeam__search__with__tree_1_1BeamSearchWithTree_1a5d22a29bccc4003da1e84163c40889cd" kind="function"><name>update_tree</name></member>
+    <member refid="classbeam__search__with__tree_1_1BeamSearchWithTree_1ae5a0e89c0ac6395a64b95d86aac0fe5d" kind="function"><name>get_path</name></member>
+    <member refid="classbeam__search__with__tree_1_1BeamSearchWithTree_1a3b56b0af53d46f4a5624a9dbc7238d9b" kind="function"><name>print_tree</name></member>
+    <member refid="classbeam__search__with__tree_1_1BeamSearchWithTree_1a66956af886bf28a2be14793de906e30c" kind="function"><name>get_best_node</name></member>
+    <member refid="classbeam__search__with__tree_1_1BeamSearchWithTree_1a10b2e7ed0ecc6158e160f4f1606fee5a" kind="function"><name>get_result</name></member>
+    <member refid="classbeam__search__with__tree_1_1BeamSearchWithTree_1ad73a0f096420da97849751b4d73820ed" kind="function"><name>search</name></member>
   </compound>
   <compound refid="classtitan23_1_1BinaryTrieMultiset" kind="class"><name>titan23::BinaryTrieMultiset</name>
     <member refid="classtitan23_1_1BinaryTrieMultiset_1ad747852e671e0e5fef24665537663caf" kind="variable"><name>left</name></member>
@@ -609,6 +627,7 @@
   <compound refid="classtitan23_1_1HashDict" kind="class"><name>titan23::HashDict</name>
     <member refid="classtitan23_1_1HashDict_1aa67d0f08a9eb917f049882ccce9c12b1" kind="typedef"><name>u64</name></member>
     <member refid="classtitan23_1_1HashDict_1a72070c7d58aaf9e1f3ef7aed030288b8" kind="variable"><name>k</name></member>
+    <member refid="classtitan23_1_1HashDict_1a9e79213d5cba2f15a32779a09cf7026e" kind="variable"><name>M</name></member>
     <member refid="classtitan23_1_1HashDict_1a3bab97cd002e5b6375a85c8d345d5395" kind="variable"><name>exist</name></member>
     <member refid="classtitan23_1_1HashDict_1a5f439164eda5a880c6c701b6720a3856" kind="variable"><name>keys</name></member>
     <member refid="classtitan23_1_1HashDict_1ab4dec83a4ca0720b1c228b6a00aeed0a" kind="variable"><name>vals</name></member>
@@ -626,6 +645,28 @@
     <member refid="classtitan23_1_1HashDict_1a009027facfad9e6458967b65f0bd290b" kind="function"><name>contains</name></member>
     <member refid="classtitan23_1_1HashDict_1a60781a52ca737206709c4954235e35c8" kind="function"><name>operator[]</name></member>
     <member refid="classtitan23_1_1HashDict_1a47f9c610ad46e93d5a17a5f26c981bd2" kind="function"><name>set</name></member>
+    <member refid="classtitan23_1_1HashDict_1a6758f24501dc370d136e4234f75493ff" kind="function"><name>len</name></member>
+  </compound>
+  <compound refid="classtitan23_1_1HashSet" kind="class"><name>titan23::HashSet</name>
+    <member refid="classtitan23_1_1HashSet_1a1cd4ca6794b72461a5bc3856bb66ef3f" kind="typedef"><name>u64</name></member>
+    <member refid="classtitan23_1_1HashSet_1ad30b20df89191f541d7dff42db0f4063" kind="variable"><name>k</name></member>
+    <member refid="classtitan23_1_1HashSet_1ad6f2accac3c957633c7408f4acc67987" kind="variable"><name>M</name></member>
+    <member refid="classtitan23_1_1HashSet_1a68d3a80de5a4f76f5f808aa4bf4677c1" kind="variable"><name>exist</name></member>
+    <member refid="classtitan23_1_1HashSet_1af764951c2028447fff191cc2987fece6" kind="variable"><name>keys</name></member>
+    <member refid="classtitan23_1_1HashSet_1ad380bba8514b553649756505ae540d26" kind="variable"><name>msk</name></member>
+    <member refid="classtitan23_1_1HashSet_1a8d32e17d310a6c4b798442286ff4fe84" kind="variable"><name>xor_</name></member>
+    <member refid="classtitan23_1_1HashSet_1acf25ff595f13fee085571c5106e6c9e2" kind="variable"><name>size</name></member>
+    <member refid="classtitan23_1_1HashSet_1a6a676cf44c678ff191623aae25efca2b" kind="function"><name>hash</name></member>
+    <member refid="classtitan23_1_1HashSet_1a2e656377efd8ff9b30e17953bb5ce0af" kind="function"><name>get_pos</name></member>
+    <member refid="classtitan23_1_1HashSet_1addf60a589e33cf0edc156d6a84a952b3" kind="function"><name>bit_length</name></member>
+    <member refid="classtitan23_1_1HashSet_1ab7263d3eda110550567c95c09836cd5b" kind="function"><name>rebuild</name></member>
+    <member refid="classtitan23_1_1HashSet_1a3b4d87f26df307875773e8db189f41f0" kind="function"><name>HashSet</name></member>
+    <member refid="classtitan23_1_1HashSet_1a0552d19e55ac037f5f7acf476c47e7df" kind="function"><name>HashSet</name></member>
+    <member refid="classtitan23_1_1HashSet_1ab2478359682b1eb2924b6b339f9c535d" kind="function"><name>contains</name></member>
+    <member refid="classtitan23_1_1HashSet_1a211fe70c6f8a1c8431e5b956cd60d019" kind="function"><name>insert</name></member>
+    <member refid="classtitan23_1_1HashSet_1ade248abacd558d9f2ca00b51650bbb77" kind="function"><name>contains_insert</name></member>
+    <member refid="classtitan23_1_1HashSet_1a9488d1fac8c23e8b880949900c6abb37" kind="function"><name>clear</name></member>
+    <member refid="classtitan23_1_1HashSet_1afda2be50d36589f09503460e6f3b389c" kind="function"><name>len</name></member>
   </compound>
   <compound refid="classtitan23_1_1HashString" kind="class"><name>titan23::HashString</name>
     <member refid="classtitan23_1_1HashString_1a2bce353df65db146772c9b075429ab53" kind="typedef"><name>u64</name></member>
@@ -1061,6 +1102,10 @@
     <member refid="structtitan23_1_1Osa__k_1a67991907b515526a6b4b98567ba410df" kind="function"><name>p_factorization</name></member>
     <member refid="structtitan23_1_1Osa__k_1afcc3ad82e5568e597e07689a7a88bbaf" kind="function"><name>p_factorization_map</name></member>
   </compound>
+  <compound refid="structbeam__search__with__tree_1_1Param" kind="struct"><name>beam_search_with_tree::Param</name>
+    <member refid="structbeam__search__with__tree_1_1Param_1a747ee87c854facb1a142579d9a7909f2" kind="variable"><name>MAX_TURN</name></member>
+    <member refid="structbeam__search__with__tree_1_1Param_1abe9c1d87d342a380ec1686e297fb0fd1" kind="variable"><name>BEAM_WIDTH</name></member>
+  </compound>
   <compound refid="classtitan23_1_1beam__search_1_1Param" kind="class"><name>titan23::beam_search::Param</name>
     <member refid="classtitan23_1_1beam__search_1_1Param_1a1fcac43590479190fff18ae396ef19cf" kind="variable"><name>timer</name></member>
     <member refid="classtitan23_1_1beam__search_1_1Param_1af2a57bf0335fedd969f53510d3455431" kind="variable"><name>time_limit</name></member>
@@ -1176,6 +1221,7 @@
     <member refid="classtitan23_1_1Random_1af912a2c0ed6a29669290f43d2e7c8ea4" kind="function"><name>randint</name></member>
     <member refid="classtitan23_1_1Random_1a6b72ec5b19b8fbbeef8acd5ff2eb5bda" kind="function"><name>randrange</name></member>
     <member refid="classtitan23_1_1Random_1a01aa00958ee23afc95c6e66d6a55f03c" kind="function"><name>randrange</name></member>
+    <member refid="classtitan23_1_1Random_1a8d608910d35516e0f7ba487aed47e55d" kind="function"><name>rand_u64</name></member>
     <member refid="classtitan23_1_1Random_1a74dc79ed9aa5dee428a782eca49407ee" kind="function"><name>randdouble</name></member>
     <member refid="classtitan23_1_1Random_1a8a3e5ca699ccd75cff80a8939b89a91d" kind="function"><name>shuffle</name></member>
     <member refid="classtitan23_1_1Random_1aa14fa9b38502d5be75bdc09cfea5ce12" kind="function"><name>choices</name></member>
@@ -1247,6 +1293,18 @@
     <member refid="structtitan23_1_1SparseTable_1a28a578e62d2aee3421dc9d38def40ee1" kind="function"><name>get</name></member>
     <member refid="structtitan23_1_1SparseTable_1ac35e559acabd307984305bd7619ec656" kind="function"><name>len</name></member>
     <member refid="structtitan23_1_1SparseTable_1a8082a2a4596653997934e553343a62b0" kind="function"><name>print</name></member>
+  </compound>
+  <compound refid="classbeam__search__with__tree_1_1State" kind="class"><name>beam_search_with_tree::State</name>
+    <member refid="classbeam__search__with__tree_1_1State_1a5f4fd38a7643c62dd982f9b63716da22" kind="variable"><name>srand</name></member>
+    <member refid="classbeam__search__with__tree_1_1State_1a55194b49fca3cbe02cbafcac1ef1ad15" kind="variable"><name>score</name></member>
+    <member refid="classbeam__search__with__tree_1_1State_1ab9a512b1258acff68df019efd3029c90" kind="variable"><name>hash</name></member>
+    <member refid="classbeam__search__with__tree_1_1State_1a5f3e9b3b1ea3d7af8dd01fe8cac645ec" kind="function"><name>init</name></member>
+    <member refid="classbeam__search__with__tree_1_1State_1a6d38c1debaffd73216cd01ad15fb0237" kind="function"><name>try_op</name></member>
+    <member refid="classbeam__search__with__tree_1_1State_1a9e9b911b61e31137a12b9f83f1b05c3f" kind="function"><name>apply_op</name></member>
+    <member refid="classbeam__search__with__tree_1_1State_1a8a578117065ba8a328b7305ff49f13c7" kind="function"><name>rollback</name></member>
+    <member refid="classbeam__search__with__tree_1_1State_1a0477593b229b27c9b6ea58993ac0ff4c" kind="function"><name>get_actions</name></member>
+    <member refid="classbeam__search__with__tree_1_1State_1a11cd404f06c7fc1c8bbc6c221b288ac0" kind="function"><name>get_score</name></member>
+    <member refid="classbeam__search__with__tree_1_1State_1a4c677b32413f644f02057125500b28df" kind="function"><name>print</name></member>
   </compound>
   <compound refid="classtitan23_1_1beam__search_1_1State" kind="class"><name>titan23::beam_search::State</name>
     <member refid="classtitan23_1_1beam__search_1_1State_1ab57abcb81264dc2b7ab5e8e0b2787331" kind="variable"><name>hash</name></member>
@@ -1334,6 +1392,14 @@
     <member refid="structtitan23_1_1StaticSet_1accd4032543d90325ba90f889460220bd" kind="function"><name>count_range</name></member>
     <member refid="structtitan23_1_1StaticSet_1accbe72e255023838a7edb9b5e456375d" kind="function"><name>contains</name></member>
   </compound>
+  <compound refid="structbeam__search__with__tree_1_1SubState" kind="struct"><name>beam_search_with_tree::SubState</name>
+    <member refid="structbeam__search__with__tree_1_1SubState_1a1ba9f97f3ef30402325ae283d66e84a4" kind="variable"><name>par</name></member>
+    <member refid="structbeam__search__with__tree_1_1SubState_1af0a848b8217a9a37ba50a44c3b479c04" kind="variable"><name>action</name></member>
+    <member refid="structbeam__search__with__tree_1_1SubState_1aeb0d525288c1c8d7fbefd2d83b409e4e" kind="variable"><name>score</name></member>
+    <member refid="structbeam__search__with__tree_1_1SubState_1a461077f3ba516b3dc0411d4e4a803c85" kind="variable"><name>hash</name></member>
+    <member refid="structbeam__search__with__tree_1_1SubState_1ab0ac4eb14a6d38f56c32b3701b2f323a" kind="function"><name>SubState</name></member>
+    <member refid="structbeam__search__with__tree_1_1SubState_1afacf21aef1fad61bf6f5e1c306be2abf" kind="function"><name>SubState</name></member>
+  </compound>
   <compound refid="structtitan23_1_1beam__search_1_1SubState" kind="struct"><name>titan23::beam_search::SubState</name>
     <member refid="structtitan23_1_1beam__search_1_1SubState_1a837089ca5344854a2497bd5bf4d92116" kind="variable"><name>score</name></member>
     <member refid="structtitan23_1_1beam__search_1_1SubState_1a6b830f0aa9dc1facf3dd2774dc4323e2" kind="variable"><name>state</name></member>
@@ -1346,6 +1412,15 @@
     <member refid="classtitan23_1_1Timer_1ac90c7728ce700f07c5a12d4bc4547856" kind="function"><name>Timer</name></member>
     <member refid="classtitan23_1_1Timer_1a9b138c885ca8956bfa5d73a628698c3d" kind="function"><name>reset</name></member>
     <member refid="classtitan23_1_1Timer_1adb30bc0ad576c57bf6410294d3099e26" kind="function"><name>elapsed</name></member>
+  </compound>
+  <compound refid="structbeam__search__with__tree_1_1TreeNode" kind="struct"><name>beam_search_with_tree::TreeNode</name>
+    <member refid="structbeam__search__with__tree_1_1TreeNode_1a88717c4fe474a9358efb117e7ab72e5a" kind="variable"><name>par</name></member>
+    <member refid="structbeam__search__with__tree_1_1TreeNode_1a01c7844ca39221dd977e15d3243e6fe8" kind="variable"><name>pre_action</name></member>
+    <member refid="structbeam__search__with__tree_1_1TreeNode_1aa3b14db6f7c7f8f9ea4324003fbf9ab8" kind="variable"><name>is_valid</name></member>
+    <member refid="structbeam__search__with__tree_1_1TreeNode_1afbc33a1e82c1ecac2fad1b015e45baba" kind="variable"><name>score</name></member>
+    <member refid="structbeam__search__with__tree_1_1TreeNode_1a66f6b83a0cfc6d7c60bcb8753b9cd00a" kind="variable"><name>child</name></member>
+    <member refid="structbeam__search__with__tree_1_1TreeNode_1a1348233c4a72c3b589e1bfaa19198e70" kind="function"><name>TreeNode</name></member>
+    <member refid="structbeam__search__with__tree_1_1TreeNode_1a2895570cd4b4a2add28b8ede87aa6bc6" kind="function"><name>is_leaf</name></member>
   </compound>
   <compound refid="classtitan23_1_1UndoableUnionFind" kind="class"><name>titan23::UndoableUnionFind</name>
     <member refid="classtitan23_1_1UndoableUnionFind_1aaf0e18e5b6fb16e7d2d406ee30dc1cc9" kind="variable"><name>_n</name></member>
@@ -1507,6 +1582,15 @@
     <member refid="classtitan23_1_1Zaatsu_1aef4f09458e4d96ad4c56c8d379e7cf15" kind="function"><name>to_zaatsu</name></member>
     <member refid="classtitan23_1_1Zaatsu_1a78c5cf1c779aa7407a1b1819ff3cb3bb" kind="function"><name>to_origin</name></member>
   </compound>
+  <compound refid="namespacebeam__search__with__tree" kind="namespace"><name>beam_search_with_tree</name>
+    <member refid="namespacebeam__search__with__tree_1af5472ddaaa54333d4757abdc047347dd" kind="typedef"><name>ScoreType</name></member>
+    <member refid="namespacebeam__search__with__tree_1aa83032ad758aef56dec6deeecbe53d6d" kind="typedef"><name>HashType</name></member>
+    <member refid="namespacebeam__search__with__tree_1ab8bf7d1bd3e51f0cf7e605750b5c2ffc" kind="typedef"><name>TreeNodeID</name></member>
+    <member refid="namespacebeam__search__with__tree_1a11dac1ad1a495e5f2336db8d767c558c" kind="typedef"><name>SubStateID</name></member>
+    <member refid="namespacebeam__search__with__tree_1a5f29ceda537d6803b87068a9aaf4072d" kind="variable"><name>treenode_pool</name></member>
+    <member refid="namespacebeam__search__with__tree_1adc4263fc1a4f888068d42f0edfae35ab" kind="variable"><name>substate_pool</name></member>
+    <member refid="namespacebeam__search__with__tree_1aa29ebd8b2371846351f14d65503dbc12" kind="function"><name>to_string</name></member>
+  </compound>
   <compound refid="namespacestd" kind="namespace"><name>std</name>
   </compound>
   <compound refid="namespacetitan23" kind="namespace"><name>titan23</name>
@@ -1541,6 +1625,9 @@
   <compound refid="action_8cpp" kind="file"><name>action.cpp</name>
   </compound>
   <compound refid="beam__search_8cpp" kind="file"><name>beam_search.cpp</name>
+  </compound>
+  <compound refid="beam__search__with__tree_8cpp" kind="file"><name>beam_search_with_tree.cpp</name>
+    <member refid="beam__search__with__tree_8cpp_1ae66f6b31b5ad750f1fe042a706a4e3d4" kind="function"><name>main</name></member>
   </compound>
   <compound refid="kmeans_8cpp" kind="file"><name>kmeans.cpp</name>
   </compound>
@@ -1609,8 +1696,8 @@
   <compound refid="fenwick__tree__2D_8cpp" kind="file"><name>fenwick_tree_2D.cpp</name>
   </compound>
   <compound refid="hash__dict_8cpp" kind="file"><name>hash_dict.cpp</name>
-    <member refid="hash__dict_8cpp_1afc28855f97302d38207feabfda45fc97" kind="define"><name>rep</name></member>
-    <member refid="hash__dict_8cpp_1ae66f6b31b5ad750f1fe042a706a4e3d4" kind="function"><name>main</name></member>
+  </compound>
+  <compound refid="hash__set_8cpp" kind="file"><name>hash_set.cpp</name>
   </compound>
   <compound refid="lazy__link__cut__tree_8cpp" kind="file"><name>lazy_link_cut_tree.cpp</name>
   </compound>

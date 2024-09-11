@@ -6,6 +6,7 @@
     <includes local="no">chrono</includes>
     <includes local="no">thread</includes>
     <includedby refid="beam__search_8cpp" local="yes">titan_cpplib/ahc/beam_search/beam_search.cpp</includedby>
+    <includedby refid="beam__search__with__tree_8cpp" local="yes">titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp</includedby>
     <includedby refid="sa_8cpp" local="yes">titan_cpplib/ahc/sa.cpp</includedby>
     <incdepgraph>
       <node id="1">
@@ -40,8 +41,14 @@
         </childnode>
         <childnode refid="3" relation="include">
         </childnode>
+        <childnode refid="4" relation="include">
+        </childnode>
       </node>
       <node id="3">
+        <label>titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp</label>
+        <link refid="beam__search__with__tree_8cpp_source"/>
+      </node>
+      <node id="4">
         <label>titan_cpplib/ahc/sa.cpp</label>
         <link refid="sa_8cpp_source"/>
       </node>

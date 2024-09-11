@@ -1,0 +1,294 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classbeam__search__with__tree_1_1BeamSearchWithTree" kind="class" language="C++" prot="public">
+    <compoundname>beam_search_with_tree::BeamSearchWithTree</compoundname>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1ac423ff40fa2cb5a602355057b0ef6098" prot="private" static="no" mutable="no">
+        <type>ScoreType</type>
+        <definition>ScoreType beam_search_with_tree::BeamSearchWithTree::best_score</definition>
+        <argsstring></argsstring>
+        <name>best_score</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="116" column="15" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="116" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1a0db086f77d62f150ad2c067c0f109081" prot="private" static="no" mutable="no">
+        <type>TreeNodeID</type>
+        <definition>TreeNodeID beam_search_with_tree::BeamSearchWithTree::best_id</definition>
+        <argsstring></argsstring>
+        <name>best_id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="117" column="16" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="117" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1ab3523132ad8e837ff87fec6b2aa8beca" prot="private" static="no" mutable="no">
+        <type><ref refid="classtitan23_1_1HashSet" kindref="compound">titan23::HashSet</ref></type>
+        <definition>titan23::HashSet beam_search_with_tree::BeamSearchWithTree::seen</definition>
+        <argsstring></argsstring>
+        <name>seen</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="118" column="22" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="118" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1ad2615a1dd778b65b3f6b280372894919" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void beam_search_with_tree::BeamSearchWithTree::get_next_beam_recursion</definition>
+        <argsstring>(State *state, TreeNodeID node, vector&lt; SubStateID &gt; &amp;next_beam, int depth, const int beam_width)</argsstring>
+        <name>get_next_beam_recursion</name>
+        <param>
+          <type><ref refid="classbeam__search__with__tree_1_1State" kindref="compound">State</ref> *</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>TreeNodeID</type>
+          <declname>node</declname>
+        </param>
+        <param>
+          <type>vector&lt; SubStateID &gt; &amp;</type>
+          <declname>next_beam</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>depth</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>beam_width</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="120" column="10" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="120" bodyend="184"/>
+      </memberdef>
+      <memberdef kind="function" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1a5bfc55d276f958339ffd1047c2af790b" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>tuple&lt; int, TreeNodeID, vector&lt; SubStateID &gt; &gt;</type>
+        <definition>tuple&lt;int, TreeNodeID, vector&lt;SubStateID&gt; &gt; beam_search_with_tree::BeamSearchWithTree::get_next_beam</definition>
+        <argsstring>(State *state, TreeNodeID node, int turn, const int beam_width)</argsstring>
+        <name>get_next_beam</name>
+        <param>
+          <type><ref refid="classbeam__search__with__tree_1_1State" kindref="compound">State</ref> *</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>TreeNodeID</type>
+          <declname>node</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>turn</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>beam_width</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="186" column="11" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="186" bodyend="206"/>
+      </memberdef>
+      <memberdef kind="function" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1ac8d39852529561a70839bc54901cf9eb" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>TreeNodeID</type>
+        <definition>TreeNodeID beam_search_with_tree::BeamSearchWithTree::get_par</definition>
+        <argsstring>(SubStateID s_node, int cnt=1)</argsstring>
+        <name>get_par</name>
+        <param>
+          <type>SubStateID</type>
+          <declname>s_node</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>cnt</declname>
+          <defval>1</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="208" column="16" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="208" bodyend="224"/>
+      </memberdef>
+      <memberdef kind="function" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1a5d22a29bccc4003da1e84163c40889cd" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool beam_search_with_tree::BeamSearchWithTree::update_tree</definition>
+        <argsstring>(const TreeNodeID node, int depth)</argsstring>
+        <name>update_tree</name>
+        <param>
+          <type>const TreeNodeID</type>
+          <declname>node</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>depth</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="227" column="10" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="227" bodyend="250"/>
+      </memberdef>
+      <memberdef kind="function" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1ae5a0e89c0ac6395a64b95d86aac0fe5d" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>vector&lt; <ref refid="structbeam__search__with__tree_1_1Action" kindref="compound">Action</ref> &gt;</type>
+        <definition>vector&lt;Action&gt; beam_search_with_tree::BeamSearchWithTree::get_path</definition>
+        <argsstring>(TreeNodeID node)</argsstring>
+        <name>get_path</name>
+        <param>
+          <type>TreeNodeID</type>
+          <declname>node</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="252" column="12" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="252" bodyend="260"/>
+      </memberdef>
+      <memberdef kind="function" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1a3b56b0af53d46f4a5624a9dbc7238d9b" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void beam_search_with_tree::BeamSearchWithTree::print_tree</definition>
+        <argsstring>(State *state, const TreeNodeID node, int depth)</argsstring>
+        <name>print_tree</name>
+        <param>
+          <type><ref refid="classbeam__search__with__tree_1_1State" kindref="compound">State</ref> *</type>
+          <declname>state</declname>
+        </param>
+        <param>
+          <type>const TreeNodeID</type>
+          <declname>node</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>depth</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="262" column="10" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="262" bodyend="294"/>
+      </memberdef>
+      <memberdef kind="function" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1a66956af886bf28a2be14793de906e30c" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void beam_search_with_tree::BeamSearchWithTree::get_best_node</definition>
+        <argsstring>(TreeNodeID node)</argsstring>
+        <name>get_best_node</name>
+        <param>
+          <type>TreeNodeID</type>
+          <declname>node</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="296" column="10" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="296" bodyend="308"/>
+      </memberdef>
+      <memberdef kind="function" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1a10b2e7ed0ecc6158e160f4f1606fee5a" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>vector&lt; <ref refid="structbeam__search__with__tree_1_1Action" kindref="compound">Action</ref> &gt;</type>
+        <definition>vector&lt;Action&gt; beam_search_with_tree::BeamSearchWithTree::get_result</definition>
+        <argsstring>(TreeNodeID root)</argsstring>
+        <name>get_result</name>
+        <param>
+          <type>TreeNodeID</type>
+          <declname>root</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="310" column="12" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="310" bodyend="317"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1ad73a0f096420da97849751b4d73820ed" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>vector&lt; <ref refid="structbeam__search__with__tree_1_1Action" kindref="compound">Action</ref> &gt;</type>
+        <definition>vector&lt;Action&gt; beam_search_with_tree::BeamSearchWithTree::search</definition>
+        <argsstring>(const Param &amp;param, const bool verbose=false)</argsstring>
+        <name>search</name>
+        <param>
+          <type>const <ref refid="structbeam__search__with__tree_1_1Param" kindref="compound">Param</ref> &amp;</type>
+          <declname>param</declname>
+        </param>
+        <param>
+          <type>const bool</type>
+          <declname>verbose</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>ビームサーチをする </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>param</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>ターン数、ビーム幅を指定するパラメータ構造体 </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>verbose</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>途中結果のスコアを標準エラー出力するかどうか </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>vector&lt;Action&gt; </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="327" column="12" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="327" bodyend="380"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="114" column="1" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="114" bodyend="381"/>
+    <listofallmembers>
+      <member refid="classbeam__search__with__tree_1_1BeamSearchWithTree_1a0db086f77d62f150ad2c067c0f109081" prot="private" virt="non-virtual"><scope>beam_search_with_tree::BeamSearchWithTree</scope><name>best_id</name></member>
+      <member refid="classbeam__search__with__tree_1_1BeamSearchWithTree_1ac423ff40fa2cb5a602355057b0ef6098" prot="private" virt="non-virtual"><scope>beam_search_with_tree::BeamSearchWithTree</scope><name>best_score</name></member>
+      <member refid="classbeam__search__with__tree_1_1BeamSearchWithTree_1a66956af886bf28a2be14793de906e30c" prot="private" virt="non-virtual"><scope>beam_search_with_tree::BeamSearchWithTree</scope><name>get_best_node</name></member>
+      <member refid="classbeam__search__with__tree_1_1BeamSearchWithTree_1a5bfc55d276f958339ffd1047c2af790b" prot="private" virt="non-virtual"><scope>beam_search_with_tree::BeamSearchWithTree</scope><name>get_next_beam</name></member>
+      <member refid="classbeam__search__with__tree_1_1BeamSearchWithTree_1ad2615a1dd778b65b3f6b280372894919" prot="private" virt="non-virtual"><scope>beam_search_with_tree::BeamSearchWithTree</scope><name>get_next_beam_recursion</name></member>
+      <member refid="classbeam__search__with__tree_1_1BeamSearchWithTree_1ac8d39852529561a70839bc54901cf9eb" prot="private" virt="non-virtual"><scope>beam_search_with_tree::BeamSearchWithTree</scope><name>get_par</name></member>
+      <member refid="classbeam__search__with__tree_1_1BeamSearchWithTree_1ae5a0e89c0ac6395a64b95d86aac0fe5d" prot="private" virt="non-virtual"><scope>beam_search_with_tree::BeamSearchWithTree</scope><name>get_path</name></member>
+      <member refid="classbeam__search__with__tree_1_1BeamSearchWithTree_1a10b2e7ed0ecc6158e160f4f1606fee5a" prot="private" virt="non-virtual"><scope>beam_search_with_tree::BeamSearchWithTree</scope><name>get_result</name></member>
+      <member refid="classbeam__search__with__tree_1_1BeamSearchWithTree_1a3b56b0af53d46f4a5624a9dbc7238d9b" prot="private" virt="non-virtual"><scope>beam_search_with_tree::BeamSearchWithTree</scope><name>print_tree</name></member>
+      <member refid="classbeam__search__with__tree_1_1BeamSearchWithTree_1ad73a0f096420da97849751b4d73820ed" prot="public" virt="non-virtual"><scope>beam_search_with_tree::BeamSearchWithTree</scope><name>search</name></member>
+      <member refid="classbeam__search__with__tree_1_1BeamSearchWithTree_1ab3523132ad8e837ff87fec6b2aa8beca" prot="private" virt="non-virtual"><scope>beam_search_with_tree::BeamSearchWithTree</scope><name>seen</name></member>
+      <member refid="classbeam__search__with__tree_1_1BeamSearchWithTree_1a5d22a29bccc4003da1e84163c40889cd" prot="private" virt="non-virtual"><scope>beam_search_with_tree::BeamSearchWithTree</scope><name>update_tree</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>
