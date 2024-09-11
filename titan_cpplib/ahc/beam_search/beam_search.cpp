@@ -135,12 +135,13 @@ namespace beam_search {
          * @param beam_depth_base
          * @param beam_width_base
          */
-        Param(const double time_limit,
-                    const int max_turn,
-                    const int decide_turn,
-                    const int beam_depth_base,
-                    const int beam_width_base,
-                    const bool adjace=false) :
+        Param(
+            const double time_limit,
+            const int max_turn,
+            const int decide_turn,
+            const int beam_depth_base,
+            const int beam_width_base,
+            const bool adjace=false) :
                 time_limit(time_limit),
                 beam_depth_base(beam_depth_base), beam_width_base(beam_width_base),
                 decide_turn(decide_turn),
@@ -186,9 +187,9 @@ namespace beam_search {
     class BeamSearch {
       private:
         static inline void calc_next_beam(const vector<long long> &keep,
-                                                                            const int turn,
-                                                                            __gnu_pbds::gp_hash_table<HashType, uint8_t> &seen,
-                                                                            vector<long long> &score_keep) {
+                                            const int turn,
+                                            __gnu_pbds::gp_hash_table<HashType, uint8_t> &seen,
+                                            vector<long long> &score_keep) {
             for (const long long now_state: keep) {
                 const vector<Action> &actions = pool.get(now_state)->get_actions(turn);
                 for (const Action &op : actions) {
