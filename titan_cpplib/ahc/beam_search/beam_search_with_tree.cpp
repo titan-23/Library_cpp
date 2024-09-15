@@ -134,7 +134,7 @@ class BeamSearchWithTree {
                     vector<Action> actions = state->get_actions();
                     for (Action action : actions) {
                         auto [score, hash] = state->try_op(action);
-                        if (seen.contains_insert(hash)) {
+                        if (seen.contains_insert(hash)) { // TODO use_hash
                             continue;
                         }
                         SubStateID substate = substate_pool.gen();
@@ -158,6 +158,7 @@ class BeamSearchWithTree {
             }
         }
 
+        // 再帰型 apply/rollbackの整合性チェックに使えるのでコメントアウトで残しておく
         // if (!treenode_pool.get(node)->is_valid) assert(false);
         // if (depth == 0) { // 葉
         //     assert(treenode_pool.get(node)->is_leaf());
@@ -195,7 +196,6 @@ class BeamSearchWithTree {
                 }
             }
             if (valid_cnt != 1) break;
-            assert(valid_node != -1);
             ++cnt;
             node = valid_node;
             state->apply_op(treenode_pool.get(node)->pre_action);
@@ -205,11 +205,12 @@ class BeamSearchWithTree {
         return make_tuple(cnt, node, next_beam);
     }
 
+    //! 親を返す / 無ければ自分を返す(!?)
     TreeNodeID get_par(SubStateID s_node, int cnt=1) {
-        assert(s_node < substate_pool.get_size());
+        assert(0 <= s_node && s_node < substate_pool.get_size());
         TreeNodeID node = substate_pool.get(s_node)->par;
         assert(node != -1);
-        for (int i = 0; i < cnt-1; ++i) {
+        for (int i = 0; i < cnt; ++i) {
             assert(node < treenode_pool.get_size());
             if (treenode_pool.get(node)->par == -1) {
                 assert(node != -1);
@@ -223,7 +224,7 @@ class BeamSearchWithTree {
         return node;
     }
 
-    // 木の各ノードのis_validの更新と、必要なければdelする
+    //! 木の各ノードのis_validの更新と、必要なければdelする
     bool update_tree(const TreeNodeID node, int depth) {
         if (!treenode_pool.get(node)->is_valid) return false;
         if (treenode_pool.get(node)->is_leaf()) {
@@ -249,50 +250,22 @@ class BeamSearchWithTree {
         return true;
     }
 
+    //! node以上のパスを返す
     vector<Action> get_path(TreeNodeID node) {
         vector<Action> result;
         while (node != -1 && treenode_pool.get(node)->par != -1) {
-            result.push_back(treenode_pool.get(node)->pre_action);
+            result.emplace_back(treenode_pool.get(node)->pre_action);
             node = treenode_pool.get(node)->par;
         }
         reverse(result.begin(), result.end());
         return result;
     }
 
+    //! for debug
     void print_tree(State* state, const TreeNodeID node, int depth) {
-        if (!treenode_pool.get(node)->is_valid) return;
-
-        if (depth == 0) {
-            cerr << "left_node : " << node << endl;
-            vector<Action> res = get_path(node);
-            for (auto a : res) cerr << a;
-            // string s = "RRDRRURULLULURULLDD";
-            // rep(i, 10) {
-            //     if (to_string(res[i]) != s[i]) {
-            //         cerr << "false" << endl;
-            //     }
-            // }
-            cerr << endl;
-        }
-        // cerr << "node : " << node << ' ' << "depth : " << depth << endl;
-        // state->print();
-        // cerr << "par_node_id : " << treenode_pool.get(node)->par << endl;
-        // cerr << "score : " << treenode_pool.get(node)->score << endl;
-        // cerr << "pre_action : " << treenode_pool.get(node)->pre_action << endl << endl;;
-
-        for (TreeNodeID nxt_node : treenode_pool.get(node)->child) {
-            string sp = " ";
-            for (int i = 0; i < 10-depth; ++i) sp += " ";
-            cerr << sp << depth << ' ' << node << " -> " << nxt_node << " : " << treenode_pool.get(nxt_node)->pre_action << ' ' << (treenode_pool.get(nxt_node)->is_valid ? "true" : "false") << endl;
-        }
-
-        for (TreeNodeID nxt_node : treenode_pool.get(node)->child) {
-            state->apply_op(treenode_pool.get(nxt_node)->pre_action);
-            print_tree(state, nxt_node, depth-1);
-            state->rollback(treenode_pool.get(nxt_node)->pre_action);
-        }
     }
 
+    //! node以下で、葉かつ最も評価値の良いノードを見るける / 葉はターン数からは判断していないので注意
     void get_best_node(TreeNodeID node) {
         if (!treenode_pool.get(node)->is_valid) return;
         if (treenode_pool.get(node)->is_leaf()) {
@@ -308,7 +281,7 @@ class BeamSearchWithTree {
     }
 
     vector<Action> get_result(TreeNodeID root) {
-        best_id = -1;
+        best_id = -1; // 更新
         get_best_node(root);
         TreeNodeID node = best_id;
         vector<Action> result = get_path(node);
@@ -351,7 +324,7 @@ class BeamSearchWithTree {
                 })))->score << endl;
             }
 
-            // ビームを絞る
+            // ビームを絞る // TODO 評価値が一致した場合、親の評価値も参考にするなど
             int beam_width = min(param.BEAM_WIDTH, (int)next_beam.size());
             nth_element(next_beam.begin(), next_beam.begin() + beam_width, next_beam.end(), [&] (const SubStateID &left, const SubStateID &right) {
                 // if (substate_pool.get(left)->score != substate_pool.get(right)->score) {
@@ -387,6 +360,6 @@ int main() {
     param.BEAM_WIDTH = 1000;
 
     beam_search_with_tree::BeamSearchWithTree bs;
-    vector<beam_search_with_tree::Action> ans = bs.search(param);
+    vector<beam_search_with_tree::Action> ans = bs.search(param, true);
 
 }
