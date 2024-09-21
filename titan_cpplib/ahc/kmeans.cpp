@@ -7,9 +7,9 @@ using namespace std;
 namespace titan23 {
 
     template <class DistType,
-                        class ElmType,
-                        DistType (*dist)(const ElmType&, const ElmType&),
-                        ElmType (*mean)(const vector<ElmType>&)>
+              class ElmType,
+              DistType (*dist)(const ElmType&, const ElmType&),
+              ElmType (*mean)(const vector<ElmType>&)>
     class Kmeans {
       private:
         int k, max_iter;

@@ -11,24 +11,23 @@ namespace titan23 {
     class HashSet {
       private:
         using u64 = unsigned long long;
-        static constexpr const u64 k = 0x517cc1b727220a95;
+        static constexpr const u64 K = 0x517cc1b727220a95;
         static constexpr const int M = 2;
         vector<u64> exist;
         vector<u64> keys;
         int msk, xor_;
         int size;
 
-        int hash(const u64 key) const {
-            return (((((key>>32)&msk) ^ (key&msk) ^ xor_)) * (k & msk)) & msk;
+        int hash(const u64 &key) const {
+            return (((((key>>32)&msk) ^ (key&msk) ^ xor_)) * (HashSet::K & msk)) & msk;
         }
 
-        pair<int, bool> get_pos(const u64 key) const {
-            int h = hash(key), s = keys.size();
+        pair<int, bool> get_pos(const u64 &key) const {
+            int h = hash(key);
             while (true) {
                 if (!(exist[h>>6]>>(h&63)&1)) return {h, false};
                 if (keys[h] == key) return {h, true};
-                ++h;
-                if (h == s) h = 0;
+                h = (h + 1) & msk;
             }
         }
 
@@ -89,7 +88,7 @@ namespace titan23 {
             }
         }
 
-        //! keyがすでにあればtrue, なければ挿入してfalse
+        //! keyがすでにあればtrue, なければ挿入してfalse / `O(1)`
         bool contains_insert(const u64 key) {
             const auto [pos, is_exist] = get_pos(key);
             if (!is_exist) {
@@ -104,6 +103,7 @@ namespace titan23 {
             return true;
         }
 
+        //! 全ての要素を削除する / `O(n/w)`
         void clear() {
             fill(exist.begin(), exist.end(), 0);
         }

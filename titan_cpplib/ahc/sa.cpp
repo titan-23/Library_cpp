@@ -52,8 +52,7 @@ namespace sa {
     };
 
     // TIME_LIMIT: ms
-    template<typename StateType>
-    StateType sa_run(const double TIME_LIMIT) {
+    State sa_run(const double TIME_LIMIT) {
         titan23::Timer sa_timer;
 
         // const double START_TEMP = param.start_temp;
@@ -62,9 +61,9 @@ namespace sa {
         const double END_TEMP   = 1;
         const double TEMP_VAL = (START_TEMP - END_TEMP) / TIME_LIMIT;
 
-        StateType ans;
+        State ans;
         ans.init();
-        StateType best_ans = ans;
+        State best_ans = ans;
         ScoreType score = ans.get_score();
         ScoreType best_score = score;
         double now_time;

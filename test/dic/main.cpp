@@ -2,9 +2,14 @@
 #include <random>
 #include <iostream>
 #include <cassert>
+#include <chrono>
 
 using namespace std;
 
+int cnt = 0;
+int loop_cnt = 0;
+
+// HashDict
 namespace titan23 {
 
     template<typename V>
@@ -14,26 +19,28 @@ namespace titan23 {
         static constexpr const u64 k = 0x517cc1b727220a95;
         static constexpr const int M = 2;
         vector<u64> exist;
+        // vector<short> exist;
         vector<u64> keys;
         vector<V> vals;
         int msk, xor_;
         int size;
 
-        int hash(const u64 key) const {
+        int hash(u64 key) const {
             return (((((key>>32)&msk) ^ (key&msk) ^ xor_)) * (k & msk)) & msk;
         }
 
         pair<int, bool> get_pos(const u64 key) const {
             int h = hash(key), s = keys.size();
+            ++cnt;
             while (true) {
+                ++loop_cnt;
                 if (!(exist[h>>6]>>(h&63)&1)) return {h, false};
                 if (keys[h] == key) return {h, true};
-                ++h;
-                if (h == s) h = 0;
+                h = (h + 1) & msk;
             }
         }
 
-        int bit_length(const int x) const {
+        static int bit_length(const int x) {
             if (x == 0) return 0;
             return 32 - __builtin_clz(x);
         }
@@ -43,9 +50,9 @@ namespace titan23 {
             vector<u64> old_keys = keys;
             vector<V> old_vals = vals;
             exist.resize(HashDict::M*old_exist.size()+1);
-            fill(exist.begin(), exist.end(), 0);
             keys.resize(HashDict::M*old_keys.size());
             vals.resize(HashDict::M*old_vals.size());
+            fill(exist.begin(), exist.end(), 0);
             size = 0;
             msk = (1<<bit_length(keys.size()-1))-1;
             random_device rd;
@@ -114,7 +121,8 @@ namespace titan23 {
             return size;
         }
     };
-}
+} // namespaced titan23
+
 
 #pragma GCC target("avx2")
 #pragma GCC optimize("O3")
@@ -149,5 +157,9 @@ int main() {
             // assert(a[k] == d[k]);
         }
     }
+
+    cerr << "cnt=" << cnt << endl;
+    cerr << "loop_cnt=" << loop_cnt << endl;
+    cerr << (float)loop_cnt / cnt << endl;
     return 0;
 }

@@ -7,7 +7,7 @@ using namespace std;
 namespace titan23 {
 
     /**
-     * @brief (疑似)乱数生成クラス
+     * @brief (疑似)乱数生成クラス(XOR shift)
      */
     class Random {
       private:
@@ -55,8 +55,40 @@ namespace titan23 {
             return begin + (((unsigned long long)_xor128() * (end-begin)) >> 32);
         }
 
+        //! `[0, u64_MAX)` の乱数を返す / zobrist hash等の使用を想定
         unsigned long long rand_u64() {
-            return (unsigned long long)_xor128() << 32 | _xor128();
+            return ((unsigned long long)_xor128() << 32) | _xor128();
+        }
+
+        //! `[0, end)` の異なる乱数を2つ返す
+        pair<int, int> rand_pair(const int end) {
+            assert(end >= 2);
+            int u = randrange(end);
+            int v = u + randrange(1, end);
+            if (v >= end) v -= end;
+            if (u > v) swap(u, v);
+            return {u, v};
+        }
+
+        //! `[begin, end)` の異なる乱数を2つ返す
+        pair<int, int> rand_pair(const int begin, const int end) {
+            assert(end - begin >= 2);
+            int u = randrange(begin, end);
+            int v = (u + randrange(1, end-begin));
+            if (v >= end) v -= (end-begin);
+            if (u > v) swap(u, v);
+            return {u, v};
+        }
+
+        //! Note `a`は非const
+        vector<int> rand_vec(const int cnt, vector<int> &a) {
+            int n = a.size();
+            for (int i = 0; i < cnt; ++i) {
+                int j = randrange(i, n);
+                swap(a[i], a[j]);
+            }
+            vector<int> res(a.begin(), a.begin()+cnt);
+            return res;
         }
 
         //! `[begin, end)` の乱数を返す(実数)
@@ -68,7 +100,7 @@ namespace titan23 {
         //! `vector` をインプレースにシャッフルする / `O(n)`
         template <typename T>
         void shuffle(vector<T> &a) {
-            int n = (int)a.size();
+            int n = a.size();
             for (int i = 0; i < n-1; ++i) {
                 int j = randrange(i, n);
                 swap(a[i], a[j]);

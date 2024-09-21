@@ -6,14 +6,13 @@
 using namespace std;
 
 namespace titan23 {
-        const double ALPHA = 1 - sqrt(2) / 2;
-        const double BETA = (1 - 2 * ALPHA) / (1 - ALPHA);
+    const double ALPHA = 1 - sqrt(2) / 2;
+    const double BETA = (1 - 2 * ALPHA) / (1 - ALPHA);
 
     template <class T>
     class WBTree {
 
       private:
-
         class Node;
         using NodePtr = Node*;
         using MyWBTree = WBTree<T>;
@@ -92,8 +91,8 @@ namespace titan23 {
         }
 
         NodePtr _merge_with_root(NodePtr l, NodePtr root, NodePtr r) {
-            int ls = l ? l->size: 0;
-            int rs = r ? r->size: 0;
+            int ls = l ? l->size : 0;
+            int rs = r ? r->size : 0;
             double diff = (double)(ls+1.0) / (ls+rs+2.0);
             if (diff > 1.0-ALPHA) {
                 l->right = _merge_with_root(l->right, root, r);
@@ -189,7 +188,6 @@ namespace titan23 {
         WBTree(NodePtr &root): root(root) {}
 
       public:
-
         NodePtr root;
 
         WBTree() : root(nullptr) {}
@@ -323,7 +321,6 @@ namespace titan23 {
         }
 
         void set(int k, T v) {
-            if (k < 0) k += len();
             assert(0 <= k && k < len());
             NodePtr node = root;
             NodePtr root = node;
