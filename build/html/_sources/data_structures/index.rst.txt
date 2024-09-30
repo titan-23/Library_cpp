@@ -52,3 +52,4 @@ data_structures
    wavelet_matrix_cpp.rst
    wavelet_matrix_cumulative_sum_cpp.rst
    wb_tree_cpp.rst
+   weight_union_find_cpp.rst

@@ -123,55 +123,54 @@ $(function() {
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    };</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="comment">// TIME_LIMIT: ms</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> StateType&gt;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    StateType sa_run(<span class="keyword">const</span> <span class="keywordtype">double</span> TIME_LIMIT) {</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        <a class="code" href="classtitan23_1_1Timer.html">titan23::Timer</a> sa_timer;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        <span class="comment">// const double START_TEMP = param.start_temp;</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        <span class="comment">// const double END_TEMP   = param.end_temp;</span></div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">double</span> START_TEMP = 1000;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">double</span> END_TEMP   = 1;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">double</span> TEMP_VAL = (START_TEMP - END_TEMP) / TIME_LIMIT;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        StateType ans;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        ans.init();</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        StateType best_ans = ans;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        ScoreType score = ans.get_score();</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        ScoreType best_score = score;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        <span class="keywordtype">double</span> now_time;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <span class="keywordtype">int</span> cnt = 0;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        <span class="keywordtype">int</span> upd_cnt = 0;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        <span class="keywordflow">while</span> (<span class="keyword">true</span>) {</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;            <span class="comment">// if ((cnt &amp; 31) == 0) now_time = sa_timer.elapsed();</span></div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;            now_time = sa_timer.<a class="code" href="classtitan23_1_1Timer.html#adb30bc0ad576c57bf6410294d3099e26">elapsed</a>();</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;            <span class="keywordflow">if</span> (now_time &gt; TIME_LIMIT) <span class="keywordflow">break</span>;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;            ++cnt;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;            ScoreType threshold = score - (START_TEMP-TEMP_VAL*now_time) * log(sa_random.<a class="code" href="classtitan23_1_1Random.html#a4191c342de62979837ea89fbceeb3631">random</a>());</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;            changed.pre_score = ans.score;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;            ans.modify(threshold);</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;            ScoreType new_score = ans.get_score();</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;            <span class="keywordflow">if</span> (new_score &lt;= threshold) {</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;                ++upd_cnt;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;                ans.advance();</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;                score = new_score;</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                <span class="keywordflow">if</span> (score &lt; best_score) {</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;                    best_score = score;</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;                    best_ans = ans;</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;                    cerr &lt;&lt; <span class="stringliteral">&quot;score=&quot;</span> &lt;&lt; best_score &lt;&lt; endl;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;                }</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;            } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;                ans.score = changed.pre_score;</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;                ans.rollback();</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;            }</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        }</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        cerr &lt;&lt; <span class="stringliteral">&quot;upd=&quot;</span> &lt;&lt; upd_cnt &lt;&lt; endl;</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        cerr &lt;&lt; <span class="stringliteral">&quot;cnt=&quot;</span> &lt;&lt; cnt &lt;&lt; endl;</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        <span class="keywordflow">return</span> best_ans;</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    }</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;}</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;}  <span class="comment">// namespace titan23</span></div>
-<div class="ttc" id="aclasstitan23_1_1Random_html"><div class="ttname"><a href="classtitan23_1_1Random.html">titan23::Random</a></div><div class="ttdoc">(疑似)乱数生成クラス</div><div class="ttdef"><b>Definition:</b> <a href="random_8cpp_source.html#l00012">random.cpp:12</a></div></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <a class="code" href="classtitan23_1_1sa_1_1State.html">State</a> sa_run(<span class="keyword">const</span> <span class="keywordtype">double</span> TIME_LIMIT) {</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        <a class="code" href="classtitan23_1_1Timer.html">titan23::Timer</a> sa_timer;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        <span class="comment">// const double START_TEMP = param.start_temp;</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        <span class="comment">// const double END_TEMP   = param.end_temp;</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">double</span> START_TEMP = 1000;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">double</span> END_TEMP   = 1;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">double</span> TEMP_VAL = (START_TEMP - END_TEMP) / TIME_LIMIT;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        <a class="code" href="classtitan23_1_1sa_1_1State.html">State</a> ans;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        ans.init();</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        <a class="code" href="classtitan23_1_1sa_1_1State.html">State</a> best_ans = ans;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        ScoreType score = ans.get_score();</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        ScoreType best_score = score;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        <span class="keywordtype">double</span> now_time;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        <span class="keywordtype">int</span> cnt = 0;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;        <span class="keywordtype">int</span> upd_cnt = 0;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        <span class="keywordflow">while</span> (<span class="keyword">true</span>) {</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;            <span class="comment">// if ((cnt &amp; 31) == 0) now_time = sa_timer.elapsed();</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;            now_time = sa_timer.<a class="code" href="classtitan23_1_1Timer.html#adb30bc0ad576c57bf6410294d3099e26">elapsed</a>();</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;            <span class="keywordflow">if</span> (now_time &gt; TIME_LIMIT) <span class="keywordflow">break</span>;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;            ++cnt;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;            ScoreType threshold = score - (START_TEMP-TEMP_VAL*now_time) * log(sa_random.<a class="code" href="classtitan23_1_1Random.html#a4191c342de62979837ea89fbceeb3631">random</a>());</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;            changed.pre_score = ans.score;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;            ans.modify(threshold);</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;            ScoreType new_score = ans.get_score();</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;            <span class="keywordflow">if</span> (new_score &lt;= threshold) {</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;                ++upd_cnt;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;                ans.advance();</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;                score = new_score;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;                <span class="keywordflow">if</span> (score &lt; best_score) {</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                    best_score = score;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;                    best_ans = ans;</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;                    cerr &lt;&lt; <span class="stringliteral">&quot;score=&quot;</span> &lt;&lt; best_score &lt;&lt; endl;</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;                }</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;            } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;                ans.score = changed.pre_score;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;                ans.rollback();</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;            }</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        }</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        cerr &lt;&lt; <span class="stringliteral">&quot;upd=&quot;</span> &lt;&lt; upd_cnt &lt;&lt; endl;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        cerr &lt;&lt; <span class="stringliteral">&quot;cnt=&quot;</span> &lt;&lt; cnt &lt;&lt; endl;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        <span class="keywordflow">return</span> best_ans;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    }</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;}</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;}  <span class="comment">// namespace titan23</span></div>
+<div class="ttc" id="aclasstitan23_1_1Random_html"><div class="ttname"><a href="classtitan23_1_1Random.html">titan23::Random</a></div><div class="ttdoc">(疑似)乱数生成クラス(XOR shift)</div><div class="ttdef"><b>Definition:</b> <a href="random_8cpp_source.html#l00012">random.cpp:12</a></div></div>
 <div class="ttc" id="aclasstitan23_1_1Random_html_a4191c342de62979837ea89fbceeb3631"><div class="ttname"><a href="classtitan23_1_1Random.html#a4191c342de62979837ea89fbceeb3631">titan23::Random::random</a></div><div class="ttdeci">double random()</div><div class="ttdoc">[0, 1] の乱数を返す(実数)</div><div class="ttdef"><b>Definition:</b> <a href="random_8cpp_source.html#l00032">random.cpp:32</a></div></div>
 <div class="ttc" id="aclasstitan23_1_1Timer_html"><div class="ttname"><a href="classtitan23_1_1Timer.html">titan23::Timer</a></div><div class="ttdoc">時間計測クラス</div><div class="ttdef"><b>Definition:</b> <a href="timer_8cpp_source.html#l00013">timer.cpp:13</a></div></div>
 <div class="ttc" id="aclasstitan23_1_1Timer_html_adb30bc0ad576c57bf6410294d3099e26"><div class="ttname"><a href="classtitan23_1_1Timer.html#adb30bc0ad576c57bf6410294d3099e26">titan23::Timer::elapsed</a></div><div class="ttdeci">double elapsed() const</div><div class="ttdoc">経過時間[ms]を返す</div><div class="ttdef"><b>Definition:</b> <a href="timer_8cpp_source.html#l00026">timer.cpp:26</a></div></div>

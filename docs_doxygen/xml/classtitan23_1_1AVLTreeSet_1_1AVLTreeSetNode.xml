@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="17" column="7" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="17" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="17" column="13" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="17" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-attrib">
@@ -29,7 +29,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="18" column="9" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="18" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="18" column="15" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="18" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1AVLTreeSet_1_1AVLTreeSetNode_1ae99242bae5db39d467e5879aa20914dc" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -42,7 +42,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="19" column="11" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="19" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="19" column="17" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="19" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1AVLTreeSet_1_1AVLTreeSetNode_1acbc6843fc84bed0d086f1aa7a0af3867" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -55,7 +55,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="19" column="16" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="19" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="19" column="22" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="19" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1AVLTreeSet_1_1AVLTreeSetNode_1a2bc44061f7671e730fb0e8bf2cbe06b4" prot="public" static="no" mutable="no">
         <type><ref refid="classtitan23_1_1AVLTreeSet_1_1AVLTreeSetNode" kindref="compound">AVLTreeSetNodePtr</ref></type>
@@ -68,7 +68,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="20" column="25" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="20" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="20" column="31" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="20" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1AVLTreeSet_1_1AVLTreeSetNode_1a15a49d6ccff9b70aa9dded063eccabfb" prot="public" static="no" mutable="no">
         <type><ref refid="classtitan23_1_1AVLTreeSet_1_1AVLTreeSetNode" kindref="compound">AVLTreeSetNodePtr</ref></type>
@@ -81,7 +81,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="20" column="29" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="20" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="20" column="35" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="20" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1AVLTreeSet_1_1AVLTreeSetNode_1a33a75a9ad9b3dbdae36f661c6fd9d487" prot="public" static="no" mutable="no">
         <type><ref refid="classtitan23_1_1AVLTreeSet_1_1AVLTreeSetNode" kindref="compound">AVLTreeSetNodePtr</ref></type>
@@ -94,7 +94,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="20" column="34" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="20" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="20" column="40" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="20" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -109,7 +109,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="22" column="7" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="22" bodyend="22"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="22" column="13" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="22" bodyend="22"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1AVLTreeSet_1_1AVLTreeSetNode_1a693ccb8bfcd93d06af8ade500ebc9b1b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -126,7 +126,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="23" column="7" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="23" bodyend="23"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="23" column="13" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="23" bodyend="23"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1AVLTreeSet_1_1AVLTreeSetNode_1aa7e3c30742a038431042a1aa4fe14195" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -139,7 +139,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="25" column="11" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="25" bodyend="29"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="25" column="17" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="25" bodyend="29"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1AVLTreeSet_1_1AVLTreeSetNode_1a2c31a480d4f7718c4b692291a87f958c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -152,7 +152,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="31" column="12" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="31" bodyend="34"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="31" column="18" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="31" bodyend="34"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -170,7 +170,7 @@
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="15" column="5" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="15" bodyend="35"/>
+    <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="15" column="9" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="15" bodyend="35"/>
     <listofallmembers>
       <member refid="classtitan23_1_1AVLTreeSet_1_1AVLTreeSetNode_1af5516d140d2dfa167355d255ad131c17" prot="public" virt="non-virtual"><scope>titan23::AVLTreeSet::AVLTreeSetNode</scope><name>AVLTreeSetNode</name></member>
       <member refid="classtitan23_1_1AVLTreeSet_1_1AVLTreeSetNode_1a693ccb8bfcd93d06af8ade500ebc9b1b" prot="public" virt="non-virtual"><scope>titan23::AVLTreeSet::AVLTreeSetNode</scope><name>AVLTreeSetNode</name></member>

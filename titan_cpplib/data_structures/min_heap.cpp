@@ -44,9 +44,7 @@ namespace titan23 {
 
       public:
         MinHeap() {}
-        MinHeap(vector<T> a) : a(a) {
-            _heapify();
-        }
+        MinHeap(vector<T> a) : a(a) { _heapify(); }
 
         //! 最小の要素を返す / `O(1)`
         T get_min() const {

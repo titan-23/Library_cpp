@@ -213,6 +213,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../data_structures/wavelet_matrix_cpp.html">wavelet matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_structures/wavelet_matrix_cumulative_sum_cpp.html">wavelet matrix cumulative sum</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_structures/wb_tree_cpp.html">wb tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/weight_union_find_cpp.html">weight union find</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../graph/index.html">graph</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of graph</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -302,67 +303,65 @@
 <span class="linenos">16</span>
 <span class="linenos">17</span><span class="w">      </span><span class="k">public</span><span class="o">:</span>
 <span class="linenos">18</span><span class="w">        </span><span class="n">StatePool</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
-<span class="linenos">19</span><span class="w">        </span><span class="n">StatePool</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">20</span><span class="w">            </span><span class="n">init</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
-<span class="linenos">21</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">22</span>
-<span class="linenos">23</span><span class="w">        </span><span class="c1">// clear</span>
-<span class="linenos">24</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">clear</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">25</span><span class="w">            </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">unused_indx</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span><span class="w"> </span><span class="n">unused_indx</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
-<span class="linenos">26</span><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="p">)</span><span class="n">pool</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="mi">-1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="o">--</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">27</span><span class="w">                </span><span class="n">unused_indx</span><span class="p">.</span><span class="n">emplace</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
-<span class="linenos">28</span><span class="w">            </span><span class="p">}</span>
-<span class="linenos">29</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">30</span>
-<span class="linenos">31</span><span class="w">        </span><span class="c1">// n要素確保する。</span>
-<span class="linenos">32</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">init</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">33</span><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">34</span><span class="w">                </span><span class="n">T</span><span class="o">*</span><span class="w"> </span><span class="n">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">T</span><span class="p">;</span>
-<span class="linenos">35</span><span class="w">                </span><span class="n">pool</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">state</span><span class="p">);</span>
-<span class="linenos">36</span><span class="w">                </span><span class="n">unused_indx</span><span class="p">.</span><span class="n">emplace</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
-<span class="linenos">37</span><span class="w">            </span><span class="p">}</span>
-<span class="linenos">38</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">39</span>
-<span class="linenos">40</span><span class="w">        </span><span class="c1">// id に対応する T のポインタを返す。</span>
-<span class="linenos">41</span><span class="w">        </span><span class="n">T</span><span class="o">*</span><span class="w"> </span><span class="n">get</span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">42</span><span class="w">            </span><span class="n">assert</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">pool</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
-<span class="linenos">43</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">pool</span><span class="p">[</span><span class="n">id</span><span class="p">];</span>
-<span class="linenos">44</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">45</span>
-<span class="linenos">46</span><span class="w">        </span><span class="c1">// idに対応するTを仮想的に削除する。</span>
-<span class="linenos">47</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">del</span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">48</span><span class="w">            </span><span class="n">assert</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">pool</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
-<span class="linenos">49</span><span class="w">            </span><span class="n">unused_indx</span><span class="p">.</span><span class="n">emplace</span><span class="p">(</span><span class="n">id</span><span class="p">);</span>
-<span class="linenos">50</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">51</span>
-<span class="linenos">52</span><span class="w">        </span><span class="c1">// T を作成し、それに対応する id を返す。</span>
-<span class="linenos">53</span><span class="w">        </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">gen</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">54</span><span class="w">            </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">state_id</span><span class="p">;</span>
-<span class="linenos">55</span><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">unused_indx</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">56</span><span class="w">                </span><span class="n">T</span><span class="o">*</span><span class="w"> </span><span class="n">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">T</span><span class="p">;</span>
-<span class="linenos">57</span><span class="w">                </span><span class="n">state_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pool</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
-<span class="linenos">58</span><span class="w">                </span><span class="n">pool</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">state</span><span class="p">);</span>
-<span class="linenos">59</span><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">60</span><span class="w">                </span><span class="n">state_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">unused_indx</span><span class="p">.</span><span class="n">top</span><span class="p">();</span>
-<span class="linenos">61</span><span class="w">                </span><span class="n">unused_indx</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
-<span class="linenos">62</span><span class="w">            </span><span class="p">}</span>
-<span class="linenos">63</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">state_id</span><span class="p">;</span>
-<span class="linenos">64</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">65</span>
-<span class="linenos">66</span><span class="w">        </span><span class="c1">// id に対応するTをコピーし、コピー先のidを返す。</span>
-<span class="linenos">67</span><span class="w">        </span><span class="c1">// T のコピーメソッドを呼び出す。</span>
-<span class="linenos">68</span><span class="w">        </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">copy</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">69</span><span class="w">            </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">new_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gen</span><span class="p">();</span>
-<span class="linenos">70</span><span class="w">            </span><span class="n">pool</span><span class="p">[</span><span class="n">id</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">copy</span><span class="p">(</span><span class="n">pool</span><span class="p">[</span><span class="n">new_id</span><span class="p">]);</span>
-<span class="linenos">71</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">new_id</span><span class="p">;</span>
-<span class="linenos">72</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">73</span>
-<span class="linenos">74</span><span class="w">        </span><span class="c1">//! 内部サイズを呼び出す</span>
-<span class="linenos">75</span><span class="w">        </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">get_size</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">76</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">pool</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
-<span class="linenos">77</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">78</span><span class="w">    </span><span class="p">};</span>
-<span class="linenos">79</span><span class="p">}</span><span class="w">  </span><span class="c1">// namespace titan23</span>
+<span class="linenos">19</span><span class="w">        </span><span class="n">StatePool</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">init</span><span class="p">(</span><span class="n">n</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos">20</span>
+<span class="linenos">21</span><span class="w">        </span><span class="c1">//! clear</span>
+<span class="linenos">22</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">clear</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">23</span><span class="w">            </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">unused_indx</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span><span class="w"> </span><span class="n">unused_indx</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+<span class="linenos">24</span><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="p">)</span><span class="n">pool</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="mi">-1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="o">--</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">25</span><span class="w">                </span><span class="n">unused_indx</span><span class="p">.</span><span class="n">emplace</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+<span class="linenos">26</span><span class="w">            </span><span class="p">}</span>
+<span class="linenos">27</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">28</span>
+<span class="linenos">29</span><span class="w">        </span><span class="c1">//! n要素確保する。</span>
+<span class="linenos">30</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">init</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">31</span><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">32</span><span class="w">                </span><span class="n">T</span><span class="o">*</span><span class="w"> </span><span class="n">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">T</span><span class="p">;</span>
+<span class="linenos">33</span><span class="w">                </span><span class="n">pool</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">state</span><span class="p">);</span>
+<span class="linenos">34</span><span class="w">                </span><span class="n">unused_indx</span><span class="p">.</span><span class="n">emplace</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+<span class="linenos">35</span><span class="w">            </span><span class="p">}</span>
+<span class="linenos">36</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">37</span>
+<span class="linenos">38</span><span class="w">        </span><span class="c1">//! id に対応する T のポインタを返す。</span>
+<span class="linenos">39</span><span class="w">        </span><span class="n">T</span><span class="o">*</span><span class="w"> </span><span class="n">get</span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">40</span><span class="w">            </span><span class="n">assert</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">pool</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+<span class="linenos">41</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">pool</span><span class="p">[</span><span class="n">id</span><span class="p">];</span>
+<span class="linenos">42</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">43</span>
+<span class="linenos">44</span><span class="w">        </span><span class="c1">//! idに対応するTを仮想的に削除する。</span>
+<span class="linenos">45</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">del</span><span class="p">(</span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">46</span><span class="w">            </span><span class="n">assert</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">pool</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+<span class="linenos">47</span><span class="w">            </span><span class="n">unused_indx</span><span class="p">.</span><span class="n">emplace</span><span class="p">(</span><span class="n">id</span><span class="p">);</span>
+<span class="linenos">48</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">49</span>
+<span class="linenos">50</span><span class="w">        </span><span class="c1">//! T を作成し、それに対応する id を返す。</span>
+<span class="linenos">51</span><span class="w">        </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">gen</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">52</span><span class="w">            </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">state_id</span><span class="p">;</span>
+<span class="linenos">53</span><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">unused_indx</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">54</span><span class="w">                </span><span class="n">T</span><span class="o">*</span><span class="w"> </span><span class="n">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">T</span><span class="p">;</span>
+<span class="linenos">55</span><span class="w">                </span><span class="n">state_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pool</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+<span class="linenos">56</span><span class="w">                </span><span class="n">pool</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">state</span><span class="p">);</span>
+<span class="linenos">57</span><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">58</span><span class="w">                </span><span class="n">state_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">unused_indx</span><span class="p">.</span><span class="n">top</span><span class="p">();</span>
+<span class="linenos">59</span><span class="w">                </span><span class="n">unused_indx</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+<span class="linenos">60</span><span class="w">            </span><span class="p">}</span>
+<span class="linenos">61</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">state_id</span><span class="p">;</span>
+<span class="linenos">62</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">63</span>
+<span class="linenos">64</span><span class="w">        </span><span class="c1">//! id に対応するTをコピーし、コピー先のidを返す。</span>
+<span class="linenos">65</span><span class="w">        </span><span class="c1">//! T のコピーメソッドを呼び出す。</span>
+<span class="linenos">66</span><span class="w">        </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">copy</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">67</span><span class="w">            </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">new_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gen</span><span class="p">();</span>
+<span class="linenos">68</span><span class="w">            </span><span class="n">pool</span><span class="p">[</span><span class="n">id</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">copy</span><span class="p">(</span><span class="n">pool</span><span class="p">[</span><span class="n">new_id</span><span class="p">]);</span>
+<span class="linenos">69</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">new_id</span><span class="p">;</span>
+<span class="linenos">70</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">71</span>
+<span class="linenos">72</span><span class="w">        </span><span class="c1">//! 内部サイズを呼び出す</span>
+<span class="linenos">73</span><span class="w">        </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="n">get_size</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">74</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">pool</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+<span class="linenos">75</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">76</span><span class="w">    </span><span class="p">};</span>
+<span class="linenos">77</span><span class="p">}</span><span class="w">  </span><span class="c1">// namespace titan23</span>
 </pre></div>
 </div>
 </section>
@@ -389,32 +388,38 @@
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4N7titan239StatePool5clearEv">
 <span id="_CPPv3N7titan239StatePool5clearEv"></span><span id="_CPPv2N7titan239StatePool5clearEv"></span><span id="titan23::StatePool::clear"></span><span class="target" id="classtitan23_1_1StatePool_1a65ccf078558e51d45e58b5d8f7480a4d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">clear</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan239StatePool5clearEv" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
+<dd><p>clear </p>
+</dd></dl>
 
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4N7titan239StatePool4initEKx">
 <span id="_CPPv3N7titan239StatePool4initEKx"></span><span id="_CPPv2N7titan239StatePool4initEKx"></span><span id="titan23::StatePool::init__l-lC"></span><span class="target" id="classtitan23_1_1StatePool_1a0ca21823cf14acf5363c827baf0968e1"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">init</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">long</span></span><span class="w"> </span><span class="kt"><span class="pre">long</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">n</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan239StatePool4initEKx" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
+<dd><p>n要素確保する。 </p>
+</dd></dl>
 
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4NK7titan239StatePool3getEx">
 <span id="_CPPv3NK7titan239StatePool3getEx"></span><span id="_CPPv2NK7titan239StatePool3getEx"></span><span id="titan23::StatePool::get__l-lC"></span><span class="target" id="classtitan23_1_1StatePool_1a7ee5fabd129600983f6b8370ad5bc080"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN7titan239StatePoolE" title="titan23::StatePool::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">get</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">long</span></span><span class="w"> </span><span class="kt"><span class="pre">long</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">id</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK7titan239StatePool3getEx" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
+<dd><p>id に対応する T のポインタを返す。 </p>
+</dd></dl>
 
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4N7titan239StatePool3delEx">
 <span id="_CPPv3N7titan239StatePool3delEx"></span><span id="_CPPv2N7titan239StatePool3delEx"></span><span id="titan23::StatePool::del__l-l"></span><span class="target" id="classtitan23_1_1StatePool_1a11fba02e368793223f077879136bc7bd"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">del</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">long</span></span><span class="w"> </span><span class="kt"><span class="pre">long</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">id</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan239StatePool3delEx" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
+<dd><p>idに対応するTを仮想的に削除する。 </p>
+</dd></dl>
 
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4N7titan239StatePool3genEv">
 <span id="_CPPv3N7titan239StatePool3genEv"></span><span id="_CPPv2N7titan239StatePool3genEv"></span><span id="titan23::StatePool::gen"></span><span class="target" id="classtitan23_1_1StatePool_1aca01bc5adac531b38ed8d4499eed2a29"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">long</span></span><span class="w"> </span><span class="kt"><span class="pre">long</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">gen</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan239StatePool3genEv" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
+<dd><p>T を作成し、それに対応する id を返す。 </p>
+</dd></dl>
 
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4N7titan239StatePool4copyEKx">
 <span id="_CPPv3N7titan239StatePool4copyEKx"></span><span id="_CPPv2N7titan239StatePool4copyEKx"></span><span id="titan23::StatePool::copy__l-lC"></span><span class="target" id="classtitan23_1_1StatePool_1aaca3084894128ce95de2847d645932f3"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">long</span></span><span class="w"> </span><span class="kt"><span class="pre">long</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">copy</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">long</span></span><span class="w"> </span><span class="kt"><span class="pre">long</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">id</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan239StatePool4copyEKx" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
+<dd><p>id に対応するTをコピーし、コピー先のidを返す。 T のコピーメソッドを呼び出す。 </p>
+</dd></dl>
 
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4NK7titan239StatePool8get_sizeEv">

@@ -20,7 +20,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="18" column="9" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="18" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="17" column="9" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="17" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="classtitan23_1_1WBTree_1a1f924bcc1041e9a8af807686e19c3d6d" prot="private" static="no">
         <type><ref refid="classtitan23_1_1WBTree" kindref="compound">WBTree</ref>&lt; T &gt;</type>
@@ -33,7 +33,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="19" column="9" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="19" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="18" column="9" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="18" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-attrib">
@@ -48,7 +48,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="193" column="17" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="193" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="191" column="17" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="191" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -67,7 +67,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="44" column="14" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="44" bodyend="58"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="43" column="14" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="43" bodyend="57"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WBTree_1a1e22adcc6155295e2ff5198dca431cc5" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>NodePtr</type>
@@ -84,7 +84,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="60" column="17" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="60" bodyend="67"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="59" column="17" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="59" bodyend="66"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WBTree_1a645bd4e856718242197da67792bb9bd5" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>NodePtr</type>
@@ -101,7 +101,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="69" column="17" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="69" bodyend="76"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="68" column="17" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="68" bodyend="75"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WBTree_1a438dfdd247a0dd4b3342c45d1ade1d27" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>NodePtr</type>
@@ -118,7 +118,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="78" column="17" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="78" bodyend="84"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="77" column="17" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="77" bodyend="83"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WBTree_1aa2f918c2a9d8acdc872052f569df7b4c" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>NodePtr</type>
@@ -135,7 +135,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="86" column="17" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="86" bodyend="92"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="85" column="17" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="85" bodyend="91"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WBTree_1a21a00d850e77afa249e729b83fb72b94" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>NodePtr</type>
@@ -160,7 +160,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="94" column="17" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="94" bodyend="118"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="93" column="17" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="93" bodyend="117"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WBTree_1a14e14d0ead2b312fbefb3912dd43c817" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>pair&lt; NodePtr, NodePtr &gt;</type>
@@ -177,7 +177,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="120" column="14" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="120" bodyend="158"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="119" column="14" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="119" bodyend="157"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WBTree_1a57e9add593e2cbfc3ca533b1fc120bbb" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>NodePtr</type>
@@ -198,7 +198,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="160" column="17" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="160" bodyend="166"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="159" column="17" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="159" bodyend="165"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WBTree_1aa8dd96d9708f133ea33ea1413ee748c9" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>pair&lt; NodePtr, NodePtr &gt;</type>
@@ -219,7 +219,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="168" column="14" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="168" bodyend="182"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="167" column="14" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="167" bodyend="181"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WBTree_1acb0bb047c84e81678d690c54a65df42a" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classtitan23_1_1WBTree" kindref="compound">WBTree</ref>&lt; T &gt;</type>
@@ -236,7 +236,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="184" column="16" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="184" bodyend="187"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="183" column="16" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="183" bodyend="186"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WBTree_1a83a3e3021bd91064ae44bebfd68fa650" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -253,7 +253,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="189" column="9" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="189" bodyend="189"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="188" column="9" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="188" bodyend="188"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -268,7 +268,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="195" column="9" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="195" bodyend="195"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="193" column="9" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="193" bodyend="193"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WBTree_1a2858a9418ebd2a947c401141e289ec13" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -285,7 +285,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="197" column="9" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="197" bodyend="197"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="195" column="9" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="195" bodyend="195"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WBTree_1a9bb1d244abdf5f95d7c7ec81ea7eeea7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -302,7 +302,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="199" column="14" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="199" bodyend="213"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="197" column="14" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="197" bodyend="211"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WBTree_1a3be148132eb6eedfa2721b847a385575" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -319,7 +319,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="215" column="14" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="215" bodyend="217"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="213" column="14" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="213" bodyend="215"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WBTree_1a0d52c232760ce578db3e2c42e7e07c79" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>pair&lt; <ref refid="classtitan23_1_1WBTree" kindref="compound">MyWBTree</ref>, <ref refid="classtitan23_1_1WBTree" kindref="compound">MyWBTree</ref> &gt;</type>
@@ -336,7 +336,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="219" column="14" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="219" bodyend="222"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="217" column="14" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="217" bodyend="220"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WBTree_1aacf4ebd1f322bf4c49eb2b6db3a55332" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -357,7 +357,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="224" column="14" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="224" bodyend="229"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="222" column="14" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="222" bodyend="227"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WBTree_1a62e62bfc9acafb39bad48157813d7176" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -374,7 +374,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="231" column="14" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="231" bodyend="233"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="229" column="14" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="229" bodyend="231"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WBTree_1a859fd70463e4279ac59a491e9a880ecb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -391,7 +391,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="235" column="11" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="235" bodyend="304"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="233" column="11" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="233" bodyend="302"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WBTree_1abc0a2cc3f362b5a541b404be1897d8f5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>vector&lt; T &gt;</type>
@@ -404,7 +404,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="306" column="16" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="306" bodyend="323"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="304" column="16" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="304" bodyend="321"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WBTree_1a92443bc5122a1073a1c1f3bb511d3b2a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -425,7 +425,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="325" column="14" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="325" bodyend="358"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="323" column="14" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="323" bodyend="355"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WBTree_1ad8eb868c7de9435410bc8a742eca179c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -442,7 +442,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="360" column="11" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="360" bodyend="376"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="357" column="11" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="357" bodyend="373"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WBTree_1a942e46b0b5bdec05b08d736fb2a3eb29" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -455,7 +455,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="378" column="14" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="378" bodyend="380"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="375" column="14" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="375" bodyend="377"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WBTree_1abc72ce5d91d023bf2070385cc87ea697" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>T &amp;</type>
@@ -472,7 +472,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="382" column="11" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="382" bodyend="398"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="379" column="11" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="379" bodyend="395"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WBTree_1aab65097b02961c992315045ff0dea009" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -485,7 +485,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="400" column="14" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="400" bodyend="408"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="397" column="14" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="397" bodyend="405"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WBTree_1a44f90ff85283de6d2e3678e4d6cf4294" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -498,7 +498,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="410" column="13" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="410" bodyend="412"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="407" column="13" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="407" bodyend="409"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WBTree_1a841470971d96265ea55eb177c9b621ca" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -511,7 +511,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="414" column="14" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="414" bodyend="440"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="411" column="14" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="411" bodyend="437"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -534,7 +534,7 @@
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="titan_cpplib/data_structures/wb_tree.cpp" line="13" column="5" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="13" bodyend="441"/>
+    <location file="titan_cpplib/data_structures/wb_tree.cpp" line="13" column="5" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="13" bodyend="438"/>
     <listofallmembers>
       <member refid="classtitan23_1_1WBTree_1a438dfdd247a0dd4b3342c45d1ade1d27" prot="private" virt="non-virtual"><scope>titan23::WBTree</scope><name>_balance_left</name></member>
       <member refid="classtitan23_1_1WBTree_1aa2f918c2a9d8acdc872052f569df7b4c" prot="private" virt="non-virtual"><scope>titan23::WBTree</scope><name>_balance_right</name></member>

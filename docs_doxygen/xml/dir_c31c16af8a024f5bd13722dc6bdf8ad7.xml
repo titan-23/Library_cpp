@@ -50,6 +50,7 @@
     <innerfile refid="wavelet__matrix_8cpp">wavelet_matrix.cpp</innerfile>
     <innerfile refid="wavelet__matrix__cumulative__sum_8cpp">wavelet_matrix_cumulative_sum.cpp</innerfile>
     <innerfile refid="wb__tree_8cpp">wb_tree.cpp</innerfile>
+    <innerfile refid="weight__union__find_8cpp">weight_union_find.cpp</innerfile>
     <briefdescription>
     </briefdescription>
     <detaileddescription>

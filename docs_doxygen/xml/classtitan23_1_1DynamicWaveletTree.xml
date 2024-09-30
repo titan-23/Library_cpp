@@ -319,10 +319,10 @@
         </inbodydescription>
         <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="206" column="11" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="206" bodyend="208"/>
       </memberdef>
-      <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1af9177c036552364b76fa638c66911a7b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1a4e6ede7bc3b05eb3dd740b7e24fa7128" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
         <definition>int titan23::DynamicWaveletTree&lt; T &gt;::range_freq</definition>
-        <argsstring>(int l, int r, T x) const</argsstring>
+        <argsstring>(int l, int r, const T &amp;x) const</argsstring>
         <name>range_freq</name>
         <param>
           <type>int</type>
@@ -333,7 +333,7 @@
           <declname>r</declname>
         </param>
         <param>
-          <type>T</type>
+          <type>const T &amp;</type>
           <declname>x</declname>
         </param>
         <briefdescription>
@@ -494,7 +494,7 @@
       <member refid="classtitan23_1_1DynamicWaveletTree_1a64c5dab88069e66dcd6cdf966ebae201" prot="public" virt="non-virtual"><scope>titan23::DynamicWaveletTree</scope><name>pop</name></member>
       <member refid="classtitan23_1_1DynamicWaveletTree_1a493a7366918605a89480509e2d0c307e" prot="public" virt="non-virtual"><scope>titan23::DynamicWaveletTree</scope><name>print</name></member>
       <member refid="classtitan23_1_1DynamicWaveletTree_1a854d3d9efdd90ba3ce16ea44b6a5878c" prot="public" virt="non-virtual"><scope>titan23::DynamicWaveletTree</scope><name>range_count</name></member>
-      <member refid="classtitan23_1_1DynamicWaveletTree_1af9177c036552364b76fa638c66911a7b" prot="public" virt="non-virtual"><scope>titan23::DynamicWaveletTree</scope><name>range_freq</name></member>
+      <member refid="classtitan23_1_1DynamicWaveletTree_1a4e6ede7bc3b05eb3dd740b7e24fa7128" prot="public" virt="non-virtual"><scope>titan23::DynamicWaveletTree</scope><name>range_freq</name></member>
       <member refid="classtitan23_1_1DynamicWaveletTree_1a384869dd7bd88e7732cd4c4fc3dd05c5" prot="public" virt="non-virtual"><scope>titan23::DynamicWaveletTree</scope><name>range_freq</name></member>
       <member refid="classtitan23_1_1DynamicWaveletTree_1a6a5940cf0aa3074ee756188401aaa3d5" prot="public" virt="non-virtual"><scope>titan23::DynamicWaveletTree</scope><name>rank</name></member>
       <member refid="classtitan23_1_1DynamicWaveletTree_1a2f3ffb903e38c64a21a550a5782f864f" prot="private" virt="non-virtual"><scope>titan23::DynamicWaveletTree</scope><name>root</name></member>

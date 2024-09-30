@@ -23,7 +23,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/bbst_node.cpp" line="9" column="20" bodyfile="titan_cpplib/data_structures/bbst_node.cpp" bodystart="9" bodyend="19"/>
+        <location file="titan_cpplib/data_structures/bbst_node.cpp" line="9" column="24" bodyfile="titan_cpplib/data_structures/bbst_node.cpp" bodystart="9" bodyend="19"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1BBSTNode_1a6447bf53a3f0e85311f48fe1d4d63bc9" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>NodePtr</type>
@@ -40,7 +40,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/bbst_node.cpp" line="21" column="20" bodyfile="titan_cpplib/data_structures/bbst_node.cpp" bodystart="21" bodyend="31"/>
+        <location file="titan_cpplib/data_structures/bbst_node.cpp" line="21" column="24" bodyfile="titan_cpplib/data_structures/bbst_node.cpp" bodystart="21" bodyend="31"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1BBSTNode_1ae81e931c26f67a17f4945579c3dcf8b8" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>NodePtr</type>
@@ -57,7 +57,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/bbst_node.cpp" line="33" column="20" bodyfile="titan_cpplib/data_structures/bbst_node.cpp" bodystart="33" bodyend="36"/>
+        <location file="titan_cpplib/data_structures/bbst_node.cpp" line="33" column="24" bodyfile="titan_cpplib/data_structures/bbst_node.cpp" bodystart="33" bodyend="36"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1BBSTNode_1a8865de753d13d0a610bea406ffe943b7" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>NodePtr</type>
@@ -74,7 +74,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/bbst_node.cpp" line="38" column="20" bodyfile="titan_cpplib/data_structures/bbst_node.cpp" bodystart="38" bodyend="41"/>
+        <location file="titan_cpplib/data_structures/bbst_node.cpp" line="38" column="24" bodyfile="titan_cpplib/data_structures/bbst_node.cpp" bodystart="38" bodyend="41"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1BBSTNode_1a099c407a5c3af1a3351e1efe151e7d1a" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>NodePtr</type>
@@ -91,7 +91,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/bbst_node.cpp" line="43" column="20" bodyfile="titan_cpplib/data_structures/bbst_node.cpp" bodystart="43" bodyend="46"/>
+        <location file="titan_cpplib/data_structures/bbst_node.cpp" line="43" column="24" bodyfile="titan_cpplib/data_structures/bbst_node.cpp" bodystart="43" bodyend="46"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1BBSTNode_1a45a86c0c60aadbfcbebb6bd30afb5d65" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>NodePtr</type>
@@ -108,7 +108,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/bbst_node.cpp" line="48" column="20" bodyfile="titan_cpplib/data_structures/bbst_node.cpp" bodystart="48" bodyend="51"/>
+        <location file="titan_cpplib/data_structures/bbst_node.cpp" line="48" column="24" bodyfile="titan_cpplib/data_structures/bbst_node.cpp" bodystart="48" bodyend="51"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1BBSTNode_1a9d0b64aedb8d1d7837e17f2761602914" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>NodePtr</type>
@@ -125,7 +125,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/bbst_node.cpp" line="53" column="20" bodyfile="titan_cpplib/data_structures/bbst_node.cpp" bodystart="53" bodyend="63"/>
+        <location file="titan_cpplib/data_structures/bbst_node.cpp" line="53" column="24" bodyfile="titan_cpplib/data_structures/bbst_node.cpp" bodystart="53" bodyend="63"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1BBSTNode_1ae7e7eec32ae00d9615028f0071bc1c4e" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>NodePtr</type>
@@ -142,14 +142,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/bbst_node.cpp" line="65" column="20" bodyfile="titan_cpplib/data_structures/bbst_node.cpp" bodystart="65" bodyend="75"/>
+        <location file="titan_cpplib/data_structures/bbst_node.cpp" line="65" column="24" bodyfile="titan_cpplib/data_structures/bbst_node.cpp" bodystart="65" bodyend="75"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/data_structures/bbst_node.cpp" line="7" column="3" bodyfile="titan_cpplib/data_structures/bbst_node.cpp" bodystart="7" bodyend="76"/>
+    <location file="titan_cpplib/data_structures/bbst_node.cpp" line="7" column="5" bodyfile="titan_cpplib/data_structures/bbst_node.cpp" bodystart="7" bodyend="76"/>
     <listofallmembers>
       <member refid="classtitan23_1_1BBSTNode_1a45a86c0c60aadbfcbebb6bd30afb5d65" prot="public" virt="non-virtual"><scope>titan23::BBSTNode</scope><name>_max</name></member>
       <member refid="classtitan23_1_1BBSTNode_1a099c407a5c3af1a3351e1efe151e7d1a" prot="public" virt="non-virtual"><scope>titan23::BBSTNode</scope><name>_min</name></member>

@@ -56,6 +56,7 @@
     <innerclass refid="classtitan23_1_1WaveletMatrix" prot="public">titan23::WaveletMatrix</innerclass>
     <innerclass refid="classtitan23_1_1WaveletMatrixCumulativeSum" prot="public">titan23::WaveletMatrixCumulativeSum</innerclass>
     <innerclass refid="classtitan23_1_1WBTree" prot="public">titan23::WBTree</innerclass>
+    <innerclass refid="classtitan23_1_1WeightedUnionFind" prot="public">titan23::WeightedUnionFind</innerclass>
     <innerclass refid="structtitan23_1_1dijkstra__path" prot="public">titan23::dijkstra_path</innerclass>
     <innerclass refid="structtitan23_1_1Graph" prot="public">titan23::Graph</innerclass>
     <innerclass refid="classtitan23_1_1HLD" prot="public">titan23::HLD</innerclass>
@@ -82,7 +83,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="9" column="22" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="9" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="9" column="18" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="9" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="wb__tree_8cpp_1ac279f95df35ca5f1a1c28c3f02cf3c04" prot="public" static="no" mutable="no">
         <type>const double</type>
@@ -96,7 +97,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="10" column="22" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="10" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/wb_tree.cpp" line="10" column="18" bodyfile="titan_cpplib/data_structures/wb_tree.cpp" bodystart="10" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="func">

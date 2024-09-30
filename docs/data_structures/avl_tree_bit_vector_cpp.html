@@ -213,6 +213,7 @@
 <li class="toctree-l2"><a class="reference internal" href="wavelet_matrix_cpp.html">wavelet matrix</a></li>
 <li class="toctree-l2"><a class="reference internal" href="wavelet_matrix_cumulative_sum_cpp.html">wavelet matrix cumulative sum</a></li>
 <li class="toctree-l2"><a class="reference internal" href="wb_tree_cpp.html">wb tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="weight_union_find_cpp.html">weight union find</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../graph/index.html">graph</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of graph</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -355,7 +356,7 @@
 <span class="linenos"> 69</span>
 <span class="linenos"> 70</span><span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">_popcount</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">uint128</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
 <span class="linenos"> 71</span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">__builtin_popcountll</span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">64</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">__builtin_popcountll</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
-<span class="linenos"> 72</span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">__builtin_popcountll</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+<span class="linenos"> 72</span><span class="w">    </span><span class="c1">// return __builtin_popcountll(n);</span>
 <span class="linenos"> 73</span><span class="w">  </span><span class="p">}</span>
 <span class="linenos"> 74</span>
 <span class="linenos"> 75</span><span class="w">  </span><span class="n">Node</span><span class="w"> </span><span class="nf">_rotate_L</span><span class="p">(</span><span class="n">Node</span><span class="w"> </span><span class="n">node</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>

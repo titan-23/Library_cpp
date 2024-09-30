@@ -75,7 +75,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="120" column="10" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="120" bodyend="184"/>
+        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="120" column="10" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="120" bodyend="185"/>
       </memberdef>
       <memberdef kind="function" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1a5bfc55d276f958339ffd1047c2af790b" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>tuple&lt; int, TreeNodeID, vector&lt; SubStateID &gt; &gt;</type>
@@ -104,7 +104,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="186" column="11" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="186" bodyend="206"/>
+        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="187" column="11" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="187" bodyend="206"/>
       </memberdef>
       <memberdef kind="function" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1ac8d39852529561a70839bc54901cf9eb" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>TreeNodeID</type>
@@ -121,12 +121,13 @@
           <defval>1</defval>
         </param>
         <briefdescription>
+<para>親を返す / 無ければ自分を返す(!?) </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="208" column="16" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="208" bodyend="224"/>
+        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="209" column="16" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="209" bodyend="225"/>
       </memberdef>
       <memberdef kind="function" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1a5d22a29bccc4003da1e84163c40889cd" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -142,12 +143,13 @@
           <declname>depth</declname>
         </param>
         <briefdescription>
+<para>木の各ノードのis_validの更新と、必要なければdelする </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="227" column="10" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="227" bodyend="250"/>
+        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="228" column="10" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="228" bodyend="251"/>
       </memberdef>
       <memberdef kind="function" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1ae5a0e89c0ac6395a64b95d86aac0fe5d" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>vector&lt; <ref refid="structbeam__search__with__tree_1_1Action" kindref="compound">Action</ref> &gt;</type>
@@ -159,12 +161,13 @@
           <declname>node</declname>
         </param>
         <briefdescription>
+<para>node以上のパスを返す </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="252" column="12" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="252" bodyend="260"/>
+        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="254" column="12" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="254" bodyend="262"/>
       </memberdef>
       <memberdef kind="function" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1a3b56b0af53d46f4a5624a9dbc7238d9b" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -184,12 +187,13 @@
           <declname>depth</declname>
         </param>
         <briefdescription>
+<para>for debug </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="262" column="10" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="262" bodyend="294"/>
+        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="265" column="10" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="265" bodyend="266"/>
       </memberdef>
       <memberdef kind="function" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1a66956af886bf28a2be14793de906e30c" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -201,12 +205,13 @@
           <declname>node</declname>
         </param>
         <briefdescription>
+<para>node以下で、葉かつ最も評価値の良いノードを見るける / 葉はターン数からは判断していないので注意 </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="296" column="10" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="296" bodyend="308"/>
+        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="269" column="10" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="269" bodyend="281"/>
       </memberdef>
       <memberdef kind="function" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1a10b2e7ed0ecc6158e160f4f1606fee5a" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>vector&lt; <ref refid="structbeam__search__with__tree_1_1Action" kindref="compound">Action</ref> &gt;</type>
@@ -223,7 +228,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="310" column="12" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="310" bodyend="317"/>
+        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="283" column="12" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="283" bodyend="290"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -268,14 +273,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="327" column="12" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="327" bodyend="380"/>
+        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="300" column="12" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="300" bodyend="353"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="114" column="1" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="114" bodyend="381"/>
+    <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="114" column="1" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="114" bodyend="354"/>
     <listofallmembers>
       <member refid="classbeam__search__with__tree_1_1BeamSearchWithTree_1a0db086f77d62f150ad2c067c0f109081" prot="private" virt="non-virtual"><scope>beam_search_with_tree::BeamSearchWithTree</scope><name>best_id</name></member>
       <member refid="classbeam__search__with__tree_1_1BeamSearchWithTree_1ac423ff40fa2cb5a602355057b0ef6098" prot="private" virt="non-virtual"><scope>beam_search_with_tree::BeamSearchWithTree</scope><name>best_score</name></member>

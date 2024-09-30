@@ -208,7 +208,7 @@ namespace titan23 {
         }
 
         //! 区間 `[l, r)` で `x` 未満の要素の個数を返す / `O(log(n)log(σ))`
-        int range_freq(int l, int r, T x) const {
+        int range_freq(int l, int r,  const T &x) const {
             Node* node = root;
             int ans = 0;
             for (int bit = _log-1; node && bit >= 0; --bit) {

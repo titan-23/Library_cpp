@@ -6,9 +6,9 @@ using namespace std;
 namespace titan23 {
 
     template <class IndexType,
-            class T,
-            T (*op)(T, T),
-            T (*e)()>
+              class T,
+              T (*op)(T, T),
+              T (*e)()>
     class DynamicSegmentTree {
       private:
         static int bit_length(IndexType x) {
@@ -79,7 +79,6 @@ namespace titan23 {
         }
 
       public:
-
         DynamicSegmentTree() : root(nullptr), u(0) {}
 
         DynamicSegmentTree(const IndexType u_) {

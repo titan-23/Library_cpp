@@ -32,6 +32,8 @@ def get_code(now_path, input_file, is_input=False):
     for line in input_file:
         if is_input:
             input_lines += 1
+        if line.startswith('#pragma once'):
+            continue
         if line.startswith(f'#include "titan_cpplib{SLASH}'):
             _, s = line.split()
             s = s.replace('"', "")

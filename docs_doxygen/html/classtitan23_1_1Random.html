@@ -73,7 +73,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>(疑似)乱数生成クラス  
+<p>(疑似)乱数生成クラス(XOR shift)  
  <a href="classtitan23_1_1Random.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -99,8 +99,21 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <tr class="memdesc:a01aa00958ee23afc95c6e66d6a55f03c"><td class="mdescLeft">&#160;</td><td class="mdescRight"><code>[begin, end)</code> の乱数を返す(整数) <br /></td></tr>
 <tr class="separator:a01aa00958ee23afc95c6e66d6a55f03c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8d608910d35516e0f7ba487aed47e55d"><td class="memItemLeft" align="right" valign="top"><a id="a8d608910d35516e0f7ba487aed47e55d"></a>
-unsigned long long&#160;</td><td class="memItemRight" valign="bottom"><b>rand_u64</b> ()</td></tr>
+unsigned long long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1Random.html#a8d608910d35516e0f7ba487aed47e55d">rand_u64</a> ()</td></tr>
+<tr class="memdesc:a8d608910d35516e0f7ba487aed47e55d"><td class="mdescLeft">&#160;</td><td class="mdescRight"><code>[0, u64_MAX)</code> の乱数を返す / zobrist hash等の使用を想定 <br /></td></tr>
 <tr class="separator:a8d608910d35516e0f7ba487aed47e55d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe557615b11a5d7304346b8ed685369a"><td class="memItemLeft" align="right" valign="top"><a id="abe557615b11a5d7304346b8ed685369a"></a>
+pair&lt; int, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1Random.html#abe557615b11a5d7304346b8ed685369a">rand_pair</a> (const int end)</td></tr>
+<tr class="memdesc:abe557615b11a5d7304346b8ed685369a"><td class="mdescLeft">&#160;</td><td class="mdescRight"><code>[0, end)</code> の異なる乱数を2つ返す <br /></td></tr>
+<tr class="separator:abe557615b11a5d7304346b8ed685369a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a06992a20cad3a884c00c3e423d879c1b"><td class="memItemLeft" align="right" valign="top"><a id="a06992a20cad3a884c00c3e423d879c1b"></a>
+pair&lt; int, int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1Random.html#a06992a20cad3a884c00c3e423d879c1b">rand_pair</a> (const int begin, const int end)</td></tr>
+<tr class="memdesc:a06992a20cad3a884c00c3e423d879c1b"><td class="mdescLeft">&#160;</td><td class="mdescRight"><code>[begin, end)</code> の異なる乱数を2つ返す <br /></td></tr>
+<tr class="separator:a06992a20cad3a884c00c3e423d879c1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15c2c12214dc315f4b09d8e6716e2b3a"><td class="memItemLeft" align="right" valign="top"><a id="a15c2c12214dc315f4b09d8e6716e2b3a"></a>
+vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1Random.html#a15c2c12214dc315f4b09d8e6716e2b3a">rand_vec</a> (const int cnt, vector&lt; int &gt; &amp;a)</td></tr>
+<tr class="memdesc:a15c2c12214dc315f4b09d8e6716e2b3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Note <code>a</code>は非const. <br /></td></tr>
+<tr class="separator:a15c2c12214dc315f4b09d8e6716e2b3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a74dc79ed9aa5dee428a782eca49407ee"><td class="memItemLeft" align="right" valign="top"><a id="a74dc79ed9aa5dee428a782eca49407ee"></a>
 double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtitan23_1_1Random.html#a74dc79ed9aa5dee428a782eca49407ee">randdouble</a> (const double begin, const double end)</td></tr>
 <tr class="memdesc:a74dc79ed9aa5dee428a782eca49407ee"><td class="mdescLeft">&#160;</td><td class="mdescRight"><code>[begin, end)</code> の乱数を返す(実数) <br /></td></tr>
@@ -128,7 +141,7 @@ template&lt;typename T &gt; </td></tr>
 <tr class="separator:ae72775efea327eabef4283b9fa47f5d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>(疑似)乱数生成クラス </p>
+<div class="textblock"><p>(疑似)乱数生成クラス(XOR shift) </p>
 
 <p class="definition">Definition at line <a class="el" href="random_8cpp_source.html#l00012">12</a> of file <a class="el" href="random_8cpp_source.html">random.cpp</a>.</p>
 </div><hr/>The documentation for this class was generated from the following file:<ul>

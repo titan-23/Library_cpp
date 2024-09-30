@@ -541,7 +541,7 @@
     <member refid="classtitan23_1_1DynamicWaveletTree_1a6b2040b5f979e6aa664b7e6454461153" kind="function"><name>access</name></member>
     <member refid="classtitan23_1_1DynamicWaveletTree_1af8417ad41638516396e6c9e6c98ddbc3" kind="function"><name>kth_smallest</name></member>
     <member refid="classtitan23_1_1DynamicWaveletTree_1adbd2d18e73422ccaa2f9c6f044483f2f" kind="function"><name>kth_largest</name></member>
-    <member refid="classtitan23_1_1DynamicWaveletTree_1af9177c036552364b76fa638c66911a7b" kind="function"><name>range_freq</name></member>
+    <member refid="classtitan23_1_1DynamicWaveletTree_1a4e6ede7bc3b05eb3dd740b7e24fa7128" kind="function"><name>range_freq</name></member>
     <member refid="classtitan23_1_1DynamicWaveletTree_1a384869dd7bd88e7732cd4c4fc3dd05c5" kind="function"><name>range_freq</name></member>
     <member refid="classtitan23_1_1DynamicWaveletTree_1af18d74f4c9fd01ae68197b31b34057d0" kind="function"><name>select</name></member>
     <member refid="classtitan23_1_1DynamicWaveletTree_1a654f65c518ca7c8a58a59b2893770d23" kind="function"><name>select_remove</name></member>
@@ -626,7 +626,7 @@
   </compound>
   <compound refid="classtitan23_1_1HashDict" kind="class"><name>titan23::HashDict</name>
     <member refid="classtitan23_1_1HashDict_1aa67d0f08a9eb917f049882ccce9c12b1" kind="typedef"><name>u64</name></member>
-    <member refid="classtitan23_1_1HashDict_1a72070c7d58aaf9e1f3ef7aed030288b8" kind="variable"><name>k</name></member>
+    <member refid="classtitan23_1_1HashDict_1aafd3542ea12189e7404b3b5f81d2294c" kind="variable"><name>K</name></member>
     <member refid="classtitan23_1_1HashDict_1a9e79213d5cba2f15a32779a09cf7026e" kind="variable"><name>M</name></member>
     <member refid="classtitan23_1_1HashDict_1a3bab97cd002e5b6375a85c8d345d5395" kind="variable"><name>exist</name></member>
     <member refid="classtitan23_1_1HashDict_1a5f439164eda5a880c6c701b6720a3856" kind="variable"><name>keys</name></member>
@@ -635,7 +635,7 @@
     <member refid="classtitan23_1_1HashDict_1a4c8f377e8d8010301de372c61c58b6d5" kind="variable"><name>xor_</name></member>
     <member refid="classtitan23_1_1HashDict_1ae93babe76b4ae5bd006e8c160adf1791" kind="variable"><name>size</name></member>
     <member refid="classtitan23_1_1HashDict_1af6acb7fc2955379d33919fd6a93b9b4e" kind="function"><name>hash</name></member>
-    <member refid="classtitan23_1_1HashDict_1a7bf79da4f9e9819d233881720d63611c" kind="function"><name>get_pos</name></member>
+    <member refid="classtitan23_1_1HashDict_1aea0dcc16b33b72a3a2be57832e5e9c95" kind="function"><name>get_pos</name></member>
     <member refid="classtitan23_1_1HashDict_1a0fe5538dd8bbe71c1c15e9e7ae27c439" kind="function"><name>bit_length</name></member>
     <member refid="classtitan23_1_1HashDict_1a3d3d6985951ff859cc9bfe443013e888" kind="function"><name>rebuild</name></member>
     <member refid="classtitan23_1_1HashDict_1aec5d173a66fd6b7948b94a3360de9593" kind="function"><name>HashDict</name></member>
@@ -649,15 +649,15 @@
   </compound>
   <compound refid="classtitan23_1_1HashSet" kind="class"><name>titan23::HashSet</name>
     <member refid="classtitan23_1_1HashSet_1a1cd4ca6794b72461a5bc3856bb66ef3f" kind="typedef"><name>u64</name></member>
-    <member refid="classtitan23_1_1HashSet_1ad30b20df89191f541d7dff42db0f4063" kind="variable"><name>k</name></member>
+    <member refid="classtitan23_1_1HashSet_1a469a94606a752bbf07a91d134bcffc56" kind="variable"><name>K</name></member>
     <member refid="classtitan23_1_1HashSet_1ad6f2accac3c957633c7408f4acc67987" kind="variable"><name>M</name></member>
     <member refid="classtitan23_1_1HashSet_1a68d3a80de5a4f76f5f808aa4bf4677c1" kind="variable"><name>exist</name></member>
     <member refid="classtitan23_1_1HashSet_1af764951c2028447fff191cc2987fece6" kind="variable"><name>keys</name></member>
     <member refid="classtitan23_1_1HashSet_1ad380bba8514b553649756505ae540d26" kind="variable"><name>msk</name></member>
     <member refid="classtitan23_1_1HashSet_1a8d32e17d310a6c4b798442286ff4fe84" kind="variable"><name>xor_</name></member>
     <member refid="classtitan23_1_1HashSet_1acf25ff595f13fee085571c5106e6c9e2" kind="variable"><name>size</name></member>
-    <member refid="classtitan23_1_1HashSet_1a6a676cf44c678ff191623aae25efca2b" kind="function"><name>hash</name></member>
-    <member refid="classtitan23_1_1HashSet_1a2e656377efd8ff9b30e17953bb5ce0af" kind="function"><name>get_pos</name></member>
+    <member refid="classtitan23_1_1HashSet_1aa4f56430eff51dd74740cb4023c98287" kind="function"><name>hash</name></member>
+    <member refid="classtitan23_1_1HashSet_1a99abdd10037eb08a2fac3337d93731cf" kind="function"><name>get_pos</name></member>
     <member refid="classtitan23_1_1HashSet_1addf60a589e33cf0edc156d6a84a952b3" kind="function"><name>bit_length</name></member>
     <member refid="classtitan23_1_1HashSet_1ab7263d3eda110550567c95c09836cd5b" kind="function"><name>rebuild</name></member>
     <member refid="classtitan23_1_1HashSet_1a3b4d87f26df307875773e8db189f41f0" kind="function"><name>HashSet</name></member>
@@ -1222,6 +1222,9 @@
     <member refid="classtitan23_1_1Random_1a6b72ec5b19b8fbbeef8acd5ff2eb5bda" kind="function"><name>randrange</name></member>
     <member refid="classtitan23_1_1Random_1a01aa00958ee23afc95c6e66d6a55f03c" kind="function"><name>randrange</name></member>
     <member refid="classtitan23_1_1Random_1a8d608910d35516e0f7ba487aed47e55d" kind="function"><name>rand_u64</name></member>
+    <member refid="classtitan23_1_1Random_1abe557615b11a5d7304346b8ed685369a" kind="function"><name>rand_pair</name></member>
+    <member refid="classtitan23_1_1Random_1a06992a20cad3a884c00c3e423d879c1b" kind="function"><name>rand_pair</name></member>
+    <member refid="classtitan23_1_1Random_1a15c2c12214dc315f4b09d8e6716e2b3a" kind="function"><name>rand_vec</name></member>
     <member refid="classtitan23_1_1Random_1a74dc79ed9aa5dee428a782eca49407ee" kind="function"><name>randdouble</name></member>
     <member refid="classtitan23_1_1Random_1a8a3e5ca699ccd75cff80a8939b89a91d" kind="function"><name>shuffle</name></member>
     <member refid="classtitan23_1_1Random_1aa14fa9b38502d5be75bdc09cfea5ce12" kind="function"><name>choices</name></member>
@@ -1574,6 +1577,20 @@
     <member refid="classtitan23_1_1WBTree_1a44f90ff85283de6d2e3678e4d6cf4294" kind="function"><name>len</name></member>
     <member refid="classtitan23_1_1WBTree_1a841470971d96265ea55eb177c9b621ca" kind="function"><name>isok</name></member>
   </compound>
+  <compound refid="classtitan23_1_1WeightedUnionFind" kind="class"><name>titan23::WeightedUnionFind</name>
+    <member refid="classtitan23_1_1WeightedUnionFind_1a5263bc9caa92cdeeb972cee3d8e95055" kind="variable"><name>n</name></member>
+    <member refid="classtitan23_1_1WeightedUnionFind_1a3c0a184385c54901b37ae6c743ad3269" kind="variable"><name>group_members</name></member>
+    <member refid="classtitan23_1_1WeightedUnionFind_1a926a24d6dfccd502a3facc6a59e333e9" kind="variable"><name>par</name></member>
+    <member refid="classtitan23_1_1WeightedUnionFind_1a7874de7b1eb830099f06629b5e4ef514" kind="variable"><name>weight</name></member>
+    <member refid="classtitan23_1_1WeightedUnionFind_1a67e0ce44d9ec1461de51a2119526050f" kind="function"><name>WeightedUnionFind</name></member>
+    <member refid="classtitan23_1_1WeightedUnionFind_1a86a88e2a4a4af0c49637c0a75823cafc" kind="function"><name>WeightedUnionFind</name></member>
+    <member refid="classtitan23_1_1WeightedUnionFind_1a28f15e5a59b76205eb4555eeba70c624" kind="function"><name>root</name></member>
+    <member refid="classtitan23_1_1WeightedUnionFind_1a872bee89231e52e4e7ca90f3fff8e868" kind="function"><name>unite</name></member>
+    <member refid="classtitan23_1_1WeightedUnionFind_1a0c446406e937844f2beddf2370eb2fc0" kind="function"><name>size</name></member>
+    <member refid="classtitan23_1_1WeightedUnionFind_1ac246d9eda131a5b1f1f128eb19e1d5c1" kind="function"><name>same</name></member>
+    <member refid="classtitan23_1_1WeightedUnionFind_1a3a386e887744b89b2e520364c81e804b" kind="function"><name>group_count</name></member>
+    <member refid="classtitan23_1_1WeightedUnionFind_1acded7243d0ff706dce96778d42a2b3ed" kind="function"><name>diff</name></member>
+  </compound>
   <compound refid="classtitan23_1_1Zaatsu" kind="class"><name>titan23::Zaatsu</name>
     <member refid="classtitan23_1_1Zaatsu_1a81dfc2394c13283f510823e071f94903" kind="variable"><name>_to_origin</name></member>
     <member refid="classtitan23_1_1Zaatsu_1a04a5f195ce43ce165feb98501b7dade7" kind="variable"><name>_n</name></member>
@@ -1620,7 +1637,7 @@
     <member refid="sa_8cpp_1af8cf41e1fd65455a97d75e65a4b72200" kind="variable"><name>param</name></member>
     <member refid="sa_8cpp_1a4ec31ed0575745aa0dc80ac47ebc1e2a" kind="variable"><name>sa_random</name></member>
     <member refid="sa_8cpp_1ab01a31ad677c65a02b88ce25d0138480" kind="variable"><name>changed</name></member>
-    <member refid="sa_8cpp_1abfb9d6f0fd5d81b6906691cdcc26418d" kind="function"><name>sa_run</name></member>
+    <member refid="sa_8cpp_1ac1e9565d039bc3eabd223717dbc5e975" kind="function"><name>sa_run</name></member>
   </compound>
   <compound refid="action_8cpp" kind="file"><name>action.cpp</name>
   </compound>
@@ -1744,6 +1761,8 @@
   <compound refid="wavelet__matrix__cumulative__sum_8cpp" kind="file"><name>wavelet_matrix_cumulative_sum.cpp</name>
   </compound>
   <compound refid="wb__tree_8cpp" kind="file"><name>wb_tree.cpp</name>
+  </compound>
+  <compound refid="weight__union__find_8cpp" kind="file"><name>weight_union_find.cpp</name>
   </compound>
   <compound refid="bfs__path_8cpp" kind="file"><name>bfs_path.cpp</name>
   </compound>

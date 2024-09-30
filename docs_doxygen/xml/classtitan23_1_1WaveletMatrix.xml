@@ -19,7 +19,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="13" column="7" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="13" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="13" column="11" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="13" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1WaveletMatrix_1aab5a32db7f216e965c45898769b51f60" prot="private" static="no" mutable="no">
         <type>int</type>
@@ -32,7 +32,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="14" column="9" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="14" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="14" column="13" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="14" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1WaveletMatrix_1af65b15809d2cf6341f52035165324557" prot="private" static="no" mutable="no">
         <type>vector&lt; <ref refid="classtitan23_1_1BitVector" kindref="compound">BitVector</ref> &gt;</type>
@@ -45,7 +45,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="15" column="12" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="15" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="15" column="16" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="15" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1WaveletMatrix_1a7c71cec686568ab339360add78e9b5b3" prot="private" static="no" mutable="no">
         <type>vector&lt; int &gt;</type>
@@ -58,7 +58,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="16" column="12" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="16" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="16" column="16" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="16" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1WaveletMatrix_1affbd31456ccaee2fcd3344a829c1901e" prot="private" static="no" mutable="no">
         <type>int</type>
@@ -71,7 +71,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="17" column="9" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="17" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="17" column="13" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="17" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -90,7 +90,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="19" column="9" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="19" bodyend="21"/>
+        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="19" column="13" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="19" bodyend="21"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WaveletMatrix_1a77fa226b89ea35576c173f7be7f1f279" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -107,7 +107,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="23" column="10" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="23" bodyend="41"/>
+        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="23" column="14" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="23" bodyend="41"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -122,7 +122,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="44" column="5" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="44" bodyend="44"/>
+        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="44" column="9" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="44" bodyend="44"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WaveletMatrix_1a0878daa99781510946d40f96f6f637d4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -139,7 +139,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="46" column="5" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="46" bodyend="47"/>
+        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="46" column="9" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="46" bodyend="47"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WaveletMatrix_1af662d8570096395be6c47c2e28e3ab4a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -160,7 +160,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="49" column="5" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="49" bodyend="52"/>
+        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="49" column="9" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="49" bodyend="52"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WaveletMatrix_1a94e2a7e1abab6d0cc83fa7efb81ebe04" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -177,7 +177,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="54" column="7" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="54" bodyend="65"/>
+        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="54" column="11" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="54" bodyend="65"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WaveletMatrix_1aa9be2e23a8735063c2dfdbfa535b973d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -193,12 +193,13 @@
           <declname>x</declname>
         </param>
         <briefdescription>
+<para><computeroutput>a[0, r)</computeroutput> に含まれる <computeroutput>x</computeroutput> の個数を返します。 </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="68" column="9" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="68" bodyend="80"/>
+        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="68" column="13" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="68" bodyend="80"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WaveletMatrix_1a8f5c4d6e04990f03790857ddacf37ec8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -219,7 +220,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="83" column="9" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="83" bodyend="101"/>
+        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="83" column="13" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="83" bodyend="101"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WaveletMatrix_1afce9d80d669551c5975f30c1084da02a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -244,7 +245,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="104" column="7" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="104" bodyend="120"/>
+        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="104" column="11" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="104" bodyend="120"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WaveletMatrix_1aed85841705cbfbde959f2ef92356475b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -269,7 +270,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="122" column="7" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="122" bodyend="124"/>
+        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="122" column="11" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="122" bodyend="124"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WaveletMatrix_1affb8e0f899b315dc799572e2f8702add" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>vector&lt; pair&lt; int, int &gt; &gt;</type>
@@ -294,7 +295,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="127" column="12" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="127" bodyend="150"/>
+        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="127" column="16" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="127" bodyend="150"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WaveletMatrix_1aa5cf7cf6c31791d97b3e7c1339236db2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -315,7 +316,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="152" column="7" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="152" bodyend="159"/>
+        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="152" column="11" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="152" bodyend="159"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WaveletMatrix_1a578b8acff305921955a94ab44bb3f477" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -340,7 +341,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="162" column="9" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="162" bodyend="176"/>
+        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="162" column="13" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="162" bodyend="176"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WaveletMatrix_1a13a5f428b3d90eb6b2664bfe7e851d08" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -369,7 +370,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="179" column="9" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="179" bodyend="181"/>
+        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="179" column="13" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="179" bodyend="181"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WaveletMatrix_1a2a4820fa9c92a6e5459fd2e9b0e4aea1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -394,7 +395,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="184" column="7" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="184" bodyend="186"/>
+        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="184" column="11" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="184" bodyend="186"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WaveletMatrix_1a713794ae104919eabd3c0be470de5746" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -419,7 +420,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="188" column="7" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="188" bodyend="190"/>
+        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="188" column="11" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="188" bodyend="190"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WaveletMatrix_1a14e5db846879671d7cd661f05ddec5df" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -444,7 +445,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="193" column="9" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="193" bodyend="195"/>
+        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="193" column="13" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="193" bodyend="195"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WaveletMatrix_1a834fb093c494c82545292193feb78b35" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -457,7 +458,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="197" column="9" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="197" bodyend="199"/>
+        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="197" column="13" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="197" bodyend="199"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WaveletMatrix_1a73e0489f40620104525d707d3b4e3eac" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -470,14 +471,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="201" column="10" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="201" bodyend="210"/>
+        <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="201" column="14" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="201" bodyend="210"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="10" column="3" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="10" bodyend="211"/>
+    <location file="titan_cpplib/data_structures/wavelet_matrix.cpp" line="10" column="5" bodyfile="titan_cpplib/data_structures/wavelet_matrix.cpp" bodystart="10" bodyend="211"/>
     <listofallmembers>
       <member refid="classtitan23_1_1WaveletMatrix_1a94e2a7e1abab6d0cc83fa7efb81ebe04" prot="public" virt="non-virtual"><scope>titan23::WaveletMatrix</scope><name>access</name></member>
       <member refid="classtitan23_1_1WaveletMatrix_1a3810ea294179d1c6b62a4ce9d8a57123" prot="private" virt="non-virtual"><scope>titan23::WaveletMatrix</scope><name>bit_length</name></member>

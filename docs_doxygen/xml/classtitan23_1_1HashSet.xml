@@ -18,11 +18,11 @@
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-static-attrib">
-      <memberdef kind="variable" id="classtitan23_1_1HashSet_1ad30b20df89191f541d7dff42db0f4063" prot="private" static="yes" constexpr="yes" mutable="no">
+      <memberdef kind="variable" id="classtitan23_1_1HashSet_1a469a94606a752bbf07a91d134bcffc56" prot="private" static="yes" constexpr="yes" mutable="no">
         <type>constexpr const u64</type>
-        <definition>constexpr const u64 titan23::HashSet::k</definition>
+        <definition>constexpr const u64 titan23::HashSet::K</definition>
         <argsstring></argsstring>
-        <name>k</name>
+        <name>K</name>
         <initializer>= 0x517cc1b727220a95</initializer>
         <briefdescription>
         </briefdescription>
@@ -115,13 +115,13 @@
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
-      <memberdef kind="function" id="classtitan23_1_1HashSet_1a6a676cf44c678ff191623aae25efca2b" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="classtitan23_1_1HashSet_1aa4f56430eff51dd74740cb4023c98287" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
         <definition>int titan23::HashSet::hash</definition>
-        <argsstring>(const u64 key) const</argsstring>
+        <argsstring>(const u64 &amp;key) const</argsstring>
         <name>hash</name>
         <param>
-          <type>const u64</type>
+          <type>const u64 &amp;</type>
           <declname>key</declname>
         </param>
         <briefdescription>
@@ -132,13 +132,13 @@
         </inbodydescription>
         <location file="titan_cpplib/data_structures/hash_set.cpp" line="21" column="13" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="21" bodyend="23"/>
       </memberdef>
-      <memberdef kind="function" id="classtitan23_1_1HashSet_1a2e656377efd8ff9b30e17953bb5ce0af" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="classtitan23_1_1HashSet_1a99abdd10037eb08a2fac3337d93731cf" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>pair&lt; int, bool &gt;</type>
         <definition>pair&lt;int, bool&gt; titan23::HashSet::get_pos</definition>
-        <argsstring>(const u64 key) const</argsstring>
+        <argsstring>(const u64 &amp;key) const</argsstring>
         <name>get_pos</name>
         <param>
-          <type>const u64</type>
+          <type>const u64 &amp;</type>
           <declname>key</declname>
         </param>
         <briefdescription>
@@ -147,7 +147,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_set.cpp" line="25" column="14" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="25" bodyend="33"/>
+        <location file="titan_cpplib/data_structures/hash_set.cpp" line="25" column="14" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="25" bodyend="32"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1HashSet_1addf60a589e33cf0edc156d6a84a952b3" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -164,7 +164,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_set.cpp" line="35" column="13" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="35" bodyend="38"/>
+        <location file="titan_cpplib/data_structures/hash_set.cpp" line="34" column="13" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="34" bodyend="37"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1HashSet_1ab7263d3eda110550567c95c09836cd5b" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -177,7 +177,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_set.cpp" line="40" column="14" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="40" bodyend="57"/>
+        <location file="titan_cpplib/data_structures/hash_set.cpp" line="39" column="14" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="39" bodyend="56"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -192,7 +192,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_set.cpp" line="60" column="9" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="60" bodyend="60"/>
+        <location file="titan_cpplib/data_structures/hash_set.cpp" line="59" column="9" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="59" bodyend="59"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1HashSet_1a0552d19e55ac037f5f7acf476c47e7df" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -209,7 +209,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_set.cpp" line="62" column="9" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="62" bodyend="74"/>
+        <location file="titan_cpplib/data_structures/hash_set.cpp" line="61" column="9" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="61" bodyend="73"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1HashSet_1ab2478359682b1eb2924b6b339f9c535d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -226,7 +226,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_set.cpp" line="76" column="14" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="76" bodyend="78"/>
+        <location file="titan_cpplib/data_structures/hash_set.cpp" line="75" column="14" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="75" bodyend="77"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1HashSet_1a211fe70c6f8a1c8431e5b956cd60d019" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -243,7 +243,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_set.cpp" line="80" column="14" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="80" bodyend="90"/>
+        <location file="titan_cpplib/data_structures/hash_set.cpp" line="79" column="14" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="79" bodyend="89"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1HashSet_1ade248abacd558d9f2ca00b51650bbb77" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -255,13 +255,13 @@
           <declname>key</declname>
         </param>
         <briefdescription>
-<para>keyがすでにあればtrue, なければ挿入してfalse </para>
+<para>keyがすでにあればtrue, なければ挿入してfalse / <computeroutput>O(1)</computeroutput> </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_set.cpp" line="93" column="14" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="93" bodyend="105"/>
+        <location file="titan_cpplib/data_structures/hash_set.cpp" line="92" column="14" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="92" bodyend="104"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1HashSet_1a9488d1fac8c23e8b880949900c6abb37" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -269,6 +269,7 @@
         <argsstring>()</argsstring>
         <name>clear</name>
         <briefdescription>
+<para>全ての要素を削除する / <computeroutput>O(n/w)</computeroutput> </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
@@ -301,12 +302,12 @@
       <member refid="classtitan23_1_1HashSet_1ab2478359682b1eb2924b6b339f9c535d" prot="public" virt="non-virtual"><scope>titan23::HashSet</scope><name>contains</name></member>
       <member refid="classtitan23_1_1HashSet_1ade248abacd558d9f2ca00b51650bbb77" prot="public" virt="non-virtual"><scope>titan23::HashSet</scope><name>contains_insert</name></member>
       <member refid="classtitan23_1_1HashSet_1a68d3a80de5a4f76f5f808aa4bf4677c1" prot="private" virt="non-virtual"><scope>titan23::HashSet</scope><name>exist</name></member>
-      <member refid="classtitan23_1_1HashSet_1a2e656377efd8ff9b30e17953bb5ce0af" prot="private" virt="non-virtual"><scope>titan23::HashSet</scope><name>get_pos</name></member>
-      <member refid="classtitan23_1_1HashSet_1a6a676cf44c678ff191623aae25efca2b" prot="private" virt="non-virtual"><scope>titan23::HashSet</scope><name>hash</name></member>
+      <member refid="classtitan23_1_1HashSet_1a99abdd10037eb08a2fac3337d93731cf" prot="private" virt="non-virtual"><scope>titan23::HashSet</scope><name>get_pos</name></member>
+      <member refid="classtitan23_1_1HashSet_1aa4f56430eff51dd74740cb4023c98287" prot="private" virt="non-virtual"><scope>titan23::HashSet</scope><name>hash</name></member>
       <member refid="classtitan23_1_1HashSet_1a3b4d87f26df307875773e8db189f41f0" prot="public" virt="non-virtual"><scope>titan23::HashSet</scope><name>HashSet</name></member>
       <member refid="classtitan23_1_1HashSet_1a0552d19e55ac037f5f7acf476c47e7df" prot="public" virt="non-virtual"><scope>titan23::HashSet</scope><name>HashSet</name></member>
       <member refid="classtitan23_1_1HashSet_1a211fe70c6f8a1c8431e5b956cd60d019" prot="public" virt="non-virtual"><scope>titan23::HashSet</scope><name>insert</name></member>
-      <member refid="classtitan23_1_1HashSet_1ad30b20df89191f541d7dff42db0f4063" prot="private" virt="non-virtual"><scope>titan23::HashSet</scope><name>k</name></member>
+      <member refid="classtitan23_1_1HashSet_1a469a94606a752bbf07a91d134bcffc56" prot="private" virt="non-virtual"><scope>titan23::HashSet</scope><name>K</name></member>
       <member refid="classtitan23_1_1HashSet_1af764951c2028447fff191cc2987fece6" prot="private" virt="non-virtual"><scope>titan23::HashSet</scope><name>keys</name></member>
       <member refid="classtitan23_1_1HashSet_1afda2be50d36589f09503460e6f3b389c" prot="public" virt="non-virtual"><scope>titan23::HashSet</scope><name>len</name></member>
       <member refid="classtitan23_1_1HashSet_1ad6f2accac3c957633c7408f4acc67987" prot="private" virt="non-virtual"><scope>titan23::HashSet</scope><name>M</name></member>

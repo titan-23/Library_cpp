@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="12" column="5" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="12" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="12" column="9" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="12" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-attrib">
@@ -29,7 +29,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="13" column="9" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="13" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="13" column="13" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="13" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1BitVector_1a49a9be63ca17e03c557bbf4dee1df252" prot="private" static="no" mutable="no">
         <type>int</type>
@@ -42,7 +42,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="13" column="11" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="13" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="13" column="15" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="13" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1BitVector_1a9d868861d85a8fb02b44bfddceac8c4a" prot="private" static="no" mutable="no">
         <type>vector&lt; u64 &gt;</type>
@@ -55,7 +55,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="14" column="12" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="14" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="14" column="16" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="14" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1BitVector_1acc3bd601b520157351a87a331fb0c866" prot="private" static="no" mutable="no">
         <type>vector&lt; u64 &gt;</type>
@@ -68,7 +68,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="14" column="16" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="14" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="14" column="20" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="14" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -83,7 +83,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="17" column="5" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="17" bodyend="17"/>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="17" column="9" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="17" bodyend="17"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1BitVector_1a37bcd12aa086ffb16f805e3c063fb14b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -100,7 +100,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="18" column="5" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="18" bodyend="19"/>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="18" column="9" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="18" bodyend="19"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1BitVector_1ab405031fbc228b63b5faa92172a2754e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -117,7 +117,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="21" column="10" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="21" bodyend="23"/>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="21" column="14" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="21" bodyend="23"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1BitVector_1a5b9e6b7b05372e57d05822879de94c29" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -130,7 +130,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="25" column="10" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="25" bodyend="29"/>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="25" column="14" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="25" bodyend="29"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1BitVector_1afd3a5c642e1a4b44762e0969ead84221" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -147,7 +147,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="31" column="10" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="31" bodyend="33"/>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="31" column="14" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="31" bodyend="33"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1BitVector_1adf16fccca98ce9079636908ebb18ed2f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -164,7 +164,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="35" column="9" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="35" bodyend="37"/>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="35" column="13" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="35" bodyend="37"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1BitVector_1a7ef3fd030dd94b4a39567bc29f3619fa" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -181,7 +181,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="39" column="9" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="39" bodyend="41"/>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="39" column="13" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="39" bodyend="41"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1BitVector_1ab4fbe0b75be5c828b8ba19b6a48e1db2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -202,7 +202,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="43" column="9" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="43" bodyend="45"/>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="43" column="13" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="43" bodyend="45"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1BitVector_1a64886a714d8feef073f014a01e84a4ef" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -219,7 +219,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="47" column="9" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="47" bodyend="70"/>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="47" column="13" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="47" bodyend="70"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1BitVector_1acb00472a3ace765cb6e5a0239ae23b29" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -236,7 +236,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="72" column="9" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="72" bodyend="95"/>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="72" column="13" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="72" bodyend="95"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1BitVector_1a8af0b37bba0cbdae4ed402a2d597879d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -257,7 +257,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="97" column="9" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="97" bodyend="99"/>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="97" column="13" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="97" bodyend="99"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1BitVector_1a549e1e72f1f5450cc6cb5995bf0081ca" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -270,7 +270,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="101" column="9" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="101" bodyend="103"/>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="101" column="13" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="101" bodyend="103"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1BitVector_1a61ed6fd8862fbf0b8d49cb417c81f78d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -283,14 +283,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="105" column="10" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="105" bodyend="114"/>
+        <location file="titan_cpplib/data_structures/bit_vector.cpp" line="105" column="14" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="105" bodyend="114"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/data_structures/bit_vector.cpp" line="10" column="3" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="10" bodyend="115"/>
+    <location file="titan_cpplib/data_structures/bit_vector.cpp" line="10" column="5" bodyfile="titan_cpplib/data_structures/bit_vector.cpp" bodystart="10" bodyend="115"/>
     <listofallmembers>
       <member refid="classtitan23_1_1BitVector_1acc3bd601b520157351a87a331fb0c866" prot="private" virt="non-virtual"><scope>titan23::BitVector</scope><name>acc</name></member>
       <member refid="classtitan23_1_1BitVector_1afd3a5c642e1a4b44762e0969ead84221" prot="public" virt="non-virtual"><scope>titan23::BitVector</scope><name>access</name></member>

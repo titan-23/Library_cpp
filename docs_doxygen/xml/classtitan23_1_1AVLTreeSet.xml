@@ -20,7 +20,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="38" column="5" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="38" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="38" column="9" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="38" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-attrib">
@@ -35,7 +35,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="39" column="23" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="39" bodyend="-1"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="39" column="27" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="39" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -54,7 +54,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="41" column="23" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="41" bodyend="71"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="41" column="27" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="41" bodyend="71"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1AVLTreeSet_1ad16bc2101e8fde657e059d5af5080252" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -71,7 +71,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="73" column="10" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="73" bodyend="105"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="73" column="14" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="73" bodyend="105"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1AVLTreeSet_1a71bb5122bb5cc1dba9a53faf6deecc9f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -88,7 +88,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="107" column="10" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="107" bodyend="140"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="107" column="14" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="107" bodyend="140"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1AVLTreeSet_1a0e4b29aea45c7f9eb4750baab3ec2238" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -101,7 +101,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="143" column="5" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="143" bodyend="143"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="143" column="9" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="143" bodyend="143"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1AVLTreeSet_1a4d501fffe7f68d710d79c1245ee5df6e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -118,7 +118,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="144" column="5" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="144" bodyend="146"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="144" column="9" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="144" bodyend="146"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1AVLTreeSet_1ad97c813c8911fca941bb943b85b2e0bf" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -135,7 +135,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="148" column="10" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="148" bodyend="169"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="148" column="14" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="148" bodyend="169"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1AVLTreeSet_1aa1d75dbdbba382af010709288064c955" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -152,7 +152,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="171" column="10" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="171" bodyend="197"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="171" column="14" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="171" bodyend="197"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1AVLTreeSet_1aeee783d9582a4eea3c2a2d031c924553" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -169,7 +169,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="199" column="10" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="199" bodyend="204"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="199" column="14" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="199" bodyend="204"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1AVLTreeSet_1a84cde5776a74d368600c015769c68ed5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -186,7 +186,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="206" column="10" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="206" bodyend="210"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="206" column="14" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="206" bodyend="210"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1AVLTreeSet_1a9f74b0e509a72bef74f4df855e6343ba" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>optional&lt; T &gt;</type>
@@ -203,7 +203,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="212" column="14" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="212" bodyend="228"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="212" column="18" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="212" bodyend="228"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1AVLTreeSet_1ad38c980e495a10f2e2db0e135c1f15ae" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>optional&lt; T &gt;</type>
@@ -220,7 +220,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="230" column="14" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="230" bodyend="242"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="230" column="18" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="230" bodyend="242"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1AVLTreeSet_1a78803eba261d64e4bac869f66a979abf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>optional&lt; T &gt;</type>
@@ -237,7 +237,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="244" column="14" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="244" bodyend="260"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="244" column="18" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="244" bodyend="260"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1AVLTreeSet_1a2da0647c2732aa15cf8981d4fda9b439" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>optional&lt; T &gt;</type>
@@ -254,7 +254,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="262" column="14" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="262" bodyend="274"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="262" column="18" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="262" bodyend="274"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1AVLTreeSet_1a2ef7a2af11e1a7fda2371b6a8727634e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -271,7 +271,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="276" column="9" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="276" bodyend="292"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="276" column="13" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="276" bodyend="292"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1AVLTreeSet_1aa3f5336e84b69265cbc3ea408f67d428" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -288,7 +288,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="294" column="9" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="294" bodyend="310"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="294" column="13" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="294" bodyend="310"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1AVLTreeSet_1a78a9c081f3b9309a6fd3dacb74dfb6e6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classtitan23_1_1AVLTreeSet_1_1AVLTreeSetNode" kindref="compound">AVLTreeSetNodePtr</ref></type>
@@ -305,7 +305,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="312" column="23" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="312" bodyend="319"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="312" column="27" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="312" bodyend="319"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1AVLTreeSet_1aab0225377d67940355f9b9005e4b5ee6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classtitan23_1_1AVLTreeSet_1_1AVLTreeSetNode" kindref="compound">AVLTreeSetNodePtr</ref></type>
@@ -322,7 +322,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="321" column="23" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="321" bodyend="333"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="321" column="27" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="321" bodyend="333"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1AVLTreeSet_1a2cb54abbd8041868355c24c08aa90a6f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -340,7 +340,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="335" column="7" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="335" bodyend="340"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="335" column="11" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="335" bodyend="340"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1AVLTreeSet_1abe3e9dba14b049010907b2dbac567d53" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>vector&lt; T &gt;</type>
@@ -353,7 +353,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="342" column="12" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="342" bodyend="359"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="342" column="16" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="342" bodyend="359"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1AVLTreeSet_1a9e665f62bd9246ee5abc8c0274319b43" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -370,7 +370,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="361" column="10" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="361" bodyend="363"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="361" column="14" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="361" bodyend="363"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1AVLTreeSet_1ad32df862f7484ec057c870821c0c5b33" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -387,7 +387,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="365" column="7" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="365" bodyend="367"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="365" column="11" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="365" bodyend="367"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1AVLTreeSet_1a40acda8f8a08a888d9bda52d8ec47db3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -400,7 +400,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="369" column="9" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="369" bodyend="371"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="369" column="13" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="369" bodyend="371"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1AVLTreeSet_1a0727455938da35566a1205ec44b89780" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -413,7 +413,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="373" column="10" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="373" bodyend="382"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="373" column="14" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="373" bodyend="382"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1AVLTreeSet_1aea4a1021878a25e86f67c3deb912af91" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -426,7 +426,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="384" column="10" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="384" bodyend="418"/>
+        <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="384" column="14" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="384" bodyend="418"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -451,7 +451,7 @@
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="13" column="3" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="13" bodyend="419"/>
+    <location file="titan_cpplib/data_structures/avl_tree_set.cpp" line="13" column="5" bodyfile="titan_cpplib/data_structures/avl_tree_set.cpp" bodystart="13" bodyend="419"/>
     <listofallmembers>
       <member refid="classtitan23_1_1AVLTreeSet_1a71bb5122bb5cc1dba9a53faf6deecc9f" prot="public" virt="non-virtual"><scope>titan23::AVLTreeSet</scope><name>_add_balance</name></member>
       <member refid="classtitan23_1_1AVLTreeSet_1ad16bc2101e8fde657e059d5af5080252" prot="public" virt="non-virtual"><scope>titan23::AVLTreeSet</scope><name>_remove_balance</name></member>

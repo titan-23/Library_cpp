@@ -115,68 +115,66 @@ $(function() {
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;      <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <a class="code" href="classtitan23_1_1MinHeap.html">MinHeap</a>() {}</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        <a class="code" href="classtitan23_1_1MinHeap.html">MinHeap</a>(vector&lt;T&gt; a) : a(a) {</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;            _heapify();</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        }</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
-<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="classtitan23_1_1MinHeap.html#a50982f8b420e35841db48d3d8c92c63f">   52</a></span>&#160;        T <a class="code" href="classtitan23_1_1MinHeap.html#a50982f8b420e35841db48d3d8c92c63f">get_min</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;            <span class="keywordflow">return</span> a[0];</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        }</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
-<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="classtitan23_1_1MinHeap.html#a1fe6c31982d44a3b8573dc21f5948c7e">   57</a></span>&#160;        T <a class="code" href="classtitan23_1_1MinHeap.html#a1fe6c31982d44a3b8573dc21f5948c7e">pop_min</a>() {</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            T res = a[0];</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            a[0] = a.back();</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;            a.pop_back();</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;            _down(0);</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;            <span class="keywordflow">return</span> res;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        }</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
-<div class="line"><a name="l00066"></a><span class="lineno"><a class="line" href="classtitan23_1_1MinHeap.html#a756931ff9a45c06d4d1896be3cc37405">   66</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classtitan23_1_1MinHeap.html#a756931ff9a45c06d4d1896be3cc37405">push</a>(<span class="keyword">const</span> T key) {</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;            a.emplace_back(key);</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;            _up(a.size() - 1);</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        }</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
-<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="classtitan23_1_1MinHeap.html#a782af426c2870fef4c14aa6546676e85">   72</a></span>&#160;        T <a class="code" href="classtitan23_1_1MinHeap.html#a782af426c2870fef4c14aa6546676e85">pushpoop_min</a>(<span class="keyword">const</span> T key) {</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;            <span class="keywordflow">if</span> (a[0] &gt;= key) <span class="keywordflow">return</span> key;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;            T res = a[0];</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;            a[0] = key;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;            _down(0);</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;            <span class="keywordflow">return</span> res;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        }</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
-<div class="line"><a name="l00081"></a><span class="lineno"><a class="line" href="classtitan23_1_1MinHeap.html#a9bea6b27e1d97e378adfa8a0fc5d278c">   81</a></span>&#160;        T <a class="code" href="classtitan23_1_1MinHeap.html#a9bea6b27e1d97e378adfa8a0fc5d278c">replace_min</a>(<span class="keyword">const</span> T key) {</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;            T res = a[0];</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;            a[0] = key;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;            _down(0);</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;            <span class="keywordflow">return</span> res;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        }</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
-<div class="line"><a name="l00089"></a><span class="lineno"><a class="line" href="classtitan23_1_1MinHeap.html#a07e7aa1f841cf2b32693ca13147e1d1a">   89</a></span>&#160;        <span class="keywordtype">int</span> <a class="code" href="classtitan23_1_1MinHeap.html#a07e7aa1f841cf2b32693ca13147e1d1a">len</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;            <span class="keywordflow">return</span> (<span class="keywordtype">int</span>)a.size();</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        }</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160; </div>
-<div class="line"><a name="l00094"></a><span class="lineno"><a class="line" href="classtitan23_1_1MinHeap.html#a85379658724f0fac100148a6b35e3183">   94</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classtitan23_1_1MinHeap.html#a85379658724f0fac100148a6b35e3183">print</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;            vector&lt;T&gt; b = a;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;            sort(b.begin(), b.end());</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;            cout &lt;&lt; <span class="charliteral">&#39;[&#39;</span>;</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; len()-1; ++i) {</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;                cout &lt;&lt; b[i] &lt;&lt; <span class="stringliteral">&quot;, &quot;</span>;</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;            }</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;            <span class="keywordflow">if</span> (!b.empty()) {</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;                cout &lt;&lt; b.back();</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;            }</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;            cout &lt;&lt; <span class="charliteral">&#39;]&#39;</span> &lt;&lt; endl;</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        }</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    };</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;} <span class="comment">// namespace titan23</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        <a class="code" href="classtitan23_1_1MinHeap.html">MinHeap</a>(vector&lt;T&gt; a) : a(a) { _heapify(); }</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
+<div class="line"><a name="l00050"></a><span class="lineno"><a class="line" href="classtitan23_1_1MinHeap.html#a50982f8b420e35841db48d3d8c92c63f">   50</a></span>&#160;        T <a class="code" href="classtitan23_1_1MinHeap.html#a50982f8b420e35841db48d3d8c92c63f">get_min</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;            <span class="keywordflow">return</span> a[0];</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        }</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
+<div class="line"><a name="l00055"></a><span class="lineno"><a class="line" href="classtitan23_1_1MinHeap.html#a1fe6c31982d44a3b8573dc21f5948c7e">   55</a></span>&#160;        T <a class="code" href="classtitan23_1_1MinHeap.html#a1fe6c31982d44a3b8573dc21f5948c7e">pop_min</a>() {</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;            T res = a[0];</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;            a[0] = a.back();</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            a.pop_back();</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            _down(0);</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;            <span class="keywordflow">return</span> res;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        }</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
+<div class="line"><a name="l00064"></a><span class="lineno"><a class="line" href="classtitan23_1_1MinHeap.html#a756931ff9a45c06d4d1896be3cc37405">   64</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classtitan23_1_1MinHeap.html#a756931ff9a45c06d4d1896be3cc37405">push</a>(<span class="keyword">const</span> T key) {</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            a.emplace_back(key);</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;            _up(a.size() - 1);</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        }</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
+<div class="line"><a name="l00070"></a><span class="lineno"><a class="line" href="classtitan23_1_1MinHeap.html#a782af426c2870fef4c14aa6546676e85">   70</a></span>&#160;        T <a class="code" href="classtitan23_1_1MinHeap.html#a782af426c2870fef4c14aa6546676e85">pushpoop_min</a>(<span class="keyword">const</span> T key) {</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;            <span class="keywordflow">if</span> (a[0] &gt;= key) <span class="keywordflow">return</span> key;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;            T res = a[0];</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;            a[0] = key;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;            _down(0);</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;            <span class="keywordflow">return</span> res;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        }</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160; </div>
+<div class="line"><a name="l00079"></a><span class="lineno"><a class="line" href="classtitan23_1_1MinHeap.html#a9bea6b27e1d97e378adfa8a0fc5d278c">   79</a></span>&#160;        T <a class="code" href="classtitan23_1_1MinHeap.html#a9bea6b27e1d97e378adfa8a0fc5d278c">replace_min</a>(<span class="keyword">const</span> T key) {</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;            T res = a[0];</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;            a[0] = key;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;            _down(0);</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;            <span class="keywordflow">return</span> res;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        }</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160; </div>
+<div class="line"><a name="l00087"></a><span class="lineno"><a class="line" href="classtitan23_1_1MinHeap.html#a07e7aa1f841cf2b32693ca13147e1d1a">   87</a></span>&#160;        <span class="keywordtype">int</span> <a class="code" href="classtitan23_1_1MinHeap.html#a07e7aa1f841cf2b32693ca13147e1d1a">len</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;            <span class="keywordflow">return</span> (<span class="keywordtype">int</span>)a.size();</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        }</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
+<div class="line"><a name="l00092"></a><span class="lineno"><a class="line" href="classtitan23_1_1MinHeap.html#a85379658724f0fac100148a6b35e3183">   92</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="classtitan23_1_1MinHeap.html#a85379658724f0fac100148a6b35e3183">print</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;            vector&lt;T&gt; b = a;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;            sort(b.begin(), b.end());</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;            cout &lt;&lt; <span class="charliteral">&#39;[&#39;</span>;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; len()-1; ++i) {</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;                cout &lt;&lt; b[i] &lt;&lt; <span class="stringliteral">&quot;, &quot;</span>;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;            }</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;            <span class="keywordflow">if</span> (!b.empty()) {</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;                cout &lt;&lt; b.back();</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;            }</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;            cout &lt;&lt; <span class="charliteral">&#39;]&#39;</span> &lt;&lt; endl;</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        }</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    };</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;} <span class="comment">// namespace titan23</span></div>
 <div class="ttc" id="aclasstitan23_1_1MinHeap_html"><div class="ttname"><a href="classtitan23_1_1MinHeap.html">titan23::MinHeap</a></div><div class="ttdef"><b>Definition:</b> <a href="min__heap_8cpp_source.html#l00009">min_heap.cpp:9</a></div></div>
-<div class="ttc" id="aclasstitan23_1_1MinHeap_html_a07e7aa1f841cf2b32693ca13147e1d1a"><div class="ttname"><a href="classtitan23_1_1MinHeap.html#a07e7aa1f841cf2b32693ca13147e1d1a">titan23::MinHeap::len</a></div><div class="ttdeci">int len() const</div><div class="ttdoc">要素数を返す / O(1)</div><div class="ttdef"><b>Definition:</b> <a href="min__heap_8cpp_source.html#l00089">min_heap.cpp:89</a></div></div>
-<div class="ttc" id="aclasstitan23_1_1MinHeap_html_a1fe6c31982d44a3b8573dc21f5948c7e"><div class="ttname"><a href="classtitan23_1_1MinHeap.html#a1fe6c31982d44a3b8573dc21f5948c7e">titan23::MinHeap::pop_min</a></div><div class="ttdeci">T pop_min()</div><div class="ttdoc">最小の要素を削除して返す / O(logn)</div><div class="ttdef"><b>Definition:</b> <a href="min__heap_8cpp_source.html#l00057">min_heap.cpp:57</a></div></div>
-<div class="ttc" id="aclasstitan23_1_1MinHeap_html_a50982f8b420e35841db48d3d8c92c63f"><div class="ttname"><a href="classtitan23_1_1MinHeap.html#a50982f8b420e35841db48d3d8c92c63f">titan23::MinHeap::get_min</a></div><div class="ttdeci">T get_min() const</div><div class="ttdoc">最小の要素を返す / O(1)</div><div class="ttdef"><b>Definition:</b> <a href="min__heap_8cpp_source.html#l00052">min_heap.cpp:52</a></div></div>
-<div class="ttc" id="aclasstitan23_1_1MinHeap_html_a756931ff9a45c06d4d1896be3cc37405"><div class="ttname"><a href="classtitan23_1_1MinHeap.html#a756931ff9a45c06d4d1896be3cc37405">titan23::MinHeap::push</a></div><div class="ttdeci">void push(const T key)</div><div class="ttdoc">key を追加する / O(logn)</div><div class="ttdef"><b>Definition:</b> <a href="min__heap_8cpp_source.html#l00066">min_heap.cpp:66</a></div></div>
-<div class="ttc" id="aclasstitan23_1_1MinHeap_html_a782af426c2870fef4c14aa6546676e85"><div class="ttname"><a href="classtitan23_1_1MinHeap.html#a782af426c2870fef4c14aa6546676e85">titan23::MinHeap::pushpoop_min</a></div><div class="ttdeci">T pushpoop_min(const T key)</div><div class="ttdoc">push して pop する / O(logn)</div><div class="ttdef"><b>Definition:</b> <a href="min__heap_8cpp_source.html#l00072">min_heap.cpp:72</a></div></div>
-<div class="ttc" id="aclasstitan23_1_1MinHeap_html_a85379658724f0fac100148a6b35e3183"><div class="ttname"><a href="classtitan23_1_1MinHeap.html#a85379658724f0fac100148a6b35e3183">titan23::MinHeap::print</a></div><div class="ttdeci">void print() const</div><div class="ttdoc">表示する</div><div class="ttdef"><b>Definition:</b> <a href="min__heap_8cpp_source.html#l00094">min_heap.cpp:94</a></div></div>
-<div class="ttc" id="aclasstitan23_1_1MinHeap_html_a9bea6b27e1d97e378adfa8a0fc5d278c"><div class="ttname"><a href="classtitan23_1_1MinHeap.html#a9bea6b27e1d97e378adfa8a0fc5d278c">titan23::MinHeap::replace_min</a></div><div class="ttdeci">T replace_min(const T key)</div><div class="ttdoc">最小の要素を pop して返し、新たに key を挿入する。 pop -&gt; push と同じ / O(logn)</div><div class="ttdef"><b>Definition:</b> <a href="min__heap_8cpp_source.html#l00081">min_heap.cpp:81</a></div></div>
+<div class="ttc" id="aclasstitan23_1_1MinHeap_html_a07e7aa1f841cf2b32693ca13147e1d1a"><div class="ttname"><a href="classtitan23_1_1MinHeap.html#a07e7aa1f841cf2b32693ca13147e1d1a">titan23::MinHeap::len</a></div><div class="ttdeci">int len() const</div><div class="ttdoc">要素数を返す / O(1)</div><div class="ttdef"><b>Definition:</b> <a href="min__heap_8cpp_source.html#l00087">min_heap.cpp:87</a></div></div>
+<div class="ttc" id="aclasstitan23_1_1MinHeap_html_a1fe6c31982d44a3b8573dc21f5948c7e"><div class="ttname"><a href="classtitan23_1_1MinHeap.html#a1fe6c31982d44a3b8573dc21f5948c7e">titan23::MinHeap::pop_min</a></div><div class="ttdeci">T pop_min()</div><div class="ttdoc">最小の要素を削除して返す / O(logn)</div><div class="ttdef"><b>Definition:</b> <a href="min__heap_8cpp_source.html#l00055">min_heap.cpp:55</a></div></div>
+<div class="ttc" id="aclasstitan23_1_1MinHeap_html_a50982f8b420e35841db48d3d8c92c63f"><div class="ttname"><a href="classtitan23_1_1MinHeap.html#a50982f8b420e35841db48d3d8c92c63f">titan23::MinHeap::get_min</a></div><div class="ttdeci">T get_min() const</div><div class="ttdoc">最小の要素を返す / O(1)</div><div class="ttdef"><b>Definition:</b> <a href="min__heap_8cpp_source.html#l00050">min_heap.cpp:50</a></div></div>
+<div class="ttc" id="aclasstitan23_1_1MinHeap_html_a756931ff9a45c06d4d1896be3cc37405"><div class="ttname"><a href="classtitan23_1_1MinHeap.html#a756931ff9a45c06d4d1896be3cc37405">titan23::MinHeap::push</a></div><div class="ttdeci">void push(const T key)</div><div class="ttdoc">key を追加する / O(logn)</div><div class="ttdef"><b>Definition:</b> <a href="min__heap_8cpp_source.html#l00064">min_heap.cpp:64</a></div></div>
+<div class="ttc" id="aclasstitan23_1_1MinHeap_html_a782af426c2870fef4c14aa6546676e85"><div class="ttname"><a href="classtitan23_1_1MinHeap.html#a782af426c2870fef4c14aa6546676e85">titan23::MinHeap::pushpoop_min</a></div><div class="ttdeci">T pushpoop_min(const T key)</div><div class="ttdoc">push して pop する / O(logn)</div><div class="ttdef"><b>Definition:</b> <a href="min__heap_8cpp_source.html#l00070">min_heap.cpp:70</a></div></div>
+<div class="ttc" id="aclasstitan23_1_1MinHeap_html_a85379658724f0fac100148a6b35e3183"><div class="ttname"><a href="classtitan23_1_1MinHeap.html#a85379658724f0fac100148a6b35e3183">titan23::MinHeap::print</a></div><div class="ttdeci">void print() const</div><div class="ttdoc">表示する</div><div class="ttdef"><b>Definition:</b> <a href="min__heap_8cpp_source.html#l00092">min_heap.cpp:92</a></div></div>
+<div class="ttc" id="aclasstitan23_1_1MinHeap_html_a9bea6b27e1d97e378adfa8a0fc5d278c"><div class="ttname"><a href="classtitan23_1_1MinHeap.html#a9bea6b27e1d97e378adfa8a0fc5d278c">titan23::MinHeap::replace_min</a></div><div class="ttdeci">T replace_min(const T key)</div><div class="ttdoc">最小の要素を pop して返し、新たに key を挿入する。 pop -&gt; push と同じ / O(logn)</div><div class="ttdef"><b>Definition:</b> <a href="min__heap_8cpp_source.html#l00079">min_heap.cpp:79</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
