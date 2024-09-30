@@ -69,7 +69,7 @@ class AVLTreeBitVector {
 
   int _popcount(const uint128 n) const {
     return __builtin_popcountll(n >> 64) + __builtin_popcountll(n);
-    return __builtin_popcountll(n);
+    // return __builtin_popcountll(n);
   }
 
   Node _rotate_L(Node node) {
