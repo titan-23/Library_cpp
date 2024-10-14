@@ -12,23 +12,23 @@ namespace titan23 {
     class StatePool {
       private:
         vector<T*> pool;
-        stack<long long> unused_indx;
+        stack<int> unused_indx;
 
       public:
         StatePool() {}
-        StatePool(const long long n) { init(n); }
+        StatePool(const int n) { init(n); }
 
         //! clear
         void clear() {
             while (!unused_indx.empty()) unused_indx.pop();
-            for (long long i = (long long)pool.size()-1; i >= 0; --i) {
+            for (int i = (int)pool.size()-1; i >= 0; --i) {
                 unused_indx.emplace(i);
             }
         }
 
         //! n要素確保する。
-        void init(const long long n) {
-            for (long long i = 0; i < n; ++i) {
+        void init(const int n) {
+            for (int i = 0; i < n; ++i) {
                 T* state = new T;
                 pool.emplace_back(state);
                 unused_indx.emplace(i);
@@ -36,20 +36,20 @@ namespace titan23 {
         }
 
         //! id に対応する T のポインタを返す。
-        T* get(long long id) const {
+        T* get(int id) const {
             assert(0 <= id && id < pool.size());
             return pool[id];
         }
 
         //! idに対応するTを仮想的に削除する。
-        void del(long long id) {
+        void del(int id) {
             assert(0 <= id && id < pool.size());
             unused_indx.emplace(id);
         }
 
         //! T を作成し、それに対応する id を返す。
-        long long gen() {
-            long long state_id;
+        int gen() {
+            int state_id;
             if (unused_indx.empty()) {
                 T* state = new T;
                 state_id = pool.size();
@@ -63,14 +63,14 @@ namespace titan23 {
 
         //! id に対応するTをコピーし、コピー先のidを返す。
         //! T のコピーメソッドを呼び出す。
-        long long copy(const long long id) {
-            long long new_id = gen();
+        int copy(const int id) {
+            int new_id = gen();
             pool[id]->copy(pool[new_id]);
             return new_id;
         }
 
         //! 内部サイズを呼び出す
-        long long get_size() const {
+        int get_size() const {
             return pool.size();
         }
     };
