@@ -20,7 +20,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="32" column="1" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="32" bodyend="-1"/>
+        <location file="titan_cpplib/ahc/beam_search_with_tree.cpp" line="22" column="1" bodyfile="titan_cpplib/ahc/beam_search_with_tree.cpp" bodystart="22" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacebeam__search__with__tree_1aa83032ad758aef56dec6deeecbe53d6d" prot="public" static="no">
         <type>unsigned long long</type>
@@ -33,11 +33,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="33" column="1" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="33" bodyend="-1"/>
+        <location file="titan_cpplib/ahc/beam_search_with_tree.cpp" line="23" column="1" bodyfile="titan_cpplib/ahc/beam_search_with_tree.cpp" bodystart="23" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="typedef" id="namespacebeam__search__with__tree_1ab8bf7d1bd3e51f0cf7e605750b5c2ffc" prot="public" static="no">
-        <type>long long</type>
-        <definition>using beam_search_with_tree::TreeNodeID = typedef long long</definition>
+      <memberdef kind="typedef" id="namespacebeam__search__with__tree_1a54906ff873336403a4705a2f5d2c9e2a" prot="public" static="no">
+        <type>int</type>
+        <definition>using beam_search_with_tree::TreeNodeID = typedef int</definition>
         <argsstring></argsstring>
         <name>TreeNodeID</name>
         <briefdescription>
@@ -46,11 +46,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="81" column="1" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="81" bodyend="-1"/>
+        <location file="titan_cpplib/ahc/beam_search_with_tree.cpp" line="71" column="1" bodyfile="titan_cpplib/ahc/beam_search_with_tree.cpp" bodystart="71" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="typedef" id="namespacebeam__search__with__tree_1a11dac1ad1a495e5f2336db8d767c558c" prot="public" static="no">
-        <type>long long</type>
-        <definition>using beam_search_with_tree::SubStateID = typedef long long</definition>
+      <memberdef kind="typedef" id="namespacebeam__search__with__tree_1a4dc08d62dd237747b897d8e7c21c3c74" prot="public" static="no">
+        <type>int</type>
+        <definition>using beam_search_with_tree::SubStateID = typedef int</definition>
         <argsstring></argsstring>
         <name>SubStateID</name>
         <briefdescription>
@@ -59,7 +59,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="82" column="1" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="82" bodyend="-1"/>
+        <location file="titan_cpplib/ahc/beam_search_with_tree.cpp" line="72" column="1" bodyfile="titan_cpplib/ahc/beam_search_with_tree.cpp" bodystart="72" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="var">
@@ -74,7 +74,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="110" column="20" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="110" bodyend="-1"/>
+        <location file="titan_cpplib/ahc/beam_search_with_tree.cpp" line="100" column="20" bodyfile="titan_cpplib/ahc/beam_search_with_tree.cpp" bodystart="100" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="namespacebeam__search__with__tree_1adc4263fc1a4f888068d42f0edfae35ab" prot="public" static="no" mutable="no">
         <type><ref refid="classtitan23_1_1StatePool" kindref="compound">titan23::StatePool</ref>&lt; <ref refid="structbeam__search__with__tree_1_1SubState" kindref="compound">SubState</ref> &gt;</type>
@@ -87,26 +87,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="111" column="20" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="111" bodyend="-1"/>
-      </memberdef>
-      </sectiondef>
-      <sectiondef kind="func">
-      <memberdef kind="function" id="namespacebeam__search__with__tree_1aa29ebd8b2371846351f14d65503dbc12" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>char</type>
-        <definition>char beam_search_with_tree::to_string</definition>
-        <argsstring>(const Action &amp;action)</argsstring>
-        <name>to_string</name>
-        <param>
-          <type>const <ref refid="structbeam__search__with__tree_1_1Action" kindref="compound">Action</ref> &amp;</type>
-          <declname>action</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="28" column="6" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="28" bodyend="29"/>
+        <location file="titan_cpplib/ahc/beam_search_with_tree.cpp" line="101" column="20" bodyfile="titan_cpplib/ahc/beam_search_with_tree.cpp" bodystart="101" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -114,6 +95,6 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="18" column="1"/>
+    <location file="titan_cpplib/ahc/beam_search_with_tree.cpp" line="11" column="1"/>
   </compounddef>
 </doxygen>

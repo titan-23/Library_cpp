@@ -1,11 +1,4 @@
-#pragma GCC target("avx2")
-#pragma GCC optimize("O3")
-#pragma GCC optimize("unroll-loops")
-
 #include <bits/stdc++.h>
-
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/hash_policy.hpp>
 
 #include "titan_cpplib/others/print.cpp"
 #include "titan_cpplib/algorithm/random.cpp"
@@ -24,9 +17,6 @@ struct Action {
         return os;
     }
 };
-
-char to_string(const Action &action) {
-}
 
 
 using ScoreType = int;
@@ -78,8 +68,8 @@ struct Param {
     int BEAM_WIDTH;
 };
 
-using TreeNodeID = long long;
-using SubStateID = long long;
+using TreeNodeID = int;
+using SubStateID = int;
 
 //! try_opした結果をメモしておく構造体
 struct SubState {
@@ -118,89 +108,39 @@ class BeamSearchWithTree {
     titan23::HashSet seen;
 
     void get_next_beam_recursion(State* state, TreeNodeID node, vector<SubStateID> &next_beam, int depth, const int beam_width) {
-        seen.clear();
-
-        stack<TreeNodeID> todo;
-        TreeNodeID root = node;
-        todo.emplace(node);
-        while (!todo.empty()) {
-            node = todo.top();
-            todo.pop();
-            if (node >= 0) {
-                assert(treenode_pool.get(node)->is_valid);
-                if (node != root) state->apply_op(treenode_pool.get(node)->pre_action);
-                if (depth == 0) { // 葉
-                    assert(treenode_pool.get(node)->is_leaf());
-                    vector<Action> actions = state->get_actions();
-                    for (Action action : actions) {
-                        auto [score, hash] = state->try_op(action);
-                        if (seen.contains_insert(hash)) { // TODO use_hash
-                            continue;
-                        }
-                        SubStateID substate = substate_pool.gen();
-                        substate_pool.get(substate)->par = node;
-                        substate_pool.get(substate)->action = action;
-                        substate_pool.get(substate)->score = score;
-                        substate_pool.get(substate)->hash = hash;
-                        next_beam.emplace_back(substate);
-                    }
-                } else {
-                    for (const TreeNodeID &nxt_node : treenode_pool.get(node)->child) {
-                        todo.emplace(~nxt_node);
-                        todo.emplace(nxt_node);
-                    }
-                }
-                --depth;
-            } else {
-                node = ~node;
-                state->rollback(treenode_pool.get(node)->pre_action);
-                ++depth;
+        if (!treenode_pool.get(node)->is_valid) assert(false);
+        if (depth == 0) { // 葉
+            assert(treenode_pool.get(node)->is_leaf());
+            vector<Action> actions = state->get_actions();
+            for (Action &action : actions) {
+                auto [score, hash] = state->try_op(action);
+                SubStateID substate = substate_pool.gen();
+                substate_pool.get(substate)->par = node;
+                substate_pool.get(substate)->action = action;
+                substate_pool.get(substate)->score = score;
+                substate_pool.get(substate)->hash = hash;
+                next_beam.emplace_back(substate);
             }
+            return;
         }
-
-        // 再帰型 apply/rollbackの整合性チェックに使えるのでコメントアウトで残しておく
-        // if (!treenode_pool.get(node)->is_valid) assert(false);
-        // if (depth == 0) { // 葉
-        //     assert(treenode_pool.get(node)->is_leaf());
-        //     vector<Action> actions = state->get_actions();
-        //     for (Action action : actions) {
-        //         auto [score, hash] = state->try_op(action);
-        //         SubStateID substate = substate_pool.gen();
-        //         substate_pool.get(substate)->par = node;
-        //         substate_pool.get(substate)->action = action;
-        //         substate_pool.get(substate)->score = score;
-        //         substate_pool.get(substate)->hash = hash;
-        //         next_beam.emplace_back(substate);
-        //     }
-        //     return;
-        // }
-        // for (TreeNodeID nxt_node : treenode_pool.get(node)->child) {
-        //     if (!treenode_pool.get(nxt_node)->is_valid) continue;
-        //     HashType hs = state->hash;
-        //     state->apply_op(treenode_pool.get(nxt_node)->pre_action);
-        //     get_next_beam_recursion(state, nxt_node, next_beam, depth-1, beam_width);
-        //     state->rollback(treenode_pool.get(nxt_node)->pre_action);
-        //     assert(state->hash == hs);
-        // }
+        for (TreeNodeID nxt_node : treenode_pool.get(node)->child) {
+            if (!treenode_pool.get(nxt_node)->is_valid) continue;
+            state->apply_op(treenode_pool.get(nxt_node)->pre_action);
+            get_next_beam_recursion(state, nxt_node, next_beam, depth-1, beam_width);
+            state->rollback(treenode_pool.get(nxt_node)->pre_action);
+        }
     }
 
     tuple<int, TreeNodeID, vector<SubStateID>> get_next_beam(State* state, TreeNodeID node, int turn, const int beam_width) {
         int cnt = 0;
         while (true) { // 一本道は行くだけ
-            int valid_cnt = 0;
-            TreeNodeID valid_node = -1;
-            for (TreeNodeID nxt_node : treenode_pool.get(node)->child) {
-                if (treenode_pool.get(nxt_node)->is_valid) {
-                    valid_node = nxt_node;
-                    valid_cnt++;
-                }
-            }
-            if (valid_cnt != 1) break;
+            if (treenode_pool.get(node)->child.size() != 1) break;
             ++cnt;
-            node = valid_node;
+            node = treenode_pool.get(node)->child[0];
             state->apply_op(treenode_pool.get(node)->pre_action);
         }
         vector<SubStateID> next_beam;
+        seen.clear();
         get_next_beam_recursion(state, node, next_beam, turn-cnt, beam_width);
         return make_tuple(cnt, node, next_beam);
     }

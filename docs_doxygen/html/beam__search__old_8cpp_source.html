@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>titan_cpplib: titan_cpplib/ahc/beam_search/beam_search.cpp Source File</title>
+<title>titan_cpplib: titan_cpplib/ahc/gomi/beam_search_old.cpp Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -61,12 +61,12 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_1e69700284635ca6657b9517b39a5512.html">titan_cpplib</a></li><li class="navelem"><a class="el" href="dir_de35d2392027b712208844ce9b2a0813.html">ahc</a></li><li class="navelem"><a class="el" href="dir_6f38a2bd66f50ec57d4a4d2e1e4c85c0.html">beam_search</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_1e69700284635ca6657b9517b39a5512.html">titan_cpplib</a></li><li class="navelem"><a class="el" href="dir_de35d2392027b712208844ce9b2a0813.html">ahc</a></li><li class="navelem"><a class="el" href="dir_1242cbfce00f1ccaeb7dd2d7b8a03f62.html">gomi</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="headertitle">
-<div class="title">beam_search.cpp</div>  </div>
+<div class="title">beam_search_old.cpp</div>  </div>
 </div><!--header-->
 <div class="contents">
 <div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &lt;iostream&gt;</span></div>
@@ -480,12 +480,12 @@ $(function() {
 <div class="ttc" id="aclasstitan23_1_1Timer_html"><div class="ttname"><a href="classtitan23_1_1Timer.html">titan23::Timer</a></div><div class="ttdoc">時間計測クラス</div><div class="ttdef"><b>Definition:</b> <a href="timer_8cpp_source.html#l00013">timer.cpp:13</a></div></div>
 <div class="ttc" id="aclasstitan23_1_1Timer_html_a9b138c885ca8956bfa5d73a628698c3d"><div class="ttname"><a href="classtitan23_1_1Timer.html#a9b138c885ca8956bfa5d73a628698c3d">titan23::Timer::reset</a></div><div class="ttdeci">void reset()</div><div class="ttdoc">リセットする</div><div class="ttdef"><b>Definition:</b> <a href="timer_8cpp_source.html#l00021">timer.cpp:21</a></div></div>
 <div class="ttc" id="aclasstitan23_1_1Timer_html_adb30bc0ad576c57bf6410294d3099e26"><div class="ttname"><a href="classtitan23_1_1Timer.html#adb30bc0ad576c57bf6410294d3099e26">titan23::Timer::elapsed</a></div><div class="ttdeci">double elapsed() const</div><div class="ttdoc">経過時間[ms]を返す</div><div class="ttdef"><b>Definition:</b> <a href="timer_8cpp_source.html#l00026">timer.cpp:26</a></div></div>
-<div class="ttc" id="aclasstitan23_1_1beam__search_1_1BeamSearch_html"><div class="ttname"><a href="classtitan23_1_1beam__search_1_1BeamSearch.html">titan23::beam_search::BeamSearch</a></div><div class="ttdef"><b>Definition:</b> <a href="beam__search_8cpp_source.html#l00187">beam_search.cpp:187</a></div></div>
-<div class="ttc" id="aclasstitan23_1_1beam__search_1_1Param_html"><div class="ttname"><a href="classtitan23_1_1beam__search_1_1Param.html">titan23::beam_search::Param</a></div><div class="ttdef"><b>Definition:</b> <a href="beam__search_8cpp_source.html#l00116">beam_search.cpp:116</a></div></div>
-<div class="ttc" id="aclasstitan23_1_1beam__search_1_1Param_html_a0c3a6e8fea8a24824e930893714bbda8"><div class="ttname"><a href="classtitan23_1_1beam__search_1_1Param.html#a0c3a6e8fea8a24824e930893714bbda8">titan23::beam_search::Param::Param</a></div><div class="ttdeci">Param(const double time_limit, const int max_turn, const int decide_turn, const int beam_depth_base, const int beam_width_base, const bool adjace=false)</div><div class="ttdoc">Construct a new Param object.</div><div class="ttdef"><b>Definition:</b> <a href="beam__search_8cpp_source.html#l00138">beam_search.cpp:138</a></div></div>
-<div class="ttc" id="aclasstitan23_1_1beam__search_1_1State_html"><div class="ttname"><a href="classtitan23_1_1beam__search_1_1State.html">titan23::beam_search::State</a></div><div class="ttdef"><b>Definition:</b> <a href="beam__search_8cpp_source.html#l00028">beam_search.cpp:28</a></div></div>
-<div class="ttc" id="astructtitan23_1_1beam__search_1_1Result_html"><div class="ttname"><a href="structtitan23_1_1beam__search_1_1Result.html">titan23::beam_search::Result</a></div><div class="ttdef"><b>Definition:</b> <a href="beam__search_8cpp_source.html#l00091">beam_search.cpp:91</a></div></div>
-<div class="ttc" id="astructtitan23_1_1beam__search_1_1SubState_html"><div class="ttname"><a href="structtitan23_1_1beam__search_1_1SubState.html">titan23::beam_search::SubState</a></div><div class="ttdef"><b>Definition:</b> <a href="beam__search_8cpp_source.html#l00109">beam_search.cpp:109</a></div></div>
+<div class="ttc" id="aclasstitan23_1_1beam__search_1_1BeamSearch_html"><div class="ttname"><a href="classtitan23_1_1beam__search_1_1BeamSearch.html">titan23::beam_search::BeamSearch</a></div><div class="ttdef"><b>Definition:</b> <a href="beam__search__old_8cpp_source.html#l00187">beam_search_old.cpp:187</a></div></div>
+<div class="ttc" id="aclasstitan23_1_1beam__search_1_1Param_html"><div class="ttname"><a href="classtitan23_1_1beam__search_1_1Param.html">titan23::beam_search::Param</a></div><div class="ttdef"><b>Definition:</b> <a href="beam__search__old_8cpp_source.html#l00116">beam_search_old.cpp:116</a></div></div>
+<div class="ttc" id="aclasstitan23_1_1beam__search_1_1Param_html_a0c3a6e8fea8a24824e930893714bbda8"><div class="ttname"><a href="classtitan23_1_1beam__search_1_1Param.html#a0c3a6e8fea8a24824e930893714bbda8">titan23::beam_search::Param::Param</a></div><div class="ttdeci">Param(const double time_limit, const int max_turn, const int decide_turn, const int beam_depth_base, const int beam_width_base, const bool adjace=false)</div><div class="ttdoc">Construct a new Param object.</div><div class="ttdef"><b>Definition:</b> <a href="beam__search__old_8cpp_source.html#l00138">beam_search_old.cpp:138</a></div></div>
+<div class="ttc" id="aclasstitan23_1_1beam__search_1_1State_html"><div class="ttname"><a href="classtitan23_1_1beam__search_1_1State.html">titan23::beam_search::State</a></div><div class="ttdef"><b>Definition:</b> <a href="beam__search__old_8cpp_source.html#l00028">beam_search_old.cpp:28</a></div></div>
+<div class="ttc" id="astructtitan23_1_1beam__search_1_1Result_html"><div class="ttname"><a href="structtitan23_1_1beam__search_1_1Result.html">titan23::beam_search::Result</a></div><div class="ttdef"><b>Definition:</b> <a href="beam__search__old_8cpp_source.html#l00091">beam_search_old.cpp:91</a></div></div>
+<div class="ttc" id="astructtitan23_1_1beam__search_1_1SubState_html"><div class="ttname"><a href="structtitan23_1_1beam__search_1_1SubState.html">titan23::beam_search::SubState</a></div><div class="ttdef"><b>Definition:</b> <a href="beam__search__old_8cpp_source.html#l00109">beam_search_old.cpp:109</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

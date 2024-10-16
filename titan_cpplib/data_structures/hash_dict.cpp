@@ -20,7 +20,7 @@ namespace titan23 {
         int msk, xor_;
         int size;
 
-        int hash(const u64 key) const {
+        int hash(const u64 &key) const {
             return (((((key>>32)&msk) ^ (key&msk) ^ xor_)) * (HashDict::K & msk)) & msk;
         }
 
@@ -108,6 +108,47 @@ namespace titan23 {
                     rebuild();
                 }
             }
+        }
+
+        //! keyがすでにあればtrue, なければ挿入してfalse / `O(1)`
+        bool contains_set(const u64 key, const V val) {
+            const auto [pos, is_exist] = get_pos(key);
+            if (val < vals[pos]) {
+                vals[pos] = val;
+            } else {
+                return false;
+            }
+            if (!is_exist) {
+                exist[pos>>6] |= 1ull<<(pos&63);
+                keys[pos] = key;
+                ++size;
+                if (HashDict::M*size > keys.size()) {
+                    rebuild();
+                }
+                return false;
+            }
+            return true;
+        }
+
+        //! keyがすでにあればtrue, なければ挿入してfalse / `O(1)`
+        bool contains_insert(const u64 key) {
+            const auto [pos, is_exist] = get_pos(key);
+            if (!is_exist) {
+                exist[pos>>6] |= 1ull<<(pos&63);
+                keys[pos] = key;
+                ++size;
+                if (HashDict::M*size > keys.size()) {
+                    rebuild();
+                }
+                return false;
+            }
+            return true;
+        }
+
+        //! 全ての要素を削除する / `O(n/w)`
+        void clear() {
+            this->size = 0;
+            fill(exist.begin(), exist.end(), 0);
         }
 
         int len() const {

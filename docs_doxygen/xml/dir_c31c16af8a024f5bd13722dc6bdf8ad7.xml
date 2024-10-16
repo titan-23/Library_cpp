@@ -31,6 +31,7 @@
     <innerfile refid="lazy__link__cut__tree_8cpp">lazy_link_cut_tree.cpp</innerfile>
     <innerfile refid="lazy__wb__tree_8cpp">lazy_wb_tree.cpp</innerfile>
     <innerfile refid="data__structures_2link__cut__tree_8cpp">link_cut_tree.cpp</innerfile>
+    <innerfile refid="max__heap_8cpp">max_heap.cpp</innerfile>
     <innerfile refid="min__heap_8cpp">min_heap.cpp</innerfile>
     <innerfile refid="offline__dynamic__connectivity_8cpp">offline_dynamic_connectivity.cpp</innerfile>
     <innerfile refid="offline__dynamic__connectivity__sum_8cpp">offline_dynamic_connectivity_sum.cpp</innerfile>

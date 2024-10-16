@@ -38,6 +38,7 @@
     <innerclass refid="classtitan23_1_1LazyLinkCutTree" prot="public">titan23::LazyLinkCutTree</innerclass>
     <innerclass refid="classtitan23_1_1LazyWBTree" prot="public">titan23::LazyWBTree</innerclass>
     <innerclass refid="classtitan23_1_1LinkCutTree" prot="public">titan23::LinkCutTree</innerclass>
+    <innerclass refid="classtitan23_1_1MaxHeap" prot="public">titan23::MaxHeap</innerclass>
     <innerclass refid="classtitan23_1_1MinHeap" prot="public">titan23::MinHeap</innerclass>
     <innerclass refid="classtitan23_1_1OfflineDynamicConnectivity" prot="public">titan23::OfflineDynamicConnectivity</innerclass>
     <innerclass refid="classtitan23_1_1OfflineDynamicConnectivitySum" prot="public">titan23::OfflineDynamicConnectivitySum</innerclass>
@@ -243,6 +244,6 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/ahc/beam_search/action.cpp" line="6" column="1"/>
+    <location file="titan_cpplib/ahc/action.cpp" line="6" column="1"/>
   </compounddef>
 </doxygen>

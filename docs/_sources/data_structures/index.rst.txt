@@ -33,6 +33,7 @@ data_structures
    lazy_link_cut_tree_cpp.rst
    lazy_wb_tree_cpp.rst
    link_cut_tree_cpp.rst
+   max_heap_cpp.rst
    min_heap_cpp.rst
    offline_dynamic_connectivity_cpp.rst
    offline_dynamic_connectivity_sum_cpp.rst

@@ -634,7 +634,7 @@
     <member refid="classtitan23_1_1HashDict_1a3d21c7432db7ed3aeefa7970d9bf7d46" kind="variable"><name>msk</name></member>
     <member refid="classtitan23_1_1HashDict_1a4c8f377e8d8010301de372c61c58b6d5" kind="variable"><name>xor_</name></member>
     <member refid="classtitan23_1_1HashDict_1ae93babe76b4ae5bd006e8c160adf1791" kind="variable"><name>size</name></member>
-    <member refid="classtitan23_1_1HashDict_1af6acb7fc2955379d33919fd6a93b9b4e" kind="function"><name>hash</name></member>
+    <member refid="classtitan23_1_1HashDict_1af1bb9f10f2b1599f6245002e6c86722d" kind="function"><name>hash</name></member>
     <member refid="classtitan23_1_1HashDict_1aea0dcc16b33b72a3a2be57832e5e9c95" kind="function"><name>get_pos</name></member>
     <member refid="classtitan23_1_1HashDict_1a0fe5538dd8bbe71c1c15e9e7ae27c439" kind="function"><name>bit_length</name></member>
     <member refid="classtitan23_1_1HashDict_1a3d3d6985951ff859cc9bfe443013e888" kind="function"><name>rebuild</name></member>
@@ -645,6 +645,9 @@
     <member refid="classtitan23_1_1HashDict_1a009027facfad9e6458967b65f0bd290b" kind="function"><name>contains</name></member>
     <member refid="classtitan23_1_1HashDict_1a60781a52ca737206709c4954235e35c8" kind="function"><name>operator[]</name></member>
     <member refid="classtitan23_1_1HashDict_1a47f9c610ad46e93d5a17a5f26c981bd2" kind="function"><name>set</name></member>
+    <member refid="classtitan23_1_1HashDict_1ab779cf5c635ca0263dfe9e0f12493829" kind="function"><name>contains_set</name></member>
+    <member refid="classtitan23_1_1HashDict_1a39fe1d5ed0bddbfb4d98abeed687a5ce" kind="function"><name>contains_insert</name></member>
+    <member refid="classtitan23_1_1HashDict_1a28e5756e72009f6370998bc26039cf9b" kind="function"><name>clear</name></member>
     <member refid="classtitan23_1_1HashDict_1a6758f24501dc370d136e4234f75493ff" kind="function"><name>len</name></member>
   </compound>
   <compound refid="classtitan23_1_1HashSet" kind="class"><name>titan23::HashSet</name>
@@ -866,6 +869,21 @@
     <member refid="classtitan23_1_1LinkCutTree_1ab7a1112db3bf507c16032160959f9e41" kind="function"><name>path_kth_elm</name></member>
     <member refid="classtitan23_1_1LinkCutTree_1a7f05bc78458f805d7707ac09ef8444c5" kind="function"><name>get</name></member>
     <member refid="classtitan23_1_1LinkCutTree_1a5e23828c5ed2e71ffa2a5766979e6446" kind="function"><name>set</name></member>
+  </compound>
+  <compound refid="classtitan23_1_1MaxHeap" kind="class"><name>titan23::MaxHeap</name>
+    <member refid="classtitan23_1_1MaxHeap_1adcb1b07869beeac39da9dfac550a3a9a" kind="variable"><name>a</name></member>
+    <member refid="classtitan23_1_1MaxHeap_1aa825d5fb3ad1a71ba8c18a88178240b2" kind="function"><name>_heapify</name></member>
+    <member refid="classtitan23_1_1MaxHeap_1a69fa67dcdc91e71442d1ff0bb43436e8" kind="function"><name>_down</name></member>
+    <member refid="classtitan23_1_1MaxHeap_1aec43272dfb4263cedea6e5002a6f69e2" kind="function"><name>_up</name></member>
+    <member refid="classtitan23_1_1MaxHeap_1ad420f0d17c639bcb19d06b4767356fd8" kind="function"><name>MaxHeap</name></member>
+    <member refid="classtitan23_1_1MaxHeap_1a5c515fccb5a27909cc1472039e4fee76" kind="function"><name>MaxHeap</name></member>
+    <member refid="classtitan23_1_1MaxHeap_1a921c852508978748c5a50b4854a55ae0" kind="function"><name>get_max</name></member>
+    <member refid="classtitan23_1_1MaxHeap_1a8537c0fa62962802a221270dde36b999" kind="function"><name>pop_max</name></member>
+    <member refid="classtitan23_1_1MaxHeap_1a135eff8e4402463c4a55cd41b974beec" kind="function"><name>push</name></member>
+    <member refid="classtitan23_1_1MaxHeap_1a374febc8243c1b07d2fa3ea27a3a8f39" kind="function"><name>pushpoop_max</name></member>
+    <member refid="classtitan23_1_1MaxHeap_1a25cdcc242221d5ba460673fdd71a78e2" kind="function"><name>replace_max</name></member>
+    <member refid="classtitan23_1_1MaxHeap_1ae1f06da8a697212d7473b4b621a80858" kind="function"><name>len</name></member>
+    <member refid="classtitan23_1_1MaxHeap_1ad8e0da14383c70201f25324b13405976" kind="function"><name>print</name></member>
   </compound>
   <compound refid="classtitan23_1_1MaximumIndependentSet" kind="class"><name>titan23::MaximumIndependentSet</name>
     <member refid="classtitan23_1_1MaximumIndependentSet_1a27d3d17e69ae41757f2ab5e3d7a649ca" kind="variable"><name>n</name></member>
@@ -1342,16 +1360,16 @@
   </compound>
   <compound refid="classtitan23_1_1StatePool" kind="class"><name>titan23::StatePool</name>
     <member refid="classtitan23_1_1StatePool_1a58b0b5923fc18a67b0ea8d65654e8b00" kind="variable"><name>pool</name></member>
-    <member refid="classtitan23_1_1StatePool_1abd770eeb530b46f97ea808da25149bcf" kind="variable"><name>unused_indx</name></member>
+    <member refid="classtitan23_1_1StatePool_1a8186d82f8caf1600523c1497955a8fc4" kind="variable"><name>unused_indx</name></member>
     <member refid="classtitan23_1_1StatePool_1a0a47921b3b1b7dafe7bf34368f0e4861" kind="function"><name>StatePool</name></member>
-    <member refid="classtitan23_1_1StatePool_1a29cce118d1b0c93669aa74d8790bff6b" kind="function"><name>StatePool</name></member>
+    <member refid="classtitan23_1_1StatePool_1aeb0fa4cb0f500844cadeaf7211c7e8ab" kind="function"><name>StatePool</name></member>
     <member refid="classtitan23_1_1StatePool_1a65ccf078558e51d45e58b5d8f7480a4d" kind="function"><name>clear</name></member>
-    <member refid="classtitan23_1_1StatePool_1a0ca21823cf14acf5363c827baf0968e1" kind="function"><name>init</name></member>
-    <member refid="classtitan23_1_1StatePool_1a7ee5fabd129600983f6b8370ad5bc080" kind="function"><name>get</name></member>
-    <member refid="classtitan23_1_1StatePool_1a11fba02e368793223f077879136bc7bd" kind="function"><name>del</name></member>
-    <member refid="classtitan23_1_1StatePool_1aca01bc5adac531b38ed8d4499eed2a29" kind="function"><name>gen</name></member>
-    <member refid="classtitan23_1_1StatePool_1aaca3084894128ce95de2847d645932f3" kind="function"><name>copy</name></member>
-    <member refid="classtitan23_1_1StatePool_1abca797200e79f4f4dc2f8abe3398907f" kind="function"><name>get_size</name></member>
+    <member refid="classtitan23_1_1StatePool_1a8a32dae8f90ffb450c9dc4a028f3a05e" kind="function"><name>init</name></member>
+    <member refid="classtitan23_1_1StatePool_1a7e491b65b00d03673649dc75ff850906" kind="function"><name>get</name></member>
+    <member refid="classtitan23_1_1StatePool_1a2871bc234478c7396ad87451e3603626" kind="function"><name>del</name></member>
+    <member refid="classtitan23_1_1StatePool_1af54bab0d6cd72a04184cee613bf24d6f" kind="function"><name>gen</name></member>
+    <member refid="classtitan23_1_1StatePool_1a4019aa5eea3c78fc089b1495936059d9" kind="function"><name>copy</name></member>
+    <member refid="classtitan23_1_1StatePool_1ac2f1c68bac4e45dc6417f6c5ee4d8f84" kind="function"><name>get_size</name></member>
   </compound>
   <compound refid="structtitan23_1_1StaticMultiset" kind="struct"><name>titan23::StaticMultiset</name>
     <member refid="structtitan23_1_1StaticMultiset_1a7b14a64c532f51f6d434c0e93ef84d7c" kind="variable"><name>data</name></member>
@@ -1602,11 +1620,10 @@
   <compound refid="namespacebeam__search__with__tree" kind="namespace"><name>beam_search_with_tree</name>
     <member refid="namespacebeam__search__with__tree_1af5472ddaaa54333d4757abdc047347dd" kind="typedef"><name>ScoreType</name></member>
     <member refid="namespacebeam__search__with__tree_1aa83032ad758aef56dec6deeecbe53d6d" kind="typedef"><name>HashType</name></member>
-    <member refid="namespacebeam__search__with__tree_1ab8bf7d1bd3e51f0cf7e605750b5c2ffc" kind="typedef"><name>TreeNodeID</name></member>
-    <member refid="namespacebeam__search__with__tree_1a11dac1ad1a495e5f2336db8d767c558c" kind="typedef"><name>SubStateID</name></member>
+    <member refid="namespacebeam__search__with__tree_1a54906ff873336403a4705a2f5d2c9e2a" kind="typedef"><name>TreeNodeID</name></member>
+    <member refid="namespacebeam__search__with__tree_1a4dc08d62dd237747b897d8e7c21c3c74" kind="typedef"><name>SubStateID</name></member>
     <member refid="namespacebeam__search__with__tree_1a5f29ceda537d6803b87068a9aaf4072d" kind="variable"><name>treenode_pool</name></member>
     <member refid="namespacebeam__search__with__tree_1adc4263fc1a4f888068d42f0edfae35ab" kind="variable"><name>substate_pool</name></member>
-    <member refid="namespacebeam__search__with__tree_1aa29ebd8b2371846351f14d65503dbc12" kind="function"><name>to_string</name></member>
   </compound>
   <compound refid="namespacestd" kind="namespace"><name>std</name>
   </compound>
@@ -1624,11 +1641,11 @@
     <member refid="action_8cpp_1aefc1cd850772bb84f81737a57cc3e3e3ae1e1d3d40573127e9ee0480caf1283d6" kind="enumvalue"><name>R</name></member>
     <member refid="action_8cpp_1aefc1cd850772bb84f81737a57cc3e3e3af623e75af30e62bbd73d6df5b50bb7b5" kind="enumvalue"><name>D</name></member>
     <member refid="action_8cpp_1aefc1cd850772bb84f81737a57cc3e3e3ad20caec3b48a1eef164cb4ca81ba2587" kind="enumvalue"><name>L</name></member>
-    <member refid="beam__search_8cpp_1ae131a1edab56d3d966e889847aaf2383" kind="typedef"><name>StatePtr</name></member>
-    <member refid="beam__search_8cpp_1ad1e25bd237e86ae396cb6f722e5d3c3b" kind="typedef"><name>ScoreType</name></member>
-    <member refid="beam__search_8cpp_1a84e2669e5846ba561b1abc0e201ee4e7" kind="typedef"><name>HashType</name></member>
-    <member refid="beam__search_8cpp_1a7f5fb517b58d58bd5cfe4c05d067f68e" kind="variable"><name>pool</name></member>
-    <member refid="beam__search_8cpp_1afbbb0be31dbf15f9a050f6495603c4b6" kind="variable"><name>sub_pool</name></member>
+    <member refid="beam__search__old_8cpp_1ae131a1edab56d3d966e889847aaf2383" kind="typedef"><name>StatePtr</name></member>
+    <member refid="beam__search__old_8cpp_1ad1e25bd237e86ae396cb6f722e5d3c3b" kind="typedef"><name>ScoreType</name></member>
+    <member refid="beam__search__old_8cpp_1a84e2669e5846ba561b1abc0e201ee4e7" kind="typedef"><name>HashType</name></member>
+    <member refid="beam__search__old_8cpp_1a7f5fb517b58d58bd5cfe4c05d067f68e" kind="variable"><name>pool</name></member>
+    <member refid="beam__search__old_8cpp_1afbbb0be31dbf15f9a050f6495603c4b6" kind="variable"><name>sub_pool</name></member>
     <member refid="action_8cpp_1aca3719b595aebdac69cce190e3de3e9e" kind="function"><name>operator&lt;&lt;</name></member>
     <member refid="action_8cpp_1acd319e71a6f0774cda00d27f88de6269" kind="function"><name>get_rev_action</name></member>
   </compound>
@@ -1641,10 +1658,10 @@
   </compound>
   <compound refid="action_8cpp" kind="file"><name>action.cpp</name>
   </compound>
-  <compound refid="beam__search_8cpp" kind="file"><name>beam_search.cpp</name>
-  </compound>
   <compound refid="beam__search__with__tree_8cpp" kind="file"><name>beam_search_with_tree.cpp</name>
     <member refid="beam__search__with__tree_8cpp_1ae66f6b31b5ad750f1fe042a706a4e3d4" kind="function"><name>main</name></member>
+  </compound>
+  <compound refid="beam__search__old_8cpp" kind="file"><name>beam_search_old.cpp</name>
   </compound>
   <compound refid="kmeans_8cpp" kind="file"><name>kmeans.cpp</name>
   </compound>
@@ -1723,6 +1740,8 @@
   <compound refid="data__structures_2link__cut__tree_8cpp" kind="file"><name>link_cut_tree.cpp</name>
   </compound>
   <compound refid="gomi_2link__cut__tree_8cpp" kind="file"><name>link_cut_tree.cpp</name>
+  </compound>
+  <compound refid="max__heap_8cpp" kind="file"><name>max_heap.cpp</name>
   </compound>
   <compound refid="min__heap_8cpp" kind="file"><name>min_heap.cpp</name>
   </compound>
@@ -1827,9 +1846,9 @@
   </compound>
   <compound refid="dir_df5b5eb2e4fbbc504307147de4724ea1" kind="dir"><name>titan_cpplib/algorithm</name>
   </compound>
-  <compound refid="dir_6f38a2bd66f50ec57d4a4d2e1e4c85c0" kind="dir"><name>titan_cpplib/ahc/beam_search</name>
-  </compound>
   <compound refid="dir_c31c16af8a024f5bd13722dc6bdf8ad7" kind="dir"><name>titan_cpplib/data_structures</name>
+  </compound>
+  <compound refid="dir_1242cbfce00f1ccaeb7dd2d7b8a03f62" kind="dir"><name>titan_cpplib/ahc/gomi</name>
   </compound>
   <compound refid="dir_fc950bd8bd73f6955932f2bd0f92a1ce" kind="dir"><name>titan_cpplib/gomi</name>
   </compound>

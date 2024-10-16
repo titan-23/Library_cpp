@@ -275,7 +275,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_set.cpp" line="107" column="14" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="107" bodyend="109"/>
+        <location file="titan_cpplib/data_structures/hash_set.cpp" line="107" column="14" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="107" bodyend="110"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1HashSet_1afda2be50d36589f09503460e6f3b389c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -288,14 +288,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_set.cpp" line="111" column="13" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="111" bodyend="113"/>
+        <location file="titan_cpplib/data_structures/hash_set.cpp" line="112" column="13" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="112" bodyend="114"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/data_structures/hash_set.cpp" line="11" column="5" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="11" bodyend="114"/>
+    <location file="titan_cpplib/data_structures/hash_set.cpp" line="11" column="5" bodyfile="titan_cpplib/data_structures/hash_set.cpp" bodystart="11" bodyend="115"/>
     <listofallmembers>
       <member refid="classtitan23_1_1HashSet_1addf60a589e33cf0edc156d6a84a952b3" prot="private" virt="non-virtual"><scope>titan23::HashSet</scope><name>bit_length</name></member>
       <member refid="classtitan23_1_1HashSet_1a9488d1fac8c23e8b880949900c6abb37" prot="public" virt="non-virtual"><scope>titan23::HashSet</scope><name>clear</name></member>

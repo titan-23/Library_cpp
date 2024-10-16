@@ -21,9 +21,9 @@
         </inbodydescription>
         <location file="titan_cpplib/ahc/state_pool.cpp" line="14" column="16" bodyfile="titan_cpplib/ahc/state_pool.cpp" bodystart="14" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classtitan23_1_1StatePool_1abd770eeb530b46f97ea808da25149bcf" prot="private" static="no" mutable="no">
-        <type>stack&lt; long long &gt;</type>
-        <definition>stack&lt;long long&gt; titan23::StatePool&lt; T &gt;::unused_indx</definition>
+      <memberdef kind="variable" id="classtitan23_1_1StatePool_1a8186d82f8caf1600523c1497955a8fc4" prot="private" static="no" mutable="no">
+        <type>stack&lt; int &gt;</type>
+        <definition>stack&lt;int&gt; titan23::StatePool&lt; T &gt;::unused_indx</definition>
         <argsstring></argsstring>
         <name>unused_indx</name>
         <briefdescription>
@@ -49,13 +49,13 @@
         </inbodydescription>
         <location file="titan_cpplib/ahc/state_pool.cpp" line="18" column="9" bodyfile="titan_cpplib/ahc/state_pool.cpp" bodystart="18" bodyend="18"/>
       </memberdef>
-      <memberdef kind="function" id="classtitan23_1_1StatePool_1a29cce118d1b0c93669aa74d8790bff6b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="classtitan23_1_1StatePool_1aeb0fa4cb0f500844cadeaf7211c7e8ab" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
         <definition>titan23::StatePool&lt; T &gt;::StatePool</definition>
-        <argsstring>(const long long n)</argsstring>
+        <argsstring>(const int n)</argsstring>
         <name>StatePool</name>
         <param>
-          <type>const long long</type>
+          <type>const int</type>
           <declname>n</declname>
         </param>
         <briefdescription>
@@ -80,13 +80,13 @@
         </inbodydescription>
         <location file="titan_cpplib/ahc/state_pool.cpp" line="22" column="14" bodyfile="titan_cpplib/ahc/state_pool.cpp" bodystart="22" bodyend="27"/>
       </memberdef>
-      <memberdef kind="function" id="classtitan23_1_1StatePool_1a0ca21823cf14acf5363c827baf0968e1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="classtitan23_1_1StatePool_1a8a32dae8f90ffb450c9dc4a028f3a05e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
         <definition>void titan23::StatePool&lt; T &gt;::init</definition>
-        <argsstring>(const long long n)</argsstring>
+        <argsstring>(const int n)</argsstring>
         <name>init</name>
         <param>
-          <type>const long long</type>
+          <type>const int</type>
           <declname>n</declname>
         </param>
         <briefdescription>
@@ -98,13 +98,13 @@
         </inbodydescription>
         <location file="titan_cpplib/ahc/state_pool.cpp" line="30" column="14" bodyfile="titan_cpplib/ahc/state_pool.cpp" bodystart="30" bodyend="36"/>
       </memberdef>
-      <memberdef kind="function" id="classtitan23_1_1StatePool_1a7ee5fabd129600983f6b8370ad5bc080" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="classtitan23_1_1StatePool_1a7e491b65b00d03673649dc75ff850906" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T *</type>
         <definition>T* titan23::StatePool&lt; T &gt;::get</definition>
-        <argsstring>(long long id) const</argsstring>
+        <argsstring>(int id) const</argsstring>
         <name>get</name>
         <param>
-          <type>long long</type>
+          <type>int</type>
           <declname>id</declname>
         </param>
         <briefdescription>
@@ -116,13 +116,13 @@
         </inbodydescription>
         <location file="titan_cpplib/ahc/state_pool.cpp" line="39" column="11" bodyfile="titan_cpplib/ahc/state_pool.cpp" bodystart="39" bodyend="42"/>
       </memberdef>
-      <memberdef kind="function" id="classtitan23_1_1StatePool_1a11fba02e368793223f077879136bc7bd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+      <memberdef kind="function" id="classtitan23_1_1StatePool_1a2871bc234478c7396ad87451e3603626" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
         <definition>void titan23::StatePool&lt; T &gt;::del</definition>
-        <argsstring>(long long id)</argsstring>
+        <argsstring>(int id)</argsstring>
         <name>del</name>
         <param>
-          <type>long long</type>
+          <type>int</type>
           <declname>id</declname>
         </param>
         <briefdescription>
@@ -134,9 +134,9 @@
         </inbodydescription>
         <location file="titan_cpplib/ahc/state_pool.cpp" line="45" column="14" bodyfile="titan_cpplib/ahc/state_pool.cpp" bodystart="45" bodyend="48"/>
       </memberdef>
-      <memberdef kind="function" id="classtitan23_1_1StatePool_1aca01bc5adac531b38ed8d4499eed2a29" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
-        <type>long long</type>
-        <definition>long long titan23::StatePool&lt; T &gt;::gen</definition>
+      <memberdef kind="function" id="classtitan23_1_1StatePool_1af54bab0d6cd72a04184cee613bf24d6f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::StatePool&lt; T &gt;::gen</definition>
         <argsstring>()</argsstring>
         <name>gen</name>
         <briefdescription>
@@ -146,15 +146,15 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/state_pool.cpp" line="51" column="19" bodyfile="titan_cpplib/ahc/state_pool.cpp" bodystart="51" bodyend="62"/>
+        <location file="titan_cpplib/ahc/state_pool.cpp" line="51" column="13" bodyfile="titan_cpplib/ahc/state_pool.cpp" bodystart="51" bodyend="62"/>
       </memberdef>
-      <memberdef kind="function" id="classtitan23_1_1StatePool_1aaca3084894128ce95de2847d645932f3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
-        <type>long long</type>
-        <definition>long long titan23::StatePool&lt; T &gt;::copy</definition>
-        <argsstring>(const long long id)</argsstring>
+      <memberdef kind="function" id="classtitan23_1_1StatePool_1a4019aa5eea3c78fc089b1495936059d9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::StatePool&lt; T &gt;::copy</definition>
+        <argsstring>(const int id)</argsstring>
         <name>copy</name>
         <param>
-          <type>const long long</type>
+          <type>const int</type>
           <declname>id</declname>
         </param>
         <briefdescription>
@@ -164,11 +164,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/state_pool.cpp" line="66" column="19" bodyfile="titan_cpplib/ahc/state_pool.cpp" bodystart="66" bodyend="70"/>
+        <location file="titan_cpplib/ahc/state_pool.cpp" line="66" column="13" bodyfile="titan_cpplib/ahc/state_pool.cpp" bodystart="66" bodyend="70"/>
       </memberdef>
-      <memberdef kind="function" id="classtitan23_1_1StatePool_1abca797200e79f4f4dc2f8abe3398907f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
-        <type>long long</type>
-        <definition>long long titan23::StatePool&lt; T &gt;::get_size</definition>
+      <memberdef kind="function" id="classtitan23_1_1StatePool_1ac2f1c68bac4e45dc6417f6c5ee4d8f84" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::StatePool&lt; T &gt;::get_size</definition>
         <argsstring>() const</argsstring>
         <name>get_size</name>
         <briefdescription>
@@ -178,7 +178,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/state_pool.cpp" line="73" column="19" bodyfile="titan_cpplib/ahc/state_pool.cpp" bodystart="73" bodyend="75"/>
+        <location file="titan_cpplib/ahc/state_pool.cpp" line="73" column="13" bodyfile="titan_cpplib/ahc/state_pool.cpp" bodystart="73" bodyend="75"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -188,16 +188,16 @@
     <location file="titan_cpplib/ahc/state_pool.cpp" line="12" column="5" bodyfile="titan_cpplib/ahc/state_pool.cpp" bodystart="12" bodyend="76"/>
     <listofallmembers>
       <member refid="classtitan23_1_1StatePool_1a65ccf078558e51d45e58b5d8f7480a4d" prot="public" virt="non-virtual"><scope>titan23::StatePool</scope><name>clear</name></member>
-      <member refid="classtitan23_1_1StatePool_1aaca3084894128ce95de2847d645932f3" prot="public" virt="non-virtual"><scope>titan23::StatePool</scope><name>copy</name></member>
-      <member refid="classtitan23_1_1StatePool_1a11fba02e368793223f077879136bc7bd" prot="public" virt="non-virtual"><scope>titan23::StatePool</scope><name>del</name></member>
-      <member refid="classtitan23_1_1StatePool_1aca01bc5adac531b38ed8d4499eed2a29" prot="public" virt="non-virtual"><scope>titan23::StatePool</scope><name>gen</name></member>
-      <member refid="classtitan23_1_1StatePool_1a7ee5fabd129600983f6b8370ad5bc080" prot="public" virt="non-virtual"><scope>titan23::StatePool</scope><name>get</name></member>
-      <member refid="classtitan23_1_1StatePool_1abca797200e79f4f4dc2f8abe3398907f" prot="public" virt="non-virtual"><scope>titan23::StatePool</scope><name>get_size</name></member>
-      <member refid="classtitan23_1_1StatePool_1a0ca21823cf14acf5363c827baf0968e1" prot="public" virt="non-virtual"><scope>titan23::StatePool</scope><name>init</name></member>
+      <member refid="classtitan23_1_1StatePool_1a4019aa5eea3c78fc089b1495936059d9" prot="public" virt="non-virtual"><scope>titan23::StatePool</scope><name>copy</name></member>
+      <member refid="classtitan23_1_1StatePool_1a2871bc234478c7396ad87451e3603626" prot="public" virt="non-virtual"><scope>titan23::StatePool</scope><name>del</name></member>
+      <member refid="classtitan23_1_1StatePool_1af54bab0d6cd72a04184cee613bf24d6f" prot="public" virt="non-virtual"><scope>titan23::StatePool</scope><name>gen</name></member>
+      <member refid="classtitan23_1_1StatePool_1a7e491b65b00d03673649dc75ff850906" prot="public" virt="non-virtual"><scope>titan23::StatePool</scope><name>get</name></member>
+      <member refid="classtitan23_1_1StatePool_1ac2f1c68bac4e45dc6417f6c5ee4d8f84" prot="public" virt="non-virtual"><scope>titan23::StatePool</scope><name>get_size</name></member>
+      <member refid="classtitan23_1_1StatePool_1a8a32dae8f90ffb450c9dc4a028f3a05e" prot="public" virt="non-virtual"><scope>titan23::StatePool</scope><name>init</name></member>
       <member refid="classtitan23_1_1StatePool_1a58b0b5923fc18a67b0ea8d65654e8b00" prot="private" virt="non-virtual"><scope>titan23::StatePool</scope><name>pool</name></member>
       <member refid="classtitan23_1_1StatePool_1a0a47921b3b1b7dafe7bf34368f0e4861" prot="public" virt="non-virtual"><scope>titan23::StatePool</scope><name>StatePool</name></member>
-      <member refid="classtitan23_1_1StatePool_1a29cce118d1b0c93669aa74d8790bff6b" prot="public" virt="non-virtual"><scope>titan23::StatePool</scope><name>StatePool</name></member>
-      <member refid="classtitan23_1_1StatePool_1abd770eeb530b46f97ea808da25149bcf" prot="private" virt="non-virtual"><scope>titan23::StatePool</scope><name>unused_indx</name></member>
+      <member refid="classtitan23_1_1StatePool_1aeb0fa4cb0f500844cadeaf7211c7e8ab" prot="public" virt="non-virtual"><scope>titan23::StatePool</scope><name>StatePool</name></member>
+      <member refid="classtitan23_1_1StatePool_1a8186d82f8caf1600523c1497955a8fc4" prot="private" virt="non-virtual"><scope>titan23::StatePool</scope><name>unused_indx</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

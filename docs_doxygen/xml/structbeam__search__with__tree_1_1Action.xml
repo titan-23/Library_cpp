@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="21" column="5" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="21" bodyend="21"/>
+        <location file="titan_cpplib/ahc/beam_search_with_tree.cpp" line="14" column="5" bodyfile="titan_cpplib/ahc/beam_search_with_tree.cpp" bodystart="14" bodyend="14"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="friend">
@@ -37,14 +37,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="23" column="12" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="23" bodyend="25"/>
+        <location file="titan_cpplib/ahc/beam_search_with_tree.cpp" line="16" column="12" bodyfile="titan_cpplib/ahc/beam_search_with_tree.cpp" bodystart="16" bodyend="18"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" line="20" column="1" bodyfile="titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp" bodystart="20" bodyend="26"/>
+    <location file="titan_cpplib/ahc/beam_search_with_tree.cpp" line="13" column="1" bodyfile="titan_cpplib/ahc/beam_search_with_tree.cpp" bodystart="13" bodyend="19"/>
     <listofallmembers>
       <member refid="structbeam__search__with__tree_1_1Action_1a35c1d1939dce9448a48765667c7a21d1" prot="public" virt="non-virtual"><scope>beam_search_with_tree::Action</scope><name>Action</name></member>
       <member refid="structbeam__search__with__tree_1_1Action_1ade82c23a0d32fb8bcbe82cd1f5d0fbd1" prot="public" virt="non-virtual"><scope>beam_search_with_tree::Action</scope><name>operator&lt;&lt;</name></member>

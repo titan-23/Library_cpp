@@ -7,7 +7,7 @@
     <includes local="no">set</includes>
     <includes local="no">unordered_set</includes>
     <includes local="no">map</includes>
-    <includedby refid="beam__search__with__tree_8cpp" local="yes">titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp</includedby>
+    <includedby refid="beam__search__with__tree_8cpp" local="yes">titan_cpplib/ahc/beam_search_with_tree.cpp</includedby>
     <incdepgraph>
       <node id="6">
         <label>map</label>
@@ -41,7 +41,7 @@
     </incdepgraph>
     <invincdepgraph>
       <node id="2">
-        <label>titan_cpplib/ahc/beam_search/beam_search_with_tree.cpp</label>
+        <label>titan_cpplib/ahc/beam_search_with_tree.cpp</label>
         <link refid="beam__search__with__tree_8cpp_source"/>
       </node>
       <node id="1">
