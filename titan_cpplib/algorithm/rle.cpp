@@ -3,6 +3,7 @@ using namespace std;
 
 // rle
 namespace titan23 {
+
     template<typename T>
     vector<pair<T, int>> rle(vector<T> &a) {
         int n = (int)a.size();
@@ -19,4 +20,5 @@ namespace titan23 {
         }
         return res;
     }
+
 }  // namespace titan23
