@@ -10,6 +10,9 @@ using namespace std;
 //! 木上のビームサーチライブラリ
 namespace beam_search_with_tree {
 
+using ScoreType = long long;
+using HashType = unsigned long long;
+
 struct Action {
     Action() {}
 
@@ -17,10 +20,6 @@ struct Action {
         return os;
     }
 };
-
-
-using ScoreType = int;
-using HashType = unsigned long long;
 
 class State {
   private:
@@ -63,7 +62,7 @@ class State {
     }
 };
 
-struct Param {
+struct BeamParam {
     int MAX_TURN;
     int BEAM_WIDTH;
 };
@@ -76,21 +75,19 @@ struct SubState {
     TreeNodeID par;
     Action action;
     ScoreType score;
-    HashType hash;
 
     SubState() : par(-1) {}
-    SubState(TreeNodeID par, Action action, ScoreType score,  HashType hash) : par(par), action(action), score(score), hash(hash) {}
+    SubState(TreeNodeID par, const Action &action, ScoreType score) : par(par), action(action), score(score) {}
 };
 
 //! ビームサーチの過程を表す木のノード
 struct TreeNode {
     TreeNodeID par;
     Action pre_action;
-    bool is_valid;
     ScoreType score;
     vector<TreeNodeID> child;
 
-    TreeNode() : par(-1), is_valid(true) {}
+    TreeNode() : par(-1) {}
 
     bool is_leaf() const {
         return child.empty();
@@ -108,23 +105,20 @@ class BeamSearchWithTree {
     titan23::HashSet seen;
 
     void get_next_beam_recursion(State* state, TreeNodeID node, vector<SubStateID> &next_beam, int depth, const int beam_width) {
-        if (!treenode_pool.get(node)->is_valid) assert(false);
         if (depth == 0) { // 葉
-            assert(treenode_pool.get(node)->is_leaf());
             vector<Action> actions = state->get_actions();
             for (Action &action : actions) {
                 auto [score, hash] = state->try_op(action);
+                if (seen.contains_insert(hash)) continue;
                 SubStateID substate = substate_pool.gen();
                 substate_pool.get(substate)->par = node;
                 substate_pool.get(substate)->action = action;
                 substate_pool.get(substate)->score = score;
-                substate_pool.get(substate)->hash = hash;
                 next_beam.emplace_back(substate);
             }
             return;
         }
-        for (TreeNodeID nxt_node : treenode_pool.get(node)->child) {
-            if (!treenode_pool.get(nxt_node)->is_valid) continue;
+        for (const TreeNodeID nxt_node : treenode_pool.get(node)->child) {
             state->apply_op(treenode_pool.get(nxt_node)->pre_action);
             get_next_beam_recursion(state, nxt_node, next_beam, depth-1, beam_width);
             state->rollback(treenode_pool.get(nxt_node)->pre_action);
@@ -164,30 +158,20 @@ class BeamSearchWithTree {
         return node;
     }
 
-    //! 木の各ノードのis_validの更新と、必要なければdelする
-    bool update_tree(const TreeNodeID node, int depth) {
-        if (!treenode_pool.get(node)->is_valid) return false;
-        if (treenode_pool.get(node)->is_leaf()) {
-            if (depth == 0) return true;
-            treenode_pool.get(node)->is_valid = false;
-            return false;
-        }
+    //! 不要なNodeを削除し、木を更新する
+    bool update_tree(const TreeNodeID node, const int depth) {
+        if (treenode_pool.get(node)->is_leaf()) return depth == 0;
         int idx = 0;
         while (idx < treenode_pool.get(node)->child.size()) {
             TreeNodeID nxt_node = treenode_pool.get(node)->child[idx];
             if (!update_tree(nxt_node, depth-1)) {
-                treenode_pool.del(treenode_pool.get(node)->child[idx]);
+                treenode_pool.del(nxt_node);
                 treenode_pool.get(node)->child.erase(treenode_pool.get(node)->child.begin() + idx);
-            } else {
-                ++idx;
+                continue;
             }
+            ++idx;
         }
-        if (idx == 0) {
-            assert(treenode_pool.get(node)->child.empty());
-            treenode_pool.get(node)->is_valid = false;
-            return false;
-        }
-        return true;
+        return idx > 0;
     }
 
     //! node以上のパスを返す
@@ -207,7 +191,6 @@ class BeamSearchWithTree {
 
     //! node以下で、葉かつ最も評価値の良いノードを見るける / 葉はターン数からは判断していないので注意
     void get_best_node(TreeNodeID node) {
-        if (!treenode_pool.get(node)->is_valid) return;
         if (treenode_pool.get(node)->is_leaf()) {
             if (best_id == -1 || treenode_pool.get(node)->score < best_score) {
                 best_score = treenode_pool.get(node)->score;
@@ -237,11 +220,10 @@ class BeamSearchWithTree {
      * @param verbose 途中結果のスコアを標準エラー出力するかどうか
      * @return vector<Action>
      */
-    vector<Action> search(const Param &param, const bool verbose = false) {
+    vector<Action> search(const BeamParam &param, const bool verbose = false) {
         TreeNodeID root = treenode_pool.gen();
         treenode_pool.get(root)->child.clear();
         treenode_pool.get(root)->par = -1;
-        treenode_pool.get(root)->is_valid = true;
 
         State* state = new State;
         state->init();
@@ -277,11 +259,10 @@ class BeamSearchWithTree {
             for (int i = 0; i < beam_width; ++i) {
                 SubStateID s = next_beam[i];
                 TreeNodeID new_node = treenode_pool.gen();
-                treenode_pool.get(substate_pool.get(s)->par)->child.push_back(new_node);
+                treenode_pool.get(substate_pool.get(s)->par)->child.emplace_back(new_node);
                 treenode_pool.get(new_node)->par = substate_pool.get(s)->par;
                 treenode_pool.get(new_node)->pre_action = substate_pool.get(s)->action;
                 treenode_pool.get(new_node)->score = substate_pool.get(s)->score;
-                treenode_pool.get(new_node)->is_valid = true;
             }
             substate_pool.clear();
             update_tree(root, turn-now_turn+1);
@@ -294,12 +275,10 @@ class BeamSearchWithTree {
 };
 } // namespace beam_search
 
-int main() {
-    beam_search_with_tree::Param param;
-    param.MAX_TURN = 2500;
-    param.BEAM_WIDTH = 1000;
-
-    beam_search_with_tree::BeamSearchWithTree bs;
-    vector<beam_search_with_tree::Action> ans = bs.search(param, true);
-
-}
+// int main() {
+//     beam_search_with_tree::BeamParam param;
+//     param.MAX_TURN = 2500;
+//     param.BEAM_WIDTH = 1000;
+//     beam_search_with_tree::BeamSearchWithTree bs;
+//     vector<beam_search_with_tree::Action> ans = bs.search(param, true);
+// }
