@@ -1,4 +1,5 @@
-#include <bits/stdc++.h>
+#include <vector>
+#include <algorithm>
 
 #include "titan_cpplib/others/print.cpp"
 #include "titan_cpplib/algorithm/random.cpp"
