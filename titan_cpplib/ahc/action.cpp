@@ -3,30 +3,24 @@
 using namespace std;
 
 // Action
-namespace titan23 {
-
-namespace beam_search {
-
-    enum class Action { U, R, D, L };
-    ostream& operator<<(ostream& os, const Action &action) {
-        switch (action) {
-            case Action::U: os << 'U'; break;
-            case Action::R: os << 'R'; break;
-            case Action::D: os << 'D'; break;
-            case Action::L: os << 'L'; break;
-            default: assert(false);
-        }
-        return os;
+enum class Action { U, R, D, L };
+ostream& operator<<(ostream& os, const Action &action) {
+    switch (action) {
+        case Action::U: os << 'U'; break;
+        case Action::R: os << 'R'; break;
+        case Action::D: os << 'D'; break;
+        case Action::L: os << 'L'; break;
+        default: assert(false);
     }
-
-    Action get_rev_action(const Action &action) {
-        switch (action) {
-            case Action::U: return Action::D;
-            case Action::D: return Action::U;
-            case Action::R: return Action::L;
-            case Action::L: return Action::R;
-        }
-        assert(false);
-    }
+    return os;
 }
-}  // namespace titan23
+
+Action get_rev_action(const Action &action) {
+    switch (action) {
+        case Action::U: return Action::D;
+        case Action::D: return Action::U;
+        case Action::R: return Action::L;
+        case Action::L: return Action::R;
+    }
+    assert(false);
+}
