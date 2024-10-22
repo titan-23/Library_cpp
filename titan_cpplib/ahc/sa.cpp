@@ -31,28 +31,23 @@ namespace sa {
         ScoreType score;
         State() {}
 
-        void init() {
-        }
+        void init() {}
 
         ScoreType get_score() const { return score; }
         ScoreType get_true_score() const { return score; }
 
         // thresholdを超えたら、だめ
-        void modify(const ScoreType threshold) {
-        }
+        void modify(const ScoreType threshold) {}
 
-        void rollback() {
-        }
+        void rollback() {}
 
-        void advance() {
-        }
+        void advance() {}
 
-        void print() const {
-        }
+        void print() const {}
     };
 
     // TIME_LIMIT: ms
-    State sa_run(const double TIME_LIMIT) {
+    State sa_run(const double TIME_LIMIT, const bool verbose = false) {
         titan23::Timer sa_timer;
 
         // const double START_TEMP = param.start_temp;
@@ -86,15 +81,19 @@ namespace sa {
                 if (score < best_score) {
                     best_score = score;
                     best_ans = ans;
-                    cerr << "score=" << best_score << endl;
+                    if (verbose) {
+                        cerr << "Info: score=" << best_score << endl;
+                    }
                 }
             } else {
                 ans.score = changed.pre_score;
                 ans.rollback();
             }
         }
-        cerr << "upd=" << upd_cnt << endl;
-        cerr << "cnt=" << cnt << endl;
+        if (verbose) {
+            cerr << "Info: upd=" << upd_cnt << endl;
+            cerr << "Info: cnt=" << cnt << endl;
+        }
         return best_ans;
     }
 }

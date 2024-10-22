@@ -45,7 +45,7 @@ namespace titan23 {
             for (int i = 0; i < n; ++i) {
                 st.insert({D[i], i});
             }
-            for (const int &a: A) {
+            for (const int &a : A) {
                 auto it = st.begin();
                 int d = it->first, v = it->second;
                 st.erase(it);

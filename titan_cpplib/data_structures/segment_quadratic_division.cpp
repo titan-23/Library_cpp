@@ -66,7 +66,7 @@ struct SegmentQuadraticDivision {
     int k = indx / size;
     data[k][indx-k*size] = key;
     T v = e;
-    for (const T &a: data[k]) {
+    for (const T &a : data[k]) {
       v = op(v, a);
     }
     bucket_data[k] = v;

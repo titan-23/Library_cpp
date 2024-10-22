@@ -7,6 +7,11 @@ using namespace std;
 
 // print
 
+// color
+static const string cerr_red = "\033[31m";
+static const string cerr_green = "\033[32m";
+static const string cerr_none = "\033[m";
+
 // pair<K, V>
 template <typename K, typename V>
 ostream& operator<<(ostream& os, const pair<K, V>& p) {
@@ -51,44 +56,40 @@ ostream& operator<<(ostream& os, const vector<vector<T>>& a) {
 // set<T>
 template <typename T>
 ostream& operator<<(ostream& os, const set<T>& a) {
-  int n = (int)a.size();
-  os << "{";
-  for (const T &x: a) {
-    os << x;
-    if (x != *(--a.end())) {
-      os << ", ";
+    os << "{";
+    for (const T &x: a) {
+        os << x;
+        if (x != *(--a.end())) {
+            os << ", ";
+        }
     }
-  }
-  os << "}";
-  return os;
+    os << "}";
+    return os;
 }
 
 // unordered_set<T>
 template <typename T>
 ostream& operator<<(ostream& os, const unordered_set<T>& a) {
-  int n = (int)a.size();
-  os << "{";
-  for (const T &x: a) {
-    os << x;
-    os << ", ";
-  }
-  os << "}";
-  return os;
+    set<T> s;
+    for (const T &x : a) {
+        s.insert(x);
+    }
+    os << s;
+    return os;
 }
 
 // map<K, V>
 template <typename K, typename V>
 ostream& operator<<(ostream& os, const map<K, V>& mp) {
-  int n = (int)mp.size();
-  os << "{";
-  auto it = mp.begin();
-  while (it != mp.end()) {
-    os << it->first << ": " << it->second;
-    ++it;
-    if (it != mp.end()) {
-      os << ", ";
+    os << "{";
+    auto it = mp.begin();
+    while (it != mp.end()) {
+        os << it->first << ": " << it->second;
+        ++it;
+        if (it != mp.end()) {
+            os << ", ";
+        }
     }
-  }
-  os << "}";
-  return os;
+    os << "}";
+    return os;
 }

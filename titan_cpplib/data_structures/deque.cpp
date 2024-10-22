@@ -103,10 +103,10 @@ namespace titan23 {
         }
 
         bool contains(const T v) const {
-            for (const T &a: front) {
+            for (const T &a : front) {
                 if (a == v) return true;
             }
-            for (const T &a: back) {
+            for (const T &a : back) {
                 if (a == v) return true;
             }
             return false;

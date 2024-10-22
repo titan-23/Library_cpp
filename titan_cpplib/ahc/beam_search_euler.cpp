@@ -51,7 +51,7 @@ class State {
     //! ロールバックに必要な情報はすべてactionにメモしておく
     pair<ScoreType, HashType> try_op(Action &action) const {}
 
-    bool is_done() const { return this->get_score() == 0; }
+    bool is_done() const {}
 
     // TODO
     //! `action` をする
@@ -65,10 +65,6 @@ class State {
     //! 現状態から遷移可能な `Action` の `vector` を返す
     vector<Action> get_actions() const {}
 
-    ScoreType get_score() const {
-        return this->score;
-    }
-
     void print() const {}
 };
 
@@ -80,10 +76,10 @@ struct BeamParam {
 class BeamSearchWithTree {
     // ref: https://eijirou-kyopro.hatenablog.com/entry/2024/02/01/115639
 
-    const int PRE_ORDER = -1;
-    const int POST_ORDER = -2;
-
   private:
+    static const int PRE_ORDER = -1;
+    static const int POST_ORDER = -2;
+
     titan23::HashSet seen;
     using ActionIDType = int;
     ActionIDType ActionID;
@@ -100,7 +96,7 @@ class BeamSearchWithTree {
 
     vector<vector<int>> next_beam_data;
 
-    int get_next_beam(State* state, int turn) {
+    void get_next_beam(State* state, const int turn) {
         next_beam.clear();
         next_beam.reserve(tree.size() * 4); // TODO
         seen.clear();
@@ -113,10 +109,9 @@ class BeamSearchWithTree {
                 next_beam.emplace_back(PRE_ORDER, score, action, ActionID);
                 ActionID++;
             }
-            return 0;
+            return;
         }
 
-        int cnt = 0;
         int leaf_id = 0;
         for (int i = 0; i < tree.size(); ++i) {
             auto [dir_or_leaf_id, action, _] = tree[i];
@@ -138,7 +133,6 @@ class BeamSearchWithTree {
                 state->rollback(action);
             }
         }
-        return cnt;
     }
 
     //! 不要なNodeを削除し、木を更新する
@@ -218,11 +212,19 @@ class BeamSearchWithTree {
                 result.pop_back();
             }
         }
-        cerr << "Error: 解が見つかりませんでした" << endl;
+        cerr << cerr_red << "Error: 解が見つかりませんでした" << cerr_none << endl;
         assert(false);
     }
 
   public:
+
+    /**
+     * @brief ビームサーチをする
+     *
+     * @param param ターン数、ビーム幅を指定するパラメータ構造体
+     * @param verbose ログ出力するかどうか
+     * @return vector<Action>
+     */
     vector<Action> search(const BeamParam &param, const bool verbose = false) {
         ActionID = 0;
         State* state = new State;
@@ -238,7 +240,7 @@ class BeamSearchWithTree {
             get_next_beam(state, turn-now_turn);
 
             if (next_beam.empty()) {
-                cerr << "Error: 次の候補が見つかりませんでした" << endl;
+                cerr << cerr_red << "Error: 次の候補が見つかりませんでした" << cerr_none << endl;
                 assert(!next_beam.empty());
             }
 
@@ -255,7 +257,7 @@ class BeamSearchWithTree {
             });
             if (verbose) cerr << "Info: best_score = " << std::get<1>(bests) << endl;
             if (std::get<1>(bests) == 0) { // TODO 終了条件
-                cerr << "Info: find valid solution." << endl;
+                cerr << cerr_green << "Info: find valid solution." << cerr_none << endl;
                 get_result();
                 result.emplace_back(std::get<2>(bests));
                 return result;
@@ -264,7 +266,6 @@ class BeamSearchWithTree {
             // 探索木の更新
             if (turn != 0) {
                 if (next_beam_data.size() < next_beam.size()) {
-                    cerr << "resize" << endl;
                     next_beam_data.resize(next_beam.size());
                 }
                 for (int i = 0; i < beam_width; ++i) {
@@ -277,6 +278,7 @@ class BeamSearchWithTree {
         }
 
         // 答えを復元する
+        if (verbose) cerr << cerr_green << "Info: MAX_TURN finished." << cerr_none << endl;
         get_result();
         return result;
     }
