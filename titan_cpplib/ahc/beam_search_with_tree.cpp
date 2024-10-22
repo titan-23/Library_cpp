@@ -108,7 +108,7 @@ class BeamSearchWithTree {
     titan23::HashSet seen;
 
     void get_next_beam_recursion(State* state, TreeNodeID node, vector<SubStateID> &next_beam, int depth, const int beam_width) {
-        if (!treenode_pool.get(node)->is_valid) assert(false);
+        assert(treenode_pool.get(node)->is_valid);
         if (depth == 0) { // 葉
             assert(treenode_pool.get(node)->is_leaf());
             vector<Action> actions = state->get_actions();
@@ -124,7 +124,7 @@ class BeamSearchWithTree {
             return;
         }
         for (TreeNodeID nxt_node : treenode_pool.get(node)->child) {
-            if (!treenode_pool.get(nxt_node)->is_valid) continue;
+            assert(treenode_pool.get(nxt_node)->is_valid);
             state->apply_op(treenode_pool.get(nxt_node)->pre_action);
             get_next_beam_recursion(state, nxt_node, next_beam, depth-1, beam_width);
             state->rollback(treenode_pool.get(nxt_node)->pre_action);
