@@ -77,8 +77,8 @@ class BeamSearchWithTree {
     // ref: https://eijirou-kyopro.hatenablog.com/entry/2024/02/01/115639
 
   private:
-    static const int PRE_ORDER = -1;
-    static const int POST_ORDER = -2;
+    static constexpr const int PRE_ORDER = -1;
+    static constexpr const int POST_ORDER = -2;
 
     titan23::HashSet seen;
     using ActionIDType = int;
@@ -226,11 +226,13 @@ class BeamSearchWithTree {
      * @return vector<Action>
      */
     vector<Action> search(const BeamParam &param, const bool verbose = false) {
+        if (verbose) cerr << cerr_green << "Info: start search()" << cerr_none << endl;
+
         ActionID = 0;
         State* state = new State;
         state->init();
 
-        this->seen = titan23::HashSet(param.BEAM_WIDTH * 4);
+        this->seen = titan23::HashSet(param.BEAM_WIDTH * 4); // TODO
 
         int now_turn = 0;
         for (int turn = 0; turn < param.MAX_TURN; ++turn) {
@@ -255,7 +257,7 @@ class BeamSearchWithTree {
             tuple<int, ScoreType, Action, ActionIDType> bests = *min_element(next_beam.begin(), next_beam.begin() + beam_width, [&] (const tuple<int, ScoreType, Action, ActionIDType> &left, const tuple<int, ScoreType, Action, ActionIDType> &right) {
                 return std::get<1>(left) < std::get<1>(right);
             });
-            if (verbose) cerr << "Info: best_score = " << std::get<1>(bests) << endl;
+            if (verbose) cerr << "Info: \tbest_score = " << std::get<1>(bests) << endl;
             if (std::get<1>(bests) == 0) { // TODO 終了条件
                 cerr << cerr_green << "Info: find valid solution." << cerr_none << endl;
                 get_result();
