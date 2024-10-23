@@ -212,7 +212,7 @@ class BeamSearchWithTree {
                 result.pop_back();
             }
         }
-        cerr << cerr_red << "Error: 解が見つかりませんでした" << cerr_none << endl;
+        cerr << PRINT_RED << "Error: 解が見つかりませんでした" << PRINT_NONE << endl;
         assert(false);
     }
 
@@ -226,7 +226,7 @@ class BeamSearchWithTree {
      * @return vector<Action>
      */
     vector<Action> search(const BeamParam &param, const bool verbose = false) {
-        if (verbose) cerr << cerr_green << "Info: start search()" << cerr_none << endl;
+        if (verbose) cerr << PRINT_GREEN << "Info: start search()" << PRINT_NONE << endl;
 
         ActionID = 0;
         State* state = new State;
@@ -242,7 +242,7 @@ class BeamSearchWithTree {
             get_next_beam(state, turn-now_turn);
 
             if (next_beam.empty()) {
-                cerr << cerr_red << "Error: 次の候補が見つかりませんでした" << cerr_none << endl;
+                cerr << PRINT_RED << "Error: \t次の候補が見つかりませんでした" << PRINT_NONE << endl;
                 assert(!next_beam.empty());
             }
 
@@ -259,7 +259,7 @@ class BeamSearchWithTree {
             });
             if (verbose) cerr << "Info: \tbest_score = " << std::get<1>(bests) << endl;
             if (std::get<1>(bests) == 0) { // TODO 終了条件
-                cerr << cerr_green << "Info: find valid solution." << cerr_none << endl;
+                cerr << PRINT_GREEN << "Info: find valid solution." << PRINT_NONE << endl;
                 get_result();
                 result.emplace_back(std::get<2>(bests));
                 return result;
@@ -280,7 +280,7 @@ class BeamSearchWithTree {
         }
 
         // 答えを復元する
-        if (verbose) cerr << cerr_green << "Info: MAX_TURN finished." << cerr_none << endl;
+        if (verbose) cerr << PRINT_GREEN << "Info: MAX_TURN finished." << PRINT_NONE << endl;
         get_result();
         return result;
     }

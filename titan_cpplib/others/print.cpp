@@ -8,9 +8,9 @@ using namespace std;
 // print
 
 // color
-static const string cerr_red = "\033[31m";
-static const string cerr_green = "\033[32m";
-static const string cerr_none = "\033[m";
+static const string PRINT_RED = "\033[31m";
+static const string PRINT_GREEN = "\033[32m";
+static const string PRINT_NONE = "\033[m";
 
 // pair<K, V>
 template <typename K, typename V>
