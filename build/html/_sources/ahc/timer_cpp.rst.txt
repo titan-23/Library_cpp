@@ -5,7 +5,7 @@ timer
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib_expanded/ahc/timer.cpp
+.. literalinclude:: ./../../titan_cpplib/ahc/timer.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ timer
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib_expanded/ahc/timer.cpp
+.. doxygenfile:: titan_cpplib/ahc/timer.cpp

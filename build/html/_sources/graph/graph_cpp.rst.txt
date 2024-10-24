@@ -5,7 +5,7 @@ graph
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib_expanded/graph/graph.cpp
+.. literalinclude:: ./../../titan_cpplib/graph/graph.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ graph
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib_expanded/graph/graph.cpp
+.. doxygenfile:: titan_cpplib/graph/graph.cpp

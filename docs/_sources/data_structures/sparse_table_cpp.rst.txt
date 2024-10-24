@@ -5,7 +5,7 @@ sparse table
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib_expanded/data_structures/sparse_table.cpp
+.. literalinclude:: ./../../titan_cpplib/data_structures/sparse_table.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ sparse table
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib_expanded/data_structures/sparse_table.cpp
+.. doxygenfile:: titan_cpplib/data_structures/sparse_table.cpp

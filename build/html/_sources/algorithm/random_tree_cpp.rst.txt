@@ -5,7 +5,7 @@ random tree
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib_expanded/algorithm/random_tree.cpp
+.. literalinclude:: ./../../titan_cpplib/algorithm/random_tree.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ random tree
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib_expanded/algorithm/random_tree.cpp
+.. doxygenfile:: titan_cpplib/algorithm/random_tree.cpp

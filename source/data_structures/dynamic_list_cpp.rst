@@ -5,7 +5,7 @@ dynamic list
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib_expanded/data_structures/dynamic_list.cpp
+.. literalinclude:: ./../../titan_cpplib/data_structures/dynamic_list.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ dynamic list
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib_expanded/data_structures/dynamic_list.cpp
+.. doxygenfile:: titan_cpplib/data_structures/dynamic_list.cpp

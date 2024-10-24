@@ -5,7 +5,7 @@ beam search euler
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib_expanded/ahc/beam_search_euler.cpp
+.. literalinclude:: ./../../titan_cpplib/ahc/beam_search_euler.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ beam search euler
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib_expanded/ahc/beam_search_euler.cpp
+.. doxygenfile:: titan_cpplib/ahc/beam_search_euler.cpp

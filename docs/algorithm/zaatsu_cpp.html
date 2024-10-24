@@ -289,102 +289,54 @@
 <h1>zaatsu<a class="headerlink" href="#zaatsu" title="Link to this heading">¶</a></h1>
 <section id="id1">
 <h2>ソースコード<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c1">// #include &quot;titan_cpplib/algorithm/zaatsu.cpp&quot;</span>
-<span class="linenos"> 2</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
-<span class="linenos"> 3</span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
-<span class="linenos"> 4</span>
-<span class="linenos"> 5</span><span class="c1">// Zaatsu</span>
-<span class="linenos"> 6</span><span class="k">namespace</span><span class="w"> </span><span class="nn">titan23</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 7</span>
-<span class="linenos"> 8</span><span class="w">    </span><span class="cm">/**</span>
-<span class="linenos"> 9</span><span class="cm">     * @brief 座標圧縮管理クラス</span>
-<span class="linenos">10</span><span class="cm">     */</span>
-<span class="linenos">11</span><span class="w">    </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
-<span class="linenos">12</span><span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="nc">Zaatsu</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">13</span><span class="w">      </span><span class="k">private</span><span class="o">:</span>
-<span class="linenos">14</span><span class="w">        </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_to_origin</span><span class="p">;</span>
-<span class="linenos">15</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">_n</span><span class="p">;</span>
-<span class="linenos">16</span>
-<span class="linenos">17</span><span class="w">      </span><span class="k">public</span><span class="o">:</span>
-<span class="linenos">18</span><span class="w">        </span><span class="c1">//! `used_items` からなる集合を管理するインスタンスを生成</span>
-<span class="linenos">19</span><span class="w">        </span><span class="n">Zaatsu</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">used_items</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">_to_origin</span><span class="p">(</span><span class="n">used_items</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">20</span><span class="w">            </span><span class="n">sort</span><span class="p">(</span><span class="n">_to_origin</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">_to_origin</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
-<span class="linenos">21</span><span class="w">            </span><span class="n">_to_origin</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">unique</span><span class="p">(</span><span class="n">_to_origin</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">_to_origin</span><span class="p">.</span><span class="n">end</span><span class="p">()),</span><span class="w"> </span><span class="n">_to_origin</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
-<span class="linenos">22</span><span class="w">            </span><span class="n">_n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">_to_origin</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
-<span class="linenos">23</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">24</span>
-<span class="linenos">25</span><span class="w">        </span><span class="c1">//! 要素の種類数を返す(`max(to_zaatsu)`)</span>
-<span class="linenos">26</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">len</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">27</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">_n</span><span class="p">;</span>
-<span class="linenos">28</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">29</span>
-<span class="linenos">30</span><span class="w">        </span><span class="c1">//! `x` を座標圧縮する</span>
-<span class="linenos">31</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">to_zaatsu</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&amp;</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">32</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">lower_bound</span><span class="p">(</span><span class="n">_to_origin</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">_to_origin</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">_to_origin</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span>
-<span class="linenos">33</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">34</span>
-<span class="linenos">35</span><span class="w">        </span><span class="c1">//! 座標圧縮された `x` を戻す</span>
-<span class="linenos">36</span><span class="w">        </span><span class="n">T</span><span class="w"> </span><span class="n">to_origin</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&amp;</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">37</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">_to_origin</span><span class="p">[</span><span class="n">x</span><span class="p">];</span>
-<span class="linenos">38</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">39</span><span class="w">    </span><span class="p">};</span>
-<span class="linenos">40</span><span class="p">}</span><span class="w">  </span><span class="c1">// namespace titan23</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+<span class="linenos"> 2</span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span><span class="c1">// Zaatsu</span>
+<span class="linenos"> 5</span><span class="k">namespace</span><span class="w"> </span><span class="nn">titan23</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 6</span>
+<span class="linenos"> 7</span><span class="w">    </span><span class="cm">/**</span>
+<span class="linenos"> 8</span><span class="cm">     * @brief 座標圧縮管理クラス</span>
+<span class="linenos"> 9</span><span class="cm">     */</span>
+<span class="linenos">10</span><span class="w">    </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<span class="linenos">11</span><span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="nc">Zaatsu</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">12</span><span class="w">      </span><span class="k">private</span><span class="o">:</span>
+<span class="linenos">13</span><span class="w">        </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_to_origin</span><span class="p">;</span>
+<span class="linenos">14</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">_n</span><span class="p">;</span>
+<span class="linenos">15</span>
+<span class="linenos">16</span><span class="w">      </span><span class="k">public</span><span class="o">:</span>
+<span class="linenos">17</span><span class="w">        </span><span class="c1">//! `used_items` からなる集合を管理するインスタンスを生成</span>
+<span class="linenos">18</span><span class="w">        </span><span class="n">Zaatsu</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">used_items</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">_to_origin</span><span class="p">(</span><span class="n">used_items</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">19</span><span class="w">            </span><span class="n">sort</span><span class="p">(</span><span class="n">_to_origin</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">_to_origin</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+<span class="linenos">20</span><span class="w">            </span><span class="n">_to_origin</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">unique</span><span class="p">(</span><span class="n">_to_origin</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">_to_origin</span><span class="p">.</span><span class="n">end</span><span class="p">()),</span><span class="w"> </span><span class="n">_to_origin</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+<span class="linenos">21</span><span class="w">            </span><span class="n">_n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">_to_origin</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+<span class="linenos">22</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">23</span>
+<span class="linenos">24</span><span class="w">        </span><span class="c1">//! 要素の種類数を返す(`max(to_zaatsu)`)</span>
+<span class="linenos">25</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">len</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">26</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">_n</span><span class="p">;</span>
+<span class="linenos">27</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">28</span>
+<span class="linenos">29</span><span class="w">        </span><span class="c1">//! `x` を座標圧縮する</span>
+<span class="linenos">30</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">to_zaatsu</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&amp;</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">31</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">lower_bound</span><span class="p">(</span><span class="n">_to_origin</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">_to_origin</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">_to_origin</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span>
+<span class="linenos">32</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">33</span>
+<span class="linenos">34</span><span class="w">        </span><span class="c1">//! 座標圧縮された `x` を戻す</span>
+<span class="linenos">35</span><span class="w">        </span><span class="n">T</span><span class="w"> </span><span class="n">to_origin</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&amp;</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">36</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">_to_origin</span><span class="p">[</span><span class="n">x</span><span class="p">];</span>
+<span class="linenos">37</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">38</span><span class="w">    </span><span class="p">};</span>
+<span class="linenos">39</span><span class="p">}</span><span class="w">  </span><span class="c1">// namespace titan23</span>
 </pre></div>
 </div>
 </section>
 <section id="id2">
 <h2>仕様<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
-<dl class="cpp type">
-<dt class="sig sig-object cpp" id="_CPPv47titan23">
-<span id="_CPPv37titan23"></span><span id="_CPPv27titan23"></span><span id="titan23"></span><span class="target" id="namespacetitan23"></span><span class="k"><span class="pre">namespace</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">titan23</span></span></span><br /></dt>
-<dd><dl class="cpp class">
-<dt class="sig sig-object cpp" id="_CPPv4I0EN7titan236ZaatsuE">
-<span id="_CPPv3I0EN7titan236ZaatsuE"></span><span id="_CPPv2I0EN7titan236ZaatsuE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classtitan23_1_1Zaatsu"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Zaatsu</span></span></span><a class="headerlink" href="#_CPPv4I0EN7titan236ZaatsuE" title="Link to this definition">¶</a><br /></dt>
-<dd><p>座標圧縮管理クラス </p>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan236Zaatsu6ZaatsuER6vectorI1TE">
-<span id="_CPPv3N7titan236Zaatsu6ZaatsuER6vectorI1TE"></span><span id="_CPPv2N7titan236Zaatsu6ZaatsuER6vectorI1TE"></span><span id="titan23::Zaatsu::Zaatsu__vector:T:R"></span><span class="target" id="classtitan23_1_1Zaatsu_1a6f2d95a2e3911e01b264a99b4083b93d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Zaatsu</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN7titan236ZaatsuE" title="titan23::Zaatsu::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">used_items</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan236Zaatsu6ZaatsuER6vectorI1TE" title="Link to this definition">¶</a><br /></dt>
-<dd><p><code class="docutils literal notranslate"><span class="pre">used_items</span></code> からなる集合を管理するインスタンスを生成 </p>
-</dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4NK7titan236Zaatsu3lenEv">
-<span id="_CPPv3NK7titan236Zaatsu3lenEv"></span><span id="_CPPv2NK7titan236Zaatsu3lenEv"></span><span id="titan23::Zaatsu::lenC"></span><span class="target" id="classtitan23_1_1Zaatsu_1ae2eeb830f7e9a40a6b8a7fc368bfeaa2"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">len</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK7titan236Zaatsu3lenEv" title="Link to this definition">¶</a><br /></dt>
-<dd><p>要素の種類数を返す(<code class="docutils literal notranslate"><span class="pre">max(to_zaatsu)</span></code>) </p>
-</dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4NK7titan236Zaatsu9to_zaatsuERK1T">
-<span id="_CPPv3NK7titan236Zaatsu9to_zaatsuERK1T"></span><span id="_CPPv2NK7titan236Zaatsu9to_zaatsuERK1T"></span><span id="titan23::Zaatsu::to_zaatsu__TCRC"></span><span class="target" id="classtitan23_1_1Zaatsu_1aef4f09458e4d96ad4c56c8d379e7cf15"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">to_zaatsu</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN7titan236ZaatsuE" title="titan23::Zaatsu::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">x</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK7titan236Zaatsu9to_zaatsuERK1T" title="Link to this definition">¶</a><br /></dt>
-<dd><p><code class="docutils literal notranslate"><span class="pre">x</span></code> を座標圧縮する </p>
-</dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4NK7titan236Zaatsu9to_originERKi">
-<span id="_CPPv3NK7titan236Zaatsu9to_originERKi"></span><span id="_CPPv2NK7titan236Zaatsu9to_originERKi"></span><span id="titan23::Zaatsu::to_origin__iCRC"></span><span class="target" id="classtitan23_1_1Zaatsu_1a78c5cf1c779aa7407a1b1819ff3cb3bb"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN7titan236ZaatsuE" title="titan23::Zaatsu::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">to_origin</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">x</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK7titan236Zaatsu9to_originERKi" title="Link to this definition">¶</a><br /></dt>
-<dd><p>座標圧縮された <code class="docutils literal notranslate"><span class="pre">x</span></code> を戻す </p>
-</dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenfile: Cannot find file “titan_cpplib/algorithm/zaatsu.cpp </p>
 </div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan236Zaatsu10_to_originE">
-<span id="_CPPv3N7titan236Zaatsu10_to_originE"></span><span id="_CPPv2N7titan236Zaatsu10_to_originE"></span><span id="titan23::Zaatsu::_to_origin__vector:T:"></span><span class="target" id="classtitan23_1_1Zaatsu_1a81dfc2394c13283f510823e071f94903"></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN7titan236ZaatsuE" title="titan23::Zaatsu::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_to_origin</span></span></span><a class="headerlink" href="#_CPPv4N7titan236Zaatsu10_to_originE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan236Zaatsu2_nE">
-<span id="_CPPv3N7titan236Zaatsu2_nE"></span><span id="_CPPv2N7titan236Zaatsu2_nE"></span><span id="titan23::Zaatsu::_n__i"></span><span class="target" id="classtitan23_1_1Zaatsu_1a04a5f195ce43ce165feb98501b7dade7"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_n</span></span></span><a class="headerlink" href="#_CPPv4N7titan236Zaatsu2_nE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-</dd></dl>
-
-</dd></dl>
-
 </section>
 </section>
 
@@ -427,21 +379,7 @@
             <ul>
 <li><a class="reference internal" href="#">zaatsu</a><ul>
 <li><a class="reference internal" href="#id1">ソースコード</a></li>
-<li><a class="reference internal" href="#id2">仕様</a><ul>
-<li><a class="reference internal" href="#_CPPv47titan23"><code class="docutils literal notranslate"><span class="pre">titan23</span></code></a><ul>
-<li><a class="reference internal" href="#_CPPv4I0EN7titan236ZaatsuE"><code class="docutils literal notranslate"><span class="pre">titan23::Zaatsu</span></code></a><ul>
-<li><a class="reference internal" href="#_CPPv4N7titan236Zaatsu6ZaatsuER6vectorI1TE"><code class="docutils literal notranslate"><span class="pre">titan23::Zaatsu::Zaatsu()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4NK7titan236Zaatsu3lenEv"><code class="docutils literal notranslate"><span class="pre">titan23::Zaatsu::len()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4NK7titan236Zaatsu9to_zaatsuERK1T"><code class="docutils literal notranslate"><span class="pre">titan23::Zaatsu::to_zaatsu()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4NK7titan236Zaatsu9to_originERKi"><code class="docutils literal notranslate"><span class="pre">titan23::Zaatsu::to_origin()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan236Zaatsu10_to_originE"><code class="docutils literal notranslate"><span class="pre">titan23::Zaatsu::_to_origin</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan236Zaatsu2_nE"><code class="docutils literal notranslate"><span class="pre">titan23::Zaatsu::_n</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a class="reference internal" href="#id2">仕様</a></li>
 </ul>
 </li>
 </ul>

@@ -289,179 +289,79 @@
 <h1>persistent stack<a class="headerlink" href="#persistent-stack" title="Link to this heading">¶</a></h1>
 <section id="id1">
 <h2>ソースコード<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c1">// #include &quot;titan_cpplib/data_structures/persistent_stack.cpp&quot;</span>
-<span class="linenos"> 2</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
-<span class="linenos"> 3</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cassert&gt;</span>
-<span class="linenos"> 4</span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
-<span class="linenos"> 5</span>
-<span class="linenos"> 6</span><span class="c1">// PersistentStack</span>
-<span class="linenos"> 7</span><span class="k">namespace</span><span class="w"> </span><span class="nn">titan23</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 8</span>
-<span class="linenos"> 9</span><span class="w">  </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
-<span class="linenos">10</span><span class="w">  </span><span class="k">class</span><span class="w"> </span><span class="nc">PersistentStack</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">11</span><span class="w">  </span><span class="k">private</span><span class="o">:</span>
-<span class="linenos">12</span><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">Node</span><span class="p">;</span>
-<span class="linenos">13</span><span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">NodePtr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Node</span><span class="o">*</span><span class="p">;</span>
-<span class="linenos">14</span><span class="w">    </span><span class="n">NodePtr</span><span class="w"> </span><span class="n">node</span><span class="p">;</span>
-<span class="linenos">15</span>
-<span class="linenos">16</span><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">Node</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">17</span><span class="w">      </span><span class="n">T</span><span class="w"> </span><span class="n">key</span><span class="p">;</span>
-<span class="linenos">18</span><span class="w">      </span><span class="n">Node</span><span class="o">*</span><span class="w"> </span><span class="n">prev</span><span class="p">;</span>
-<span class="linenos">19</span><span class="w">      </span><span class="n">Node</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
-<span class="linenos">20</span><span class="w">      </span><span class="n">Node</span><span class="p">(</span><span class="n">T</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">key</span><span class="p">(</span><span class="n">key</span><span class="p">),</span><span class="w"> </span><span class="n">prev</span><span class="p">(</span><span class="k">nullptr</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
-<span class="linenos">21</span><span class="w">      </span><span class="n">Node</span><span class="p">(</span><span class="n">T</span><span class="w"> </span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">NodePtr</span><span class="w"> </span><span class="n">prev</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">key</span><span class="p">(</span><span class="n">key</span><span class="p">),</span><span class="w"> </span><span class="n">prev</span><span class="p">(</span><span class="n">prev</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
-<span class="linenos">22</span><span class="w">    </span><span class="p">};</span>
-<span class="linenos">23</span>
-<span class="linenos">24</span><span class="w">    </span><span class="n">PersistentStack</span><span class="p">(</span><span class="n">NodePtr</span><span class="w"> </span><span class="n">new_node</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">node</span><span class="p">(</span><span class="n">new_node</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
-<span class="linenos">25</span>
-<span class="linenos">26</span><span class="w">  </span><span class="k">public</span><span class="o">:</span>
-<span class="linenos">27</span><span class="w">    </span><span class="n">PersistentStack</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">node</span><span class="p">(</span><span class="k">nullptr</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
-<span class="linenos">28</span><span class="w">    </span>
-<span class="linenos">29</span><span class="w">    </span><span class="n">T</span><span class="w"> </span><span class="n">top</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">30</span><span class="w">      </span><span class="n">assert</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
-<span class="linenos">31</span><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">node</span><span class="o">-&gt;</span><span class="n">key</span><span class="p">;</span>
-<span class="linenos">32</span><span class="w">    </span><span class="p">}</span>
-<span class="linenos">33</span>
-<span class="linenos">34</span><span class="w">    </span><span class="n">T</span><span class="w"> </span><span class="n">pop</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">35</span><span class="w">      </span><span class="n">T</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">node</span><span class="o">-&gt;</span><span class="n">key</span><span class="p">;</span>
-<span class="linenos">36</span><span class="w">      </span><span class="n">assert</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">prev</span><span class="p">);</span>
-<span class="linenos">37</span><span class="w">      </span><span class="n">node</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">node</span><span class="o">-&gt;</span><span class="n">prev</span><span class="p">;</span>
-<span class="linenos">38</span><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">res</span><span class="p">;</span>
-<span class="linenos">39</span><span class="w">    </span><span class="p">}</span>
-<span class="linenos">40</span>
-<span class="linenos">41</span><span class="w">    </span><span class="n">PersistentStack</span><span class="w"> </span><span class="n">copy</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">42</span><span class="w">      </span><span class="n">NodePtr</span><span class="w"> </span><span class="n">new_node</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Node</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">node</span><span class="o">-&gt;</span><span class="n">prev</span><span class="p">))</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span>
-<span class="linenos">43</span><span class="w">      </span><span class="n">PersistentStack</span><span class="w"> </span><span class="nf">s</span><span class="p">(</span><span class="n">new_node</span><span class="p">);</span>
-<span class="linenos">44</span><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">s</span><span class="p">;</span>
-<span class="linenos">45</span><span class="w">    </span><span class="p">}</span>
-<span class="linenos">46</span>
-<span class="linenos">47</span><span class="w">    </span><span class="n">PersistentStack</span><span class="w"> </span><span class="n">push</span><span class="p">(</span><span class="n">T</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">48</span><span class="w">      </span><span class="n">NodePtr</span><span class="w"> </span><span class="n">new_node</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Node</span><span class="p">(</span><span class="n">key</span><span class="p">);</span>
-<span class="linenos">49</span><span class="w">      </span><span class="n">new_node</span><span class="o">-&gt;</span><span class="n">prev</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">node</span><span class="p">;</span>
-<span class="linenos">50</span><span class="w">      </span><span class="n">PersistentStack</span><span class="w"> </span><span class="nf">s</span><span class="p">(</span><span class="n">new_node</span><span class="p">);</span>
-<span class="linenos">51</span><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">s</span><span class="p">;</span>
-<span class="linenos">52</span><span class="w">    </span><span class="p">}</span>
-<span class="linenos">53</span>
-<span class="linenos">54</span><span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">tovector</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">55</span><span class="w">      </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
-<span class="linenos">56</span><span class="w">      </span><span class="n">NodePtr</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">node</span><span class="p">;</span>
-<span class="linenos">57</span><span class="w">      </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">58</span><span class="w">        </span><span class="n">a</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">s</span><span class="o">-&gt;</span><span class="n">key</span><span class="p">);</span>
-<span class="linenos">59</span><span class="w">        </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="o">-&gt;</span><span class="n">prev</span><span class="p">;;</span>
-<span class="linenos">60</span><span class="w">      </span><span class="p">}</span>
-<span class="linenos">61</span><span class="w">      </span><span class="n">reverse</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
-<span class="linenos">62</span><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
-<span class="linenos">63</span><span class="w">    </span><span class="p">}</span>
-<span class="linenos">64</span><span class="w">  </span><span class="p">};</span>
-<span class="linenos">65</span><span class="p">}</span><span class="w">  </span><span class="c1">// namespase titan23</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+<span class="linenos"> 2</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cassert&gt;</span>
+<span class="linenos"> 3</span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="c1">// PersistentStack</span>
+<span class="linenos"> 6</span><span class="k">namespace</span><span class="w"> </span><span class="nn">titan23</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 7</span>
+<span class="linenos"> 8</span><span class="w">  </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<span class="linenos"> 9</span><span class="w">  </span><span class="k">class</span><span class="w"> </span><span class="nc">PersistentStack</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">10</span><span class="w">  </span><span class="k">private</span><span class="o">:</span>
+<span class="linenos">11</span><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">Node</span><span class="p">;</span>
+<span class="linenos">12</span><span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">NodePtr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Node</span><span class="o">*</span><span class="p">;</span>
+<span class="linenos">13</span><span class="w">    </span><span class="n">NodePtr</span><span class="w"> </span><span class="n">node</span><span class="p">;</span>
+<span class="linenos">14</span>
+<span class="linenos">15</span><span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">Node</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">16</span><span class="w">      </span><span class="n">T</span><span class="w"> </span><span class="n">key</span><span class="p">;</span>
+<span class="linenos">17</span><span class="w">      </span><span class="n">Node</span><span class="o">*</span><span class="w"> </span><span class="n">prev</span><span class="p">;</span>
+<span class="linenos">18</span><span class="w">      </span><span class="n">Node</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">19</span><span class="w">      </span><span class="n">Node</span><span class="p">(</span><span class="n">T</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">key</span><span class="p">(</span><span class="n">key</span><span class="p">),</span><span class="w"> </span><span class="n">prev</span><span class="p">(</span><span class="k">nullptr</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">20</span><span class="w">      </span><span class="n">Node</span><span class="p">(</span><span class="n">T</span><span class="w"> </span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">NodePtr</span><span class="w"> </span><span class="n">prev</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">key</span><span class="p">(</span><span class="n">key</span><span class="p">),</span><span class="w"> </span><span class="n">prev</span><span class="p">(</span><span class="n">prev</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">21</span><span class="w">    </span><span class="p">};</span>
+<span class="linenos">22</span>
+<span class="linenos">23</span><span class="w">    </span><span class="n">PersistentStack</span><span class="p">(</span><span class="n">NodePtr</span><span class="w"> </span><span class="n">new_node</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">node</span><span class="p">(</span><span class="n">new_node</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">24</span>
+<span class="linenos">25</span><span class="w">  </span><span class="k">public</span><span class="o">:</span>
+<span class="linenos">26</span><span class="w">    </span><span class="n">PersistentStack</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">node</span><span class="p">(</span><span class="k">nullptr</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">27</span><span class="w">    </span>
+<span class="linenos">28</span><span class="w">    </span><span class="n">T</span><span class="w"> </span><span class="n">top</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">29</span><span class="w">      </span><span class="n">assert</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+<span class="linenos">30</span><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">node</span><span class="o">-&gt;</span><span class="n">key</span><span class="p">;</span>
+<span class="linenos">31</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">32</span>
+<span class="linenos">33</span><span class="w">    </span><span class="n">T</span><span class="w"> </span><span class="n">pop</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">34</span><span class="w">      </span><span class="n">T</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">node</span><span class="o">-&gt;</span><span class="n">key</span><span class="p">;</span>
+<span class="linenos">35</span><span class="w">      </span><span class="n">assert</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">prev</span><span class="p">);</span>
+<span class="linenos">36</span><span class="w">      </span><span class="n">node</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">node</span><span class="o">-&gt;</span><span class="n">prev</span><span class="p">;</span>
+<span class="linenos">37</span><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">res</span><span class="p">;</span>
+<span class="linenos">38</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">39</span>
+<span class="linenos">40</span><span class="w">    </span><span class="n">PersistentStack</span><span class="w"> </span><span class="n">copy</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">41</span><span class="w">      </span><span class="n">NodePtr</span><span class="w"> </span><span class="n">new_node</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Node</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">node</span><span class="o">-&gt;</span><span class="n">prev</span><span class="p">))</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span>
+<span class="linenos">42</span><span class="w">      </span><span class="n">PersistentStack</span><span class="w"> </span><span class="nf">s</span><span class="p">(</span><span class="n">new_node</span><span class="p">);</span>
+<span class="linenos">43</span><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">s</span><span class="p">;</span>
+<span class="linenos">44</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">45</span>
+<span class="linenos">46</span><span class="w">    </span><span class="n">PersistentStack</span><span class="w"> </span><span class="n">push</span><span class="p">(</span><span class="n">T</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">47</span><span class="w">      </span><span class="n">NodePtr</span><span class="w"> </span><span class="n">new_node</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Node</span><span class="p">(</span><span class="n">key</span><span class="p">);</span>
+<span class="linenos">48</span><span class="w">      </span><span class="n">new_node</span><span class="o">-&gt;</span><span class="n">prev</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">node</span><span class="p">;</span>
+<span class="linenos">49</span><span class="w">      </span><span class="n">PersistentStack</span><span class="w"> </span><span class="nf">s</span><span class="p">(</span><span class="n">new_node</span><span class="p">);</span>
+<span class="linenos">50</span><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">s</span><span class="p">;</span>
+<span class="linenos">51</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">52</span>
+<span class="linenos">53</span><span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">tovector</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">54</span><span class="w">      </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
+<span class="linenos">55</span><span class="w">      </span><span class="n">NodePtr</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">node</span><span class="p">;</span>
+<span class="linenos">56</span><span class="w">      </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">57</span><span class="w">        </span><span class="n">a</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">s</span><span class="o">-&gt;</span><span class="n">key</span><span class="p">);</span>
+<span class="linenos">58</span><span class="w">        </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="o">-&gt;</span><span class="n">prev</span><span class="p">;;</span>
+<span class="linenos">59</span><span class="w">      </span><span class="p">}</span>
+<span class="linenos">60</span><span class="w">      </span><span class="n">reverse</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+<span class="linenos">61</span><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
+<span class="linenos">62</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">63</span><span class="w">  </span><span class="p">};</span>
+<span class="linenos">64</span><span class="p">}</span><span class="w">  </span><span class="c1">// namespase titan23</span>
 </pre></div>
 </div>
 </section>
 <section id="id2">
 <h2>仕様<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
-<dl class="cpp type">
-<dt class="sig sig-object cpp" id="_CPPv47titan23">
-<span id="_CPPv37titan23"></span><span id="_CPPv27titan23"></span><span id="titan23"></span><span class="target" id="namespacetitan23"></span><span class="k"><span class="pre">namespace</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">titan23</span></span></span><br /></dt>
-<dd><dl class="cpp class">
-<dt class="sig sig-object cpp" id="_CPPv4I0EN7titan2315PersistentStackE">
-<span id="_CPPv3I0EN7titan2315PersistentStackE"></span><span id="_CPPv2I0EN7titan2315PersistentStackE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classtitan23_1_1PersistentStack"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PersistentStack</span></span></span><a class="headerlink" href="#_CPPv4I0EN7titan2315PersistentStackE" title="Link to this definition">¶</a><br /></dt>
-<dd><div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan2315PersistentStack15PersistentStackEv">
-<span id="_CPPv3N7titan2315PersistentStack15PersistentStackEv"></span><span id="_CPPv2N7titan2315PersistentStack15PersistentStackEv"></span><span id="titan23::PersistentStack::PersistentStack"></span><span class="target" id="classtitan23_1_1PersistentStack_1a13b86517ed60d089ba0253dea5192019"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PersistentStack</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2315PersistentStack15PersistentStackEv" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4NK7titan2315PersistentStack3topEv">
-<span id="_CPPv3NK7titan2315PersistentStack3topEv"></span><span id="_CPPv2NK7titan2315PersistentStack3topEv"></span><span id="titan23::PersistentStack::topC"></span><span class="target" id="classtitan23_1_1PersistentStack_1ac8686c3d845d41ee95de7039032a49a2"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN7titan2315PersistentStackE" title="titan23::PersistentStack::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">top</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK7titan2315PersistentStack3topEv" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan2315PersistentStack3popEv">
-<span id="_CPPv3N7titan2315PersistentStack3popEv"></span><span id="_CPPv2N7titan2315PersistentStack3popEv"></span><span id="titan23::PersistentStack::pop"></span><span class="target" id="classtitan23_1_1PersistentStack_1af77b5b087306bcc87c33ce82a1dd70e0"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN7titan2315PersistentStackE" title="titan23::PersistentStack::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pop</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2315PersistentStack3popEv" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4NK7titan2315PersistentStack4copyEv">
-<span id="_CPPv3NK7titan2315PersistentStack4copyEv"></span><span id="_CPPv2NK7titan2315PersistentStack4copyEv"></span><span id="titan23::PersistentStack::copyC"></span><span class="target" id="classtitan23_1_1PersistentStack_1ac77e580b7f43504c7678b0c2072a5ed2"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN7titan2315PersistentStackE" title="titan23::PersistentStack"><span class="n"><span class="pre">PersistentStack</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">copy</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK7titan2315PersistentStack4copyEv" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan2315PersistentStack4pushE1T">
-<span id="_CPPv3N7titan2315PersistentStack4pushE1T"></span><span id="_CPPv2N7titan2315PersistentStack4pushE1T"></span><span id="titan23::PersistentStack::push__T"></span><span class="target" id="classtitan23_1_1PersistentStack_1a5cff809ff652c8516e96461a3a6cc0ff"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN7titan2315PersistentStackE" title="titan23::PersistentStack"><span class="n"><span class="pre">PersistentStack</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">push</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0EN7titan2315PersistentStackE" title="titan23::PersistentStack::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">key</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2315PersistentStack4pushE1T" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4NK7titan2315PersistentStack8tovectorEv">
-<span id="_CPPv3NK7titan2315PersistentStack8tovectorEv"></span><span id="_CPPv2NK7titan2315PersistentStack8tovectorEv"></span><span id="titan23::PersistentStack::tovectorC"></span><span class="target" id="classtitan23_1_1PersistentStack_1a8e8b0ce9dd5e543863dae53e5eb42602"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN7titan2315PersistentStackE" title="titan23::PersistentStack::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tovector</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK7titan2315PersistentStack8tovectorEv" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenfile: Cannot find file “titan_cpplib/data_structures/persistent_stack.cpp </p>
 </div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-types">Private Types</p>
-<dl class="cpp type">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan2315PersistentStack7NodePtrE">
-<span id="_CPPv3N7titan2315PersistentStack7NodePtrE"></span><span id="_CPPv2N7titan2315PersistentStack7NodePtrE"></span><span class="target" id="classtitan23_1_1PersistentStack_1a62e5edee51ebf241915d78ae2fed5d3b"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">NodePtr</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N7titan2315PersistentStack4NodeE" title="titan23::PersistentStack::Node"><span class="n"><span class="pre">Node</span></span></a><span class="p"><span class="pre">*</span></span><a class="headerlink" href="#_CPPv4N7titan2315PersistentStack7NodePtrE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan2315PersistentStack15PersistentStackE7NodePtr">
-<span id="_CPPv3N7titan2315PersistentStack15PersistentStackE7NodePtr"></span><span id="_CPPv2N7titan2315PersistentStack15PersistentStackE7NodePtr"></span><span id="titan23::PersistentStack::PersistentStack__NodePtr"></span><span class="target" id="classtitan23_1_1PersistentStack_1aac6ab6144c01b3a8ae3129981b3aeffc"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PersistentStack</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N7titan2315PersistentStack7NodePtrE" title="titan23::PersistentStack::NodePtr"><span class="n"><span class="pre">NodePtr</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">new_node</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2315PersistentStack15PersistentStackE7NodePtr" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan2315PersistentStack4nodeE">
-<span id="_CPPv3N7titan2315PersistentStack4nodeE"></span><span id="_CPPv2N7titan2315PersistentStack4nodeE"></span><span id="titan23::PersistentStack::node__NodePtr"></span><span class="target" id="classtitan23_1_1PersistentStack_1a4f4c0dbd1d242edfff09f4c12c2a1f1d"></span><a class="reference internal" href="#_CPPv4N7titan2315PersistentStack7NodePtrE" title="titan23::PersistentStack::NodePtr"><span class="n"><span class="pre">NodePtr</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">node</span></span></span><a class="headerlink" href="#_CPPv4N7titan2315PersistentStack4nodeE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-<dl class="cpp struct">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan2315PersistentStack4NodeE">
-<span id="_CPPv3N7titan2315PersistentStack4NodeE"></span><span id="_CPPv2N7titan2315PersistentStack4NodeE"></span><span id="titan23::PersistentStack::Node"></span><span class="target" id="structtitan23_1_1PersistentStack_1_1Node"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Node</span></span></span><a class="headerlink" href="#_CPPv4N7titan2315PersistentStack4NodeE" title="Link to this definition">¶</a><br /></dt>
-<dd><div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan2315PersistentStack4Node4NodeEv">
-<span id="_CPPv3N7titan2315PersistentStack4Node4NodeEv"></span><span id="_CPPv2N7titan2315PersistentStack4Node4NodeEv"></span><span id="titan23::PersistentStack::Node::Node"></span><span class="target" id="structtitan23_1_1PersistentStack_1_1Node_1ac9ccf25bb4e0b63a7ab8e44cb7c842b7"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Node</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2315PersistentStack4Node4NodeEv" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan2315PersistentStack4Node4NodeE1T">
-<span id="_CPPv3N7titan2315PersistentStack4Node4NodeE1T"></span><span id="_CPPv2N7titan2315PersistentStack4Node4NodeE1T"></span><span id="titan23::PersistentStack::Node::Node__T"></span><span class="target" id="structtitan23_1_1PersistentStack_1_1Node_1a0a329ae4b9fcdf781fcaa32b5b8c55a1"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Node</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0EN7titan2315PersistentStackE" title="titan23::PersistentStack::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">key</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2315PersistentStack4Node4NodeE1T" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan2315PersistentStack4Node4NodeE1T7NodePtr">
-<span id="_CPPv3N7titan2315PersistentStack4Node4NodeE1T7NodePtr"></span><span id="_CPPv2N7titan2315PersistentStack4Node4NodeE1T7NodePtr"></span><span id="titan23::PersistentStack::Node::Node__T.NodePtr"></span><span class="target" id="structtitan23_1_1PersistentStack_1_1Node_1a62076e16a88e3b8b0b4ef091ea8ed3d2"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Node</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0EN7titan2315PersistentStackE" title="titan23::PersistentStack::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">key</span></span>, <a class="reference internal" href="#_CPPv4N7titan2315PersistentStack7NodePtrE" title="titan23::PersistentStack::NodePtr"><span class="n"><span class="pre">NodePtr</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">prev</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2315PersistentStack4Node4NodeE1T7NodePtr" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan2315PersistentStack4Node3keyE">
-<span id="_CPPv3N7titan2315PersistentStack4Node3keyE"></span><span id="_CPPv2N7titan2315PersistentStack4Node3keyE"></span><span id="titan23::PersistentStack::Node::key__T"></span><span class="target" id="structtitan23_1_1PersistentStack_1_1Node_1a72b7841633b64b6f3d3805c8178619f8"></span><a class="reference internal" href="#_CPPv4I0EN7titan2315PersistentStackE" title="titan23::PersistentStack::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">key</span></span></span><a class="headerlink" href="#_CPPv4N7titan2315PersistentStack4Node3keyE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan2315PersistentStack4Node4prevE">
-<span id="_CPPv3N7titan2315PersistentStack4Node4prevE"></span><span id="_CPPv2N7titan2315PersistentStack4Node4prevE"></span><span id="titan23::PersistentStack::Node::prev__NodeP"></span><span class="target" id="structtitan23_1_1PersistentStack_1_1Node_1acb1b5dd413bfb466d1e1f05346ffc154"></span><a class="reference internal" href="#_CPPv4N7titan2315PersistentStack4NodeE" title="titan23::PersistentStack::Node"><span class="n"><span class="pre">Node</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">prev</span></span></span><a class="headerlink" href="#_CPPv4N7titan2315PersistentStack4Node4prevE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-</dd></dl>
-
-</dd></dl>
-
-</dd></dl>
-
 </section>
 </section>
 
@@ -522,32 +422,7 @@
             <ul>
 <li><a class="reference internal" href="#">persistent stack</a><ul>
 <li><a class="reference internal" href="#id1">ソースコード</a></li>
-<li><a class="reference internal" href="#id2">仕様</a><ul>
-<li><a class="reference internal" href="#_CPPv47titan23"><code class="docutils literal notranslate"><span class="pre">titan23</span></code></a><ul>
-<li><a class="reference internal" href="#_CPPv4I0EN7titan2315PersistentStackE"><code class="docutils literal notranslate"><span class="pre">titan23::PersistentStack</span></code></a><ul>
-<li><a class="reference internal" href="#_CPPv4N7titan2315PersistentStack15PersistentStackEv"><code class="docutils literal notranslate"><span class="pre">titan23::PersistentStack::PersistentStack()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4NK7titan2315PersistentStack3topEv"><code class="docutils literal notranslate"><span class="pre">titan23::PersistentStack::top()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan2315PersistentStack3popEv"><code class="docutils literal notranslate"><span class="pre">titan23::PersistentStack::pop()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4NK7titan2315PersistentStack4copyEv"><code class="docutils literal notranslate"><span class="pre">titan23::PersistentStack::copy()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan2315PersistentStack4pushE1T"><code class="docutils literal notranslate"><span class="pre">titan23::PersistentStack::push()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4NK7titan2315PersistentStack8tovectorEv"><code class="docutils literal notranslate"><span class="pre">titan23::PersistentStack::tovector()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan2315PersistentStack7NodePtrE"><code class="docutils literal notranslate"><span class="pre">titan23::PersistentStack::NodePtr</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan2315PersistentStack15PersistentStackE7NodePtr"><code class="docutils literal notranslate"><span class="pre">titan23::PersistentStack::PersistentStack()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan2315PersistentStack4nodeE"><code class="docutils literal notranslate"><span class="pre">titan23::PersistentStack::node</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan2315PersistentStack4NodeE"><code class="docutils literal notranslate"><span class="pre">titan23::PersistentStack::Node</span></code></a><ul>
-<li><a class="reference internal" href="#_CPPv4N7titan2315PersistentStack4Node4NodeEv"><code class="docutils literal notranslate"><span class="pre">titan23::PersistentStack::Node::Node()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan2315PersistentStack4Node4NodeE1T"><code class="docutils literal notranslate"><span class="pre">titan23::PersistentStack::Node::Node()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan2315PersistentStack4Node4NodeE1T7NodePtr"><code class="docutils literal notranslate"><span class="pre">titan23::PersistentStack::Node::Node()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan2315PersistentStack4Node3keyE"><code class="docutils literal notranslate"><span class="pre">titan23::PersistentStack::Node::key</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan2315PersistentStack4Node4prevE"><code class="docutils literal notranslate"><span class="pre">titan23::PersistentStack::Node::prev</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a class="reference internal" href="#id2">仕様</a></li>
 </ul>
 </li>
 </ul>

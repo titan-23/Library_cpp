@@ -289,208 +289,120 @@
 <h1>min heap<a class="headerlink" href="#min-heap" title="Link to this heading">¶</a></h1>
 <section id="id1">
 <h2>ソースコード<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="linenos">  1</span><span class="c1">// #include &quot;titan_cpplib/data_structures/min_heap.cpp&quot;</span>
-<span class="linenos">  2</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
-<span class="linenos">  3</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
-<span class="linenos">  4</span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
-<span class="linenos">  5</span>
-<span class="linenos">  6</span><span class="c1">// MinHeap</span>
-<span class="linenos">  7</span><span class="k">namespace</span><span class="w"> </span><span class="nn">titan23</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">  8</span>
-<span class="linenos">  9</span><span class="w">    </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
-<span class="linenos"> 10</span><span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="nc">MinHeap</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 11</span><span class="w">      </span><span class="k">private</span><span class="o">:</span>
-<span class="linenos"> 12</span><span class="w">        </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
-<span class="linenos"> 13</span>
-<span class="linenos"> 14</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="nf">_heapify</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 15</span><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="o">--</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 16</span><span class="w">                </span><span class="n">_down</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
-<span class="linenos"> 17</span><span class="w">            </span><span class="p">}</span>
-<span class="linenos"> 18</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos"> 19</span>
-<span class="linenos"> 20</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="nf">_down</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 21</span><span class="w">            </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
-<span class="linenos"> 22</span><span class="w">            </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="o">&lt;&lt;</span><span class="mi">1</span><span class="o">|</span><span class="mi">1</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 23</span><span class="w">                </span><span class="kt">int</span><span class="w"> </span><span class="n">u</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">2</span><span class="p">;</span>
-<span class="linenos"> 24</span><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">v</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">u</span><span class="p">]</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">v</span><span class="p">])</span><span class="w"> </span><span class="n">u</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">;</span>
-<span class="linenos"> 25</span><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">u</span><span class="p">])</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 26</span><span class="w">                    </span><span class="n">swap</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">u</span><span class="p">]);</span>
-<span class="linenos"> 27</span><span class="w">                    </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">u</span><span class="p">;</span>
-<span class="linenos"> 28</span><span class="w">                </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 29</span><span class="w">                    </span><span class="k">break</span><span class="p">;</span>
-<span class="linenos"> 30</span><span class="w">                </span><span class="p">}</span>
-<span class="linenos"> 31</span><span class="w">            </span><span class="p">}</span>
-<span class="linenos"> 32</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos"> 33</span>
-<span class="linenos"> 34</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="nf">_up</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 35</span><span class="w">            </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 36</span><span class="w">                </span><span class="kt">int</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
-<span class="linenos"> 37</span><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">p</span><span class="p">])</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 38</span><span class="w">                    </span><span class="n">swap</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">p</span><span class="p">]);</span>
-<span class="linenos"> 39</span><span class="w">                    </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p</span><span class="p">;</span>
-<span class="linenos"> 40</span><span class="w">                </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 41</span><span class="w">                    </span><span class="k">break</span><span class="p">;</span>
-<span class="linenos"> 42</span><span class="w">                </span><span class="p">}</span>
-<span class="linenos"> 43</span><span class="w">            </span><span class="p">}</span>
-<span class="linenos"> 44</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos"> 45</span>
-<span class="linenos"> 46</span><span class="w">      </span><span class="k">public</span><span class="o">:</span>
-<span class="linenos"> 47</span><span class="w">        </span><span class="n">MinHeap</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
-<span class="linenos"> 48</span><span class="w">        </span><span class="n">MinHeap</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">a</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">a</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">_heapify</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-<span class="linenos"> 49</span>
-<span class="linenos"> 50</span><span class="w">        </span><span class="c1">//! 最小の要素を返す / `O(1)`</span>
-<span class="linenos"> 51</span><span class="w">        </span><span class="n">T</span><span class="w"> </span><span class="n">get_min</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 52</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-<span class="linenos"> 53</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos"> 54</span>
-<span class="linenos"> 55</span><span class="w">        </span><span class="c1">//! 最小の要素を削除して返す / `O(logn)`</span>
-<span class="linenos"> 56</span><span class="w">        </span><span class="n">T</span><span class="w"> </span><span class="n">pop_min</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 57</span><span class="w">            </span><span class="n">T</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-<span class="linenos"> 58</span><span class="w">            </span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">back</span><span class="p">();</span>
-<span class="linenos"> 59</span><span class="w">            </span><span class="n">a</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
-<span class="linenos"> 60</span><span class="w">            </span><span class="n">_down</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
-<span class="linenos"> 61</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">res</span><span class="p">;</span>
-<span class="linenos"> 62</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos"> 63</span>
-<span class="linenos"> 64</span><span class="w">        </span><span class="c1">//! `key` を追加する / `O(logn)`</span>
-<span class="linenos"> 65</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">push</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 66</span><span class="w">            </span><span class="n">a</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">key</span><span class="p">);</span>
-<span class="linenos"> 67</span><span class="w">            </span><span class="n">_up</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
-<span class="linenos"> 68</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos"> 69</span>
-<span class="linenos"> 70</span><span class="w">        </span><span class="c1">//! `push` して `pop` する / `O(logn)`</span>
-<span class="linenos"> 71</span><span class="w">        </span><span class="n">T</span><span class="w"> </span><span class="n">pushpoop_min</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 72</span><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">key</span><span class="p">;</span>
-<span class="linenos"> 73</span><span class="w">            </span><span class="n">T</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-<span class="linenos"> 74</span><span class="w">            </span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">key</span><span class="p">;</span>
-<span class="linenos"> 75</span><span class="w">            </span><span class="n">_down</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
-<span class="linenos"> 76</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">res</span><span class="p">;</span>
-<span class="linenos"> 77</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos"> 78</span>
-<span class="linenos"> 79</span><span class="w">        </span><span class="c1">//! 最小の要素を `pop` して返し、新たに `key` を挿入する。 `pop -&gt; push` と同じ / `O(logn)`</span>
-<span class="linenos"> 80</span><span class="w">        </span><span class="n">T</span><span class="w"> </span><span class="n">replace_min</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 81</span><span class="w">            </span><span class="n">T</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
-<span class="linenos"> 82</span><span class="w">            </span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">key</span><span class="p">;</span>
-<span class="linenos"> 83</span><span class="w">            </span><span class="n">_down</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
-<span class="linenos"> 84</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">res</span><span class="p">;</span>
-<span class="linenos"> 85</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos"> 86</span>
-<span class="linenos"> 87</span><span class="w">        </span><span class="c1">//! 要素数を返す / `O(1)`</span>
-<span class="linenos"> 88</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">len</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 89</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
-<span class="linenos"> 90</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos"> 91</span>
-<span class="linenos"> 92</span><span class="w">        </span><span class="c1">//! 表示する</span>
-<span class="linenos"> 93</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">print</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 94</span><span class="w">            </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
-<span class="linenos"> 95</span><span class="w">            </span><span class="n">sort</span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
-<span class="linenos"> 96</span><span class="w">            </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">&#39;[&#39;</span><span class="p">;</span>
-<span class="linenos"> 97</span><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">len</span><span class="p">()</span><span class="mi">-1</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 98</span><span class="w">                </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;, &quot;</span><span class="p">;</span>
-<span class="linenos"> 99</span><span class="w">            </span><span class="p">}</span>
-<span class="linenos">100</span><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">b</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">101</span><span class="w">                </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">back</span><span class="p">();</span>
-<span class="linenos">102</span><span class="w">            </span><span class="p">}</span>
-<span class="linenos">103</span><span class="w">            </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">&#39;]&#39;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
-<span class="linenos">104</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">105</span><span class="w">    </span><span class="p">};</span>
-<span class="linenos">106</span><span class="p">}</span><span class="w"> </span><span class="c1">// namespace titan23</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="linenos">  1</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
+<span class="linenos">  2</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+<span class="linenos">  3</span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
+<span class="linenos">  4</span>
+<span class="linenos">  5</span><span class="c1">// MinHeap</span>
+<span class="linenos">  6</span><span class="k">namespace</span><span class="w"> </span><span class="nn">titan23</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">  7</span>
+<span class="linenos">  8</span><span class="w">    </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<span class="linenos">  9</span><span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="nc">MinHeap</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 10</span><span class="w">      </span><span class="k">private</span><span class="o">:</span>
+<span class="linenos"> 11</span><span class="w">        </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
+<span class="linenos"> 12</span>
+<span class="linenos"> 13</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="nf">_heapify</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 14</span><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="o">--</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 15</span><span class="w">                </span><span class="n">_down</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+<span class="linenos"> 16</span><span class="w">            </span><span class="p">}</span>
+<span class="linenos"> 17</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos"> 18</span>
+<span class="linenos"> 19</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="nf">_down</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 20</span><span class="w">            </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+<span class="linenos"> 21</span><span class="w">            </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="o">&lt;&lt;</span><span class="mi">1</span><span class="o">|</span><span class="mi">1</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 22</span><span class="w">                </span><span class="kt">int</span><span class="w"> </span><span class="n">u</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">2</span><span class="p">;</span>
+<span class="linenos"> 23</span><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">v</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">u</span><span class="p">]</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">v</span><span class="p">])</span><span class="w"> </span><span class="n">u</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">;</span>
+<span class="linenos"> 24</span><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">u</span><span class="p">])</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 25</span><span class="w">                    </span><span class="n">swap</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">u</span><span class="p">]);</span>
+<span class="linenos"> 26</span><span class="w">                    </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">u</span><span class="p">;</span>
+<span class="linenos"> 27</span><span class="w">                </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 28</span><span class="w">                    </span><span class="k">break</span><span class="p">;</span>
+<span class="linenos"> 29</span><span class="w">                </span><span class="p">}</span>
+<span class="linenos"> 30</span><span class="w">            </span><span class="p">}</span>
+<span class="linenos"> 31</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos"> 32</span>
+<span class="linenos"> 33</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="nf">_up</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 34</span><span class="w">            </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 35</span><span class="w">                </span><span class="kt">int</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="linenos"> 36</span><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">p</span><span class="p">])</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 37</span><span class="w">                    </span><span class="n">swap</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">p</span><span class="p">]);</span>
+<span class="linenos"> 38</span><span class="w">                    </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p</span><span class="p">;</span>
+<span class="linenos"> 39</span><span class="w">                </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 40</span><span class="w">                    </span><span class="k">break</span><span class="p">;</span>
+<span class="linenos"> 41</span><span class="w">                </span><span class="p">}</span>
+<span class="linenos"> 42</span><span class="w">            </span><span class="p">}</span>
+<span class="linenos"> 43</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos"> 44</span>
+<span class="linenos"> 45</span><span class="w">      </span><span class="k">public</span><span class="o">:</span>
+<span class="linenos"> 46</span><span class="w">        </span><span class="n">MinHeap</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 47</span><span class="w">        </span><span class="n">MinHeap</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">a</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">a</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">_heapify</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+<span class="linenos"> 48</span>
+<span class="linenos"> 49</span><span class="w">        </span><span class="c1">//! 最小の要素を返す / `O(1)`</span>
+<span class="linenos"> 50</span><span class="w">        </span><span class="n">T</span><span class="w"> </span><span class="n">get_min</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 51</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+<span class="linenos"> 52</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos"> 53</span>
+<span class="linenos"> 54</span><span class="w">        </span><span class="c1">//! 最小の要素を削除して返す / `O(logn)`</span>
+<span class="linenos"> 55</span><span class="w">        </span><span class="n">T</span><span class="w"> </span><span class="n">pop_min</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 56</span><span class="w">            </span><span class="n">T</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+<span class="linenos"> 57</span><span class="w">            </span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">back</span><span class="p">();</span>
+<span class="linenos"> 58</span><span class="w">            </span><span class="n">a</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
+<span class="linenos"> 59</span><span class="w">            </span><span class="n">_down</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="linenos"> 60</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">res</span><span class="p">;</span>
+<span class="linenos"> 61</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos"> 62</span>
+<span class="linenos"> 63</span><span class="w">        </span><span class="c1">//! `key` を追加する / `O(logn)`</span>
+<span class="linenos"> 64</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">push</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 65</span><span class="w">            </span><span class="n">a</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">key</span><span class="p">);</span>
+<span class="linenos"> 66</span><span class="w">            </span><span class="n">_up</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="linenos"> 67</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos"> 68</span>
+<span class="linenos"> 69</span><span class="w">        </span><span class="c1">//! `push` して `pop` する / `O(logn)`</span>
+<span class="linenos"> 70</span><span class="w">        </span><span class="n">T</span><span class="w"> </span><span class="n">pushpoop_min</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 71</span><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">key</span><span class="p">;</span>
+<span class="linenos"> 72</span><span class="w">            </span><span class="n">T</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+<span class="linenos"> 73</span><span class="w">            </span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">key</span><span class="p">;</span>
+<span class="linenos"> 74</span><span class="w">            </span><span class="n">_down</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="linenos"> 75</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">res</span><span class="p">;</span>
+<span class="linenos"> 76</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos"> 77</span>
+<span class="linenos"> 78</span><span class="w">        </span><span class="c1">//! 最小の要素を `pop` して返し、新たに `key` を挿入する。 `pop -&gt; push` と同じ / `O(logn)`</span>
+<span class="linenos"> 79</span><span class="w">        </span><span class="n">T</span><span class="w"> </span><span class="n">replace_min</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 80</span><span class="w">            </span><span class="n">T</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+<span class="linenos"> 81</span><span class="w">            </span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">key</span><span class="p">;</span>
+<span class="linenos"> 82</span><span class="w">            </span><span class="n">_down</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="linenos"> 83</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">res</span><span class="p">;</span>
+<span class="linenos"> 84</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos"> 85</span>
+<span class="linenos"> 86</span><span class="w">        </span><span class="c1">//! 要素数を返す / `O(1)`</span>
+<span class="linenos"> 87</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">len</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 88</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+<span class="linenos"> 89</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos"> 90</span>
+<span class="linenos"> 91</span><span class="w">        </span><span class="c1">//! 表示する</span>
+<span class="linenos"> 92</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">print</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 93</span><span class="w">            </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">;</span>
+<span class="linenos"> 94</span><span class="w">            </span><span class="n">sort</span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+<span class="linenos"> 95</span><span class="w">            </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">&#39;[&#39;</span><span class="p">;</span>
+<span class="linenos"> 96</span><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">len</span><span class="p">()</span><span class="mi">-1</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 97</span><span class="w">                </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;, &quot;</span><span class="p">;</span>
+<span class="linenos"> 98</span><span class="w">            </span><span class="p">}</span>
+<span class="linenos"> 99</span><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">b</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">100</span><span class="w">                </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">back</span><span class="p">();</span>
+<span class="linenos">101</span><span class="w">            </span><span class="p">}</span>
+<span class="linenos">102</span><span class="w">            </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">&#39;]&#39;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="linenos">103</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">104</span><span class="w">    </span><span class="p">};</span>
+<span class="linenos">105</span><span class="p">}</span><span class="w"> </span><span class="c1">// namespace titan23</span>
 </pre></div>
 </div>
 </section>
 <section id="id2">
 <h2>仕様<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
-<dl class="cpp type">
-<dt class="sig sig-object cpp" id="_CPPv47titan23">
-<span id="_CPPv37titan23"></span><span id="_CPPv27titan23"></span><span id="titan23"></span><span class="target" id="namespacetitan23"></span><span class="k"><span class="pre">namespace</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">titan23</span></span></span><br /></dt>
-<dd><dl class="cpp class">
-<dt class="sig sig-object cpp" id="_CPPv4I0EN7titan237MinHeapE">
-<span id="_CPPv3I0EN7titan237MinHeapE"></span><span id="_CPPv2I0EN7titan237MinHeapE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classtitan23_1_1MinHeap"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MinHeap</span></span></span><a class="headerlink" href="#_CPPv4I0EN7titan237MinHeapE" title="Link to this definition">¶</a><br /></dt>
-<dd><div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan237MinHeap7MinHeapEv">
-<span id="_CPPv3N7titan237MinHeap7MinHeapEv"></span><span id="_CPPv2N7titan237MinHeap7MinHeapEv"></span><span id="titan23::MinHeap::MinHeap"></span><span class="target" id="classtitan23_1_1MinHeap_1a5cfc3308f8470ad281599f7a31aa13ce"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MinHeap</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan237MinHeap7MinHeapEv" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan237MinHeap7MinHeapE6vectorI1TE">
-<span id="_CPPv3N7titan237MinHeap7MinHeapE6vectorI1TE"></span><span id="_CPPv2N7titan237MinHeap7MinHeapE6vectorI1TE"></span><span id="titan23::MinHeap::MinHeap__vector:T:"></span><span class="target" id="classtitan23_1_1MinHeap_1ae464ea6bda044b539f1c1f24f1572be1"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MinHeap</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN7titan237MinHeapE" title="titan23::MinHeap::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">a</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan237MinHeap7MinHeapE6vectorI1TE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4NK7titan237MinHeap7get_minEv">
-<span id="_CPPv3NK7titan237MinHeap7get_minEv"></span><span id="_CPPv2NK7titan237MinHeap7get_minEv"></span><span id="titan23::MinHeap::get_minC"></span><span class="target" id="classtitan23_1_1MinHeap_1a50982f8b420e35841db48d3d8c92c63f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN7titan237MinHeapE" title="titan23::MinHeap::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">get_min</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK7titan237MinHeap7get_minEv" title="Link to this definition">¶</a><br /></dt>
-<dd><p>最小の要素を返す / <code class="docutils literal notranslate"><span class="pre">O(1)</span></code></p>
-</dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan237MinHeap7pop_minEv">
-<span id="_CPPv3N7titan237MinHeap7pop_minEv"></span><span id="_CPPv2N7titan237MinHeap7pop_minEv"></span><span id="titan23::MinHeap::pop_min"></span><span class="target" id="classtitan23_1_1MinHeap_1a1fe6c31982d44a3b8573dc21f5948c7e"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN7titan237MinHeapE" title="titan23::MinHeap::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pop_min</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan237MinHeap7pop_minEv" title="Link to this definition">¶</a><br /></dt>
-<dd><p>最小の要素を削除して返す / <code class="docutils literal notranslate"><span class="pre">O(logn)</span></code></p>
-</dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan237MinHeap4pushEK1T">
-<span id="_CPPv3N7titan237MinHeap4pushEK1T"></span><span id="_CPPv2N7titan237MinHeap4pushEK1T"></span><span id="titan23::MinHeap::push__TC"></span><span class="target" id="classtitan23_1_1MinHeap_1a756931ff9a45c06d4d1896be3cc37405"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">push</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN7titan237MinHeapE" title="titan23::MinHeap::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">key</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan237MinHeap4pushEK1T" title="Link to this definition">¶</a><br /></dt>
-<dd><p><code class="docutils literal notranslate"><span class="pre">key</span></code> を追加する / <code class="docutils literal notranslate"><span class="pre">O(logn)</span></code></p>
-</dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan237MinHeap12pushpoop_minEK1T">
-<span id="_CPPv3N7titan237MinHeap12pushpoop_minEK1T"></span><span id="_CPPv2N7titan237MinHeap12pushpoop_minEK1T"></span><span id="titan23::MinHeap::pushpoop_min__TC"></span><span class="target" id="classtitan23_1_1MinHeap_1a782af426c2870fef4c14aa6546676e85"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN7titan237MinHeapE" title="titan23::MinHeap::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pushpoop_min</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN7titan237MinHeapE" title="titan23::MinHeap::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">key</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan237MinHeap12pushpoop_minEK1T" title="Link to this definition">¶</a><br /></dt>
-<dd><p><code class="docutils literal notranslate"><span class="pre">push</span></code> して <code class="docutils literal notranslate"><span class="pre">pop</span></code> する / <code class="docutils literal notranslate"><span class="pre">O(logn)</span></code></p>
-</dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan237MinHeap11replace_minEK1T">
-<span id="_CPPv3N7titan237MinHeap11replace_minEK1T"></span><span id="_CPPv2N7titan237MinHeap11replace_minEK1T"></span><span id="titan23::MinHeap::replace_min__TC"></span><span class="target" id="classtitan23_1_1MinHeap_1a9bea6b27e1d97e378adfa8a0fc5d278c"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN7titan237MinHeapE" title="titan23::MinHeap::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">replace_min</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN7titan237MinHeapE" title="titan23::MinHeap::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">key</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan237MinHeap11replace_minEK1T" title="Link to this definition">¶</a><br /></dt>
-<dd><p>最小の要素を <code class="docutils literal notranslate"><span class="pre">pop</span></code> して返し、新たに <code class="docutils literal notranslate"><span class="pre">key</span></code> を挿入する。 <code class="docutils literal notranslate"><span class="pre">pop</span> <span class="pre">-&gt;</span> <span class="pre">push</span></code> と同じ / <code class="docutils literal notranslate"><span class="pre">O(logn)</span></code></p>
-</dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4NK7titan237MinHeap3lenEv">
-<span id="_CPPv3NK7titan237MinHeap3lenEv"></span><span id="_CPPv2NK7titan237MinHeap3lenEv"></span><span id="titan23::MinHeap::lenC"></span><span class="target" id="classtitan23_1_1MinHeap_1a07e7aa1f841cf2b32693ca13147e1d1a"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">len</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK7titan237MinHeap3lenEv" title="Link to this definition">¶</a><br /></dt>
-<dd><p>要素数を返す / <code class="docutils literal notranslate"><span class="pre">O(1)</span></code></p>
-</dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4NK7titan237MinHeap5printEv">
-<span id="_CPPv3NK7titan237MinHeap5printEv"></span><span id="_CPPv2NK7titan237MinHeap5printEv"></span><span id="titan23::MinHeap::printC"></span><span class="target" id="classtitan23_1_1MinHeap_1a85379658724f0fac100148a6b35e3183"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">print</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK7titan237MinHeap5printEv" title="Link to this definition">¶</a><br /></dt>
-<dd><p>表示する </p>
-</dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenfile: Cannot find file “titan_cpplib/data_structures/min_heap.cpp </p>
 </div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan237MinHeap8_heapifyEv">
-<span id="_CPPv3N7titan237MinHeap8_heapifyEv"></span><span id="_CPPv2N7titan237MinHeap8_heapifyEv"></span><span id="titan23::MinHeap::_heapify"></span><span class="target" id="classtitan23_1_1MinHeap_1a3be7940bfec62674e6e1a7f320afe288"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_heapify</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan237MinHeap8_heapifyEv" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan237MinHeap5_downEi">
-<span id="_CPPv3N7titan237MinHeap5_downEi"></span><span id="_CPPv2N7titan237MinHeap5_downEi"></span><span id="titan23::MinHeap::_down__i"></span><span class="target" id="classtitan23_1_1MinHeap_1a69c2816e61f38406895544302ea56409"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_down</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">i</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan237MinHeap5_downEi" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan237MinHeap3_upEi">
-<span id="_CPPv3N7titan237MinHeap3_upEi"></span><span id="_CPPv2N7titan237MinHeap3_upEi"></span><span id="titan23::MinHeap::_up__i"></span><span class="target" id="classtitan23_1_1MinHeap_1a5092455ad06cc2dd1b9bc81056d4e4df"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_up</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">i</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan237MinHeap3_upEi" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan237MinHeap1aE">
-<span id="_CPPv3N7titan237MinHeap1aE"></span><span id="_CPPv2N7titan237MinHeap1aE"></span><span id="titan23::MinHeap::a__vector:T:"></span><span class="target" id="classtitan23_1_1MinHeap_1a022392f0722887806cfa4b785c99e280"></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN7titan237MinHeapE" title="titan23::MinHeap::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">a</span></span></span><a class="headerlink" href="#_CPPv4N7titan237MinHeap1aE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-</dd></dl>
-
-</dd></dl>
-
 </section>
 </section>
 
@@ -551,28 +463,7 @@
             <ul>
 <li><a class="reference internal" href="#">min heap</a><ul>
 <li><a class="reference internal" href="#id1">ソースコード</a></li>
-<li><a class="reference internal" href="#id2">仕様</a><ul>
-<li><a class="reference internal" href="#_CPPv47titan23"><code class="docutils literal notranslate"><span class="pre">titan23</span></code></a><ul>
-<li><a class="reference internal" href="#_CPPv4I0EN7titan237MinHeapE"><code class="docutils literal notranslate"><span class="pre">titan23::MinHeap</span></code></a><ul>
-<li><a class="reference internal" href="#_CPPv4N7titan237MinHeap7MinHeapEv"><code class="docutils literal notranslate"><span class="pre">titan23::MinHeap::MinHeap()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan237MinHeap7MinHeapE6vectorI1TE"><code class="docutils literal notranslate"><span class="pre">titan23::MinHeap::MinHeap()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4NK7titan237MinHeap7get_minEv"><code class="docutils literal notranslate"><span class="pre">titan23::MinHeap::get_min()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan237MinHeap7pop_minEv"><code class="docutils literal notranslate"><span class="pre">titan23::MinHeap::pop_min()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan237MinHeap4pushEK1T"><code class="docutils literal notranslate"><span class="pre">titan23::MinHeap::push()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan237MinHeap12pushpoop_minEK1T"><code class="docutils literal notranslate"><span class="pre">titan23::MinHeap::pushpoop_min()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan237MinHeap11replace_minEK1T"><code class="docutils literal notranslate"><span class="pre">titan23::MinHeap::replace_min()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4NK7titan237MinHeap3lenEv"><code class="docutils literal notranslate"><span class="pre">titan23::MinHeap::len()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4NK7titan237MinHeap5printEv"><code class="docutils literal notranslate"><span class="pre">titan23::MinHeap::print()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan237MinHeap8_heapifyEv"><code class="docutils literal notranslate"><span class="pre">titan23::MinHeap::_heapify()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan237MinHeap5_downEi"><code class="docutils literal notranslate"><span class="pre">titan23::MinHeap::_down()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan237MinHeap3_upEi"><code class="docutils literal notranslate"><span class="pre">titan23::MinHeap::_up()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan237MinHeap1aE"><code class="docutils literal notranslate"><span class="pre">titan23::MinHeap::a</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a class="reference internal" href="#id2">仕様</a></li>
 </ul>
 </li>
 </ul>

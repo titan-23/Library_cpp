@@ -41,7 +41,7 @@ def create_rst_files(root_dir, output_dir):
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./{di}titan_cpplib_expanded/{file_path}
+.. literalinclude:: ./{di}titan_cpplib/{file_path}
    :language: cpp
    :linenos:
 
@@ -49,12 +49,12 @@ def create_rst_files(root_dir, output_dir):
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib_expanded/{file_path}
+.. doxygenfile:: titan_cpplib/{file_path}
 '''
                         rst_file.write(new_paragraph)
 
 
 if __name__ == "__main__":
-    root_dir = "titan_cpplib_expanded"
+    root_dir = "titan_cpplib"
     output_dir = "source"
     create_rst_files(root_dir, output_dir)

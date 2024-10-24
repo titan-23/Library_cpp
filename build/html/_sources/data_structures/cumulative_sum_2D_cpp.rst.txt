@@ -5,7 +5,7 @@ cumulative sum 2D
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib_expanded/data_structures/cumulative_sum_2D.cpp
+.. literalinclude:: ./../../titan_cpplib/data_structures/cumulative_sum_2D.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ cumulative sum 2D
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib_expanded/data_structures/cumulative_sum_2D.cpp
+.. doxygenfile:: titan_cpplib/data_structures/cumulative_sum_2D.cpp

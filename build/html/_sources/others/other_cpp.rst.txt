@@ -5,7 +5,7 @@ other
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib_expanded/others/other.cpp
+.. literalinclude:: ./../../titan_cpplib/others/other.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ other
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib_expanded/others/other.cpp
+.. doxygenfile:: titan_cpplib/others/other.cpp

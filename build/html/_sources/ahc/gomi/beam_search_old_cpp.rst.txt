@@ -5,7 +5,7 @@ beam search old
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../../titan_cpplib_expanded/ahc/gomi/beam_search_old.cpp
+.. literalinclude:: ./../../../titan_cpplib/ahc/gomi/beam_search_old.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ beam search old
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib_expanded/ahc/gomi/beam_search_old.cpp
+.. doxygenfile:: titan_cpplib/ahc/gomi/beam_search_old.cpp

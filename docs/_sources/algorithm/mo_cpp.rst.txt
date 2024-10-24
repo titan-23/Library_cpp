@@ -5,7 +5,7 @@ mo
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib_expanded/algorithm/mo.cpp
+.. literalinclude:: ./../../titan_cpplib/algorithm/mo.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ mo
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib_expanded/algorithm/mo.cpp
+.. doxygenfile:: titan_cpplib/algorithm/mo.cpp

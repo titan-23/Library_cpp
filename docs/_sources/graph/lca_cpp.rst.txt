@@ -5,7 +5,7 @@ lca
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib_expanded/graph/lca.cpp
+.. literalinclude:: ./../../titan_cpplib/graph/lca.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ lca
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib_expanded/graph/lca.cpp
+.. doxygenfile:: titan_cpplib/graph/lca.cpp

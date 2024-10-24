@@ -5,7 +5,7 @@ action
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib_expanded/ahc/action.cpp
+.. literalinclude:: ./../../titan_cpplib/ahc/action.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ action
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib_expanded/ahc/action.cpp
+.. doxygenfile:: titan_cpplib/ahc/action.cpp

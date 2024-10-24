@@ -5,7 +5,7 @@ math
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib_expanded/math/math.cpp
+.. literalinclude:: ./../../titan_cpplib/math/math.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ math
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib_expanded/math/math.cpp
+.. doxygenfile:: titan_cpplib/math/math.cpp

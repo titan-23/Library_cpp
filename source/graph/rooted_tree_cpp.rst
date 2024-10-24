@@ -5,7 +5,7 @@ rooted tree
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib_expanded/graph/rooted_tree.cpp
+.. literalinclude:: ./../../titan_cpplib/graph/rooted_tree.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ rooted tree
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib_expanded/graph/rooted_tree.cpp
+.. doxygenfile:: titan_cpplib/graph/rooted_tree.cpp

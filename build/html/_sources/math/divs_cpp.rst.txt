@@ -5,7 +5,7 @@ divs
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib_expanded/math/divs.cpp
+.. literalinclude:: ./../../titan_cpplib/math/divs.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ divs
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib_expanded/math/divs.cpp
+.. doxygenfile:: titan_cpplib/math/divs.cpp

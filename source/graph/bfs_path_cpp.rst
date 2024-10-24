@@ -5,7 +5,7 @@ bfs path
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib_expanded/graph/bfs_path.cpp
+.. literalinclude:: ./../../titan_cpplib/graph/bfs_path.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ bfs path
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib_expanded/graph/bfs_path.cpp
+.. doxygenfile:: titan_cpplib/graph/bfs_path.cpp

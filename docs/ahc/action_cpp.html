@@ -289,85 +289,41 @@
 <h1>action<a class="headerlink" href="#action" title="Link to this heading">¶</a></h1>
 <section id="id1">
 <h2>ソースコード<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c1">// #include &quot;titan_cpplib/ahc/action.cpp&quot;</span>
-<span class="linenos"> 2</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
-<span class="linenos"> 3</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cassert&gt;</span>
-<span class="linenos"> 4</span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
-<span class="linenos"> 5</span>
-<span class="linenos"> 6</span><span class="c1">// Action</span>
-<span class="linenos"> 7</span><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Action</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="p">,</span><span class="w"> </span><span class="n">D</span><span class="p">,</span><span class="w"> </span><span class="n">L</span><span class="w"> </span><span class="p">};</span>
-<span class="linenos"> 8</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Action</span><span class="w"> </span><span class="o">&amp;</span><span class="n">action</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 9</span><span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">action</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">10</span><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Action</span><span class="o">::</span><span class="no">U</span><span class="p">:</span><span class="w"> </span><span class="n">os</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">&#39;U&#39;</span><span class="p">;</span><span class="w"> </span><span class="k">break</span><span class="p">;</span>
-<span class="linenos">11</span><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Action</span><span class="o">::</span><span class="no">R</span><span class="p">:</span><span class="w"> </span><span class="n">os</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">&#39;R&#39;</span><span class="p">;</span><span class="w"> </span><span class="k">break</span><span class="p">;</span>
-<span class="linenos">12</span><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Action</span><span class="o">::</span><span class="no">D</span><span class="p">:</span><span class="w"> </span><span class="n">os</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">&#39;D&#39;</span><span class="p">;</span><span class="w"> </span><span class="k">break</span><span class="p">;</span>
-<span class="linenos">13</span><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Action</span><span class="o">::</span><span class="no">L</span><span class="p">:</span><span class="w"> </span><span class="n">os</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">&#39;L&#39;</span><span class="p">;</span><span class="w"> </span><span class="k">break</span><span class="p">;</span>
-<span class="linenos">14</span><span class="w">        </span><span class="k">default</span><span class="o">:</span><span class="w"> </span><span class="n">assert</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span>
-<span class="linenos">15</span><span class="w">    </span><span class="p">}</span>
-<span class="linenos">16</span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">os</span><span class="p">;</span>
-<span class="linenos">17</span><span class="p">}</span>
-<span class="linenos">18</span>
-<span class="linenos">19</span><span class="n">Action</span><span class="w"> </span><span class="n">get_rev_action</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Action</span><span class="w"> </span><span class="o">&amp;</span><span class="n">action</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">20</span><span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">action</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">21</span><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Action</span><span class="o">::</span><span class="no">U</span><span class="p">:</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">Action</span><span class="o">::</span><span class="n">D</span><span class="p">;</span>
-<span class="linenos">22</span><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Action</span><span class="o">::</span><span class="no">D</span><span class="p">:</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">Action</span><span class="o">::</span><span class="n">U</span><span class="p">;</span>
-<span class="linenos">23</span><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Action</span><span class="o">::</span><span class="no">R</span><span class="p">:</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">Action</span><span class="o">::</span><span class="n">L</span><span class="p">;</span>
-<span class="linenos">24</span><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Action</span><span class="o">::</span><span class="no">L</span><span class="p">:</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">Action</span><span class="o">::</span><span class="n">R</span><span class="p">;</span>
-<span class="linenos">25</span><span class="w">    </span><span class="p">}</span>
-<span class="linenos">26</span><span class="w">    </span><span class="n">assert</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span>
-<span class="linenos">27</span><span class="p">}</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
+<span class="linenos"> 2</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cassert&gt;</span>
+<span class="linenos"> 3</span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
+<span class="linenos"> 4</span>
+<span class="linenos"> 5</span><span class="c1">// Action</span>
+<span class="linenos"> 6</span><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">Action</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="p">,</span><span class="w"> </span><span class="n">D</span><span class="p">,</span><span class="w"> </span><span class="n">L</span><span class="w"> </span><span class="p">};</span>
+<span class="linenos"> 7</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Action</span><span class="w"> </span><span class="o">&amp;</span><span class="n">action</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 8</span><span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">action</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 9</span><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Action</span><span class="o">::</span><span class="no">U</span><span class="p">:</span><span class="w"> </span><span class="n">os</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">&#39;U&#39;</span><span class="p">;</span><span class="w"> </span><span class="k">break</span><span class="p">;</span>
+<span class="linenos">10</span><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Action</span><span class="o">::</span><span class="no">R</span><span class="p">:</span><span class="w"> </span><span class="n">os</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">&#39;R&#39;</span><span class="p">;</span><span class="w"> </span><span class="k">break</span><span class="p">;</span>
+<span class="linenos">11</span><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Action</span><span class="o">::</span><span class="no">D</span><span class="p">:</span><span class="w"> </span><span class="n">os</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">&#39;D&#39;</span><span class="p">;</span><span class="w"> </span><span class="k">break</span><span class="p">;</span>
+<span class="linenos">12</span><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Action</span><span class="o">::</span><span class="no">L</span><span class="p">:</span><span class="w"> </span><span class="n">os</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">&#39;L&#39;</span><span class="p">;</span><span class="w"> </span><span class="k">break</span><span class="p">;</span>
+<span class="linenos">13</span><span class="w">        </span><span class="k">default</span><span class="o">:</span><span class="w"> </span><span class="n">assert</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span>
+<span class="linenos">14</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">15</span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">os</span><span class="p">;</span>
+<span class="linenos">16</span><span class="p">}</span>
+<span class="linenos">17</span>
+<span class="linenos">18</span><span class="n">Action</span><span class="w"> </span><span class="n">get_rev_action</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Action</span><span class="w"> </span><span class="o">&amp;</span><span class="n">action</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">19</span><span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">action</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">20</span><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Action</span><span class="o">::</span><span class="no">U</span><span class="p">:</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">Action</span><span class="o">::</span><span class="n">D</span><span class="p">;</span>
+<span class="linenos">21</span><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Action</span><span class="o">::</span><span class="no">D</span><span class="p">:</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">Action</span><span class="o">::</span><span class="n">U</span><span class="p">;</span>
+<span class="linenos">22</span><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Action</span><span class="o">::</span><span class="no">R</span><span class="p">:</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">Action</span><span class="o">::</span><span class="n">L</span><span class="p">;</span>
+<span class="linenos">23</span><span class="w">        </span><span class="k">case</span><span class="w"> </span><span class="no">Action</span><span class="o">::</span><span class="no">L</span><span class="p">:</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">Action</span><span class="o">::</span><span class="n">R</span><span class="p">;</span>
+<span class="linenos">24</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">25</span><span class="w">    </span><span class="n">assert</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span>
+<span class="linenos">26</span><span class="p">}</span>
 </pre></div>
 </div>
 </section>
 <section id="id2">
 <h2>仕様<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-enums">Enums</p>
-<dl class="cpp enum-class">
-<dt class="sig sig-object cpp" id="_CPPv46Action">
-<span id="_CPPv36Action"></span><span id="_CPPv26Action"></span><span class="target" id="action_8cpp_1a8bb1ef53467e4f61410d12822d922498"></span><span class="k"><span class="pre">enum</span></span><span class="w"> </span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Action</span></span></span><a class="headerlink" href="#_CPPv46Action" title="Link to this definition">¶</a><br /></dt>
-<dd><p><em>Values:</em></p>
-<dl class="cpp enumerator">
-<dt class="sig sig-object cpp" id="_CPPv4N6Action1UE">
-<span id="_CPPv3N6Action1UE"></span><span id="_CPPv2N6Action1UE"></span><span class="target" id="action_8cpp_1a8bb1ef53467e4f61410d12822d922498a4c614360da93c0a041b22e537de151eb"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">U</span></span></span><a class="headerlink" href="#_CPPv4N6Action1UE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp enumerator">
-<dt class="sig sig-object cpp" id="_CPPv4N6Action1RE">
-<span id="_CPPv3N6Action1RE"></span><span id="_CPPv2N6Action1RE"></span><span class="target" id="action_8cpp_1a8bb1ef53467e4f61410d12822d922498ae1e1d3d40573127e9ee0480caf1283d6"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">R</span></span></span><a class="headerlink" href="#_CPPv4N6Action1RE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp enumerator">
-<dt class="sig sig-object cpp" id="_CPPv4N6Action1DE">
-<span id="_CPPv3N6Action1DE"></span><span id="_CPPv2N6Action1DE"></span><span class="target" id="action_8cpp_1a8bb1ef53467e4f61410d12822d922498af623e75af30e62bbd73d6df5b50bb7b5"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">D</span></span></span><a class="headerlink" href="#_CPPv4N6Action1DE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp enumerator">
-<dt class="sig sig-object cpp" id="_CPPv4N6Action1LE">
-<span id="_CPPv3N6Action1LE"></span><span id="_CPPv2N6Action1LE"></span><span class="target" id="action_8cpp_1a8bb1ef53467e4f61410d12822d922498ad20caec3b48a1eef164cb4ca81ba2587"></span><span class="k"><span class="pre">enumerator</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">L</span></span></span><a class="headerlink" href="#_CPPv4N6Action1LE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenfile: Cannot find file “titan_cpplib/ahc/action.cpp </p>
 </div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4lsR7ostreamRK6Action">
-<span id="_CPPv3lsR7ostreamRK6Action"></span><span id="_CPPv2lsR7ostreamRK6Action"></span><span id="lshift-operator__ostreamR.ActionCR"></span><span class="target" id="action_8cpp_1ade82c23a0d32fb8bcbe82cd1f5d0fbd1"></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">&lt;&lt;</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">os</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv46Action" title="Action"><span class="n"><span class="pre">Action</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">action</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4lsR7ostreamRK6Action" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv414get_rev_actionRK6Action">
-<span id="_CPPv314get_rev_actionRK6Action"></span><span id="_CPPv214get_rev_actionRK6Action"></span><span id="get_rev_action__ActionCR"></span><span class="target" id="action_8cpp_1ad11de7662f1dd5695c0c0040c6f66f14"></span><a class="reference internal" href="#_CPPv46Action" title="Action"><span class="n"><span class="pre">Action</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">get_rev_action</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv46Action" title="Action"><span class="n"><span class="pre">Action</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">action</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv414get_rev_actionRK6Action" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-<dl class="cpp type">
-<dt class="sig sig-object cpp" id="_CPPv4St">
-<span id="_CPPv3St"></span><span id="_CPPv2St"></span><span id="std"></span><span class="target" id="namespacestd"></span><span class="k"><span class="pre">namespace</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">std</span></span></span><a class="headerlink" href="#_CPPv4St" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
 </section>
 </section>
 
@@ -428,19 +384,7 @@
             <ul>
 <li><a class="reference internal" href="#">action</a><ul>
 <li><a class="reference internal" href="#id1">ソースコード</a></li>
-<li><a class="reference internal" href="#id2">仕様</a><ul>
-<li><a class="reference internal" href="#_CPPv46Action"><code class="docutils literal notranslate"><span class="pre">Action</span></code></a><ul>
-<li><a class="reference internal" href="#_CPPv4N6Action1UE"><code class="docutils literal notranslate"><span class="pre">Action::U</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N6Action1RE"><code class="docutils literal notranslate"><span class="pre">Action::R</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N6Action1DE"><code class="docutils literal notranslate"><span class="pre">Action::D</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N6Action1LE"><code class="docutils literal notranslate"><span class="pre">Action::L</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#_CPPv4lsR7ostreamRK6Action"><code class="docutils literal notranslate"><span class="pre">operator&lt;&lt;()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv414get_rev_actionRK6Action"><code class="docutils literal notranslate"><span class="pre">get_rev_action()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4St"><code class="docutils literal notranslate"><span class="pre">std</span></code></a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#id2">仕様</a></li>
 </ul>
 </li>
 </ul>

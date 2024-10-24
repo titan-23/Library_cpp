@@ -5,7 +5,7 @@ maximum independent set
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib_expanded/graph/maximum_independent_set.cpp
+.. literalinclude:: ./../../titan_cpplib/graph/maximum_independent_set.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ maximum independent set
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib_expanded/graph/maximum_independent_set.cpp
+.. doxygenfile:: titan_cpplib/graph/maximum_independent_set.cpp

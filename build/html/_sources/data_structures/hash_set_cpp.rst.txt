@@ -5,7 +5,7 @@ hash set
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib_expanded/data_structures/hash_set.cpp
+.. literalinclude:: ./../../titan_cpplib/data_structures/hash_set.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ hash set
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib_expanded/data_structures/hash_set.cpp
+.. doxygenfile:: titan_cpplib/data_structures/hash_set.cpp

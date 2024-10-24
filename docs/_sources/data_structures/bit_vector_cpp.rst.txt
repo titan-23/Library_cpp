@@ -5,7 +5,7 @@ bit vector
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib_expanded/data_structures/bit_vector.cpp
+.. literalinclude:: ./../../titan_cpplib/data_structures/bit_vector.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ bit vector
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib_expanded/data_structures/bit_vector.cpp
+.. doxygenfile:: titan_cpplib/data_structures/bit_vector.cpp

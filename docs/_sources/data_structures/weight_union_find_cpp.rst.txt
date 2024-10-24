@@ -5,7 +5,7 @@ weight union find
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib_expanded/data_structures/weight_union_find.cpp
+.. literalinclude:: ./../../titan_cpplib/data_structures/weight_union_find.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ weight union find
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib_expanded/data_structures/weight_union_find.cpp
+.. doxygenfile:: titan_cpplib/data_structures/weight_union_find.cpp

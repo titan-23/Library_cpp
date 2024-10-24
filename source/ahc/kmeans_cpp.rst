@@ -5,7 +5,7 @@ kmeans
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib_expanded/ahc/kmeans.cpp
+.. literalinclude:: ./../../titan_cpplib/ahc/kmeans.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ kmeans
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib_expanded/ahc/kmeans.cpp
+.. doxygenfile:: titan_cpplib/ahc/kmeans.cpp

@@ -5,7 +5,7 @@ sa
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib_expanded/ahc/sa.cpp
+.. literalinclude:: ./../../titan_cpplib/ahc/sa.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ sa
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib_expanded/ahc/sa.cpp
+.. doxygenfile:: titan_cpplib/ahc/sa.cpp

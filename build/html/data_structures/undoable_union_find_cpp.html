@@ -289,86 +289,79 @@
 <h1>undoable union find<a class="headerlink" href="#undoable-union-find" title="Link to this heading">¶</a></h1>
 <section id="id1">
 <h2>ソースコード<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c1">// #include &quot;titan_cpplib/data_structures/undoable_union_find.cpp&quot;</span>
-<span class="linenos"> 2</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
-<span class="linenos"> 3</span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
-<span class="linenos"> 4</span>
-<span class="linenos"> 5</span><span class="c1">// UndoableUnionFind</span>
-<span class="linenos"> 6</span><span class="k">namespace</span><span class="w"> </span><span class="nn">titan23</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 7</span>
-<span class="linenos"> 8</span><span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="nc">UndoableUnionFind</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 9</span><span class="w">      </span><span class="k">private</span><span class="o">:</span>
-<span class="linenos">10</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">_n</span><span class="p">,</span><span class="w"> </span><span class="n">_group_count</span><span class="p">;</span>
-<span class="linenos">11</span><span class="w">        </span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_parents</span><span class="p">;</span>
-<span class="linenos">12</span><span class="w">        </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">pair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">_history</span><span class="p">;</span>
-<span class="linenos">13</span>
-<span class="linenos">14</span><span class="w">      </span><span class="k">public</span><span class="o">:</span>
-<span class="linenos">15</span><span class="w">        </span><span class="n">UndoableUnionFind</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
-<span class="linenos">16</span><span class="w">        </span><span class="n">UndoableUnionFind</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="o">:</span>
-<span class="linenos">17</span><span class="w">            </span><span class="n">_n</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">_group_count</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">_parents</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="mi">-1</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
-<span class="linenos">18</span>
-<span class="linenos">19</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">undo</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">20</span><span class="w">            </span><span class="k">auto</span><span class="w"> </span><span class="p">[</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">py</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_history</span><span class="p">.</span><span class="n">back</span><span class="p">();</span>
-<span class="linenos">21</span><span class="w">            </span><span class="n">_history</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
-<span class="linenos">22</span><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">-1</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
-<span class="linenos">23</span><span class="w">            </span><span class="k">auto</span><span class="w"> </span><span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">px</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_history</span><span class="p">.</span><span class="n">back</span><span class="p">();</span>
-<span class="linenos">24</span><span class="w">            </span><span class="n">_history</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
-<span class="linenos">25</span><span class="w">            </span><span class="o">++</span><span class="n">_group_count</span><span class="p">;</span>
-<span class="linenos">26</span><span class="w">            </span><span class="n">_parents</span><span class="p">[</span><span class="n">y</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">py</span><span class="p">;</span>
-<span class="linenos">27</span><span class="w">            </span><span class="n">_parents</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">px</span><span class="p">;</span>
-<span class="linenos">28</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">29</span>
-<span class="linenos">30</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">root</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">31</span><span class="w">            </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">_parents</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">32</span><span class="w">                </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_parents</span><span class="p">[</span><span class="n">x</span><span class="p">];</span>
-<span class="linenos">33</span><span class="w">            </span><span class="p">}</span>
-<span class="linenos">34</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">x</span><span class="p">;</span>
-<span class="linenos">35</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">36</span>
-<span class="linenos">37</span><span class="w">        </span><span class="kt">bool</span><span class="w"> </span><span class="n">unite</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">38</span><span class="w">            </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">root</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
-<span class="linenos">39</span><span class="w">            </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">root</span><span class="p">(</span><span class="n">y</span><span class="p">);</span>
-<span class="linenos">40</span><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">41</span><span class="w">                </span><span class="n">_history</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="mi">-1</span><span class="p">,</span><span class="w"> </span><span class="mi">-1</span><span class="p">);</span>
-<span class="linenos">42</span><span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-<span class="linenos">43</span><span class="w">            </span><span class="p">}</span>
-<span class="linenos">44</span><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_parents</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">_parents</span><span class="p">[</span><span class="n">y</span><span class="p">])</span><span class="w"> </span><span class="n">swap</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">);</span>
-<span class="linenos">45</span><span class="w">            </span><span class="n">_group_count</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
-<span class="linenos">46</span><span class="w">            </span><span class="n">_history</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">_parents</span><span class="p">[</span><span class="n">x</span><span class="p">]);</span>
-<span class="linenos">47</span><span class="w">            </span><span class="n">_history</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">_parents</span><span class="p">[</span><span class="n">y</span><span class="p">]);</span>
-<span class="linenos">48</span><span class="w">            </span><span class="n">_parents</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">_parents</span><span class="p">[</span><span class="n">y</span><span class="p">];</span>
-<span class="linenos">49</span><span class="w">            </span><span class="n">_parents</span><span class="p">[</span><span class="n">y</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="p">;</span>
-<span class="linenos">50</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
-<span class="linenos">51</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">52</span>
-<span class="linenos">53</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">54</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="o">-</span><span class="n">_parents</span><span class="p">[</span><span class="n">root</span><span class="p">(</span><span class="n">x</span><span class="p">)];</span>
-<span class="linenos">55</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">56</span>
-<span class="linenos">57</span><span class="w">        </span><span class="kt">bool</span><span class="w"> </span><span class="n">same</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">58</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">root</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">root</span><span class="p">(</span><span class="n">y</span><span class="p">);</span>
-<span class="linenos">59</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">60</span>
-<span class="linenos">61</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">group_count</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">62</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">_group_count</span><span class="p">;</span>
-<span class="linenos">63</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">64</span><span class="w">    </span><span class="p">};</span>
-<span class="linenos">65</span><span class="p">}</span><span class="w"> </span><span class="c1">// namespace titan23</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+<span class="linenos"> 2</span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
+<span class="linenos"> 3</span>
+<span class="linenos"> 4</span><span class="c1">// UndoableUnionFind</span>
+<span class="linenos"> 5</span><span class="k">namespace</span><span class="w"> </span><span class="nn">titan23</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 6</span>
+<span class="linenos"> 7</span><span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="nc">UndoableUnionFind</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 8</span><span class="w">      </span><span class="k">private</span><span class="o">:</span>
+<span class="linenos"> 9</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">_n</span><span class="p">,</span><span class="w"> </span><span class="n">_group_count</span><span class="p">;</span>
+<span class="linenos">10</span><span class="w">        </span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_parents</span><span class="p">;</span>
+<span class="linenos">11</span><span class="w">        </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">pair</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">_history</span><span class="p">;</span>
+<span class="linenos">12</span>
+<span class="linenos">13</span><span class="w">      </span><span class="k">public</span><span class="o">:</span>
+<span class="linenos">14</span><span class="w">        </span><span class="n">UndoableUnionFind</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">15</span><span class="w">        </span><span class="n">UndoableUnionFind</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="o">:</span>
+<span class="linenos">16</span><span class="w">            </span><span class="n">_n</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">_group_count</span><span class="p">(</span><span class="n">n</span><span class="p">),</span><span class="w"> </span><span class="n">_parents</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="mi">-1</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">17</span>
+<span class="linenos">18</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">undo</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">19</span><span class="w">            </span><span class="k">auto</span><span class="w"> </span><span class="p">[</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">py</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_history</span><span class="p">.</span><span class="n">back</span><span class="p">();</span>
+<span class="linenos">20</span><span class="w">            </span><span class="n">_history</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
+<span class="linenos">21</span><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">-1</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+<span class="linenos">22</span><span class="w">            </span><span class="k">auto</span><span class="w"> </span><span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">px</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_history</span><span class="p">.</span><span class="n">back</span><span class="p">();</span>
+<span class="linenos">23</span><span class="w">            </span><span class="n">_history</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
+<span class="linenos">24</span><span class="w">            </span><span class="o">++</span><span class="n">_group_count</span><span class="p">;</span>
+<span class="linenos">25</span><span class="w">            </span><span class="n">_parents</span><span class="p">[</span><span class="n">y</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">py</span><span class="p">;</span>
+<span class="linenos">26</span><span class="w">            </span><span class="n">_parents</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">px</span><span class="p">;</span>
+<span class="linenos">27</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">28</span>
+<span class="linenos">29</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">root</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">30</span><span class="w">            </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">_parents</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">31</span><span class="w">                </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">_parents</span><span class="p">[</span><span class="n">x</span><span class="p">];</span>
+<span class="linenos">32</span><span class="w">            </span><span class="p">}</span>
+<span class="linenos">33</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">x</span><span class="p">;</span>
+<span class="linenos">34</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">35</span>
+<span class="linenos">36</span><span class="w">        </span><span class="kt">bool</span><span class="w"> </span><span class="n">unite</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">37</span><span class="w">            </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">root</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+<span class="linenos">38</span><span class="w">            </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">root</span><span class="p">(</span><span class="n">y</span><span class="p">);</span>
+<span class="linenos">39</span><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">40</span><span class="w">                </span><span class="n">_history</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="mi">-1</span><span class="p">,</span><span class="w"> </span><span class="mi">-1</span><span class="p">);</span>
+<span class="linenos">41</span><span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="linenos">42</span><span class="w">            </span><span class="p">}</span>
+<span class="linenos">43</span><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">_parents</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">_parents</span><span class="p">[</span><span class="n">y</span><span class="p">])</span><span class="w"> </span><span class="n">swap</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">);</span>
+<span class="linenos">44</span><span class="w">            </span><span class="n">_group_count</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="linenos">45</span><span class="w">            </span><span class="n">_history</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">_parents</span><span class="p">[</span><span class="n">x</span><span class="p">]);</span>
+<span class="linenos">46</span><span class="w">            </span><span class="n">_history</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">_parents</span><span class="p">[</span><span class="n">y</span><span class="p">]);</span>
+<span class="linenos">47</span><span class="w">            </span><span class="n">_parents</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">_parents</span><span class="p">[</span><span class="n">y</span><span class="p">];</span>
+<span class="linenos">48</span><span class="w">            </span><span class="n">_parents</span><span class="p">[</span><span class="n">y</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="p">;</span>
+<span class="linenos">49</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="linenos">50</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">51</span>
+<span class="linenos">52</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">size</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">53</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="o">-</span><span class="n">_parents</span><span class="p">[</span><span class="n">root</span><span class="p">(</span><span class="n">x</span><span class="p">)];</span>
+<span class="linenos">54</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">55</span>
+<span class="linenos">56</span><span class="w">        </span><span class="kt">bool</span><span class="w"> </span><span class="n">same</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">57</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">root</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">root</span><span class="p">(</span><span class="n">y</span><span class="p">);</span>
+<span class="linenos">58</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">59</span>
+<span class="linenos">60</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">group_count</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">61</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">_group_count</span><span class="p">;</span>
+<span class="linenos">62</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">63</span><span class="w">    </span><span class="p">};</span>
+<span class="linenos">64</span><span class="p">}</span><span class="w"> </span><span class="c1">// namespace titan23</span>
 </pre></div>
 </div>
 </section>
 <section id="id2">
 <h2>仕様<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
-<dl class="cpp type">
-<dt class="sig sig-object cpp" id="_CPPv47titan23">
-<span id="_CPPv37titan23"></span><span id="_CPPv27titan23"></span><span id="titan23"></span><span class="target" id="namespacetitan23"></span><span class="k"><span class="pre">namespace</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">titan23</span></span></span><br /></dt>
-<dd><dl class="cpp class">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan2317UndoableUnionFindE">
-<span id="_CPPv3N7titan2317UndoableUnionFindE"></span><span id="_CPPv2N7titan2317UndoableUnionFindE"></span><span id="titan23::UndoableUnionFind"></span><span class="target" id="classtitan23_1_1UndoableUnionFind"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">UndoableUnionFind</span></span></span><br /></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenfile: Cannot find file “titan_cpplib/data_structures/undoable_union_find.cpp </p>
+</div>
 </section>
 </section>
 
@@ -429,13 +422,7 @@
             <ul>
 <li><a class="reference internal" href="#">undoable union find</a><ul>
 <li><a class="reference internal" href="#id1">ソースコード</a></li>
-<li><a class="reference internal" href="#id2">仕様</a><ul>
-<li><a class="reference internal" href="#_CPPv47titan23"><code class="docutils literal notranslate"><span class="pre">titan23</span></code></a><ul>
-<li><a class="reference internal" href="#_CPPv4N7titan2317UndoableUnionFindE"><code class="docutils literal notranslate"><span class="pre">titan23::UndoableUnionFind</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a class="reference internal" href="#id2">仕様</a></li>
 </ul>
 </li>
 </ul>

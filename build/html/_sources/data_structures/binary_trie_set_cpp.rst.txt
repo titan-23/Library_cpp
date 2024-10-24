@@ -5,7 +5,7 @@ binary trie set
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib_expanded/data_structures/binary_trie_set.cpp
+.. literalinclude:: ./../../titan_cpplib/data_structures/binary_trie_set.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ binary trie set
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib_expanded/data_structures/binary_trie_set.cpp
+.. doxygenfile:: titan_cpplib/data_structures/binary_trie_set.cpp

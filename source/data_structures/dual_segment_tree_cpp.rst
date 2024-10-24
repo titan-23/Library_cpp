@@ -5,7 +5,7 @@ dual segment tree
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib_expanded/data_structures/dual_segment_tree.cpp
+.. literalinclude:: ./../../titan_cpplib/data_structures/dual_segment_tree.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ dual segment tree
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib_expanded/data_structures/dual_segment_tree.cpp
+.. doxygenfile:: titan_cpplib/data_structures/dual_segment_tree.cpp

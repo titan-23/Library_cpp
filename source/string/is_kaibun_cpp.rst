@@ -5,7 +5,7 @@ is kaibun
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib_expanded/string/is_kaibun.cpp
+.. literalinclude:: ./../../titan_cpplib/string/is_kaibun.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ is kaibun
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib_expanded/string/is_kaibun.cpp
+.. doxygenfile:: titan_cpplib/string/is_kaibun.cpp

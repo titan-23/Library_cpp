@@ -5,7 +5,7 @@ min heap
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib_expanded/data_structures/min_heap.cpp
+.. literalinclude:: ./../../titan_cpplib/data_structures/min_heap.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ min heap
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib_expanded/data_structures/min_heap.cpp
+.. doxygenfile:: titan_cpplib/data_structures/min_heap.cpp
