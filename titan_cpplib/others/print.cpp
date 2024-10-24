@@ -3,6 +3,7 @@
 #include <set>
 #include <unordered_set>
 #include <map>
+#include <unordered_map>
 using namespace std;
 
 // print
@@ -55,11 +56,13 @@ ostream& operator<<(ostream& os, const vector<vector<T>>& a) {
 
 // set<T>
 template <typename T>
-ostream& operator<<(ostream& os, const set<T>& a) {
+ostream& operator<<(ostream& os, const set<T>& s) {
     os << "{";
-    for (const T &x: a) {
-        os << x;
-        if (x != *(--a.end())) {
+    auto it = s.begin();
+    while (it != s.end()) {
+        os << *it;
+        ++it;
+        if (it != s.end()) {
             os << ", ";
         }
     }
@@ -91,5 +94,16 @@ ostream& operator<<(ostream& os, const map<K, V>& mp) {
         }
     }
     os << "}";
+    return os;
+}
+
+// unordered_map<K, V>
+template <typename K, typename V>
+ostream& operator<<(ostream& os, const unordered_map<K, V>& mp) {
+    map<K, V> m;
+    for (const auto &[k, v] : mp) {
+        m[k] = v;
+    }
+    os << m;
     return os;
 }

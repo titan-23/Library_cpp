@@ -119,8 +119,6 @@ class BeamSearchWithTree {
             }
             return;
         }
-        for (TreeNodeID nxt_node : treenode_pool.get(node)->child) {
-            assert(treenode_pool.get(nxt_node)->is_valid);
         for (const TreeNodeID nxt_node : treenode_pool.get(node)->child) {
             state->apply_op(treenode_pool.get(nxt_node)->pre_action);
             get_next_beam_recursion(state, nxt_node, next_beam, depth-1, beam_width);
@@ -140,25 +138,6 @@ class BeamSearchWithTree {
         seen.clear();
         get_next_beam_recursion(state, node, next_beam, turn-cnt, beam_width);
         return make_tuple(cnt, node, next_beam);
-    }
-
-    //! 親を返す / 無ければ自分を返す(!?)
-    TreeNodeID get_par(SubStateID s_node, int cnt=1) {
-        assert(0 <= s_node && s_node < substate_pool.get_size());
-        TreeNodeID node = substate_pool.get(s_node)->par;
-        assert(node != -1);
-        for (int i = 0; i < cnt; ++i) {
-            assert(node < treenode_pool.get_size());
-            if (treenode_pool.get(node)->par == -1) {
-                assert(node != -1);
-                return node;
-            }
-            assert(node != -1);
-            node = treenode_pool.get(node)->par;
-        }
-        assert(node != -1);
-        assert(node < treenode_pool.get_size());
-        return node;
     }
 
     //! 不要なNodeを削除し、木を更新する
@@ -249,13 +228,10 @@ class BeamSearchWithTree {
                 })))->score << endl;
             }
 
-            // ビームを絞る // TODO 評価値が一致した場合、親の評価値も参考にするなど
+            // ビームを絞る
             int beam_width = min(param.BEAM_WIDTH, (int)next_beam.size());
             nth_element(next_beam.begin(), next_beam.begin() + beam_width, next_beam.end(), [&] (const SubStateID &left, const SubStateID &right) {
-                // if (substate_pool.get(left)->score != substate_pool.get(right)->score) {
-                    return substate_pool.get(left)->score < substate_pool.get(right)->score;
-                // }
-                // return treenode_pool.get(get_par(left))->score < treenode_pool.get(get_par(right))->score;
+                return substate_pool.get(left)->score < substate_pool.get(right)->score;
             });
 
             // 探索木の更新
