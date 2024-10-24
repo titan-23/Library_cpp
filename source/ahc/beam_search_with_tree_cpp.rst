@@ -5,7 +5,7 @@ beam search with tree
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib/ahc/beam_search_with_tree.cpp
+.. literalinclude:: ./../../titan_cpplib_expanded/ahc/beam_search_with_tree.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ beam search with tree
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib/ahc/beam_search_with_tree.cpp
+.. doxygenfile:: titan_cpplib_expanded/ahc/beam_search_with_tree.cpp

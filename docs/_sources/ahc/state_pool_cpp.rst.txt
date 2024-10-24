@@ -5,7 +5,7 @@ state pool
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib/ahc/state_pool.cpp
+.. literalinclude:: ./../../titan_cpplib_expanded/ahc/state_pool.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ state pool
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib/ahc/state_pool.cpp
+.. doxygenfile:: titan_cpplib_expanded/ahc/state_pool.cpp

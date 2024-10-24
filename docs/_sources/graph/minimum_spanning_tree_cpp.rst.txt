@@ -5,7 +5,7 @@ minimum spanning tree
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib/graph/minimum_spanning_tree.cpp
+.. literalinclude:: ./../../titan_cpplib_expanded/graph/minimum_spanning_tree.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ minimum spanning tree
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib/graph/minimum_spanning_tree.cpp
+.. doxygenfile:: titan_cpplib_expanded/graph/minimum_spanning_tree.cpp

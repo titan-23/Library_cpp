@@ -5,7 +5,7 @@ zaatsu
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib/algorithm/zaatsu.cpp
+.. literalinclude:: ./../../titan_cpplib_expanded/algorithm/zaatsu.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ zaatsu
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib/algorithm/zaatsu.cpp
+.. doxygenfile:: titan_cpplib_expanded/algorithm/zaatsu.cpp

@@ -5,7 +5,7 @@ offline dynamic connectivity
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib/data_structures/offline_dynamic_connectivity.cpp
+.. literalinclude:: ./../../titan_cpplib_expanded/data_structures/offline_dynamic_connectivity.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ offline dynamic connectivity
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib/data_structures/offline_dynamic_connectivity.cpp
+.. doxygenfile:: titan_cpplib_expanded/data_structures/offline_dynamic_connectivity.cpp

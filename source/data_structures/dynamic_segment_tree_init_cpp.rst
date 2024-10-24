@@ -5,7 +5,7 @@ dynamic segment tree init
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib/data_structures/dynamic_segment_tree_init.cpp
+.. literalinclude:: ./../../titan_cpplib_expanded/data_structures/dynamic_segment_tree_init.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ dynamic segment tree init
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib/data_structures/dynamic_segment_tree_init.cpp
+.. doxygenfile:: titan_cpplib_expanded/data_structures/dynamic_segment_tree_init.cpp

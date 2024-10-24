@@ -5,7 +5,7 @@ hld segment tree
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib/graph/hld_segment_tree.cpp
+.. literalinclude:: ./../../titan_cpplib_expanded/graph/hld_segment_tree.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ hld segment tree
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib/graph/hld_segment_tree.cpp
+.. doxygenfile:: titan_cpplib_expanded/graph/hld_segment_tree.cpp

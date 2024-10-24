@@ -5,7 +5,7 @@ wb tree
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib/data_structures/wb_tree.cpp
+.. literalinclude:: ./../../titan_cpplib_expanded/data_structures/wb_tree.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ wb tree
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib/data_structures/wb_tree.cpp
+.. doxygenfile:: titan_cpplib_expanded/data_structures/wb_tree.cpp

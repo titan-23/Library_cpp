@@ -5,7 +5,7 @@ fenwick tree
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib/data_structures/fenwick_tree.cpp
+.. literalinclude:: ./../../titan_cpplib_expanded/data_structures/fenwick_tree.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ fenwick tree
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib/data_structures/fenwick_tree.cpp
+.. doxygenfile:: titan_cpplib_expanded/data_structures/fenwick_tree.cpp

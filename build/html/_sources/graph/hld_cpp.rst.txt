@@ -5,7 +5,7 @@ hld
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib/graph/hld.cpp
+.. literalinclude:: ./../../titan_cpplib_expanded/graph/hld.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ hld
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib/graph/hld.cpp
+.. doxygenfile:: titan_cpplib_expanded/graph/hld.cpp

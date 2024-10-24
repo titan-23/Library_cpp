@@ -5,7 +5,7 @@ dijkstra
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib/graph/dijkstra.cpp
+.. literalinclude:: ./../../titan_cpplib_expanded/graph/dijkstra.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ dijkstra
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib/graph/dijkstra.cpp
+.. doxygenfile:: titan_cpplib_expanded/graph/dijkstra.cpp

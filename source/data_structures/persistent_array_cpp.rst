@@ -5,7 +5,7 @@ persistent array
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib/data_structures/persistent_array.cpp
+.. literalinclude:: ./../../titan_cpplib_expanded/data_structures/persistent_array.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ persistent array
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib/data_structures/persistent_array.cpp
+.. doxygenfile:: titan_cpplib_expanded/data_structures/persistent_array.cpp

@@ -5,7 +5,7 @@ euler tour tree
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib/data_structures/euler_tour_tree.cpp
+.. literalinclude:: ./../../titan_cpplib_expanded/data_structures/euler_tour_tree.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ euler tour tree
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib/data_structures/euler_tour_tree.cpp
+.. doxygenfile:: titan_cpplib_expanded/data_structures/euler_tour_tree.cpp

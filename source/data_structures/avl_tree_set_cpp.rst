@@ -5,7 +5,7 @@ avl tree set
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib/data_structures/avl_tree_set.cpp
+.. literalinclude:: ./../../titan_cpplib_expanded/data_structures/avl_tree_set.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ avl tree set
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib/data_structures/avl_tree_set.cpp
+.. doxygenfile:: titan_cpplib_expanded/data_structures/avl_tree_set.cpp

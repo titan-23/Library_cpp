@@ -5,7 +5,7 @@ quadratic division set
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib/data_structures/quadratic_division_set.cpp
+.. literalinclude:: ./../../titan_cpplib_expanded/data_structures/quadratic_division_set.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ quadratic division set
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib/data_structures/quadratic_division_set.cpp
+.. doxygenfile:: titan_cpplib_expanded/data_structures/quadratic_division_set.cpp

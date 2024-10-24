@@ -5,7 +5,7 @@ persistent lazy wb tree
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp
+.. literalinclude:: ./../../titan_cpplib_expanded/data_structures/persistent_lazy_wb_tree.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ persistent lazy wb tree
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp
+.. doxygenfile:: titan_cpplib_expanded/data_structures/persistent_lazy_wb_tree.cpp

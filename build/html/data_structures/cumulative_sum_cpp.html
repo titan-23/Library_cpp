@@ -289,72 +289,140 @@
 <h1>cumulative sum<a class="headerlink" href="#cumulative-sum" title="Link to this heading">¶</a></h1>
 <section id="id1">
 <h2>ソースコード<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
-<span class="linenos"> 2</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
-<span class="linenos"> 3</span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
-<span class="linenos"> 4</span>
-<span class="linenos"> 5</span><span class="c1">// CumulativeSum</span>
-<span class="linenos"> 6</span><span class="k">namespace</span><span class="w"> </span><span class="nn">titan23</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 7</span><span class="w">    </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
-<span class="linenos"> 8</span><span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="nc">CumulativeSum</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 9</span><span class="w">      </span><span class="k">private</span><span class="o">:</span>
-<span class="linenos">10</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">;</span>
-<span class="linenos">11</span><span class="w">        </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">acc</span><span class="p">;</span>
-<span class="linenos">12</span>
-<span class="linenos">13</span><span class="w">      </span><span class="k">public</span><span class="o">:</span>
-<span class="linenos">14</span><span class="w">        </span><span class="n">CumulativeSum</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
-<span class="linenos">15</span><span class="w">        </span><span class="n">CumulativeSum</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">n</span><span class="p">((</span><span class="kt">int</span><span class="p">)</span><span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">()),</span><span class="w"> </span><span class="n">acc</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">16</span><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">17</span><span class="w">                </span><span class="n">acc</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">acc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
-<span class="linenos">18</span><span class="w">            </span><span class="p">}</span>
-<span class="linenos">19</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">20</span>
-<span class="linenos">21</span><span class="w">        </span><span class="n">T</span><span class="w"> </span><span class="n">pref</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">22</span><span class="w">            </span><span class="n">assert</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">n</span><span class="p">);</span>
-<span class="linenos">23</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">acc</span><span class="p">[</span><span class="n">r</span><span class="p">];</span>
-<span class="linenos">24</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">25</span>
-<span class="linenos">26</span><span class="w">        </span><span class="n">T</span><span class="w"> </span><span class="n">all_sum</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">27</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">acc</span><span class="p">.</span><span class="n">back</span><span class="p">();</span>
-<span class="linenos">28</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">29</span>
-<span class="linenos">30</span><span class="w">        </span><span class="n">T</span><span class="w"> </span><span class="n">sum</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">31</span><span class="w">            </span><span class="n">assert</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">n</span><span class="p">);</span>
-<span class="linenos">32</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">acc</span><span class="p">[</span><span class="n">r</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">acc</span><span class="p">[</span><span class="n">l</span><span class="p">];</span>
-<span class="linenos">33</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">34</span>
-<span class="linenos">35</span><span class="w">        </span><span class="n">T</span><span class="w"> </span><span class="n">prod</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">36</span><span class="w">            </span><span class="n">assert</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">n</span><span class="p">);</span>
-<span class="linenos">37</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">acc</span><span class="p">[</span><span class="n">r</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">acc</span><span class="p">[</span><span class="n">l</span><span class="p">];</span>
-<span class="linenos">38</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">39</span>
-<span class="linenos">40</span><span class="w">        </span><span class="n">T</span><span class="w"> </span><span class="n">all_prod</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">41</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">acc</span><span class="p">.</span><span class="n">back</span><span class="p">();</span>
-<span class="linenos">42</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">43</span>
-<span class="linenos">44</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">len</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">45</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">n</span><span class="p">;</span>
-<span class="linenos">46</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">47</span>
-<span class="linenos">48</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">print</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">49</span><span class="w">            </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">&#39;[&#39;</span><span class="p">;</span>
-<span class="linenos">50</span><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="mi">-1</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">51</span><span class="w">                </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">acc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;, &quot;</span><span class="p">;</span>
-<span class="linenos">52</span><span class="w">            </span><span class="p">}</span>
-<span class="linenos">53</span><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">acc</span><span class="p">.</span><span class="n">back</span><span class="p">();</span>
-<span class="linenos">54</span><span class="w">            </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">&#39;]&#39;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
-<span class="linenos">55</span><span class="w">        </span><span class="p">}</span>
-<span class="linenos">56</span><span class="w">    </span><span class="p">};</span>
-<span class="linenos">57</span><span class="p">}</span><span class="w">  </span><span class="c1">// namespace titan23</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="c1">// #include &quot;titan_cpplib/data_structures/cumulative_sum.cpp&quot;</span>
+<span class="linenos"> 2</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
+<span class="linenos"> 3</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+<span class="linenos"> 4</span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
+<span class="linenos"> 5</span>
+<span class="linenos"> 6</span><span class="c1">// CumulativeSum</span>
+<span class="linenos"> 7</span><span class="k">namespace</span><span class="w"> </span><span class="nn">titan23</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 8</span><span class="w">    </span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<span class="linenos"> 9</span><span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="nc">CumulativeSum</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">10</span><span class="w">      </span><span class="k">private</span><span class="o">:</span>
+<span class="linenos">11</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">;</span>
+<span class="linenos">12</span><span class="w">        </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">acc</span><span class="p">;</span>
+<span class="linenos">13</span>
+<span class="linenos">14</span><span class="w">      </span><span class="k">public</span><span class="o">:</span>
+<span class="linenos">15</span><span class="w">        </span><span class="n">CumulativeSum</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos">16</span><span class="w">        </span><span class="n">CumulativeSum</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">n</span><span class="p">((</span><span class="kt">int</span><span class="p">)</span><span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">()),</span><span class="w"> </span><span class="n">acc</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">17</span><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">18</span><span class="w">                </span><span class="n">acc</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">acc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="linenos">19</span><span class="w">            </span><span class="p">}</span>
+<span class="linenos">20</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">21</span>
+<span class="linenos">22</span><span class="w">        </span><span class="n">T</span><span class="w"> </span><span class="n">pref</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">23</span><span class="w">            </span><span class="n">assert</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">n</span><span class="p">);</span>
+<span class="linenos">24</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">acc</span><span class="p">[</span><span class="n">r</span><span class="p">];</span>
+<span class="linenos">25</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">26</span>
+<span class="linenos">27</span><span class="w">        </span><span class="n">T</span><span class="w"> </span><span class="n">all_sum</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">28</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">acc</span><span class="p">.</span><span class="n">back</span><span class="p">();</span>
+<span class="linenos">29</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">30</span>
+<span class="linenos">31</span><span class="w">        </span><span class="n">T</span><span class="w"> </span><span class="n">sum</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">32</span><span class="w">            </span><span class="n">assert</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">n</span><span class="p">);</span>
+<span class="linenos">33</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">acc</span><span class="p">[</span><span class="n">r</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">acc</span><span class="p">[</span><span class="n">l</span><span class="p">];</span>
+<span class="linenos">34</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">35</span>
+<span class="linenos">36</span><span class="w">        </span><span class="n">T</span><span class="w"> </span><span class="n">prod</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">37</span><span class="w">            </span><span class="n">assert</span><span class="p">(</span><span class="mi">0</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">n</span><span class="p">);</span>
+<span class="linenos">38</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">acc</span><span class="p">[</span><span class="n">r</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">acc</span><span class="p">[</span><span class="n">l</span><span class="p">];</span>
+<span class="linenos">39</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">40</span>
+<span class="linenos">41</span><span class="w">        </span><span class="n">T</span><span class="w"> </span><span class="n">all_prod</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">42</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">acc</span><span class="p">.</span><span class="n">back</span><span class="p">();</span>
+<span class="linenos">43</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">44</span>
+<span class="linenos">45</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">len</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">46</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">n</span><span class="p">;</span>
+<span class="linenos">47</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">48</span>
+<span class="linenos">49</span><span class="w">        </span><span class="kt">void</span><span class="w"> </span><span class="n">print</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">50</span><span class="w">            </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">&#39;[&#39;</span><span class="p">;</span>
+<span class="linenos">51</span><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="mi">-1</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">52</span><span class="w">                </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">acc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;, &quot;</span><span class="p">;</span>
+<span class="linenos">53</span><span class="w">            </span><span class="p">}</span>
+<span class="linenos">54</span><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">acc</span><span class="p">.</span><span class="n">back</span><span class="p">();</span>
+<span class="linenos">55</span><span class="w">            </span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">&#39;]&#39;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="linenos">56</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">57</span><span class="w">    </span><span class="p">};</span>
+<span class="linenos">58</span><span class="p">}</span><span class="w">  </span><span class="c1">// namespace titan23</span>
 </pre></div>
 </div>
 </section>
 <section id="id2">
 <h2>仕様<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>doxygenfile: Cannot find file “titan_cpplib/data_structures/cumulative_sum.cpp </p>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv47titan23">
+<span id="_CPPv37titan23"></span><span id="_CPPv27titan23"></span><span id="titan23"></span><span class="target" id="namespacetitan23"></span><span class="k"><span class="pre">namespace</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">titan23</span></span></span><br /></dt>
+<dd><dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN7titan2313CumulativeSumE">
+<span id="_CPPv3I0EN7titan2313CumulativeSumE"></span><span id="_CPPv2I0EN7titan2313CumulativeSumE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classtitan23_1_1CumulativeSum"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CumulativeSum</span></span></span><a class="headerlink" href="#_CPPv4I0EN7titan2313CumulativeSumE" title="Link to this definition">¶</a><br /></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2313CumulativeSum13CumulativeSumEv">
+<span id="_CPPv3N7titan2313CumulativeSum13CumulativeSumEv"></span><span id="_CPPv2N7titan2313CumulativeSum13CumulativeSumEv"></span><span id="titan23::CumulativeSum::CumulativeSum"></span><span class="target" id="classtitan23_1_1CumulativeSum_1ae93b4c3409de384ae2fdfec825797451"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CumulativeSum</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2313CumulativeSum13CumulativeSumEv" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2313CumulativeSum13CumulativeSumER6vectorI1TE1T">
+<span id="_CPPv3N7titan2313CumulativeSum13CumulativeSumER6vectorI1TE1T"></span><span id="_CPPv2N7titan2313CumulativeSum13CumulativeSumER6vectorI1TE1T"></span><span id="titan23::CumulativeSum::CumulativeSum__vector:T:R.T"></span><span class="target" id="classtitan23_1_1CumulativeSum_1a606f3a2cf4cef31ad24e429a25838012"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">CumulativeSum</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN7titan2313CumulativeSumE" title="titan23::CumulativeSum::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">a</span></span>, <a class="reference internal" href="#_CPPv4I0EN7titan2313CumulativeSumE" title="titan23::CumulativeSum::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">e</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan2313CumulativeSum13CumulativeSumER6vectorI1TE1T" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK7titan2313CumulativeSum4prefEKi">
+<span id="_CPPv3NK7titan2313CumulativeSum4prefEKi"></span><span id="_CPPv2NK7titan2313CumulativeSum4prefEKi"></span><span id="titan23::CumulativeSum::pref__iCC"></span><span class="target" id="classtitan23_1_1CumulativeSum_1a5fa037f2920ab329f1c8668598363b52"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN7titan2313CumulativeSumE" title="titan23::CumulativeSum::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pref</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK7titan2313CumulativeSum4prefEKi" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK7titan2313CumulativeSum7all_sumEv">
+<span id="_CPPv3NK7titan2313CumulativeSum7all_sumEv"></span><span id="_CPPv2NK7titan2313CumulativeSum7all_sumEv"></span><span id="titan23::CumulativeSum::all_sumC"></span><span class="target" id="classtitan23_1_1CumulativeSum_1a5bc1d4a5dea0cfe6a4c026f1fccfa8ef"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN7titan2313CumulativeSumE" title="titan23::CumulativeSum::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">all_sum</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK7titan2313CumulativeSum7all_sumEv" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK7titan2313CumulativeSum3sumEKiKi">
+<span id="_CPPv3NK7titan2313CumulativeSum3sumEKiKi"></span><span id="_CPPv2NK7titan2313CumulativeSum3sumEKiKi"></span><span id="titan23::CumulativeSum::sum__iC.iCC"></span><span class="target" id="classtitan23_1_1CumulativeSum_1ac12d01787658e6e91fa3d471eae03864"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN7titan2313CumulativeSumE" title="titan23::CumulativeSum::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sum</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">l</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK7titan2313CumulativeSum3sumEKiKi" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK7titan2313CumulativeSum4prodEKiKi">
+<span id="_CPPv3NK7titan2313CumulativeSum4prodEKiKi"></span><span id="_CPPv2NK7titan2313CumulativeSum4prodEKiKi"></span><span id="titan23::CumulativeSum::prod__iC.iCC"></span><span class="target" id="classtitan23_1_1CumulativeSum_1a9dd78ace7793f96da84a34f8d79fa8bf"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN7titan2313CumulativeSumE" title="titan23::CumulativeSum::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">prod</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">l</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK7titan2313CumulativeSum4prodEKiKi" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK7titan2313CumulativeSum8all_prodEv">
+<span id="_CPPv3NK7titan2313CumulativeSum8all_prodEv"></span><span id="_CPPv2NK7titan2313CumulativeSum8all_prodEv"></span><span id="titan23::CumulativeSum::all_prodC"></span><span class="target" id="classtitan23_1_1CumulativeSum_1a9844d6f91be1582781dc7af97b57b77a"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN7titan2313CumulativeSumE" title="titan23::CumulativeSum::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">all_prod</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK7titan2313CumulativeSum8all_prodEv" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK7titan2313CumulativeSum3lenEv">
+<span id="_CPPv3NK7titan2313CumulativeSum3lenEv"></span><span id="_CPPv2NK7titan2313CumulativeSum3lenEv"></span><span id="titan23::CumulativeSum::lenC"></span><span class="target" id="classtitan23_1_1CumulativeSum_1a914ff6bf10b5bfaffbde0b7a22707456"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">len</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK7titan2313CumulativeSum3lenEv" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK7titan2313CumulativeSum5printEv">
+<span id="_CPPv3NK7titan2313CumulativeSum5printEv"></span><span id="_CPPv2NK7titan2313CumulativeSum5printEv"></span><span id="titan23::CumulativeSum::printC"></span><span class="target" id="classtitan23_1_1CumulativeSum_1af5d879656e99410be8f1ac3a6159bfb7"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">print</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK7titan2313CumulativeSum5printEv" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
 </div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2313CumulativeSum1nE">
+<span id="_CPPv3N7titan2313CumulativeSum1nE"></span><span id="_CPPv2N7titan2313CumulativeSum1nE"></span><span id="titan23::CumulativeSum::n__i"></span><span class="target" id="classtitan23_1_1CumulativeSum_1a08617ffbd37ac1061725b15dad0e865b"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">n</span></span></span><a class="headerlink" href="#_CPPv4N7titan2313CumulativeSum1nE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N7titan2313CumulativeSum3accE">
+<span id="_CPPv3N7titan2313CumulativeSum3accE"></span><span id="_CPPv2N7titan2313CumulativeSum3accE"></span><span id="titan23::CumulativeSum::acc__vector:T:"></span><span class="target" id="classtitan23_1_1CumulativeSum_1ad0299951450d43a8252d66b47bf89efb"></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN7titan2313CumulativeSumE" title="titan23::CumulativeSum::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">acc</span></span></span><a class="headerlink" href="#_CPPv4N7titan2313CumulativeSum3accE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 </section>
 
@@ -415,7 +483,26 @@
             <ul>
 <li><a class="reference internal" href="#">cumulative sum</a><ul>
 <li><a class="reference internal" href="#id1">ソースコード</a></li>
-<li><a class="reference internal" href="#id2">仕様</a></li>
+<li><a class="reference internal" href="#id2">仕様</a><ul>
+<li><a class="reference internal" href="#_CPPv47titan23"><code class="docutils literal notranslate"><span class="pre">titan23</span></code></a><ul>
+<li><a class="reference internal" href="#_CPPv4I0EN7titan2313CumulativeSumE"><code class="docutils literal notranslate"><span class="pre">titan23::CumulativeSum</span></code></a><ul>
+<li><a class="reference internal" href="#_CPPv4N7titan2313CumulativeSum13CumulativeSumEv"><code class="docutils literal notranslate"><span class="pre">titan23::CumulativeSum::CumulativeSum()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2313CumulativeSum13CumulativeSumER6vectorI1TE1T"><code class="docutils literal notranslate"><span class="pre">titan23::CumulativeSum::CumulativeSum()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4NK7titan2313CumulativeSum4prefEKi"><code class="docutils literal notranslate"><span class="pre">titan23::CumulativeSum::pref()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4NK7titan2313CumulativeSum7all_sumEv"><code class="docutils literal notranslate"><span class="pre">titan23::CumulativeSum::all_sum()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4NK7titan2313CumulativeSum3sumEKiKi"><code class="docutils literal notranslate"><span class="pre">titan23::CumulativeSum::sum()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4NK7titan2313CumulativeSum4prodEKiKi"><code class="docutils literal notranslate"><span class="pre">titan23::CumulativeSum::prod()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4NK7titan2313CumulativeSum8all_prodEv"><code class="docutils literal notranslate"><span class="pre">titan23::CumulativeSum::all_prod()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4NK7titan2313CumulativeSum3lenEv"><code class="docutils literal notranslate"><span class="pre">titan23::CumulativeSum::len()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4NK7titan2313CumulativeSum5printEv"><code class="docutils literal notranslate"><span class="pre">titan23::CumulativeSum::print()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2313CumulativeSum1nE"><code class="docutils literal notranslate"><span class="pre">titan23::CumulativeSum::n</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N7titan2313CumulativeSum3accE"><code class="docutils literal notranslate"><span class="pre">titan23::CumulativeSum::acc</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

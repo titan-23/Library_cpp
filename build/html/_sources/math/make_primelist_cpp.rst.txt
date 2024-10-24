@@ -5,7 +5,7 @@ make primelist
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib/math/make_primelist.cpp
+.. literalinclude:: ./../../titan_cpplib_expanded/math/make_primelist.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ make primelist
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib/math/make_primelist.cpp
+.. doxygenfile:: titan_cpplib_expanded/math/make_primelist.cpp

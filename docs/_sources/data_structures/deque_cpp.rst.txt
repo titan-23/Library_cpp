@@ -5,7 +5,7 @@ deque
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib/data_structures/deque.cpp
+.. literalinclude:: ./../../titan_cpplib_expanded/data_structures/deque.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ deque
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib/data_structures/deque.cpp
+.. doxygenfile:: titan_cpplib_expanded/data_structures/deque.cpp

@@ -5,7 +5,7 @@ bbst node
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib/data_structures/bbst_node.cpp
+.. literalinclude:: ./../../titan_cpplib_expanded/data_structures/bbst_node.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ bbst node
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib/data_structures/bbst_node.cpp
+.. doxygenfile:: titan_cpplib_expanded/data_structures/bbst_node.cpp

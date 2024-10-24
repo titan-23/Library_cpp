@@ -5,7 +5,7 @@ random
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib/algorithm/random.cpp
+.. literalinclude:: ./../../titan_cpplib_expanded/algorithm/random.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ random
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib/algorithm/random.cpp
+.. doxygenfile:: titan_cpplib_expanded/algorithm/random.cpp

@@ -5,7 +5,7 @@ static set
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib/data_structures/static_set.cpp
+.. literalinclude:: ./../../titan_cpplib_expanded/data_structures/static_set.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ static set
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib/data_structures/static_set.cpp
+.. doxygenfile:: titan_cpplib_expanded/data_structures/static_set.cpp

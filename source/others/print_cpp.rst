@@ -5,7 +5,7 @@ print
 ソースコード
 ^^^^^^^^^^^^
 
-.. literalinclude:: ./../../titan_cpplib/others/print.cpp
+.. literalinclude:: ./../../titan_cpplib_expanded/others/print.cpp
    :language: cpp
    :linenos:
 
@@ -13,4 +13,4 @@ print
 仕様
 ^^^^^^^^^^^^
 
-.. doxygenfile:: titan_cpplib/others/print.cpp
+.. doxygenfile:: titan_cpplib_expanded/others/print.cpp
