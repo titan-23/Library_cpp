@@ -51,7 +51,7 @@
         <argsstring>() const</argsstring>
         <name>elapsed</name>
         <briefdescription>
-<para>経過時間[ms]を返す </para>
+<para>経過時間[ms](double)を返す </para>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>

@@ -4,14 +4,12 @@
     <compoundname>beam_search_with_tree</compoundname>
     <innerclass refid="structbeam__search__with__tree_1_1Action" prot="public">beam_search_with_tree::Action</innerclass>
     <innerclass refid="classbeam__search__with__tree_1_1State" prot="public">beam_search_with_tree::State</innerclass>
-    <innerclass refid="structbeam__search__with__tree_1_1Param" prot="public">beam_search_with_tree::Param</innerclass>
-    <innerclass refid="structbeam__search__with__tree_1_1SubState" prot="public">beam_search_with_tree::SubState</innerclass>
-    <innerclass refid="structbeam__search__with__tree_1_1TreeNode" prot="public">beam_search_with_tree::TreeNode</innerclass>
+    <innerclass refid="structbeam__search__with__tree_1_1BeamParam" prot="public">beam_search_with_tree::BeamParam</innerclass>
     <innerclass refid="classbeam__search__with__tree_1_1BeamSearchWithTree" prot="public">beam_search_with_tree::BeamSearchWithTree</innerclass>
       <sectiondef kind="typedef">
-      <memberdef kind="typedef" id="namespacebeam__search__with__tree_1af5472ddaaa54333d4757abdc047347dd" prot="public" static="no">
-        <type>int</type>
-        <definition>using beam_search_with_tree::ScoreType = typedef int</definition>
+      <memberdef kind="typedef" id="namespacebeam__search__with__tree_1a1294f102550ff38b60ddb22b0ffcdab3" prot="public" static="no">
+        <type>long long</type>
+        <definition>using beam_search_with_tree::ScoreType = typedef long long</definition>
         <argsstring></argsstring>
         <name>ScoreType</name>
         <briefdescription>
@@ -20,7 +18,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search_with_tree.cpp" line="22" column="1" bodyfile="titan_cpplib/ahc/beam_search_with_tree.cpp" bodystart="22" bodyend="-1"/>
+        <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="19" column="1" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="19" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacebeam__search__with__tree_1aa83032ad758aef56dec6deeecbe53d6d" prot="public" static="no">
         <type>unsigned long long</type>
@@ -33,61 +31,46 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search_with_tree.cpp" line="23" column="1" bodyfile="titan_cpplib/ahc/beam_search_with_tree.cpp" bodystart="23" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="typedef" id="namespacebeam__search__with__tree_1a54906ff873336403a4705a2f5d2c9e2a" prot="public" static="no">
-        <type>int</type>
-        <definition>using beam_search_with_tree::TreeNodeID = typedef int</definition>
-        <argsstring></argsstring>
-        <name>TreeNodeID</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search_with_tree.cpp" line="71" column="1" bodyfile="titan_cpplib/ahc/beam_search_with_tree.cpp" bodystart="71" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="typedef" id="namespacebeam__search__with__tree_1a4dc08d62dd237747b897d8e7c21c3c74" prot="public" static="no">
-        <type>int</type>
-        <definition>using beam_search_with_tree::SubStateID = typedef int</definition>
-        <argsstring></argsstring>
-        <name>SubStateID</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search_with_tree.cpp" line="72" column="1" bodyfile="titan_cpplib/ahc/beam_search_with_tree.cpp" bodystart="72" bodyend="-1"/>
+        <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="20" column="1" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="20" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="var">
-      <memberdef kind="variable" id="namespacebeam__search__with__tree_1a5f29ceda537d6803b87068a9aaf4072d" prot="public" static="no" mutable="no">
-        <type><ref refid="classtitan23_1_1StatePool" kindref="compound">titan23::StatePool</ref>&lt; <ref refid="structbeam__search__with__tree_1_1TreeNode" kindref="compound">TreeNode</ref> &gt;</type>
-        <definition>titan23::StatePool&lt;TreeNode&gt; beam_search_with_tree::treenode_pool</definition>
+      <memberdef kind="variable" id="namespacebeam__search__with__tree_1af90a4c9af8ff0f76e058cca1df3c84b4" prot="public" static="no" mutable="no">
+        <type>const ScoreType</type>
+        <definition>const ScoreType beam_search_with_tree::INF</definition>
         <argsstring></argsstring>
-        <name>treenode_pool</name>
+        <name>INF</name>
+        <initializer>= 1e9</initializer>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search_with_tree.cpp" line="100" column="20" bodyfile="titan_cpplib/ahc/beam_search_with_tree.cpp" bodystart="100" bodyend="-1"/>
+        <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="21" column="17" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="21" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="namespacebeam__search__with__tree_1adc4263fc1a4f888068d42f0edfae35ab" prot="public" static="no" mutable="no">
-        <type><ref refid="classtitan23_1_1StatePool" kindref="compound">titan23::StatePool</ref>&lt; <ref refid="structbeam__search__with__tree_1_1SubState" kindref="compound">SubState</ref> &gt;</type>
-        <definition>titan23::StatePool&lt;SubState&gt; beam_search_with_tree::substate_pool</definition>
-        <argsstring></argsstring>
-        <name>substate_pool</name>
+      </sectiondef>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespacebeam__search__with__tree_1a129a8b9547b5ba5752b734feb46b31bd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>ostream &amp;</type>
+        <definition>ostream&amp; beam_search_with_tree::operator&lt;&lt;</definition>
+        <argsstring>(ostream &amp;os, const Action &amp;action)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <param>
+          <type>ostream &amp;</type>
+          <declname>os</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structbeam__search__with__tree_1_1Action" kindref="compound">Action</ref> &amp;</type>
+          <declname>action</declname>
+        </param>
         <briefdescription>
         </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search_with_tree.cpp" line="101" column="20" bodyfile="titan_cpplib/ahc/beam_search_with_tree.cpp" bodystart="101" bodyend="-1"/>
+        <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="32" column="1" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="32" bodyend="35"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -95,6 +78,6 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/ahc/beam_search_with_tree.cpp" line="11" column="1"/>
+    <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="17" column="1"/>
   </compounddef>
 </doxygen>

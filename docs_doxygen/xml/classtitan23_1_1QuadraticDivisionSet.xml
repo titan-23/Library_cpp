@@ -1,0 +1,186 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classtitan23_1_1QuadraticDivisionSet" kind="class" language="C++" prot="public">
+    <compoundname>titan23::QuadraticDivisionSet</compoundname>
+    <templateparamlist>
+      <param>
+        <type>typename T</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classtitan23_1_1QuadraticDivisionSet_1addca5dcf15774b02c25dd71f6b63c4a3" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int titan23::QuadraticDivisionSet&lt; T &gt;::n</definition>
+        <argsstring></argsstring>
+        <name>n</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/quadratic_division_set.cpp" line="12" column="9" bodyfile="titan_cpplib/data_structures/quadratic_division_set.cpp" bodystart="12" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1QuadraticDivisionSet_1a97e19bbf587d7fc8b8518801f20f3928" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int titan23::QuadraticDivisionSet&lt; T &gt;::size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/quadratic_division_set.cpp" line="12" column="11" bodyfile="titan_cpplib/data_structures/quadratic_division_set.cpp" bodystart="12" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1QuadraticDivisionSet_1a00133a5b36abb2c1b7876381ccd412b9" prot="private" static="no" mutable="no">
+        <type>int</type>
+        <definition>int titan23::QuadraticDivisionSet&lt; T &gt;::bucket_cnt</definition>
+        <argsstring></argsstring>
+        <name>bucket_cnt</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/quadratic_division_set.cpp" line="12" column="16" bodyfile="titan_cpplib/data_structures/quadratic_division_set.cpp" bodystart="12" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1QuadraticDivisionSet_1ade599140ff8ad1bbbe2bda83dbd15566" prot="private" static="no" mutable="no">
+        <type>vector&lt; vector&lt; T &gt; &gt;</type>
+        <definition>vector&lt;vector&lt;T&gt; &gt; titan23::QuadraticDivisionSet&lt; T &gt;::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/quadratic_division_set.cpp" line="13" column="12" bodyfile="titan_cpplib/data_structures/quadratic_division_set.cpp" bodystart="13" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classtitan23_1_1QuadraticDivisionSet_1a093e987de7bf551af073a15af5dcb4ee" prot="private" static="no" mutable="no">
+        <type>vector&lt; T &gt;</type>
+        <definition>vector&lt;T&gt; titan23::QuadraticDivisionSet&lt; T &gt;::bucket_data</definition>
+        <argsstring></argsstring>
+        <name>bucket_data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/quadratic_division_set.cpp" line="14" column="12" bodyfile="titan_cpplib/data_structures/quadratic_division_set.cpp" bodystart="14" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classtitan23_1_1QuadraticDivisionSet_1aee14c5cc9c147a7cea1f9f8f6d9e6d4c" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::QuadraticDivisionSet&lt; T &gt;::QuadraticDivisionSet</definition>
+        <argsstring>(int n)</argsstring>
+        <name>QuadraticDivisionSet</name>
+        <param>
+          <type>int</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/quadratic_division_set.cpp" line="16" column="5" bodyfile="titan_cpplib/data_structures/quadratic_division_set.cpp" bodystart="16" bodyend="19"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1QuadraticDivisionSet_1a1bb34dff7af4ef0a4968acba65a18899" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::QuadraticDivisionSet&lt; T &gt;::QuadraticDivisionSet</definition>
+        <argsstring>(vector&lt; T &gt; a)</argsstring>
+        <name>QuadraticDivisionSet</name>
+        <param>
+          <type>vector&lt; T &gt;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/quadratic_division_set.cpp" line="21" column="5" bodyfile="titan_cpplib/data_structures/quadratic_division_set.cpp" bodystart="21" bodyend="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1QuadraticDivisionSet_1a0adb4521fc87aaac2b9847d1c7c4b472" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::QuadraticDivisionSet&lt; T &gt;::_build</definition>
+        <argsstring>(vector&lt; T &gt; a)</argsstring>
+        <name>_build</name>
+        <param>
+          <type>vector&lt; T &gt;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/quadratic_division_set.cpp" line="25" column="10" bodyfile="titan_cpplib/data_structures/quadratic_division_set.cpp" bodystart="25" bodyend="38"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1QuadraticDivisionSet_1a69bd378c1da696c2a64fcf38a1e654be" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T titan23::QuadraticDivisionSet&lt; T &gt;::sum</definition>
+        <argsstring>(int l, int r) const</argsstring>
+        <name>sum</name>
+        <param>
+          <type>int</type>
+          <declname>l</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/quadratic_division_set.cpp" line="40" column="7" bodyfile="titan_cpplib/data_structures/quadratic_division_set.cpp" bodystart="40" bodyend="61"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1QuadraticDivisionSet_1a6e5a1bdfbca9075850897123b57c56b9" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T titan23::QuadraticDivisionSet&lt; T &gt;::get</definition>
+        <argsstring>(int idx)</argsstring>
+        <name>get</name>
+        <param>
+          <type>int</type>
+          <declname>idx</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/data_structures/quadratic_division_set.cpp" line="63" column="7" bodyfile="titan_cpplib/data_structures/quadratic_division_set.cpp" bodystart="63" bodyend="66"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="titan_cpplib/data_structures/quadratic_division_set.cpp" line="10" column="1" bodyfile="titan_cpplib/data_structures/quadratic_division_set.cpp" bodystart="10" bodyend="67"/>
+    <listofallmembers>
+      <member refid="classtitan23_1_1QuadraticDivisionSet_1a0adb4521fc87aaac2b9847d1c7c4b472" prot="private" virt="non-virtual"><scope>titan23::QuadraticDivisionSet</scope><name>_build</name></member>
+      <member refid="classtitan23_1_1QuadraticDivisionSet_1a00133a5b36abb2c1b7876381ccd412b9" prot="private" virt="non-virtual"><scope>titan23::QuadraticDivisionSet</scope><name>bucket_cnt</name></member>
+      <member refid="classtitan23_1_1QuadraticDivisionSet_1a093e987de7bf551af073a15af5dcb4ee" prot="private" virt="non-virtual"><scope>titan23::QuadraticDivisionSet</scope><name>bucket_data</name></member>
+      <member refid="classtitan23_1_1QuadraticDivisionSet_1ade599140ff8ad1bbbe2bda83dbd15566" prot="private" virt="non-virtual"><scope>titan23::QuadraticDivisionSet</scope><name>data</name></member>
+      <member refid="classtitan23_1_1QuadraticDivisionSet_1a6e5a1bdfbca9075850897123b57c56b9" prot="private" virt="non-virtual"><scope>titan23::QuadraticDivisionSet</scope><name>get</name></member>
+      <member refid="classtitan23_1_1QuadraticDivisionSet_1addca5dcf15774b02c25dd71f6b63c4a3" prot="private" virt="non-virtual"><scope>titan23::QuadraticDivisionSet</scope><name>n</name></member>
+      <member refid="classtitan23_1_1QuadraticDivisionSet_1aee14c5cc9c147a7cea1f9f8f6d9e6d4c" prot="private" virt="non-virtual"><scope>titan23::QuadraticDivisionSet</scope><name>QuadraticDivisionSet</name></member>
+      <member refid="classtitan23_1_1QuadraticDivisionSet_1a1bb34dff7af4ef0a4968acba65a18899" prot="private" virt="non-virtual"><scope>titan23::QuadraticDivisionSet</scope><name>QuadraticDivisionSet</name></member>
+      <member refid="classtitan23_1_1QuadraticDivisionSet_1a97e19bbf587d7fc8b8518801f20f3928" prot="private" virt="non-virtual"><scope>titan23::QuadraticDivisionSet</scope><name>size</name></member>
+      <member refid="classtitan23_1_1QuadraticDivisionSet_1a69bd378c1da696c2a64fcf38a1e654be" prot="private" virt="non-virtual"><scope>titan23::QuadraticDivisionSet</scope><name>sum</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

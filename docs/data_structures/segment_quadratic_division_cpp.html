@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="segment tree" href="segment_tree_cpp.html" /><link rel="prev" title="persistent stack" href="persistent_stack_cpp.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.01.29 -->
         <title>segment quadratic division - titan_cpplib documentation</title>
@@ -156,9 +156,10 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  <ul class="current">
+  <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../ahc/index.html">ahc</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of ahc</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../ahc/action_cpp.html">action</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ahc/beam_search_euler_cpp.html">beam search euler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../ahc/beam_search_with_tree_cpp.html">beam search with tree</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../ahc/kmeans_cpp.html">kmeans</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../ahc/sa_cpp.html">sa</a></li>
@@ -166,7 +167,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../ahc/timer_cpp.html">timer</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">data_structures</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of data_structures</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="index.html">data_structures</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of data_structures</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="array_cpp.html">array</a></li>
 <li class="toctree-l2"><a class="reference internal" href="avl_tree_bit_vector_cpp.html">avl tree bit vector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="avl_tree_multiset_cpp.html">avl tree multiset</a></li>
@@ -204,7 +205,7 @@
 <li class="toctree-l2"><a class="reference internal" href="persistent_lazy_wb_tree_cpp.html">persistent lazy wb tree</a></li>
 <li class="toctree-l2"><a class="reference internal" href="persistent_segment_tree_cpp.html">persistent segment tree</a></li>
 <li class="toctree-l2"><a class="reference internal" href="persistent_stack_cpp.html">persistent stack</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">segment quadratic division</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quadratic_division_set_cpp.html">quadratic division set</a></li>
 <li class="toctree-l2"><a class="reference internal" href="segment_tree_cpp.html">segment tree</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sparse_table_cpp.html">sparse table</a></li>
 <li class="toctree-l2"><a class="reference internal" href="static_multiset_cpp.html">static multiset</a></li>
@@ -288,161 +289,13 @@
 <h1>segment quadratic division<a class="headerlink" href="#segment-quadratic-division" title="Link to this heading">¶</a></h1>
 <section id="id1">
 <h2>ソースコード<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="linenos"> 1</span><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
-<span class="linenos"> 2</span><span class="k">struct</span><span class="w"> </span><span class="nc">SegmentQuadraticDivision</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos"> 3</span><span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="n">bucket_cnt</span><span class="p">;</span>
-<span class="linenos"> 4</span><span class="w">  </span><span class="n">T</span><span class="w"> </span><span class="n">e</span><span class="p">;</span>
-<span class="linenos"> 5</span><span class="w">  </span><span class="n">function</span><span class="o">&lt;</span><span class="n">T</span><span class="w"> </span><span class="p">(</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">op</span><span class="p">;</span>
-<span class="linenos"> 6</span><span class="w">  </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">data</span><span class="p">;</span>
-<span class="linenos"> 7</span><span class="w">  </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">bucket_data</span><span class="p">;</span>
-<span class="linenos"> 8</span>
-<span class="linenos"> 9</span><span class="w">  </span><span class="n">SegmentQuadraticDivision</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">function</span><span class="o">&lt;</span><span class="n">T</span><span class="w"> </span><span class="p">(</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">10</span><span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">a</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">);</span>
-<span class="linenos">11</span><span class="w">    </span><span class="n">_build</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">);</span>
-<span class="linenos">12</span><span class="w">  </span><span class="p">}</span>
-<span class="linenos">13</span>
-<span class="linenos">14</span><span class="w">  </span><span class="n">SegmentQuadraticDivision</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">function</span><span class="o">&lt;</span><span class="n">T</span><span class="w"> </span><span class="p">(</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">15</span><span class="w">    </span><span class="n">_build</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">);</span>
-<span class="linenos">16</span><span class="w">  </span><span class="p">}</span>
-<span class="linenos">17</span>
-<span class="linenos">18</span><span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">_build</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">function</span><span class="o">&lt;</span><span class="n">T</span><span class="w"> </span><span class="p">(</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">19</span><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">a</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
-<span class="linenos">20</span><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">op</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">op</span><span class="p">;</span>
-<span class="linenos">21</span><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">e</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">e</span><span class="p">;</span>
-<span class="linenos">22</span><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
-<span class="linenos">23</span><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">bucket_cnt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="n">size</span><span class="mi">-1</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">size</span><span class="p">;</span>
-<span class="linenos">24</span><span class="w">    </span><span class="n">bucket_data</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">bucket_cnt</span><span class="p">);</span>
-<span class="linenos">25</span><span class="w">    </span><span class="n">data</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">bucket_cnt</span><span class="p">);</span>
-<span class="linenos">26</span><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">bucket_cnt</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">27</span><span class="w">      </span><span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">].</span><span class="n">resize</span><span class="p">(</span><span class="n">size</span><span class="p">);</span>
-<span class="linenos">28</span><span class="w">      </span><span class="n">T</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">e</span><span class="p">;</span>
-<span class="linenos">29</span><span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">size</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">30</span><span class="w">        </span><span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">k</span><span class="o">*</span><span class="n">size</span><span class="o">+</span><span class="n">i</span><span class="p">];</span>
-<span class="linenos">31</span><span class="w">        </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">op</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="n">k</span><span class="o">*</span><span class="n">size</span><span class="o">+</span><span class="n">i</span><span class="p">]);</span>
-<span class="linenos">32</span><span class="w">      </span><span class="p">}</span>
-<span class="linenos">33</span><span class="w">      </span><span class="n">bucket_data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">;</span>
-<span class="linenos">34</span><span class="w">    </span><span class="p">}</span>
-<span class="linenos">35</span><span class="w">  </span><span class="p">}</span>
-<span class="linenos">36</span>
-<span class="linenos">37</span><span class="w">  </span><span class="n">T</span><span class="w"> </span><span class="n">prod</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">38</span><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">k1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="n">k2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">size</span><span class="p">;</span>
-<span class="linenos">39</span><span class="w">    </span><span class="n">l</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="n">k1</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">size</span><span class="p">;</span>
-<span class="linenos">40</span><span class="w">    </span><span class="n">r</span><span class="w"> </span><span class="o">-=</span><span class="w"> </span><span class="n">k2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">size</span><span class="p">;</span>
-<span class="linenos">41</span><span class="w">    </span><span class="n">T</span><span class="w"> </span><span class="n">ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">e</span><span class="p">;</span>
-<span class="linenos">42</span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">k1</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">k2</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">43</span><span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">l</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">r</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">44</span><span class="w">        </span><span class="n">ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">op</span><span class="p">(</span><span class="n">ans</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="n">k1</span><span class="p">][</span><span class="n">i</span><span class="p">]);</span>
-<span class="linenos">45</span><span class="w">      </span><span class="p">}</span>
-<span class="linenos">46</span><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">47</span><span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">l</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">data</span><span class="p">[</span><span class="n">k1</span><span class="p">].</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">48</span><span class="w">        </span><span class="n">ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">op</span><span class="p">(</span><span class="n">ans</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="n">k1</span><span class="p">][</span><span class="n">i</span><span class="p">]);</span>
-<span class="linenos">49</span><span class="w">      </span><span class="p">}</span>
-<span class="linenos">50</span><span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">k1</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">k2</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">51</span><span class="w">        </span><span class="n">ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">op</span><span class="p">(</span><span class="n">ans</span><span class="p">,</span><span class="w"> </span><span class="n">bucket_data</span><span class="p">[</span><span class="n">k</span><span class="p">]);</span>
-<span class="linenos">52</span><span class="w">      </span><span class="p">}</span>
-<span class="linenos">53</span><span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">r</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">54</span><span class="w">        </span><span class="n">ans</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">op</span><span class="p">(</span><span class="n">ans</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="n">k2</span><span class="p">][</span><span class="n">i</span><span class="p">]);</span>
-<span class="linenos">55</span><span class="w">      </span><span class="p">}</span>
-<span class="linenos">56</span><span class="w">    </span><span class="p">}</span>
-<span class="linenos">57</span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ans</span><span class="p">;</span>
-<span class="linenos">58</span><span class="w">  </span><span class="p">}</span>
-<span class="linenos">59</span>
-<span class="linenos">60</span><span class="w">  </span><span class="n">T</span><span class="w"> </span><span class="n">get</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">indx</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">61</span><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">indx</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">size</span><span class="p">;</span>
-<span class="linenos">62</span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">indx</span><span class="o">-</span><span class="n">k</span><span class="o">*</span><span class="n">size</span><span class="p">];</span>
-<span class="linenos">63</span><span class="w">  </span><span class="p">}</span>
-<span class="linenos">64</span>
-<span class="linenos">65</span><span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">set</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">indx</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">66</span><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">indx</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">size</span><span class="p">;</span>
-<span class="linenos">67</span><span class="w">    </span><span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">indx</span><span class="o">-</span><span class="n">k</span><span class="o">*</span><span class="n">size</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">key</span><span class="p">;</span>
-<span class="linenos">68</span><span class="w">    </span><span class="n">T</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">e</span><span class="p">;</span>
-<span class="linenos">69</span><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="o">:</span><span class="w"> </span><span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">])</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">70</span><span class="w">      </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">op</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">);</span>
-<span class="linenos">71</span><span class="w">    </span><span class="p">}</span>
-<span class="linenos">72</span><span class="w">    </span><span class="n">bucket_data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">;</span>
-<span class="linenos">73</span><span class="w">  </span><span class="p">}</span>
-<span class="linenos">74</span><span class="p">};</span>
-</pre></div>
-</div>
 </section>
 <section id="id2">
 <h2>仕様<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
-<dl class="cpp struct">
-<dt class="sig sig-object cpp" id="_CPPv4I0E24SegmentQuadraticDivision">
-<span id="_CPPv3I0E24SegmentQuadraticDivision"></span><span id="_CPPv2I0E24SegmentQuadraticDivision"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="structSegmentQuadraticDivision"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SegmentQuadraticDivision</span></span></span><a class="headerlink" href="#_CPPv4I0E24SegmentQuadraticDivision" title="Link to this definition">¶</a><br /></dt>
-<dd><div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N24SegmentQuadraticDivision24SegmentQuadraticDivisionEi8functionIF1T1T1TEE1T">
-<span id="_CPPv3N24SegmentQuadraticDivision24SegmentQuadraticDivisionEi8functionIF1T1T1TEE1T"></span><span id="_CPPv2N24SegmentQuadraticDivision24SegmentQuadraticDivisionEi8functionIF1T1T1TEE1T"></span><span class="target" id="structSegmentQuadraticDivision_1a2fa513c175035c74e30aee889313372d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SegmentQuadraticDivision</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">n</span></span>, <span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0E24SegmentQuadraticDivision" title="SegmentQuadraticDivision::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">(</span></span><a class="reference internal" href="#_CPPv4I0E24SegmentQuadraticDivision" title="SegmentQuadraticDivision::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0E24SegmentQuadraticDivision" title="SegmentQuadraticDivision::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">op</span></span>, <a class="reference internal" href="#_CPPv4I0E24SegmentQuadraticDivision" title="SegmentQuadraticDivision::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">e</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N24SegmentQuadraticDivision24SegmentQuadraticDivisionEi8functionIF1T1T1TEE1T" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N24SegmentQuadraticDivision24SegmentQuadraticDivisionE6vectorI1TE8functionIF1T1T1TEE1T">
-<span id="_CPPv3N24SegmentQuadraticDivision24SegmentQuadraticDivisionE6vectorI1TE8functionIF1T1T1TEE1T"></span><span id="_CPPv2N24SegmentQuadraticDivision24SegmentQuadraticDivisionE6vectorI1TE8functionIF1T1T1TEE1T"></span><span class="target" id="structSegmentQuadraticDivision_1ab33f1822900c7d8bd8caeab77413415c"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SegmentQuadraticDivision</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0E24SegmentQuadraticDivision" title="SegmentQuadraticDivision::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">a</span></span>, <span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0E24SegmentQuadraticDivision" title="SegmentQuadraticDivision::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">(</span></span><a class="reference internal" href="#_CPPv4I0E24SegmentQuadraticDivision" title="SegmentQuadraticDivision::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0E24SegmentQuadraticDivision" title="SegmentQuadraticDivision::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">op</span></span>, <a class="reference internal" href="#_CPPv4I0E24SegmentQuadraticDivision" title="SegmentQuadraticDivision::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">e</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N24SegmentQuadraticDivision24SegmentQuadraticDivisionE6vectorI1TE8functionIF1T1T1TEE1T" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N24SegmentQuadraticDivision6_buildE6vectorI1TE8functionIF1T1T1TEE1T">
-<span id="_CPPv3N24SegmentQuadraticDivision6_buildE6vectorI1TE8functionIF1T1T1TEE1T"></span><span id="_CPPv2N24SegmentQuadraticDivision6_buildE6vectorI1TE8functionIF1T1T1TEE1T"></span><span class="target" id="structSegmentQuadraticDivision_1a58a6a685292bb69623a91d916a3808e2"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_build</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0E24SegmentQuadraticDivision" title="SegmentQuadraticDivision::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">a</span></span>, <span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0E24SegmentQuadraticDivision" title="SegmentQuadraticDivision::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">(</span></span><a class="reference internal" href="#_CPPv4I0E24SegmentQuadraticDivision" title="SegmentQuadraticDivision::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0E24SegmentQuadraticDivision" title="SegmentQuadraticDivision::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">op</span></span>, <a class="reference internal" href="#_CPPv4I0E24SegmentQuadraticDivision" title="SegmentQuadraticDivision::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">e</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N24SegmentQuadraticDivision6_buildE6vectorI1TE8functionIF1T1T1TEE1T" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N24SegmentQuadraticDivision4prodEii">
-<span id="_CPPv3N24SegmentQuadraticDivision4prodEii"></span><span id="_CPPv2N24SegmentQuadraticDivision4prodEii"></span><span id="SegmentQuadraticDivision::prod__i.i"></span><span class="target" id="structSegmentQuadraticDivision_1a4768e05754b485d2fb8c714e525856be"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0E24SegmentQuadraticDivision" title="SegmentQuadraticDivision::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">prod</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">l</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N24SegmentQuadraticDivision4prodEii" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N24SegmentQuadraticDivision3getEi">
-<span id="_CPPv3N24SegmentQuadraticDivision3getEi"></span><span id="_CPPv2N24SegmentQuadraticDivision3getEi"></span><span id="SegmentQuadraticDivision::get__i"></span><span class="target" id="structSegmentQuadraticDivision_1ae35d754e567f1d8eb51d3b12f4f8c2d4"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0E24SegmentQuadraticDivision" title="SegmentQuadraticDivision::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">get</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">indx</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N24SegmentQuadraticDivision3getEi" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N24SegmentQuadraticDivision3setEi1T">
-<span id="_CPPv3N24SegmentQuadraticDivision3setEi1T"></span><span id="_CPPv2N24SegmentQuadraticDivision3setEi1T"></span><span id="SegmentQuadraticDivision::set__i.T"></span><span class="target" id="structSegmentQuadraticDivision_1ac426935f70a818c4477fa6f2f2f69446"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">set</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">indx</span></span>, <a class="reference internal" href="#_CPPv4I0E24SegmentQuadraticDivision" title="SegmentQuadraticDivision::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">key</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N24SegmentQuadraticDivision3setEi1T" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenfile: Cannot find file “titan_cpplib/data_structures/segment_quadratic_division.cpp </p>
 </div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N24SegmentQuadraticDivision1nE">
-<span id="_CPPv3N24SegmentQuadraticDivision1nE"></span><span id="_CPPv2N24SegmentQuadraticDivision1nE"></span><span id="SegmentQuadraticDivision::n__i"></span><span class="target" id="structSegmentQuadraticDivision_1acee3bbe56b902dcc78ca06a29e04c7fc"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">n</span></span></span><a class="headerlink" href="#_CPPv4N24SegmentQuadraticDivision1nE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N24SegmentQuadraticDivision4sizeE">
-<span id="_CPPv3N24SegmentQuadraticDivision4sizeE"></span><span id="_CPPv2N24SegmentQuadraticDivision4sizeE"></span><span id="SegmentQuadraticDivision::size__i"></span><span class="target" id="structSegmentQuadraticDivision_1a0fbf9fc09f60cd450a70a3bcd0c8515f"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">size</span></span></span><a class="headerlink" href="#_CPPv4N24SegmentQuadraticDivision4sizeE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N24SegmentQuadraticDivision10bucket_cntE">
-<span id="_CPPv3N24SegmentQuadraticDivision10bucket_cntE"></span><span id="_CPPv2N24SegmentQuadraticDivision10bucket_cntE"></span><span id="SegmentQuadraticDivision::bucket_cnt__i"></span><span class="target" id="structSegmentQuadraticDivision_1ad13790b5a244bf8e4ee3632a3cc727e0"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bucket_cnt</span></span></span><a class="headerlink" href="#_CPPv4N24SegmentQuadraticDivision10bucket_cntE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N24SegmentQuadraticDivision1eE">
-<span id="_CPPv3N24SegmentQuadraticDivision1eE"></span><span id="_CPPv2N24SegmentQuadraticDivision1eE"></span><span id="SegmentQuadraticDivision::e__T"></span><span class="target" id="structSegmentQuadraticDivision_1af9066315177c5dedf048460ada92f215"></span><a class="reference internal" href="#_CPPv4I0E24SegmentQuadraticDivision" title="SegmentQuadraticDivision::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">e</span></span></span><a class="headerlink" href="#_CPPv4N24SegmentQuadraticDivision1eE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N24SegmentQuadraticDivision2opE">
-<span id="_CPPv3N24SegmentQuadraticDivision2opE"></span><span id="_CPPv2N24SegmentQuadraticDivision2opE"></span><span class="target" id="structSegmentQuadraticDivision_1a649917a56955dd07130283422c3eaa62"></span><span class="n"><span class="pre">function</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0E24SegmentQuadraticDivision" title="SegmentQuadraticDivision::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">(</span></span><a class="reference internal" href="#_CPPv4I0E24SegmentQuadraticDivision" title="SegmentQuadraticDivision::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0E24SegmentQuadraticDivision" title="SegmentQuadraticDivision::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">)</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">op</span></span></span><a class="headerlink" href="#_CPPv4N24SegmentQuadraticDivision2opE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N24SegmentQuadraticDivision4dataE">
-<span id="_CPPv3N24SegmentQuadraticDivision4dataE"></span><span id="_CPPv2N24SegmentQuadraticDivision4dataE"></span><span id="SegmentQuadraticDivision::data__vector:vector:T::"></span><span class="target" id="structSegmentQuadraticDivision_1af468b5ac9e53030e151fba508ff76679"></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0E24SegmentQuadraticDivision" title="SegmentQuadraticDivision::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">data</span></span></span><a class="headerlink" href="#_CPPv4N24SegmentQuadraticDivision4dataE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N24SegmentQuadraticDivision11bucket_dataE">
-<span id="_CPPv3N24SegmentQuadraticDivision11bucket_dataE"></span><span id="_CPPv2N24SegmentQuadraticDivision11bucket_dataE"></span><span id="SegmentQuadraticDivision::bucket_data__vector:T:"></span><span class="target" id="structSegmentQuadraticDivision_1a609bce2cd31a51b0b834aaa81f239bac"></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0E24SegmentQuadraticDivision" title="SegmentQuadraticDivision::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bucket_data</span></span></span><a class="headerlink" href="#_CPPv4N24SegmentQuadraticDivision11bucket_dataE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-</dd></dl>
-
 </section>
 </section>
 
@@ -451,26 +304,8 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="segment_tree_cpp.html">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title">segment tree</div>
-              </div>
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
-            </a>
-          <a class="prev-page" href="persistent_stack_cpp.html">
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
-              <div class="page-info">
-                <div class="context">
-                  <span>Previous</span>
-                </div>
-                
-                <div class="title">persistent stack</div>
-                
-              </div>
-            </a>
+          
+          
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
@@ -503,25 +338,7 @@
             <ul>
 <li><a class="reference internal" href="#">segment quadratic division</a><ul>
 <li><a class="reference internal" href="#id1">ソースコード</a></li>
-<li><a class="reference internal" href="#id2">仕様</a><ul>
-<li><a class="reference internal" href="#_CPPv4I0E24SegmentQuadraticDivision"><code class="docutils literal notranslate"><span class="pre">SegmentQuadraticDivision</span></code></a><ul>
-<li><a class="reference internal" href="#_CPPv4N24SegmentQuadraticDivision24SegmentQuadraticDivisionEi8functionIF1T1T1TEE1T"><code class="docutils literal notranslate"><span class="pre">SegmentQuadraticDivision::SegmentQuadraticDivision()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N24SegmentQuadraticDivision24SegmentQuadraticDivisionE6vectorI1TE8functionIF1T1T1TEE1T"><code class="docutils literal notranslate"><span class="pre">SegmentQuadraticDivision::SegmentQuadraticDivision()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N24SegmentQuadraticDivision6_buildE6vectorI1TE8functionIF1T1T1TEE1T"><code class="docutils literal notranslate"><span class="pre">SegmentQuadraticDivision::_build()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N24SegmentQuadraticDivision4prodEii"><code class="docutils literal notranslate"><span class="pre">SegmentQuadraticDivision::prod()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N24SegmentQuadraticDivision3getEi"><code class="docutils literal notranslate"><span class="pre">SegmentQuadraticDivision::get()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N24SegmentQuadraticDivision3setEi1T"><code class="docutils literal notranslate"><span class="pre">SegmentQuadraticDivision::set()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N24SegmentQuadraticDivision1nE"><code class="docutils literal notranslate"><span class="pre">SegmentQuadraticDivision::n</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N24SegmentQuadraticDivision4sizeE"><code class="docutils literal notranslate"><span class="pre">SegmentQuadraticDivision::size</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N24SegmentQuadraticDivision10bucket_cntE"><code class="docutils literal notranslate"><span class="pre">SegmentQuadraticDivision::bucket_cnt</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N24SegmentQuadraticDivision1eE"><code class="docutils literal notranslate"><span class="pre">SegmentQuadraticDivision::e</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N24SegmentQuadraticDivision2opE"><code class="docutils literal notranslate"><span class="pre">SegmentQuadraticDivision::op</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N24SegmentQuadraticDivision4dataE"><code class="docutils literal notranslate"><span class="pre">SegmentQuadraticDivision::data</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N24SegmentQuadraticDivision11bucket_dataE"><code class="docutils literal notranslate"><span class="pre">SegmentQuadraticDivision::bucket_data</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a class="reference internal" href="#id2">仕様</a></li>
 </ul>
 </li>
 </ul>

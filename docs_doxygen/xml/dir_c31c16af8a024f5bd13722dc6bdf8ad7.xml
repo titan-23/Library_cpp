@@ -39,7 +39,7 @@
     <innerfile refid="persistent__lazy__wb__tree_8cpp">persistent_lazy_wb_tree.cpp</innerfile>
     <innerfile refid="persistent__segment__tree_8cpp">persistent_segment_tree.cpp</innerfile>
     <innerfile refid="persistent__stack_8cpp">persistent_stack.cpp</innerfile>
-    <innerfile refid="segment__quadratic__division_8cpp">segment_quadratic_division.cpp</innerfile>
+    <innerfile refid="quadratic__division__set_8cpp">quadratic_division_set.cpp</innerfile>
     <innerfile refid="segment__tree_8cpp">segment_tree.cpp</innerfile>
     <innerfile refid="sparse__table_8cpp">sparse_table.cpp</innerfile>
     <innerfile refid="static__multiset_8cpp">static_multiset.cpp</innerfile>

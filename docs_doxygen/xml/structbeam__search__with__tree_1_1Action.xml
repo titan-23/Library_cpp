@@ -2,6 +2,73 @@
 <doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
   <compounddef id="structbeam__search__with__tree_1_1Action" kind="struct" language="C++" prot="public">
     <compoundname>beam_search_with_tree::Action</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="structbeam__search__with__tree_1_1Action_1ab14840d0b504c0e145e8c5d1a79c1444" prot="public" static="no" mutable="no">
+        <type>char</type>
+        <definition>char beam_search_with_tree::Action::d</definition>
+        <argsstring></argsstring>
+        <name>d</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="25" column="10" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="25" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbeam__search__with__tree_1_1Action_1a3b2f581501b8039dd441ef3c0e675fe5" prot="public" static="no" mutable="no">
+        <type>ScoreType</type>
+        <definition>ScoreType beam_search_with_tree::Action::pre_score</definition>
+        <argsstring></argsstring>
+        <name>pre_score</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="26" column="15" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbeam__search__with__tree_1_1Action_1a1b645db68cd9100f60a2c9572ee13fc7" prot="public" static="no" mutable="no">
+        <type>ScoreType</type>
+        <definition>ScoreType beam_search_with_tree::Action::nxt_score</definition>
+        <argsstring></argsstring>
+        <name>nxt_score</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="26" column="25" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="26" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbeam__search__with__tree_1_1Action_1a4226cf0e82dc2a9bada3f410bb68f27c" prot="public" static="no" mutable="no">
+        <type>HashType</type>
+        <definition>HashType beam_search_with_tree::Action::pre_hash</definition>
+        <argsstring></argsstring>
+        <name>pre_hash</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="27" column="14" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="structbeam__search__with__tree_1_1Action_1aff7f8a1e132c836d37aac60940b4a469" prot="public" static="no" mutable="no">
+        <type>HashType</type>
+        <definition>HashType beam_search_with_tree::Action::nxt_hash</definition>
+        <argsstring></argsstring>
+        <name>nxt_hash</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="27" column="23" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="27" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
       <sectiondef kind="public-func">
       <memberdef kind="function" id="structbeam__search__with__tree_1_1Action_1a35c1d1939dce9448a48765667c7a21d1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -14,22 +81,16 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search_with_tree.cpp" line="14" column="5" bodyfile="titan_cpplib/ahc/beam_search_with_tree.cpp" bodystart="14" bodyend="14"/>
+        <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="29" column="5" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="29" bodyend="29"/>
       </memberdef>
-      </sectiondef>
-      <sectiondef kind="friend">
-      <memberdef kind="friend" id="structbeam__search__with__tree_1_1Action_1ade82c23a0d32fb8bcbe82cd1f5d0fbd1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
-        <type>ostream &amp;</type>
-        <definition>ostream&amp; operator&lt;&lt;</definition>
-        <argsstring>(ostream &amp;os, const Action &amp;action)</argsstring>
-        <name>operator&lt;&lt;</name>
+      <memberdef kind="function" id="structbeam__search__with__tree_1_1Action_1a1badedef2492323b4c2e8ab171f04d74" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>beam_search_with_tree::Action::Action</definition>
+        <argsstring>(const char d)</argsstring>
+        <name>Action</name>
         <param>
-          <type>ostream &amp;</type>
-          <declname>os</declname>
-        </param>
-        <param>
-          <type>const <ref refid="structbeam__search__with__tree_1_1Action" kindref="compound">Action</ref> &amp;</type>
-          <declname>action</declname>
+          <type>const char</type>
+          <declname>d</declname>
         </param>
         <briefdescription>
         </briefdescription>
@@ -37,17 +98,22 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search_with_tree.cpp" line="16" column="12" bodyfile="titan_cpplib/ahc/beam_search_with_tree.cpp" bodystart="16" bodyend="18"/>
+        <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="30" column="5" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="30" bodyend="30"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/ahc/beam_search_with_tree.cpp" line="13" column="1" bodyfile="titan_cpplib/ahc/beam_search_with_tree.cpp" bodystart="13" bodyend="19"/>
+    <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="24" column="1" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="24" bodyend="31"/>
     <listofallmembers>
       <member refid="structbeam__search__with__tree_1_1Action_1a35c1d1939dce9448a48765667c7a21d1" prot="public" virt="non-virtual"><scope>beam_search_with_tree::Action</scope><name>Action</name></member>
-      <member refid="structbeam__search__with__tree_1_1Action_1ade82c23a0d32fb8bcbe82cd1f5d0fbd1" prot="public" virt="non-virtual"><scope>beam_search_with_tree::Action</scope><name>operator&lt;&lt;</name></member>
+      <member refid="structbeam__search__with__tree_1_1Action_1a1badedef2492323b4c2e8ab171f04d74" prot="public" virt="non-virtual"><scope>beam_search_with_tree::Action</scope><name>Action</name></member>
+      <member refid="structbeam__search__with__tree_1_1Action_1ab14840d0b504c0e145e8c5d1a79c1444" prot="public" virt="non-virtual"><scope>beam_search_with_tree::Action</scope><name>d</name></member>
+      <member refid="structbeam__search__with__tree_1_1Action_1aff7f8a1e132c836d37aac60940b4a469" prot="public" virt="non-virtual"><scope>beam_search_with_tree::Action</scope><name>nxt_hash</name></member>
+      <member refid="structbeam__search__with__tree_1_1Action_1a1b645db68cd9100f60a2c9572ee13fc7" prot="public" virt="non-virtual"><scope>beam_search_with_tree::Action</scope><name>nxt_score</name></member>
+      <member refid="structbeam__search__with__tree_1_1Action_1a4226cf0e82dc2a9bada3f410bb68f27c" prot="public" virt="non-virtual"><scope>beam_search_with_tree::Action</scope><name>pre_hash</name></member>
+      <member refid="structbeam__search__with__tree_1_1Action_1a3b2f581501b8039dd441ef3c0e675fe5" prot="public" virt="non-virtual"><scope>beam_search_with_tree::Action</scope><name>pre_score</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

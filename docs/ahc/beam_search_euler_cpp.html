@@ -1,0 +1,1002 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="beam search with tree" href="beam_search_with_tree_cpp.html" /><link rel="prev" title="action" href="action_cpp.html" />
+
+    <!-- Generated with Sphinx 7.3.7 and Furo 2024.01.29 -->
+        <title>beam search euler - titan_cpplib documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=135e06be" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=36a5483c" />
+    <link rel="stylesheet" type="text/css" href="../_static/_static/style.css" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #eeffcc;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">titan_cpplib  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  
+  <span class="sidebar-brand-text">titan_cpplib  documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">ahc</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of ahc</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="action_cpp.html">action</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">beam search euler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="beam_search_with_tree_cpp.html">beam search with tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="kmeans_cpp.html">kmeans</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sa_cpp.html">sa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="state_pool_cpp.html">state pool</a></li>
+<li class="toctree-l2"><a class="reference internal" href="timer_cpp.html">timer</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../data_structures/index.html">data_structures</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of data_structures</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/array_cpp.html">array</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/avl_tree_bit_vector_cpp.html">avl tree bit vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/avl_tree_multiset_cpp.html">avl tree multiset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/avl_tree_set_cpp.html">avl tree set</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/bbst_node_cpp.html">bbst node</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/binary_trie_multiset_cpp.html">binary trie multiset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/binary_trie_set_cpp.html">binary trie set</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/bit_vector_cpp.html">bit vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/cumulative_sum_cpp.html">cumulative sum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/cumulative_sum_2D_cpp.html">cumulative sum 2D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/deque_cpp.html">deque</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/dual_commutative_segment_tree_cpp.html">dual commutative segment tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/dual_segment_tree_cpp.html">dual segment tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/dynamic_bit_vector_cpp.html">dynamic bit vector</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/dynamic_fenwick_tree_2D_cpp.html">dynamic fenwick tree 2D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/dynamic_lazy_segment_tree_cpp.html">dynamic lazy segment tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/dynamic_list_cpp.html">dynamic list</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/dynamic_segment_tree_cpp.html">dynamic segment tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/dynamic_segment_tree_init_cpp.html">dynamic segment tree init</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/dynamic_wavelet_matrix_cpp.html">dynamic wavelet matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/dynamic_wavelet_tree_cpp.html">dynamic wavelet tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/euler_tour_tree_cpp.html">euler tour tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/fenwick_tree_cpp.html">fenwick tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/fenwick_tree_2D_cpp.html">fenwick tree 2D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/hash_dict_cpp.html">hash dict</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/hash_set_cpp.html">hash set</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/lazy_link_cut_tree_cpp.html">lazy link cut tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/lazy_wb_tree_cpp.html">lazy wb tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/link_cut_tree_cpp.html">link cut tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/max_heap_cpp.html">max heap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/min_heap_cpp.html">min heap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/offline_dynamic_connectivity_cpp.html">offline dynamic connectivity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/offline_dynamic_connectivity_sum_cpp.html">offline dynamic connectivity sum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/persistent_array_cpp.html">persistent array</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/persistent_lazy_wb_tree_cpp.html">persistent lazy wb tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/persistent_segment_tree_cpp.html">persistent segment tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/persistent_stack_cpp.html">persistent stack</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/quadratic_division_set_cpp.html">quadratic division set</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/segment_tree_cpp.html">segment tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/sparse_table_cpp.html">sparse table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/static_multiset_cpp.html">static multiset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/static_set_cpp.html">static set</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/undoable_union_find_cpp.html">undoable union find</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/undoable_union_find_sum_cpp.html">undoable union find sum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/union_find_cpp.html">union find</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/union_find_light_cpp.html">union find light</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/wavelet_matrix_cpp.html">wavelet matrix</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/wavelet_matrix_cumulative_sum_cpp.html">wavelet matrix cumulative sum</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/wb_tree_cpp.html">wb tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/weight_union_find_cpp.html">weight union find</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../graph/index.html">graph</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of graph</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../graph/bfs_path_cpp.html">bfs path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../graph/dijkstra_cpp.html">dijkstra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../graph/dijkstra_path_cpp.html">dijkstra path</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../graph/graph_cpp.html">graph</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../graph/hld_cpp.html">hld</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../graph/hld_segment_tree_cpp.html">hld segment tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../graph/lca_cpp.html">lca</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../graph/maximum_independent_set_cpp.html">maximum independent set</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../graph/minimum_spanning_tree_cpp.html">minimum spanning tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../graph/minimum_steiner_tree_cpp.html">minimum steiner tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../graph/rooted_tree_cpp.html">rooted tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../graph/warshall_floyd_path_cpp.html">warshall floyd path</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../math/index.html">math</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of math</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../math/divs_cpp.html">divs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../math/make_primelist_cpp.html">make primelist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../math/math_cpp.html">math</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../others/index.html">others</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of others</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../others/other_cpp.html">other</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../others/print_cpp.html">print</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../string/index.html">string</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of string</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../string/hash_string_cpp.html">hash string</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../string/is_kaibun_cpp.html">is kaibun</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="beam-search-euler">
+<h1>beam search euler<a class="headerlink" href="#beam-search-euler" title="Link to this heading">¶</a></h1>
+<section id="id1">
+<h2>ソースコード<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="linenos">  1</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
+<span class="linenos">  2</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+<span class="linenos">  3</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cassert&gt;</span>
+<span class="linenos">  4</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;algorithm&gt;</span>
+<span class="linenos">  5</span>
+<span class="linenos">  6</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;titan_cpplib/algorithm/random.cpp&quot;</span>
+<span class="linenos">  7</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;titan_cpplib/ahc/state_pool.cpp&quot;</span>
+<span class="linenos">  8</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;titan_cpplib/ahc/timer.cpp&quot;</span>
+<span class="linenos">  9</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;titan_cpplib/data_structures/hash_set.cpp&quot;</span>
+<span class="linenos"> 10</span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;titan_cpplib/others/print.cpp&quot;</span>
+<span class="linenos"> 11</span>
+<span class="linenos"> 12</span><span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
+<span class="linenos"> 13</span>
+<span class="linenos"> 14</span><span class="cp">#define rep(i, n) for (int i = 0; i &lt; (n); ++i)</span>
+<span class="linenos"> 15</span>
+<span class="linenos"> 16</span><span class="c1">//! 木上のビームサーチライブラリ</span>
+<span class="linenos"> 17</span><span class="k">namespace</span><span class="w"> </span><span class="nn">beam_search_with_tree</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 18</span>
+<span class="linenos"> 19</span><span class="k">using</span><span class="w"> </span><span class="n">ScoreType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="p">;</span>
+<span class="linenos"> 20</span><span class="k">using</span><span class="w"> </span><span class="n">HashType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="p">;</span>
+<span class="linenos"> 21</span><span class="k">const</span><span class="w"> </span><span class="n">ScoreType</span><span class="w"> </span><span class="n">INF</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1e9</span><span class="p">;</span>
+<span class="linenos"> 22</span>
+<span class="linenos"> 23</span><span class="c1">// Action</span>
+<span class="linenos"> 24</span><span class="k">struct</span><span class="w"> </span><span class="nc">Action</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 25</span><span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">d</span><span class="p">;</span>
+<span class="linenos"> 26</span><span class="w">    </span><span class="n">ScoreType</span><span class="w"> </span><span class="n">pre_score</span><span class="p">,</span><span class="w"> </span><span class="n">nxt_score</span><span class="p">;</span>
+<span class="linenos"> 27</span><span class="w">    </span><span class="n">HashType</span><span class="w"> </span><span class="n">pre_hash</span><span class="p">,</span><span class="w"> </span><span class="n">nxt_hash</span><span class="p">;</span>
+<span class="linenos"> 28</span>
+<span class="linenos"> 29</span><span class="w">    </span><span class="n">Action</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 30</span><span class="w">    </span><span class="n">Action</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">d</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">d</span><span class="p">(</span><span class="n">d</span><span class="p">),</span><span class="w"> </span><span class="n">pre_score</span><span class="p">(</span><span class="n">INF</span><span class="p">),</span><span class="w"> </span><span class="n">nxt_score</span><span class="p">(</span><span class="n">INF</span><span class="p">),</span><span class="w"> </span><span class="n">pre_hash</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="n">nxt_hash</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 31</span><span class="p">};</span>
+<span class="linenos"> 32</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Action</span><span class="w"> </span><span class="o">&amp;</span><span class="n">action</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 33</span><span class="w">    </span><span class="n">os</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">action</span><span class="p">.</span><span class="n">d</span><span class="p">;</span>
+<span class="linenos"> 34</span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">os</span><span class="p">;</span>
+<span class="linenos"> 35</span><span class="p">}</span>
+<span class="linenos"> 36</span>
+<span class="linenos"> 37</span><span class="k">class</span><span class="w"> </span><span class="nc">State</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 38</span><span class="w">  </span><span class="k">private</span><span class="o">:</span>
+<span class="linenos"> 39</span>
+<span class="linenos"> 40</span><span class="w">  </span><span class="k">public</span><span class="o">:</span>
+<span class="linenos"> 41</span><span class="w">    </span><span class="n">ScoreType</span><span class="w"> </span><span class="n">score</span><span class="p">;</span>
+<span class="linenos"> 42</span><span class="w">    </span><span class="n">HashType</span><span class="w"> </span><span class="n">hash</span><span class="p">;</span>
+<span class="linenos"> 43</span>
+<span class="linenos"> 44</span><span class="w">    </span><span class="n">State</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 45</span>
+<span class="linenos"> 46</span><span class="w">    </span><span class="c1">// TODO Stateを初期化する</span>
+<span class="linenos"> 47</span><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">init</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 48</span>
+<span class="linenos"> 49</span><span class="w">    </span><span class="c1">// TODO</span>
+<span class="linenos"> 50</span><span class="w">    </span><span class="c1">//! `action` をしたときの評価値とハッシュ値を返す</span>
+<span class="linenos"> 51</span><span class="w">    </span><span class="c1">//! ロールバックに必要な情報はすべてactionにメモしておく</span>
+<span class="linenos"> 52</span><span class="w">    </span><span class="n">pair</span><span class="o">&lt;</span><span class="n">ScoreType</span><span class="p">,</span><span class="w"> </span><span class="n">HashType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">try_op</span><span class="p">(</span><span class="n">Action</span><span class="w"> </span><span class="o">&amp;</span><span class="n">action</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 53</span>
+<span class="linenos"> 54</span><span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_done</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 55</span>
+<span class="linenos"> 56</span><span class="w">    </span><span class="c1">// TODO</span>
+<span class="linenos"> 57</span><span class="w">    </span><span class="c1">//! `action` をする</span>
+<span class="linenos"> 58</span><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">apply_op</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Action</span><span class="w"> </span><span class="o">&amp;</span><span class="n">action</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 59</span>
+<span class="linenos"> 60</span><span class="w">    </span><span class="c1">// TODO</span>
+<span class="linenos"> 61</span><span class="w">    </span><span class="c1">//! `action` を戻す</span>
+<span class="linenos"> 62</span><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">rollback</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Action</span><span class="w"> </span><span class="o">&amp;</span><span class="n">action</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 63</span>
+<span class="linenos"> 64</span><span class="w">    </span><span class="c1">// TODO</span>
+<span class="linenos"> 65</span><span class="w">    </span><span class="c1">//! 現状態から遷移可能な `Action` の `vector` を返す</span>
+<span class="linenos"> 66</span><span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Action</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_actions</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 67</span>
+<span class="linenos"> 68</span><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">print</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{}</span>
+<span class="linenos"> 69</span><span class="p">};</span>
+<span class="linenos"> 70</span>
+<span class="linenos"> 71</span><span class="k">struct</span><span class="w"> </span><span class="nc">BeamParam</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 72</span><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">MAX_TURN</span><span class="p">;</span>
+<span class="linenos"> 73</span><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">BEAM_WIDTH</span><span class="p">;</span>
+<span class="linenos"> 74</span><span class="p">};</span>
+<span class="linenos"> 75</span>
+<span class="linenos"> 76</span><span class="k">class</span><span class="w"> </span><span class="nc">BeamSearchWithTree</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos"> 77</span><span class="w">    </span><span class="c1">// ref: https://eijirou-kyopro.hatenablog.com/entry/2024/02/01/115639</span>
+<span class="linenos"> 78</span>
+<span class="linenos"> 79</span><span class="w">  </span><span class="k">private</span><span class="o">:</span>
+<span class="linenos"> 80</span><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">PRE_ORDER</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+<span class="linenos"> 81</span><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">POST_ORDER</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-2</span><span class="p">;</span>
+<span class="linenos"> 82</span>
+<span class="linenos"> 83</span><span class="w">    </span><span class="n">titan23</span><span class="o">::</span><span class="n">HashSet</span><span class="w"> </span><span class="n">seen</span><span class="p">;</span>
+<span class="linenos"> 84</span><span class="w">    </span><span class="k">using</span><span class="w"> </span><span class="n">ActionIDType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">int</span><span class="p">;</span>
+<span class="linenos"> 85</span><span class="w">    </span><span class="n">ActionIDType</span><span class="w"> </span><span class="n">ActionID</span><span class="p">;</span>
+<span class="linenos"> 86</span><span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Action</span><span class="o">&gt;</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<span class="linenos"> 87</span>
+<span class="linenos"> 88</span><span class="w">    </span><span class="c1">// ビームサーチの過程を表す木</span>
+<span class="linenos"> 89</span><span class="w">    </span><span class="c1">// &lt;dir or id, action, action_id&gt;</span>
+<span class="linenos"> 90</span><span class="w">    </span><span class="c1">// dir or id := 葉のとき、leaf_id</span>
+<span class="linenos"> 91</span><span class="w">    </span><span class="c1">//              そうでないとき、行きがけなら-1、帰りがけなら-2</span>
+<span class="linenos"> 92</span><span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">tuple</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">Action</span><span class="p">,</span><span class="w"> </span><span class="n">ActionIDType</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">tree</span><span class="p">;</span>
+<span class="linenos"> 93</span>
+<span class="linenos"> 94</span><span class="w">    </span><span class="c1">// 次のビーム候補を保持する配列</span>
+<span class="linenos"> 95</span><span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">tuple</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">ScoreType</span><span class="p">,</span><span class="w"> </span><span class="n">Action</span><span class="p">,</span><span class="w"> </span><span class="n">ActionIDType</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">next_beam</span><span class="p">;</span><span class="w"> </span><span class="c1">// &lt;par, score, action, action_id&gt;</span>
+<span class="linenos"> 96</span>
+<span class="linenos"> 97</span><span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">next_beam_data</span><span class="p">;</span>
+<span class="linenos"> 98</span>
+<span class="linenos"> 99</span><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">get_next_beam</span><span class="p">(</span><span class="n">State</span><span class="o">*</span><span class="w"> </span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">turn</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">100</span><span class="w">        </span><span class="n">next_beam</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+<span class="linenos">101</span><span class="w">        </span><span class="n">next_beam</span><span class="p">.</span><span class="n">reserve</span><span class="p">(</span><span class="n">tree</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">4</span><span class="p">);</span><span class="w"> </span><span class="c1">// TODO</span>
+<span class="linenos">102</span><span class="w">        </span><span class="n">seen</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+<span class="linenos">103</span>
+<span class="linenos">104</span><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">turn</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">105</span><span class="w">            </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Action</span><span class="o">&gt;</span><span class="w"> </span><span class="n">actions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="o">-&gt;</span><span class="n">get_actions</span><span class="p">();</span>
+<span class="linenos">106</span><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Action</span><span class="w"> </span><span class="o">&amp;</span><span class="n">action</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">actions</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">107</span><span class="w">                </span><span class="k">auto</span><span class="w"> </span><span class="p">[</span><span class="n">score</span><span class="p">,</span><span class="w"> </span><span class="n">hash</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="o">-&gt;</span><span class="n">try_op</span><span class="p">(</span><span class="n">action</span><span class="p">);</span>
+<span class="linenos">108</span><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">seen</span><span class="p">.</span><span class="n">contains_insert</span><span class="p">(</span><span class="n">hash</span><span class="p">))</span><span class="w"> </span><span class="k">continue</span><span class="p">;</span>
+<span class="linenos">109</span><span class="w">                </span><span class="n">next_beam</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">PRE_ORDER</span><span class="p">,</span><span class="w"> </span><span class="n">score</span><span class="p">,</span><span class="w"> </span><span class="n">action</span><span class="p">,</span><span class="w"> </span><span class="n">ActionID</span><span class="p">);</span>
+<span class="linenos">110</span><span class="w">                </span><span class="n">ActionID</span><span class="o">++</span><span class="p">;</span>
+<span class="linenos">111</span><span class="w">            </span><span class="p">}</span>
+<span class="linenos">112</span><span class="w">            </span><span class="k">return</span><span class="p">;</span>
+<span class="linenos">113</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">114</span>
+<span class="linenos">115</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">leaf_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="linenos">116</span><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">tree</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">117</span><span class="w">            </span><span class="k">auto</span><span class="w"> </span><span class="p">[</span><span class="n">dir_or_leaf_id</span><span class="p">,</span><span class="w"> </span><span class="n">action</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tree</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="linenos">118</span><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">dir_or_leaf_id</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">119</span><span class="w">                </span><span class="n">state</span><span class="o">-&gt;</span><span class="n">apply_op</span><span class="p">(</span><span class="n">action</span><span class="p">);</span>
+<span class="linenos">120</span><span class="w">                </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Action</span><span class="o">&gt;</span><span class="w"> </span><span class="n">actions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="o">-&gt;</span><span class="n">get_actions</span><span class="p">();</span>
+<span class="linenos">121</span><span class="w">                </span><span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">leaf_id</span><span class="p">;</span>
+<span class="linenos">122</span><span class="w">                </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">Action</span><span class="w"> </span><span class="o">&amp;</span><span class="n">action</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">actions</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">123</span><span class="w">                    </span><span class="k">auto</span><span class="w"> </span><span class="p">[</span><span class="n">score</span><span class="p">,</span><span class="w"> </span><span class="n">hash</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="o">-&gt;</span><span class="n">try_op</span><span class="p">(</span><span class="n">action</span><span class="p">);</span>
+<span class="linenos">124</span><span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">seen</span><span class="p">.</span><span class="n">contains_insert</span><span class="p">(</span><span class="n">hash</span><span class="p">))</span><span class="w"> </span><span class="k">continue</span><span class="p">;</span>
+<span class="linenos">125</span><span class="w">                    </span><span class="n">next_beam</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">leaf_id</span><span class="p">,</span><span class="w"> </span><span class="n">score</span><span class="p">,</span><span class="w"> </span><span class="n">action</span><span class="p">,</span><span class="w"> </span><span class="n">ActionID</span><span class="p">);</span>
+<span class="linenos">126</span><span class="w">                    </span><span class="n">ActionID</span><span class="o">++</span><span class="p">;</span>
+<span class="linenos">127</span><span class="w">                </span><span class="p">}</span>
+<span class="linenos">128</span><span class="w">                </span><span class="o">++</span><span class="n">leaf_id</span><span class="p">;</span>
+<span class="linenos">129</span><span class="w">                </span><span class="n">state</span><span class="o">-&gt;</span><span class="n">rollback</span><span class="p">(</span><span class="n">action</span><span class="p">);</span>
+<span class="linenos">130</span><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">dir_or_leaf_id</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">PRE_ORDER</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">131</span><span class="w">                </span><span class="n">state</span><span class="o">-&gt;</span><span class="n">apply_op</span><span class="p">(</span><span class="n">action</span><span class="p">);</span>
+<span class="linenos">132</span><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">133</span><span class="w">                </span><span class="n">state</span><span class="o">-&gt;</span><span class="n">rollback</span><span class="p">(</span><span class="n">action</span><span class="p">);</span>
+<span class="linenos">134</span><span class="w">            </span><span class="p">}</span>
+<span class="linenos">135</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">136</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">137</span>
+<span class="linenos">138</span><span class="w">    </span><span class="c1">//! 不要なNodeを削除し、木を更新する</span>
+<span class="linenos">139</span><span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">update_tree</span><span class="p">(</span><span class="n">State</span><span class="o">*</span><span class="w"> </span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">turn</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">140</span><span class="w">        </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">tuple</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">Action</span><span class="p">,</span><span class="w"> </span><span class="n">ActionIDType</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">new_tree</span><span class="p">;</span>
+<span class="linenos">141</span><span class="w">        </span><span class="n">new_tree</span><span class="p">.</span><span class="n">reserve</span><span class="p">(</span><span class="n">tree</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+<span class="linenos">142</span><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">turn</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">143</span><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[</span><span class="n">par</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">new_action</span><span class="p">,</span><span class="w"> </span><span class="n">action_id</span><span class="p">]</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">next_beam</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">144</span><span class="w">                </span><span class="n">assert</span><span class="p">(</span><span class="n">par</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">-1</span><span class="p">);</span>
+<span class="linenos">145</span><span class="w">                </span><span class="n">new_tree</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">new_action</span><span class="p">,</span><span class="w"> </span><span class="n">action_id</span><span class="p">);</span>
+<span class="linenos">146</span><span class="w">            </span><span class="p">}</span>
+<span class="linenos">147</span><span class="w">            </span><span class="n">swap</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span><span class="w"> </span><span class="n">new_tree</span><span class="p">);</span>
+<span class="linenos">148</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="linenos">149</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">150</span>
+<span class="linenos">151</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="linenos">152</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">apply_only_turn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="linenos">153</span><span class="w">        </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="nb">true</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">154</span><span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[</span><span class="n">dir_or_leaf_id</span><span class="p">,</span><span class="w"> </span><span class="n">action</span><span class="p">,</span><span class="w"> </span><span class="n">action_id</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tree</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="linenos">155</span><span class="w">            </span><span class="c1">// 行きがけかつ帰りがけのaction_idが一致しているなら、一本道なので行くだけ</span>
+<span class="linenos">156</span><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">dir_or_leaf_id</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">PRE_ORDER</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">action_id</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="mi">2</span><span class="o">&gt;</span><span class="p">(</span><span class="n">tree</span><span class="p">.</span><span class="n">back</span><span class="p">()))</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">157</span><span class="w">                </span><span class="o">++</span><span class="n">i</span><span class="p">;</span>
+<span class="linenos">158</span><span class="w">                </span><span class="n">result</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">action</span><span class="p">);</span>
+<span class="linenos">159</span><span class="w">                </span><span class="n">state</span><span class="o">-&gt;</span><span class="n">apply_op</span><span class="p">(</span><span class="n">action</span><span class="p">);</span>
+<span class="linenos">160</span><span class="w">                </span><span class="n">tree</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
+<span class="linenos">161</span><span class="w">                </span><span class="n">apply_only_turn</span><span class="o">++</span><span class="p">;</span>
+<span class="linenos">162</span><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">163</span><span class="w">                </span><span class="k">break</span><span class="p">;</span>
+<span class="linenos">164</span><span class="w">            </span><span class="p">}</span>
+<span class="linenos">165</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">166</span>
+<span class="linenos">167</span><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">tree</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">168</span><span class="w">            </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[</span><span class="n">dir_or_leaf_id</span><span class="p">,</span><span class="w"> </span><span class="n">action</span><span class="p">,</span><span class="w"> </span><span class="n">action_id</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tree</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="linenos">169</span><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">dir_or_leaf_id</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">170</span><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">next_beam_data</span><span class="p">[</span><span class="n">dir_or_leaf_id</span><span class="p">].</span><span class="n">empty</span><span class="p">())</span><span class="w"> </span><span class="k">continue</span><span class="p">;</span>
+<span class="linenos">171</span><span class="w">                </span><span class="n">new_tree</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">PRE_ORDER</span><span class="p">,</span><span class="w"> </span><span class="n">action</span><span class="p">,</span><span class="w"> </span><span class="n">action_id</span><span class="p">);</span>
+<span class="linenos">172</span><span class="w">                </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">beam_idx</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">next_beam_data</span><span class="p">[</span><span class="n">dir_or_leaf_id</span><span class="p">])</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">173</span><span class="w">                    </span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">__</span><span class="p">,</span><span class="w"> </span><span class="n">new_action</span><span class="p">,</span><span class="w"> </span><span class="n">new_action_id</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">next_beam</span><span class="p">[</span><span class="n">beam_idx</span><span class="p">];</span>
+<span class="linenos">174</span><span class="w">                    </span><span class="n">new_tree</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">dir_or_leaf_id</span><span class="p">,</span><span class="w"> </span><span class="n">new_action</span><span class="p">,</span><span class="w"> </span><span class="n">new_action_id</span><span class="p">);</span>
+<span class="linenos">175</span><span class="w">                </span><span class="p">}</span>
+<span class="linenos">176</span><span class="w">                </span><span class="n">new_tree</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">POST_ORDER</span><span class="p">,</span><span class="w"> </span><span class="n">action</span><span class="p">,</span><span class="w"> </span><span class="n">action_id</span><span class="p">);</span>
+<span class="linenos">177</span><span class="w">                </span><span class="n">next_beam_data</span><span class="p">[</span><span class="n">dir_or_leaf_id</span><span class="p">].</span><span class="n">clear</span><span class="p">();</span>
+<span class="linenos">178</span><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">dir_or_leaf_id</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">PRE_ORDER</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">179</span><span class="w">                </span><span class="n">new_tree</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">PRE_ORDER</span><span class="p">,</span><span class="w"> </span><span class="n">action</span><span class="p">,</span><span class="w"> </span><span class="n">action_id</span><span class="p">);</span>
+<span class="linenos">180</span><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">181</span><span class="w">                </span><span class="kt">int</span><span class="w"> </span><span class="n">pre_dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">(</span><span class="n">new_tree</span><span class="p">.</span><span class="n">back</span><span class="p">());</span>
+<span class="linenos">182</span><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pre_dir</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">PRE_ORDER</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">183</span><span class="w">                    </span><span class="n">new_tree</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span><span class="w"> </span><span class="c1">// 一つ前が行きがけなら、削除して追加しない</span>
+<span class="linenos">184</span><span class="w">                </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">185</span><span class="w">                    </span><span class="n">new_tree</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">POST_ORDER</span><span class="p">,</span><span class="w"> </span><span class="n">action</span><span class="p">,</span><span class="w"> </span><span class="n">action_id</span><span class="p">);</span>
+<span class="linenos">186</span><span class="w">                </span><span class="p">}</span>
+<span class="linenos">187</span><span class="w">            </span><span class="p">}</span>
+<span class="linenos">188</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">189</span><span class="w">        </span><span class="n">swap</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span><span class="w"> </span><span class="n">new_tree</span><span class="p">);</span>
+<span class="linenos">190</span><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">apply_only_turn</span><span class="p">;</span>
+<span class="linenos">191</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">192</span>
+<span class="linenos">193</span><span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">get_result</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">194</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">best_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+<span class="linenos">195</span><span class="w">        </span><span class="n">ScoreType</span><span class="w"> </span><span class="n">best_score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="linenos">196</span><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="p">[</span><span class="n">par</span><span class="p">,</span><span class="w"> </span><span class="n">score</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">__</span><span class="p">]</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">next_beam</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">197</span><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">best_id</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">-1</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">score</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">best_score</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">198</span><span class="w">                </span><span class="n">best_score</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">score</span><span class="p">;</span>
+<span class="linenos">199</span><span class="w">                </span><span class="n">best_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">par</span><span class="p">;</span>
+<span class="linenos">200</span><span class="w">            </span><span class="p">}</span>
+<span class="linenos">201</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">202</span><span class="w">        </span><span class="n">assert</span><span class="p">(</span><span class="n">best_id</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">-1</span><span class="p">);</span>
+<span class="linenos">203</span><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[</span><span class="n">dir_or_leaf_id</span><span class="p">,</span><span class="w"> </span><span class="n">action</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">]</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">tree</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">204</span><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">dir_or_leaf_id</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">205</span><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">best_id</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">dir_or_leaf_id</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">206</span><span class="w">                    </span><span class="n">result</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">action</span><span class="p">);</span>
+<span class="linenos">207</span><span class="w">                    </span><span class="k">return</span><span class="p">;</span>
+<span class="linenos">208</span><span class="w">                </span><span class="p">}</span>
+<span class="linenos">209</span><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">dir_or_leaf_id</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">PRE_ORDER</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">210</span><span class="w">                </span><span class="n">result</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">action</span><span class="p">);</span>
+<span class="linenos">211</span><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">212</span><span class="w">                </span><span class="n">result</span><span class="p">.</span><span class="n">pop_back</span><span class="p">();</span>
+<span class="linenos">213</span><span class="w">            </span><span class="p">}</span>
+<span class="linenos">214</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">215</span><span class="w">        </span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">PRINT_RED</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Error: 解が見つかりませんでした&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">PRINT_NONE</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="linenos">216</span><span class="w">        </span><span class="n">assert</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span>
+<span class="linenos">217</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">218</span>
+<span class="linenos">219</span><span class="w">  </span><span class="k">public</span><span class="o">:</span>
+<span class="linenos">220</span>
+<span class="linenos">221</span><span class="w">    </span><span class="cm">/**</span>
+<span class="linenos">222</span><span class="cm">     * @brief ビームサーチをする</span>
+<span class="linenos">223</span><span class="cm">     *</span>
+<span class="linenos">224</span><span class="cm">     * @param param ターン数、ビーム幅を指定するパラメータ構造体</span>
+<span class="linenos">225</span><span class="cm">     * @param verbose ログ出力するかどうか</span>
+<span class="linenos">226</span><span class="cm">     * @return vector&lt;Action&gt;</span>
+<span class="linenos">227</span><span class="cm">     */</span>
+<span class="linenos">228</span><span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Action</span><span class="o">&gt;</span><span class="w"> </span><span class="n">search</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">BeamParam</span><span class="w"> </span><span class="o">&amp;</span><span class="n">param</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">verbose</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">229</span><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">verbose</span><span class="p">)</span><span class="w"> </span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">PRINT_GREEN</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Info: start search()&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">PRINT_NONE</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="linenos">230</span>
+<span class="linenos">231</span><span class="w">        </span><span class="n">ActionID</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="linenos">232</span><span class="w">        </span><span class="n">State</span><span class="o">*</span><span class="w"> </span><span class="n">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">State</span><span class="p">;</span>
+<span class="linenos">233</span><span class="w">        </span><span class="n">state</span><span class="o">-&gt;</span><span class="n">init</span><span class="p">();</span>
+<span class="linenos">234</span>
+<span class="linenos">235</span><span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">seen</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">titan23</span><span class="o">::</span><span class="n">HashSet</span><span class="p">(</span><span class="n">param</span><span class="p">.</span><span class="n">BEAM_WIDTH</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">4</span><span class="p">);</span><span class="w"> </span><span class="c1">// TODO</span>
+<span class="linenos">236</span>
+<span class="linenos">237</span><span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">now_turn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="linenos">238</span><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">turn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">turn</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">param</span><span class="p">.</span><span class="n">MAX_TURN</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">turn</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">239</span><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">verbose</span><span class="p">)</span><span class="w"> </span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Info: # turn : &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">turn</span><span class="o">+</span><span class="mi">1</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="linenos">240</span>
+<span class="linenos">241</span><span class="w">            </span><span class="c1">// 次のビーム候補を求める</span>
+<span class="linenos">242</span><span class="w">            </span><span class="n">get_next_beam</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">turn</span><span class="o">-</span><span class="n">now_turn</span><span class="p">);</span>
+<span class="linenos">243</span>
+<span class="linenos">244</span><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">next_beam</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">245</span><span class="w">                </span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">PRINT_RED</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Error: </span><span class="se">\t</span><span class="s">次の候補が見つかりませんでした&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">PRINT_NONE</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="linenos">246</span><span class="w">                </span><span class="n">assert</span><span class="p">(</span><span class="o">!</span><span class="n">next_beam</span><span class="p">.</span><span class="n">empty</span><span class="p">());</span>
+<span class="linenos">247</span><span class="w">            </span><span class="p">}</span>
+<span class="linenos">248</span>
+<span class="linenos">249</span><span class="w">            </span><span class="c1">// ビームを絞る</span>
+<span class="linenos">250</span><span class="w">            </span><span class="kt">int</span><span class="w"> </span><span class="n">beam_width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">min</span><span class="p">(</span><span class="n">param</span><span class="p">.</span><span class="n">BEAM_WIDTH</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">next_beam</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+<span class="linenos">251</span><span class="w">            </span><span class="n">assert</span><span class="p">(</span><span class="n">beam_width</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">param</span><span class="p">.</span><span class="n">BEAM_WIDTH</span><span class="p">);</span>
+<span class="linenos">252</span>
+<span class="linenos">253</span><span class="w">            </span><span class="n">nth_element</span><span class="p">(</span><span class="n">next_beam</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">next_beam</span><span class="p">.</span><span class="n">begin</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">beam_width</span><span class="p">,</span><span class="w"> </span><span class="n">next_beam</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="p">]</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">tuple</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">ScoreType</span><span class="p">,</span><span class="w"> </span><span class="n">Action</span><span class="p">,</span><span class="w"> </span><span class="n">ActionIDType</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">left</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">tuple</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">ScoreType</span><span class="p">,</span><span class="w"> </span><span class="n">Action</span><span class="p">,</span><span class="w"> </span><span class="n">ActionIDType</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">right</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">254</span><span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">(</span><span class="n">left</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">(</span><span class="n">right</span><span class="p">);</span>
+<span class="linenos">255</span><span class="w">            </span><span class="p">});</span>
+<span class="linenos">256</span>
+<span class="linenos">257</span><span class="w">            </span><span class="n">tuple</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">ScoreType</span><span class="p">,</span><span class="w"> </span><span class="n">Action</span><span class="p">,</span><span class="w"> </span><span class="n">ActionIDType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">bests</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="n">min_element</span><span class="p">(</span><span class="n">next_beam</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">next_beam</span><span class="p">.</span><span class="n">begin</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">beam_width</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="o">&amp;</span><span class="p">]</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">tuple</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">ScoreType</span><span class="p">,</span><span class="w"> </span><span class="n">Action</span><span class="p">,</span><span class="w"> </span><span class="n">ActionIDType</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">left</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">tuple</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">ScoreType</span><span class="p">,</span><span class="w"> </span><span class="n">Action</span><span class="p">,</span><span class="w"> </span><span class="n">ActionIDType</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">right</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">258</span><span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">(</span><span class="n">left</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">(</span><span class="n">right</span><span class="p">);</span>
+<span class="linenos">259</span><span class="w">            </span><span class="p">});</span>
+<span class="linenos">260</span><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">verbose</span><span class="p">)</span><span class="w"> </span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Info: </span><span class="se">\t</span><span class="s">best_score = &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">(</span><span class="n">bests</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="linenos">261</span><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">(</span><span class="n">bests</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// TODO 終了条件</span>
+<span class="linenos">262</span><span class="w">                </span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">PRINT_GREEN</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Info: find valid solution.&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">PRINT_NONE</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="linenos">263</span><span class="w">                </span><span class="n">get_result</span><span class="p">();</span>
+<span class="linenos">264</span><span class="w">                </span><span class="n">result</span><span class="p">.</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">get</span><span class="o">&lt;</span><span class="mi">2</span><span class="o">&gt;</span><span class="p">(</span><span class="n">bests</span><span class="p">));</span>
+<span class="linenos">265</span><span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<span class="linenos">266</span><span class="w">            </span><span class="p">}</span>
+<span class="linenos">267</span>
+<span class="linenos">268</span><span class="w">            </span><span class="c1">// 探索木の更新</span>
+<span class="linenos">269</span><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">turn</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">270</span><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">next_beam_data</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">next_beam</span><span class="p">.</span><span class="n">size</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">271</span><span class="w">                    </span><span class="n">next_beam_data</span><span class="p">.</span><span class="n">resize</span><span class="p">(</span><span class="n">next_beam</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+<span class="linenos">272</span><span class="w">                </span><span class="p">}</span>
+<span class="linenos">273</span><span class="w">                </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">beam_width</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">274</span><span class="w">                    </span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[</span><span class="n">par</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">new_action</span><span class="p">,</span><span class="w"> </span><span class="n">new_action_id</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">next_beam</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="linenos">275</span><span class="w">                    </span><span class="n">next_beam_data</span><span class="p">[</span><span class="n">par</span><span class="p">].</span><span class="n">emplace_back</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+<span class="linenos">276</span><span class="w">                </span><span class="p">}</span>
+<span class="linenos">277</span><span class="w">            </span><span class="p">}</span>
+<span class="linenos">278</span><span class="w">            </span><span class="kt">int</span><span class="w"> </span><span class="n">apply_only_turn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">update_tree</span><span class="p">(</span><span class="n">state</span><span class="p">,</span><span class="w"> </span><span class="n">turn</span><span class="p">);</span>
+<span class="linenos">279</span><span class="w">            </span><span class="n">now_turn</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">apply_only_turn</span><span class="p">;</span>
+<span class="linenos">280</span><span class="w">        </span><span class="p">}</span>
+<span class="linenos">281</span>
+<span class="linenos">282</span><span class="w">        </span><span class="c1">// 答えを復元する</span>
+<span class="linenos">283</span><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">verbose</span><span class="p">)</span><span class="w"> </span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">PRINT_GREEN</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Info: MAX_TURN finished.&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">PRINT_NONE</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">endl</span><span class="p">;</span>
+<span class="linenos">284</span><span class="w">        </span><span class="n">get_result</span><span class="p">();</span>
+<span class="linenos">285</span><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">result</span><span class="p">;</span>
+<span class="linenos">286</span><span class="w">    </span><span class="p">}</span>
+<span class="linenos">287</span><span class="p">};</span>
+<span class="linenos">288</span><span class="p">}</span><span class="w"> </span><span class="c1">// namespace beam_search</span>
+<span class="linenos">289</span>
+<span class="linenos">290</span><span class="c1">// int main() {</span>
+<span class="linenos">291</span><span class="c1">//     beam_search_with_tree::BeamParam param;</span>
+<span class="linenos">292</span><span class="c1">//     param.MAX_TURN = 1000;</span>
+<span class="linenos">293</span><span class="c1">//     param.BEAM_WIDTH = 100;</span>
+<span class="linenos">294</span><span class="c1">//     beam_search_with_tree::init_zhs();</span>
+<span class="linenos">295</span><span class="c1">//     beam_search_with_tree::BeamSearchWithTree bs;</span>
+<span class="linenos">296</span><span class="c1">//     vector&lt;beam_search_with_tree::Action&gt; ans = bs.search(param, true);</span>
+<span class="linenos">297</span><span class="c1">//     for (const beam_search_with_tree::Action &amp;action : ans) {</span>
+<span class="linenos">298</span><span class="c1">//         cout &lt;&lt; action;</span>
+<span class="linenos">299</span><span class="c1">//     }</span>
+<span class="linenos">300</span><span class="c1">//     cout &lt;&lt; endl;</span>
+<span class="linenos">301</span><span class="c1">//     cerr &lt;&lt; &quot;Score = &quot; &lt;&lt; ans.size() &lt;&lt; endl;</span>
+<span class="linenos">302</span><span class="c1">//     return 0;</span>
+<span class="linenos">303</span><span class="c1">// }</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2>仕様<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-defines">Defines</p>
+<dl class="cpp macro">
+<dt class="sig sig-object cpp" id="c.rep">
+<span class="target" id="beam__search__euler_8cpp_1afc28855f97302d38207feabfda45fc97"></span><span class="sig-name descname"><span class="n"><span class="pre">rep</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">i</span></span>, <span class="n"><span class="pre">n</span></span><span class="sig-paren">)</span><a class="headerlink" href="#c.rep" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv421beam_search_with_tree">
+<span id="_CPPv321beam_search_with_tree"></span><span id="_CPPv221beam_search_with_tree"></span><span id="beam_search_with_tree"></span><span class="target" id="namespacebeam__search__with__tree"></span><span class="k"><span class="pre">namespace</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">beam_search_with_tree</span></span></span><a class="headerlink" href="#_CPPv421beam_search_with_tree" title="Link to this definition">¶</a><br /></dt>
+<dd><p>木上のビームサーチライブラリ </p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-typedefs">Typedefs</p>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree9ScoreTypeE">
+<span id="_CPPv3N21beam_search_with_tree9ScoreTypeE"></span><span id="_CPPv2N21beam_search_with_tree9ScoreTypeE"></span><span class="target" id="namespacebeam__search__with__tree_1a1294f102550ff38b60ddb22b0ffcdab3"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ScoreType</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="kt"><span class="pre">long</span></span><span class="w"> </span><span class="kt"><span class="pre">long</span></span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree9ScoreTypeE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree8HashTypeE">
+<span id="_CPPv3N21beam_search_with_tree8HashTypeE"></span><span id="_CPPv2N21beam_search_with_tree8HashTypeE"></span><span class="target" id="namespacebeam__search__with__tree_1aa83032ad758aef56dec6deeecbe53d6d"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HashType</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">long</span></span><span class="w"> </span><span class="kt"><span class="pre">long</span></span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree8HashTypeE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-functions">Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_treelsER7ostreamRK6Action">
+<span id="_CPPv3N21beam_search_with_treelsER7ostreamRK6Action"></span><span id="_CPPv2N21beam_search_with_treelsER7ostreamRK6Action"></span><span id="beam_search_with_tree::lshift-operator__ostreamR.ActionCR"></span><span class="target" id="namespacebeam__search__with__tree_1a129a8b9547b5ba5752b734feb46b31bd"></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">&lt;&lt;</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">os</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N21beam_search_with_tree6ActionE" title="beam_search_with_tree::Action"><span class="n"><span class="pre">Action</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">action</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21beam_search_with_treelsER7ostreamRK6Action" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-variables">Variables</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree3INFE">
+<span id="_CPPv3N21beam_search_with_tree3INFE"></span><span id="_CPPv2N21beam_search_with_tree3INFE"></span><span id="beam_search_with_tree::INF__ScoreTypeC"></span><span class="target" id="namespacebeam__search__with__tree_1af90a4c9af8ff0f76e058cca1df3c84b4"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N21beam_search_with_tree9ScoreTypeE" title="beam_search_with_tree::ScoreType"><span class="n"><span class="pre">ScoreType</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">INF</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">1e9</span></span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree3INFE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree6ActionE">
+<span id="_CPPv3N21beam_search_with_tree6ActionE"></span><span id="_CPPv2N21beam_search_with_tree6ActionE"></span><span id="beam_search_with_tree::Action"></span><span class="target" id="structbeam__search__with__tree_1_1Action"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Action</span></span></span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree6ActionE" title="Link to this definition">¶</a><br /></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree6Action6ActionEv">
+<span id="_CPPv3N21beam_search_with_tree6Action6ActionEv"></span><span id="_CPPv2N21beam_search_with_tree6Action6ActionEv"></span><span id="beam_search_with_tree::Action::Action"></span><span class="target" id="structbeam__search__with__tree_1_1Action_1a35c1d1939dce9448a48765667c7a21d1"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Action</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree6Action6ActionEv" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree6Action6ActionEKc">
+<span id="_CPPv3N21beam_search_with_tree6Action6ActionEKc"></span><span id="_CPPv2N21beam_search_with_tree6Action6ActionEKc"></span><span id="beam_search_with_tree::Action::Action__cC"></span><span class="target" id="structbeam__search__with__tree_1_1Action_1a1badedef2492323b4c2e8ab171f04d74"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Action</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">d</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree6Action6ActionEKc" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree6Action1dE">
+<span id="_CPPv3N21beam_search_with_tree6Action1dE"></span><span id="_CPPv2N21beam_search_with_tree6Action1dE"></span><span id="beam_search_with_tree::Action::d__c"></span><span class="target" id="structbeam__search__with__tree_1_1Action_1ab14840d0b504c0e145e8c5d1a79c1444"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">d</span></span></span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree6Action1dE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree6Action9pre_scoreE">
+<span id="_CPPv3N21beam_search_with_tree6Action9pre_scoreE"></span><span id="_CPPv2N21beam_search_with_tree6Action9pre_scoreE"></span><span id="beam_search_with_tree::Action::pre_score__ScoreType"></span><span class="target" id="structbeam__search__with__tree_1_1Action_1a3b2f581501b8039dd441ef3c0e675fe5"></span><a class="reference internal" href="#_CPPv4N21beam_search_with_tree9ScoreTypeE" title="beam_search_with_tree::ScoreType"><span class="n"><span class="pre">ScoreType</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pre_score</span></span></span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree6Action9pre_scoreE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree6Action9nxt_scoreE">
+<span id="_CPPv3N21beam_search_with_tree6Action9nxt_scoreE"></span><span id="_CPPv2N21beam_search_with_tree6Action9nxt_scoreE"></span><span id="beam_search_with_tree::Action::nxt_score__ScoreType"></span><span class="target" id="structbeam__search__with__tree_1_1Action_1a1b645db68cd9100f60a2c9572ee13fc7"></span><a class="reference internal" href="#_CPPv4N21beam_search_with_tree9ScoreTypeE" title="beam_search_with_tree::ScoreType"><span class="n"><span class="pre">ScoreType</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nxt_score</span></span></span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree6Action9nxt_scoreE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree6Action8pre_hashE">
+<span id="_CPPv3N21beam_search_with_tree6Action8pre_hashE"></span><span id="_CPPv2N21beam_search_with_tree6Action8pre_hashE"></span><span id="beam_search_with_tree::Action::pre_hash__HashType"></span><span class="target" id="structbeam__search__with__tree_1_1Action_1a4226cf0e82dc2a9bada3f410bb68f27c"></span><a class="reference internal" href="#_CPPv4N21beam_search_with_tree8HashTypeE" title="beam_search_with_tree::HashType"><span class="n"><span class="pre">HashType</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pre_hash</span></span></span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree6Action8pre_hashE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree6Action8nxt_hashE">
+<span id="_CPPv3N21beam_search_with_tree6Action8nxt_hashE"></span><span id="_CPPv2N21beam_search_with_tree6Action8nxt_hashE"></span><span id="beam_search_with_tree::Action::nxt_hash__HashType"></span><span class="target" id="structbeam__search__with__tree_1_1Action_1aff7f8a1e132c836d37aac60940b4a469"></span><a class="reference internal" href="#_CPPv4N21beam_search_with_tree8HashTypeE" title="beam_search_with_tree::HashType"><span class="n"><span class="pre">HashType</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nxt_hash</span></span></span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree6Action8nxt_hashE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree5StateE">
+<span id="_CPPv3N21beam_search_with_tree5StateE"></span><span id="_CPPv2N21beam_search_with_tree5StateE"></span><span id="beam_search_with_tree::State"></span><span class="target" id="classbeam__search__with__tree_1_1State"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">State</span></span></span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree5StateE" title="Link to this definition">¶</a><br /></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree5State5StateEv">
+<span id="_CPPv3N21beam_search_with_tree5State5StateEv"></span><span id="_CPPv2N21beam_search_with_tree5State5StateEv"></span><span id="beam_search_with_tree::State::State"></span><span class="target" id="classbeam__search__with__tree_1_1State_1af981806b6ee3c22aa82ba5f5f0ee5426"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">State</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree5State5StateEv" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree5State4initEv">
+<span id="_CPPv3N21beam_search_with_tree5State4initEv"></span><span id="_CPPv2N21beam_search_with_tree5State4initEv"></span><span id="beam_search_with_tree::State::init"></span><span class="target" id="classbeam__search__with__tree_1_1State_1a5f3e9b3b1ea3d7af8dd01fe8cac645ec"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">init</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree5State4initEv" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK21beam_search_with_tree5State6try_opER6Action">
+<span id="_CPPv3NK21beam_search_with_tree5State6try_opER6Action"></span><span id="_CPPv2NK21beam_search_with_tree5State6try_opER6Action"></span><span id="beam_search_with_tree::State::try_op__ActionRC"></span><span class="target" id="classbeam__search__with__tree_1_1State_1a6d38c1debaffd73216cd01ad15fb0237"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">pair</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4N21beam_search_with_tree9ScoreTypeE" title="beam_search_with_tree::ScoreType"><span class="n"><span class="pre">ScoreType</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N21beam_search_with_tree8HashTypeE" title="beam_search_with_tree::HashType"><span class="n"><span class="pre">HashType</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">try_op</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N21beam_search_with_tree6ActionE" title="beam_search_with_tree::Action"><span class="n"><span class="pre">Action</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">action</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK21beam_search_with_tree5State6try_opER6Action" title="Link to this definition">¶</a><br /></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">action</span></code> をしたときの評価値とハッシュ値を返す ロールバックに必要な情報はすべてactionにメモしておく </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK21beam_search_with_tree5State7is_doneEv">
+<span id="_CPPv3NK21beam_search_with_tree5State7is_doneEv"></span><span id="_CPPv2NK21beam_search_with_tree5State7is_doneEv"></span><span id="beam_search_with_tree::State::is_doneC"></span><span class="target" id="classbeam__search__with__tree_1_1State_1a1246f1c1fe399fcdaddb1bc9962675fc"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">is_done</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK21beam_search_with_tree5State7is_doneEv" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree5State8apply_opERK6Action">
+<span id="_CPPv3N21beam_search_with_tree5State8apply_opERK6Action"></span><span id="_CPPv2N21beam_search_with_tree5State8apply_opERK6Action"></span><span id="beam_search_with_tree::State::apply_op__ActionCR"></span><span class="target" id="classbeam__search__with__tree_1_1State_1a9e9b911b61e31137a12b9f83f1b05c3f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">apply_op</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N21beam_search_with_tree6ActionE" title="beam_search_with_tree::Action"><span class="n"><span class="pre">Action</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">action</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree5State8apply_opERK6Action" title="Link to this definition">¶</a><br /></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">action</span></code> をする </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree5State8rollbackERK6Action">
+<span id="_CPPv3N21beam_search_with_tree5State8rollbackERK6Action"></span><span id="_CPPv2N21beam_search_with_tree5State8rollbackERK6Action"></span><span id="beam_search_with_tree::State::rollback__ActionCR"></span><span class="target" id="classbeam__search__with__tree_1_1State_1a8a578117065ba8a328b7305ff49f13c7"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rollback</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N21beam_search_with_tree6ActionE" title="beam_search_with_tree::Action"><span class="n"><span class="pre">Action</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">action</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree5State8rollbackERK6Action" title="Link to this definition">¶</a><br /></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">action</span></code> を戻す </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK21beam_search_with_tree5State11get_actionsEv">
+<span id="_CPPv3NK21beam_search_with_tree5State11get_actionsEv"></span><span id="_CPPv2NK21beam_search_with_tree5State11get_actionsEv"></span><span id="beam_search_with_tree::State::get_actionsC"></span><span class="target" id="classbeam__search__with__tree_1_1State_1a0477593b229b27c9b6ea58993ac0ff4c"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4N21beam_search_with_tree6ActionE" title="beam_search_with_tree::Action"><span class="n"><span class="pre">Action</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">get_actions</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK21beam_search_with_tree5State11get_actionsEv" title="Link to this definition">¶</a><br /></dt>
+<dd><p>現状態から遷移可能な <code class="docutils literal notranslate"><a class="reference internal" href="#structbeam__search__with__tree_1_1Action"><span class="std std-ref"><span class="pre">Action</span></span></a></code> の <code class="docutils literal notranslate"><span class="pre">vector</span></code> を返す </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK21beam_search_with_tree5State5printEv">
+<span id="_CPPv3NK21beam_search_with_tree5State5printEv"></span><span id="_CPPv2NK21beam_search_with_tree5State5printEv"></span><span id="beam_search_with_tree::State::printC"></span><span class="target" id="classbeam__search__with__tree_1_1State_1a4c677b32413f644f02057125500b28df"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">print</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK21beam_search_with_tree5State5printEv" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree5State5scoreE">
+<span id="_CPPv3N21beam_search_with_tree5State5scoreE"></span><span id="_CPPv2N21beam_search_with_tree5State5scoreE"></span><span id="beam_search_with_tree::State::score__ScoreType"></span><span class="target" id="classbeam__search__with__tree_1_1State_1a55194b49fca3cbe02cbafcac1ef1ad15"></span><a class="reference internal" href="#_CPPv4N21beam_search_with_tree9ScoreTypeE" title="beam_search_with_tree::ScoreType"><span class="n"><span class="pre">ScoreType</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">score</span></span></span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree5State5scoreE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree5State4hashE">
+<span id="_CPPv3N21beam_search_with_tree5State4hashE"></span><span id="_CPPv2N21beam_search_with_tree5State4hashE"></span><span id="beam_search_with_tree::State::hash__HashType"></span><span class="target" id="classbeam__search__with__tree_1_1State_1ab9a512b1258acff68df019efd3029c90"></span><a class="reference internal" href="#_CPPv4N21beam_search_with_tree8HashTypeE" title="beam_search_with_tree::HashType"><span class="n"><span class="pre">HashType</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">hash</span></span></span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree5State4hashE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree9BeamParamE">
+<span id="_CPPv3N21beam_search_with_tree9BeamParamE"></span><span id="_CPPv2N21beam_search_with_tree9BeamParamE"></span><span id="beam_search_with_tree::BeamParam"></span><span class="target" id="structbeam__search__with__tree_1_1BeamParam"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">BeamParam</span></span></span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree9BeamParamE" title="Link to this definition">¶</a><br /></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree9BeamParam8MAX_TURNE">
+<span id="_CPPv3N21beam_search_with_tree9BeamParam8MAX_TURNE"></span><span id="_CPPv2N21beam_search_with_tree9BeamParam8MAX_TURNE"></span><span id="beam_search_with_tree::BeamParam::MAX_TURN__i"></span><span class="target" id="structbeam__search__with__tree_1_1BeamParam_1ab5fed34dfb7b9486678481e90665c6bc"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">MAX_TURN</span></span></span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree9BeamParam8MAX_TURNE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree9BeamParam10BEAM_WIDTHE">
+<span id="_CPPv3N21beam_search_with_tree9BeamParam10BEAM_WIDTHE"></span><span id="_CPPv2N21beam_search_with_tree9BeamParam10BEAM_WIDTHE"></span><span id="beam_search_with_tree::BeamParam::BEAM_WIDTH__i"></span><span class="target" id="structbeam__search__with__tree_1_1BeamParam_1a9a9fa2f3b8a570468b15ac547d960e33"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">BEAM_WIDTH</span></span></span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree9BeamParam10BEAM_WIDTHE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree18BeamSearchWithTreeE">
+<span id="_CPPv3N21beam_search_with_tree18BeamSearchWithTreeE"></span><span id="_CPPv2N21beam_search_with_tree18BeamSearchWithTreeE"></span><span id="beam_search_with_tree::BeamSearchWithTree"></span><span class="target" id="classbeam__search__with__tree_1_1BeamSearchWithTree"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">BeamSearchWithTree</span></span></span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTreeE" title="Link to this definition">¶</a><br /></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree18BeamSearchWithTree6searchERK9BeamParamKb">
+<span id="_CPPv3N21beam_search_with_tree18BeamSearchWithTree6searchERK9BeamParamKb"></span><span id="_CPPv2N21beam_search_with_tree18BeamSearchWithTree6searchERK9BeamParamKb"></span><span id="beam_search_with_tree::BeamSearchWithTree::search__BeamParamCR.bC"></span><span class="target" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1a695397b4c9c9a183ccbd649e8735b0f9"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4N21beam_search_with_tree6ActionE" title="beam_search_with_tree::Action"><span class="n"><span class="pre">Action</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">search</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N21beam_search_with_tree9BeamParamE" title="beam_search_with_tree::BeamParam"><span class="n"><span class="pre">BeamParam</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">param</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">verbose</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTree6searchERK9BeamParamKb" title="Link to this definition">¶</a><br /></dt>
+<dd><p>ビームサーチをする </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>param</strong> – ターン数、ビーム幅を指定するパラメータ構造体 </p></li>
+<li><p><strong>verbose</strong> – ログ出力するかどうか </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>vector&lt;Action&gt; </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-types">Private Types</p>
+<dl class="cpp type">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree18BeamSearchWithTree12ActionIDTypeE">
+<span id="_CPPv3N21beam_search_with_tree18BeamSearchWithTree12ActionIDTypeE"></span><span id="_CPPv2N21beam_search_with_tree18BeamSearchWithTree12ActionIDTypeE"></span><span class="target" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1adc427980ec645f29281c0eff9c8d7305"></span><span class="k"><span class="pre">using</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ActionIDType</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTree12ActionIDTypeE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree18BeamSearchWithTree13get_next_beamEP5StateKi">
+<span id="_CPPv3N21beam_search_with_tree18BeamSearchWithTree13get_next_beamEP5StateKi"></span><span id="_CPPv2N21beam_search_with_tree18BeamSearchWithTree13get_next_beamEP5StateKi"></span><span id="beam_search_with_tree::BeamSearchWithTree::get_next_beam__StateP.iC"></span><span class="target" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1a2ee70ea226bdd14cc687f7f1544e8e89"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">get_next_beam</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N21beam_search_with_tree5StateE" title="beam_search_with_tree::State"><span class="n"><span class="pre">State</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">state</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">turn</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTree13get_next_beamEP5StateKi" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree18BeamSearchWithTree11update_treeEP5StateKi">
+<span id="_CPPv3N21beam_search_with_tree18BeamSearchWithTree11update_treeEP5StateKi"></span><span id="_CPPv2N21beam_search_with_tree18BeamSearchWithTree11update_treeEP5StateKi"></span><span id="beam_search_with_tree::BeamSearchWithTree::update_tree__StateP.iC"></span><span class="target" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1a7d07a1b76f0ca727486d4ee671fd8e7a"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">update_tree</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N21beam_search_with_tree5StateE" title="beam_search_with_tree::State"><span class="n"><span class="pre">State</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">state</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">turn</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTree11update_treeEP5StateKi" title="Link to this definition">¶</a><br /></dt>
+<dd><p>不要なNodeを削除し、木を更新する </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree18BeamSearchWithTree10get_resultEv">
+<span id="_CPPv3N21beam_search_with_tree18BeamSearchWithTree10get_resultEv"></span><span id="_CPPv2N21beam_search_with_tree18BeamSearchWithTree10get_resultEv"></span><span id="beam_search_with_tree::BeamSearchWithTree::get_result"></span><span class="target" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1aa3b34dabe31b8c7d1c9333450b119a77"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">get_result</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTree10get_resultEv" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree18BeamSearchWithTree4seenE">
+<span id="_CPPv3N21beam_search_with_tree18BeamSearchWithTree4seenE"></span><span id="_CPPv2N21beam_search_with_tree18BeamSearchWithTree4seenE"></span><span id="beam_search_with_tree::BeamSearchWithTree::seen__titan23::HashSet"></span><span class="target" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1ab3523132ad8e837ff87fec6b2aa8beca"></span><a class="reference internal" href="gomi/beam_search_old_cpp.html#_CPPv47titan23" title="titan23"><span class="n"><span class="pre">titan23</span></span></a><span class="p"><span class="pre">::</span></span><a class="reference internal" href="../data_structures/hash_set_cpp.html#_CPPv4N7titan237HashSetE" title="titan23::HashSet"><span class="n"><span class="pre">HashSet</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">seen</span></span></span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTree4seenE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree18BeamSearchWithTree8ActionIDE">
+<span id="_CPPv3N21beam_search_with_tree18BeamSearchWithTree8ActionIDE"></span><span id="_CPPv2N21beam_search_with_tree18BeamSearchWithTree8ActionIDE"></span><span id="beam_search_with_tree::BeamSearchWithTree::ActionID__ActionIDType"></span><span class="target" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1a924a54e6d2b6159d5bfd0ca122d918fd"></span><a class="reference internal" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTree12ActionIDTypeE" title="beam_search_with_tree::BeamSearchWithTree::ActionIDType"><span class="n"><span class="pre">ActionIDType</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ActionID</span></span></span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTree8ActionIDE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree18BeamSearchWithTree6resultE">
+<span id="_CPPv3N21beam_search_with_tree18BeamSearchWithTree6resultE"></span><span id="_CPPv2N21beam_search_with_tree18BeamSearchWithTree6resultE"></span><span id="beam_search_with_tree::BeamSearchWithTree::result__vector:Action:"></span><span class="target" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1af49e2cd5dbcd9c57e7ed111487fe20ae"></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4N21beam_search_with_tree6ActionE" title="beam_search_with_tree::Action"><span class="n"><span class="pre">Action</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">result</span></span></span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTree6resultE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree18BeamSearchWithTree4treeE">
+<span id="_CPPv3N21beam_search_with_tree18BeamSearchWithTree4treeE"></span><span id="_CPPv2N21beam_search_with_tree18BeamSearchWithTree4treeE"></span><span id="beam_search_with_tree::BeamSearchWithTree::tree__vector:tuple:i.Action.ActionIDType::"></span><span class="target" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1a2ce4b376cc4cd6eef8c747e68005e249"></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">tuple</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N21beam_search_with_tree6ActionE" title="beam_search_with_tree::Action"><span class="n"><span class="pre">Action</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTree12ActionIDTypeE" title="beam_search_with_tree::BeamSearchWithTree::ActionIDType"><span class="n"><span class="pre">ActionIDType</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tree</span></span></span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTree4treeE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree18BeamSearchWithTree9next_beamE">
+<span id="_CPPv3N21beam_search_with_tree18BeamSearchWithTree9next_beamE"></span><span id="_CPPv2N21beam_search_with_tree18BeamSearchWithTree9next_beamE"></span><span id="beam_search_with_tree::BeamSearchWithTree::next_beam__vector:tuple:i.ScoreType.Action.ActionIDType::"></span><span class="target" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1adc6896f1e21f6a3525243fe495363506"></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">tuple</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N21beam_search_with_tree9ScoreTypeE" title="beam_search_with_tree::ScoreType"><span class="n"><span class="pre">ScoreType</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N21beam_search_with_tree6ActionE" title="beam_search_with_tree::Action"><span class="n"><span class="pre">Action</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTree12ActionIDTypeE" title="beam_search_with_tree::BeamSearchWithTree::ActionIDType"><span class="n"><span class="pre">ActionIDType</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">next_beam</span></span></span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTree9next_beamE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree18BeamSearchWithTree14next_beam_dataE">
+<span id="_CPPv3N21beam_search_with_tree18BeamSearchWithTree14next_beam_dataE"></span><span id="_CPPv2N21beam_search_with_tree18BeamSearchWithTree14next_beam_dataE"></span><span id="beam_search_with_tree::BeamSearchWithTree::next_beam_data__vector:vector:i::"></span><span class="target" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1a4f403f63d83b122b017ac4b7212d316c"></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">next_beam_data</span></span></span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTree14next_beam_dataE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-static-attributes">Private Static Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree18BeamSearchWithTree9PRE_ORDERE">
+<span id="_CPPv3N21beam_search_with_tree18BeamSearchWithTree9PRE_ORDERE"></span><span id="_CPPv2N21beam_search_with_tree18BeamSearchWithTree9PRE_ORDERE"></span><span id="beam_search_with_tree::BeamSearchWithTree::PRE_ORDER__iC"></span><span class="target" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1ae57d30af763018d99b95d5a22773af7f"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">constexpr</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PRE_ORDER</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">1</span></span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTree9PRE_ORDERE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N21beam_search_with_tree18BeamSearchWithTree10POST_ORDERE">
+<span id="_CPPv3N21beam_search_with_tree18BeamSearchWithTree10POST_ORDERE"></span><span id="_CPPv2N21beam_search_with_tree18BeamSearchWithTree10POST_ORDERE"></span><span id="beam_search_with_tree::BeamSearchWithTree::POST_ORDER__iC"></span><span class="target" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1a28bdc7707d3672d3352a8153326b27f3"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">constexpr</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">POST_ORDER</span></span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="o"><span class="pre">-</span></span><span class="m"><span class="pre">2</span></span><a class="headerlink" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTree10POST_ORDERE" title="Link to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="beam_search_with_tree_cpp.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">beam search with tree</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="action_cpp.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">action</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2024, titan23
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">beam search euler</a><ul>
+<li><a class="reference internal" href="#id1">ソースコード</a></li>
+<li><a class="reference internal" href="#id2">仕様</a><ul>
+<li><a class="reference internal" href="#_CPPv421beam_search_with_tree"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree</span></code></a><ul>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree9ScoreTypeE"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::ScoreType</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree8HashTypeE"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::HashType</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_treelsER7ostreamRK6Action"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::operator&lt;&lt;()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree3INFE"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::INF</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree6ActionE"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::Action</span></code></a><ul>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree6Action6ActionEv"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::Action::Action()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree6Action6ActionEKc"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::Action::Action()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree6Action1dE"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::Action::d</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree6Action9pre_scoreE"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::Action::pre_score</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree6Action9nxt_scoreE"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::Action::nxt_score</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree6Action8pre_hashE"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::Action::pre_hash</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree6Action8nxt_hashE"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::Action::nxt_hash</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree5StateE"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::State</span></code></a><ul>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree5State5StateEv"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::State::State()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree5State4initEv"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::State::init()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4NK21beam_search_with_tree5State6try_opER6Action"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::State::try_op()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4NK21beam_search_with_tree5State7is_doneEv"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::State::is_done()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree5State8apply_opERK6Action"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::State::apply_op()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree5State8rollbackERK6Action"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::State::rollback()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4NK21beam_search_with_tree5State11get_actionsEv"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::State::get_actions()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4NK21beam_search_with_tree5State5printEv"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::State::print()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree5State5scoreE"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::State::score</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree5State4hashE"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::State::hash</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree9BeamParamE"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::BeamParam</span></code></a><ul>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree9BeamParam8MAX_TURNE"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::BeamParam::MAX_TURN</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree9BeamParam10BEAM_WIDTHE"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::BeamParam::BEAM_WIDTH</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTreeE"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::BeamSearchWithTree</span></code></a><ul>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTree6searchERK9BeamParamKb"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::BeamSearchWithTree::search()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTree12ActionIDTypeE"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::BeamSearchWithTree::ActionIDType</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTree13get_next_beamEP5StateKi"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::BeamSearchWithTree::get_next_beam()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTree11update_treeEP5StateKi"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::BeamSearchWithTree::update_tree()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTree10get_resultEv"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::BeamSearchWithTree::get_result()</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTree4seenE"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::BeamSearchWithTree::seen</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTree8ActionIDE"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::BeamSearchWithTree::ActionID</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTree6resultE"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::BeamSearchWithTree::result</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTree4treeE"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::BeamSearchWithTree::tree</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTree9next_beamE"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::BeamSearchWithTree::next_beam</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTree14next_beam_dataE"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::BeamSearchWithTree::next_beam_data</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTree9PRE_ORDERE"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::BeamSearchWithTree::PRE_ORDER</span></code></a></li>
+<li><a class="reference internal" href="#_CPPv4N21beam_search_with_tree18BeamSearchWithTree10POST_ORDERE"><code class="docutils literal notranslate"><span class="pre">beam_search_with_tree::BeamSearchWithTree::POST_ORDER</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/furo.js?v=32e29ea5"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    </body>
+</html>

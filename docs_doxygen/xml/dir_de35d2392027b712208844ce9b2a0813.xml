@@ -4,6 +4,7 @@
     <compoundname>titan_cpplib/ahc</compoundname>
     <innerdir refid="dir_1242cbfce00f1ccaeb7dd2d7b8a03f62">titan_cpplib/ahc/gomi</innerdir>
     <innerfile refid="action_8cpp">action.cpp</innerfile>
+    <innerfile refid="beam__search__euler_8cpp">beam_search_euler.cpp</innerfile>
     <innerfile refid="beam__search__with__tree_8cpp">beam_search_with_tree.cpp</innerfile>
     <innerfile refid="kmeans_8cpp">kmeans.cpp</innerfile>
     <innerfile refid="sa_8cpp">sa.cpp</innerfile>

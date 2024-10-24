@@ -5,6 +5,7 @@
     <includes local="no">cassert</includes>
     <includes local="no">unordered_set</includes>
     <includes local="no">vector</includes>
+    <includedby refid="beam__search__euler_8cpp" local="yes">titan_cpplib/ahc/beam_search_euler.cpp</includedby>
     <includedby refid="beam__search__with__tree_8cpp" local="yes">titan_cpplib/ahc/beam_search_with_tree.cpp</includedby>
     <includedby refid="kmeans_8cpp" local="yes">titan_cpplib/ahc/kmeans.cpp</includedby>
     <includedby refid="sa_8cpp" local="yes">titan_cpplib/ahc/sa.cpp</includedby>
@@ -31,7 +32,7 @@
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="2">
+      <node id="3">
         <label>titan_cpplib/ahc/beam_search_with_tree.cpp</label>
         <link refid="beam__search__with__tree_8cpp_source"/>
       </node>
@@ -46,16 +47,22 @@
         </childnode>
         <childnode refid="5" relation="include">
         </childnode>
+        <childnode refid="6" relation="include">
+        </childnode>
       </node>
-      <node id="5">
+      <node id="6">
         <label>titan_cpplib/algorithm/random_tree.cpp</label>
         <link refid="random__tree_8cpp_source"/>
       </node>
-      <node id="4">
+      <node id="2">
+        <label>titan_cpplib/ahc/beam_search_euler.cpp</label>
+        <link refid="beam__search__euler_8cpp_source"/>
+      </node>
+      <node id="5">
         <label>titan_cpplib/ahc/sa.cpp</label>
         <link refid="sa_8cpp_source"/>
       </node>
-      <node id="3">
+      <node id="4">
         <label>titan_cpplib/ahc/kmeans.cpp</label>
         <link refid="kmeans_8cpp_source"/>
       </node>

@@ -159,6 +159,7 @@
   <ul class="current">
 <li class="toctree-l1 current has-children"><a class="reference internal" href="index.html">ahc</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of ahc</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="action_cpp.html">action</a></li>
+<li class="toctree-l2"><a class="reference internal" href="beam_search_euler_cpp.html">beam search euler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="beam_search_with_tree_cpp.html">beam search with tree</a></li>
 <li class="toctree-l2"><a class="reference internal" href="kmeans_cpp.html">kmeans</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sa_cpp.html">sa</a></li>
@@ -204,7 +205,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../data_structures/persistent_lazy_wb_tree_cpp.html">persistent lazy wb tree</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_structures/persistent_segment_tree_cpp.html">persistent segment tree</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_structures/persistent_stack_cpp.html">persistent stack</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_structures/segment_quadratic_division_cpp.html">segment quadratic division</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_structures/quadratic_division_set_cpp.html">quadratic division set</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_structures/segment_tree_cpp.html">segment tree</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_structures/sparse_table_cpp.html">sparse table</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_structures/static_multiset_cpp.html">static multiset</a></li>
@@ -312,7 +313,7 @@
 <span class="linenos">22</span><span class="w">            </span><span class="n">start_timepoint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">chrono</span><span class="o">::</span><span class="n">high_resolution_clock</span><span class="o">::</span><span class="n">now</span><span class="p">();</span>
 <span class="linenos">23</span><span class="w">        </span><span class="p">}</span>
 <span class="linenos">24</span>
-<span class="linenos">25</span><span class="w">        </span><span class="c1">//! 経過時間[ms]を返す</span>
+<span class="linenos">25</span><span class="w">        </span><span class="c1">//! 経過時間[ms](double)を返す</span>
 <span class="linenos">26</span><span class="w">        </span><span class="kt">double</span><span class="w"> </span><span class="n">elapsed</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
 <span class="linenos">27</span><span class="w">            </span><span class="k">auto</span><span class="w"> </span><span class="n">end_timepoint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">chrono</span><span class="o">::</span><span class="n">high_resolution_clock</span><span class="o">::</span><span class="n">now</span><span class="p">();</span>
 <span class="linenos">28</span><span class="w">            </span><span class="k">auto</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">chrono</span><span class="o">::</span><span class="n">time_point_cast</span><span class="o">&lt;</span><span class="n">chrono</span><span class="o">::</span><span class="n">microseconds</span><span class="o">&gt;</span><span class="p">(</span><span class="n">start_timepoint</span><span class="p">).</span><span class="n">time_since_epoch</span><span class="p">().</span><span class="n">count</span><span class="p">();</span>
@@ -349,7 +350,7 @@
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4NK7titan235Timer7elapsedEv">
 <span id="_CPPv3NK7titan235Timer7elapsedEv"></span><span id="_CPPv2NK7titan235Timer7elapsedEv"></span><span id="titan23::Timer::elapsedC"></span><span class="target" id="classtitan23_1_1Timer_1adb30bc0ad576c57bf6410294d3099e26"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">elapsed</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK7titan235Timer7elapsedEv" title="Link to this definition">¶</a><br /></dt>
-<dd><p>経過時間[ms]を返す </p>
+<dd><p>経過時間[ms](double)を返す </p>
 </dd></dl>
 
 </div>

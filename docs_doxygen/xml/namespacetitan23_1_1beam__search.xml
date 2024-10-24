@@ -7,47 +7,6 @@
     <innerclass refid="structtitan23_1_1beam__search_1_1SubState" prot="public">titan23::beam_search::SubState</innerclass>
     <innerclass refid="classtitan23_1_1beam__search_1_1Param" prot="public">titan23::beam_search::Param</innerclass>
     <innerclass refid="classtitan23_1_1beam__search_1_1BeamSearch" prot="public">titan23::beam_search::BeamSearch</innerclass>
-      <sectiondef kind="enum">
-      <memberdef kind="enum" id="action_8cpp_1aefc1cd850772bb84f81737a57cc3e3e3" prot="public" static="no" strong="yes">
-        <type></type>
-        <name>Action</name>
-        <enumvalue id="action_8cpp_1aefc1cd850772bb84f81737a57cc3e3e3a4c614360da93c0a041b22e537de151eb" prot="public">
-          <name>U</name>
-          <briefdescription>
-          </briefdescription>
-          <detaileddescription>
-          </detaileddescription>
-        </enumvalue>
-        <enumvalue id="action_8cpp_1aefc1cd850772bb84f81737a57cc3e3e3ae1e1d3d40573127e9ee0480caf1283d6" prot="public">
-          <name>R</name>
-          <briefdescription>
-          </briefdescription>
-          <detaileddescription>
-          </detaileddescription>
-        </enumvalue>
-        <enumvalue id="action_8cpp_1aefc1cd850772bb84f81737a57cc3e3e3af623e75af30e62bbd73d6df5b50bb7b5" prot="public">
-          <name>D</name>
-          <briefdescription>
-          </briefdescription>
-          <detaileddescription>
-          </detaileddescription>
-        </enumvalue>
-        <enumvalue id="action_8cpp_1aefc1cd850772bb84f81737a57cc3e3e3ad20caec3b48a1eef164cb4ca81ba2587" prot="public">
-          <name>L</name>
-          <briefdescription>
-          </briefdescription>
-          <detaileddescription>
-          </detaileddescription>
-        </enumvalue>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="titan_cpplib/ahc/action.cpp" line="10" column="5" bodyfile="titan_cpplib/ahc/action.cpp" bodystart="10" bodyend="10"/>
-      </memberdef>
-      </sectiondef>
       <sectiondef kind="typedef">
       <memberdef kind="typedef" id="beam__search__old_8cpp_1ae131a1edab56d3d966e889847aaf2383" prot="public" static="no">
         <type><ref refid="classtitan23_1_1beam__search_1_1State" kindref="compound">State</ref> *</type>
@@ -117,50 +76,10 @@
         <location file="titan_cpplib/ahc/gomi/beam_search_old.cpp" line="22" column="15" bodyfile="titan_cpplib/ahc/gomi/beam_search_old.cpp" bodystart="22" bodyend="-1"/>
       </memberdef>
       </sectiondef>
-      <sectiondef kind="func">
-      <memberdef kind="function" id="action_8cpp_1aca3719b595aebdac69cce190e3de3e9e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>ostream &amp;</type>
-        <definition>ostream&amp; titan23::beam_search::operator&lt;&lt;</definition>
-        <argsstring>(ostream &amp;os, const Action &amp;action)</argsstring>
-        <name>operator&lt;&lt;</name>
-        <param>
-          <type>ostream &amp;</type>
-          <declname>os</declname>
-        </param>
-        <param>
-          <type>const Action &amp;</type>
-          <declname>action</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="titan_cpplib/ahc/action.cpp" line="11" column="5" bodyfile="titan_cpplib/ahc/action.cpp" bodystart="11" bodyend="20"/>
-      </memberdef>
-      <memberdef kind="function" id="action_8cpp_1acd319e71a6f0774cda00d27f88de6269" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>Action</type>
-        <definition>Action titan23::beam_search::get_rev_action</definition>
-        <argsstring>(const Action &amp;action)</argsstring>
-        <name>get_rev_action</name>
-        <param>
-          <type>const Action &amp;</type>
-          <declname>action</declname>
-        </param>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="titan_cpplib/ahc/action.cpp" line="22" column="12" bodyfile="titan_cpplib/ahc/action.cpp" bodystart="22" bodyend="30"/>
-      </memberdef>
-      </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/ahc/action.cpp" line="8" column="1"/>
+    <location file="titan_cpplib/ahc/gomi/beam_search_old.cpp" line="17" column="1"/>
   </compounddef>
 </doxygen>

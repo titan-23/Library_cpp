@@ -6,6 +6,7 @@
     <includes local="no">random</includes>
     <includes local="no">iostream</includes>
     <includes local="no">cassert</includes>
+    <includedby refid="beam__search__euler_8cpp" local="yes">titan_cpplib/ahc/beam_search_euler.cpp</includedby>
     <includedby refid="beam__search__with__tree_8cpp" local="yes">titan_cpplib/ahc/beam_search_with_tree.cpp</includedby>
     <incdepgraph>
       <node id="5">
@@ -34,7 +35,7 @@
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="2">
+      <node id="3">
         <label>titan_cpplib/ahc/beam_search_with_tree.cpp</label>
         <link refid="beam__search__with__tree_8cpp_source"/>
       </node>
@@ -43,6 +44,12 @@
         <link refid="hash__set_8cpp"/>
         <childnode refid="2" relation="include">
         </childnode>
+        <childnode refid="3" relation="include">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>titan_cpplib/ahc/beam_search_euler.cpp</label>
+        <link refid="beam__search__euler_8cpp_source"/>
       </node>
     </invincdepgraph>
     <innerclass refid="classtitan23_1_1HashSet" prot="public">titan23::HashSet</innerclass>

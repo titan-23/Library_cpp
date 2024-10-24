@@ -41,7 +41,7 @@ data_structures
    persistent_lazy_wb_tree_cpp.rst
    persistent_segment_tree_cpp.rst
    persistent_stack_cpp.rst
-   segment_quadratic_division_cpp.rst
+   quadratic_division_set_cpp.rst
    segment_tree_cpp.rst
    sparse_table_cpp.rst
    static_multiset_cpp.rst

@@ -159,6 +159,7 @@
   <ul class="current">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../ahc/index.html">ahc</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of ahc</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../ahc/action_cpp.html">action</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../ahc/beam_search_euler_cpp.html">beam search euler</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../ahc/beam_search_with_tree_cpp.html">beam search with tree</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../ahc/kmeans_cpp.html">kmeans</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../ahc/sa_cpp.html">sa</a></li>
@@ -204,7 +205,7 @@
 <li class="toctree-l2"><a class="reference internal" href="persistent_lazy_wb_tree_cpp.html">persistent lazy wb tree</a></li>
 <li class="toctree-l2"><a class="reference internal" href="persistent_segment_tree_cpp.html">persistent segment tree</a></li>
 <li class="toctree-l2"><a class="reference internal" href="persistent_stack_cpp.html">persistent stack</a></li>
-<li class="toctree-l2"><a class="reference internal" href="segment_quadratic_division_cpp.html">segment quadratic division</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quadratic_division_set_cpp.html">quadratic division set</a></li>
 <li class="toctree-l2"><a class="reference internal" href="segment_tree_cpp.html">segment tree</a></li>
 <li class="toctree-l2"><a class="reference internal" href="sparse_table_cpp.html">sparse table</a></li>
 <li class="toctree-l2"><a class="reference internal" href="static_multiset_cpp.html">static multiset</a></li>
@@ -393,10 +394,10 @@
 <span class="linenos">103</span><span class="w">        </span><span class="p">}</span>
 <span class="linenos">104</span>
 <span class="linenos">105</span><span class="w">        </span><span class="kt">bool</span><span class="w"> </span><span class="n">contains</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">v</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
-<span class="linenos">106</span><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="o">:</span><span class="w"> </span><span class="n">front</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">106</span><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">front</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="linenos">107</span><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">v</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
 <span class="linenos">108</span><span class="w">            </span><span class="p">}</span>
-<span class="linenos">109</span><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="o">:</span><span class="w"> </span><span class="n">back</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="linenos">109</span><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">back</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="linenos">110</span><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">v</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
 <span class="linenos">111</span><span class="w">            </span><span class="p">}</span>
 <span class="linenos">112</span><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>

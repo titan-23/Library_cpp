@@ -64,6 +64,7 @@ $(function() {
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#typedef-members">Typedefs</a> &#124;
+<a href="#func-members">Functions</a> &#124;
 <a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">beam_search_with_tree Namespace Reference</div>  </div>
@@ -79,40 +80,31 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeam__search__with__tree_1_1State.html">State</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeam__search__with__tree_1_1Param.html">Param</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeam__search__with__tree_1_1SubState.html">SubState</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">try_opした結果をメモしておく構造体  <a href="structbeam__search__with__tree_1_1SubState.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeam__search__with__tree_1_1TreeNode.html">TreeNode</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">ビームサーチの過程を表す木のノード  <a href="structbeam__search__with__tree_1_1TreeNode.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structbeam__search__with__tree_1_1BeamParam.html">BeamParam</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbeam__search__with__tree_1_1BeamSearchWithTree.html">BeamSearchWithTree</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:af5472ddaaa54333d4757abdc047347dd"><td class="memItemLeft" align="right" valign="top"><a id="af5472ddaaa54333d4757abdc047347dd"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>ScoreType</b> = int</td></tr>
-<tr class="separator:af5472ddaaa54333d4757abdc047347dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1294f102550ff38b60ddb22b0ffcdab3"><td class="memItemLeft" align="right" valign="top"><a id="a1294f102550ff38b60ddb22b0ffcdab3"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>ScoreType</b> = long long</td></tr>
+<tr class="separator:a1294f102550ff38b60ddb22b0ffcdab3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa83032ad758aef56dec6deeecbe53d6d"><td class="memItemLeft" align="right" valign="top"><a id="aa83032ad758aef56dec6deeecbe53d6d"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>HashType</b> = unsigned long long</td></tr>
 <tr class="separator:aa83032ad758aef56dec6deeecbe53d6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a54906ff873336403a4705a2f5d2c9e2a"><td class="memItemLeft" align="right" valign="top"><a id="a54906ff873336403a4705a2f5d2c9e2a"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>TreeNodeID</b> = int</td></tr>
-<tr class="separator:a54906ff873336403a4705a2f5d2c9e2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4dc08d62dd237747b897d8e7c21c3c74"><td class="memItemLeft" align="right" valign="top"><a id="a4dc08d62dd237747b897d8e7c21c3c74"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>SubStateID</b> = int</td></tr>
-<tr class="separator:a4dc08d62dd237747b897d8e7c21c3c74"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a129a8b9547b5ba5752b734feb46b31bd"><td class="memItemLeft" align="right" valign="top"><a id="a129a8b9547b5ba5752b734feb46b31bd"></a>
+ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator&lt;&lt;</b> (ostream &amp;os, const <a class="el" href="structbeam__search__with__tree_1_1Action.html">Action</a> &amp;action)</td></tr>
+<tr class="separator:a129a8b9547b5ba5752b734feb46b31bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a5f29ceda537d6803b87068a9aaf4072d"><td class="memItemLeft" align="right" valign="top"><a id="a5f29ceda537d6803b87068a9aaf4072d"></a>
-<a class="el" href="classtitan23_1_1StatePool.html">titan23::StatePool</a>&lt; <a class="el" href="structbeam__search__with__tree_1_1TreeNode.html">TreeNode</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>treenode_pool</b></td></tr>
-<tr class="separator:a5f29ceda537d6803b87068a9aaf4072d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc4263fc1a4f888068d42f0edfae35ab"><td class="memItemLeft" align="right" valign="top"><a id="adc4263fc1a4f888068d42f0edfae35ab"></a>
-<a class="el" href="classtitan23_1_1StatePool.html">titan23::StatePool</a>&lt; <a class="el" href="structbeam__search__with__tree_1_1SubState.html">SubState</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>substate_pool</b></td></tr>
-<tr class="separator:adc4263fc1a4f888068d42f0edfae35ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af90a4c9af8ff0f76e058cca1df3c84b4"><td class="memItemLeft" align="right" valign="top"><a id="af90a4c9af8ff0f76e058cca1df3c84b4"></a>
+const ScoreType&#160;</td><td class="memItemRight" valign="bottom"><b>INF</b> = 1e9</td></tr>
+<tr class="separator:af90a4c9af8ff0f76e058cca1df3c84b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>木上のビームサーチライブラリ </p>

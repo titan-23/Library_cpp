@@ -65,7 +65,7 @@ namespace titan23 {
                 return eval[i] < eval[j];
             });
             int nl = 0, nr = 0;
-            for (const int &i: qi) {
+            for (const int &i : qi) {
                 const int li = _l[i], ri = _r[i];
                 while (nl > li) add_left(--nl);
                 while (nr < ri) add_right(nr++);
