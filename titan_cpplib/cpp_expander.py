@@ -37,13 +37,12 @@ class CppExpander:
 
     def __init__(self, input_path: str) -> None:
         if not os.path.exists(input_path):
-            logger.critical(to_red(f'input_path : "{input_path}" does not found.'))
+            logger.critical(to_red(f'input_path : "{input_path}" does not exist.'))
             exit(1)
         self.input_path: str = input_path
         self.seen_path: set[str] = set()
         self.outputs: list[str] = []
-        self.added_file = set()
-        self.input_lines = 0
+        self.added_file: set[str] = set()
 
     def expand(self, output_fiepath: str) -> None:
         """コードを展開してoutput_fiepathに書き出す"""
@@ -57,14 +56,14 @@ class CppExpander:
             with open(output_fiepath, "w", encoding="utf-8") as f:
                 f.write(output_code)
         logger.info(to_green("The process completed successfully."))
-        logger.info(to_green(f"Output file: {output_fiepath} ."))
+        logger.info(to_green(f"Output file: \"{output_fiepath}\"."))
 
     def get_code(self, input_file_path: str) -> None:
         input_lines = 0
         with open(input_file_path, "r", encoding="utf-8") as input_file:
             for line in input_file:
                 input_lines += 1
-                if line.startswith(f'#include "titan_cpplib'):
+                if line.startswith(f"#include \"titan_cpplib"):
                     _, s = line.split()
                     s = s.replace('"', "")
                     if s in self.added_file:
