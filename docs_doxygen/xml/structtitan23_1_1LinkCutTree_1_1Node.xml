@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="15" column="17" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="15" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="16" column="17" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="16" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structtitan23_1_1LinkCutTree_1_1Node_1a1a2ea3d2717249eaf189d3ec2500d918" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="15" column="23" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="15" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="16" column="23" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="16" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structtitan23_1_1LinkCutTree_1_1Node_1a2a798d7981e9e7e00888f6ba3cd3ad4f" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -40,7 +40,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="15" column="28" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="15" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="16" column="28" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="16" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structtitan23_1_1LinkCutTree_1_1Node_1a7046a0d2622cb7df702e59e804bb4e11" prot="public" static="no" mutable="no">
         <type>NodePtr</type>
@@ -53,7 +53,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="16" column="21" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="16" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="17" column="21" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="17" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structtitan23_1_1LinkCutTree_1_1Node_1a19f8b172257c4dff35afc207a306fbd0" prot="public" static="no" mutable="no">
         <type>NodePtr</type>
@@ -66,7 +66,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="16" column="26" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="16" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="17" column="26" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="17" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structtitan23_1_1LinkCutTree_1_1Node_1a6f7bf19506adce57884a944a0e25eeb1" prot="public" static="no" mutable="no">
         <type>NodePtr</type>
@@ -79,7 +79,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="16" column="32" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="16" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="17" column="32" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="17" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -98,7 +98,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="18" column="13" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="18" bodyend="21"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="19" column="13" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="19" bodyend="22"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1LinkCutTree_1_1Node_1a93598f7b7e27ee114456ae0006c5f51a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -111,7 +111,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="23" column="18" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="23" bodyend="25"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="24" column="18" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="24" bodyend="26"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -128,7 +128,7 @@
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="14" column="9" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="14" bodyend="26"/>
+    <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="15" column="9" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="15" bodyend="27"/>
     <listofallmembers>
       <member refid="structtitan23_1_1LinkCutTree_1_1Node_1afdb4356a94684a359e9a0333b1141af2" prot="public" virt="non-virtual"><scope>titan23::LinkCutTree::Node</scope><name>index</name></member>
       <member refid="structtitan23_1_1LinkCutTree_1_1Node_1a93598f7b7e27ee114456ae0006c5f51a" prot="public" virt="non-virtual"><scope>titan23::LinkCutTree::Node</scope><name>is_root</name></member>

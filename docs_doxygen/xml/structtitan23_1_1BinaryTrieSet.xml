@@ -19,7 +19,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="9" column="12" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="9" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="10" column="12" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="10" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structtitan23_1_1BinaryTrieSet_1af8c6afea5e7c40c9aeb6f44fa99853e2" prot="public" static="no" mutable="no">
         <type>vector&lt; unsigned int &gt;</type>
@@ -32,7 +32,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="9" column="17" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="9" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="10" column="17" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="10" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structtitan23_1_1BinaryTrieSet_1a2c7c8e3e22032d1fed8e7d455bc62304" prot="public" static="no" mutable="no">
         <type>vector&lt; unsigned int &gt;</type>
@@ -45,7 +45,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="9" column="23" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="9" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="10" column="23" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="10" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structtitan23_1_1BinaryTrieSet_1a1402b66bc34398c9680c16e5fbf9bb93" prot="public" static="no" mutable="no">
         <type>vector&lt; unsigned int &gt;</type>
@@ -58,7 +58,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="9" column="27" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="9" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="10" column="27" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="10" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structtitan23_1_1BinaryTrieSet_1aceb82de7822126119830cde6f464fef5" prot="public" static="no" mutable="no">
         <type>unsigned int</type>
@@ -71,7 +71,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="10" column="18" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="10" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="11" column="18" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="11" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structtitan23_1_1BinaryTrieSet_1adb6bd9bd3e16087430b8cd7d7b60a541" prot="public" static="no" mutable="no">
         <type>unsigned int</type>
@@ -84,7 +84,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="10" column="23" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="10" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="11" column="23" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="11" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structtitan23_1_1BinaryTrieSet_1a8a30e7e96fc7c98fcbeda836279fe266" prot="public" static="no" mutable="no">
         <type>unsigned int</type>
@@ -97,7 +97,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="10" column="29" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="10" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="11" column="29" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="11" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structtitan23_1_1BinaryTrieSet_1aae58761267dc890cfd2534e5d295fdcb" prot="public" static="no" mutable="no">
         <type>T</type>
@@ -110,7 +110,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="11" column="7" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="11" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="12" column="7" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="12" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structtitan23_1_1BinaryTrieSet_1a3e052190312006cc5b4ba53925c3e18e" prot="public" static="no" mutable="no">
         <type>T</type>
@@ -123,7 +123,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="11" column="12" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="11" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="12" column="12" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="12" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -142,7 +142,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="13" column="5" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="13" bodyend="23"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="14" column="5" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="14" bodyend="24"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1BinaryTrieSet_1ae844a1084418d2443f51e791c8f76a0a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -159,7 +159,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="25" column="10" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="25" bodyend="30"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="26" column="10" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="26" bodyend="31"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1BinaryTrieSet_1a7ece67b7f0c9d6409b046b8a12556083" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>unsigned int</type>
@@ -172,7 +172,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="32" column="18" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="32" bodyend="40"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="33" column="18" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="33" bodyend="41"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1BinaryTrieSet_1a29c917211657b9cf1239add8f2248263" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>unsigned int</type>
@@ -189,7 +189,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="42" column="18" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="42" bodyend="55"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="43" column="18" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="43" bodyend="56"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1BinaryTrieSet_1a018874200ef885b9f77892c0ec66484f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -206,7 +206,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="57" column="10" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="57" bodyend="84"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="58" column="10" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="58" bodyend="85"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1BinaryTrieSet_1abb8f9be5db7959fdae5c541b77f29afd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -223,7 +223,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="86" column="10" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="86" bodyend="88"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="87" column="10" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="87" bodyend="89"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1BinaryTrieSet_1ae1f2279114b6af7007e4f07f94706442" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -240,7 +240,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="90" column="10" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="90" bodyend="107"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="91" column="10" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="91" bodyend="108"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1BinaryTrieSet_1a9eaac673e25ebb6b6e2051c87fbaa5f9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -257,7 +257,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="109" column="10" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="109" bodyend="114"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="110" column="10" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="110" bodyend="115"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1BinaryTrieSet_1a66bc23e47059d3cb5839dcc3c29da66a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -274,7 +274,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="116" column="7" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="116" bodyend="135"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="117" column="7" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="117" bodyend="136"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1BinaryTrieSet_1a9620ccb5df80a146789820d74eaade06" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -287,7 +287,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="137" column="7" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="137" bodyend="139"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="138" column="7" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="138" bodyend="140"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1BinaryTrieSet_1a2d8102d7b5fc23d33d0b04794ed7b84f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -300,7 +300,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="141" column="7" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="141" bodyend="143"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="142" column="7" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="142" bodyend="144"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1BinaryTrieSet_1a541db0795ad382ccff0013f094ba7182" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -317,7 +317,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="145" column="10" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="145" bodyend="147"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="146" column="10" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="146" bodyend="148"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1BinaryTrieSet_1adbe1713afe9e0342278394257f9a2c4c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -330,7 +330,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="149" column="7" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="149" bodyend="172"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="150" column="7" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="150" bodyend="173"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1BinaryTrieSet_1a68aa1b7d4397a02ca0f7f3d314512c71" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -343,7 +343,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="174" column="7" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="174" bodyend="197"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="175" column="7" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="175" bodyend="198"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1BinaryTrieSet_1a799daaad93c23fb63715c4d6cd074548" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -360,7 +360,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="199" column="9" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="199" bodyend="213"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="200" column="9" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="200" bodyend="214"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1BinaryTrieSet_1a6e765026b4f2e13a65fe93d77766ed74" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -377,7 +377,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="215" column="9" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="215" bodyend="230"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="216" column="9" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="216" bodyend="231"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1BinaryTrieSet_1ad0e78d1cfc96d7cb2be6b0b5feeeb9a6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -394,7 +394,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="232" column="7" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="232" bodyend="250"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="233" column="7" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="233" bodyend="251"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1BinaryTrieSet_1a1f625e4be187235bee3cb8854d9ddf77" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -411,7 +411,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="252" column="7" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="252" bodyend="255"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="253" column="7" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="253" bodyend="256"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1BinaryTrieSet_1a450eba10ed5c85079e4db615f28f099f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -428,7 +428,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="257" column="7" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="257" bodyend="260"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="258" column="7" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="258" bodyend="261"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1BinaryTrieSet_1a7ce4c7f9ece2aef5e5a6b31e9aeeb112" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -445,7 +445,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="262" column="7" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="262" bodyend="266"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="263" column="7" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="263" bodyend="267"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1BinaryTrieSet_1afbdc8b2b3dc86aadb03b00b94345256f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -462,7 +462,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="268" column="7" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="268" bodyend="271"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="269" column="7" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="269" bodyend="272"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1BinaryTrieSet_1a090be0261749e4338b278d5fda64e330" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>vector&lt; T &gt;</type>
@@ -475,7 +475,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="273" column="12" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="273" bodyend="282"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="274" column="12" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="274" bodyend="283"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1BinaryTrieSet_1ada196651361931df6469d02693da4210" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -488,7 +488,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="284" column="10" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="284" bodyend="286"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="285" column="10" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="285" bodyend="287"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1BinaryTrieSet_1aafa9adc177bc12ed1dad2a71db18ed09" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -501,7 +501,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="288" column="10" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="288" bodyend="298"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="289" column="10" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="289" bodyend="299"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1BinaryTrieSet_1a883dbd560b4774a29d2fc5845dfab2ae" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -514,14 +514,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="300" column="9" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="300" bodyend="302"/>
+        <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="301" column="9" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="301" bodyend="303"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/data_structures/binary_trie_set.cpp" line="8" column="3" bodyfile="titan_cpplib/data_structures/binary_trie_set.cpp" bodystart="8" bodyend="303"/>
+    <location file="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" line="9" column="3" bodyfile="titan_cpplib_expanded/data_structures/binary_trie_set.cpp" bodystart="9" bodyend="304"/>
     <listofallmembers>
       <member refid="structtitan23_1_1BinaryTrieSet_1a8a30e7e96fc7c98fcbeda836279fe266" prot="public" virt="non-virtual"><scope>titan23::BinaryTrieSet</scope><name>_bit</name></member>
       <member refid="structtitan23_1_1BinaryTrieSet_1ae1f2279114b6af7007e4f07f94706442" prot="public" virt="non-virtual"><scope>titan23::BinaryTrieSet</scope><name>_discard</name></member>

@@ -19,7 +19,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_dict.cpp" line="14" column="9" bodyfile="titan_cpplib/data_structures/hash_dict.cpp" bodystart="14" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/hash_dict.cpp" line="15" column="9" bodyfile="titan_cpplib_expanded/data_structures/hash_dict.cpp" bodystart="15" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-static-attrib">
@@ -35,7 +35,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_dict.cpp" line="15" column="36" bodyfile="titan_cpplib/data_structures/hash_dict.cpp" bodystart="15" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/hash_dict.cpp" line="16" column="36" bodyfile="titan_cpplib_expanded/data_structures/hash_dict.cpp" bodystart="16" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1HashDict_1a9e79213d5cba2f15a32779a09cf7026e" prot="private" static="yes" constexpr="yes" mutable="no">
         <type>constexpr const int</type>
@@ -49,7 +49,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_dict.cpp" line="16" column="36" bodyfile="titan_cpplib/data_structures/hash_dict.cpp" bodystart="16" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/hash_dict.cpp" line="17" column="36" bodyfile="titan_cpplib_expanded/data_structures/hash_dict.cpp" bodystart="17" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-attrib">
@@ -64,7 +64,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_dict.cpp" line="17" column="16" bodyfile="titan_cpplib/data_structures/hash_dict.cpp" bodystart="17" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/hash_dict.cpp" line="18" column="16" bodyfile="titan_cpplib_expanded/data_structures/hash_dict.cpp" bodystart="18" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1HashDict_1a5f439164eda5a880c6c701b6720a3856" prot="private" static="no" mutable="no">
         <type>vector&lt; u64 &gt;</type>
@@ -77,7 +77,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_dict.cpp" line="18" column="16" bodyfile="titan_cpplib/data_structures/hash_dict.cpp" bodystart="18" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/hash_dict.cpp" line="19" column="16" bodyfile="titan_cpplib_expanded/data_structures/hash_dict.cpp" bodystart="19" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1HashDict_1ab4dec83a4ca0720b1c228b6a00aeed0a" prot="private" static="no" mutable="no">
         <type>vector&lt; V &gt;</type>
@@ -90,7 +90,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_dict.cpp" line="19" column="16" bodyfile="titan_cpplib/data_structures/hash_dict.cpp" bodystart="19" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/hash_dict.cpp" line="20" column="16" bodyfile="titan_cpplib_expanded/data_structures/hash_dict.cpp" bodystart="20" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1HashDict_1a3d21c7432db7ed3aeefa7970d9bf7d46" prot="private" static="no" mutable="no">
         <type>int</type>
@@ -103,7 +103,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_dict.cpp" line="20" column="13" bodyfile="titan_cpplib/data_structures/hash_dict.cpp" bodystart="20" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/hash_dict.cpp" line="21" column="13" bodyfile="titan_cpplib_expanded/data_structures/hash_dict.cpp" bodystart="21" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1HashDict_1a4c8f377e8d8010301de372c61c58b6d5" prot="private" static="no" mutable="no">
         <type>int</type>
@@ -116,7 +116,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_dict.cpp" line="20" column="17" bodyfile="titan_cpplib/data_structures/hash_dict.cpp" bodystart="20" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/hash_dict.cpp" line="21" column="17" bodyfile="titan_cpplib_expanded/data_structures/hash_dict.cpp" bodystart="21" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1HashDict_1ae93babe76b4ae5bd006e8c160adf1791" prot="private" static="no" mutable="no">
         <type>int</type>
@@ -129,7 +129,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_dict.cpp" line="21" column="13" bodyfile="titan_cpplib/data_structures/hash_dict.cpp" bodystart="21" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/hash_dict.cpp" line="22" column="13" bodyfile="titan_cpplib_expanded/data_structures/hash_dict.cpp" bodystart="22" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -148,7 +148,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_dict.cpp" line="23" column="13" bodyfile="titan_cpplib/data_structures/hash_dict.cpp" bodystart="23" bodyend="25"/>
+        <location file="titan_cpplib_expanded/data_structures/hash_dict.cpp" line="24" column="13" bodyfile="titan_cpplib_expanded/data_structures/hash_dict.cpp" bodystart="24" bodyend="26"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1HashDict_1aea0dcc16b33b72a3a2be57832e5e9c95" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>pair&lt; int, bool &gt;</type>
@@ -165,7 +165,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_dict.cpp" line="27" column="14" bodyfile="titan_cpplib/data_structures/hash_dict.cpp" bodystart="27" bodyend="34"/>
+        <location file="titan_cpplib_expanded/data_structures/hash_dict.cpp" line="28" column="14" bodyfile="titan_cpplib_expanded/data_structures/hash_dict.cpp" bodystart="28" bodyend="35"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1HashDict_1a0fe5538dd8bbe71c1c15e9e7ae27c439" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -182,7 +182,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_dict.cpp" line="36" column="13" bodyfile="titan_cpplib/data_structures/hash_dict.cpp" bodystart="36" bodyend="39"/>
+        <location file="titan_cpplib_expanded/data_structures/hash_dict.cpp" line="37" column="13" bodyfile="titan_cpplib_expanded/data_structures/hash_dict.cpp" bodystart="37" bodyend="40"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1HashDict_1a3d3d6985951ff859cc9bfe443013e888" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -195,7 +195,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_dict.cpp" line="41" column="14" bodyfile="titan_cpplib/data_structures/hash_dict.cpp" bodystart="41" bodyend="60"/>
+        <location file="titan_cpplib_expanded/data_structures/hash_dict.cpp" line="42" column="14" bodyfile="titan_cpplib_expanded/data_structures/hash_dict.cpp" bodystart="42" bodyend="61"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -210,7 +210,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_dict.cpp" line="63" column="9" bodyfile="titan_cpplib/data_structures/hash_dict.cpp" bodystart="63" bodyend="63"/>
+        <location file="titan_cpplib_expanded/data_structures/hash_dict.cpp" line="64" column="9" bodyfile="titan_cpplib_expanded/data_structures/hash_dict.cpp" bodystart="64" bodyend="64"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1HashDict_1a3e651c58dda6e14cba2b167666e3b942" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -227,7 +227,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_dict.cpp" line="65" column="9" bodyfile="titan_cpplib/data_structures/hash_dict.cpp" bodystart="65" bodyend="78"/>
+        <location file="titan_cpplib_expanded/data_structures/hash_dict.cpp" line="66" column="9" bodyfile="titan_cpplib_expanded/data_structures/hash_dict.cpp" bodystart="66" bodyend="79"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1HashDict_1a7e8c3644d0057250317a8587cfaf87e4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>V</type>
@@ -244,7 +244,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_dict.cpp" line="80" column="11" bodyfile="titan_cpplib/data_structures/hash_dict.cpp" bodystart="80" bodyend="84"/>
+        <location file="titan_cpplib_expanded/data_structures/hash_dict.cpp" line="81" column="11" bodyfile="titan_cpplib_expanded/data_structures/hash_dict.cpp" bodystart="81" bodyend="85"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1HashDict_1a4d0a500f6ab9c6e571c774a8f2624454" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>V</type>
@@ -265,7 +265,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_dict.cpp" line="86" column="11" bodyfile="titan_cpplib/data_structures/hash_dict.cpp" bodystart="86" bodyend="90"/>
+        <location file="titan_cpplib_expanded/data_structures/hash_dict.cpp" line="87" column="11" bodyfile="titan_cpplib_expanded/data_structures/hash_dict.cpp" bodystart="87" bodyend="91"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1HashDict_1a009027facfad9e6458967b65f0bd290b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -282,7 +282,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_dict.cpp" line="92" column="14" bodyfile="titan_cpplib/data_structures/hash_dict.cpp" bodystart="92" bodyend="94"/>
+        <location file="titan_cpplib_expanded/data_structures/hash_dict.cpp" line="93" column="14" bodyfile="titan_cpplib_expanded/data_structures/hash_dict.cpp" bodystart="93" bodyend="95"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1HashDict_1a60781a52ca737206709c4954235e35c8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>V</type>
@@ -299,7 +299,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_dict.cpp" line="96" column="11" bodyfile="titan_cpplib/data_structures/hash_dict.cpp" bodystart="96" bodyend="98"/>
+        <location file="titan_cpplib_expanded/data_structures/hash_dict.cpp" line="97" column="11" bodyfile="titan_cpplib_expanded/data_structures/hash_dict.cpp" bodystart="97" bodyend="99"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1HashDict_1a47f9c610ad46e93d5a17a5f26c981bd2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -320,7 +320,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_dict.cpp" line="100" column="14" bodyfile="titan_cpplib/data_structures/hash_dict.cpp" bodystart="100" bodyend="111"/>
+        <location file="titan_cpplib_expanded/data_structures/hash_dict.cpp" line="101" column="14" bodyfile="titan_cpplib_expanded/data_structures/hash_dict.cpp" bodystart="101" bodyend="112"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1HashDict_1ab779cf5c635ca0263dfe9e0f12493829" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -342,7 +342,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_dict.cpp" line="114" column="14" bodyfile="titan_cpplib/data_structures/hash_dict.cpp" bodystart="114" bodyend="131"/>
+        <location file="titan_cpplib_expanded/data_structures/hash_dict.cpp" line="115" column="14" bodyfile="titan_cpplib_expanded/data_structures/hash_dict.cpp" bodystart="115" bodyend="132"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1HashDict_1a39fe1d5ed0bddbfb4d98abeed687a5ce" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -360,7 +360,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_dict.cpp" line="134" column="14" bodyfile="titan_cpplib/data_structures/hash_dict.cpp" bodystart="134" bodyend="146"/>
+        <location file="titan_cpplib_expanded/data_structures/hash_dict.cpp" line="135" column="14" bodyfile="titan_cpplib_expanded/data_structures/hash_dict.cpp" bodystart="135" bodyend="147"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1HashDict_1a28e5756e72009f6370998bc26039cf9b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -374,7 +374,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_dict.cpp" line="149" column="14" bodyfile="titan_cpplib/data_structures/hash_dict.cpp" bodystart="149" bodyend="152"/>
+        <location file="titan_cpplib_expanded/data_structures/hash_dict.cpp" line="150" column="14" bodyfile="titan_cpplib_expanded/data_structures/hash_dict.cpp" bodystart="150" bodyend="153"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1HashDict_1a6758f24501dc370d136e4234f75493ff" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -387,14 +387,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/hash_dict.cpp" line="154" column="13" bodyfile="titan_cpplib/data_structures/hash_dict.cpp" bodystart="154" bodyend="156"/>
+        <location file="titan_cpplib_expanded/data_structures/hash_dict.cpp" line="155" column="13" bodyfile="titan_cpplib_expanded/data_structures/hash_dict.cpp" bodystart="155" bodyend="157"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/data_structures/hash_dict.cpp" line="12" column="5" bodyfile="titan_cpplib/data_structures/hash_dict.cpp" bodystart="12" bodyend="157"/>
+    <location file="titan_cpplib_expanded/data_structures/hash_dict.cpp" line="13" column="5" bodyfile="titan_cpplib_expanded/data_structures/hash_dict.cpp" bodystart="13" bodyend="158"/>
     <listofallmembers>
       <member refid="classtitan23_1_1HashDict_1a0fe5538dd8bbe71c1c15e9e7ae27c439" prot="private" virt="non-virtual"><scope>titan23::HashDict</scope><name>bit_length</name></member>
       <member refid="classtitan23_1_1HashDict_1a28e5756e72009f6370998bc26039cf9b" prot="public" virt="non-virtual"><scope>titan23::HashDict</scope><name>clear</name></member>

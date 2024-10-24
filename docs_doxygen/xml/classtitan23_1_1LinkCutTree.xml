@@ -48,7 +48,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="11" column="9" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="11" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="12" column="9" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="12" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-attrib">
@@ -63,7 +63,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="12" column="16" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="12" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="13" column="16" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="13" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-attrib">
@@ -78,7 +78,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/gomi/link_cut_tree.cpp" line="16" column="9" bodyfile="titan_cpplib/gomi/link_cut_tree.cpp" bodystart="16" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/gomi/link_cut_tree.cpp" line="17" column="9" bodyfile="titan_cpplib_expanded/gomi/link_cut_tree.cpp" bodystart="17" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1LinkCutTree_1a312a69a289d6a12da93902b19d36c0f0" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -91,7 +91,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/gomi/link_cut_tree.cpp" line="16" column="11" bodyfile="titan_cpplib/gomi/link_cut_tree.cpp" bodystart="16" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/gomi/link_cut_tree.cpp" line="17" column="11" bodyfile="titan_cpplib_expanded/gomi/link_cut_tree.cpp" bodystart="17" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1LinkCutTree_1ac83410b9ba9d0d463541ed49638e7fb0" prot="public" static="no" mutable="no">
         <type>vector&lt; int &gt;</type>
@@ -104,7 +104,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/gomi/link_cut_tree.cpp" line="17" column="12" bodyfile="titan_cpplib/gomi/link_cut_tree.cpp" bodystart="17" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/gomi/link_cut_tree.cpp" line="18" column="12" bodyfile="titan_cpplib_expanded/gomi/link_cut_tree.cpp" bodystart="18" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1LinkCutTree_1a70781190042ba4534ecd146dabdf5ba4" prot="public" static="no" mutable="no">
         <type>vector&lt; int &gt;</type>
@@ -117,7 +117,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/gomi/link_cut_tree.cpp" line="17" column="16" bodyfile="titan_cpplib/gomi/link_cut_tree.cpp" bodystart="17" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/gomi/link_cut_tree.cpp" line="18" column="16" bodyfile="titan_cpplib_expanded/gomi/link_cut_tree.cpp" bodystart="18" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1LinkCutTree_1a4c00b2137fea9b07b8d365d3ba2c7904" prot="public" static="no" mutable="no">
         <type>vector&lt; T &gt;</type>
@@ -130,7 +130,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/gomi/link_cut_tree.cpp" line="18" column="12" bodyfile="titan_cpplib/gomi/link_cut_tree.cpp" bodystart="18" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/gomi/link_cut_tree.cpp" line="19" column="12" bodyfile="titan_cpplib_expanded/gomi/link_cut_tree.cpp" bodystart="19" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1LinkCutTree_1ae0609ce7ed2454af2a07583fef8313c5" prot="public" static="no" mutable="no">
         <type>vector&lt; T &gt;</type>
@@ -143,7 +143,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/gomi/link_cut_tree.cpp" line="18" column="16" bodyfile="titan_cpplib/gomi/link_cut_tree.cpp" bodystart="18" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/gomi/link_cut_tree.cpp" line="19" column="16" bodyfile="titan_cpplib_expanded/gomi/link_cut_tree.cpp" bodystart="19" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1LinkCutTree_1a50c2f79183a7e7c5f65ce099493027b2" prot="public" static="no" mutable="no">
         <type>vector&lt; F &gt;</type>
@@ -156,7 +156,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/gomi/link_cut_tree.cpp" line="19" column="12" bodyfile="titan_cpplib/gomi/link_cut_tree.cpp" bodystart="19" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/gomi/link_cut_tree.cpp" line="20" column="12" bodyfile="titan_cpplib_expanded/gomi/link_cut_tree.cpp" bodystart="20" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -175,7 +175,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="28" column="14" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="28" bodyend="31"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="29" column="14" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="29" bodyend="32"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1a663be1063c8dd9dddd2a6dea59e737f1" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -192,7 +192,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="33" column="14" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="33" bodyend="41"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="34" column="14" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="34" bodyend="42"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1a108c9e039f3be678b00494160a241cd3" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -209,7 +209,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="43" column="14" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="43" bodyend="54"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="44" column="14" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="44" bodyend="55"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1a3a2bdd9feb48c82a70b0ff7491a37fc1" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -226,7 +226,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="56" column="14" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="56" bodyend="81"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="57" column="14" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="57" bodyend="82"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1a0c81aca07cef4b988ef1c8119426274f" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -243,7 +243,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="83" column="14" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="83" bodyend="94"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="84" column="14" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="84" bodyend="95"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1a71855f7b2935319a2ac2f110655838ee" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -264,7 +264,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="96" column="14" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="96" bodyend="102"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="97" column="14" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="97" bodyend="103"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1a464b81015e6152ca84e94e30b492770b" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -281,7 +281,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="104" column="14" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="104" bodyend="109"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="105" column="14" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="105" bodyend="110"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1acea69388b0599d2ebcc50ad381854da7" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>NodePtr</type>
@@ -298,7 +298,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="111" column="17" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="111" bodyend="126"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="112" column="17" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="112" bodyend="127"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1ac98b769653471030fba7636612cac04e" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>NodePtr</type>
@@ -315,7 +315,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="128" column="17" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="128" bodyend="137"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="129" column="17" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="129" bodyend="138"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1a2782f1092cc0dafdbe593a73a48dda76" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -332,7 +332,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="139" column="14" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="139" bodyend="143"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="140" column="14" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="140" bodyend="144"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -347,7 +347,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="146" column="9" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="146" bodyend="146"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="147" column="9" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="147" bodyend="147"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1a2ce71449a3b3830be756a8b3990fb383" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -364,7 +364,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="148" column="9" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="148" bodyend="153"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="149" column="9" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="149" bodyend="154"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1ab02a905fafdeeaf4bd8f137ad83288c1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -381,7 +381,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="155" column="13" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="155" bodyend="157"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="156" column="13" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="156" bodyend="158"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1a6f3ea7a33c4147af032ccabcdfdd22ff" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -407,7 +407,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="159" column="13" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="159" bodyend="163"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="160" column="13" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="160" bodyend="164"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1a32448bc75e933ea9c78060931f6e2f69" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -428,7 +428,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="165" column="14" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="165" bodyend="167"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="166" column="14" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="166" bodyend="168"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1a71881643479715aa9acf1b81acd086f7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -445,7 +445,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="169" column="14" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="169" bodyend="171"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="170" column="14" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="170" bodyend="172"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1ad50f980adf46cefa18901963a1490259" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -462,7 +462,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="173" column="13" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="173" bodyend="175"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="174" column="13" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="174" bodyend="176"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1a98fffe099393ce18dac56add1edf7f8e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -483,7 +483,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="177" column="14" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="177" bodyend="179"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="178" column="14" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="178" bodyend="180"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1ac50c3e15df35759dacd9b571b90757e1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -500,7 +500,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="181" column="14" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="181" bodyend="183"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="182" column="14" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="182" bodyend="184"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1af7983214cd7954283e90de6a0e45c4c2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -521,7 +521,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="185" column="14" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="185" bodyend="190"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="186" column="14" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="186" bodyend="191"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1a7a4806f31c01a2950a3619d6b053f9bd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -542,7 +542,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="192" column="14" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="192" bodyend="195"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="193" column="14" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="193" bodyend="196"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1ab7a1112db3bf507c16032160959f9e41" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -567,7 +567,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="197" column="13" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="197" bodyend="216"/>
+        <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="198" column="13" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="198" bodyend="217"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1a95a95e025ef84750f04e0b98726e3163" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -584,7 +584,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/gomi/link_cut_tree.cpp" line="21" column="5" bodyfile="titan_cpplib/gomi/link_cut_tree.cpp" bodystart="21" bodyend="31"/>
+        <location file="titan_cpplib_expanded/gomi/link_cut_tree.cpp" line="22" column="5" bodyfile="titan_cpplib_expanded/gomi/link_cut_tree.cpp" bodystart="22" bodyend="32"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1ac840b54909126bab46d86ef888072ca4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -601,7 +601,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/gomi/link_cut_tree.cpp" line="33" column="10" bodyfile="titan_cpplib/gomi/link_cut_tree.cpp" bodystart="33" bodyend="35"/>
+        <location file="titan_cpplib_expanded/gomi/link_cut_tree.cpp" line="34" column="10" bodyfile="titan_cpplib_expanded/gomi/link_cut_tree.cpp" bodystart="34" bodyend="36"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1a1d05f4e6cda1960d4d1733cd05dd5c34" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -618,7 +618,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/gomi/link_cut_tree.cpp" line="37" column="10" bodyfile="titan_cpplib/gomi/link_cut_tree.cpp" bodystart="37" bodyend="64"/>
+        <location file="titan_cpplib_expanded/gomi/link_cut_tree.cpp" line="38" column="10" bodyfile="titan_cpplib_expanded/gomi/link_cut_tree.cpp" bodystart="38" bodyend="65"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1a10a09330e8e1c80668e3e5c06522f662" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -635,7 +635,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/gomi/link_cut_tree.cpp" line="66" column="10" bodyfile="titan_cpplib/gomi/link_cut_tree.cpp" bodystart="66" bodyend="74"/>
+        <location file="titan_cpplib_expanded/gomi/link_cut_tree.cpp" line="67" column="10" bodyfile="titan_cpplib_expanded/gomi/link_cut_tree.cpp" bodystart="67" bodyend="75"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1a2ddf1c87c82689268a08642081485586" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -660,7 +660,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/gomi/link_cut_tree.cpp" line="76" column="10" bodyfile="titan_cpplib/gomi/link_cut_tree.cpp" bodystart="76" bodyend="100"/>
+        <location file="titan_cpplib_expanded/gomi/link_cut_tree.cpp" line="77" column="10" bodyfile="titan_cpplib_expanded/gomi/link_cut_tree.cpp" bodystart="77" bodyend="101"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1a68e6c258a5ba031dc200c72d49a02623" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -681,7 +681,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/gomi/link_cut_tree.cpp" line="102" column="10" bodyfile="titan_cpplib/gomi/link_cut_tree.cpp" bodystart="102" bodyend="116"/>
+        <location file="titan_cpplib_expanded/gomi/link_cut_tree.cpp" line="103" column="10" bodyfile="titan_cpplib_expanded/gomi/link_cut_tree.cpp" bodystart="103" bodyend="117"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1ac23660c1ca11e4de33e8268e1479bd88" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -698,7 +698,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/gomi/link_cut_tree.cpp" line="118" column="10" bodyfile="titan_cpplib/gomi/link_cut_tree.cpp" bodystart="118" bodyend="159"/>
+        <location file="titan_cpplib_expanded/gomi/link_cut_tree.cpp" line="119" column="10" bodyfile="titan_cpplib_expanded/gomi/link_cut_tree.cpp" bodystart="119" bodyend="160"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1a57a37f895a5129c2b9f759290d262b73" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -715,7 +715,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/gomi/link_cut_tree.cpp" line="161" column="9" bodyfile="titan_cpplib/gomi/link_cut_tree.cpp" bodystart="161" bodyend="176"/>
+        <location file="titan_cpplib_expanded/gomi/link_cut_tree.cpp" line="162" column="9" bodyfile="titan_cpplib_expanded/gomi/link_cut_tree.cpp" bodystart="162" bodyend="177"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1a23af434a5b11baae11649bb71fa86130" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -741,7 +741,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/gomi/link_cut_tree.cpp" line="178" column="9" bodyfile="titan_cpplib/gomi/link_cut_tree.cpp" bodystart="178" bodyend="182"/>
+        <location file="titan_cpplib_expanded/gomi/link_cut_tree.cpp" line="179" column="9" bodyfile="titan_cpplib_expanded/gomi/link_cut_tree.cpp" bodystart="179" bodyend="183"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1a22d3dcb13f4306bf814bcb8abd97ed8f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -762,7 +762,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/gomi/link_cut_tree.cpp" line="184" column="10" bodyfile="titan_cpplib/gomi/link_cut_tree.cpp" bodystart="184" bodyend="191"/>
+        <location file="titan_cpplib_expanded/gomi/link_cut_tree.cpp" line="185" column="10" bodyfile="titan_cpplib_expanded/gomi/link_cut_tree.cpp" bodystart="185" bodyend="192"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1a1ba2be63aa396c6faa62d921706871c8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -779,7 +779,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/gomi/link_cut_tree.cpp" line="193" column="10" bodyfile="titan_cpplib/gomi/link_cut_tree.cpp" bodystart="193" bodyend="200"/>
+        <location file="titan_cpplib_expanded/gomi/link_cut_tree.cpp" line="194" column="10" bodyfile="titan_cpplib_expanded/gomi/link_cut_tree.cpp" bodystart="194" bodyend="201"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1ac3d07c34e96618b782f20d3e1e27367d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -792,7 +792,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/gomi/link_cut_tree.cpp" line="202" column="9" bodyfile="titan_cpplib/gomi/link_cut_tree.cpp" bodystart="202" bodyend="204"/>
+        <location file="titan_cpplib_expanded/gomi/link_cut_tree.cpp" line="203" column="9" bodyfile="titan_cpplib_expanded/gomi/link_cut_tree.cpp" bodystart="203" bodyend="205"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1ad50f980adf46cefa18901963a1490259" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -809,7 +809,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/gomi/link_cut_tree.cpp" line="206" column="9" bodyfile="titan_cpplib/gomi/link_cut_tree.cpp" bodystart="206" bodyend="214"/>
+        <location file="titan_cpplib_expanded/gomi/link_cut_tree.cpp" line="207" column="9" bodyfile="titan_cpplib_expanded/gomi/link_cut_tree.cpp" bodystart="207" bodyend="215"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1ac9a0049c47a91de84009e12b6ebf864a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -830,7 +830,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/gomi/link_cut_tree.cpp" line="216" column="10" bodyfile="titan_cpplib/gomi/link_cut_tree.cpp" bodystart="216" bodyend="218"/>
+        <location file="titan_cpplib_expanded/gomi/link_cut_tree.cpp" line="217" column="10" bodyfile="titan_cpplib_expanded/gomi/link_cut_tree.cpp" bodystart="217" bodyend="219"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1a870752797edb7456bf25aa042e7ec9f5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -847,7 +847,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/gomi/link_cut_tree.cpp" line="220" column="10" bodyfile="titan_cpplib/gomi/link_cut_tree.cpp" bodystart="220" bodyend="224"/>
+        <location file="titan_cpplib_expanded/gomi/link_cut_tree.cpp" line="221" column="10" bodyfile="titan_cpplib_expanded/gomi/link_cut_tree.cpp" bodystart="221" bodyend="225"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1a9a36617c94d26074ed44449f60de476a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -868,7 +868,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/gomi/link_cut_tree.cpp" line="226" column="7" bodyfile="titan_cpplib/gomi/link_cut_tree.cpp" bodystart="226" bodyend="230"/>
+        <location file="titan_cpplib_expanded/gomi/link_cut_tree.cpp" line="227" column="7" bodyfile="titan_cpplib_expanded/gomi/link_cut_tree.cpp" bodystart="227" bodyend="231"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1ae5cce6d11ef9a22ad3e284a3b20823cf" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -893,7 +893,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/gomi/link_cut_tree.cpp" line="232" column="10" bodyfile="titan_cpplib/gomi/link_cut_tree.cpp" bodystart="232" bodyend="240"/>
+        <location file="titan_cpplib_expanded/gomi/link_cut_tree.cpp" line="233" column="10" bodyfile="titan_cpplib_expanded/gomi/link_cut_tree.cpp" bodystart="233" bodyend="241"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1aba0dd444f84e7a54579d7cbd6cbdf638" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -914,7 +914,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/gomi/link_cut_tree.cpp" line="242" column="9" bodyfile="titan_cpplib/gomi/link_cut_tree.cpp" bodystart="242" bodyend="246"/>
+        <location file="titan_cpplib_expanded/gomi/link_cut_tree.cpp" line="243" column="9" bodyfile="titan_cpplib_expanded/gomi/link_cut_tree.cpp" bodystart="243" bodyend="247"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1ae1744dca1e84fa1bbb60b3d658950f32" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -935,7 +935,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/gomi/link_cut_tree.cpp" line="248" column="10" bodyfile="titan_cpplib/gomi/link_cut_tree.cpp" bodystart="248" bodyend="256"/>
+        <location file="titan_cpplib_expanded/gomi/link_cut_tree.cpp" line="249" column="10" bodyfile="titan_cpplib_expanded/gomi/link_cut_tree.cpp" bodystart="249" bodyend="257"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1acd0cf091659be0cdc25b8c13da5bfaed" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -956,7 +956,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/gomi/link_cut_tree.cpp" line="258" column="10" bodyfile="titan_cpplib/gomi/link_cut_tree.cpp" bodystart="258" bodyend="263"/>
+        <location file="titan_cpplib_expanded/gomi/link_cut_tree.cpp" line="259" column="10" bodyfile="titan_cpplib_expanded/gomi/link_cut_tree.cpp" bodystart="259" bodyend="264"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1ab7a1112db3bf507c16032160959f9e41" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -981,7 +981,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/gomi/link_cut_tree.cpp" line="265" column="9" bodyfile="titan_cpplib/gomi/link_cut_tree.cpp" bodystart="265" bodyend="281"/>
+        <location file="titan_cpplib_expanded/gomi/link_cut_tree.cpp" line="266" column="9" bodyfile="titan_cpplib_expanded/gomi/link_cut_tree.cpp" bodystart="266" bodyend="282"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1a7f05bc78458f805d7707ac09ef8444c5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -998,7 +998,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/gomi/link_cut_tree.cpp" line="283" column="7" bodyfile="titan_cpplib/gomi/link_cut_tree.cpp" bodystart="283" bodyend="286"/>
+        <location file="titan_cpplib_expanded/gomi/link_cut_tree.cpp" line="284" column="7" bodyfile="titan_cpplib_expanded/gomi/link_cut_tree.cpp" bodystart="284" bodyend="287"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LinkCutTree_1a5e23828c5ed2e71ffa2a5766979e6446" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -1019,14 +1019,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/gomi/link_cut_tree.cpp" line="288" column="10" bodyfile="titan_cpplib/gomi/link_cut_tree.cpp" bodystart="288" bodyend="292"/>
+        <location file="titan_cpplib_expanded/gomi/link_cut_tree.cpp" line="289" column="10" bodyfile="titan_cpplib_expanded/gomi/link_cut_tree.cpp" bodystart="289" bodyend="293"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/data_structures/link_cut_tree.cpp" line="8" column="5" bodyfile="titan_cpplib/data_structures/link_cut_tree.cpp" bodystart="8" bodyend="217"/>
+    <location file="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" line="9" column="5" bodyfile="titan_cpplib_expanded/data_structures/link_cut_tree.cpp" bodystart="9" bodyend="218"/>
     <listofallmembers>
       <member refid="classtitan23_1_1LinkCutTree_1a538afbe256eabc9d2d982b1a79b57aa7" prot="private" virt="non-virtual"><scope>titan23::LinkCutTree</scope><name>_apply_rev</name></member>
       <member refid="classtitan23_1_1LinkCutTree_1a464b81015e6152ca84e94e30b492770b" prot="private" virt="non-virtual"><scope>titan23::LinkCutTree</scope><name>_cut</name></member>

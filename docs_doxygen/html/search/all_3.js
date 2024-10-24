@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['del_30',['del',['../classtitan23_1_1StatePool.html#a2871bc234478c7396ad87451e3603626',1,'titan23::StatePool']]],
+  ['del_30',['del',['../classtitan23_1_1StatePool.html#a2871bc234478c7396ad87451e3603626',1,'titan23::StatePool::del(int id)'],['../classtitan23_1_1StatePool.html#a2871bc234478c7396ad87451e3603626',1,'titan23::StatePool::del(int id)'],['../classtitan23_1_1StatePool.html#a2871bc234478c7396ad87451e3603626',1,'titan23::StatePool::del(int id)']]],
   ['deque_31',['Deque',['../structtitan23_1_1Deque.html',1,'titan23']]],
   ['dijkstra_5fpath_32',['dijkstra_path',['../structtitan23_1_1dijkstra__path.html',1,'titan23']]],
   ['dualcommutativesegmenttree_33',['DualCommutativeSegmentTree',['../classtitan23_1_1DualCommutativeSegmentTree.html',1,'titan23']]],

@@ -30,7 +30,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_segment_tree.cpp" line="16" column="9" bodyfile="titan_cpplib/data_structures/persistent_segment_tree.cpp" bodystart="16" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_segment_tree.cpp" line="17" column="9" bodyfile="titan_cpplib_expanded/data_structures/persistent_segment_tree.cpp" bodystart="17" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-attrib">
@@ -45,7 +45,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_segment_tree.cpp" line="19" column="17" bodyfile="titan_cpplib/data_structures/persistent_segment_tree.cpp" bodystart="19" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_segment_tree.cpp" line="20" column="17" bodyfile="titan_cpplib_expanded/data_structures/persistent_segment_tree.cpp" bodystart="20" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -64,7 +64,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_segment_tree.cpp" line="53" column="14" bodyfile="titan_cpplib/data_structures/persistent_segment_tree.cpp" bodystart="53" bodyend="69"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_segment_tree.cpp" line="54" column="14" bodyfile="titan_cpplib_expanded/data_structures/persistent_segment_tree.cpp" bodystart="54" bodyend="70"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1PersistentSegmentTree_1aaeb42d2806b230fc1d424e43fbf7671f" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -81,7 +81,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_segment_tree.cpp" line="71" column="9" bodyfile="titan_cpplib/data_structures/persistent_segment_tree.cpp" bodystart="71" bodyend="71"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_segment_tree.cpp" line="72" column="9" bodyfile="titan_cpplib_expanded/data_structures/persistent_segment_tree.cpp" bodystart="72" bodyend="72"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1PersistentSegmentTree_1aa719aacf3c9e806e2cf5cabbb0483899" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classtitan23_1_1PersistentSegmentTree" kindref="compound">PersistentSegmentTree</ref>&lt; T, op, e &gt;</type>
@@ -98,7 +98,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_segment_tree.cpp" line="73" column="31" bodyfile="titan_cpplib/data_structures/persistent_segment_tree.cpp" bodystart="73" bodyend="75"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_segment_tree.cpp" line="74" column="31" bodyfile="titan_cpplib_expanded/data_structures/persistent_segment_tree.cpp" bodystart="74" bodyend="76"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -113,7 +113,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_segment_tree.cpp" line="78" column="9" bodyfile="titan_cpplib/data_structures/persistent_segment_tree.cpp" bodystart="78" bodyend="78"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_segment_tree.cpp" line="79" column="9" bodyfile="titan_cpplib_expanded/data_structures/persistent_segment_tree.cpp" bodystart="79" bodyend="79"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1PersistentSegmentTree_1a902626d207f343348d18de0b667083a0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -130,7 +130,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_segment_tree.cpp" line="79" column="9" bodyfile="titan_cpplib/data_structures/persistent_segment_tree.cpp" bodystart="79" bodyend="81"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_segment_tree.cpp" line="80" column="9" bodyfile="titan_cpplib_expanded/data_structures/persistent_segment_tree.cpp" bodystart="80" bodyend="82"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1PersistentSegmentTree_1adc9d41cc80de58fab75d18707888668f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -151,7 +151,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_segment_tree.cpp" line="83" column="11" bodyfile="titan_cpplib/data_structures/persistent_segment_tree.cpp" bodystart="83" bodyend="104"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_segment_tree.cpp" line="84" column="11" bodyfile="titan_cpplib_expanded/data_structures/persistent_segment_tree.cpp" bodystart="84" bodyend="105"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1PersistentSegmentTree_1a0660813b4b17ea1b9bd53d1415d6566d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classtitan23_1_1PersistentSegmentTree" kindref="compound">PersistentSegmentTree</ref>&lt; T, op, e &gt;</type>
@@ -172,7 +172,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_segment_tree.cpp" line="106" column="31" bodyfile="titan_cpplib/data_structures/persistent_segment_tree.cpp" bodystart="106" bodyend="150"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_segment_tree.cpp" line="107" column="31" bodyfile="titan_cpplib_expanded/data_structures/persistent_segment_tree.cpp" bodystart="107" bodyend="151"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1PersistentSegmentTree_1ad12e7a9104d72c5ad06bfffb79522077" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -189,7 +189,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_segment_tree.cpp" line="152" column="11" bodyfile="titan_cpplib/data_structures/persistent_segment_tree.cpp" bodystart="152" bodyend="168"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_segment_tree.cpp" line="153" column="11" bodyfile="titan_cpplib_expanded/data_structures/persistent_segment_tree.cpp" bodystart="153" bodyend="169"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1PersistentSegmentTree_1a0054296ce42b270e645b127085a4202c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classtitan23_1_1PersistentSegmentTree" kindref="compound">PersistentSegmentTree</ref>&lt; T, op, e &gt;</type>
@@ -202,7 +202,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_segment_tree.cpp" line="170" column="31" bodyfile="titan_cpplib/data_structures/persistent_segment_tree.cpp" bodystart="170" bodyend="172"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_segment_tree.cpp" line="171" column="31" bodyfile="titan_cpplib_expanded/data_structures/persistent_segment_tree.cpp" bodystart="171" bodyend="173"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1PersistentSegmentTree_1aa9b28069de257215e9b44db127ae9fe1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>vector&lt; T &gt;</type>
@@ -215,7 +215,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_segment_tree.cpp" line="174" column="16" bodyfile="titan_cpplib/data_structures/persistent_segment_tree.cpp" bodystart="174" bodyend="191"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_segment_tree.cpp" line="175" column="16" bodyfile="titan_cpplib_expanded/data_structures/persistent_segment_tree.cpp" bodystart="175" bodyend="192"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1PersistentSegmentTree_1a0920040a90e9e347a7faf4b3d92b9a95" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -228,7 +228,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_segment_tree.cpp" line="193" column="13" bodyfile="titan_cpplib/data_structures/persistent_segment_tree.cpp" bodystart="193" bodyend="195"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_segment_tree.cpp" line="194" column="13" bodyfile="titan_cpplib_expanded/data_structures/persistent_segment_tree.cpp" bodystart="194" bodyend="196"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1PersistentSegmentTree_1adb704cedc9a26991014802f09b8eafec" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -241,14 +241,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_segment_tree.cpp" line="197" column="14" bodyfile="titan_cpplib/data_structures/persistent_segment_tree.cpp" bodystart="197" bodyend="207"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_segment_tree.cpp" line="198" column="14" bodyfile="titan_cpplib_expanded/data_structures/persistent_segment_tree.cpp" bodystart="198" bodyend="208"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/data_structures/persistent_segment_tree.cpp" line="12" column="5" bodyfile="titan_cpplib/data_structures/persistent_segment_tree.cpp" bodystart="12" bodyend="208"/>
+    <location file="titan_cpplib_expanded/data_structures/persistent_segment_tree.cpp" line="13" column="5" bodyfile="titan_cpplib_expanded/data_structures/persistent_segment_tree.cpp" bodystart="13" bodyend="209"/>
     <listofallmembers>
       <member refid="classtitan23_1_1PersistentSegmentTree_1aa532e10e55c01bb78e0cc658ea4d3c07" prot="private" virt="non-virtual"><scope>titan23::PersistentSegmentTree</scope><name>_build</name></member>
       <member refid="classtitan23_1_1PersistentSegmentTree_1aa719aacf3c9e806e2cf5cabbb0483899" prot="private" virt="non-virtual"><scope>titan23::PersistentSegmentTree</scope><name>_new</name></member>

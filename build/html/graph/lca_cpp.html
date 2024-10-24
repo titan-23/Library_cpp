@@ -368,84 +368,10 @@
 </section>
 <section id="id2">
 <h2>仕様<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
-<dl class="cpp type">
-<dt class="sig sig-object cpp" id="_CPPv47titan23">
-<span id="_CPPv37titan23"></span><span id="_CPPv27titan23"></span><span id="titan23"></span><span class="target" id="namespacetitan23"></span><span class="k"><span class="pre">namespace</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">titan23</span></span></span><br /></dt>
-<dd><dl class="cpp class">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan233LCAE">
-<span id="_CPPv3N7titan233LCAE"></span><span id="_CPPv2N7titan233LCAE"></span><span id="titan23::LCA"></span><span class="target" id="classtitan23_1_1LCA"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">LCA</span></span></span><a class="headerlink" href="#_CPPv4N7titan233LCAE" title="Link to this definition">¶</a><br /></dt>
-<dd><p>静的なグラフに対しLCAを求めるだけのライブラリ &lt;O(nlogn), O(1)&gt; </p>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan233LCA3LCAEv">
-<span id="_CPPv3N7titan233LCA3LCAEv"></span><span id="_CPPv2N7titan233LCA3LCAEv"></span><span id="titan23::LCA::LCA"></span><span class="target" id="classtitan23_1_1LCA_1ac6b0cf138b9a77b1999826251c6d05a1"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">LCA</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan233LCA3LCAEv" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan233LCA3LCAERK6vectorI6vectorIiEEKi">
-<span id="_CPPv3N7titan233LCA3LCAERK6vectorI6vectorIiEEKi"></span><span id="_CPPv2N7titan233LCA3LCAERK6vectorI6vectorIiEEKi"></span><span id="titan23::LCA::LCA__vector:vector:i::CR.iC"></span><span class="target" id="classtitan23_1_1LCA_1ad54cc0a876541a5eb907486b4782083c"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">LCA</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">G</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">root</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan233LCA3LCAERK6vectorI6vectorIiEEKi" title="Link to this definition">¶</a><br /></dt>
-<dd><p>隣接リスト <code class="docutils literal notranslate"><span class="pre">G</span></code> 、根 <code class="docutils literal notranslate"><span class="pre">root</span></code> として前計算をする / <code class="docutils literal notranslate"><span class="pre">O(nlogn)</span></code></p>
-</dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4NK7titan233LCA3lcaEKiKi">
-<span id="_CPPv3NK7titan233LCA3lcaEKiKi"></span><span id="_CPPv2NK7titan233LCA3lcaEKiKi"></span><span id="titan23::LCA::lca__iC.iCC"></span><span class="target" id="classtitan23_1_1LCA_1a161954869b0c81788e994afa8f248535"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">lca</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">u</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">v</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK7titan233LCA3lcaEKiKi" title="Link to this definition">¶</a><br /></dt>
-<dd><p><code class="docutils literal notranslate"><span class="pre">u</span></code>, <code class="docutils literal notranslate"><span class="pre">v</span></code> の lca を求める / <code class="docutils literal notranslate"><span class="pre">O(1)</span></code></p>
-</dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4NK7titan233LCA7lca_mulERK6vectorIiE">
-<span id="_CPPv3NK7titan233LCA7lca_mulERK6vectorIiE"></span><span id="_CPPv2NK7titan233LCA7lca_mulERK6vectorIiE"></span><span id="titan23::LCA::lca_mul__vector:i:CRC"></span><span class="target" id="classtitan23_1_1LCA_1ab1924c1da3730a050151889407baad21"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">lca_mul</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">a</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK7titan233LCA7lca_mulERK6vectorIiE" title="Link to this definition">¶</a><br /></dt>
-<dd><p>頂点集合 <code class="docutils literal notranslate"><span class="pre">a</span></code> の lca を求める / <code class="docutils literal notranslate"><span class="pre">O(|a|)</span></code></p>
-</dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenfile: Cannot find file “titan_cpplib/graph/lca.cpp </p>
 </div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan233LCA1nE">
-<span id="_CPPv3N7titan233LCA1nE"></span><span id="_CPPv2N7titan233LCA1nE"></span><span id="titan23::LCA::n__i"></span><span class="target" id="classtitan23_1_1LCA_1a73271287b9651ca0ba7e5af5e206ef59"></span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">n</span></span></span><a class="headerlink" href="#_CPPv4N7titan233LCA1nE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan233LCA4pathE">
-<span id="_CPPv3N7titan233LCA4pathE"></span><span id="_CPPv2N7titan233LCA4pathE"></span><span id="titan23::LCA::path__vector:i:"></span><span class="target" id="classtitan23_1_1LCA_1a335efd3ebfeb251c0d9323b0580655bb"></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">path</span></span></span><a class="headerlink" href="#_CPPv4N7titan233LCA4pathE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan233LCA6nodeinE">
-<span id="_CPPv3N7titan233LCA6nodeinE"></span><span id="_CPPv2N7titan233LCA6nodeinE"></span><span id="titan23::LCA::nodein__vector:i:"></span><span class="target" id="classtitan23_1_1LCA_1ac8336079cdcde74eb6471b6ea8320330"></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nodein</span></span></span><a class="headerlink" href="#_CPPv4N7titan233LCA6nodeinE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan233LCA3parE">
-<span id="_CPPv3N7titan233LCA3parE"></span><span id="_CPPv2N7titan233LCA3parE"></span><span id="titan23::LCA::par__vector:i:"></span><span class="target" id="classtitan23_1_1LCA_1aceb54eef4f3cdf7e623dc4f0ee664c61"></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">par</span></span></span><a class="headerlink" href="#_CPPv4N7titan233LCA3parE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan233LCA2stE">
-<span id="_CPPv3N7titan233LCA2stE"></span><span id="_CPPv2N7titan233LCA2stE"></span><span id="titan23::LCA::st__SparseTable:i.__LCA_op.__LCA_e:"></span><span class="target" id="classtitan23_1_1LCA_1ae582a345a2b152db7effb922c26d486f"></span><a class="reference internal" href="../data_structures/sparse_table_cpp.html#_CPPv4I0_PF1T1T1TE_PF1TvEEN7titan2311SparseTableE" title="titan23::SparseTable"><span class="n"><span class="pre">SparseTable</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N7titan233LCA8__LCA_opEii" title="titan23::LCA::__LCA_op"><span class="n"><span class="pre">__LCA_op</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N7titan233LCA7__LCA_eEv" title="titan23::LCA::__LCA_e"><span class="n"><span class="pre">__LCA_e</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">st</span></span></span><a class="headerlink" href="#_CPPv4N7titan233LCA2stE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-static-functions">Private Static Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan233LCA8__LCA_opEii">
-<span id="_CPPv3N7titan233LCA8__LCA_opEii"></span><span id="_CPPv2N7titan233LCA8__LCA_opEii"></span><span id="titan23::LCA::__LCA_op__i.i"></span><span class="target" id="classtitan23_1_1LCA_1acfbf3e78281543c07655951f83468cc0"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">__LCA_op</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">s</span></span>, <span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">t</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan233LCA8__LCA_opEii" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan233LCA7__LCA_eEv">
-<span id="_CPPv3N7titan233LCA7__LCA_eEv"></span><span id="_CPPv2N7titan233LCA7__LCA_eEv"></span><span id="titan23::LCA::__LCA_e"></span><span class="target" id="classtitan23_1_1LCA_1a0673e7bf61b5e4626882e99ba13bd62b"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">__LCA_e</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan233LCA7__LCA_eEv" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-</dd></dl>
-
-</dd></dl>
-
 </section>
 </section>
 
@@ -506,26 +432,7 @@
             <ul>
 <li><a class="reference internal" href="#">lca</a><ul>
 <li><a class="reference internal" href="#id1">ソースコード</a></li>
-<li><a class="reference internal" href="#id2">仕様</a><ul>
-<li><a class="reference internal" href="#_CPPv47titan23"><code class="docutils literal notranslate"><span class="pre">titan23</span></code></a><ul>
-<li><a class="reference internal" href="#_CPPv4N7titan233LCAE"><code class="docutils literal notranslate"><span class="pre">titan23::LCA</span></code></a><ul>
-<li><a class="reference internal" href="#_CPPv4N7titan233LCA3LCAEv"><code class="docutils literal notranslate"><span class="pre">titan23::LCA::LCA()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan233LCA3LCAERK6vectorI6vectorIiEEKi"><code class="docutils literal notranslate"><span class="pre">titan23::LCA::LCA()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4NK7titan233LCA3lcaEKiKi"><code class="docutils literal notranslate"><span class="pre">titan23::LCA::lca()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4NK7titan233LCA7lca_mulERK6vectorIiE"><code class="docutils literal notranslate"><span class="pre">titan23::LCA::lca_mul()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan233LCA1nE"><code class="docutils literal notranslate"><span class="pre">titan23::LCA::n</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan233LCA4pathE"><code class="docutils literal notranslate"><span class="pre">titan23::LCA::path</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan233LCA6nodeinE"><code class="docutils literal notranslate"><span class="pre">titan23::LCA::nodein</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan233LCA3parE"><code class="docutils literal notranslate"><span class="pre">titan23::LCA::par</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan233LCA2stE"><code class="docutils literal notranslate"><span class="pre">titan23::LCA::st</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan233LCA8__LCA_opEii"><code class="docutils literal notranslate"><span class="pre">titan23::LCA::__LCA_op()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan233LCA7__LCA_eEv"><code class="docutils literal notranslate"><span class="pre">titan23::LCA::__LCA_e()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a class="reference internal" href="#id2">仕様</a></li>
 </ul>
 </li>
 </ul>

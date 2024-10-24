@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/random.cpp" line="14" column="22" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="14" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="21" column="22" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="21" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1Random_1aa5f712efb2d57476cc84742f093e7396" prot="private" static="no" mutable="no">
         <type>unsigned int</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/random.cpp" line="14" column="25" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="14" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="21" column="25" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="21" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1Random_1acb24fee459a4ddbd9242d234ff709f1f" prot="private" static="no" mutable="no">
         <type>unsigned int</type>
@@ -40,7 +40,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/random.cpp" line="14" column="28" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="14" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="21" column="28" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="21" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1Random_1a1e0bac744adc61aaaae98259e8da5cf7" prot="private" static="no" mutable="no">
         <type>unsigned int</type>
@@ -53,7 +53,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/random.cpp" line="14" column="31" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="14" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="21" column="31" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="21" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -68,7 +68,72 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/random.cpp" line="16" column="22" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="16" bodyend="23"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="23" column="22" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="23" bodyend="30"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a8bb331ebcba2e050292022b1394526e5" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>unsigned int</type>
+        <definition>unsigned int titan23::Random::_xor128</definition>
+        <argsstring>()</argsstring>
+        <name>_xor128</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" line="118" column="22" bodyfile="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" bodystart="118" bodyend="125"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a8bb331ebcba2e050292022b1394526e5" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>unsigned int</type>
+        <definition>unsigned int titan23::Random::_xor128</definition>
+        <argsstring>()</argsstring>
+        <name>_xor128</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/kmeans.cpp" line="20" column="22" bodyfile="titan_cpplib_expanded/ahc/kmeans.cpp" bodystart="20" bodyend="27"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a8bb331ebcba2e050292022b1394526e5" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>unsigned int</type>
+        <definition>unsigned int titan23::Random::_xor128</definition>
+        <argsstring>()</argsstring>
+        <name>_xor128</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/sa.cpp" line="55" column="22" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="55" bodyend="62"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a8bb331ebcba2e050292022b1394526e5" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>unsigned int</type>
+        <definition>unsigned int titan23::Random::_xor128</definition>
+        <argsstring>()</argsstring>
+        <name>_xor128</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random.cpp" line="17" column="22" bodyfile="titan_cpplib_expanded/algorithm/random.cpp" bodystart="17" bodyend="24"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a8bb331ebcba2e050292022b1394526e5" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>unsigned int</type>
+        <definition>unsigned int titan23::Random::_xor128</definition>
+        <argsstring>()</argsstring>
+        <name>_xor128</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random_tree.cpp" line="21" column="22" bodyfile="titan_cpplib_expanded/algorithm/random_tree.cpp" bodystart="21" bodyend="28"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -83,7 +148,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/random.cpp" line="26" column="9" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="26" bodyend="29"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="33" column="9" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="33" bodyend="36"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Random_1a4191c342de62979837ea89fbceeb3631" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>double</type>
@@ -97,7 +162,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/random.cpp" line="32" column="16" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="32" bodyend="32"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="39" column="16" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="39" bodyend="39"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Random_1a60524b9288bf9dde85b6f200272528c5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -115,7 +180,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/random.cpp" line="35" column="13" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="35" bodyend="38"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="42" column="13" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="42" bodyend="45"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Random_1af912a2c0ed6a29669290f43d2e7c8ea4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -137,7 +202,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/random.cpp" line="41" column="13" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="41" bodyend="44"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="48" column="13" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="48" bodyend="51"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Random_1a6b72ec5b19b8fbbeef8acd5ff2eb5bda" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -155,7 +220,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/random.cpp" line="47" column="13" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="47" bodyend="50"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="54" column="13" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="54" bodyend="57"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Random_1a01aa00958ee23afc95c6e66d6a55f03c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -177,7 +242,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/random.cpp" line="53" column="13" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="53" bodyend="56"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="60" column="13" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="60" bodyend="63"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Random_1a8d608910d35516e0f7ba487aed47e55d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>unsigned long long</type>
@@ -191,7 +256,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/random.cpp" line="59" column="28" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="59" bodyend="61"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="66" column="28" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="66" bodyend="68"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Random_1abe557615b11a5d7304346b8ed685369a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>pair&lt; int, int &gt;</type>
@@ -209,7 +274,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/random.cpp" line="64" column="14" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="64" bodyend="71"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="71" column="14" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="71" bodyend="78"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Random_1a06992a20cad3a884c00c3e423d879c1b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>pair&lt; int, int &gt;</type>
@@ -231,7 +296,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/random.cpp" line="74" column="14" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="74" bodyend="81"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="81" column="14" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="81" bodyend="88"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Random_1a15c2c12214dc315f4b09d8e6716e2b3a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>vector&lt; int &gt;</type>
@@ -253,7 +318,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/random.cpp" line="84" column="16" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="84" bodyend="92"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="91" column="16" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="91" bodyend="99"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Random_1a74dc79ed9aa5dee428a782eca49407ee" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>double</type>
@@ -275,7 +340,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/random.cpp" line="95" column="16" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="95" bodyend="98"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="102" column="16" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="102" bodyend="105"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Random_1a8a3e5ca699ccd75cff80a8939b89a91d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -298,7 +363,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/random.cpp" line="102" column="14" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="102" bodyend="108"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="109" column="14" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="109" bodyend="115"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Random_1aa14fa9b38502d5be75bdc09cfea5ce12" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -324,7 +389,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/random.cpp" line="111" column="16" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="111" bodyend="122"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="118" column="16" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="118" bodyend="129"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Random_1a6e5323152fa179e6ce198965ef84bc83" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -346,7 +411,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/random.cpp" line="125" column="11" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="125" bodyend="127"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="132" column="11" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="132" bodyend="134"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Random_1a09fa8bb8f81eabfca9e4d0bc3bc34ece" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -376,7 +441,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/random.cpp" line="130" column="11" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="130" bodyend="142"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="137" column="11" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="137" bodyend="149"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Random_1ae72775efea327eabef4283b9fa47f5d2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -402,7 +467,1667 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/random.cpp" line="145" column="11" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="145" bodyend="154"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="152" column="11" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="152" bodyend="161"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1ade5caf3ad830145699118032b77b85db" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::Random::Random</definition>
+        <argsstring>()</argsstring>
+        <name>Random</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" line="128" column="9" bodyfile="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" bodystart="128" bodyend="131"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a4191c342de62979837ea89fbceeb3631" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double titan23::Random::random</definition>
+        <argsstring>()</argsstring>
+        <name>random</name>
+        <briefdescription>
+<para><computeroutput>[0, 1]</computeroutput> の乱数を返す(実数) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" line="134" column="16" bodyfile="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" bodystart="134" bodyend="134"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a60524b9288bf9dde85b6f200272528c5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::Random::randint</definition>
+        <argsstring>(const int end)</argsstring>
+        <name>randint</name>
+        <param>
+          <type>const int</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[0, end]</computeroutput> の乱数を返す(整数) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" line="137" column="13" bodyfile="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" bodystart="137" bodyend="140"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1af912a2c0ed6a29669290f43d2e7c8ea4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::Random::randint</definition>
+        <argsstring>(const int begin, const int end)</argsstring>
+        <name>randint</name>
+        <param>
+          <type>const int</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[begin, end]</computeroutput> の乱数を返す(整数) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" line="143" column="13" bodyfile="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" bodystart="143" bodyend="146"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a6b72ec5b19b8fbbeef8acd5ff2eb5bda" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::Random::randrange</definition>
+        <argsstring>(const int end)</argsstring>
+        <name>randrange</name>
+        <param>
+          <type>const int</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[0, end)</computeroutput> の乱数を返す(整数) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" line="149" column="13" bodyfile="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" bodystart="149" bodyend="152"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a01aa00958ee23afc95c6e66d6a55f03c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::Random::randrange</definition>
+        <argsstring>(const int begin, const int end)</argsstring>
+        <name>randrange</name>
+        <param>
+          <type>const int</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[begin, end)</computeroutput> の乱数を返す(整数) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" line="155" column="13" bodyfile="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" bodystart="155" bodyend="158"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a8d608910d35516e0f7ba487aed47e55d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>unsigned long long</type>
+        <definition>unsigned long long titan23::Random::rand_u64</definition>
+        <argsstring>()</argsstring>
+        <name>rand_u64</name>
+        <briefdescription>
+<para><computeroutput>[0, u64_MAX)</computeroutput> の乱数を返す / zobrist hash等の使用を想定 </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" line="161" column="28" bodyfile="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" bodystart="161" bodyend="163"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1abe557615b11a5d7304346b8ed685369a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>pair&lt; int, int &gt;</type>
+        <definition>pair&lt;int, int&gt; titan23::Random::rand_pair</definition>
+        <argsstring>(const int end)</argsstring>
+        <name>rand_pair</name>
+        <param>
+          <type>const int</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[0, end)</computeroutput> の異なる乱数を2つ返す </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" line="166" column="14" bodyfile="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" bodystart="166" bodyend="173"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a06992a20cad3a884c00c3e423d879c1b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>pair&lt; int, int &gt;</type>
+        <definition>pair&lt;int, int&gt; titan23::Random::rand_pair</definition>
+        <argsstring>(const int begin, const int end)</argsstring>
+        <name>rand_pair</name>
+        <param>
+          <type>const int</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[begin, end)</computeroutput> の異なる乱数を2つ返す </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" line="176" column="14" bodyfile="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" bodystart="176" bodyend="183"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a15c2c12214dc315f4b09d8e6716e2b3a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>vector&lt; int &gt;</type>
+        <definition>vector&lt;int&gt; titan23::Random::rand_vec</definition>
+        <argsstring>(const int cnt, vector&lt; int &gt; &amp;a)</argsstring>
+        <name>rand_vec</name>
+        <param>
+          <type>const int</type>
+          <declname>cnt</declname>
+        </param>
+        <param>
+          <type>vector&lt; int &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+<para>Note <computeroutput>a</computeroutput>は非const. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" line="186" column="16" bodyfile="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" bodystart="186" bodyend="194"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a74dc79ed9aa5dee428a782eca49407ee" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double titan23::Random::randdouble</definition>
+        <argsstring>(const double begin, const double end)</argsstring>
+        <name>randdouble</name>
+        <param>
+          <type>const double</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[begin, end)</computeroutput> の乱数を返す(実数) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" line="197" column="16" bodyfile="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" bodystart="197" bodyend="200"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a8a3e5ca699ccd75cff80a8939b89a91d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void titan23::Random::shuffle</definition>
+        <argsstring>(vector&lt; T &gt; &amp;a)</argsstring>
+        <name>shuffle</name>
+        <param>
+          <type>vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>vector</computeroutput> をインプレースにシャッフルする / <computeroutput>O(n)</computeroutput> </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" line="204" column="14" bodyfile="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" bodystart="204" bodyend="210"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1aa14fa9b38502d5be75bdc09cfea5ce12" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>vector&lt; T &gt;</type>
+        <definition>vector&lt;T&gt; titan23::Random::choices</definition>
+        <argsstring>(const vector&lt; T &gt; &amp;a, const int k)</argsstring>
+        <name>choices</name>
+        <param>
+          <type>const vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>k</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" line="213" column="16" bodyfile="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" bodystart="213" bodyend="224"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a6e5323152fa179e6ce198965ef84bc83" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>T</type>
+        <definition>T titan23::Random::choice</definition>
+        <argsstring>(const vector&lt; T &gt; &amp;a)</argsstring>
+        <name>choice</name>
+        <param>
+          <type>const vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" line="227" column="11" bodyfile="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" bodystart="227" bodyend="229"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a09fa8bb8f81eabfca9e4d0bc3bc34ece" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>T</type>
+        <definition>T titan23::Random::choice</definition>
+        <argsstring>(const vector&lt; T &gt; &amp;a, const vector&lt; int &gt; &amp;w, bool normal)</argsstring>
+        <name>choice</name>
+        <param>
+          <type>const vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const vector&lt; int &gt; &amp;</type>
+          <declname>w</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>normal</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" line="232" column="11" bodyfile="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" bodystart="232" bodyend="244"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1ae72775efea327eabef4283b9fa47f5d2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>T</type>
+        <definition>T titan23::Random::choice</definition>
+        <argsstring>(const vector&lt; T &gt; &amp;a, const vector&lt; double &gt; &amp;w)</argsstring>
+        <name>choice</name>
+        <param>
+          <type>const vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const vector&lt; double &gt; &amp;</type>
+          <declname>w</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" line="247" column="11" bodyfile="titan_cpplib_expanded/ahc/beam_search_with_tree.cpp" bodystart="247" bodyend="256"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1ade5caf3ad830145699118032b77b85db" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::Random::Random</definition>
+        <argsstring>()</argsstring>
+        <name>Random</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/kmeans.cpp" line="30" column="9" bodyfile="titan_cpplib_expanded/ahc/kmeans.cpp" bodystart="30" bodyend="33"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a4191c342de62979837ea89fbceeb3631" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double titan23::Random::random</definition>
+        <argsstring>()</argsstring>
+        <name>random</name>
+        <briefdescription>
+<para><computeroutput>[0, 1]</computeroutput> の乱数を返す(実数) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/kmeans.cpp" line="36" column="16" bodyfile="titan_cpplib_expanded/ahc/kmeans.cpp" bodystart="36" bodyend="36"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a60524b9288bf9dde85b6f200272528c5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::Random::randint</definition>
+        <argsstring>(const int end)</argsstring>
+        <name>randint</name>
+        <param>
+          <type>const int</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[0, end]</computeroutput> の乱数を返す(整数) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/kmeans.cpp" line="39" column="13" bodyfile="titan_cpplib_expanded/ahc/kmeans.cpp" bodystart="39" bodyend="42"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1af912a2c0ed6a29669290f43d2e7c8ea4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::Random::randint</definition>
+        <argsstring>(const int begin, const int end)</argsstring>
+        <name>randint</name>
+        <param>
+          <type>const int</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[begin, end]</computeroutput> の乱数を返す(整数) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/kmeans.cpp" line="45" column="13" bodyfile="titan_cpplib_expanded/ahc/kmeans.cpp" bodystart="45" bodyend="48"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a6b72ec5b19b8fbbeef8acd5ff2eb5bda" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::Random::randrange</definition>
+        <argsstring>(const int end)</argsstring>
+        <name>randrange</name>
+        <param>
+          <type>const int</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[0, end)</computeroutput> の乱数を返す(整数) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/kmeans.cpp" line="51" column="13" bodyfile="titan_cpplib_expanded/ahc/kmeans.cpp" bodystart="51" bodyend="54"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a01aa00958ee23afc95c6e66d6a55f03c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::Random::randrange</definition>
+        <argsstring>(const int begin, const int end)</argsstring>
+        <name>randrange</name>
+        <param>
+          <type>const int</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[begin, end)</computeroutput> の乱数を返す(整数) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/kmeans.cpp" line="57" column="13" bodyfile="titan_cpplib_expanded/ahc/kmeans.cpp" bodystart="57" bodyend="60"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a8d608910d35516e0f7ba487aed47e55d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>unsigned long long</type>
+        <definition>unsigned long long titan23::Random::rand_u64</definition>
+        <argsstring>()</argsstring>
+        <name>rand_u64</name>
+        <briefdescription>
+<para><computeroutput>[0, u64_MAX)</computeroutput> の乱数を返す / zobrist hash等の使用を想定 </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/kmeans.cpp" line="63" column="28" bodyfile="titan_cpplib_expanded/ahc/kmeans.cpp" bodystart="63" bodyend="65"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1abe557615b11a5d7304346b8ed685369a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>pair&lt; int, int &gt;</type>
+        <definition>pair&lt;int, int&gt; titan23::Random::rand_pair</definition>
+        <argsstring>(const int end)</argsstring>
+        <name>rand_pair</name>
+        <param>
+          <type>const int</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[0, end)</computeroutput> の異なる乱数を2つ返す </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/kmeans.cpp" line="68" column="14" bodyfile="titan_cpplib_expanded/ahc/kmeans.cpp" bodystart="68" bodyend="75"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a06992a20cad3a884c00c3e423d879c1b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>pair&lt; int, int &gt;</type>
+        <definition>pair&lt;int, int&gt; titan23::Random::rand_pair</definition>
+        <argsstring>(const int begin, const int end)</argsstring>
+        <name>rand_pair</name>
+        <param>
+          <type>const int</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[begin, end)</computeroutput> の異なる乱数を2つ返す </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/kmeans.cpp" line="78" column="14" bodyfile="titan_cpplib_expanded/ahc/kmeans.cpp" bodystart="78" bodyend="85"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a15c2c12214dc315f4b09d8e6716e2b3a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>vector&lt; int &gt;</type>
+        <definition>vector&lt;int&gt; titan23::Random::rand_vec</definition>
+        <argsstring>(const int cnt, vector&lt; int &gt; &amp;a)</argsstring>
+        <name>rand_vec</name>
+        <param>
+          <type>const int</type>
+          <declname>cnt</declname>
+        </param>
+        <param>
+          <type>vector&lt; int &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+<para>Note <computeroutput>a</computeroutput>は非const. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/kmeans.cpp" line="88" column="16" bodyfile="titan_cpplib_expanded/ahc/kmeans.cpp" bodystart="88" bodyend="96"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a74dc79ed9aa5dee428a782eca49407ee" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double titan23::Random::randdouble</definition>
+        <argsstring>(const double begin, const double end)</argsstring>
+        <name>randdouble</name>
+        <param>
+          <type>const double</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[begin, end)</computeroutput> の乱数を返す(実数) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/kmeans.cpp" line="99" column="16" bodyfile="titan_cpplib_expanded/ahc/kmeans.cpp" bodystart="99" bodyend="102"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a8a3e5ca699ccd75cff80a8939b89a91d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void titan23::Random::shuffle</definition>
+        <argsstring>(vector&lt; T &gt; &amp;a)</argsstring>
+        <name>shuffle</name>
+        <param>
+          <type>vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>vector</computeroutput> をインプレースにシャッフルする / <computeroutput>O(n)</computeroutput> </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/kmeans.cpp" line="106" column="14" bodyfile="titan_cpplib_expanded/ahc/kmeans.cpp" bodystart="106" bodyend="112"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1aa14fa9b38502d5be75bdc09cfea5ce12" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>vector&lt; T &gt;</type>
+        <definition>vector&lt;T&gt; titan23::Random::choices</definition>
+        <argsstring>(const vector&lt; T &gt; &amp;a, const int k)</argsstring>
+        <name>choices</name>
+        <param>
+          <type>const vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>k</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/kmeans.cpp" line="115" column="16" bodyfile="titan_cpplib_expanded/ahc/kmeans.cpp" bodystart="115" bodyend="126"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a6e5323152fa179e6ce198965ef84bc83" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>T</type>
+        <definition>T titan23::Random::choice</definition>
+        <argsstring>(const vector&lt; T &gt; &amp;a)</argsstring>
+        <name>choice</name>
+        <param>
+          <type>const vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/kmeans.cpp" line="129" column="11" bodyfile="titan_cpplib_expanded/ahc/kmeans.cpp" bodystart="129" bodyend="131"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a09fa8bb8f81eabfca9e4d0bc3bc34ece" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>T</type>
+        <definition>T titan23::Random::choice</definition>
+        <argsstring>(const vector&lt; T &gt; &amp;a, const vector&lt; int &gt; &amp;w, bool normal)</argsstring>
+        <name>choice</name>
+        <param>
+          <type>const vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const vector&lt; int &gt; &amp;</type>
+          <declname>w</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>normal</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/kmeans.cpp" line="134" column="11" bodyfile="titan_cpplib_expanded/ahc/kmeans.cpp" bodystart="134" bodyend="146"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1ae72775efea327eabef4283b9fa47f5d2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>T</type>
+        <definition>T titan23::Random::choice</definition>
+        <argsstring>(const vector&lt; T &gt; &amp;a, const vector&lt; double &gt; &amp;w)</argsstring>
+        <name>choice</name>
+        <param>
+          <type>const vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const vector&lt; double &gt; &amp;</type>
+          <declname>w</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/kmeans.cpp" line="149" column="11" bodyfile="titan_cpplib_expanded/ahc/kmeans.cpp" bodystart="149" bodyend="158"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1ade5caf3ad830145699118032b77b85db" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::Random::Random</definition>
+        <argsstring>()</argsstring>
+        <name>Random</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/sa.cpp" line="65" column="9" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="65" bodyend="68"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a4191c342de62979837ea89fbceeb3631" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double titan23::Random::random</definition>
+        <argsstring>()</argsstring>
+        <name>random</name>
+        <briefdescription>
+<para><computeroutput>[0, 1]</computeroutput> の乱数を返す(実数) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/sa.cpp" line="71" column="16" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="71" bodyend="71"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a60524b9288bf9dde85b6f200272528c5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::Random::randint</definition>
+        <argsstring>(const int end)</argsstring>
+        <name>randint</name>
+        <param>
+          <type>const int</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[0, end]</computeroutput> の乱数を返す(整数) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/sa.cpp" line="74" column="13" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="74" bodyend="77"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1af912a2c0ed6a29669290f43d2e7c8ea4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::Random::randint</definition>
+        <argsstring>(const int begin, const int end)</argsstring>
+        <name>randint</name>
+        <param>
+          <type>const int</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[begin, end]</computeroutput> の乱数を返す(整数) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/sa.cpp" line="80" column="13" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="80" bodyend="83"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a6b72ec5b19b8fbbeef8acd5ff2eb5bda" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::Random::randrange</definition>
+        <argsstring>(const int end)</argsstring>
+        <name>randrange</name>
+        <param>
+          <type>const int</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[0, end)</computeroutput> の乱数を返す(整数) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/sa.cpp" line="86" column="13" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="86" bodyend="89"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a01aa00958ee23afc95c6e66d6a55f03c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::Random::randrange</definition>
+        <argsstring>(const int begin, const int end)</argsstring>
+        <name>randrange</name>
+        <param>
+          <type>const int</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[begin, end)</computeroutput> の乱数を返す(整数) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/sa.cpp" line="92" column="13" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="92" bodyend="95"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a8d608910d35516e0f7ba487aed47e55d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>unsigned long long</type>
+        <definition>unsigned long long titan23::Random::rand_u64</definition>
+        <argsstring>()</argsstring>
+        <name>rand_u64</name>
+        <briefdescription>
+<para><computeroutput>[0, u64_MAX)</computeroutput> の乱数を返す / zobrist hash等の使用を想定 </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/sa.cpp" line="98" column="28" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="98" bodyend="100"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1abe557615b11a5d7304346b8ed685369a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>pair&lt; int, int &gt;</type>
+        <definition>pair&lt;int, int&gt; titan23::Random::rand_pair</definition>
+        <argsstring>(const int end)</argsstring>
+        <name>rand_pair</name>
+        <param>
+          <type>const int</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[0, end)</computeroutput> の異なる乱数を2つ返す </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/sa.cpp" line="103" column="14" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="103" bodyend="110"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a06992a20cad3a884c00c3e423d879c1b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>pair&lt; int, int &gt;</type>
+        <definition>pair&lt;int, int&gt; titan23::Random::rand_pair</definition>
+        <argsstring>(const int begin, const int end)</argsstring>
+        <name>rand_pair</name>
+        <param>
+          <type>const int</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[begin, end)</computeroutput> の異なる乱数を2つ返す </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/sa.cpp" line="113" column="14" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="113" bodyend="120"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a15c2c12214dc315f4b09d8e6716e2b3a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>vector&lt; int &gt;</type>
+        <definition>vector&lt;int&gt; titan23::Random::rand_vec</definition>
+        <argsstring>(const int cnt, vector&lt; int &gt; &amp;a)</argsstring>
+        <name>rand_vec</name>
+        <param>
+          <type>const int</type>
+          <declname>cnt</declname>
+        </param>
+        <param>
+          <type>vector&lt; int &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+<para>Note <computeroutput>a</computeroutput>は非const. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/sa.cpp" line="123" column="16" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="123" bodyend="131"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a74dc79ed9aa5dee428a782eca49407ee" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double titan23::Random::randdouble</definition>
+        <argsstring>(const double begin, const double end)</argsstring>
+        <name>randdouble</name>
+        <param>
+          <type>const double</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[begin, end)</computeroutput> の乱数を返す(実数) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/sa.cpp" line="134" column="16" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="134" bodyend="137"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a8a3e5ca699ccd75cff80a8939b89a91d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void titan23::Random::shuffle</definition>
+        <argsstring>(vector&lt; T &gt; &amp;a)</argsstring>
+        <name>shuffle</name>
+        <param>
+          <type>vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>vector</computeroutput> をインプレースにシャッフルする / <computeroutput>O(n)</computeroutput> </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/sa.cpp" line="141" column="14" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="141" bodyend="147"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1aa14fa9b38502d5be75bdc09cfea5ce12" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>vector&lt; T &gt;</type>
+        <definition>vector&lt;T&gt; titan23::Random::choices</definition>
+        <argsstring>(const vector&lt; T &gt; &amp;a, const int k)</argsstring>
+        <name>choices</name>
+        <param>
+          <type>const vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>k</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/sa.cpp" line="150" column="16" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="150" bodyend="161"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a6e5323152fa179e6ce198965ef84bc83" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>T</type>
+        <definition>T titan23::Random::choice</definition>
+        <argsstring>(const vector&lt; T &gt; &amp;a)</argsstring>
+        <name>choice</name>
+        <param>
+          <type>const vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/sa.cpp" line="164" column="11" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="164" bodyend="166"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a09fa8bb8f81eabfca9e4d0bc3bc34ece" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>T</type>
+        <definition>T titan23::Random::choice</definition>
+        <argsstring>(const vector&lt; T &gt; &amp;a, const vector&lt; int &gt; &amp;w, bool normal)</argsstring>
+        <name>choice</name>
+        <param>
+          <type>const vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const vector&lt; int &gt; &amp;</type>
+          <declname>w</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>normal</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/sa.cpp" line="169" column="11" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="169" bodyend="181"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1ae72775efea327eabef4283b9fa47f5d2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>T</type>
+        <definition>T titan23::Random::choice</definition>
+        <argsstring>(const vector&lt; T &gt; &amp;a, const vector&lt; double &gt; &amp;w)</argsstring>
+        <name>choice</name>
+        <param>
+          <type>const vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const vector&lt; double &gt; &amp;</type>
+          <declname>w</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/ahc/sa.cpp" line="184" column="11" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="184" bodyend="193"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1ade5caf3ad830145699118032b77b85db" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::Random::Random</definition>
+        <argsstring>()</argsstring>
+        <name>Random</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random.cpp" line="27" column="9" bodyfile="titan_cpplib_expanded/algorithm/random.cpp" bodystart="27" bodyend="30"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a4191c342de62979837ea89fbceeb3631" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double titan23::Random::random</definition>
+        <argsstring>()</argsstring>
+        <name>random</name>
+        <briefdescription>
+<para><computeroutput>[0, 1]</computeroutput> の乱数を返す(実数) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random.cpp" line="33" column="16" bodyfile="titan_cpplib_expanded/algorithm/random.cpp" bodystart="33" bodyend="33"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a60524b9288bf9dde85b6f200272528c5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::Random::randint</definition>
+        <argsstring>(const int end)</argsstring>
+        <name>randint</name>
+        <param>
+          <type>const int</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[0, end]</computeroutput> の乱数を返す(整数) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random.cpp" line="36" column="13" bodyfile="titan_cpplib_expanded/algorithm/random.cpp" bodystart="36" bodyend="39"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1af912a2c0ed6a29669290f43d2e7c8ea4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::Random::randint</definition>
+        <argsstring>(const int begin, const int end)</argsstring>
+        <name>randint</name>
+        <param>
+          <type>const int</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[begin, end]</computeroutput> の乱数を返す(整数) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random.cpp" line="42" column="13" bodyfile="titan_cpplib_expanded/algorithm/random.cpp" bodystart="42" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a6b72ec5b19b8fbbeef8acd5ff2eb5bda" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::Random::randrange</definition>
+        <argsstring>(const int end)</argsstring>
+        <name>randrange</name>
+        <param>
+          <type>const int</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[0, end)</computeroutput> の乱数を返す(整数) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random.cpp" line="48" column="13" bodyfile="titan_cpplib_expanded/algorithm/random.cpp" bodystart="48" bodyend="51"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a01aa00958ee23afc95c6e66d6a55f03c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::Random::randrange</definition>
+        <argsstring>(const int begin, const int end)</argsstring>
+        <name>randrange</name>
+        <param>
+          <type>const int</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[begin, end)</computeroutput> の乱数を返す(整数) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random.cpp" line="54" column="13" bodyfile="titan_cpplib_expanded/algorithm/random.cpp" bodystart="54" bodyend="57"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a8d608910d35516e0f7ba487aed47e55d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>unsigned long long</type>
+        <definition>unsigned long long titan23::Random::rand_u64</definition>
+        <argsstring>()</argsstring>
+        <name>rand_u64</name>
+        <briefdescription>
+<para><computeroutput>[0, u64_MAX)</computeroutput> の乱数を返す / zobrist hash等の使用を想定 </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random.cpp" line="60" column="28" bodyfile="titan_cpplib_expanded/algorithm/random.cpp" bodystart="60" bodyend="62"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1abe557615b11a5d7304346b8ed685369a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>pair&lt; int, int &gt;</type>
+        <definition>pair&lt;int, int&gt; titan23::Random::rand_pair</definition>
+        <argsstring>(const int end)</argsstring>
+        <name>rand_pair</name>
+        <param>
+          <type>const int</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[0, end)</computeroutput> の異なる乱数を2つ返す </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random.cpp" line="65" column="14" bodyfile="titan_cpplib_expanded/algorithm/random.cpp" bodystart="65" bodyend="72"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a06992a20cad3a884c00c3e423d879c1b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>pair&lt; int, int &gt;</type>
+        <definition>pair&lt;int, int&gt; titan23::Random::rand_pair</definition>
+        <argsstring>(const int begin, const int end)</argsstring>
+        <name>rand_pair</name>
+        <param>
+          <type>const int</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[begin, end)</computeroutput> の異なる乱数を2つ返す </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random.cpp" line="75" column="14" bodyfile="titan_cpplib_expanded/algorithm/random.cpp" bodystart="75" bodyend="82"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a15c2c12214dc315f4b09d8e6716e2b3a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>vector&lt; int &gt;</type>
+        <definition>vector&lt;int&gt; titan23::Random::rand_vec</definition>
+        <argsstring>(const int cnt, vector&lt; int &gt; &amp;a)</argsstring>
+        <name>rand_vec</name>
+        <param>
+          <type>const int</type>
+          <declname>cnt</declname>
+        </param>
+        <param>
+          <type>vector&lt; int &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+<para>Note <computeroutput>a</computeroutput>は非const. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random.cpp" line="85" column="16" bodyfile="titan_cpplib_expanded/algorithm/random.cpp" bodystart="85" bodyend="93"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a74dc79ed9aa5dee428a782eca49407ee" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double titan23::Random::randdouble</definition>
+        <argsstring>(const double begin, const double end)</argsstring>
+        <name>randdouble</name>
+        <param>
+          <type>const double</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[begin, end)</computeroutput> の乱数を返す(実数) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random.cpp" line="96" column="16" bodyfile="titan_cpplib_expanded/algorithm/random.cpp" bodystart="96" bodyend="99"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a8a3e5ca699ccd75cff80a8939b89a91d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void titan23::Random::shuffle</definition>
+        <argsstring>(vector&lt; T &gt; &amp;a)</argsstring>
+        <name>shuffle</name>
+        <param>
+          <type>vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>vector</computeroutput> をインプレースにシャッフルする / <computeroutput>O(n)</computeroutput> </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random.cpp" line="103" column="14" bodyfile="titan_cpplib_expanded/algorithm/random.cpp" bodystart="103" bodyend="109"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1aa14fa9b38502d5be75bdc09cfea5ce12" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>vector&lt; T &gt;</type>
+        <definition>vector&lt;T&gt; titan23::Random::choices</definition>
+        <argsstring>(const vector&lt; T &gt; &amp;a, const int k)</argsstring>
+        <name>choices</name>
+        <param>
+          <type>const vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>k</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random.cpp" line="112" column="16" bodyfile="titan_cpplib_expanded/algorithm/random.cpp" bodystart="112" bodyend="123"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a6e5323152fa179e6ce198965ef84bc83" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>T</type>
+        <definition>T titan23::Random::choice</definition>
+        <argsstring>(const vector&lt; T &gt; &amp;a)</argsstring>
+        <name>choice</name>
+        <param>
+          <type>const vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random.cpp" line="126" column="11" bodyfile="titan_cpplib_expanded/algorithm/random.cpp" bodystart="126" bodyend="128"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a09fa8bb8f81eabfca9e4d0bc3bc34ece" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>T</type>
+        <definition>T titan23::Random::choice</definition>
+        <argsstring>(const vector&lt; T &gt; &amp;a, const vector&lt; int &gt; &amp;w, bool normal)</argsstring>
+        <name>choice</name>
+        <param>
+          <type>const vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const vector&lt; int &gt; &amp;</type>
+          <declname>w</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>normal</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random.cpp" line="131" column="11" bodyfile="titan_cpplib_expanded/algorithm/random.cpp" bodystart="131" bodyend="143"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1ae72775efea327eabef4283b9fa47f5d2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>T</type>
+        <definition>T titan23::Random::choice</definition>
+        <argsstring>(const vector&lt; T &gt; &amp;a, const vector&lt; double &gt; &amp;w)</argsstring>
+        <name>choice</name>
+        <param>
+          <type>const vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const vector&lt; double &gt; &amp;</type>
+          <declname>w</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random.cpp" line="146" column="11" bodyfile="titan_cpplib_expanded/algorithm/random.cpp" bodystart="146" bodyend="155"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1ade5caf3ad830145699118032b77b85db" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::Random::Random</definition>
+        <argsstring>()</argsstring>
+        <name>Random</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random_tree.cpp" line="31" column="9" bodyfile="titan_cpplib_expanded/algorithm/random_tree.cpp" bodystart="31" bodyend="34"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a4191c342de62979837ea89fbceeb3631" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double titan23::Random::random</definition>
+        <argsstring>()</argsstring>
+        <name>random</name>
+        <briefdescription>
+<para><computeroutput>[0, 1]</computeroutput> の乱数を返す(実数) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random_tree.cpp" line="37" column="16" bodyfile="titan_cpplib_expanded/algorithm/random_tree.cpp" bodystart="37" bodyend="37"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a60524b9288bf9dde85b6f200272528c5" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::Random::randint</definition>
+        <argsstring>(const int end)</argsstring>
+        <name>randint</name>
+        <param>
+          <type>const int</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[0, end]</computeroutput> の乱数を返す(整数) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random_tree.cpp" line="40" column="13" bodyfile="titan_cpplib_expanded/algorithm/random_tree.cpp" bodystart="40" bodyend="43"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1af912a2c0ed6a29669290f43d2e7c8ea4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::Random::randint</definition>
+        <argsstring>(const int begin, const int end)</argsstring>
+        <name>randint</name>
+        <param>
+          <type>const int</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[begin, end]</computeroutput> の乱数を返す(整数) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random_tree.cpp" line="46" column="13" bodyfile="titan_cpplib_expanded/algorithm/random_tree.cpp" bodystart="46" bodyend="49"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a6b72ec5b19b8fbbeef8acd5ff2eb5bda" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::Random::randrange</definition>
+        <argsstring>(const int end)</argsstring>
+        <name>randrange</name>
+        <param>
+          <type>const int</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[0, end)</computeroutput> の乱数を返す(整数) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random_tree.cpp" line="52" column="13" bodyfile="titan_cpplib_expanded/algorithm/random_tree.cpp" bodystart="52" bodyend="55"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a01aa00958ee23afc95c6e66d6a55f03c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::Random::randrange</definition>
+        <argsstring>(const int begin, const int end)</argsstring>
+        <name>randrange</name>
+        <param>
+          <type>const int</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[begin, end)</computeroutput> の乱数を返す(整数) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random_tree.cpp" line="58" column="13" bodyfile="titan_cpplib_expanded/algorithm/random_tree.cpp" bodystart="58" bodyend="61"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a8d608910d35516e0f7ba487aed47e55d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>unsigned long long</type>
+        <definition>unsigned long long titan23::Random::rand_u64</definition>
+        <argsstring>()</argsstring>
+        <name>rand_u64</name>
+        <briefdescription>
+<para><computeroutput>[0, u64_MAX)</computeroutput> の乱数を返す / zobrist hash等の使用を想定 </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random_tree.cpp" line="64" column="28" bodyfile="titan_cpplib_expanded/algorithm/random_tree.cpp" bodystart="64" bodyend="66"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1abe557615b11a5d7304346b8ed685369a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>pair&lt; int, int &gt;</type>
+        <definition>pair&lt;int, int&gt; titan23::Random::rand_pair</definition>
+        <argsstring>(const int end)</argsstring>
+        <name>rand_pair</name>
+        <param>
+          <type>const int</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[0, end)</computeroutput> の異なる乱数を2つ返す </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random_tree.cpp" line="69" column="14" bodyfile="titan_cpplib_expanded/algorithm/random_tree.cpp" bodystart="69" bodyend="76"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a06992a20cad3a884c00c3e423d879c1b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>pair&lt; int, int &gt;</type>
+        <definition>pair&lt;int, int&gt; titan23::Random::rand_pair</definition>
+        <argsstring>(const int begin, const int end)</argsstring>
+        <name>rand_pair</name>
+        <param>
+          <type>const int</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[begin, end)</computeroutput> の異なる乱数を2つ返す </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random_tree.cpp" line="79" column="14" bodyfile="titan_cpplib_expanded/algorithm/random_tree.cpp" bodystart="79" bodyend="86"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a15c2c12214dc315f4b09d8e6716e2b3a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>vector&lt; int &gt;</type>
+        <definition>vector&lt;int&gt; titan23::Random::rand_vec</definition>
+        <argsstring>(const int cnt, vector&lt; int &gt; &amp;a)</argsstring>
+        <name>rand_vec</name>
+        <param>
+          <type>const int</type>
+          <declname>cnt</declname>
+        </param>
+        <param>
+          <type>vector&lt; int &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+<para>Note <computeroutput>a</computeroutput>は非const. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random_tree.cpp" line="89" column="16" bodyfile="titan_cpplib_expanded/algorithm/random_tree.cpp" bodystart="89" bodyend="97"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a74dc79ed9aa5dee428a782eca49407ee" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>double</type>
+        <definition>double titan23::Random::randdouble</definition>
+        <argsstring>(const double begin, const double end)</argsstring>
+        <name>randdouble</name>
+        <param>
+          <type>const double</type>
+          <declname>begin</declname>
+        </param>
+        <param>
+          <type>const double</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>[begin, end)</computeroutput> の乱数を返す(実数) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random_tree.cpp" line="100" column="16" bodyfile="titan_cpplib_expanded/algorithm/random_tree.cpp" bodystart="100" bodyend="103"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a8a3e5ca699ccd75cff80a8939b89a91d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void titan23::Random::shuffle</definition>
+        <argsstring>(vector&lt; T &gt; &amp;a)</argsstring>
+        <name>shuffle</name>
+        <param>
+          <type>vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+<para><computeroutput>vector</computeroutput> をインプレースにシャッフルする / <computeroutput>O(n)</computeroutput> </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random_tree.cpp" line="107" column="14" bodyfile="titan_cpplib_expanded/algorithm/random_tree.cpp" bodystart="107" bodyend="113"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1aa14fa9b38502d5be75bdc09cfea5ce12" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>vector&lt; T &gt;</type>
+        <definition>vector&lt;T&gt; titan23::Random::choices</definition>
+        <argsstring>(const vector&lt; T &gt; &amp;a, const int k)</argsstring>
+        <name>choices</name>
+        <param>
+          <type>const vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>k</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random_tree.cpp" line="116" column="16" bodyfile="titan_cpplib_expanded/algorithm/random_tree.cpp" bodystart="116" bodyend="127"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a6e5323152fa179e6ce198965ef84bc83" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>T</type>
+        <definition>T titan23::Random::choice</definition>
+        <argsstring>(const vector&lt; T &gt; &amp;a)</argsstring>
+        <name>choice</name>
+        <param>
+          <type>const vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random_tree.cpp" line="130" column="11" bodyfile="titan_cpplib_expanded/algorithm/random_tree.cpp" bodystart="130" bodyend="132"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1a09fa8bb8f81eabfca9e4d0bc3bc34ece" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>T</type>
+        <definition>T titan23::Random::choice</definition>
+        <argsstring>(const vector&lt; T &gt; &amp;a, const vector&lt; int &gt; &amp;w, bool normal)</argsstring>
+        <name>choice</name>
+        <param>
+          <type>const vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const vector&lt; int &gt; &amp;</type>
+          <declname>w</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>normal</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random_tree.cpp" line="135" column="11" bodyfile="titan_cpplib_expanded/algorithm/random_tree.cpp" bodystart="135" bodyend="147"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1Random_1ae72775efea327eabef4283b9fa47f5d2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>T</type>
+        <definition>T titan23::Random::choice</definition>
+        <argsstring>(const vector&lt; T &gt; &amp;a, const vector&lt; double &gt; &amp;w)</argsstring>
+        <name>choice</name>
+        <param>
+          <type>const vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const vector&lt; double &gt; &amp;</type>
+          <declname>w</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/algorithm/random_tree.cpp" line="150" column="11" bodyfile="titan_cpplib_expanded/algorithm/random_tree.cpp" bodystart="150" bodyend="159"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -410,28 +2135,113 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/algorithm/random.cpp" line="12" column="5" bodyfile="titan_cpplib/algorithm/random.cpp" bodystart="12" bodyend="155"/>
+    <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="19" column="5" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="19" bodyend="162"/>
     <listofallmembers>
       <member refid="classtitan23_1_1Random_1a1e0bac744adc61aaaae98259e8da5cf7" prot="private" virt="non-virtual"><scope>titan23::Random</scope><name>_w</name></member>
       <member refid="classtitan23_1_1Random_1a7466d0ca186123e768892d715882ce21" prot="private" virt="non-virtual"><scope>titan23::Random</scope><name>_x</name></member>
+      <member refid="classtitan23_1_1Random_1a8bb331ebcba2e050292022b1394526e5" prot="private" virt="non-virtual"><scope>titan23::Random</scope><name>_xor128</name></member>
+      <member refid="classtitan23_1_1Random_1a8bb331ebcba2e050292022b1394526e5" prot="private" virt="non-virtual"><scope>titan23::Random</scope><name>_xor128</name></member>
+      <member refid="classtitan23_1_1Random_1a8bb331ebcba2e050292022b1394526e5" prot="private" virt="non-virtual"><scope>titan23::Random</scope><name>_xor128</name></member>
+      <member refid="classtitan23_1_1Random_1a8bb331ebcba2e050292022b1394526e5" prot="private" virt="non-virtual"><scope>titan23::Random</scope><name>_xor128</name></member>
+      <member refid="classtitan23_1_1Random_1a8bb331ebcba2e050292022b1394526e5" prot="private" virt="non-virtual"><scope>titan23::Random</scope><name>_xor128</name></member>
       <member refid="classtitan23_1_1Random_1a8bb331ebcba2e050292022b1394526e5" prot="private" virt="non-virtual"><scope>titan23::Random</scope><name>_xor128</name></member>
       <member refid="classtitan23_1_1Random_1aa5f712efb2d57476cc84742f093e7396" prot="private" virt="non-virtual"><scope>titan23::Random</scope><name>_y</name></member>
       <member refid="classtitan23_1_1Random_1acb24fee459a4ddbd9242d234ff709f1f" prot="private" virt="non-virtual"><scope>titan23::Random</scope><name>_z</name></member>
       <member refid="classtitan23_1_1Random_1a6e5323152fa179e6ce198965ef84bc83" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>choice</name></member>
       <member refid="classtitan23_1_1Random_1a09fa8bb8f81eabfca9e4d0bc3bc34ece" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>choice</name></member>
       <member refid="classtitan23_1_1Random_1ae72775efea327eabef4283b9fa47f5d2" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>choice</name></member>
+      <member refid="classtitan23_1_1Random_1a6e5323152fa179e6ce198965ef84bc83" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>choice</name></member>
+      <member refid="classtitan23_1_1Random_1a09fa8bb8f81eabfca9e4d0bc3bc34ece" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>choice</name></member>
+      <member refid="classtitan23_1_1Random_1ae72775efea327eabef4283b9fa47f5d2" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>choice</name></member>
+      <member refid="classtitan23_1_1Random_1a6e5323152fa179e6ce198965ef84bc83" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>choice</name></member>
+      <member refid="classtitan23_1_1Random_1a09fa8bb8f81eabfca9e4d0bc3bc34ece" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>choice</name></member>
+      <member refid="classtitan23_1_1Random_1ae72775efea327eabef4283b9fa47f5d2" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>choice</name></member>
+      <member refid="classtitan23_1_1Random_1a6e5323152fa179e6ce198965ef84bc83" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>choice</name></member>
+      <member refid="classtitan23_1_1Random_1a09fa8bb8f81eabfca9e4d0bc3bc34ece" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>choice</name></member>
+      <member refid="classtitan23_1_1Random_1ae72775efea327eabef4283b9fa47f5d2" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>choice</name></member>
+      <member refid="classtitan23_1_1Random_1a6e5323152fa179e6ce198965ef84bc83" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>choice</name></member>
+      <member refid="classtitan23_1_1Random_1a09fa8bb8f81eabfca9e4d0bc3bc34ece" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>choice</name></member>
+      <member refid="classtitan23_1_1Random_1ae72775efea327eabef4283b9fa47f5d2" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>choice</name></member>
+      <member refid="classtitan23_1_1Random_1a6e5323152fa179e6ce198965ef84bc83" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>choice</name></member>
+      <member refid="classtitan23_1_1Random_1a09fa8bb8f81eabfca9e4d0bc3bc34ece" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>choice</name></member>
+      <member refid="classtitan23_1_1Random_1ae72775efea327eabef4283b9fa47f5d2" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>choice</name></member>
+      <member refid="classtitan23_1_1Random_1aa14fa9b38502d5be75bdc09cfea5ce12" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>choices</name></member>
+      <member refid="classtitan23_1_1Random_1aa14fa9b38502d5be75bdc09cfea5ce12" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>choices</name></member>
+      <member refid="classtitan23_1_1Random_1aa14fa9b38502d5be75bdc09cfea5ce12" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>choices</name></member>
+      <member refid="classtitan23_1_1Random_1aa14fa9b38502d5be75bdc09cfea5ce12" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>choices</name></member>
+      <member refid="classtitan23_1_1Random_1aa14fa9b38502d5be75bdc09cfea5ce12" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>choices</name></member>
       <member refid="classtitan23_1_1Random_1aa14fa9b38502d5be75bdc09cfea5ce12" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>choices</name></member>
       <member refid="classtitan23_1_1Random_1abe557615b11a5d7304346b8ed685369a" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>rand_pair</name></member>
       <member refid="classtitan23_1_1Random_1a06992a20cad3a884c00c3e423d879c1b" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>rand_pair</name></member>
+      <member refid="classtitan23_1_1Random_1abe557615b11a5d7304346b8ed685369a" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>rand_pair</name></member>
+      <member refid="classtitan23_1_1Random_1a06992a20cad3a884c00c3e423d879c1b" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>rand_pair</name></member>
+      <member refid="classtitan23_1_1Random_1abe557615b11a5d7304346b8ed685369a" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>rand_pair</name></member>
+      <member refid="classtitan23_1_1Random_1a06992a20cad3a884c00c3e423d879c1b" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>rand_pair</name></member>
+      <member refid="classtitan23_1_1Random_1abe557615b11a5d7304346b8ed685369a" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>rand_pair</name></member>
+      <member refid="classtitan23_1_1Random_1a06992a20cad3a884c00c3e423d879c1b" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>rand_pair</name></member>
+      <member refid="classtitan23_1_1Random_1abe557615b11a5d7304346b8ed685369a" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>rand_pair</name></member>
+      <member refid="classtitan23_1_1Random_1a06992a20cad3a884c00c3e423d879c1b" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>rand_pair</name></member>
+      <member refid="classtitan23_1_1Random_1abe557615b11a5d7304346b8ed685369a" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>rand_pair</name></member>
+      <member refid="classtitan23_1_1Random_1a06992a20cad3a884c00c3e423d879c1b" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>rand_pair</name></member>
+      <member refid="classtitan23_1_1Random_1a8d608910d35516e0f7ba487aed47e55d" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>rand_u64</name></member>
+      <member refid="classtitan23_1_1Random_1a8d608910d35516e0f7ba487aed47e55d" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>rand_u64</name></member>
+      <member refid="classtitan23_1_1Random_1a8d608910d35516e0f7ba487aed47e55d" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>rand_u64</name></member>
+      <member refid="classtitan23_1_1Random_1a8d608910d35516e0f7ba487aed47e55d" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>rand_u64</name></member>
+      <member refid="classtitan23_1_1Random_1a8d608910d35516e0f7ba487aed47e55d" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>rand_u64</name></member>
       <member refid="classtitan23_1_1Random_1a8d608910d35516e0f7ba487aed47e55d" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>rand_u64</name></member>
       <member refid="classtitan23_1_1Random_1a15c2c12214dc315f4b09d8e6716e2b3a" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>rand_vec</name></member>
+      <member refid="classtitan23_1_1Random_1a15c2c12214dc315f4b09d8e6716e2b3a" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>rand_vec</name></member>
+      <member refid="classtitan23_1_1Random_1a15c2c12214dc315f4b09d8e6716e2b3a" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>rand_vec</name></member>
+      <member refid="classtitan23_1_1Random_1a15c2c12214dc315f4b09d8e6716e2b3a" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>rand_vec</name></member>
+      <member refid="classtitan23_1_1Random_1a15c2c12214dc315f4b09d8e6716e2b3a" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>rand_vec</name></member>
+      <member refid="classtitan23_1_1Random_1a15c2c12214dc315f4b09d8e6716e2b3a" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>rand_vec</name></member>
+      <member refid="classtitan23_1_1Random_1a74dc79ed9aa5dee428a782eca49407ee" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randdouble</name></member>
+      <member refid="classtitan23_1_1Random_1a74dc79ed9aa5dee428a782eca49407ee" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randdouble</name></member>
+      <member refid="classtitan23_1_1Random_1a74dc79ed9aa5dee428a782eca49407ee" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randdouble</name></member>
+      <member refid="classtitan23_1_1Random_1a74dc79ed9aa5dee428a782eca49407ee" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randdouble</name></member>
+      <member refid="classtitan23_1_1Random_1a74dc79ed9aa5dee428a782eca49407ee" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randdouble</name></member>
       <member refid="classtitan23_1_1Random_1a74dc79ed9aa5dee428a782eca49407ee" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randdouble</name></member>
       <member refid="classtitan23_1_1Random_1a60524b9288bf9dde85b6f200272528c5" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randint</name></member>
       <member refid="classtitan23_1_1Random_1af912a2c0ed6a29669290f43d2e7c8ea4" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randint</name></member>
+      <member refid="classtitan23_1_1Random_1a60524b9288bf9dde85b6f200272528c5" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randint</name></member>
+      <member refid="classtitan23_1_1Random_1af912a2c0ed6a29669290f43d2e7c8ea4" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randint</name></member>
+      <member refid="classtitan23_1_1Random_1a60524b9288bf9dde85b6f200272528c5" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randint</name></member>
+      <member refid="classtitan23_1_1Random_1af912a2c0ed6a29669290f43d2e7c8ea4" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randint</name></member>
+      <member refid="classtitan23_1_1Random_1a60524b9288bf9dde85b6f200272528c5" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randint</name></member>
+      <member refid="classtitan23_1_1Random_1af912a2c0ed6a29669290f43d2e7c8ea4" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randint</name></member>
+      <member refid="classtitan23_1_1Random_1a60524b9288bf9dde85b6f200272528c5" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randint</name></member>
+      <member refid="classtitan23_1_1Random_1af912a2c0ed6a29669290f43d2e7c8ea4" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randint</name></member>
+      <member refid="classtitan23_1_1Random_1a60524b9288bf9dde85b6f200272528c5" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randint</name></member>
+      <member refid="classtitan23_1_1Random_1af912a2c0ed6a29669290f43d2e7c8ea4" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randint</name></member>
       <member refid="classtitan23_1_1Random_1ade5caf3ad830145699118032b77b85db" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>Random</name></member>
+      <member refid="classtitan23_1_1Random_1ade5caf3ad830145699118032b77b85db" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>Random</name></member>
+      <member refid="classtitan23_1_1Random_1ade5caf3ad830145699118032b77b85db" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>Random</name></member>
+      <member refid="classtitan23_1_1Random_1ade5caf3ad830145699118032b77b85db" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>Random</name></member>
+      <member refid="classtitan23_1_1Random_1ade5caf3ad830145699118032b77b85db" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>Random</name></member>
+      <member refid="classtitan23_1_1Random_1ade5caf3ad830145699118032b77b85db" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>Random</name></member>
+      <member refid="classtitan23_1_1Random_1a4191c342de62979837ea89fbceeb3631" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>random</name></member>
+      <member refid="classtitan23_1_1Random_1a4191c342de62979837ea89fbceeb3631" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>random</name></member>
+      <member refid="classtitan23_1_1Random_1a4191c342de62979837ea89fbceeb3631" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>random</name></member>
+      <member refid="classtitan23_1_1Random_1a4191c342de62979837ea89fbceeb3631" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>random</name></member>
+      <member refid="classtitan23_1_1Random_1a4191c342de62979837ea89fbceeb3631" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>random</name></member>
       <member refid="classtitan23_1_1Random_1a4191c342de62979837ea89fbceeb3631" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>random</name></member>
       <member refid="classtitan23_1_1Random_1a6b72ec5b19b8fbbeef8acd5ff2eb5bda" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randrange</name></member>
       <member refid="classtitan23_1_1Random_1a01aa00958ee23afc95c6e66d6a55f03c" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randrange</name></member>
+      <member refid="classtitan23_1_1Random_1a6b72ec5b19b8fbbeef8acd5ff2eb5bda" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randrange</name></member>
+      <member refid="classtitan23_1_1Random_1a01aa00958ee23afc95c6e66d6a55f03c" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randrange</name></member>
+      <member refid="classtitan23_1_1Random_1a6b72ec5b19b8fbbeef8acd5ff2eb5bda" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randrange</name></member>
+      <member refid="classtitan23_1_1Random_1a01aa00958ee23afc95c6e66d6a55f03c" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randrange</name></member>
+      <member refid="classtitan23_1_1Random_1a6b72ec5b19b8fbbeef8acd5ff2eb5bda" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randrange</name></member>
+      <member refid="classtitan23_1_1Random_1a01aa00958ee23afc95c6e66d6a55f03c" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randrange</name></member>
+      <member refid="classtitan23_1_1Random_1a6b72ec5b19b8fbbeef8acd5ff2eb5bda" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randrange</name></member>
+      <member refid="classtitan23_1_1Random_1a01aa00958ee23afc95c6e66d6a55f03c" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randrange</name></member>
+      <member refid="classtitan23_1_1Random_1a6b72ec5b19b8fbbeef8acd5ff2eb5bda" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randrange</name></member>
+      <member refid="classtitan23_1_1Random_1a01aa00958ee23afc95c6e66d6a55f03c" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>randrange</name></member>
+      <member refid="classtitan23_1_1Random_1a8a3e5ca699ccd75cff80a8939b89a91d" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>shuffle</name></member>
+      <member refid="classtitan23_1_1Random_1a8a3e5ca699ccd75cff80a8939b89a91d" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>shuffle</name></member>
+      <member refid="classtitan23_1_1Random_1a8a3e5ca699ccd75cff80a8939b89a91d" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>shuffle</name></member>
+      <member refid="classtitan23_1_1Random_1a8a3e5ca699ccd75cff80a8939b89a91d" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>shuffle</name></member>
+      <member refid="classtitan23_1_1Random_1a8a3e5ca699ccd75cff80a8939b89a91d" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>shuffle</name></member>
       <member refid="classtitan23_1_1Random_1a8a3e5ca699ccd75cff80a8939b89a91d" prot="public" virt="non-virtual"><scope>titan23::Random</scope><name>shuffle</name></member>
     </listofallmembers>
   </compounddef>

@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="72" column="9" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="72" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="555" column="9" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="555" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structbeam__search__with__tree_1_1BeamParam_1a9a9fa2f3b8a570468b15ac547d960e33" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -27,14 +27,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="73" column="9" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="73" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="556" column="9" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="556" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="71" column="1" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="71" bodyend="74"/>
+    <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="554" column="1" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="554" bodyend="557"/>
     <listofallmembers>
       <member refid="structbeam__search__with__tree_1_1BeamParam_1a9a9fa2f3b8a570468b15ac547d960e33" prot="public" virt="non-virtual"><scope>beam_search_with_tree::BeamParam</scope><name>BEAM_WIDTH</name></member>
       <member refid="structbeam__search__with__tree_1_1BeamParam_1ab5fed34dfb7b9486678481e90665c6bc" prot="public" virt="non-virtual"><scope>beam_search_with_tree::BeamParam</scope><name>MAX_TURN</name></member>

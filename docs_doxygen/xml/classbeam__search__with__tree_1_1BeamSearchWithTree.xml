@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="84" column="5" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="84" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="567" column="5" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="567" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-static-attrib">
@@ -30,7 +30,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="80" column="32" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="80" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="563" column="32" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="563" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1a28bdc7707d3672d3352a8153326b27f3" prot="private" static="yes" constexpr="yes" mutable="no">
         <type>constexpr const int</type>
@@ -44,7 +44,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="81" column="32" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="81" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="564" column="32" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="564" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-attrib">
@@ -59,7 +59,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="83" column="22" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="83" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="566" column="22" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="566" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1a924a54e6d2b6159d5bfd0ca122d918fd" prot="private" static="no" mutable="no">
         <type>ActionIDType</type>
@@ -72,7 +72,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="85" column="18" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="85" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="568" column="18" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="568" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1af49e2cd5dbcd9c57e7ed111487fe20ae" prot="private" static="no" mutable="no">
         <type>vector&lt; <ref refid="structbeam__search__with__tree_1_1Action" kindref="compound">Action</ref> &gt;</type>
@@ -85,7 +85,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="86" column="12" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="86" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="569" column="12" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="569" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1a2ce4b376cc4cd6eef8c747e68005e249" prot="private" static="no" mutable="no">
         <type>vector&lt; tuple&lt; int, <ref refid="structbeam__search__with__tree_1_1Action" kindref="compound">Action</ref>, ActionIDType &gt; &gt;</type>
@@ -98,7 +98,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="92" column="12" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="92" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="575" column="12" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="575" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1adc6896f1e21f6a3525243fe495363506" prot="private" static="no" mutable="no">
         <type>vector&lt; tuple&lt; int, ScoreType, <ref refid="structbeam__search__with__tree_1_1Action" kindref="compound">Action</ref>, ActionIDType &gt; &gt;</type>
@@ -111,7 +111,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="95" column="12" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="95" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="578" column="12" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="578" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1a4f403f63d83b122b017ac4b7212d316c" prot="private" static="no" mutable="no">
         <type>vector&lt; vector&lt; int &gt; &gt;</type>
@@ -124,7 +124,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="97" column="12" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="97" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="580" column="12" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="580" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -147,7 +147,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="99" column="10" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="99" bodyend="136"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="582" column="10" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="582" bodyend="619"/>
       </memberdef>
       <memberdef kind="function" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1a7d07a1b76f0ca727486d4ee671fd8e7a" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -169,7 +169,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="139" column="9" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="139" bodyend="191"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="622" column="9" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="622" bodyend="674"/>
       </memberdef>
       <memberdef kind="function" id="classbeam__search__with__tree_1_1BeamSearchWithTree_1aa3b34dabe31b8c7d1c9333450b119a77" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -182,7 +182,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="193" column="10" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="193" bodyend="217"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="676" column="10" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="676" bodyend="700"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -227,14 +227,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="228" column="12" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="228" bodyend="286"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="711" column="12" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="711" bodyend="769"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="76" column="1" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="76" bodyend="287"/>
+    <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="559" column="1" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="559" bodyend="770"/>
     <listofallmembers>
       <member refid="classbeam__search__with__tree_1_1BeamSearchWithTree_1a924a54e6d2b6159d5bfd0ca122d918fd" prot="private" virt="non-virtual"><scope>beam_search_with_tree::BeamSearchWithTree</scope><name>ActionID</name></member>
       <member refid="classbeam__search__with__tree_1_1BeamSearchWithTree_1adc427980ec645f29281c0eff9c8d7305" prot="private" virt="non-virtual"><scope>beam_search_with_tree::BeamSearchWithTree</scope><name>ActionIDType</name></member>

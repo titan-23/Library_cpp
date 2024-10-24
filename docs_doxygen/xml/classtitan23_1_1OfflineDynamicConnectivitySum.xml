@@ -19,7 +19,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" line="18" column="9" bodyfile="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="18" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" line="115" column="9" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="115" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1OfflineDynamicConnectivitySum_1a9041ab0f2417e517b8b62f61d9d55a98" prot="private" static="no" mutable="no">
         <type>int</type>
@@ -32,7 +32,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" line="18" column="12" bodyfile="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="18" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" line="115" column="12" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="115" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1OfflineDynamicConnectivitySum_1a699f7cc75f6aecf67504542a745daef8" prot="private" static="no" mutable="no">
         <type>int</type>
@@ -45,7 +45,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" line="18" column="25" bodyfile="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="18" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" line="115" column="25" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="115" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1OfflineDynamicConnectivitySum_1a2f6bbd6aa91276634578df0dade3a45d" prot="private" static="no" mutable="no">
         <type>int</type>
@@ -58,7 +58,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" line="18" column="31" bodyfile="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="18" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" line="115" column="31" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="115" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1OfflineDynamicConnectivitySum_1acdf4771b636a1beed2dd45d38e25aba3" prot="private" static="no" mutable="no">
         <type>long long</type>
@@ -71,7 +71,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" line="19" column="15" bodyfile="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="19" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" line="116" column="15" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="116" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1OfflineDynamicConnectivitySum_1a70d44415fa3476af02e669fcbf515104" prot="private" static="no" mutable="no">
         <type>long long</type>
@@ -84,7 +84,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" line="19" column="20" bodyfile="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="19" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" line="116" column="20" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="116" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1OfflineDynamicConnectivitySum_1ae0eef13d204ecaca3eae58e3e1b6661f" prot="private" static="no" mutable="no">
         <type>unordered_map&lt; long long, pair&lt; int, int &gt; &gt;</type>
@@ -97,7 +97,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" line="20" column="19" bodyfile="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="20" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" line="117" column="19" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="117" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1OfflineDynamicConnectivitySum_1ab1fcfac3c4c5931f26d5fec14b7d6d91" prot="private" static="no" mutable="no">
         <type>vector&lt; vector&lt; long long &gt; &gt;</type>
@@ -110,7 +110,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" line="21" column="12" bodyfile="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="21" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" line="118" column="12" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="118" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1OfflineDynamicConnectivitySum_1a3b8b12053072e602e90af2d0db5c4896" prot="private" static="no" mutable="no">
         <type>vector&lt; tuple&lt; int, int, long long &gt; &gt;</type>
@@ -123,7 +123,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" line="22" column="12" bodyfile="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="22" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" line="119" column="12" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="119" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-attrib">
@@ -138,7 +138,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" line="45" column="26" bodyfile="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="45" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" line="142" column="26" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="142" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -157,7 +157,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" line="24" column="9" bodyfile="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="24" bodyend="27"/>
+        <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" line="121" column="9" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="121" bodyend="124"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1OfflineDynamicConnectivitySum_1ac68b9ac7b71627080994b8509a038f2c" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -182,7 +182,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" line="29" column="10" bodyfile="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="29" bodyend="42"/>
+        <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" line="126" column="10" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="126" bodyend="139"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -209,7 +209,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" line="47" column="5" bodyfile="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="47" bodyend="58"/>
+        <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" line="144" column="5" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="144" bodyend="155"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1OfflineDynamicConnectivitySum_1ac5fd438e474305f0d3cef5c4e5174000" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -230,7 +230,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" line="60" column="10" bodyfile="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="60" bodyend="67"/>
+        <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" line="157" column="10" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="157" bodyend="164"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1OfflineDynamicConnectivitySum_1aae87a6289d87baa35b88b04c57e12edf" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -251,7 +251,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" line="69" column="10" bodyfile="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="69" bodyend="77"/>
+        <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" line="166" column="10" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="166" bodyend="174"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1OfflineDynamicConnectivitySum_1a96a828420b39ef79a97a04e01076eb33" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -264,7 +264,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" line="79" column="10" bodyfile="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="79" bodyend="81"/>
+        <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" line="176" column="10" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="176" bodyend="178"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1OfflineDynamicConnectivitySum_1a42222f38184c70a7d76b06a91388f9ab" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -286,7 +286,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" line="84" column="10" bodyfile="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="84" bodyend="118"/>
+        <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" line="181" column="10" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="181" bodyend="215"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -306,7 +306,7 @@
         <link refid="classtitan23_1_1UndoableUnionFindSum"/>
       </node>
     </collaborationgraph>
-    <location file="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" line="16" column="3" bodyfile="titan_cpplib/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="16" bodyend="119"/>
+    <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" line="113" column="3" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity_sum.cpp" bodystart="113" bodyend="216"/>
     <listofallmembers>
       <member refid="classtitan23_1_1OfflineDynamicConnectivitySum_1acdf4771b636a1beed2dd45d38e25aba3" prot="private" virt="non-virtual"><scope>titan23::OfflineDynamicConnectivitySum</scope><name>_bit</name></member>
       <member refid="classtitan23_1_1OfflineDynamicConnectivitySum_1ac68b9ac7b71627080994b8509a038f2c" prot="private" virt="non-virtual"><scope>titan23::OfflineDynamicConnectivitySum</scope><name>_internal_add</name></member>

@@ -158,7 +158,7 @@ class titan23::DynamicWaveletTree&lt; T &gt;</h3>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="dynamic__wavelet__tree_8cpp_source.html#l00015">15</a> of file <a class="el" href="dynamic__wavelet__tree_8cpp_source.html">dynamic_wavelet_tree.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="dynamic__wavelet__tree_8cpp_source.html#l00763">763</a> of file <a class="el" href="dynamic__wavelet__tree_8cpp_source.html">dynamic_wavelet_tree.cpp</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a717f0d589b9c57ed4387d052465a86fa"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a717f0d589b9c57ed4387d052465a86fa">&#9670;&nbsp;</a></span>tovector()</h2>
@@ -186,47 +186,47 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 <p><code>vector</code> にして返す / <code>O(nlog(σ))</code> (n 回 access するよりも高速) </p>
 
-<p class="definition">Definition at line <a class="el" href="dynamic__wavelet__tree_8cpp_source.html#l00287">287</a> of file <a class="el" href="dynamic__wavelet__tree_8cpp_source.html">dynamic_wavelet_tree.cpp</a>.</p>
-<div class="fragment"><div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;                                   {</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;            vector&lt;T&gt; a(<a class="code" href="classtitan23_1_1DynamicWaveletTree.html#a7be1bb911b0c138a4b3cbb591c9ca1c8">len</a>(), 0);</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;            vector&lt;int&gt; buff0(a.size()), buff1;</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;            <span class="keyword">auto</span> dfs = [&amp;] (<span class="keyword">auto</span> &amp;&amp;dfs,</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;                            Node* node,</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;                            <span class="keywordtype">int</span> bit,</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;                            <span class="keywordtype">bool</span> flag01,</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;                            <span class="keywordtype">int</span> s0, <span class="keywordtype">int</span> g0,</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;                            <span class="keywordtype">int</span> s1, <span class="keywordtype">int</span> g1</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;                            ) -&gt; <span class="keywordtype">void</span> {</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;                <span class="keywordtype">int</span> s = flag01 ? s1 : s0;</div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;                <span class="keywordtype">int</span> g = flag01 ? g1 : g0;</div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;                <span class="keywordflow">if</span> (s == g || bit &lt; 0) <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;                vector&lt;int&gt; &amp;vec = flag01 ? buff1 : buff0;</div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;                <span class="keyword">const</span> vector&lt;uint8_t&gt; &amp;v = node-&gt;v.tovector();</div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;                <span class="keywordtype">int</span> start_0 = buff0.size(), start_1 = buff1.size();</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;                <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = s; i &lt; g; ++i) {</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;                    <span class="keywordflow">if</span> (v[i-s]) {</div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;                        a[vec[i]] |= (T)1 &lt;&lt; bit;</div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;                        buff1.emplace_back(vec[i]);</div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;                    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;                        buff0.emplace_back(vec[i]);</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;                    }</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;                }</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;                <span class="keywordtype">int</span> end_0 = buff0.size(), end_1 = buff1.size();</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;                dfs(dfs, node-&gt;left,  bit-1, 0, start_0, end_0, start_1, end_1);</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;                dfs(dfs, node-&gt;right, bit-1, 1, start_0, end_0, start_1, end_1);</div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;            };</div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; a.size(); ++i) {</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;                buff0[i] = i;</div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;            }</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;            dfs(dfs, this-&gt;root, _log-1, 0, 0, a.size(), 0, 0);</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;            <span class="keywordflow">return</span> a;</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;        }</div>
-<div class="ttc" id="aclasstitan23_1_1DynamicWaveletTree_html_a7be1bb911b0c138a4b3cbb591c9ca1c8"><div class="ttname"><a href="classtitan23_1_1DynamicWaveletTree.html#a7be1bb911b0c138a4b3cbb591c9ca1c8">titan23::DynamicWaveletTree::len</a></div><div class="ttdeci">int len() const</div><div class="ttdoc">要素数を返す / O(1)</div><div class="ttdef"><b>Definition:</b> <a href="dynamic__wavelet__tree_8cpp_source.html#l00281">dynamic_wavelet_tree.cpp:281</a></div></div>
+<p class="definition">Definition at line <a class="el" href="dynamic__wavelet__tree_8cpp_source.html#l01035">1035</a> of file <a class="el" href="dynamic__wavelet__tree_8cpp_source.html">dynamic_wavelet_tree.cpp</a>.</p>
+<div class="fragment"><div class="line"><a name="l01035"></a><span class="lineno"> 1035</span>&#160;                                   {</div>
+<div class="line"><a name="l01036"></a><span class="lineno"> 1036</span>&#160;            vector&lt;T&gt; a(<a class="code" href="classtitan23_1_1DynamicWaveletTree.html#a7be1bb911b0c138a4b3cbb591c9ca1c8">len</a>(), 0);</div>
+<div class="line"><a name="l01037"></a><span class="lineno"> 1037</span>&#160;            vector&lt;int&gt; buff0(a.size()), buff1;</div>
+<div class="line"><a name="l01038"></a><span class="lineno"> 1038</span>&#160;            <span class="keyword">auto</span> dfs = [&amp;] (<span class="keyword">auto</span> &amp;&amp;dfs,</div>
+<div class="line"><a name="l01039"></a><span class="lineno"> 1039</span>&#160;                            Node* node,</div>
+<div class="line"><a name="l01040"></a><span class="lineno"> 1040</span>&#160;                            <span class="keywordtype">int</span> bit,</div>
+<div class="line"><a name="l01041"></a><span class="lineno"> 1041</span>&#160;                            <span class="keywordtype">bool</span> flag01,</div>
+<div class="line"><a name="l01042"></a><span class="lineno"> 1042</span>&#160;                            <span class="keywordtype">int</span> s0, <span class="keywordtype">int</span> g0,</div>
+<div class="line"><a name="l01043"></a><span class="lineno"> 1043</span>&#160;                            <span class="keywordtype">int</span> s1, <span class="keywordtype">int</span> g1</div>
+<div class="line"><a name="l01044"></a><span class="lineno"> 1044</span>&#160;                            ) -&gt; <span class="keywordtype">void</span> {</div>
+<div class="line"><a name="l01045"></a><span class="lineno"> 1045</span>&#160;                <span class="keywordtype">int</span> s = flag01 ? s1 : s0;</div>
+<div class="line"><a name="l01046"></a><span class="lineno"> 1046</span>&#160;                <span class="keywordtype">int</span> g = flag01 ? g1 : g0;</div>
+<div class="line"><a name="l01047"></a><span class="lineno"> 1047</span>&#160;                <span class="keywordflow">if</span> (s == g || bit &lt; 0) <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l01048"></a><span class="lineno"> 1048</span>&#160;                vector&lt;int&gt; &amp;vec = flag01 ? buff1 : buff0;</div>
+<div class="line"><a name="l01049"></a><span class="lineno"> 1049</span>&#160;                <span class="keyword">const</span> vector&lt;uint8_t&gt; &amp;v = node-&gt;v.tovector();</div>
+<div class="line"><a name="l01050"></a><span class="lineno"> 1050</span>&#160;                <span class="keywordtype">int</span> start_0 = buff0.size(), start_1 = buff1.size();</div>
+<div class="line"><a name="l01051"></a><span class="lineno"> 1051</span>&#160;                <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = s; i &lt; g; ++i) {</div>
+<div class="line"><a name="l01052"></a><span class="lineno"> 1052</span>&#160;                    <span class="keywordflow">if</span> (v[i-s]) {</div>
+<div class="line"><a name="l01053"></a><span class="lineno"> 1053</span>&#160;                        a[vec[i]] |= (T)1 &lt;&lt; bit;</div>
+<div class="line"><a name="l01054"></a><span class="lineno"> 1054</span>&#160;                        buff1.emplace_back(vec[i]);</div>
+<div class="line"><a name="l01055"></a><span class="lineno"> 1055</span>&#160;                    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l01056"></a><span class="lineno"> 1056</span>&#160;                        buff0.emplace_back(vec[i]);</div>
+<div class="line"><a name="l01057"></a><span class="lineno"> 1057</span>&#160;                    }</div>
+<div class="line"><a name="l01058"></a><span class="lineno"> 1058</span>&#160;                }</div>
+<div class="line"><a name="l01059"></a><span class="lineno"> 1059</span>&#160;                <span class="keywordtype">int</span> end_0 = buff0.size(), end_1 = buff1.size();</div>
+<div class="line"><a name="l01060"></a><span class="lineno"> 1060</span>&#160;                dfs(dfs, node-&gt;left,  bit-1, 0, start_0, end_0, start_1, end_1);</div>
+<div class="line"><a name="l01061"></a><span class="lineno"> 1061</span>&#160;                dfs(dfs, node-&gt;right, bit-1, 1, start_0, end_0, start_1, end_1);</div>
+<div class="line"><a name="l01062"></a><span class="lineno"> 1062</span>&#160;            };</div>
+<div class="line"><a name="l01063"></a><span class="lineno"> 1063</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; a.size(); ++i) {</div>
+<div class="line"><a name="l01064"></a><span class="lineno"> 1064</span>&#160;                buff0[i] = i;</div>
+<div class="line"><a name="l01065"></a><span class="lineno"> 1065</span>&#160;            }</div>
+<div class="line"><a name="l01066"></a><span class="lineno"> 1066</span>&#160;            dfs(dfs, this-&gt;root, _log-1, 0, 0, a.size(), 0, 0);</div>
+<div class="line"><a name="l01067"></a><span class="lineno"> 1067</span>&#160;            <span class="keywordflow">return</span> a;</div>
+<div class="line"><a name="l01068"></a><span class="lineno"> 1068</span>&#160;        }</div>
+<div class="ttc" id="aclasstitan23_1_1DynamicWaveletTree_html_a7be1bb911b0c138a4b3cbb591c9ca1c8"><div class="ttname"><a href="classtitan23_1_1DynamicWaveletTree.html#a7be1bb911b0c138a4b3cbb591c9ca1c8">titan23::DynamicWaveletTree::len</a></div><div class="ttdeci">int len() const</div><div class="ttdoc">要素数を返す / O(1)</div><div class="ttdef"><b>Definition:</b> <a href="dynamic__wavelet__tree_8cpp_source.html#l01029">dynamic_wavelet_tree.cpp:1029</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>titan_cpplib/data_structures/<a class="el" href="dynamic__wavelet__tree_8cpp_source.html">dynamic_wavelet_tree.cpp</a></li>
+<li>titan_cpplib_expanded/data_structures/<a class="el" href="dynamic__wavelet__tree_8cpp_source.html">dynamic_wavelet_tree.cpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

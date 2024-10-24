@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/sa.cpp" line="23" column="13" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="23" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/ahc/sa.cpp" line="311" column="13" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="311" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structtitan23_1_1sa_1_1Changed_1a92eb93a5ca18fcea94adb95a09b5779c" prot="public" static="no" mutable="no">
         <type>ScoreType</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/sa.cpp" line="24" column="19" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="24" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/ahc/sa.cpp" line="312" column="19" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="312" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -42,14 +42,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/sa.cpp" line="25" column="9" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="25" bodyend="25"/>
+        <location file="titan_cpplib_expanded/ahc/sa.cpp" line="313" column="9" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="313" bodyend="313"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/ahc/sa.cpp" line="22" column="5" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="22" bodyend="26"/>
+    <location file="titan_cpplib_expanded/ahc/sa.cpp" line="310" column="5" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="310" bodyend="314"/>
     <listofallmembers>
       <member refid="structtitan23_1_1sa_1_1Changed_1af88e3ad43a8b279c6f870d28a2e84e4e" prot="public" virt="non-virtual"><scope>titan23::sa::Changed</scope><name>Changed</name></member>
       <member refid="structtitan23_1_1sa_1_1Changed_1a92eb93a5ca18fcea94adb95a09b5779c" prot="public" virt="non-virtual"><scope>titan23::sa::Changed</scope><name>pre_score</name></member>

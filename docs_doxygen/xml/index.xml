@@ -43,16 +43,20 @@
   <compound refid="classtitan23_1_1AVLTreeBitVector" kind="class"><name>titan23::AVLTreeBitVector</name>
     <member refid="classtitan23_1_1AVLTreeBitVector_1a52216d4dc5f46e10e19830f5626eb777" kind="typedef"><name>Node</name></member>
     <member refid="classtitan23_1_1AVLTreeBitVector_1ad664e0f43b7b972e2efbde82c49c4937" kind="typedef"><name>uint128</name></member>
-    <member refid="classtitan23_1_1AVLTreeBitVector_1abe1bf08290ce8f7f33377751dd2495ee" kind="variable"><name>_W</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a52216d4dc5f46e10e19830f5626eb777" kind="typedef"><name>Node</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1ad664e0f43b7b972e2efbde82c49c4937" kind="typedef"><name>uint128</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a52216d4dc5f46e10e19830f5626eb777" kind="typedef"><name>Node</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1ad664e0f43b7b972e2efbde82c49c4937" kind="typedef"><name>uint128</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a3914e68a48522856d06ac904e3f86761" kind="variable"><name>_W</name></member>
     <member refid="classtitan23_1_1AVLTreeBitVector_1aaa86a4ab52fe319e3efe4ddd59584ddb" kind="variable"><name>_root</name></member>
     <member refid="classtitan23_1_1AVLTreeBitVector_1a662b73f6a66125a871b4c7424541f8ce" kind="variable"><name>_end</name></member>
-    <member refid="classtitan23_1_1AVLTreeBitVector_1a30dd2247b236d0e29b684c802a2bc161" kind="variable"><name>_key</name></member>
-    <member refid="classtitan23_1_1AVLTreeBitVector_1acafc91f86f236c7bcf30454a71ce67f0" kind="variable"><name>_left</name></member>
-    <member refid="classtitan23_1_1AVLTreeBitVector_1a058ed7f5e28a529659de303f97163aed" kind="variable"><name>_right</name></member>
-    <member refid="classtitan23_1_1AVLTreeBitVector_1a2f54ee0dec04a6ed0de2d02fd43d91ed" kind="variable"><name>_size</name></member>
-    <member refid="classtitan23_1_1AVLTreeBitVector_1ab6ae5f64ae8edd048636dd19029773e9" kind="variable"><name>_total</name></member>
-    <member refid="classtitan23_1_1AVLTreeBitVector_1aa8772d2963db0b7bbfd09febd03efa98" kind="variable"><name>_bit_len</name></member>
-    <member refid="classtitan23_1_1AVLTreeBitVector_1a64c0999f72bdd0ae23b205777286fc9e" kind="variable"><name>_balance</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1af1f01c26e46e9365047710577ab80898" kind="variable"><name>_key</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1abeae4f884ed72341f5b4f0748b39d135" kind="variable"><name>_left</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a9cb2216c903052cda7f0acf5fdafca2f" kind="variable"><name>_right</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a96456b2f2b8c08326c6096dac6e9f138" kind="variable"><name>_size</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1ae0e1cc694853f635b0e1c14e35024de9" kind="variable"><name>_total</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a6f18aa7c734e693b50fb3fa4aae2ec09" kind="variable"><name>_bit_len</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1aa6c9ef6d4aca6374f362dae73a5cc09f" kind="variable"><name>_balance</name></member>
     <member refid="classtitan23_1_1AVLTreeBitVector_1a4c29613f6e76a1c99d19b4518e5cbeee" kind="function"><name>_build</name></member>
     <member refid="classtitan23_1_1AVLTreeBitVector_1a03c77b2ca93448c1da47f6f33a07d14b" kind="function"><name>_popcount</name></member>
     <member refid="classtitan23_1_1AVLTreeBitVector_1ae5c2a042f9256cb31fe2b9cd05f4e3ed" kind="function"><name>_rotate_L</name></member>
@@ -66,6 +70,72 @@
     <member refid="classtitan23_1_1AVLTreeBitVector_1a939699a065f5559fde09c83eb128e15e" kind="function"><name>_bit_pop</name></member>
     <member refid="classtitan23_1_1AVLTreeBitVector_1a931ad8b14dc6a8f3af7dec036d0feefc" kind="function"><name>_pop_under</name></member>
     <member refid="classtitan23_1_1AVLTreeBitVector_1a6198f116b7515fbc9efc24a402cbc187" kind="function"><name>_debug_acc</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a4c29613f6e76a1c99d19b4518e5cbeee" kind="function"><name>_build</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a03c77b2ca93448c1da47f6f33a07d14b" kind="function"><name>_popcount</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1ae5c2a042f9256cb31fe2b9cd05f4e3ed" kind="function"><name>_rotate_L</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1ac835e6fb8d4877d47da11661327af0ab" kind="function"><name>_rotate_R</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a69142f082b3906b833e6eeb9cc8b007a" kind="function"><name>_update_balance</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a93c0c8b52ef245f52f5a46ca662d37e5" kind="function"><name>_rotate_LR</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a502ae2871c22827b3e23f314e0275f92" kind="function"><name>_rotate_RL</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a31993b01a67781564347cbca7ad49664" kind="function"><name>_pref</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a4f1f2dbd88372645630d2bf5e8dd0794" kind="function"><name>_make_node</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a5ae582dc2056cfdcf409cf78e2d92d92" kind="function"><name>_bit_insert</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a939699a065f5559fde09c83eb128e15e" kind="function"><name>_bit_pop</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a931ad8b14dc6a8f3af7dec036d0feefc" kind="function"><name>_pop_under</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a6198f116b7515fbc9efc24a402cbc187" kind="function"><name>_debug_acc</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a4c29613f6e76a1c99d19b4518e5cbeee" kind="function"><name>_build</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a03c77b2ca93448c1da47f6f33a07d14b" kind="function"><name>_popcount</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1ae5c2a042f9256cb31fe2b9cd05f4e3ed" kind="function"><name>_rotate_L</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1ac835e6fb8d4877d47da11661327af0ab" kind="function"><name>_rotate_R</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a69142f082b3906b833e6eeb9cc8b007a" kind="function"><name>_update_balance</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a93c0c8b52ef245f52f5a46ca662d37e5" kind="function"><name>_rotate_LR</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a502ae2871c22827b3e23f314e0275f92" kind="function"><name>_rotate_RL</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a31993b01a67781564347cbca7ad49664" kind="function"><name>_pref</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a4f1f2dbd88372645630d2bf5e8dd0794" kind="function"><name>_make_node</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a5ae582dc2056cfdcf409cf78e2d92d92" kind="function"><name>_bit_insert</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a939699a065f5559fde09c83eb128e15e" kind="function"><name>_bit_pop</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a931ad8b14dc6a8f3af7dec036d0feefc" kind="function"><name>_pop_under</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a6198f116b7515fbc9efc24a402cbc187" kind="function"><name>_debug_acc</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1acf0eea93c46c0a3a890d9b91a53b5e01" kind="function"><name>AVLTreeBitVector</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1ac51123af31270a35375c883efd1253de" kind="function"><name>AVLTreeBitVector</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a9fb6da96c9eee7ce0d71d94f2e954f10" kind="function"><name>reserve</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1ad7e68f4e8f630bfb97a9f9187284643d" kind="function"><name>insert</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a82e109827a48041446851e3c4d7e5f8f" kind="function"><name>pop</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a217caf3f2c2bf866fc95a6d5bca713c0" kind="function"><name>set</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a9c6450a157f4772b354233de2c43383c" kind="function"><name>tovector</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1ab3ead37f005e465bc35f9a7f4323d354" kind="function"><name>access</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1ab670685b529c10f037ce27870ad68079" kind="function"><name>rank0</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1abd1ab07feee878a7800473666a29d889" kind="function"><name>rank1</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a22c1085c2a88f9e4f51cfeb1e73c3a6a" kind="function"><name>rank</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a54f6b1e482654db1a170662fceeb9b0e" kind="function"><name>select0</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a3bea18e9be799cc765f958033c684aad" kind="function"><name>select1</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a6ed8caf281f54e2c072c523ce13016ae" kind="function"><name>select</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a2866195da572c3229480d6f7ee9a5a12" kind="function"><name>_insert_and_rank1</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1aed4a34632f525c41097ebe2ed4880fd0" kind="function"><name>_access_pop_and_rank1</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1aa813de9fd828a694f3a1c642aa412fef" kind="function"><name>_access_ans_rank1</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a4390935c2ccbf67028e4b5a915e1bf9d" kind="function"><name>print</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1aaaba0c03aefb1065d43868563efafd97" kind="function"><name>empty</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a77833e4a50756086f85eb002d092846e" kind="function"><name>len</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1acf0eea93c46c0a3a890d9b91a53b5e01" kind="function"><name>AVLTreeBitVector</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1ac51123af31270a35375c883efd1253de" kind="function"><name>AVLTreeBitVector</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a9fb6da96c9eee7ce0d71d94f2e954f10" kind="function"><name>reserve</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1ad7e68f4e8f630bfb97a9f9187284643d" kind="function"><name>insert</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a82e109827a48041446851e3c4d7e5f8f" kind="function"><name>pop</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a217caf3f2c2bf866fc95a6d5bca713c0" kind="function"><name>set</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a9c6450a157f4772b354233de2c43383c" kind="function"><name>tovector</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1ab3ead37f005e465bc35f9a7f4323d354" kind="function"><name>access</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1ab670685b529c10f037ce27870ad68079" kind="function"><name>rank0</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1abd1ab07feee878a7800473666a29d889" kind="function"><name>rank1</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a22c1085c2a88f9e4f51cfeb1e73c3a6a" kind="function"><name>rank</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a54f6b1e482654db1a170662fceeb9b0e" kind="function"><name>select0</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a3bea18e9be799cc765f958033c684aad" kind="function"><name>select1</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a6ed8caf281f54e2c072c523ce13016ae" kind="function"><name>select</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a2866195da572c3229480d6f7ee9a5a12" kind="function"><name>_insert_and_rank1</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1aed4a34632f525c41097ebe2ed4880fd0" kind="function"><name>_access_pop_and_rank1</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1aa813de9fd828a694f3a1c642aa412fef" kind="function"><name>_access_ans_rank1</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a4390935c2ccbf67028e4b5a915e1bf9d" kind="function"><name>print</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1aaaba0c03aefb1065d43868563efafd97" kind="function"><name>empty</name></member>
+    <member refid="classtitan23_1_1AVLTreeBitVector_1a77833e4a50756086f85eb002d092846e" kind="function"><name>len</name></member>
     <member refid="classtitan23_1_1AVLTreeBitVector_1acf0eea93c46c0a3a890d9b91a53b5e01" kind="function"><name>AVLTreeBitVector</name></member>
     <member refid="classtitan23_1_1AVLTreeBitVector_1ac51123af31270a35375c883efd1253de" kind="function"><name>AVLTreeBitVector</name></member>
     <member refid="classtitan23_1_1AVLTreeBitVector_1a9fb6da96c9eee7ce0d71d94f2e954f10" kind="function"><name>reserve</name></member>
@@ -180,6 +250,22 @@
     <member refid="classtitan23_1_1BBSTNode_1a45a86c0c60aadbfcbebb6bd30afb5d65" kind="function"><name>_max</name></member>
     <member refid="classtitan23_1_1BBSTNode_1a9d0b64aedb8d1d7837e17f2761602914" kind="function"><name>_next</name></member>
     <member refid="classtitan23_1_1BBSTNode_1ae7e7eec32ae00d9615028f0071bc1c4e" kind="function"><name>_prev</name></member>
+    <member refid="classtitan23_1_1BBSTNode_1ae8dbbe6decc9f240bcc96b81e4b21c0d" kind="function"><name>rotate_right</name></member>
+    <member refid="classtitan23_1_1BBSTNode_1a6447bf53a3f0e85311f48fe1d4d63bc9" kind="function"><name>rotate_left</name></member>
+    <member refid="classtitan23_1_1BBSTNode_1ae81e931c26f67a17f4945579c3dcf8b8" kind="function"><name>rotate_LR</name></member>
+    <member refid="classtitan23_1_1BBSTNode_1a8865de753d13d0a610bea406ffe943b7" kind="function"><name>rotate_RL</name></member>
+    <member refid="classtitan23_1_1BBSTNode_1a099c407a5c3af1a3351e1efe151e7d1a" kind="function"><name>_min</name></member>
+    <member refid="classtitan23_1_1BBSTNode_1a45a86c0c60aadbfcbebb6bd30afb5d65" kind="function"><name>_max</name></member>
+    <member refid="classtitan23_1_1BBSTNode_1a9d0b64aedb8d1d7837e17f2761602914" kind="function"><name>_next</name></member>
+    <member refid="classtitan23_1_1BBSTNode_1ae7e7eec32ae00d9615028f0071bc1c4e" kind="function"><name>_prev</name></member>
+    <member refid="classtitan23_1_1BBSTNode_1ae8dbbe6decc9f240bcc96b81e4b21c0d" kind="function"><name>rotate_right</name></member>
+    <member refid="classtitan23_1_1BBSTNode_1a6447bf53a3f0e85311f48fe1d4d63bc9" kind="function"><name>rotate_left</name></member>
+    <member refid="classtitan23_1_1BBSTNode_1ae81e931c26f67a17f4945579c3dcf8b8" kind="function"><name>rotate_LR</name></member>
+    <member refid="classtitan23_1_1BBSTNode_1a8865de753d13d0a610bea406ffe943b7" kind="function"><name>rotate_RL</name></member>
+    <member refid="classtitan23_1_1BBSTNode_1a099c407a5c3af1a3351e1efe151e7d1a" kind="function"><name>_min</name></member>
+    <member refid="classtitan23_1_1BBSTNode_1a45a86c0c60aadbfcbebb6bd30afb5d65" kind="function"><name>_max</name></member>
+    <member refid="classtitan23_1_1BBSTNode_1a9d0b64aedb8d1d7837e17f2761602914" kind="function"><name>_next</name></member>
+    <member refid="classtitan23_1_1BBSTNode_1ae7e7eec32ae00d9615028f0071bc1c4e" kind="function"><name>_prev</name></member>
   </compound>
   <compound refid="structbeam__search__with__tree_1_1BeamParam" kind="struct"><name>beam_search_with_tree::BeamParam</name>
     <member refid="structbeam__search__with__tree_1_1BeamParam_1ab5fed34dfb7b9486678481e90665c6bc" kind="variable"><name>MAX_TURN</name></member>
@@ -284,10 +370,38 @@
   </compound>
   <compound refid="classtitan23_1_1BitVector" kind="class"><name>titan23::BitVector</name>
     <member refid="classtitan23_1_1BitVector_1aa108efd820b5fd7b13ee2d06d9731b63" kind="typedef"><name>u64</name></member>
+    <member refid="classtitan23_1_1BitVector_1aa108efd820b5fd7b13ee2d06d9731b63" kind="typedef"><name>u64</name></member>
+    <member refid="classtitan23_1_1BitVector_1aa108efd820b5fd7b13ee2d06d9731b63" kind="typedef"><name>u64</name></member>
     <member refid="classtitan23_1_1BitVector_1a312910140bd0f85becf4061ab878b495" kind="variable"><name>n</name></member>
     <member refid="classtitan23_1_1BitVector_1a49a9be63ca17e03c557bbf4dee1df252" kind="variable"><name>bsize</name></member>
-    <member refid="classtitan23_1_1BitVector_1a9d868861d85a8fb02b44bfddceac8c4a" kind="variable"><name>bit</name></member>
-    <member refid="classtitan23_1_1BitVector_1acc3bd601b520157351a87a331fb0c866" kind="variable"><name>acc</name></member>
+    <member refid="classtitan23_1_1BitVector_1a88913e1bea5c1e26dc7d923a7ee2d847" kind="variable"><name>bit</name></member>
+    <member refid="classtitan23_1_1BitVector_1ad1fed767f24fb90df5ac6ec7a7c9e1ed" kind="variable"><name>acc</name></member>
+    <member refid="classtitan23_1_1BitVector_1aa1d6b3738cc1d4455d1f8a8aef2a9cf7" kind="function"><name>BitVector</name></member>
+    <member refid="classtitan23_1_1BitVector_1a37bcd12aa086ffb16f805e3c063fb14b" kind="function"><name>BitVector</name></member>
+    <member refid="classtitan23_1_1BitVector_1ab405031fbc228b63b5faa92172a2754e" kind="function"><name>set</name></member>
+    <member refid="classtitan23_1_1BitVector_1a5b9e6b7b05372e57d05822879de94c29" kind="function"><name>build</name></member>
+    <member refid="classtitan23_1_1BitVector_1afd3a5c642e1a4b44762e0969ead84221" kind="function"><name>access</name></member>
+    <member refid="classtitan23_1_1BitVector_1adf16fccca98ce9079636908ebb18ed2f" kind="function"><name>rank0</name></member>
+    <member refid="classtitan23_1_1BitVector_1a7ef3fd030dd94b4a39567bc29f3619fa" kind="function"><name>rank1</name></member>
+    <member refid="classtitan23_1_1BitVector_1ab4fbe0b75be5c828b8ba19b6a48e1db2" kind="function"><name>rank</name></member>
+    <member refid="classtitan23_1_1BitVector_1a64886a714d8feef073f014a01e84a4ef" kind="function"><name>select0</name></member>
+    <member refid="classtitan23_1_1BitVector_1acb00472a3ace765cb6e5a0239ae23b29" kind="function"><name>select1</name></member>
+    <member refid="classtitan23_1_1BitVector_1a8af0b37bba0cbdae4ed402a2d597879d" kind="function"><name>select</name></member>
+    <member refid="classtitan23_1_1BitVector_1a549e1e72f1f5450cc6cb5995bf0081ca" kind="function"><name>len</name></member>
+    <member refid="classtitan23_1_1BitVector_1a61ed6fd8862fbf0b8d49cb417c81f78d" kind="function"><name>print</name></member>
+    <member refid="classtitan23_1_1BitVector_1aa1d6b3738cc1d4455d1f8a8aef2a9cf7" kind="function"><name>BitVector</name></member>
+    <member refid="classtitan23_1_1BitVector_1a37bcd12aa086ffb16f805e3c063fb14b" kind="function"><name>BitVector</name></member>
+    <member refid="classtitan23_1_1BitVector_1ab405031fbc228b63b5faa92172a2754e" kind="function"><name>set</name></member>
+    <member refid="classtitan23_1_1BitVector_1a5b9e6b7b05372e57d05822879de94c29" kind="function"><name>build</name></member>
+    <member refid="classtitan23_1_1BitVector_1afd3a5c642e1a4b44762e0969ead84221" kind="function"><name>access</name></member>
+    <member refid="classtitan23_1_1BitVector_1adf16fccca98ce9079636908ebb18ed2f" kind="function"><name>rank0</name></member>
+    <member refid="classtitan23_1_1BitVector_1a7ef3fd030dd94b4a39567bc29f3619fa" kind="function"><name>rank1</name></member>
+    <member refid="classtitan23_1_1BitVector_1ab4fbe0b75be5c828b8ba19b6a48e1db2" kind="function"><name>rank</name></member>
+    <member refid="classtitan23_1_1BitVector_1a64886a714d8feef073f014a01e84a4ef" kind="function"><name>select0</name></member>
+    <member refid="classtitan23_1_1BitVector_1acb00472a3ace765cb6e5a0239ae23b29" kind="function"><name>select1</name></member>
+    <member refid="classtitan23_1_1BitVector_1a8af0b37bba0cbdae4ed402a2d597879d" kind="function"><name>select</name></member>
+    <member refid="classtitan23_1_1BitVector_1a549e1e72f1f5450cc6cb5995bf0081ca" kind="function"><name>len</name></member>
+    <member refid="classtitan23_1_1BitVector_1a61ed6fd8862fbf0b8d49cb417c81f78d" kind="function"><name>print</name></member>
     <member refid="classtitan23_1_1BitVector_1aa1d6b3738cc1d4455d1f8a8aef2a9cf7" kind="function"><name>BitVector</name></member>
     <member refid="classtitan23_1_1BitVector_1a37bcd12aa086ffb16f805e3c063fb14b" kind="function"><name>BitVector</name></member>
     <member refid="classtitan23_1_1BitVector_1ab405031fbc228b63b5faa92172a2754e" kind="function"><name>set</name></member>
@@ -309,7 +423,16 @@
   </compound>
   <compound refid="classtitan23_1_1CumulativeSum" kind="class"><name>titan23::CumulativeSum</name>
     <member refid="classtitan23_1_1CumulativeSum_1a08617ffbd37ac1061725b15dad0e865b" kind="variable"><name>n</name></member>
-    <member refid="classtitan23_1_1CumulativeSum_1a6af3dd06288b281a2bc0f37e170d1ab2" kind="variable"><name>acc</name></member>
+    <member refid="classtitan23_1_1CumulativeSum_1ad0299951450d43a8252d66b47bf89efb" kind="variable"><name>acc</name></member>
+    <member refid="classtitan23_1_1CumulativeSum_1ae93b4c3409de384ae2fdfec825797451" kind="function"><name>CumulativeSum</name></member>
+    <member refid="classtitan23_1_1CumulativeSum_1a606f3a2cf4cef31ad24e429a25838012" kind="function"><name>CumulativeSum</name></member>
+    <member refid="classtitan23_1_1CumulativeSum_1a5fa037f2920ab329f1c8668598363b52" kind="function"><name>pref</name></member>
+    <member refid="classtitan23_1_1CumulativeSum_1a5bc1d4a5dea0cfe6a4c026f1fccfa8ef" kind="function"><name>all_sum</name></member>
+    <member refid="classtitan23_1_1CumulativeSum_1ac12d01787658e6e91fa3d471eae03864" kind="function"><name>sum</name></member>
+    <member refid="classtitan23_1_1CumulativeSum_1a9dd78ace7793f96da84a34f8d79fa8bf" kind="function"><name>prod</name></member>
+    <member refid="classtitan23_1_1CumulativeSum_1a9844d6f91be1582781dc7af97b57b77a" kind="function"><name>all_prod</name></member>
+    <member refid="classtitan23_1_1CumulativeSum_1a914ff6bf10b5bfaffbde0b7a22707456" kind="function"><name>len</name></member>
+    <member refid="classtitan23_1_1CumulativeSum_1af5d879656e99410be8f1ac3a6159bfb7" kind="function"><name>print</name></member>
     <member refid="classtitan23_1_1CumulativeSum_1ae93b4c3409de384ae2fdfec825797451" kind="function"><name>CumulativeSum</name></member>
     <member refid="classtitan23_1_1CumulativeSum_1a606f3a2cf4cef31ad24e429a25838012" kind="function"><name>CumulativeSum</name></member>
     <member refid="classtitan23_1_1CumulativeSum_1a5fa037f2920ab329f1c8668598363b52" kind="function"><name>pref</name></member>
@@ -662,10 +785,12 @@
   </compound>
   <compound refid="classtitan23_1_1HashSet" kind="class"><name>titan23::HashSet</name>
     <member refid="classtitan23_1_1HashSet_1a1cd4ca6794b72461a5bc3856bb66ef3f" kind="typedef"><name>u64</name></member>
-    <member refid="classtitan23_1_1HashSet_1a469a94606a752bbf07a91d134bcffc56" kind="variable"><name>K</name></member>
-    <member refid="classtitan23_1_1HashSet_1ad6f2accac3c957633c7408f4acc67987" kind="variable"><name>M</name></member>
-    <member refid="classtitan23_1_1HashSet_1a68d3a80de5a4f76f5f808aa4bf4677c1" kind="variable"><name>exist</name></member>
-    <member refid="classtitan23_1_1HashSet_1af764951c2028447fff191cc2987fece6" kind="variable"><name>keys</name></member>
+    <member refid="classtitan23_1_1HashSet_1a1cd4ca6794b72461a5bc3856bb66ef3f" kind="typedef"><name>u64</name></member>
+    <member refid="classtitan23_1_1HashSet_1a1cd4ca6794b72461a5bc3856bb66ef3f" kind="typedef"><name>u64</name></member>
+    <member refid="classtitan23_1_1HashSet_1abc52de1c09eb51322fda16f47ec58b0e" kind="variable"><name>K</name></member>
+    <member refid="classtitan23_1_1HashSet_1ad2a52234141a94a1b729d5b799c862a8" kind="variable"><name>M</name></member>
+    <member refid="classtitan23_1_1HashSet_1afd00e967f3afde8bda3fcf81b58d0000" kind="variable"><name>exist</name></member>
+    <member refid="classtitan23_1_1HashSet_1a49cb3f0fc5c02d482832d3d4640756e7" kind="variable"><name>keys</name></member>
     <member refid="classtitan23_1_1HashSet_1ad380bba8514b553649756505ae540d26" kind="variable"><name>msk</name></member>
     <member refid="classtitan23_1_1HashSet_1a8d32e17d310a6c4b798442286ff4fe84" kind="variable"><name>xor_</name></member>
     <member refid="classtitan23_1_1HashSet_1acf25ff595f13fee085571c5106e6c9e2" kind="variable"><name>size</name></member>
@@ -673,6 +798,28 @@
     <member refid="classtitan23_1_1HashSet_1a99abdd10037eb08a2fac3337d93731cf" kind="function"><name>get_pos</name></member>
     <member refid="classtitan23_1_1HashSet_1addf60a589e33cf0edc156d6a84a952b3" kind="function"><name>bit_length</name></member>
     <member refid="classtitan23_1_1HashSet_1ab7263d3eda110550567c95c09836cd5b" kind="function"><name>rebuild</name></member>
+    <member refid="classtitan23_1_1HashSet_1aa4f56430eff51dd74740cb4023c98287" kind="function"><name>hash</name></member>
+    <member refid="classtitan23_1_1HashSet_1a99abdd10037eb08a2fac3337d93731cf" kind="function"><name>get_pos</name></member>
+    <member refid="classtitan23_1_1HashSet_1addf60a589e33cf0edc156d6a84a952b3" kind="function"><name>bit_length</name></member>
+    <member refid="classtitan23_1_1HashSet_1ab7263d3eda110550567c95c09836cd5b" kind="function"><name>rebuild</name></member>
+    <member refid="classtitan23_1_1HashSet_1aa4f56430eff51dd74740cb4023c98287" kind="function"><name>hash</name></member>
+    <member refid="classtitan23_1_1HashSet_1a99abdd10037eb08a2fac3337d93731cf" kind="function"><name>get_pos</name></member>
+    <member refid="classtitan23_1_1HashSet_1addf60a589e33cf0edc156d6a84a952b3" kind="function"><name>bit_length</name></member>
+    <member refid="classtitan23_1_1HashSet_1ab7263d3eda110550567c95c09836cd5b" kind="function"><name>rebuild</name></member>
+    <member refid="classtitan23_1_1HashSet_1a3b4d87f26df307875773e8db189f41f0" kind="function"><name>HashSet</name></member>
+    <member refid="classtitan23_1_1HashSet_1a0552d19e55ac037f5f7acf476c47e7df" kind="function"><name>HashSet</name></member>
+    <member refid="classtitan23_1_1HashSet_1ab2478359682b1eb2924b6b339f9c535d" kind="function"><name>contains</name></member>
+    <member refid="classtitan23_1_1HashSet_1a211fe70c6f8a1c8431e5b956cd60d019" kind="function"><name>insert</name></member>
+    <member refid="classtitan23_1_1HashSet_1ade248abacd558d9f2ca00b51650bbb77" kind="function"><name>contains_insert</name></member>
+    <member refid="classtitan23_1_1HashSet_1a9488d1fac8c23e8b880949900c6abb37" kind="function"><name>clear</name></member>
+    <member refid="classtitan23_1_1HashSet_1afda2be50d36589f09503460e6f3b389c" kind="function"><name>len</name></member>
+    <member refid="classtitan23_1_1HashSet_1a3b4d87f26df307875773e8db189f41f0" kind="function"><name>HashSet</name></member>
+    <member refid="classtitan23_1_1HashSet_1a0552d19e55ac037f5f7acf476c47e7df" kind="function"><name>HashSet</name></member>
+    <member refid="classtitan23_1_1HashSet_1ab2478359682b1eb2924b6b339f9c535d" kind="function"><name>contains</name></member>
+    <member refid="classtitan23_1_1HashSet_1a211fe70c6f8a1c8431e5b956cd60d019" kind="function"><name>insert</name></member>
+    <member refid="classtitan23_1_1HashSet_1ade248abacd558d9f2ca00b51650bbb77" kind="function"><name>contains_insert</name></member>
+    <member refid="classtitan23_1_1HashSet_1a9488d1fac8c23e8b880949900c6abb37" kind="function"><name>clear</name></member>
+    <member refid="classtitan23_1_1HashSet_1afda2be50d36589f09503460e6f3b389c" kind="function"><name>len</name></member>
     <member refid="classtitan23_1_1HashSet_1a3b4d87f26df307875773e8db189f41f0" kind="function"><name>HashSet</name></member>
     <member refid="classtitan23_1_1HashSet_1a0552d19e55ac037f5f7acf476c47e7df" kind="function"><name>HashSet</name></member>
     <member refid="classtitan23_1_1HashSet_1ab2478359682b1eb2924b6b339f9c535d" kind="function"><name>contains</name></member>
@@ -712,17 +859,23 @@
     <member refid="classtitan23_1_1HashStringBase_1a261eff8017f0434c3dfdc7ce0c9151a8" kind="function"><name>unite</name></member>
   </compound>
   <compound refid="classtitan23_1_1HLD" kind="class"><name>titan23::HLD</name>
-    <member refid="classtitan23_1_1HLD_1a703f067fdd9c686c82152db93d718bf6" kind="variable"><name>G</name></member>
+    <member refid="classtitan23_1_1HLD_1a2fbe0fca5416ac7e8ded75dcd5d338fa" kind="variable"><name>G</name></member>
     <member refid="classtitan23_1_1HLD_1abc5700210b55d0d240d1fb2d2896aca1" kind="variable"><name>root</name></member>
     <member refid="classtitan23_1_1HLD_1a0db20ef6bbe7d4d9c4ee0fc55acfed51" kind="variable"><name>n</name></member>
-    <member refid="classtitan23_1_1HLD_1a9d813e557dbe4647fa832bfe14e2c76e" kind="variable"><name>size</name></member>
-    <member refid="classtitan23_1_1HLD_1a9dfaf167a71aa226e2a501f9c2fe4168" kind="variable"><name>par</name></member>
-    <member refid="classtitan23_1_1HLD_1a95deec28974895f787e06432201910bf" kind="variable"><name>dep</name></member>
-    <member refid="classtitan23_1_1HLD_1aec3fc6cad353974373482cc0223a43c8" kind="variable"><name>nodein</name></member>
-    <member refid="classtitan23_1_1HLD_1ae4e43aa9f36079548b33b410a0a63482" kind="variable"><name>nodeout</name></member>
-    <member refid="classtitan23_1_1HLD_1a488c375acd20e43b39007845ad6d3c3e" kind="variable"><name>head</name></member>
-    <member refid="classtitan23_1_1HLD_1a60fb8caa0bb5a6363677626dc774e9a1" kind="variable"><name>hld</name></member>
+    <member refid="classtitan23_1_1HLD_1a0978f38f5c03dbbcb3360429edada9e5" kind="variable"><name>size</name></member>
+    <member refid="classtitan23_1_1HLD_1aa328c95424cbe73c0fe98f39ce622cb4" kind="variable"><name>par</name></member>
+    <member refid="classtitan23_1_1HLD_1a64178e7eb08aada8e6fa07158eb8ec70" kind="variable"><name>dep</name></member>
+    <member refid="classtitan23_1_1HLD_1a1afbb848bdc8d7d20760d3b0311167a8" kind="variable"><name>nodein</name></member>
+    <member refid="classtitan23_1_1HLD_1a54cdeac359ffb47e0e4cb30fc6c97c08" kind="variable"><name>nodeout</name></member>
+    <member refid="classtitan23_1_1HLD_1a5f000458727afc73f175005094a3e863" kind="variable"><name>head</name></member>
+    <member refid="classtitan23_1_1HLD_1a72ac462d450d50483fbba97a8db77d4a" kind="variable"><name>hld</name></member>
     <member refid="classtitan23_1_1HLD_1a91ad3257975d735929bf47f39f7c6ee4" kind="function"><name>_dfs</name></member>
+    <member refid="classtitan23_1_1HLD_1a91ad3257975d735929bf47f39f7c6ee4" kind="function"><name>_dfs</name></member>
+    <member refid="classtitan23_1_1HLD_1abc18a90e76018c5b9e22c66ec995f919" kind="function"><name>HLD</name></member>
+    <member refid="classtitan23_1_1HLD_1aa149e089ed04c99eb4ad21cdd7dbbc6f" kind="function"><name>HLD</name></member>
+    <member refid="classtitan23_1_1HLD_1aa284c506a754749ec8f6ef754742f41f" kind="function"><name>build_list</name></member>
+    <member refid="classtitan23_1_1HLD_1a60937a92ca64b98a8f2725b30c50d29a" kind="function"><name>lca</name></member>
+    <member refid="classtitan23_1_1HLD_1a7f8c3602e09ef9f3ce30a3f22ddbc48a" kind="function"><name>path_kth_elm</name></member>
     <member refid="classtitan23_1_1HLD_1abc18a90e76018c5b9e22c66ec995f919" kind="function"><name>HLD</name></member>
     <member refid="classtitan23_1_1HLD_1aa149e089ed04c99eb4ad21cdd7dbbc6f" kind="function"><name>HLD</name></member>
     <member refid="classtitan23_1_1HLD_1aa284c506a754749ec8f6ef754742f41f" kind="function"><name>build_list</name></member>
@@ -1251,6 +1404,91 @@
     <member refid="classtitan23_1_1Random_1acb24fee459a4ddbd9242d234ff709f1f" kind="variable"><name>_z</name></member>
     <member refid="classtitan23_1_1Random_1a1e0bac744adc61aaaae98259e8da5cf7" kind="variable"><name>_w</name></member>
     <member refid="classtitan23_1_1Random_1a8bb331ebcba2e050292022b1394526e5" kind="function"><name>_xor128</name></member>
+    <member refid="classtitan23_1_1Random_1a8bb331ebcba2e050292022b1394526e5" kind="function"><name>_xor128</name></member>
+    <member refid="classtitan23_1_1Random_1a8bb331ebcba2e050292022b1394526e5" kind="function"><name>_xor128</name></member>
+    <member refid="classtitan23_1_1Random_1a8bb331ebcba2e050292022b1394526e5" kind="function"><name>_xor128</name></member>
+    <member refid="classtitan23_1_1Random_1a8bb331ebcba2e050292022b1394526e5" kind="function"><name>_xor128</name></member>
+    <member refid="classtitan23_1_1Random_1a8bb331ebcba2e050292022b1394526e5" kind="function"><name>_xor128</name></member>
+    <member refid="classtitan23_1_1Random_1ade5caf3ad830145699118032b77b85db" kind="function"><name>Random</name></member>
+    <member refid="classtitan23_1_1Random_1a4191c342de62979837ea89fbceeb3631" kind="function"><name>random</name></member>
+    <member refid="classtitan23_1_1Random_1a60524b9288bf9dde85b6f200272528c5" kind="function"><name>randint</name></member>
+    <member refid="classtitan23_1_1Random_1af912a2c0ed6a29669290f43d2e7c8ea4" kind="function"><name>randint</name></member>
+    <member refid="classtitan23_1_1Random_1a6b72ec5b19b8fbbeef8acd5ff2eb5bda" kind="function"><name>randrange</name></member>
+    <member refid="classtitan23_1_1Random_1a01aa00958ee23afc95c6e66d6a55f03c" kind="function"><name>randrange</name></member>
+    <member refid="classtitan23_1_1Random_1a8d608910d35516e0f7ba487aed47e55d" kind="function"><name>rand_u64</name></member>
+    <member refid="classtitan23_1_1Random_1abe557615b11a5d7304346b8ed685369a" kind="function"><name>rand_pair</name></member>
+    <member refid="classtitan23_1_1Random_1a06992a20cad3a884c00c3e423d879c1b" kind="function"><name>rand_pair</name></member>
+    <member refid="classtitan23_1_1Random_1a15c2c12214dc315f4b09d8e6716e2b3a" kind="function"><name>rand_vec</name></member>
+    <member refid="classtitan23_1_1Random_1a74dc79ed9aa5dee428a782eca49407ee" kind="function"><name>randdouble</name></member>
+    <member refid="classtitan23_1_1Random_1a8a3e5ca699ccd75cff80a8939b89a91d" kind="function"><name>shuffle</name></member>
+    <member refid="classtitan23_1_1Random_1aa14fa9b38502d5be75bdc09cfea5ce12" kind="function"><name>choices</name></member>
+    <member refid="classtitan23_1_1Random_1a6e5323152fa179e6ce198965ef84bc83" kind="function"><name>choice</name></member>
+    <member refid="classtitan23_1_1Random_1a09fa8bb8f81eabfca9e4d0bc3bc34ece" kind="function"><name>choice</name></member>
+    <member refid="classtitan23_1_1Random_1ae72775efea327eabef4283b9fa47f5d2" kind="function"><name>choice</name></member>
+    <member refid="classtitan23_1_1Random_1ade5caf3ad830145699118032b77b85db" kind="function"><name>Random</name></member>
+    <member refid="classtitan23_1_1Random_1a4191c342de62979837ea89fbceeb3631" kind="function"><name>random</name></member>
+    <member refid="classtitan23_1_1Random_1a60524b9288bf9dde85b6f200272528c5" kind="function"><name>randint</name></member>
+    <member refid="classtitan23_1_1Random_1af912a2c0ed6a29669290f43d2e7c8ea4" kind="function"><name>randint</name></member>
+    <member refid="classtitan23_1_1Random_1a6b72ec5b19b8fbbeef8acd5ff2eb5bda" kind="function"><name>randrange</name></member>
+    <member refid="classtitan23_1_1Random_1a01aa00958ee23afc95c6e66d6a55f03c" kind="function"><name>randrange</name></member>
+    <member refid="classtitan23_1_1Random_1a8d608910d35516e0f7ba487aed47e55d" kind="function"><name>rand_u64</name></member>
+    <member refid="classtitan23_1_1Random_1abe557615b11a5d7304346b8ed685369a" kind="function"><name>rand_pair</name></member>
+    <member refid="classtitan23_1_1Random_1a06992a20cad3a884c00c3e423d879c1b" kind="function"><name>rand_pair</name></member>
+    <member refid="classtitan23_1_1Random_1a15c2c12214dc315f4b09d8e6716e2b3a" kind="function"><name>rand_vec</name></member>
+    <member refid="classtitan23_1_1Random_1a74dc79ed9aa5dee428a782eca49407ee" kind="function"><name>randdouble</name></member>
+    <member refid="classtitan23_1_1Random_1a8a3e5ca699ccd75cff80a8939b89a91d" kind="function"><name>shuffle</name></member>
+    <member refid="classtitan23_1_1Random_1aa14fa9b38502d5be75bdc09cfea5ce12" kind="function"><name>choices</name></member>
+    <member refid="classtitan23_1_1Random_1a6e5323152fa179e6ce198965ef84bc83" kind="function"><name>choice</name></member>
+    <member refid="classtitan23_1_1Random_1a09fa8bb8f81eabfca9e4d0bc3bc34ece" kind="function"><name>choice</name></member>
+    <member refid="classtitan23_1_1Random_1ae72775efea327eabef4283b9fa47f5d2" kind="function"><name>choice</name></member>
+    <member refid="classtitan23_1_1Random_1ade5caf3ad830145699118032b77b85db" kind="function"><name>Random</name></member>
+    <member refid="classtitan23_1_1Random_1a4191c342de62979837ea89fbceeb3631" kind="function"><name>random</name></member>
+    <member refid="classtitan23_1_1Random_1a60524b9288bf9dde85b6f200272528c5" kind="function"><name>randint</name></member>
+    <member refid="classtitan23_1_1Random_1af912a2c0ed6a29669290f43d2e7c8ea4" kind="function"><name>randint</name></member>
+    <member refid="classtitan23_1_1Random_1a6b72ec5b19b8fbbeef8acd5ff2eb5bda" kind="function"><name>randrange</name></member>
+    <member refid="classtitan23_1_1Random_1a01aa00958ee23afc95c6e66d6a55f03c" kind="function"><name>randrange</name></member>
+    <member refid="classtitan23_1_1Random_1a8d608910d35516e0f7ba487aed47e55d" kind="function"><name>rand_u64</name></member>
+    <member refid="classtitan23_1_1Random_1abe557615b11a5d7304346b8ed685369a" kind="function"><name>rand_pair</name></member>
+    <member refid="classtitan23_1_1Random_1a06992a20cad3a884c00c3e423d879c1b" kind="function"><name>rand_pair</name></member>
+    <member refid="classtitan23_1_1Random_1a15c2c12214dc315f4b09d8e6716e2b3a" kind="function"><name>rand_vec</name></member>
+    <member refid="classtitan23_1_1Random_1a74dc79ed9aa5dee428a782eca49407ee" kind="function"><name>randdouble</name></member>
+    <member refid="classtitan23_1_1Random_1a8a3e5ca699ccd75cff80a8939b89a91d" kind="function"><name>shuffle</name></member>
+    <member refid="classtitan23_1_1Random_1aa14fa9b38502d5be75bdc09cfea5ce12" kind="function"><name>choices</name></member>
+    <member refid="classtitan23_1_1Random_1a6e5323152fa179e6ce198965ef84bc83" kind="function"><name>choice</name></member>
+    <member refid="classtitan23_1_1Random_1a09fa8bb8f81eabfca9e4d0bc3bc34ece" kind="function"><name>choice</name></member>
+    <member refid="classtitan23_1_1Random_1ae72775efea327eabef4283b9fa47f5d2" kind="function"><name>choice</name></member>
+    <member refid="classtitan23_1_1Random_1ade5caf3ad830145699118032b77b85db" kind="function"><name>Random</name></member>
+    <member refid="classtitan23_1_1Random_1a4191c342de62979837ea89fbceeb3631" kind="function"><name>random</name></member>
+    <member refid="classtitan23_1_1Random_1a60524b9288bf9dde85b6f200272528c5" kind="function"><name>randint</name></member>
+    <member refid="classtitan23_1_1Random_1af912a2c0ed6a29669290f43d2e7c8ea4" kind="function"><name>randint</name></member>
+    <member refid="classtitan23_1_1Random_1a6b72ec5b19b8fbbeef8acd5ff2eb5bda" kind="function"><name>randrange</name></member>
+    <member refid="classtitan23_1_1Random_1a01aa00958ee23afc95c6e66d6a55f03c" kind="function"><name>randrange</name></member>
+    <member refid="classtitan23_1_1Random_1a8d608910d35516e0f7ba487aed47e55d" kind="function"><name>rand_u64</name></member>
+    <member refid="classtitan23_1_1Random_1abe557615b11a5d7304346b8ed685369a" kind="function"><name>rand_pair</name></member>
+    <member refid="classtitan23_1_1Random_1a06992a20cad3a884c00c3e423d879c1b" kind="function"><name>rand_pair</name></member>
+    <member refid="classtitan23_1_1Random_1a15c2c12214dc315f4b09d8e6716e2b3a" kind="function"><name>rand_vec</name></member>
+    <member refid="classtitan23_1_1Random_1a74dc79ed9aa5dee428a782eca49407ee" kind="function"><name>randdouble</name></member>
+    <member refid="classtitan23_1_1Random_1a8a3e5ca699ccd75cff80a8939b89a91d" kind="function"><name>shuffle</name></member>
+    <member refid="classtitan23_1_1Random_1aa14fa9b38502d5be75bdc09cfea5ce12" kind="function"><name>choices</name></member>
+    <member refid="classtitan23_1_1Random_1a6e5323152fa179e6ce198965ef84bc83" kind="function"><name>choice</name></member>
+    <member refid="classtitan23_1_1Random_1a09fa8bb8f81eabfca9e4d0bc3bc34ece" kind="function"><name>choice</name></member>
+    <member refid="classtitan23_1_1Random_1ae72775efea327eabef4283b9fa47f5d2" kind="function"><name>choice</name></member>
+    <member refid="classtitan23_1_1Random_1ade5caf3ad830145699118032b77b85db" kind="function"><name>Random</name></member>
+    <member refid="classtitan23_1_1Random_1a4191c342de62979837ea89fbceeb3631" kind="function"><name>random</name></member>
+    <member refid="classtitan23_1_1Random_1a60524b9288bf9dde85b6f200272528c5" kind="function"><name>randint</name></member>
+    <member refid="classtitan23_1_1Random_1af912a2c0ed6a29669290f43d2e7c8ea4" kind="function"><name>randint</name></member>
+    <member refid="classtitan23_1_1Random_1a6b72ec5b19b8fbbeef8acd5ff2eb5bda" kind="function"><name>randrange</name></member>
+    <member refid="classtitan23_1_1Random_1a01aa00958ee23afc95c6e66d6a55f03c" kind="function"><name>randrange</name></member>
+    <member refid="classtitan23_1_1Random_1a8d608910d35516e0f7ba487aed47e55d" kind="function"><name>rand_u64</name></member>
+    <member refid="classtitan23_1_1Random_1abe557615b11a5d7304346b8ed685369a" kind="function"><name>rand_pair</name></member>
+    <member refid="classtitan23_1_1Random_1a06992a20cad3a884c00c3e423d879c1b" kind="function"><name>rand_pair</name></member>
+    <member refid="classtitan23_1_1Random_1a15c2c12214dc315f4b09d8e6716e2b3a" kind="function"><name>rand_vec</name></member>
+    <member refid="classtitan23_1_1Random_1a74dc79ed9aa5dee428a782eca49407ee" kind="function"><name>randdouble</name></member>
+    <member refid="classtitan23_1_1Random_1a8a3e5ca699ccd75cff80a8939b89a91d" kind="function"><name>shuffle</name></member>
+    <member refid="classtitan23_1_1Random_1aa14fa9b38502d5be75bdc09cfea5ce12" kind="function"><name>choices</name></member>
+    <member refid="classtitan23_1_1Random_1a6e5323152fa179e6ce198965ef84bc83" kind="function"><name>choice</name></member>
+    <member refid="classtitan23_1_1Random_1a09fa8bb8f81eabfca9e4d0bc3bc34ece" kind="function"><name>choice</name></member>
+    <member refid="classtitan23_1_1Random_1ae72775efea327eabef4283b9fa47f5d2" kind="function"><name>choice</name></member>
     <member refid="classtitan23_1_1Random_1ade5caf3ad830145699118032b77b85db" kind="function"><name>Random</name></member>
     <member refid="classtitan23_1_1Random_1a4191c342de62979837ea89fbceeb3631" kind="function"><name>random</name></member>
     <member refid="classtitan23_1_1Random_1a60524b9288bf9dde85b6f200272528c5" kind="function"><name>randint</name></member>
@@ -1294,7 +1532,19 @@
     <member refid="structtitan23_1_1SegmentTree_1a7fbd682684aa3b92d2d7feb56f2efd9b" kind="variable"><name>n</name></member>
     <member refid="structtitan23_1_1SegmentTree_1a778ec8906f383d76bbd9f0b8ba050891" kind="variable"><name>_size</name></member>
     <member refid="structtitan23_1_1SegmentTree_1abfeb2b071420afb893d142f418276c29" kind="variable"><name>_log</name></member>
-    <member refid="structtitan23_1_1SegmentTree_1acef4ffb1a7d59906abfd7a2a0fe79b20" kind="variable"><name>_data</name></member>
+    <member refid="structtitan23_1_1SegmentTree_1a05d7c2db86f53dd462197cca718283ef" kind="variable"><name>_data</name></member>
+    <member refid="structtitan23_1_1SegmentTree_1a29a62a35c279c79c89f8ff57458763f5" kind="function"><name>SegmentTree</name></member>
+    <member refid="structtitan23_1_1SegmentTree_1ae8a64aa992c9d6b710173d76544d3170" kind="function"><name>SegmentTree</name></member>
+    <member refid="structtitan23_1_1SegmentTree_1a2ab7a4b83d059ff8fbf70cfb01d6d02c" kind="function"><name>SegmentTree</name></member>
+    <member refid="structtitan23_1_1SegmentTree_1a0494896b2337e1cab38b0c83a697fcdf" kind="function"><name>_build</name></member>
+    <member refid="structtitan23_1_1SegmentTree_1a95f641ef5cc47f1760161f0e7c8cfa1a" kind="function"><name>get</name></member>
+    <member refid="structtitan23_1_1SegmentTree_1adf441031fb1ff3c7c4a3baebf256b23b" kind="function"><name>set</name></member>
+    <member refid="structtitan23_1_1SegmentTree_1a59d9bb6dba359090bf4d7f65f9d02e49" kind="function"><name>prod</name></member>
+    <member refid="structtitan23_1_1SegmentTree_1a3d42d09034f7baab5eb69fe8cb598b77" kind="function"><name>all_prod</name></member>
+    <member refid="structtitan23_1_1SegmentTree_1a7c5b6a591e064a12ab5f31f7856f72a4" kind="function"><name>max_right</name></member>
+    <member refid="structtitan23_1_1SegmentTree_1a3c45b025c7a7e7cb2e5ce9f30f2b9db1" kind="function"><name>min_left</name></member>
+    <member refid="structtitan23_1_1SegmentTree_1aaec50d321ed8582f387a55b7a419a822" kind="function"><name>tovector</name></member>
+    <member refid="structtitan23_1_1SegmentTree_1a801ad53a9baa69de17ec4a4c47b9eee4" kind="function"><name>print</name></member>
     <member refid="structtitan23_1_1SegmentTree_1a29a62a35c279c79c89f8ff57458763f5" kind="function"><name>SegmentTree</name></member>
     <member refid="structtitan23_1_1SegmentTree_1ae8a64aa992c9d6b710173d76544d3170" kind="function"><name>SegmentTree</name></member>
     <member refid="structtitan23_1_1SegmentTree_1a2ab7a4b83d059ff8fbf70cfb01d6d02c" kind="function"><name>SegmentTree</name></member>
@@ -1310,7 +1560,13 @@
   </compound>
   <compound refid="structtitan23_1_1SparseTable" kind="struct"><name>titan23::SparseTable</name>
     <member refid="structtitan23_1_1SparseTable_1aae26aec993d654168bdc065828862580" kind="variable"><name>n</name></member>
-    <member refid="structtitan23_1_1SparseTable_1a4808be2252a54bcde4d2553bbf059347" kind="variable"><name>data</name></member>
+    <member refid="structtitan23_1_1SparseTable_1ae9a3d432116a36223b1a463ecffde811" kind="variable"><name>data</name></member>
+    <member refid="structtitan23_1_1SparseTable_1a9c0ad9dac49b4f6f8cd3f9244fd74a29" kind="function"><name>SparseTable</name></member>
+    <member refid="structtitan23_1_1SparseTable_1a2fe72eca36ff2211f2e349f3f72b1071" kind="function"><name>SparseTable</name></member>
+    <member refid="structtitan23_1_1SparseTable_1a6a50dcdfa26bd8ea3dc3c3e460de23f0" kind="function"><name>prod</name></member>
+    <member refid="structtitan23_1_1SparseTable_1a28a578e62d2aee3421dc9d38def40ee1" kind="function"><name>get</name></member>
+    <member refid="structtitan23_1_1SparseTable_1ac35e559acabd307984305bd7619ec656" kind="function"><name>len</name></member>
+    <member refid="structtitan23_1_1SparseTable_1a8082a2a4596653997934e553343a62b0" kind="function"><name>print</name></member>
     <member refid="structtitan23_1_1SparseTable_1a9c0ad9dac49b4f6f8cd3f9244fd74a29" kind="function"><name>SparseTable</name></member>
     <member refid="structtitan23_1_1SparseTable_1a2fe72eca36ff2211f2e349f3f72b1071" kind="function"><name>SparseTable</name></member>
     <member refid="structtitan23_1_1SparseTable_1a6a50dcdfa26bd8ea3dc3c3e460de23f0" kind="function"><name>prod</name></member>
@@ -1362,8 +1618,26 @@
     <member refid="classtitan23_1_1sa_1_1State_1a368891e5cbfae0fd1119f7fa1c92775a" kind="function"><name>print</name></member>
   </compound>
   <compound refid="classtitan23_1_1StatePool" kind="class"><name>titan23::StatePool</name>
-    <member refid="classtitan23_1_1StatePool_1a58b0b5923fc18a67b0ea8d65654e8b00" kind="variable"><name>pool</name></member>
-    <member refid="classtitan23_1_1StatePool_1a8186d82f8caf1600523c1497955a8fc4" kind="variable"><name>unused_indx</name></member>
+    <member refid="classtitan23_1_1StatePool_1a21f9dea8b52e5a66ae0781923eed4515" kind="variable"><name>pool</name></member>
+    <member refid="classtitan23_1_1StatePool_1acef3218deea556f607903e39a3408c12" kind="variable"><name>unused_indx</name></member>
+    <member refid="classtitan23_1_1StatePool_1a0a47921b3b1b7dafe7bf34368f0e4861" kind="function"><name>StatePool</name></member>
+    <member refid="classtitan23_1_1StatePool_1aeb0fa4cb0f500844cadeaf7211c7e8ab" kind="function"><name>StatePool</name></member>
+    <member refid="classtitan23_1_1StatePool_1a65ccf078558e51d45e58b5d8f7480a4d" kind="function"><name>clear</name></member>
+    <member refid="classtitan23_1_1StatePool_1a8a32dae8f90ffb450c9dc4a028f3a05e" kind="function"><name>init</name></member>
+    <member refid="classtitan23_1_1StatePool_1a7e491b65b00d03673649dc75ff850906" kind="function"><name>get</name></member>
+    <member refid="classtitan23_1_1StatePool_1a2871bc234478c7396ad87451e3603626" kind="function"><name>del</name></member>
+    <member refid="classtitan23_1_1StatePool_1af54bab0d6cd72a04184cee613bf24d6f" kind="function"><name>gen</name></member>
+    <member refid="classtitan23_1_1StatePool_1a4019aa5eea3c78fc089b1495936059d9" kind="function"><name>copy</name></member>
+    <member refid="classtitan23_1_1StatePool_1ac2f1c68bac4e45dc6417f6c5ee4d8f84" kind="function"><name>get_size</name></member>
+    <member refid="classtitan23_1_1StatePool_1a0a47921b3b1b7dafe7bf34368f0e4861" kind="function"><name>StatePool</name></member>
+    <member refid="classtitan23_1_1StatePool_1aeb0fa4cb0f500844cadeaf7211c7e8ab" kind="function"><name>StatePool</name></member>
+    <member refid="classtitan23_1_1StatePool_1a65ccf078558e51d45e58b5d8f7480a4d" kind="function"><name>clear</name></member>
+    <member refid="classtitan23_1_1StatePool_1a8a32dae8f90ffb450c9dc4a028f3a05e" kind="function"><name>init</name></member>
+    <member refid="classtitan23_1_1StatePool_1a7e491b65b00d03673649dc75ff850906" kind="function"><name>get</name></member>
+    <member refid="classtitan23_1_1StatePool_1a2871bc234478c7396ad87451e3603626" kind="function"><name>del</name></member>
+    <member refid="classtitan23_1_1StatePool_1af54bab0d6cd72a04184cee613bf24d6f" kind="function"><name>gen</name></member>
+    <member refid="classtitan23_1_1StatePool_1a4019aa5eea3c78fc089b1495936059d9" kind="function"><name>copy</name></member>
+    <member refid="classtitan23_1_1StatePool_1ac2f1c68bac4e45dc6417f6c5ee4d8f84" kind="function"><name>get_size</name></member>
     <member refid="classtitan23_1_1StatePool_1a0a47921b3b1b7dafe7bf34368f0e4861" kind="function"><name>StatePool</name></member>
     <member refid="classtitan23_1_1StatePool_1aeb0fa4cb0f500844cadeaf7211c7e8ab" kind="function"><name>StatePool</name></member>
     <member refid="classtitan23_1_1StatePool_1a65ccf078558e51d45e58b5d8f7480a4d" kind="function"><name>clear</name></member>
@@ -1424,7 +1698,16 @@
     <member refid="structtitan23_1_1beam__search_1_1SubState_1a4fc9efd2757dd1561c67a4b4a5ab76b0" kind="function"><name>SubState</name></member>
   </compound>
   <compound refid="classtitan23_1_1Timer" kind="class"><name>titan23::Timer</name>
-    <member refid="classtitan23_1_1Timer_1a836f5baef30fe60b0a723eca8d3d8c24" kind="variable"><name>start_timepoint</name></member>
+    <member refid="classtitan23_1_1Timer_1a50b362b45e1aa6443c6ae54cce04087e" kind="variable"><name>start_timepoint</name></member>
+    <member refid="classtitan23_1_1Timer_1ac90c7728ce700f07c5a12d4bc4547856" kind="function"><name>Timer</name></member>
+    <member refid="classtitan23_1_1Timer_1a9b138c885ca8956bfa5d73a628698c3d" kind="function"><name>reset</name></member>
+    <member refid="classtitan23_1_1Timer_1adb30bc0ad576c57bf6410294d3099e26" kind="function"><name>elapsed</name></member>
+    <member refid="classtitan23_1_1Timer_1ac90c7728ce700f07c5a12d4bc4547856" kind="function"><name>Timer</name></member>
+    <member refid="classtitan23_1_1Timer_1a9b138c885ca8956bfa5d73a628698c3d" kind="function"><name>reset</name></member>
+    <member refid="classtitan23_1_1Timer_1adb30bc0ad576c57bf6410294d3099e26" kind="function"><name>elapsed</name></member>
+    <member refid="classtitan23_1_1Timer_1ac90c7728ce700f07c5a12d4bc4547856" kind="function"><name>Timer</name></member>
+    <member refid="classtitan23_1_1Timer_1a9b138c885ca8956bfa5d73a628698c3d" kind="function"><name>reset</name></member>
+    <member refid="classtitan23_1_1Timer_1adb30bc0ad576c57bf6410294d3099e26" kind="function"><name>elapsed</name></member>
     <member refid="classtitan23_1_1Timer_1ac90c7728ce700f07c5a12d4bc4547856" kind="function"><name>Timer</name></member>
     <member refid="classtitan23_1_1Timer_1a9b138c885ca8956bfa5d73a628698c3d" kind="function"><name>reset</name></member>
     <member refid="classtitan23_1_1Timer_1adb30bc0ad576c57bf6410294d3099e26" kind="function"><name>elapsed</name></member>
@@ -1432,8 +1715,16 @@
   <compound refid="classtitan23_1_1UndoableUnionFind" kind="class"><name>titan23::UndoableUnionFind</name>
     <member refid="classtitan23_1_1UndoableUnionFind_1aaf0e18e5b6fb16e7d2d406ee30dc1cc9" kind="variable"><name>_n</name></member>
     <member refid="classtitan23_1_1UndoableUnionFind_1a3888da17b9c5ee3769f13934c78df22b" kind="variable"><name>_group_count</name></member>
-    <member refid="classtitan23_1_1UndoableUnionFind_1af2ae495541f7380d9d476aa2b96caad5" kind="variable"><name>_parents</name></member>
-    <member refid="classtitan23_1_1UndoableUnionFind_1a1026e6c551ba27097bdf67f5d9c83697" kind="variable"><name>_history</name></member>
+    <member refid="classtitan23_1_1UndoableUnionFind_1aef71e1dc05a8849c5eff28fe0aaf7a25" kind="variable"><name>_parents</name></member>
+    <member refid="classtitan23_1_1UndoableUnionFind_1a15f72c513257532b3e7e35fcc6975d27" kind="variable"><name>_history</name></member>
+    <member refid="classtitan23_1_1UndoableUnionFind_1aaa295d038bd24ebed90b14f4989cc5a4" kind="function"><name>UndoableUnionFind</name></member>
+    <member refid="classtitan23_1_1UndoableUnionFind_1a8e9feff30056f307964f9454ec4cf1ae" kind="function"><name>UndoableUnionFind</name></member>
+    <member refid="classtitan23_1_1UndoableUnionFind_1a92691f6e33582c29d2a1722af4908e0a" kind="function"><name>undo</name></member>
+    <member refid="classtitan23_1_1UndoableUnionFind_1ab71afdcfd316597b511ae0cc39a06f25" kind="function"><name>root</name></member>
+    <member refid="classtitan23_1_1UndoableUnionFind_1a3295d811427e29446a017044c8629de6" kind="function"><name>unite</name></member>
+    <member refid="classtitan23_1_1UndoableUnionFind_1a08b84a5a59cfbc74353b419d89dbbcde" kind="function"><name>size</name></member>
+    <member refid="classtitan23_1_1UndoableUnionFind_1a9c0b9228723fb0c4b3991e9e437b36e8" kind="function"><name>same</name></member>
+    <member refid="classtitan23_1_1UndoableUnionFind_1a03a791d8ca639e9b3f8fa3cf37aa07bb" kind="function"><name>group_count</name></member>
     <member refid="classtitan23_1_1UndoableUnionFind_1aaa295d038bd24ebed90b14f4989cc5a4" kind="function"><name>UndoableUnionFind</name></member>
     <member refid="classtitan23_1_1UndoableUnionFind_1a8e9feff30056f307964f9454ec4cf1ae" kind="function"><name>UndoableUnionFind</name></member>
     <member refid="classtitan23_1_1UndoableUnionFind_1a92691f6e33582c29d2a1722af4908e0a" kind="function"><name>undo</name></member>
@@ -1447,10 +1738,21 @@
     <member refid="classtitan23_1_1UndoableUnionFindSum_1a9a4a45fcad95c9abe4db21f42a9cf1b9" kind="variable"><name>_n</name></member>
     <member refid="classtitan23_1_1UndoableUnionFindSum_1a2d510113d85b117f5f4b5c9f20dcd07d" kind="variable"><name>_group_count</name></member>
     <member refid="classtitan23_1_1UndoableUnionFindSum_1af290c54d5a19f85d5eeaf1759299fa73" kind="variable"><name>_e</name></member>
-    <member refid="classtitan23_1_1UndoableUnionFindSum_1a1ea050f325e904fc4f8d965987e1dea7" kind="variable"><name>_parents</name></member>
-    <member refid="classtitan23_1_1UndoableUnionFindSum_1a5a29e13dc51e8b2d6c3cd15541f1ceb9" kind="variable"><name>_all_sum</name></member>
-    <member refid="classtitan23_1_1UndoableUnionFindSum_1aeebae734da097f799b219da31cf49f2a" kind="variable"><name>_one_sum</name></member>
-    <member refid="classtitan23_1_1UndoableUnionFindSum_1a65de6a67b8fadcc96c5983bd499235ae" kind="variable"><name>_history</name></member>
+    <member refid="classtitan23_1_1UndoableUnionFindSum_1aea5df165455c1bf5ab3219dbff174b29" kind="variable"><name>_parents</name></member>
+    <member refid="classtitan23_1_1UndoableUnionFindSum_1aa2743ec48d6b52ace6f9a8a285b0831d" kind="variable"><name>_all_sum</name></member>
+    <member refid="classtitan23_1_1UndoableUnionFindSum_1a74c2ac0420759556881affcc9165ad60" kind="variable"><name>_one_sum</name></member>
+    <member refid="classtitan23_1_1UndoableUnionFindSum_1af0cad2c92f792356f92a57f048bc8c8d" kind="variable"><name>_history</name></member>
+    <member refid="classtitan23_1_1UndoableUnionFindSum_1a6d4194451d80a7fec85542bc2c338ca4" kind="function"><name>UndoableUnionFindSum</name></member>
+    <member refid="classtitan23_1_1UndoableUnionFindSum_1abde12287aa21e90237da81a405fc66f4" kind="function"><name>UndoableUnionFindSum</name></member>
+    <member refid="classtitan23_1_1UndoableUnionFindSum_1af3aa72c53cef5f81a27ddd4c923510a1" kind="function"><name>undo</name></member>
+    <member refid="classtitan23_1_1UndoableUnionFindSum_1ad16499becf5def4fb47b0a080fd70f48" kind="function"><name>root</name></member>
+    <member refid="classtitan23_1_1UndoableUnionFindSum_1a91070aae2ae5f0e54ec48441b85fdf9d" kind="function"><name>unite</name></member>
+    <member refid="classtitan23_1_1UndoableUnionFindSum_1a1834f4c8901d92a0204338aeb94d624c" kind="function"><name>size</name></member>
+    <member refid="classtitan23_1_1UndoableUnionFindSum_1ac5b85c9c2a153313e94b55716d51a8dd" kind="function"><name>same</name></member>
+    <member refid="classtitan23_1_1UndoableUnionFindSum_1a0820367b28f6103ff8cdc70f668a3063" kind="function"><name>add_point</name></member>
+    <member refid="classtitan23_1_1UndoableUnionFindSum_1a037f44429b6058c5d220dbadc61b3bf0" kind="function"><name>add_group</name></member>
+    <member refid="classtitan23_1_1UndoableUnionFindSum_1aa1aa58fbffbd36916654f40276f78d73" kind="function"><name>group_count</name></member>
+    <member refid="classtitan23_1_1UndoableUnionFindSum_1aafcf9484dd729e8fc6e03a9a2979e34c" kind="function"><name>group_sum</name></member>
     <member refid="classtitan23_1_1UndoableUnionFindSum_1a6d4194451d80a7fec85542bc2c338ca4" kind="function"><name>UndoableUnionFindSum</name></member>
     <member refid="classtitan23_1_1UndoableUnionFindSum_1abde12287aa21e90237da81a405fc66f4" kind="function"><name>UndoableUnionFindSum</name></member>
     <member refid="classtitan23_1_1UndoableUnionFindSum_1af3aa72c53cef5f81a27ddd4c923510a1" kind="function"><name>undo</name></member>
@@ -1466,8 +1768,20 @@
   <compound refid="classtitan23_1_1UnionFind" kind="class"><name>titan23::UnionFind</name>
     <member refid="classtitan23_1_1UnionFind_1a9643826bb9353b3ebe475c883b3327e5" kind="variable"><name>n</name></member>
     <member refid="classtitan23_1_1UnionFind_1ae2418469221028c7971f859db782fb1f" kind="variable"><name>group_numbers</name></member>
-    <member refid="classtitan23_1_1UnionFind_1a7da4e59aef4df48de082a16d0b324e92" kind="variable"><name>par</name></member>
-    <member refid="classtitan23_1_1UnionFind_1ae4dd2542fe56eef2d6be5dc5595ca7a7" kind="variable"><name>G</name></member>
+    <member refid="classtitan23_1_1UnionFind_1a06d87e67964796a2cc373d60a709dfe8" kind="variable"><name>par</name></member>
+    <member refid="classtitan23_1_1UnionFind_1a0b94f9cdce0f881228c759e0c13bf4a3" kind="variable"><name>G</name></member>
+    <member refid="classtitan23_1_1UnionFind_1a277b695039b93edf4c490f38f476002a" kind="function"><name>UnionFind</name></member>
+    <member refid="classtitan23_1_1UnionFind_1a85c25164a09cd403f941fab9d74bff8f" kind="function"><name>UnionFind</name></member>
+    <member refid="classtitan23_1_1UnionFind_1acf9365b3b97d5d5c8a3a4cc0d92203f9" kind="function"><name>root</name></member>
+    <member refid="classtitan23_1_1UnionFind_1a1d3d13023a557d411c7bb6450ff2a141" kind="function"><name>unite</name></member>
+    <member refid="classtitan23_1_1UnionFind_1a0a4be76accf9f6e5909313c76d7b7928" kind="function"><name>size</name></member>
+    <member refid="classtitan23_1_1UnionFind_1ae23fd9d1572714d5805a846c51ae6eb4" kind="function"><name>same</name></member>
+    <member refid="classtitan23_1_1UnionFind_1af32e79150a28aa8a0d9291e0c4b6766d" kind="function"><name>members</name></member>
+    <member refid="classtitan23_1_1UnionFind_1a9eaa735e4984540a8d8ac7481a343c59" kind="function"><name>all_roots</name></member>
+    <member refid="classtitan23_1_1UnionFind_1a4f6f2889bb25af093ffefac801d02df8" kind="function"><name>group_count</name></member>
+    <member refid="classtitan23_1_1UnionFind_1ac951cdc927b0b2de5f340772778530b3" kind="function"><name>clear</name></member>
+    <member refid="classtitan23_1_1UnionFind_1af924219dafecda29a9c9984fe783662a" kind="function"><name>all_group_members</name></member>
+    <member refid="classtitan23_1_1UnionFind_1ab6a12f51739c13818591aabf8f71a847" kind="function"><name>print</name></member>
     <member refid="classtitan23_1_1UnionFind_1a277b695039b93edf4c490f38f476002a" kind="function"><name>UnionFind</name></member>
     <member refid="classtitan23_1_1UnionFind_1a85c25164a09cd403f941fab9d74bff8f" kind="function"><name>UnionFind</name></member>
     <member refid="classtitan23_1_1UnionFind_1acf9365b3b97d5d5c8a3a4cc0d92203f9" kind="function"><name>root</name></member>
@@ -1495,8 +1809,12 @@
   <compound refid="structtitan23_1_1warshall__floyd__path" kind="struct"><name>titan23::warshall_floyd_path</name>
     <member refid="structtitan23_1_1warshall__floyd__path_1a077758674e0d9b6a9be0b67897a1137b" kind="variable"><name>n</name></member>
     <member refid="structtitan23_1_1warshall__floyd__path_1a95bfe3aff2d4fc9307a9aac49f3af9a0" kind="variable"><name>INF</name></member>
-    <member refid="structtitan23_1_1warshall__floyd__path_1a59e53cf725ae37e24886feb46751df4d" kind="variable"><name>nxt</name></member>
-    <member refid="structtitan23_1_1warshall__floyd__path_1a1dc7a7f93059f1de5dc853bc4ad69298" kind="variable"><name>dist</name></member>
+    <member refid="structtitan23_1_1warshall__floyd__path_1a999f81777244efbed852423f7b6d0396" kind="variable"><name>nxt</name></member>
+    <member refid="structtitan23_1_1warshall__floyd__path_1af670118037ba3a4c827af5af46073078" kind="variable"><name>dist</name></member>
+    <member refid="structtitan23_1_1warshall__floyd__path_1aa6c10ef39eaa22d4f3a69e8c27499d28" kind="function"><name>warshall_floyd_path</name></member>
+    <member refid="structtitan23_1_1warshall__floyd__path_1aeddccbf9af9443bff00284e31d6ef2c2" kind="function"><name>warshall_floyd_path</name></member>
+    <member refid="structtitan23_1_1warshall__floyd__path_1a0db2d51ad5a067588a4a6bb4b9334d2c" kind="function"><name>get_dist</name></member>
+    <member refid="structtitan23_1_1warshall__floyd__path_1a7bdfd432482360d8bf438577cc08ef8c" kind="function"><name>get_path</name></member>
     <member refid="structtitan23_1_1warshall__floyd__path_1aa6c10ef39eaa22d4f3a69e8c27499d28" kind="function"><name>warshall_floyd_path</name></member>
     <member refid="structtitan23_1_1warshall__floyd__path_1aeddccbf9af9443bff00284e31d6ef2c2" kind="function"><name>warshall_floyd_path</name></member>
     <member refid="structtitan23_1_1warshall__floyd__path_1a0db2d51ad5a067588a4a6bb4b9334d2c" kind="function"><name>get_dist</name></member>
@@ -1644,14 +1962,44 @@
   </compound>
   <compound refid="beam__search__euler_8cpp" kind="file"><name>beam_search_euler.cpp</name>
     <member refid="beam__search__euler_8cpp_1afc28855f97302d38207feabfda45fc97" kind="define"><name>rep</name></member>
+    <member refid="beam__search__euler_8cpp_1a2b1e6bf81012cf4317fac07c2a26a6b0" kind="variable"><name>PRINT_RED</name></member>
+    <member refid="beam__search__euler_8cpp_1a7beb6612758edec43e5a14e4da38ea07" kind="variable"><name>PRINT_GREEN</name></member>
+    <member refid="beam__search__euler_8cpp_1a684e38948c1a3565d3b85e64c7d92544" kind="variable"><name>PRINT_NONE</name></member>
+    <member refid="beam__search__euler_8cpp_1ae4b89e4d643a2a91dcb5422ea1cee478" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="beam__search__euler_8cpp_1a7eb3327d7a4339f8eb999f6b753098e3" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="beam__search__euler_8cpp_1ace87e3a66bfd4831de373b69e94fb37e" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="beam__search__euler_8cpp_1a3b9e486b9795584e339b218debd9e242" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="beam__search__euler_8cpp_1a92d34c4ecc0675d7147d32ab8300c0b4" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="beam__search__euler_8cpp_1a4e265c41ffb51a68fa88ffb03af3d420" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="beam__search__euler_8cpp_1aac2ed171daee68304fbea4f161be914d" kind="function"><name>operator&lt;&lt;</name></member>
   </compound>
   <compound refid="beam__search__with__tree_8cpp" kind="file"><name>beam_search_with_tree.cpp</name>
+    <member refid="beam__search__with__tree_8cpp_1a2b1e6bf81012cf4317fac07c2a26a6b0" kind="variable"><name>PRINT_RED</name></member>
+    <member refid="beam__search__with__tree_8cpp_1a7beb6612758edec43e5a14e4da38ea07" kind="variable"><name>PRINT_GREEN</name></member>
+    <member refid="beam__search__with__tree_8cpp_1a684e38948c1a3565d3b85e64c7d92544" kind="variable"><name>PRINT_NONE</name></member>
+    <member refid="beam__search__with__tree_8cpp_1ae4b89e4d643a2a91dcb5422ea1cee478" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="beam__search__with__tree_8cpp_1a7eb3327d7a4339f8eb999f6b753098e3" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="beam__search__with__tree_8cpp_1ace87e3a66bfd4831de373b69e94fb37e" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="beam__search__with__tree_8cpp_1a3b9e486b9795584e339b218debd9e242" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="beam__search__with__tree_8cpp_1a92d34c4ecc0675d7147d32ab8300c0b4" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="beam__search__with__tree_8cpp_1a4e265c41ffb51a68fa88ffb03af3d420" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="beam__search__with__tree_8cpp_1aac2ed171daee68304fbea4f161be914d" kind="function"><name>operator&lt;&lt;</name></member>
   </compound>
   <compound refid="beam__search__old_8cpp" kind="file"><name>beam_search_old.cpp</name>
   </compound>
   <compound refid="kmeans_8cpp" kind="file"><name>kmeans.cpp</name>
   </compound>
   <compound refid="sa_8cpp" kind="file"><name>sa.cpp</name>
+    <member refid="sa_8cpp_1a2b1e6bf81012cf4317fac07c2a26a6b0" kind="variable"><name>PRINT_RED</name></member>
+    <member refid="sa_8cpp_1a7beb6612758edec43e5a14e4da38ea07" kind="variable"><name>PRINT_GREEN</name></member>
+    <member refid="sa_8cpp_1a684e38948c1a3565d3b85e64c7d92544" kind="variable"><name>PRINT_NONE</name></member>
+    <member refid="sa_8cpp_1ae4b89e4d643a2a91dcb5422ea1cee478" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="sa_8cpp_1a7eb3327d7a4339f8eb999f6b753098e3" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="sa_8cpp_1ace87e3a66bfd4831de373b69e94fb37e" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="sa_8cpp_1a3b9e486b9795584e339b218debd9e242" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="sa_8cpp_1a92d34c4ecc0675d7147d32ab8300c0b4" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="sa_8cpp_1a4e265c41ffb51a68fa88ffb03af3d420" kind="function"><name>operator&lt;&lt;</name></member>
+    <member refid="sa_8cpp_1aac2ed171daee68304fbea4f161be914d" kind="function"><name>operator&lt;&lt;</name></member>
   </compound>
   <compound refid="state__pool_8cpp" kind="file"><name>state_pool.cpp</name>
   </compound>
@@ -1832,24 +2180,24 @@
   <compound refid="is__kaibun_8cpp" kind="file"><name>is_kaibun.cpp</name>
     <member refid="is__kaibun_8cpp_1a7b8852e6b521a72ed6b80ffd8d3ae504" kind="function"><name>is_kaibun</name></member>
   </compound>
-  <compound refid="dir_de35d2392027b712208844ce9b2a0813" kind="dir"><name>titan_cpplib/ahc</name>
+  <compound refid="dir_1dc5d7a06ca3b31eb8e6fe3d3746236d" kind="dir"><name>titan_cpplib_expanded/ahc</name>
   </compound>
-  <compound refid="dir_df5b5eb2e4fbbc504307147de4724ea1" kind="dir"><name>titan_cpplib/algorithm</name>
+  <compound refid="dir_c2b2addf7c6c76290556d3a188d041d8" kind="dir"><name>titan_cpplib_expanded/algorithm</name>
   </compound>
-  <compound refid="dir_c31c16af8a024f5bd13722dc6bdf8ad7" kind="dir"><name>titan_cpplib/data_structures</name>
+  <compound refid="dir_db9163211a28c856ca9eea42881993c2" kind="dir"><name>titan_cpplib_expanded/data_structures</name>
   </compound>
-  <compound refid="dir_1242cbfce00f1ccaeb7dd2d7b8a03f62" kind="dir"><name>titan_cpplib/ahc/gomi</name>
+  <compound refid="dir_a75965a4498d3244d59944caa101d32a" kind="dir"><name>titan_cpplib_expanded/ahc/gomi</name>
   </compound>
-  <compound refid="dir_fc950bd8bd73f6955932f2bd0f92a1ce" kind="dir"><name>titan_cpplib/gomi</name>
+  <compound refid="dir_e807f75b9f16234a40428c935424cfb9" kind="dir"><name>titan_cpplib_expanded/gomi</name>
   </compound>
-  <compound refid="dir_0992e87d7c61568b0098460b684d7766" kind="dir"><name>titan_cpplib/graph</name>
+  <compound refid="dir_493a58b92c4f4bfff9918dd049df90fc" kind="dir"><name>titan_cpplib_expanded/graph</name>
   </compound>
-  <compound refid="dir_9bcea43a9f038f1f227e129a5ae0f3e9" kind="dir"><name>titan_cpplib/math</name>
+  <compound refid="dir_6ad6886e411479adb3269d64e01ec2ef" kind="dir"><name>titan_cpplib_expanded/math</name>
   </compound>
-  <compound refid="dir_da17a94c01aa281cf3f27f567783aec1" kind="dir"><name>titan_cpplib/others</name>
+  <compound refid="dir_77609d3018ea2bae259d6620a9480788" kind="dir"><name>titan_cpplib_expanded/others</name>
   </compound>
-  <compound refid="dir_a8570d89746682b1bec38d9b3d47b2d6" kind="dir"><name>titan_cpplib/string</name>
+  <compound refid="dir_2e521de48bb0eefff0678b4c00a428bf" kind="dir"><name>titan_cpplib_expanded/string</name>
   </compound>
-  <compound refid="dir_1e69700284635ca6657b9517b39a5512" kind="dir"><name>titan_cpplib</name>
+  <compound refid="dir_ff18b89ae890cbd85fbee3170cfbc70d" kind="dir"><name>titan_cpplib_expanded</name>
   </compound>
 </doxygenindex>

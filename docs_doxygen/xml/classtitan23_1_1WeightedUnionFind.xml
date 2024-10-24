@@ -19,7 +19,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/weight_union_find.cpp" line="7" column="13" bodyfile="titan_cpplib/data_structures/weight_union_find.cpp" bodystart="7" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/weight_union_find.cpp" line="8" column="13" bodyfile="titan_cpplib_expanded/data_structures/weight_union_find.cpp" bodystart="8" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1WeightedUnionFind_1a3c0a184385c54901b37ae6c743ad3269" prot="private" static="no" mutable="no">
         <type>int</type>
@@ -32,7 +32,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/weight_union_find.cpp" line="7" column="15" bodyfile="titan_cpplib/data_structures/weight_union_find.cpp" bodystart="7" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/weight_union_find.cpp" line="8" column="15" bodyfile="titan_cpplib_expanded/data_structures/weight_union_find.cpp" bodystart="8" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1WeightedUnionFind_1a926a24d6dfccd502a3facc6a59e333e9" prot="private" static="no" mutable="no">
         <type>vector&lt; int &gt;</type>
@@ -45,7 +45,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/weight_union_find.cpp" line="8" column="16" bodyfile="titan_cpplib/data_structures/weight_union_find.cpp" bodystart="8" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/weight_union_find.cpp" line="9" column="16" bodyfile="titan_cpplib_expanded/data_structures/weight_union_find.cpp" bodystart="9" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1WeightedUnionFind_1a7874de7b1eb830099f06629b5e4ef514" prot="private" static="no" mutable="no">
         <type>vector&lt; T &gt;</type>
@@ -58,7 +58,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/weight_union_find.cpp" line="9" column="16" bodyfile="titan_cpplib/data_structures/weight_union_find.cpp" bodystart="9" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/weight_union_find.cpp" line="10" column="16" bodyfile="titan_cpplib_expanded/data_structures/weight_union_find.cpp" bodystart="10" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -73,7 +73,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/weight_union_find.cpp" line="12" column="9" bodyfile="titan_cpplib/data_structures/weight_union_find.cpp" bodystart="12" bodyend="12"/>
+        <location file="titan_cpplib_expanded/data_structures/weight_union_find.cpp" line="13" column="9" bodyfile="titan_cpplib_expanded/data_structures/weight_union_find.cpp" bodystart="13" bodyend="13"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WeightedUnionFind_1a86a88e2a4a4af0c49637c0a75823cafc" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -90,7 +90,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/weight_union_find.cpp" line="13" column="9" bodyfile="titan_cpplib/data_structures/weight_union_find.cpp" bodystart="13" bodyend="13"/>
+        <location file="titan_cpplib_expanded/data_structures/weight_union_find.cpp" line="14" column="9" bodyfile="titan_cpplib_expanded/data_structures/weight_union_find.cpp" bodystart="14" bodyend="14"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WeightedUnionFind_1a28f15e5a59b76205eb4555eeba70c624" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -107,7 +107,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/weight_union_find.cpp" line="15" column="13" bodyfile="titan_cpplib/data_structures/weight_union_find.cpp" bodystart="15" bodyend="30"/>
+        <location file="titan_cpplib_expanded/data_structures/weight_union_find.cpp" line="16" column="13" bodyfile="titan_cpplib_expanded/data_structures/weight_union_find.cpp" bodystart="16" bodyend="31"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WeightedUnionFind_1a872bee89231e52e4e7ca90f3fff8e868" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -132,7 +132,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/weight_union_find.cpp" line="32" column="14" bodyfile="titan_cpplib/data_structures/weight_union_find.cpp" bodystart="32" bodyend="48"/>
+        <location file="titan_cpplib_expanded/data_structures/weight_union_find.cpp" line="33" column="14" bodyfile="titan_cpplib_expanded/data_structures/weight_union_find.cpp" bodystart="33" bodyend="49"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WeightedUnionFind_1a0c446406e937844f2beddf2370eb2fc0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -149,7 +149,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/weight_union_find.cpp" line="50" column="13" bodyfile="titan_cpplib/data_structures/weight_union_find.cpp" bodystart="50" bodyend="52"/>
+        <location file="titan_cpplib_expanded/data_structures/weight_union_find.cpp" line="51" column="13" bodyfile="titan_cpplib_expanded/data_structures/weight_union_find.cpp" bodystart="51" bodyend="53"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WeightedUnionFind_1ac246d9eda131a5b1f1f128eb19e1d5c1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -170,7 +170,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/weight_union_find.cpp" line="54" column="14" bodyfile="titan_cpplib/data_structures/weight_union_find.cpp" bodystart="54" bodyend="56"/>
+        <location file="titan_cpplib_expanded/data_structures/weight_union_find.cpp" line="55" column="14" bodyfile="titan_cpplib_expanded/data_structures/weight_union_find.cpp" bodystart="55" bodyend="57"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WeightedUnionFind_1a3a386e887744b89b2e520364c81e804b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -183,7 +183,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/weight_union_find.cpp" line="58" column="13" bodyfile="titan_cpplib/data_structures/weight_union_find.cpp" bodystart="58" bodyend="60"/>
+        <location file="titan_cpplib_expanded/data_structures/weight_union_find.cpp" line="59" column="13" bodyfile="titan_cpplib_expanded/data_structures/weight_union_find.cpp" bodystart="59" bodyend="61"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1WeightedUnionFind_1acded7243d0ff706dce96778d42a2b3ed" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -204,14 +204,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/weight_union_find.cpp" line="62" column="11" bodyfile="titan_cpplib/data_structures/weight_union_find.cpp" bodystart="62" bodyend="65"/>
+        <location file="titan_cpplib_expanded/data_structures/weight_union_find.cpp" line="63" column="11" bodyfile="titan_cpplib_expanded/data_structures/weight_union_find.cpp" bodystart="63" bodyend="66"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/data_structures/weight_union_find.cpp" line="5" column="5" bodyfile="titan_cpplib/data_structures/weight_union_find.cpp" bodystart="5" bodyend="66"/>
+    <location file="titan_cpplib_expanded/data_structures/weight_union_find.cpp" line="6" column="5" bodyfile="titan_cpplib_expanded/data_structures/weight_union_find.cpp" bodystart="6" bodyend="67"/>
     <listofallmembers>
       <member refid="classtitan23_1_1WeightedUnionFind_1acded7243d0ff706dce96778d42a2b3ed" prot="public" virt="non-virtual"><scope>titan23::WeightedUnionFind</scope><name>diff</name></member>
       <member refid="classtitan23_1_1WeightedUnionFind_1a3a386e887744b89b2e520364c81e804b" prot="public" virt="non-virtual"><scope>titan23::WeightedUnionFind</scope><name>group_count</name></member>

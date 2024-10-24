@@ -19,7 +19,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/quadratic_division_set.cpp" line="12" column="9" bodyfile="titan_cpplib/data_structures/quadratic_division_set.cpp" bodystart="12" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/quadratic_division_set.cpp" line="13" column="9" bodyfile="titan_cpplib_expanded/data_structures/quadratic_division_set.cpp" bodystart="13" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1QuadraticDivisionSet_1a97e19bbf587d7fc8b8518801f20f3928" prot="private" static="no" mutable="no">
         <type>int</type>
@@ -32,7 +32,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/quadratic_division_set.cpp" line="12" column="11" bodyfile="titan_cpplib/data_structures/quadratic_division_set.cpp" bodystart="12" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/quadratic_division_set.cpp" line="13" column="11" bodyfile="titan_cpplib_expanded/data_structures/quadratic_division_set.cpp" bodystart="13" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1QuadraticDivisionSet_1a00133a5b36abb2c1b7876381ccd412b9" prot="private" static="no" mutable="no">
         <type>int</type>
@@ -45,7 +45,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/quadratic_division_set.cpp" line="12" column="16" bodyfile="titan_cpplib/data_structures/quadratic_division_set.cpp" bodystart="12" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/quadratic_division_set.cpp" line="13" column="16" bodyfile="titan_cpplib_expanded/data_structures/quadratic_division_set.cpp" bodystart="13" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1QuadraticDivisionSet_1ade599140ff8ad1bbbe2bda83dbd15566" prot="private" static="no" mutable="no">
         <type>vector&lt; vector&lt; T &gt; &gt;</type>
@@ -58,7 +58,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/quadratic_division_set.cpp" line="13" column="12" bodyfile="titan_cpplib/data_structures/quadratic_division_set.cpp" bodystart="13" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/quadratic_division_set.cpp" line="14" column="12" bodyfile="titan_cpplib_expanded/data_structures/quadratic_division_set.cpp" bodystart="14" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1QuadraticDivisionSet_1a093e987de7bf551af073a15af5dcb4ee" prot="private" static="no" mutable="no">
         <type>vector&lt; T &gt;</type>
@@ -71,7 +71,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/quadratic_division_set.cpp" line="14" column="12" bodyfile="titan_cpplib/data_structures/quadratic_division_set.cpp" bodystart="14" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/quadratic_division_set.cpp" line="15" column="12" bodyfile="titan_cpplib_expanded/data_structures/quadratic_division_set.cpp" bodystart="15" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -90,7 +90,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/quadratic_division_set.cpp" line="16" column="5" bodyfile="titan_cpplib/data_structures/quadratic_division_set.cpp" bodystart="16" bodyend="19"/>
+        <location file="titan_cpplib_expanded/data_structures/quadratic_division_set.cpp" line="17" column="5" bodyfile="titan_cpplib_expanded/data_structures/quadratic_division_set.cpp" bodystart="17" bodyend="20"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1QuadraticDivisionSet_1a1bb34dff7af4ef0a4968acba65a18899" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -107,7 +107,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/quadratic_division_set.cpp" line="21" column="5" bodyfile="titan_cpplib/data_structures/quadratic_division_set.cpp" bodystart="21" bodyend="23"/>
+        <location file="titan_cpplib_expanded/data_structures/quadratic_division_set.cpp" line="22" column="5" bodyfile="titan_cpplib_expanded/data_structures/quadratic_division_set.cpp" bodystart="22" bodyend="24"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1QuadraticDivisionSet_1a0adb4521fc87aaac2b9847d1c7c4b472" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -124,7 +124,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/quadratic_division_set.cpp" line="25" column="10" bodyfile="titan_cpplib/data_structures/quadratic_division_set.cpp" bodystart="25" bodyend="38"/>
+        <location file="titan_cpplib_expanded/data_structures/quadratic_division_set.cpp" line="26" column="10" bodyfile="titan_cpplib_expanded/data_structures/quadratic_division_set.cpp" bodystart="26" bodyend="39"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1QuadraticDivisionSet_1a69bd378c1da696c2a64fcf38a1e654be" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -145,7 +145,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/quadratic_division_set.cpp" line="40" column="7" bodyfile="titan_cpplib/data_structures/quadratic_division_set.cpp" bodystart="40" bodyend="61"/>
+        <location file="titan_cpplib_expanded/data_structures/quadratic_division_set.cpp" line="41" column="7" bodyfile="titan_cpplib_expanded/data_structures/quadratic_division_set.cpp" bodystart="41" bodyend="62"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1QuadraticDivisionSet_1a6e5a1bdfbca9075850897123b57c56b9" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -162,14 +162,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/quadratic_division_set.cpp" line="63" column="7" bodyfile="titan_cpplib/data_structures/quadratic_division_set.cpp" bodystart="63" bodyend="66"/>
+        <location file="titan_cpplib_expanded/data_structures/quadratic_division_set.cpp" line="64" column="7" bodyfile="titan_cpplib_expanded/data_structures/quadratic_division_set.cpp" bodystart="64" bodyend="67"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/data_structures/quadratic_division_set.cpp" line="10" column="1" bodyfile="titan_cpplib/data_structures/quadratic_division_set.cpp" bodystart="10" bodyend="67"/>
+    <location file="titan_cpplib_expanded/data_structures/quadratic_division_set.cpp" line="11" column="1" bodyfile="titan_cpplib_expanded/data_structures/quadratic_division_set.cpp" bodystart="11" bodyend="68"/>
     <listofallmembers>
       <member refid="classtitan23_1_1QuadraticDivisionSet_1a0adb4521fc87aaac2b9847d1c7c4b472" prot="private" virt="non-virtual"><scope>titan23::QuadraticDivisionSet</scope><name>_build</name></member>
       <member refid="classtitan23_1_1QuadraticDivisionSet_1a00133a5b36abb2c1b7876381ccd412b9" prot="private" virt="non-virtual"><scope>titan23::QuadraticDivisionSet</scope><name>bucket_cnt</name></member>

@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/undoable_union_find.cpp" line="9" column="13" bodyfile="titan_cpplib/data_structures/undoable_union_find.cpp" bodystart="9" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity.cpp" line="16" column="13" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity.cpp" bodystart="16" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1UndoableUnionFind_1a3888da17b9c5ee3769f13934c78df22b" prot="private" static="no" mutable="no">
         <type>int</type>
@@ -27,11 +27,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/undoable_union_find.cpp" line="9" column="16" bodyfile="titan_cpplib/data_structures/undoable_union_find.cpp" bodystart="9" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity.cpp" line="16" column="16" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity.cpp" bodystart="16" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classtitan23_1_1UndoableUnionFind_1af2ae495541f7380d9d476aa2b96caad5" prot="private" static="no" mutable="no">
+      <memberdef kind="variable" id="classtitan23_1_1UndoableUnionFind_1aef71e1dc05a8849c5eff28fe0aaf7a25" prot="private" static="no" mutable="no">
         <type>vector&lt; int &gt;</type>
-        <definition>vector&lt;int&gt; titan23::UndoableUnionFind::_parents</definition>
+        <definition>vector&lt; int &gt; titan23::UndoableUnionFind::_parents</definition>
         <argsstring></argsstring>
         <name>_parents</name>
         <briefdescription>
@@ -40,11 +40,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/undoable_union_find.cpp" line="10" column="16" bodyfile="titan_cpplib/data_structures/undoable_union_find.cpp" bodystart="10" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity.cpp" line="17" column="16" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity.cpp" bodystart="17" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classtitan23_1_1UndoableUnionFind_1a1026e6c551ba27097bdf67f5d9c83697" prot="private" static="no" mutable="no">
+      <memberdef kind="variable" id="classtitan23_1_1UndoableUnionFind_1a15f72c513257532b3e7e35fcc6975d27" prot="private" static="no" mutable="no">
         <type>vector&lt; pair&lt; int, int &gt; &gt;</type>
-        <definition>vector&lt;pair&lt;int, int&gt; &gt; titan23::UndoableUnionFind::_history</definition>
+        <definition>vector&lt; pair&lt; int, int &gt; &gt; titan23::UndoableUnionFind::_history</definition>
         <argsstring></argsstring>
         <name>_history</name>
         <briefdescription>
@@ -53,7 +53,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/undoable_union_find.cpp" line="11" column="16" bodyfile="titan_cpplib/data_structures/undoable_union_find.cpp" bodystart="11" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity.cpp" line="18" column="16" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity.cpp" bodystart="18" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -68,7 +68,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/undoable_union_find.cpp" line="14" column="9" bodyfile="titan_cpplib/data_structures/undoable_union_find.cpp" bodystart="14" bodyend="14"/>
+        <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity.cpp" line="21" column="9" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity.cpp" bodystart="21" bodyend="21"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1UndoableUnionFind_1a8e9feff30056f307964f9454ec4cf1ae" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -85,7 +85,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/undoable_union_find.cpp" line="15" column="9" bodyfile="titan_cpplib/data_structures/undoable_union_find.cpp" bodystart="15" bodyend="16"/>
+        <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity.cpp" line="22" column="9" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity.cpp" bodystart="22" bodyend="23"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1UndoableUnionFind_1a92691f6e33582c29d2a1722af4908e0a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -98,7 +98,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/undoable_union_find.cpp" line="18" column="14" bodyfile="titan_cpplib/data_structures/undoable_union_find.cpp" bodystart="18" bodyend="27"/>
+        <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity.cpp" line="25" column="14" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity.cpp" bodystart="25" bodyend="34"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1UndoableUnionFind_1ab71afdcfd316597b511ae0cc39a06f25" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -115,7 +115,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/undoable_union_find.cpp" line="29" column="13" bodyfile="titan_cpplib/data_structures/undoable_union_find.cpp" bodystart="29" bodyend="34"/>
+        <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity.cpp" line="36" column="13" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity.cpp" bodystart="36" bodyend="41"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1UndoableUnionFind_1a3295d811427e29446a017044c8629de6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -136,7 +136,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/undoable_union_find.cpp" line="36" column="14" bodyfile="titan_cpplib/data_structures/undoable_union_find.cpp" bodystart="36" bodyend="50"/>
+        <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity.cpp" line="43" column="14" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity.cpp" bodystart="43" bodyend="57"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1UndoableUnionFind_1a08b84a5a59cfbc74353b419d89dbbcde" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -153,7 +153,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/undoable_union_find.cpp" line="52" column="13" bodyfile="titan_cpplib/data_structures/undoable_union_find.cpp" bodystart="52" bodyend="54"/>
+        <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity.cpp" line="59" column="13" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity.cpp" bodystart="59" bodyend="61"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1UndoableUnionFind_1a9c0b9228723fb0c4b3991e9e437b36e8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -174,7 +174,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/undoable_union_find.cpp" line="56" column="14" bodyfile="titan_cpplib/data_structures/undoable_union_find.cpp" bodystart="56" bodyend="58"/>
+        <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity.cpp" line="63" column="14" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity.cpp" bodystart="63" bodyend="65"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1UndoableUnionFind_1a03a791d8ca639e9b3f8fa3cf37aa07bb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -187,26 +187,166 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/undoable_union_find.cpp" line="60" column="13" bodyfile="titan_cpplib/data_structures/undoable_union_find.cpp" bodystart="60" bodyend="62"/>
+        <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity.cpp" line="67" column="13" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity.cpp" bodystart="67" bodyend="69"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1UndoableUnionFind_1aaa295d038bd24ebed90b14f4989cc5a4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::UndoableUnionFind::UndoableUnionFind</definition>
+        <argsstring>()</argsstring>
+        <name>UndoableUnionFind</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/data_structures/undoable_union_find.cpp" line="15" column="9" bodyfile="titan_cpplib_expanded/data_structures/undoable_union_find.cpp" bodystart="15" bodyend="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1UndoableUnionFind_1a8e9feff30056f307964f9454ec4cf1ae" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::UndoableUnionFind::UndoableUnionFind</definition>
+        <argsstring>(int n)</argsstring>
+        <name>UndoableUnionFind</name>
+        <param>
+          <type>int</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/data_structures/undoable_union_find.cpp" line="16" column="9" bodyfile="titan_cpplib_expanded/data_structures/undoable_union_find.cpp" bodystart="16" bodyend="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1UndoableUnionFind_1a92691f6e33582c29d2a1722af4908e0a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::UndoableUnionFind::undo</definition>
+        <argsstring>()</argsstring>
+        <name>undo</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/data_structures/undoable_union_find.cpp" line="19" column="14" bodyfile="titan_cpplib_expanded/data_structures/undoable_union_find.cpp" bodystart="19" bodyend="28"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1UndoableUnionFind_1ab71afdcfd316597b511ae0cc39a06f25" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::UndoableUnionFind::root</definition>
+        <argsstring>(int x) const</argsstring>
+        <name>root</name>
+        <param>
+          <type>int</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/data_structures/undoable_union_find.cpp" line="30" column="13" bodyfile="titan_cpplib_expanded/data_structures/undoable_union_find.cpp" bodystart="30" bodyend="35"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1UndoableUnionFind_1a3295d811427e29446a017044c8629de6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool titan23::UndoableUnionFind::unite</definition>
+        <argsstring>(int x, int y)</argsstring>
+        <name>unite</name>
+        <param>
+          <type>int</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/data_structures/undoable_union_find.cpp" line="37" column="14" bodyfile="titan_cpplib_expanded/data_structures/undoable_union_find.cpp" bodystart="37" bodyend="51"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1UndoableUnionFind_1a08b84a5a59cfbc74353b419d89dbbcde" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::UndoableUnionFind::size</definition>
+        <argsstring>(const int x) const</argsstring>
+        <name>size</name>
+        <param>
+          <type>const int</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/data_structures/undoable_union_find.cpp" line="53" column="13" bodyfile="titan_cpplib_expanded/data_structures/undoable_union_find.cpp" bodystart="53" bodyend="55"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1UndoableUnionFind_1a9c0b9228723fb0c4b3991e9e437b36e8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool titan23::UndoableUnionFind::same</definition>
+        <argsstring>(const int x, const int y) const</argsstring>
+        <name>same</name>
+        <param>
+          <type>const int</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/data_structures/undoable_union_find.cpp" line="57" column="14" bodyfile="titan_cpplib_expanded/data_structures/undoable_union_find.cpp" bodystart="57" bodyend="59"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1UndoableUnionFind_1a03a791d8ca639e9b3f8fa3cf37aa07bb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::UndoableUnionFind::group_count</definition>
+        <argsstring>() const</argsstring>
+        <name>group_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/data_structures/undoable_union_find.cpp" line="61" column="13" bodyfile="titan_cpplib_expanded/data_structures/undoable_union_find.cpp" bodystart="61" bodyend="63"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/data_structures/undoable_union_find.cpp" line="7" column="5" bodyfile="titan_cpplib/data_structures/undoable_union_find.cpp" bodystart="7" bodyend="63"/>
+    <location file="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity.cpp" line="14" column="5" bodyfile="titan_cpplib_expanded/data_structures/offline_dynamic_connectivity.cpp" bodystart="14" bodyend="70"/>
     <listofallmembers>
       <member refid="classtitan23_1_1UndoableUnionFind_1a3888da17b9c5ee3769f13934c78df22b" prot="private" virt="non-virtual"><scope>titan23::UndoableUnionFind</scope><name>_group_count</name></member>
-      <member refid="classtitan23_1_1UndoableUnionFind_1a1026e6c551ba27097bdf67f5d9c83697" prot="private" virt="non-virtual"><scope>titan23::UndoableUnionFind</scope><name>_history</name></member>
+      <member refid="classtitan23_1_1UndoableUnionFind_1a15f72c513257532b3e7e35fcc6975d27" prot="private" virt="non-virtual"><scope>titan23::UndoableUnionFind</scope><name>_history</name></member>
       <member refid="classtitan23_1_1UndoableUnionFind_1aaf0e18e5b6fb16e7d2d406ee30dc1cc9" prot="private" virt="non-virtual"><scope>titan23::UndoableUnionFind</scope><name>_n</name></member>
-      <member refid="classtitan23_1_1UndoableUnionFind_1af2ae495541f7380d9d476aa2b96caad5" prot="private" virt="non-virtual"><scope>titan23::UndoableUnionFind</scope><name>_parents</name></member>
+      <member refid="classtitan23_1_1UndoableUnionFind_1aef71e1dc05a8849c5eff28fe0aaf7a25" prot="private" virt="non-virtual"><scope>titan23::UndoableUnionFind</scope><name>_parents</name></member>
+      <member refid="classtitan23_1_1UndoableUnionFind_1a03a791d8ca639e9b3f8fa3cf37aa07bb" prot="public" virt="non-virtual"><scope>titan23::UndoableUnionFind</scope><name>group_count</name></member>
       <member refid="classtitan23_1_1UndoableUnionFind_1a03a791d8ca639e9b3f8fa3cf37aa07bb" prot="public" virt="non-virtual"><scope>titan23::UndoableUnionFind</scope><name>group_count</name></member>
       <member refid="classtitan23_1_1UndoableUnionFind_1ab71afdcfd316597b511ae0cc39a06f25" prot="public" virt="non-virtual"><scope>titan23::UndoableUnionFind</scope><name>root</name></member>
+      <member refid="classtitan23_1_1UndoableUnionFind_1ab71afdcfd316597b511ae0cc39a06f25" prot="public" virt="non-virtual"><scope>titan23::UndoableUnionFind</scope><name>root</name></member>
+      <member refid="classtitan23_1_1UndoableUnionFind_1a9c0b9228723fb0c4b3991e9e437b36e8" prot="public" virt="non-virtual"><scope>titan23::UndoableUnionFind</scope><name>same</name></member>
       <member refid="classtitan23_1_1UndoableUnionFind_1a9c0b9228723fb0c4b3991e9e437b36e8" prot="public" virt="non-virtual"><scope>titan23::UndoableUnionFind</scope><name>same</name></member>
       <member refid="classtitan23_1_1UndoableUnionFind_1a08b84a5a59cfbc74353b419d89dbbcde" prot="public" virt="non-virtual"><scope>titan23::UndoableUnionFind</scope><name>size</name></member>
+      <member refid="classtitan23_1_1UndoableUnionFind_1a08b84a5a59cfbc74353b419d89dbbcde" prot="public" virt="non-virtual"><scope>titan23::UndoableUnionFind</scope><name>size</name></member>
+      <member refid="classtitan23_1_1UndoableUnionFind_1a92691f6e33582c29d2a1722af4908e0a" prot="public" virt="non-virtual"><scope>titan23::UndoableUnionFind</scope><name>undo</name></member>
       <member refid="classtitan23_1_1UndoableUnionFind_1a92691f6e33582c29d2a1722af4908e0a" prot="public" virt="non-virtual"><scope>titan23::UndoableUnionFind</scope><name>undo</name></member>
       <member refid="classtitan23_1_1UndoableUnionFind_1aaa295d038bd24ebed90b14f4989cc5a4" prot="public" virt="non-virtual"><scope>titan23::UndoableUnionFind</scope><name>UndoableUnionFind</name></member>
       <member refid="classtitan23_1_1UndoableUnionFind_1a8e9feff30056f307964f9454ec4cf1ae" prot="public" virt="non-virtual"><scope>titan23::UndoableUnionFind</scope><name>UndoableUnionFind</name></member>
+      <member refid="classtitan23_1_1UndoableUnionFind_1aaa295d038bd24ebed90b14f4989cc5a4" prot="public" virt="non-virtual"><scope>titan23::UndoableUnionFind</scope><name>UndoableUnionFind</name></member>
+      <member refid="classtitan23_1_1UndoableUnionFind_1a8e9feff30056f307964f9454ec4cf1ae" prot="public" virt="non-virtual"><scope>titan23::UndoableUnionFind</scope><name>UndoableUnionFind</name></member>
+      <member refid="classtitan23_1_1UndoableUnionFind_1a3295d811427e29446a017044c8629de6" prot="public" virt="non-virtual"><scope>titan23::UndoableUnionFind</scope><name>unite</name></member>
       <member refid="classtitan23_1_1UndoableUnionFind_1a3295d811427e29446a017044c8629de6" prot="public" virt="non-virtual"><scope>titan23::UndoableUnionFind</scope><name>unite</name></member>
     </listofallmembers>
   </compounddef>

@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_493a58b92c4f4bfff9918dd049df90fc" kind="dir">
+    <compoundname>titan_cpplib_expanded/graph</compoundname>
+    <innerfile refid="bfs__path_8cpp">bfs_path.cpp</innerfile>
+    <innerfile refid="dijkstra_8cpp">dijkstra.cpp</innerfile>
+    <innerfile refid="dijkstra__path_8cpp">dijkstra_path.cpp</innerfile>
+    <innerfile refid="graph_8cpp">graph.cpp</innerfile>
+    <innerfile refid="hld_8cpp">hld.cpp</innerfile>
+    <innerfile refid="hld__segment__tree_8cpp">hld_segment_tree.cpp</innerfile>
+    <innerfile refid="lca_8cpp">lca.cpp</innerfile>
+    <innerfile refid="maximum__independent__set_8cpp">maximum_independent_set.cpp</innerfile>
+    <innerfile refid="minimum__spanning__tree_8cpp">minimum_spanning_tree.cpp</innerfile>
+    <innerfile refid="minimum__steiner__tree_8cpp">minimum_steiner_tree.cpp</innerfile>
+    <innerfile refid="rooted__tree_8cpp">rooted_tree.cpp</innerfile>
+    <innerfile refid="warshall__floyd__path_8cpp">warshall_floyd_path.cpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="titan_cpplib_expanded/graph/"/>
+  </compounddef>
+</doxygen>

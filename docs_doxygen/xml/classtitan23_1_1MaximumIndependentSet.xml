@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/maximum_independent_set.cpp" line="8" column="13" bodyfile="titan_cpplib/graph/maximum_independent_set.cpp" bodystart="8" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/graph/maximum_independent_set.cpp" line="9" column="13" bodyfile="titan_cpplib_expanded/graph/maximum_independent_set.cpp" bodystart="9" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1MaximumIndependentSet_1a40819cf8f718ea481732465a1f8422cb" prot="private" static="no" mutable="no">
         <type>vector&lt; vector&lt; bool &gt; &gt;</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/maximum_independent_set.cpp" line="9" column="16" bodyfile="titan_cpplib/graph/maximum_independent_set.cpp" bodystart="9" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/graph/maximum_independent_set.cpp" line="10" column="16" bodyfile="titan_cpplib_expanded/graph/maximum_independent_set.cpp" bodystart="10" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -42,7 +42,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/maximum_independent_set.cpp" line="12" column="9" bodyfile="titan_cpplib/graph/maximum_independent_set.cpp" bodystart="12" bodyend="12"/>
+        <location file="titan_cpplib_expanded/graph/maximum_independent_set.cpp" line="13" column="9" bodyfile="titan_cpplib_expanded/graph/maximum_independent_set.cpp" bodystart="13" bodyend="13"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1MaximumIndependentSet_1aa77f7804ec85dd6435d3bbd0beedcacb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -59,7 +59,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/maximum_independent_set.cpp" line="13" column="9" bodyfile="titan_cpplib/graph/maximum_independent_set.cpp" bodystart="13" bodyend="13"/>
+        <location file="titan_cpplib_expanded/graph/maximum_independent_set.cpp" line="14" column="9" bodyfile="titan_cpplib_expanded/graph/maximum_independent_set.cpp" bodystart="14" bodyend="14"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1MaximumIndependentSet_1ae514ad45587784cb09fd35c700a05b92" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -80,7 +80,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/maximum_independent_set.cpp" line="15" column="14" bodyfile="titan_cpplib/graph/maximum_independent_set.cpp" bodystart="15" bodyend="17"/>
+        <location file="titan_cpplib_expanded/graph/maximum_independent_set.cpp" line="16" column="14" bodyfile="titan_cpplib_expanded/graph/maximum_independent_set.cpp" bodystart="16" bodyend="18"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1MaximumIndependentSet_1ae2b814ff1dc1d7ca533d1a0c787311be" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>vector&lt; int &gt;</type>
@@ -93,14 +93,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/maximum_independent_set.cpp" line="19" column="16" bodyfile="titan_cpplib/graph/maximum_independent_set.cpp" bodystart="19" bodyend="43"/>
+        <location file="titan_cpplib_expanded/graph/maximum_independent_set.cpp" line="20" column="16" bodyfile="titan_cpplib_expanded/graph/maximum_independent_set.cpp" bodystart="20" bodyend="44"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/graph/maximum_independent_set.cpp" line="6" column="5" bodyfile="titan_cpplib/graph/maximum_independent_set.cpp" bodystart="6" bodyend="44"/>
+    <location file="titan_cpplib_expanded/graph/maximum_independent_set.cpp" line="7" column="5" bodyfile="titan_cpplib_expanded/graph/maximum_independent_set.cpp" bodystart="7" bodyend="45"/>
     <listofallmembers>
       <member refid="classtitan23_1_1MaximumIndependentSet_1ae514ad45587784cb09fd35c700a05b92" prot="public" virt="non-virtual"><scope>titan23::MaximumIndependentSet</scope><name>add_edge</name></member>
       <member refid="classtitan23_1_1MaximumIndependentSet_1a40819cf8f718ea481732465a1f8422cb" prot="private" virt="non-virtual"><scope>titan23::MaximumIndependentSet</scope><name>G</name></member>

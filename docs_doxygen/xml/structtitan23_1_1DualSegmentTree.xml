@@ -42,7 +42,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_segment_tree.cpp" line="17" column="9" bodyfile="titan_cpplib/data_structures/dual_segment_tree.cpp" bodystart="17" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" line="18" column="9" bodyfile="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" bodystart="18" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structtitan23_1_1DualSegmentTree_1a8b832ab95c4f51b57f46835396394409" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -55,7 +55,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_segment_tree.cpp" line="17" column="12" bodyfile="titan_cpplib/data_structures/dual_segment_tree.cpp" bodystart="17" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" line="18" column="12" bodyfile="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" bodystart="18" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structtitan23_1_1DualSegmentTree_1ae2afbeed6aee7440e572fee7577e4638" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -68,7 +68,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_segment_tree.cpp" line="17" column="18" bodyfile="titan_cpplib/data_structures/dual_segment_tree.cpp" bodystart="17" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" line="18" column="18" bodyfile="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" bodystart="18" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structtitan23_1_1DualSegmentTree_1a6cf647971788f554c5c61d4ae42e2210" prot="public" static="no" mutable="no">
         <type>vector&lt; T &gt;</type>
@@ -81,7 +81,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_segment_tree.cpp" line="18" column="12" bodyfile="titan_cpplib/data_structures/dual_segment_tree.cpp" bodystart="18" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" line="19" column="12" bodyfile="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" bodystart="19" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structtitan23_1_1DualSegmentTree_1a8de0cd82a73d81d3bbdbbf9b9ffbbe8c" prot="public" static="no" mutable="no">
         <type>vector&lt; T &gt;</type>
@@ -94,7 +94,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_segment_tree.cpp" line="18" column="18" bodyfile="titan_cpplib/data_structures/dual_segment_tree.cpp" bodystart="18" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" line="19" column="18" bodyfile="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" bodystart="19" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -109,7 +109,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_segment_tree.cpp" line="20" column="5" bodyfile="titan_cpplib/data_structures/dual_segment_tree.cpp" bodystart="20" bodyend="20"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" line="21" column="5" bodyfile="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" bodystart="21" bodyend="21"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1DualSegmentTree_1aac6ec4f66bf4601ab1cf1dc8fd26f7ff" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -126,7 +126,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_segment_tree.cpp" line="22" column="5" bodyfile="titan_cpplib/data_structures/dual_segment_tree.cpp" bodystart="22" bodyend="24"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" line="23" column="5" bodyfile="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" bodystart="23" bodyend="25"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1DualSegmentTree_1adc929d4fde4fde6e995a614e01e0c840" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -143,7 +143,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_segment_tree.cpp" line="26" column="5" bodyfile="titan_cpplib/data_structures/dual_segment_tree.cpp" bodystart="26" bodyend="32"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" line="27" column="5" bodyfile="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" bodystart="27" bodyend="33"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1DualSegmentTree_1a106cf918ccfc3cf7676667a7cd1a9f5f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -160,7 +160,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_segment_tree.cpp" line="34" column="10" bodyfile="titan_cpplib/data_structures/dual_segment_tree.cpp" bodystart="34" bodyend="40"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" line="35" column="10" bodyfile="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" bodystart="35" bodyend="41"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1DualSegmentTree_1a1f2b6b13cfcc1f2d64bdc66946437d0c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -181,7 +181,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_segment_tree.cpp" line="42" column="10" bodyfile="titan_cpplib/data_structures/dual_segment_tree.cpp" bodystart="42" bodyend="51"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" line="43" column="10" bodyfile="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" bodystart="43" bodyend="52"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1DualSegmentTree_1af966669c8b61576e1556b40649ef79f2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -198,7 +198,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_segment_tree.cpp" line="53" column="10" bodyfile="titan_cpplib/data_structures/dual_segment_tree.cpp" bodystart="53" bodyend="57"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" line="54" column="10" bodyfile="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" bodystart="54" bodyend="58"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1DualSegmentTree_1a429140db122c49a663bd35990dd6148a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -219,7 +219,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_segment_tree.cpp" line="59" column="10" bodyfile="titan_cpplib/data_structures/dual_segment_tree.cpp" bodystart="59" bodyend="65"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" line="60" column="10" bodyfile="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" bodystart="60" bodyend="66"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1DualSegmentTree_1a98cee976795dbf28de0063a7cfba79b3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -244,7 +244,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_segment_tree.cpp" line="67" column="10" bodyfile="titan_cpplib/data_structures/dual_segment_tree.cpp" bodystart="67" bodyend="102"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" line="68" column="10" bodyfile="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" bodystart="68" bodyend="103"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1DualSegmentTree_1a34b146aa5f4e956517f53e590b5debde" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -261,7 +261,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_segment_tree.cpp" line="104" column="10" bodyfile="titan_cpplib/data_structures/dual_segment_tree.cpp" bodystart="104" bodyend="106"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" line="105" column="10" bodyfile="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" bodystart="105" bodyend="107"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1DualSegmentTree_1afe756dd239c2908fe84946a8bd63b5b1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -274,7 +274,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_segment_tree.cpp" line="108" column="10" bodyfile="titan_cpplib/data_structures/dual_segment_tree.cpp" bodystart="108" bodyend="112"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" line="109" column="10" bodyfile="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" bodystart="109" bodyend="113"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1DualSegmentTree_1a62f4a78f13386369805ec40c31328cf8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>vector&lt; T &gt;</type>
@@ -287,7 +287,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_segment_tree.cpp" line="114" column="12" bodyfile="titan_cpplib/data_structures/dual_segment_tree.cpp" bodystart="114" bodyend="118"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" line="115" column="12" bodyfile="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" bodystart="115" bodyend="119"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1DualSegmentTree_1a6e5e1ae7f9b4dfaf3e975091ffeab7d1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -304,7 +304,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_segment_tree.cpp" line="120" column="7" bodyfile="titan_cpplib/data_structures/dual_segment_tree.cpp" bodystart="120" bodyend="127"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" line="121" column="7" bodyfile="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" bodystart="121" bodyend="128"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1DualSegmentTree_1aac27fd10dce8b6f474eb93bba93a0f76" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -325,7 +325,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_segment_tree.cpp" line="129" column="10" bodyfile="titan_cpplib/data_structures/dual_segment_tree.cpp" bodystart="129" bodyend="136"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" line="130" column="10" bodyfile="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" bodystart="130" bodyend="137"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1DualSegmentTree_1a3d1d5982c1ab2b275d51fc80a001e26f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -338,14 +338,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_segment_tree.cpp" line="138" column="10" bodyfile="titan_cpplib/data_structures/dual_segment_tree.cpp" bodystart="138" bodyend="145"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" line="139" column="10" bodyfile="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" bodystart="139" bodyend="146"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/data_structures/dual_segment_tree.cpp" line="15" column="3" bodyfile="titan_cpplib/data_structures/dual_segment_tree.cpp" bodystart="15" bodyend="146"/>
+    <location file="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" line="16" column="3" bodyfile="titan_cpplib_expanded/data_structures/dual_segment_tree.cpp" bodystart="16" bodyend="147"/>
     <listofallmembers>
       <member refid="structtitan23_1_1DualSegmentTree_1a1f2b6b13cfcc1f2d64bdc66946437d0c" prot="public" virt="non-virtual"><scope>titan23::DualSegmentTree</scope><name>_all_apply</name></member>
       <member refid="structtitan23_1_1DualSegmentTree_1a106cf918ccfc3cf7676667a7cd1a9f5f" prot="public" virt="non-virtual"><scope>titan23::DualSegmentTree</scope><name>_build</name></member>

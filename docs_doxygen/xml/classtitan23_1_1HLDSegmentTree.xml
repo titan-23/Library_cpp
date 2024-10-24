@@ -29,7 +29,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/hld_segment_tree.cpp" line="20" column="22" bodyfile="titan_cpplib/graph/hld_segment_tree.cpp" bodystart="20" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/graph/hld_segment_tree.cpp" line="284" column="22" bodyfile="titan_cpplib_expanded/graph/hld_segment_tree.cpp" bodystart="284" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1HLDSegmentTree_1a2f99b6fd857d1ffc519df1afb1983ac9" prot="private" static="no" mutable="no">
         <type><ref refid="structtitan23_1_1SegmentTree" kindref="compound">titan23::SegmentTree</ref>&lt; T, op, e &gt;</type>
@@ -42,7 +42,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/hld_segment_tree.cpp" line="21" column="30" bodyfile="titan_cpplib/graph/hld_segment_tree.cpp" bodystart="21" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/graph/hld_segment_tree.cpp" line="285" column="30" bodyfile="titan_cpplib_expanded/graph/hld_segment_tree.cpp" bodystart="285" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -61,7 +61,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/hld_segment_tree.cpp" line="24" column="9" bodyfile="titan_cpplib/graph/hld_segment_tree.cpp" bodystart="24" bodyend="27"/>
+        <location file="titan_cpplib_expanded/graph/hld_segment_tree.cpp" line="288" column="9" bodyfile="titan_cpplib_expanded/graph/hld_segment_tree.cpp" bodystart="288" bodyend="291"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1HLDSegmentTree_1aec53af51dd366338de64e082f9c992f8" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -82,7 +82,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/hld_segment_tree.cpp" line="29" column="9" bodyfile="titan_cpplib/graph/hld_segment_tree.cpp" bodystart="29" bodyend="32"/>
+        <location file="titan_cpplib_expanded/graph/hld_segment_tree.cpp" line="293" column="9" bodyfile="titan_cpplib_expanded/graph/hld_segment_tree.cpp" bodystart="293" bodyend="296"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1HLDSegmentTree_1a6b68c4cf878416e7ae21580f9a0796aa" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -104,7 +104,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/hld_segment_tree.cpp" line="35" column="11" bodyfile="titan_cpplib/graph/hld_segment_tree.cpp" bodystart="35" bodyend="48"/>
+        <location file="titan_cpplib_expanded/graph/hld_segment_tree.cpp" line="299" column="11" bodyfile="titan_cpplib_expanded/graph/hld_segment_tree.cpp" bodystart="299" bodyend="312"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1HLDSegmentTree_1a9fc2fd79b4380f32843ba25ad98b2a54" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -122,7 +122,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/hld_segment_tree.cpp" line="51" column="11" bodyfile="titan_cpplib/graph/hld_segment_tree.cpp" bodystart="51" bodyend="53"/>
+        <location file="titan_cpplib_expanded/graph/hld_segment_tree.cpp" line="315" column="11" bodyfile="titan_cpplib_expanded/graph/hld_segment_tree.cpp" bodystart="315" bodyend="317"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1HLDSegmentTree_1a58d615e822081f63575bae71c59e8f5f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -144,7 +144,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/hld_segment_tree.cpp" line="56" column="14" bodyfile="titan_cpplib/graph/hld_segment_tree.cpp" bodystart="56" bodyend="58"/>
+        <location file="titan_cpplib_expanded/graph/hld_segment_tree.cpp" line="320" column="14" bodyfile="titan_cpplib_expanded/graph/hld_segment_tree.cpp" bodystart="320" bodyend="322"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1HLDSegmentTree_1aa0293295506cd28d17fc3563c92390fb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -162,7 +162,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/hld_segment_tree.cpp" line="61" column="11" bodyfile="titan_cpplib/graph/hld_segment_tree.cpp" bodystart="61" bodyend="63"/>
+        <location file="titan_cpplib_expanded/graph/hld_segment_tree.cpp" line="325" column="11" bodyfile="titan_cpplib_expanded/graph/hld_segment_tree.cpp" bodystart="325" bodyend="327"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -197,7 +197,7 @@
 </parameterlist>
 </para>
     </detaileddescription>
-    <location file="titan_cpplib/graph/hld_segment_tree.cpp" line="18" column="5" bodyfile="titan_cpplib/graph/hld_segment_tree.cpp" bodystart="18" bodyend="64"/>
+    <location file="titan_cpplib_expanded/graph/hld_segment_tree.cpp" line="282" column="5" bodyfile="titan_cpplib_expanded/graph/hld_segment_tree.cpp" bodystart="282" bodyend="328"/>
     <listofallmembers>
       <member refid="classtitan23_1_1HLDSegmentTree_1a9fc2fd79b4380f32843ba25ad98b2a54" prot="public" virt="non-virtual"><scope>titan23::HLDSegmentTree</scope><name>get</name></member>
       <member refid="classtitan23_1_1HLDSegmentTree_1a9e991172237ba339e81c483c94f19f78" prot="private" virt="non-virtual"><scope>titan23::HLDSegmentTree</scope><name>hld</name></member>

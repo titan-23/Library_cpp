@@ -1,8 +1,7 @@
 var searchData=
 [
-  ['lca_284',['lca',['../classtitan23_1_1LCA.html#a161954869b0c81788e994afa8f248535',1,'titan23::LCA']]],
-  ['lca_285',['LCA',['../classtitan23_1_1LCA.html#ad54cc0a876541a5eb907486b4782083c',1,'titan23::LCA']]],
-  ['lca_286',['lca',['../classtitan23_1_1HLD.html#a60937a92ca64b98a8f2725b30c50d29a',1,'titan23::HLD']]],
+  ['lca_285',['lca',['../classtitan23_1_1HLD.html#a60937a92ca64b98a8f2725b30c50d29a',1,'titan23::HLD::lca(int u, int v) const'],['../classtitan23_1_1HLD.html#a60937a92ca64b98a8f2725b30c50d29a',1,'titan23::HLD::lca(int u, int v) const'],['../classtitan23_1_1LCA.html#a161954869b0c81788e994afa8f248535',1,'titan23::LCA::lca(const int u, const int v) const']]],
+  ['lca_286',['LCA',['../classtitan23_1_1LCA.html#ad54cc0a876541a5eb907486b4782083c',1,'titan23::LCA']]],
   ['lca_5fmul_287',['lca_mul',['../classtitan23_1_1LCA.html#ab1924c1da3730a050151889407baad21',1,'titan23::LCA']]],
   ['le_288',['le',['../structtitan23_1_1StaticMultiset.html#af1dd98fcd6eb476bf42b58757b41104b',1,'titan23::StaticMultiset::le()'],['../structtitan23_1_1StaticSet.html#adf8326b017041cabf3314923fb951949',1,'titan23::StaticSet::le()']]],
   ['leader_289',['leader',['../classtitan23_1_1EulerTourTree.html#afdfc36d3ea4d6e0481da70d7abf380b1',1,'titan23::EulerTourTree']]],

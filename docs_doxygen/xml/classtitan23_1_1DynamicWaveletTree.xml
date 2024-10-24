@@ -20,7 +20,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="18" column="14" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="17" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" line="766" column="14" bodyfile="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" bodystart="765" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1DynamicWaveletTree_1af10e35ca9553379b8c5a3a82221b6052" prot="private" static="no" mutable="no">
         <type>T</type>
@@ -33,7 +33,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="19" column="11" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="19" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" line="767" column="11" bodyfile="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" bodystart="767" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1DynamicWaveletTree_1a5233e8ff07513ed1b04a50140e8b5fff" prot="private" static="no" mutable="no">
         <type>int</type>
@@ -46,7 +46,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="20" column="13" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="20" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" line="768" column="13" bodyfile="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" bodystart="768" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1DynamicWaveletTree_1aa3f0589358998d35f424c948c82ac943" prot="private" static="no" mutable="no">
         <type>int</type>
@@ -59,7 +59,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="21" column="13" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="21" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" line="769" column="13" bodyfile="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" bodystart="769" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -78,7 +78,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="34" column="13" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="34" bodyend="36"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" line="782" column="13" bodyfile="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" bodystart="782" bodyend="784"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1aec84e1e06c510937a49dc9e59b68ee52" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -95,7 +95,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="38" column="14" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="38" bodyend="75"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" line="786" column="14" bodyfile="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" bodystart="786" bodyend="823"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -115,7 +115,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="79" column="9" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="79" bodyend="82"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" line="827" column="9" bodyfile="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" bodystart="827" bodyend="830"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1aafce2f74ed8745a0e630edf9e10a145a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -137,7 +137,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="85" column="9" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="85" bodyend="88"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" line="833" column="9" bodyfile="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" bodystart="833" bodyend="836"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1aa937f107de268e68a549990f32b122a2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -159,7 +159,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="91" column="14" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="91" bodyend="113"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" line="839" column="14" bodyfile="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" bodystart="839" bodyend="861"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1a64c5dab88069e66dcd6cdf966ebae201" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -177,7 +177,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="116" column="11" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="116" bodyend="132"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" line="864" column="11" bodyfile="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" bodystart="864" bodyend="880"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1ac81b6567f3719b5f8e3120850e92a648" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -199,7 +199,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="135" column="14" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="135" bodyend="138"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" line="883" column="14" bodyfile="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" bodystart="883" bodyend="886"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1a6a5940cf0aa3074ee756188401aaa3d5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -221,7 +221,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="141" column="13" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="141" bodyend="156"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" line="889" column="13" bodyfile="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" bodystart="889" bodyend="904"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1a854d3d9efdd90ba3ce16ea44b6a5878c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -247,7 +247,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="159" column="13" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="159" bodyend="161"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" line="907" column="13" bodyfile="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" bodystart="907" bodyend="909"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1a6b2040b5f979e6aa664b7e6454461153" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -265,7 +265,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="164" column="11" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="164" bodyend="180"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" line="912" column="11" bodyfile="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" bodystart="912" bodyend="928"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1af8417ad41638516396e6c9e6c98ddbc3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -291,7 +291,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="183" column="11" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="183" bodyend="203"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" line="931" column="11" bodyfile="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" bodystart="931" bodyend="951"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1adbd2d18e73422ccaa2f9c6f044483f2f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -317,7 +317,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="206" column="11" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="206" bodyend="208"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" line="954" column="11" bodyfile="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" bodystart="954" bodyend="956"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1a4e6ede7bc3b05eb3dd740b7e24fa7128" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -343,7 +343,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="211" column="13" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="211" bodyend="229"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" line="959" column="13" bodyfile="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" bodystart="959" bodyend="977"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1a384869dd7bd88e7732cd4c4fc3dd05c5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -373,7 +373,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="232" column="13" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="232" bodyend="234"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" line="980" column="13" bodyfile="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" bodystart="980" bodyend="982"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1af18d74f4c9fd01ae68197b31b34057d0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -395,7 +395,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="237" column="13" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="237" bodyend="255"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" line="985" column="13" bodyfile="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" bodystart="985" bodyend="1003"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1a654f65c518ca7c8a58a59b2893770d23" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -417,7 +417,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="258" column="13" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="258" bodyend="278"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" line="1006" column="13" bodyfile="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" bodystart="1006" bodyend="1026"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1a7be1bb911b0c138a4b3cbb591c9ca1c8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -431,7 +431,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="281" column="13" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="281" bodyend="283"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" line="1029" column="13" bodyfile="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" bodystart="1029" bodyend="1031"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1a717f0d589b9c57ed4387d052465a86fa" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>vector&lt; T &gt;</type>
@@ -445,7 +445,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="287" column="16" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="287" bodyend="320"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" line="1035" column="16" bodyfile="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" bodystart="1035" bodyend="1068"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicWaveletTree_1a493a7366918605a89480509e2d0c307e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -459,7 +459,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="323" column="14" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="323" bodyend="335"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" line="1071" column="14" bodyfile="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" bodystart="1071" bodyend="1083"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -477,7 +477,7 @@
 </parameterlist>
 </para>
     </detaileddescription>
-    <location file="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" line="15" column="5" bodyfile="titan_cpplib/data_structures/dynamic_wavelet_tree.cpp" bodystart="15" bodyend="336"/>
+    <location file="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" line="763" column="5" bodyfile="titan_cpplib_expanded/data_structures/dynamic_wavelet_tree.cpp" bodystart="763" bodyend="1084"/>
     <listofallmembers>
       <member refid="classtitan23_1_1DynamicWaveletTree_1aec84e1e06c510937a49dc9e59b68ee52" prot="private" virt="non-virtual"><scope>titan23::DynamicWaveletTree</scope><name>_build</name></member>
       <member refid="classtitan23_1_1DynamicWaveletTree_1a5233e8ff07513ed1b04a50140e8b5fff" prot="private" virt="non-virtual"><scope>titan23::DynamicWaveletTree</scope><name>_log</name></member>

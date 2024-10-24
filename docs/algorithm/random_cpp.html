@@ -450,142 +450,10 @@
 </section>
 <section id="id2">
 <h2>仕様<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
-<dl class="cpp type">
-<dt class="sig sig-object cpp" id="_CPPv47titan23">
-<span id="_CPPv37titan23"></span><span id="_CPPv27titan23"></span><span id="titan23"></span><span class="target" id="namespacetitan23"></span><span class="k"><span class="pre">namespace</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">titan23</span></span></span><br /></dt>
-<dd><dl class="cpp class">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan236RandomE">
-<span id="_CPPv3N7titan236RandomE"></span><span id="_CPPv2N7titan236RandomE"></span><span id="titan23::Random"></span><span class="target" id="classtitan23_1_1Random"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Random</span></span></span><a class="headerlink" href="#_CPPv4N7titan236RandomE" title="Link to this definition">¶</a><br /></dt>
-<dd><p>(疑似)乱数生成クラス(XOR shift) </p>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan236Random6RandomEv">
-<span id="_CPPv3N7titan236Random6RandomEv"></span><span id="_CPPv2N7titan236Random6RandomEv"></span><span id="titan23::Random::Random"></span><span class="target" id="classtitan23_1_1Random_1ade5caf3ad830145699118032b77b85db"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Random</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan236Random6RandomEv" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan236Random6randomEv">
-<span id="_CPPv3N7titan236Random6randomEv"></span><span id="_CPPv2N7titan236Random6randomEv"></span><span id="titan23::Random::random"></span><span class="target" id="classtitan23_1_1Random_1a4191c342de62979837ea89fbceeb3631"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">random</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan236Random6randomEv" title="Link to this definition">¶</a><br /></dt>
-<dd><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code> の乱数を返す(実数) </p>
-</dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan236Random7randintEKi">
-<span id="_CPPv3N7titan236Random7randintEKi"></span><span id="_CPPv2N7titan236Random7randintEKi"></span><span id="titan23::Random::randint__iC"></span><span class="target" id="classtitan23_1_1Random_1a60524b9288bf9dde85b6f200272528c5"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">randint</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">end</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan236Random7randintEKi" title="Link to this definition">¶</a><br /></dt>
-<dd><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">end]</span></code> の乱数を返す(整数) </p>
-</dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan236Random7randintEKiKi">
-<span id="_CPPv3N7titan236Random7randintEKiKi"></span><span id="_CPPv2N7titan236Random7randintEKiKi"></span><span id="titan23::Random::randint__iC.iC"></span><span class="target" id="classtitan23_1_1Random_1af912a2c0ed6a29669290f43d2e7c8ea4"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">randint</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">begin</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">end</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan236Random7randintEKiKi" title="Link to this definition">¶</a><br /></dt>
-<dd><p><code class="docutils literal notranslate"><span class="pre">[begin,</span> <span class="pre">end]</span></code> の乱数を返す(整数) </p>
-</dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan236Random9randrangeEKi">
-<span id="_CPPv3N7titan236Random9randrangeEKi"></span><span id="_CPPv2N7titan236Random9randrangeEKi"></span><span id="titan23::Random::randrange__iC"></span><span class="target" id="classtitan23_1_1Random_1a6b72ec5b19b8fbbeef8acd5ff2eb5bda"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">randrange</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">end</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan236Random9randrangeEKi" title="Link to this definition">¶</a><br /></dt>
-<dd><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">end)</span></code> の乱数を返す(整数) </p>
-</dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan236Random9randrangeEKiKi">
-<span id="_CPPv3N7titan236Random9randrangeEKiKi"></span><span id="_CPPv2N7titan236Random9randrangeEKiKi"></span><span id="titan23::Random::randrange__iC.iC"></span><span class="target" id="classtitan23_1_1Random_1a01aa00958ee23afc95c6e66d6a55f03c"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">randrange</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">begin</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">end</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan236Random9randrangeEKiKi" title="Link to this definition">¶</a><br /></dt>
-<dd><p><code class="docutils literal notranslate"><span class="pre">[begin,</span> <span class="pre">end)</span></code> の乱数を返す(整数) </p>
-</dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan236Random8rand_u64Ev">
-<span id="_CPPv3N7titan236Random8rand_u64Ev"></span><span id="_CPPv2N7titan236Random8rand_u64Ev"></span><span id="titan23::Random::rand_u64"></span><span class="target" id="classtitan23_1_1Random_1a8d608910d35516e0f7ba487aed47e55d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">long</span></span><span class="w"> </span><span class="kt"><span class="pre">long</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rand_u64</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan236Random8rand_u64Ev" title="Link to this definition">¶</a><br /></dt>
-<dd><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">u64_MAX)</span></code> の乱数を返す / zobrist hash等の使用を想定 </p>
-</dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan236Random9rand_pairEKi">
-<span id="_CPPv3N7titan236Random9rand_pairEKi"></span><span id="_CPPv2N7titan236Random9rand_pairEKi"></span><span id="titan23::Random::rand_pair__iC"></span><span class="target" id="classtitan23_1_1Random_1abe557615b11a5d7304346b8ed685369a"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">pair</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rand_pair</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">end</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan236Random9rand_pairEKi" title="Link to this definition">¶</a><br /></dt>
-<dd><p><code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">end)</span></code> の異なる乱数を2つ返す </p>
-</dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan236Random9rand_pairEKiKi">
-<span id="_CPPv3N7titan236Random9rand_pairEKiKi"></span><span id="_CPPv2N7titan236Random9rand_pairEKiKi"></span><span id="titan23::Random::rand_pair__iC.iC"></span><span class="target" id="classtitan23_1_1Random_1a06992a20cad3a884c00c3e423d879c1b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">pair</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rand_pair</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">begin</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">end</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan236Random9rand_pairEKiKi" title="Link to this definition">¶</a><br /></dt>
-<dd><p><code class="docutils literal notranslate"><span class="pre">[begin,</span> <span class="pre">end)</span></code> の異なる乱数を2つ返す </p>
-</dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan236Random8rand_vecEKiR6vectorIiE">
-<span id="_CPPv3N7titan236Random8rand_vecEKiR6vectorIiE"></span><span id="_CPPv2N7titan236Random8rand_vecEKiR6vectorIiE"></span><span id="titan23::Random::rand_vec__iC.vector:i:R"></span><span class="target" id="classtitan23_1_1Random_1a15c2c12214dc315f4b09d8e6716e2b3a"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rand_vec</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">cnt</span></span>, <span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">a</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan236Random8rand_vecEKiR6vectorIiE" title="Link to this definition">¶</a><br /></dt>
-<dd><p>Note <code class="docutils literal notranslate"><span class="pre">a</span></code>は非const. </p>
-</dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan236Random10randdoubleEKdKd">
-<span id="_CPPv3N7titan236Random10randdoubleEKdKd"></span><span id="_CPPv2N7titan236Random10randdoubleEKdKd"></span><span id="titan23::Random::randdouble__doubleC.doubleC"></span><span class="target" id="classtitan23_1_1Random_1a74dc79ed9aa5dee428a782eca49407ee"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">randdouble</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">begin</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">end</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan236Random10randdoubleEKdKd" title="Link to this definition">¶</a><br /></dt>
-<dd><p><code class="docutils literal notranslate"><span class="pre">[begin,</span> <span class="pre">end)</span></code> の乱数を返す(実数) </p>
-</dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4I0EN7titan236Random7shuffleEvR6vectorI1TE">
-<span id="_CPPv3I0EN7titan236Random7shuffleER6vectorI1TE"></span><span id="_CPPv2I0EN7titan236Random7shuffleER6vectorI1TE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classtitan23_1_1Random_1a8a3e5ca699ccd75cff80a8939b89a91d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">shuffle</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN7titan236Random7shuffleEvR6vectorI1TE" title="titan23::Random::shuffle::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">a</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN7titan236Random7shuffleEvR6vectorI1TE" title="Link to this definition">¶</a><br /></dt>
-<dd><p><code class="docutils literal notranslate"><span class="pre">vector</span></code> をインプレースにシャッフルする / <code class="docutils literal notranslate"><span class="pre">O(n)</span></code></p>
-</dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4I0EN7titan236Random7choicesE6vectorI1TERK6vectorI1TEKi">
-<span id="_CPPv3I0EN7titan236Random7choicesERK6vectorI1TEKi"></span><span id="_CPPv2I0EN7titan236Random7choicesERK6vectorI1TEKi"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classtitan23_1_1Random_1aa14fa9b38502d5be75bdc09cfea5ce12"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN7titan236Random7choicesE6vectorI1TERK6vectorI1TEKi" title="titan23::Random::choices::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">choices</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN7titan236Random7choicesE6vectorI1TERK6vectorI1TEKi" title="titan23::Random::choices::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">a</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">k</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN7titan236Random7choicesE6vectorI1TERK6vectorI1TEKi" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4I0EN7titan236Random6choiceE1TRK6vectorI1TE">
-<span id="_CPPv3I0EN7titan236Random6choiceERK6vectorI1TE"></span><span id="_CPPv2I0EN7titan236Random6choiceERK6vectorI1TE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classtitan23_1_1Random_1a6e5323152fa179e6ce198965ef84bc83"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN7titan236Random6choiceE1TRK6vectorI1TE" title="titan23::Random::choice::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">choice</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN7titan236Random6choiceE1TRK6vectorI1TE" title="titan23::Random::choice::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">a</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN7titan236Random6choiceE1TRK6vectorI1TE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4I0EN7titan236Random6choiceE1TRK6vectorI1TERK6vectorIiEb">
-<span id="_CPPv3I0EN7titan236Random6choiceERK6vectorI1TERK6vectorIiEb"></span><span id="_CPPv2I0EN7titan236Random6choiceERK6vectorI1TERK6vectorIiEb"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classtitan23_1_1Random_1a09fa8bb8f81eabfca9e4d0bc3bc34ece"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN7titan236Random6choiceE1TRK6vectorI1TERK6vectorIiEb" title="titan23::Random::choice::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">choice</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN7titan236Random6choiceE1TRK6vectorI1TERK6vectorIiEb" title="titan23::Random::choice::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">a</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">int</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">w</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">normal</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN7titan236Random6choiceE1TRK6vectorI1TERK6vectorIiEb" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4I0EN7titan236Random6choiceE1TRK6vectorI1TERK6vectorIdE">
-<span id="_CPPv3I0EN7titan236Random6choiceERK6vectorI1TERK6vectorIdE"></span><span id="_CPPv2I0EN7titan236Random6choiceERK6vectorI1TERK6vectorIdE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classtitan23_1_1Random_1ae72775efea327eabef4283b9fa47f5d2"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN7titan236Random6choiceE1TRK6vectorI1TERK6vectorIdE" title="titan23::Random::choice::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">choice</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN7titan236Random6choiceE1TRK6vectorI1TERK6vectorIdE" title="titan23::Random::choice::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">a</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">w</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN7titan236Random6choiceE1TRK6vectorI1TERK6vectorIdE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>doxygenfile: Cannot find file “titan_cpplib/algorithm/random.cpp </p>
 </div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-functions">Private Functions</p>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan236Random7_xor128Ev">
-<span id="_CPPv3N7titan236Random7_xor128Ev"></span><span id="_CPPv2N7titan236Random7_xor128Ev"></span><span id="titan23::Random::_xor128"></span><span class="target" id="classtitan23_1_1Random_1a8bb331ebcba2e050292022b1394526e5"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_xor128</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N7titan236Random7_xor128Ev" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-<div class="breathe-sectiondef docutils container">
-<p class="breathe-sectiondef-title rubric" id="breathe-section-title-private-members">Private Members</p>
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan236Random2_xE">
-<span id="_CPPv3N7titan236Random2_xE"></span><span id="_CPPv2N7titan236Random2_xE"></span><span id="titan23::Random::_x__unsigned-i"></span><span class="target" id="classtitan23_1_1Random_1a7466d0ca186123e768892d715882ce21"></span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_x</span></span></span><a class="headerlink" href="#_CPPv4N7titan236Random2_xE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan236Random2_yE">
-<span id="_CPPv3N7titan236Random2_yE"></span><span id="_CPPv2N7titan236Random2_yE"></span><span id="titan23::Random::_y__unsigned-i"></span><span class="target" id="classtitan23_1_1Random_1aa5f712efb2d57476cc84742f093e7396"></span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_y</span></span></span><a class="headerlink" href="#_CPPv4N7titan236Random2_yE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan236Random2_zE">
-<span id="_CPPv3N7titan236Random2_zE"></span><span id="_CPPv2N7titan236Random2_zE"></span><span id="titan23::Random::_z__unsigned-i"></span><span class="target" id="classtitan23_1_1Random_1acb24fee459a4ddbd9242d234ff709f1f"></span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_z</span></span></span><a class="headerlink" href="#_CPPv4N7titan236Random2_zE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-<dl class="cpp var">
-<dt class="sig sig-object cpp" id="_CPPv4N7titan236Random2_wE">
-<span id="_CPPv3N7titan236Random2_wE"></span><span id="_CPPv2N7titan236Random2_wE"></span><span id="titan23::Random::_w__unsigned-i"></span><span class="target" id="classtitan23_1_1Random_1a1e0bac744adc61aaaae98259e8da5cf7"></span><span class="kt"><span class="pre">unsigned</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">_w</span></span></span><a class="headerlink" href="#_CPPv4N7titan236Random2_wE" title="Link to this definition">¶</a><br /></dt>
-<dd></dd></dl>
-
-</div>
-</dd></dl>
-
-</dd></dl>
-
 </section>
 </section>
 
@@ -628,36 +496,7 @@
             <ul>
 <li><a class="reference internal" href="#">random</a><ul>
 <li><a class="reference internal" href="#id1">ソースコード</a></li>
-<li><a class="reference internal" href="#id2">仕様</a><ul>
-<li><a class="reference internal" href="#_CPPv47titan23"><code class="docutils literal notranslate"><span class="pre">titan23</span></code></a><ul>
-<li><a class="reference internal" href="#_CPPv4N7titan236RandomE"><code class="docutils literal notranslate"><span class="pre">titan23::Random</span></code></a><ul>
-<li><a class="reference internal" href="#_CPPv4N7titan236Random6RandomEv"><code class="docutils literal notranslate"><span class="pre">titan23::Random::Random()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan236Random6randomEv"><code class="docutils literal notranslate"><span class="pre">titan23::Random::random()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan236Random7randintEKi"><code class="docutils literal notranslate"><span class="pre">titan23::Random::randint()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan236Random7randintEKiKi"><code class="docutils literal notranslate"><span class="pre">titan23::Random::randint()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan236Random9randrangeEKi"><code class="docutils literal notranslate"><span class="pre">titan23::Random::randrange()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan236Random9randrangeEKiKi"><code class="docutils literal notranslate"><span class="pre">titan23::Random::randrange()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan236Random8rand_u64Ev"><code class="docutils literal notranslate"><span class="pre">titan23::Random::rand_u64()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan236Random9rand_pairEKi"><code class="docutils literal notranslate"><span class="pre">titan23::Random::rand_pair()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan236Random9rand_pairEKiKi"><code class="docutils literal notranslate"><span class="pre">titan23::Random::rand_pair()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan236Random8rand_vecEKiR6vectorIiE"><code class="docutils literal notranslate"><span class="pre">titan23::Random::rand_vec()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan236Random10randdoubleEKdKd"><code class="docutils literal notranslate"><span class="pre">titan23::Random::randdouble()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4I0EN7titan236Random7shuffleEvR6vectorI1TE"><code class="docutils literal notranslate"><span class="pre">titan23::Random::shuffle()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4I0EN7titan236Random7choicesE6vectorI1TERK6vectorI1TEKi"><code class="docutils literal notranslate"><span class="pre">titan23::Random::choices()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4I0EN7titan236Random6choiceE1TRK6vectorI1TE"><code class="docutils literal notranslate"><span class="pre">titan23::Random::choice()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4I0EN7titan236Random6choiceE1TRK6vectorI1TERK6vectorIiEb"><code class="docutils literal notranslate"><span class="pre">titan23::Random::choice()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4I0EN7titan236Random6choiceE1TRK6vectorI1TERK6vectorIdE"><code class="docutils literal notranslate"><span class="pre">titan23::Random::choice()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan236Random7_xor128Ev"><code class="docutils literal notranslate"><span class="pre">titan23::Random::_xor128()</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan236Random2_xE"><code class="docutils literal notranslate"><span class="pre">titan23::Random::_x</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan236Random2_yE"><code class="docutils literal notranslate"><span class="pre">titan23::Random::_y</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan236Random2_zE"><code class="docutils literal notranslate"><span class="pre">titan23::Random::_z</span></code></a></li>
-<li><a class="reference internal" href="#_CPPv4N7titan236Random2_wE"><code class="docutils literal notranslate"><span class="pre">titan23::Random::_w</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
+<li><a class="reference internal" href="#id2">仕様</a></li>
 </ul>
 </li>
 </ul>

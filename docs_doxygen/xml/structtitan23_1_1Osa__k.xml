@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/math/divs.cpp" line="11" column="9" bodyfile="titan_cpplib/math/divs.cpp" bodystart="11" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/math/divs.cpp" line="12" column="9" bodyfile="titan_cpplib_expanded/math/divs.cpp" bodystart="12" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structtitan23_1_1Osa__k_1a9a7ae3bc829e4f110f0c5488b10ec8c0" prot="public" static="no" mutable="no">
         <type>vector&lt; int &gt;</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/math/divs.cpp" line="12" column="12" bodyfile="titan_cpplib/math/divs.cpp" bodystart="12" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/math/divs.cpp" line="13" column="12" bodyfile="titan_cpplib_expanded/math/divs.cpp" bodystart="13" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -46,7 +46,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/math/divs.cpp" line="14" column="5" bodyfile="titan_cpplib/math/divs.cpp" bodystart="14" bodyend="25"/>
+        <location file="titan_cpplib_expanded/math/divs.cpp" line="15" column="5" bodyfile="titan_cpplib_expanded/math/divs.cpp" bodystart="15" bodyend="26"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1Osa__k_1a67991907b515526a6b4b98567ba410df" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>vector&lt; int &gt;</type>
@@ -63,7 +63,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/math/divs.cpp" line="27" column="12" bodyfile="titan_cpplib/math/divs.cpp" bodystart="27" bodyend="34"/>
+        <location file="titan_cpplib_expanded/math/divs.cpp" line="28" column="12" bodyfile="titan_cpplib_expanded/math/divs.cpp" bodystart="28" bodyend="35"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1Osa__k_1afcc3ad82e5568e597e07689a7a88bbaf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>map&lt; int, int &gt;</type>
@@ -80,14 +80,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/math/divs.cpp" line="36" column="9" bodyfile="titan_cpplib/math/divs.cpp" bodystart="36" bodyend="43"/>
+        <location file="titan_cpplib_expanded/math/divs.cpp" line="37" column="9" bodyfile="titan_cpplib_expanded/math/divs.cpp" bodystart="37" bodyend="44"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/math/divs.cpp" line="10" column="3" bodyfile="titan_cpplib/math/divs.cpp" bodystart="10" bodyend="44"/>
+    <location file="titan_cpplib_expanded/math/divs.cpp" line="11" column="3" bodyfile="titan_cpplib_expanded/math/divs.cpp" bodystart="11" bodyend="45"/>
     <listofallmembers>
       <member refid="structtitan23_1_1Osa__k_1a9a7ae3bc829e4f110f0c5488b10ec8c0" prot="public" virt="non-virtual"><scope>titan23::Osa_k</scope><name>min_factor</name></member>
       <member refid="structtitan23_1_1Osa__k_1a9ca9229c118655566495d925c0a8f834" prot="public" virt="non-virtual"><scope>titan23::Osa_k</scope><name>n</name></member>

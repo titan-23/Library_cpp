@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['fenwicktree_195',['FenwickTree',['../structtitan23_1_1FenwickTree.html',1,'titan23']]],
-  ['fenwicktree2d_196',['FenwickTree2D',['../structtitan23_1_1FenwickTree2D.html',1,'titan23']]]
+  ['fenwicktree_196',['FenwickTree',['../structtitan23_1_1FenwickTree.html',1,'titan23']]],
+  ['fenwicktree2d_197',['FenwickTree2D',['../structtitan23_1_1FenwickTree2D.html',1,'titan23']]]
 ];

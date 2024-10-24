@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="dir_77609d3018ea2bae259d6620a9480788" kind="dir">
+    <compoundname>titan_cpplib_expanded/others</compoundname>
+    <innerfile refid="other_8cpp">other.cpp</innerfile>
+    <innerfile refid="print_8cpp">print.cpp</innerfile>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="titan_cpplib_expanded/others/"/>
+  </compounddef>
+</doxygen>

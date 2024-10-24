@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/string/hash_string.cpp" line="89" column="5" bodyfile="titan_cpplib/string/hash_string.cpp" bodystart="89" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/string/hash_string.cpp" line="90" column="5" bodyfile="titan_cpplib_expanded/string/hash_string.cpp" bodystart="90" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-attrib">
@@ -29,7 +29,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/string/hash_string.cpp" line="90" column="20" bodyfile="titan_cpplib/string/hash_string.cpp" bodystart="90" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/string/hash_string.cpp" line="91" column="20" bodyfile="titan_cpplib_expanded/string/hash_string.cpp" bodystart="91" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1HashString_1a1255a7508c42238318e74de39794257f" prot="private" static="no" mutable="no">
         <type>int</type>
@@ -42,7 +42,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/string/hash_string.cpp" line="91" column="9" bodyfile="titan_cpplib/string/hash_string.cpp" bodystart="91" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/string/hash_string.cpp" line="92" column="9" bodyfile="titan_cpplib_expanded/string/hash_string.cpp" bodystart="92" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1HashString_1a5d298ee1fa2a42b8cb51c13132513afe" prot="private" static="no" mutable="no">
         <type>vector&lt; u64 &gt;</type>
@@ -55,7 +55,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/string/hash_string.cpp" line="92" column="12" bodyfile="titan_cpplib/string/hash_string.cpp" bodystart="92" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/string/hash_string.cpp" line="93" column="12" bodyfile="titan_cpplib_expanded/string/hash_string.cpp" bodystart="93" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1HashString_1aa606e62c00f6f81e26283b3da80dbaac" prot="private" static="no" mutable="no">
         <type>vector&lt; u64 &gt;</type>
@@ -68,7 +68,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/string/hash_string.cpp" line="92" column="17" bodyfile="titan_cpplib/string/hash_string.cpp" bodystart="92" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/string/hash_string.cpp" line="93" column="17" bodyfile="titan_cpplib_expanded/string/hash_string.cpp" bodystart="93" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -83,7 +83,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/string/hash_string.cpp" line="95" column="5" bodyfile="titan_cpplib/string/hash_string.cpp" bodystart="95" bodyend="95"/>
+        <location file="titan_cpplib_expanded/string/hash_string.cpp" line="96" column="5" bodyfile="titan_cpplib_expanded/string/hash_string.cpp" bodystart="96" bodyend="96"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1HashString_1a977c3531814fc9dae9f5d203df06ca9c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -104,7 +104,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/string/hash_string.cpp" line="96" column="5" bodyfile="titan_cpplib/string/hash_string.cpp" bodystart="96" bodyend="104"/>
+        <location file="titan_cpplib_expanded/string/hash_string.cpp" line="97" column="5" bodyfile="titan_cpplib_expanded/string/hash_string.cpp" bodystart="97" bodyend="105"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1HashString_1a2b7cd5afa925576a8e7cdac6e541a1b0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>u64</type>
@@ -125,7 +125,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/string/hash_string.cpp" line="106" column="9" bodyfile="titan_cpplib/string/hash_string.cpp" bodystart="106" bodyend="109"/>
+        <location file="titan_cpplib_expanded/string/hash_string.cpp" line="107" column="9" bodyfile="titan_cpplib_expanded/string/hash_string.cpp" bodystart="107" bodyend="110"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1HashString_1a3309091829c17be68d645853803c79bf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>vector&lt; int &gt;</type>
@@ -138,14 +138,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/string/hash_string.cpp" line="111" column="12" bodyfile="titan_cpplib/string/hash_string.cpp" bodystart="111" bodyend="122"/>
+        <location file="titan_cpplib_expanded/string/hash_string.cpp" line="112" column="12" bodyfile="titan_cpplib_expanded/string/hash_string.cpp" bodystart="112" bodyend="123"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/string/hash_string.cpp" line="87" column="3" bodyfile="titan_cpplib/string/hash_string.cpp" bodystart="87" bodyend="123"/>
+    <location file="titan_cpplib_expanded/string/hash_string.cpp" line="88" column="3" bodyfile="titan_cpplib_expanded/string/hash_string.cpp" bodystart="88" bodyend="124"/>
     <listofallmembers>
       <member refid="classtitan23_1_1HashString_1aa606e62c00f6f81e26283b3da80dbaac" prot="private" virt="non-virtual"><scope>titan23::HashString</scope><name>acc</name></member>
       <member refid="classtitan23_1_1HashString_1a5d298ee1fa2a42b8cb51c13132513afe" prot="private" virt="non-virtual"><scope>titan23::HashString</scope><name>data</name></member>

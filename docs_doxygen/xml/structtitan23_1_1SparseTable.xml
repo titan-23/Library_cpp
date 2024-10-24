@@ -29,11 +29,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/sparse_table.cpp" line="14" column="13" bodyfile="titan_cpplib/data_structures/sparse_table.cpp" bodystart="14" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/sparse_table.cpp" line="15" column="13" bodyfile="titan_cpplib_expanded/data_structures/sparse_table.cpp" bodystart="15" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="structtitan23_1_1SparseTable_1a4808be2252a54bcde4d2553bbf059347" prot="private" static="no" mutable="no">
+      <memberdef kind="variable" id="structtitan23_1_1SparseTable_1ae9a3d432116a36223b1a463ecffde811" prot="private" static="no" mutable="no">
         <type>vector&lt; vector&lt; T &gt; &gt;</type>
-        <definition>vector&lt;vector&lt;T&gt; &gt; titan23::SparseTable&lt; T, op, e &gt;::data</definition>
+        <definition>vector&lt; vector&lt; T &gt; &gt; titan23::SparseTable&lt; T, op, e &gt;::data</definition>
         <argsstring></argsstring>
         <name>data</name>
         <briefdescription>
@@ -42,7 +42,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/sparse_table.cpp" line="15" column="16" bodyfile="titan_cpplib/data_structures/sparse_table.cpp" bodystart="15" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/sparse_table.cpp" line="16" column="16" bodyfile="titan_cpplib_expanded/data_structures/sparse_table.cpp" bodystart="16" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -57,7 +57,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/sparse_table.cpp" line="18" column="9" bodyfile="titan_cpplib/data_structures/sparse_table.cpp" bodystart="18" bodyend="18"/>
+        <location file="titan_cpplib_expanded/data_structures/sparse_table.cpp" line="19" column="9" bodyfile="titan_cpplib_expanded/data_structures/sparse_table.cpp" bodystart="19" bodyend="19"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1SparseTable_1a2fe72eca36ff2211f2e349f3f72b1071" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -74,7 +74,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/sparse_table.cpp" line="19" column="9" bodyfile="titan_cpplib/data_structures/sparse_table.cpp" bodystart="19" bodyend="33"/>
+        <location file="titan_cpplib_expanded/data_structures/sparse_table.cpp" line="20" column="9" bodyfile="titan_cpplib_expanded/data_structures/sparse_table.cpp" bodystart="20" bodyend="34"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1SparseTable_1a6a50dcdfa26bd8ea3dc3c3e460de23f0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -95,7 +95,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/sparse_table.cpp" line="35" column="11" bodyfile="titan_cpplib/data_structures/sparse_table.cpp" bodystart="35" bodyend="40"/>
+        <location file="titan_cpplib_expanded/data_structures/sparse_table.cpp" line="36" column="11" bodyfile="titan_cpplib_expanded/data_structures/sparse_table.cpp" bodystart="36" bodyend="41"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1SparseTable_1a28a578e62d2aee3421dc9d38def40ee1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -112,7 +112,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/sparse_table.cpp" line="42" column="11" bodyfile="titan_cpplib/data_structures/sparse_table.cpp" bodystart="42" bodyend="45"/>
+        <location file="titan_cpplib_expanded/data_structures/sparse_table.cpp" line="43" column="11" bodyfile="titan_cpplib_expanded/data_structures/sparse_table.cpp" bodystart="43" bodyend="46"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1SparseTable_1ac35e559acabd307984305bd7619ec656" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -125,7 +125,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/sparse_table.cpp" line="47" column="13" bodyfile="titan_cpplib/data_structures/sparse_table.cpp" bodystart="47" bodyend="49"/>
+        <location file="titan_cpplib_expanded/data_structures/sparse_table.cpp" line="48" column="13" bodyfile="titan_cpplib_expanded/data_structures/sparse_table.cpp" bodystart="48" bodyend="50"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1SparseTable_1a8082a2a4596653997934e553343a62b0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -138,21 +138,121 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/sparse_table.cpp" line="51" column="14" bodyfile="titan_cpplib/data_structures/sparse_table.cpp" bodystart="51" bodyend="60"/>
+        <location file="titan_cpplib_expanded/data_structures/sparse_table.cpp" line="52" column="14" bodyfile="titan_cpplib_expanded/data_structures/sparse_table.cpp" bodystart="52" bodyend="61"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1SparseTable_1a9c0ad9dac49b4f6f8cd3f9244fd74a29" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::SparseTable&lt; T, op, e &gt;::SparseTable</definition>
+        <argsstring>()</argsstring>
+        <name>SparseTable</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/graph/lca.cpp" line="24" column="9" bodyfile="titan_cpplib_expanded/graph/lca.cpp" bodystart="24" bodyend="24"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1SparseTable_1a2fe72eca36ff2211f2e349f3f72b1071" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::SparseTable&lt; T, op, e &gt;::SparseTable</definition>
+        <argsstring>(vector&lt; T &gt; &amp;a)</argsstring>
+        <name>SparseTable</name>
+        <param>
+          <type>vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/graph/lca.cpp" line="25" column="9" bodyfile="titan_cpplib_expanded/graph/lca.cpp" bodystart="25" bodyend="39"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1SparseTable_1a6a50dcdfa26bd8ea3dc3c3e460de23f0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T titan23::SparseTable&lt; T, op, e &gt;::prod</definition>
+        <argsstring>(const int l, const int r) const</argsstring>
+        <name>prod</name>
+        <param>
+          <type>const int</type>
+          <declname>l</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>r</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/graph/lca.cpp" line="41" column="11" bodyfile="titan_cpplib_expanded/graph/lca.cpp" bodystart="41" bodyend="46"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1SparseTable_1a28a578e62d2aee3421dc9d38def40ee1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T titan23::SparseTable&lt; T, op, e &gt;::get</definition>
+        <argsstring>(const int k) const</argsstring>
+        <name>get</name>
+        <param>
+          <type>const int</type>
+          <declname>k</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/graph/lca.cpp" line="48" column="11" bodyfile="titan_cpplib_expanded/graph/lca.cpp" bodystart="48" bodyend="51"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1SparseTable_1ac35e559acabd307984305bd7619ec656" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::SparseTable&lt; T, op, e &gt;::len</definition>
+        <argsstring>() const</argsstring>
+        <name>len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/graph/lca.cpp" line="53" column="13" bodyfile="titan_cpplib_expanded/graph/lca.cpp" bodystart="53" bodyend="55"/>
+      </memberdef>
+      <memberdef kind="function" id="structtitan23_1_1SparseTable_1a8082a2a4596653997934e553343a62b0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::SparseTable&lt; T, op, e &gt;::print</definition>
+        <argsstring>() const</argsstring>
+        <name>print</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/graph/lca.cpp" line="57" column="14" bodyfile="titan_cpplib_expanded/graph/lca.cpp" bodystart="57" bodyend="66"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/data_structures/sparse_table.cpp" line="12" column="5" bodyfile="titan_cpplib/data_structures/sparse_table.cpp" bodystart="12" bodyend="61"/>
+    <location file="titan_cpplib_expanded/data_structures/sparse_table.cpp" line="13" column="5" bodyfile="titan_cpplib_expanded/data_structures/sparse_table.cpp" bodystart="13" bodyend="62"/>
     <listofallmembers>
-      <member refid="structtitan23_1_1SparseTable_1a4808be2252a54bcde4d2553bbf059347" prot="private" virt="non-virtual"><scope>titan23::SparseTable</scope><name>data</name></member>
+      <member refid="structtitan23_1_1SparseTable_1ae9a3d432116a36223b1a463ecffde811" prot="private" virt="non-virtual"><scope>titan23::SparseTable</scope><name>data</name></member>
       <member refid="structtitan23_1_1SparseTable_1a28a578e62d2aee3421dc9d38def40ee1" prot="public" virt="non-virtual"><scope>titan23::SparseTable</scope><name>get</name></member>
+      <member refid="structtitan23_1_1SparseTable_1a28a578e62d2aee3421dc9d38def40ee1" prot="public" virt="non-virtual"><scope>titan23::SparseTable</scope><name>get</name></member>
+      <member refid="structtitan23_1_1SparseTable_1ac35e559acabd307984305bd7619ec656" prot="public" virt="non-virtual"><scope>titan23::SparseTable</scope><name>len</name></member>
       <member refid="structtitan23_1_1SparseTable_1ac35e559acabd307984305bd7619ec656" prot="public" virt="non-virtual"><scope>titan23::SparseTable</scope><name>len</name></member>
       <member refid="structtitan23_1_1SparseTable_1aae26aec993d654168bdc065828862580" prot="private" virt="non-virtual"><scope>titan23::SparseTable</scope><name>n</name></member>
       <member refid="structtitan23_1_1SparseTable_1a8082a2a4596653997934e553343a62b0" prot="public" virt="non-virtual"><scope>titan23::SparseTable</scope><name>print</name></member>
+      <member refid="structtitan23_1_1SparseTable_1a8082a2a4596653997934e553343a62b0" prot="public" virt="non-virtual"><scope>titan23::SparseTable</scope><name>print</name></member>
       <member refid="structtitan23_1_1SparseTable_1a6a50dcdfa26bd8ea3dc3c3e460de23f0" prot="public" virt="non-virtual"><scope>titan23::SparseTable</scope><name>prod</name></member>
+      <member refid="structtitan23_1_1SparseTable_1a6a50dcdfa26bd8ea3dc3c3e460de23f0" prot="public" virt="non-virtual"><scope>titan23::SparseTable</scope><name>prod</name></member>
+      <member refid="structtitan23_1_1SparseTable_1a9c0ad9dac49b4f6f8cd3f9244fd74a29" prot="public" virt="non-virtual"><scope>titan23::SparseTable</scope><name>SparseTable</name></member>
+      <member refid="structtitan23_1_1SparseTable_1a2fe72eca36ff2211f2e349f3f72b1071" prot="public" virt="non-virtual"><scope>titan23::SparseTable</scope><name>SparseTable</name></member>
       <member refid="structtitan23_1_1SparseTable_1a9c0ad9dac49b4f6f8cd3f9244fd74a29" prot="public" virt="non-virtual"><scope>titan23::SparseTable</scope><name>SparseTable</name></member>
       <member refid="structtitan23_1_1SparseTable_1a2fe72eca36ff2211f2e349f3f72b1071" prot="public" virt="non-virtual"><scope>titan23::SparseTable</scope><name>SparseTable</name></member>
     </listofallmembers>

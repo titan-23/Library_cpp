@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/lca.cpp" line="19" column="13" bodyfile="titan_cpplib/graph/lca.cpp" bodystart="19" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/graph/lca.cpp" line="83" column="13" bodyfile="titan_cpplib_expanded/graph/lca.cpp" bodystart="83" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1LCA_1a335efd3ebfeb251c0d9323b0580655bb" prot="private" static="no" mutable="no">
         <type>vector&lt; int &gt;</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/lca.cpp" line="20" column="16" bodyfile="titan_cpplib/graph/lca.cpp" bodystart="20" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/graph/lca.cpp" line="84" column="16" bodyfile="titan_cpplib_expanded/graph/lca.cpp" bodystart="84" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1LCA_1ac8336079cdcde74eb6471b6ea8320330" prot="private" static="no" mutable="no">
         <type>vector&lt; int &gt;</type>
@@ -40,7 +40,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/lca.cpp" line="20" column="21" bodyfile="titan_cpplib/graph/lca.cpp" bodystart="20" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/graph/lca.cpp" line="84" column="21" bodyfile="titan_cpplib_expanded/graph/lca.cpp" bodystart="84" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1LCA_1aceb54eef4f3cdf7e623dc4f0ee664c61" prot="private" static="no" mutable="no">
         <type>vector&lt; int &gt;</type>
@@ -53,7 +53,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/lca.cpp" line="20" column="28" bodyfile="titan_cpplib/graph/lca.cpp" bodystart="20" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/graph/lca.cpp" line="84" column="28" bodyfile="titan_cpplib_expanded/graph/lca.cpp" bodystart="84" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1LCA_1ae582a345a2b152db7effb922c26d486f" prot="private" static="no" mutable="no">
         <type><ref refid="structtitan23_1_1SparseTable" kindref="compound">SparseTable</ref>&lt; int, __LCA_op, __LCA_e &gt;</type>
@@ -66,7 +66,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/lca.cpp" line="21" column="21" bodyfile="titan_cpplib/graph/lca.cpp" bodystart="21" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/graph/lca.cpp" line="85" column="21" bodyfile="titan_cpplib_expanded/graph/lca.cpp" bodystart="85" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-static-func">
@@ -89,7 +89,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/lca.cpp" line="17" column="20" bodyfile="titan_cpplib/graph/lca.cpp" bodystart="17" bodyend="17"/>
+        <location file="titan_cpplib_expanded/graph/lca.cpp" line="81" column="20" bodyfile="titan_cpplib_expanded/graph/lca.cpp" bodystart="81" bodyend="81"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LCA_1a0673e7bf61b5e4626882e99ba13bd62b" prot="private" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -102,7 +102,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/lca.cpp" line="18" column="20" bodyfile="titan_cpplib/graph/lca.cpp" bodystart="18" bodyend="18"/>
+        <location file="titan_cpplib_expanded/graph/lca.cpp" line="82" column="20" bodyfile="titan_cpplib_expanded/graph/lca.cpp" bodystart="82" bodyend="82"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -117,7 +117,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/lca.cpp" line="24" column="9" bodyfile="titan_cpplib/graph/lca.cpp" bodystart="24" bodyend="24"/>
+        <location file="titan_cpplib_expanded/graph/lca.cpp" line="88" column="9" bodyfile="titan_cpplib_expanded/graph/lca.cpp" bodystart="88" bodyend="88"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LCA_1ad54cc0a876541a5eb907486b4782083c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -139,7 +139,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/lca.cpp" line="27" column="9" bodyfile="titan_cpplib/graph/lca.cpp" bodystart="27" bodyend="50"/>
+        <location file="titan_cpplib_expanded/graph/lca.cpp" line="91" column="9" bodyfile="titan_cpplib_expanded/graph/lca.cpp" bodystart="91" bodyend="114"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LCA_1a161954869b0c81788e994afa8f248535" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -161,7 +161,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/lca.cpp" line="53" column="13" bodyfile="titan_cpplib/graph/lca.cpp" bodystart="53" bodyend="58"/>
+        <location file="titan_cpplib_expanded/graph/lca.cpp" line="117" column="13" bodyfile="titan_cpplib_expanded/graph/lca.cpp" bodystart="117" bodyend="122"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LCA_1ab1924c1da3730a050151889407baad21" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -179,7 +179,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/lca.cpp" line="61" column="13" bodyfile="titan_cpplib/graph/lca.cpp" bodystart="61" bodyend="72"/>
+        <location file="titan_cpplib_expanded/graph/lca.cpp" line="125" column="13" bodyfile="titan_cpplib_expanded/graph/lca.cpp" bodystart="125" bodyend="136"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -187,7 +187,7 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/graph/lca.cpp" line="15" column="5" bodyfile="titan_cpplib/graph/lca.cpp" bodystart="15" bodyend="73"/>
+    <location file="titan_cpplib_expanded/graph/lca.cpp" line="79" column="5" bodyfile="titan_cpplib_expanded/graph/lca.cpp" bodystart="79" bodyend="137"/>
     <listofallmembers>
       <member refid="classtitan23_1_1LCA_1a0673e7bf61b5e4626882e99ba13bd62b" prot="private" virt="non-virtual"><scope>titan23::LCA</scope><name>__LCA_e</name></member>
       <member refid="classtitan23_1_1LCA_1acfbf3e78281543c07655951f83468cc0" prot="private" virt="non-virtual"><scope>titan23::LCA</scope><name>__LCA_op</name></member>

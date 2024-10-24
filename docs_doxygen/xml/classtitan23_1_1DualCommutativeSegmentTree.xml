@@ -42,7 +42,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" line="20" column="9" bodyfile="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" bodystart="20" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" line="21" column="9" bodyfile="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" bodystart="21" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1DualCommutativeSegmentTree_1a48bbede973908ecc53406565f12683c7" prot="private" static="no" mutable="no">
         <type>int</type>
@@ -55,7 +55,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" line="20" column="12" bodyfile="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" bodystart="20" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" line="21" column="12" bodyfile="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" bodystart="21" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1DualCommutativeSegmentTree_1ae7db126cdc4992d5a2e7f8fd6fc21402" prot="private" static="no" mutable="no">
         <type>int</type>
@@ -68,7 +68,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" line="20" column="18" bodyfile="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" bodystart="20" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" line="21" column="18" bodyfile="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" bodystart="21" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1DualCommutativeSegmentTree_1ada4b0ba37ada4d06018233d7176eaa90" prot="private" static="no" mutable="no">
         <type>vector&lt; T &gt;</type>
@@ -81,7 +81,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" line="21" column="12" bodyfile="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" bodystart="21" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" line="22" column="12" bodyfile="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" bodystart="22" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1DualCommutativeSegmentTree_1a24d04b9a3ca2d5cfe833c58d8b8c628c" prot="private" static="no" mutable="no">
         <type>vector&lt; T &gt;</type>
@@ -94,7 +94,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" line="21" column="18" bodyfile="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" bodystart="21" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" line="22" column="18" bodyfile="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" bodystart="22" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -113,7 +113,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" line="23" column="10" bodyfile="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" bodystart="23" bodyend="29"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" line="24" column="10" bodyfile="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" bodystart="24" bodyend="30"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DualCommutativeSegmentTree_1a9ad8140e37dc4094a270e8ed638965b2" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -134,7 +134,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" line="31" column="10" bodyfile="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" bodystart="31" bodyend="40"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" line="32" column="10" bodyfile="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" bodystart="32" bodyend="41"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DualCommutativeSegmentTree_1aa1c6094bfd097468e0c3c250bfc6e302" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -151,7 +151,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" line="42" column="10" bodyfile="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" bodystart="42" bodyend="46"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" line="43" column="10" bodyfile="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" bodystart="43" bodyend="47"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -166,7 +166,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" line="49" column="5" bodyfile="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" bodystart="49" bodyend="49"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" line="50" column="5" bodyfile="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" bodystart="50" bodyend="50"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DualCommutativeSegmentTree_1a92c7166d4a678ff260ecb13e1c179b7b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -183,7 +183,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" line="51" column="5" bodyfile="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" bodystart="51" bodyend="53"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" line="52" column="5" bodyfile="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" bodystart="52" bodyend="54"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DualCommutativeSegmentTree_1a189093383051330b19aa2385416496bc" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -200,7 +200,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" line="55" column="5" bodyfile="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" bodystart="55" bodyend="61"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" line="56" column="5" bodyfile="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" bodystart="56" bodyend="62"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DualCommutativeSegmentTree_1a7a913f56a223afd6a9a5b522635aa8fd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -221,7 +221,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" line="63" column="10" bodyfile="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" bodystart="63" bodyend="65"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" line="64" column="10" bodyfile="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" bodystart="64" bodyend="66"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DualCommutativeSegmentTree_1a4fdf9d4d1ea15e1d7dc1474a8b125247" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -246,7 +246,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" line="67" column="10" bodyfile="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" bodystart="67" bodyend="94"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" line="68" column="10" bodyfile="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" bodystart="68" bodyend="95"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DualCommutativeSegmentTree_1ac6f5d9032ad7910d36d94c4d31e5746a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -263,7 +263,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" line="96" column="10" bodyfile="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" bodystart="96" bodyend="98"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" line="97" column="10" bodyfile="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" bodystart="97" bodyend="99"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DualCommutativeSegmentTree_1aec32d6adc63c7d464c3df95d00a76814" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -276,7 +276,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" line="100" column="10" bodyfile="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" bodystart="100" bodyend="104"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" line="101" column="10" bodyfile="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" bodystart="101" bodyend="105"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DualCommutativeSegmentTree_1aac07fe59294d8af90c7c15d0ec4c68cd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>vector&lt; T &gt;</type>
@@ -289,7 +289,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" line="106" column="12" bodyfile="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" bodystart="106" bodyend="110"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" line="107" column="12" bodyfile="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" bodystart="107" bodyend="111"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DualCommutativeSegmentTree_1aa4a7d4cf306bb1c2400c94ad0496f52c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -306,7 +306,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" line="112" column="7" bodyfile="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" bodystart="112" bodyend="120"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" line="113" column="7" bodyfile="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" bodystart="113" bodyend="121"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DualCommutativeSegmentTree_1a49170c251e03cf16590c902e6bd27e8f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -327,7 +327,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" line="122" column="10" bodyfile="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" bodystart="122" bodyend="129"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" line="123" column="10" bodyfile="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" bodystart="123" bodyend="130"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DualCommutativeSegmentTree_1ae00604f1c883beec6cb7b260f419d9e0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -340,7 +340,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" line="131" column="10" bodyfile="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" bodystart="131" bodyend="140"/>
+        <location file="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" line="132" column="10" bodyfile="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" bodystart="132" bodyend="141"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -348,7 +348,7 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" line="18" column="3" bodyfile="titan_cpplib/data_structures/dual_commutative_segment_tree.cpp" bodystart="18" bodyend="141"/>
+    <location file="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" line="19" column="3" bodyfile="titan_cpplib_expanded/data_structures/dual_commutative_segment_tree.cpp" bodystart="19" bodyend="142"/>
     <listofallmembers>
       <member refid="classtitan23_1_1DualCommutativeSegmentTree_1a9ad8140e37dc4094a270e8ed638965b2" prot="private" virt="non-virtual"><scope>titan23::DualCommutativeSegmentTree</scope><name>_all_apply</name></member>
       <member refid="classtitan23_1_1DualCommutativeSegmentTree_1a3958b8edfb7039760312f9923f03442f" prot="private" virt="non-virtual"><scope>titan23::DualCommutativeSegmentTree</scope><name>_build</name></member>

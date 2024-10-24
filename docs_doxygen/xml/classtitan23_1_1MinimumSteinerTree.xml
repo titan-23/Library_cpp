@@ -19,7 +19,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/minimum_steiner_tree.cpp" line="17" column="9" bodyfile="titan_cpplib/graph/minimum_steiner_tree.cpp" bodystart="17" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/graph/minimum_steiner_tree.cpp" line="79" column="9" bodyfile="titan_cpplib_expanded/graph/minimum_steiner_tree.cpp" bodystart="79" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1MinimumSteinerTree_1a061c454ef31c15d99d665192f00c6101" prot="private" static="no" mutable="no">
         <type>T</type>
@@ -32,7 +32,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/minimum_steiner_tree.cpp" line="18" column="7" bodyfile="titan_cpplib/graph/minimum_steiner_tree.cpp" bodystart="18" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/graph/minimum_steiner_tree.cpp" line="80" column="7" bodyfile="titan_cpplib_expanded/graph/minimum_steiner_tree.cpp" bodystart="80" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1MinimumSteinerTree_1a3b1570f66bc3ba70e730c949c01b3e38" prot="private" static="no" mutable="no">
         <type><ref refid="structtitan23_1_1warshall__floyd__path" kindref="compound">titan23::warshall_floyd_path</ref>&lt; T &gt;</type>
@@ -45,7 +45,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/minimum_steiner_tree.cpp" line="19" column="34" bodyfile="titan_cpplib/graph/minimum_steiner_tree.cpp" bodystart="19" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/graph/minimum_steiner_tree.cpp" line="81" column="34" bodyfile="titan_cpplib_expanded/graph/minimum_steiner_tree.cpp" bodystart="81" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -60,7 +60,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/minimum_steiner_tree.cpp" line="22" column="5" bodyfile="titan_cpplib/graph/minimum_steiner_tree.cpp" bodystart="22" bodyend="22"/>
+        <location file="titan_cpplib_expanded/graph/minimum_steiner_tree.cpp" line="84" column="5" bodyfile="titan_cpplib_expanded/graph/minimum_steiner_tree.cpp" bodystart="84" bodyend="84"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1MinimumSteinerTree_1a635bb936a9f46a896e0e7575e3d60c57" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -81,7 +81,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/minimum_steiner_tree.cpp" line="25" column="5" bodyfile="titan_cpplib/graph/minimum_steiner_tree.cpp" bodystart="25" bodyend="28"/>
+        <location file="titan_cpplib_expanded/graph/minimum_steiner_tree.cpp" line="87" column="5" bodyfile="titan_cpplib_expanded/graph/minimum_steiner_tree.cpp" bodystart="87" bodyend="90"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1MinimumSteinerTree_1af533407a00a9b1a72ce3e9e59fe54a4e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>vector&lt; pair&lt; int, int &gt; &gt;</type>
@@ -98,7 +98,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/minimum_steiner_tree.cpp" line="31" column="12" bodyfile="titan_cpplib/graph/minimum_steiner_tree.cpp" bodystart="31" bodyend="67"/>
+        <location file="titan_cpplib_expanded/graph/minimum_steiner_tree.cpp" line="93" column="12" bodyfile="titan_cpplib_expanded/graph/minimum_steiner_tree.cpp" bodystart="93" bodyend="129"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -107,7 +107,7 @@
     <detaileddescription>
 <para>プリム法を用いた近似解法の実装 時間 O(|V|^3), 空間 O(|V|^2) </para>
     </detaileddescription>
-    <location file="titan_cpplib/graph/minimum_steiner_tree.cpp" line="15" column="3" bodyfile="titan_cpplib/graph/minimum_steiner_tree.cpp" bodystart="15" bodyend="68"/>
+    <location file="titan_cpplib_expanded/graph/minimum_steiner_tree.cpp" line="77" column="3" bodyfile="titan_cpplib_expanded/graph/minimum_steiner_tree.cpp" bodystart="77" bodyend="130"/>
     <listofallmembers>
       <member refid="classtitan23_1_1MinimumSteinerTree_1af533407a00a9b1a72ce3e9e59fe54a4e" prot="public" virt="non-virtual"><scope>titan23::MinimumSteinerTree</scope><name>build_prim</name></member>
       <member refid="classtitan23_1_1MinimumSteinerTree_1a3b1570f66bc3ba70e730c949c01b3e38" prot="private" virt="non-virtual"><scope>titan23::MinimumSteinerTree</scope><name>dist_path</name></member>

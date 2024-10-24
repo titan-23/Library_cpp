@@ -33,7 +33,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_segment_tree.cpp" line="19" column="9" bodyfile="titan_cpplib/data_structures/dynamic_segment_tree.cpp" bodystart="19" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_segment_tree.cpp" line="20" column="9" bodyfile="titan_cpplib_expanded/data_structures/dynamic_segment_tree.cpp" bodystart="20" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-attrib">
@@ -48,7 +48,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_segment_tree.cpp" line="20" column="17" bodyfile="titan_cpplib/data_structures/dynamic_segment_tree.cpp" bodystart="20" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_segment_tree.cpp" line="21" column="17" bodyfile="titan_cpplib_expanded/data_structures/dynamic_segment_tree.cpp" bodystart="21" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1DynamicSegmentTree_1a0f11e52121f343771e8762976a8ab6c3" prot="private" static="no" mutable="no">
         <type>IndexType</type>
@@ -61,7 +61,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_segment_tree.cpp" line="21" column="19" bodyfile="titan_cpplib/data_structures/dynamic_segment_tree.cpp" bodystart="21" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_segment_tree.cpp" line="22" column="19" bodyfile="titan_cpplib_expanded/data_structures/dynamic_segment_tree.cpp" bodystart="22" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-static-func">
@@ -80,7 +80,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_segment_tree.cpp" line="14" column="20" bodyfile="titan_cpplib/data_structures/dynamic_segment_tree.cpp" bodystart="14" bodyend="16"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_segment_tree.cpp" line="15" column="20" bodyfile="titan_cpplib_expanded/data_structures/dynamic_segment_tree.cpp" bodystart="15" bodyend="17"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -107,7 +107,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_segment_tree.cpp" line="57" column="11" bodyfile="titan_cpplib/data_structures/dynamic_segment_tree.cpp" bodystart="57" bodyend="64"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_segment_tree.cpp" line="58" column="11" bodyfile="titan_cpplib_expanded/data_structures/dynamic_segment_tree.cpp" bodystart="58" bodyend="65"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicSegmentTree_1addab0ab0eaed8bef48711c6dbd7a97d4" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -132,7 +132,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_segment_tree.cpp" line="66" column="14" bodyfile="titan_cpplib/data_structures/dynamic_segment_tree.cpp" bodystart="66" bodyend="79"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_segment_tree.cpp" line="67" column="14" bodyfile="titan_cpplib_expanded/data_structures/dynamic_segment_tree.cpp" bodystart="67" bodyend="80"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -147,7 +147,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_segment_tree.cpp" line="82" column="9" bodyfile="titan_cpplib/data_structures/dynamic_segment_tree.cpp" bodystart="82" bodyend="82"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_segment_tree.cpp" line="83" column="9" bodyfile="titan_cpplib_expanded/data_structures/dynamic_segment_tree.cpp" bodystart="83" bodyend="83"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicSegmentTree_1aa9f7bfa07903c54f27b8d5f939e4a393" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -164,7 +164,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_segment_tree.cpp" line="84" column="9" bodyfile="titan_cpplib/data_structures/dynamic_segment_tree.cpp" bodystart="84" bodyend="88"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_segment_tree.cpp" line="85" column="9" bodyfile="titan_cpplib_expanded/data_structures/dynamic_segment_tree.cpp" bodystart="85" bodyend="89"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicSegmentTree_1a0545eb93b782969c628a630cf610f782" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -185,7 +185,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_segment_tree.cpp" line="90" column="11" bodyfile="titan_cpplib/data_structures/dynamic_segment_tree.cpp" bodystart="90" bodyend="92"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_segment_tree.cpp" line="91" column="11" bodyfile="titan_cpplib_expanded/data_structures/dynamic_segment_tree.cpp" bodystart="91" bodyend="93"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicSegmentTree_1a4b6852fb949a48ae2bdcec8356e988fb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -202,7 +202,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_segment_tree.cpp" line="94" column="11" bodyfile="titan_cpplib/data_structures/dynamic_segment_tree.cpp" bodystart="94" bodyend="108"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_segment_tree.cpp" line="95" column="11" bodyfile="titan_cpplib_expanded/data_structures/dynamic_segment_tree.cpp" bodystart="95" bodyend="109"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicSegmentTree_1afa82bb62c05179bfd7bdf9a7be1ac312" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -223,7 +223,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_segment_tree.cpp" line="110" column="14" bodyfile="titan_cpplib/data_structures/dynamic_segment_tree.cpp" bodystart="110" bodyend="112"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_segment_tree.cpp" line="111" column="14" bodyfile="titan_cpplib_expanded/data_structures/dynamic_segment_tree.cpp" bodystart="111" bodyend="113"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1DynamicSegmentTree_1a333e30bfaf77159e0acbc3ba460b10a4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -236,14 +236,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_segment_tree.cpp" line="114" column="14" bodyfile="titan_cpplib/data_structures/dynamic_segment_tree.cpp" bodystart="114" bodyend="119"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_segment_tree.cpp" line="115" column="14" bodyfile="titan_cpplib_expanded/data_structures/dynamic_segment_tree.cpp" bodystart="115" bodyend="120"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/data_structures/dynamic_segment_tree.cpp" line="12" column="5" bodyfile="titan_cpplib/data_structures/dynamic_segment_tree.cpp" bodystart="12" bodyend="120"/>
+    <location file="titan_cpplib_expanded/data_structures/dynamic_segment_tree.cpp" line="13" column="5" bodyfile="titan_cpplib_expanded/data_structures/dynamic_segment_tree.cpp" bodystart="13" bodyend="121"/>
     <listofallmembers>
       <member refid="classtitan23_1_1DynamicSegmentTree_1a5a1296c7fcefb92dc37c967b8ab93367" prot="private" virt="non-virtual"><scope>titan23::DynamicSegmentTree</scope><name>bit_length</name></member>
       <member refid="classtitan23_1_1DynamicSegmentTree_1af26d260c5d24a17acb96fca403c2a3fa" prot="public" virt="non-virtual"><scope>titan23::DynamicSegmentTree</scope><name>DynamicSegmentTree</name></member>

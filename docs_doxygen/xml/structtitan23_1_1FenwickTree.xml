@@ -19,7 +19,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/fenwick_tree.cpp" line="11" column="9" bodyfile="titan_cpplib/data_structures/fenwick_tree.cpp" bodystart="11" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" line="12" column="9" bodyfile="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" bodystart="12" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structtitan23_1_1FenwickTree_1a61c3be01e23e74c97b88901fb871e369" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -32,7 +32,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/fenwick_tree.cpp" line="11" column="12" bodyfile="titan_cpplib/data_structures/fenwick_tree.cpp" bodystart="11" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" line="12" column="12" bodyfile="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" bodystart="12" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structtitan23_1_1FenwickTree_1a7fb202450a6ce481c87940fe79030cb5" prot="public" static="no" mutable="no">
         <type>vector&lt; T &gt;</type>
@@ -45,7 +45,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/fenwick_tree.cpp" line="12" column="12" bodyfile="titan_cpplib/data_structures/fenwick_tree.cpp" bodystart="12" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" line="13" column="12" bodyfile="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" bodystart="13" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -64,7 +64,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/fenwick_tree.cpp" line="14" column="5" bodyfile="titan_cpplib/data_structures/fenwick_tree.cpp" bodystart="14" bodyend="18"/>
+        <location file="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" line="15" column="5" bodyfile="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" bodystart="15" bodyend="19"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1FenwickTree_1af5d5cc2d69a444100492205002946440" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -81,7 +81,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/fenwick_tree.cpp" line="20" column="5" bodyfile="titan_cpplib/data_structures/fenwick_tree.cpp" bodystart="20" bodyend="29"/>
+        <location file="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" line="21" column="5" bodyfile="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" bodystart="21" bodyend="30"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1FenwickTree_1a7e3eebb70362c9b555bec5dde9ff082e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -98,7 +98,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/fenwick_tree.cpp" line="31" column="7" bodyfile="titan_cpplib/data_structures/fenwick_tree.cpp" bodystart="31" bodyend="38"/>
+        <location file="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" line="32" column="7" bodyfile="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" bodystart="32" bodyend="39"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1FenwickTree_1a7747ac699ff311c596d62daaa4ad874a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -115,7 +115,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/fenwick_tree.cpp" line="40" column="7" bodyfile="titan_cpplib/data_structures/fenwick_tree.cpp" bodystart="40" bodyend="42"/>
+        <location file="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" line="41" column="7" bodyfile="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" bodystart="41" bodyend="43"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1FenwickTree_1ad9f119b3c48fe91794ff9b4fe2970b26" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -136,7 +136,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/fenwick_tree.cpp" line="44" column="7" bodyfile="titan_cpplib/data_structures/fenwick_tree.cpp" bodystart="44" bodyend="46"/>
+        <location file="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" line="45" column="7" bodyfile="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" bodystart="45" bodyend="47"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1FenwickTree_1a95d67a81adc0b3a0cfd0221110cafc3c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -157,7 +157,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/fenwick_tree.cpp" line="48" column="10" bodyfile="titan_cpplib/data_structures/fenwick_tree.cpp" bodystart="48" bodyend="54"/>
+        <location file="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" line="49" column="10" bodyfile="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" bodystart="49" bodyend="55"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1FenwickTree_1a1e77e5d601f805e4a86b715e784bf71b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -174,7 +174,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/fenwick_tree.cpp" line="56" column="7" bodyfile="titan_cpplib/data_structures/fenwick_tree.cpp" bodystart="56" bodyend="58"/>
+        <location file="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" line="57" column="7" bodyfile="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" bodystart="57" bodyend="59"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1FenwickTree_1aa6c85d4661d467b2a171c0698204a04e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -195,7 +195,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/fenwick_tree.cpp" line="60" column="10" bodyfile="titan_cpplib/data_structures/fenwick_tree.cpp" bodystart="60" bodyend="63"/>
+        <location file="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" line="61" column="10" bodyfile="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" bodystart="61" bodyend="64"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1FenwickTree_1a9fcb8536d8cbd6c5972cb40f516ba368" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -212,7 +212,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/fenwick_tree.cpp" line="65" column="9" bodyfile="titan_cpplib/data_structures/fenwick_tree.cpp" bodystart="65" bodyend="75"/>
+        <location file="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" line="66" column="9" bodyfile="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" bodystart="66" bodyend="76"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1FenwickTree_1acbebdb2a446c95ddc0bb8b4a8a273415" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -229,7 +229,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/fenwick_tree.cpp" line="77" column="9" bodyfile="titan_cpplib/data_structures/fenwick_tree.cpp" bodystart="77" bodyend="87"/>
+        <location file="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" line="78" column="9" bodyfile="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" bodystart="78" bodyend="88"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1FenwickTree_1a94dc66222aa1540281c0865009c3623f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>vector&lt; T &gt;</type>
@@ -242,7 +242,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/fenwick_tree.cpp" line="89" column="12" bodyfile="titan_cpplib/data_structures/fenwick_tree.cpp" bodystart="89" bodyend="94"/>
+        <location file="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" line="90" column="12" bodyfile="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" bodystart="90" bodyend="95"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1FenwickTree_1a5f98d24860182d85651f139bb054813e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -255,14 +255,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/fenwick_tree.cpp" line="96" column="10" bodyfile="titan_cpplib/data_structures/fenwick_tree.cpp" bodystart="96" bodyend="101"/>
+        <location file="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" line="97" column="10" bodyfile="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" bodystart="97" bodyend="102"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/data_structures/fenwick_tree.cpp" line="10" column="3" bodyfile="titan_cpplib/data_structures/fenwick_tree.cpp" bodystart="10" bodyend="102"/>
+    <location file="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" line="11" column="3" bodyfile="titan_cpplib_expanded/data_structures/fenwick_tree.cpp" bodystart="11" bodyend="103"/>
     <listofallmembers>
       <member refid="structtitan23_1_1FenwickTree_1a18000c42ea4d617e72fcd3615ddaaea6" prot="public" virt="non-virtual"><scope>titan23::FenwickTree</scope><name>_n</name></member>
       <member refid="structtitan23_1_1FenwickTree_1a61c3be01e23e74c97b88901fb871e369" prot="public" virt="non-virtual"><scope>titan23::FenwickTree</scope><name>_s</name></member>

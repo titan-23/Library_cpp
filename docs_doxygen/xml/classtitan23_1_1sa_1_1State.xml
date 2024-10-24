@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/sa.cpp" line="32" column="19" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="32" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/ahc/sa.cpp" line="320" column="19" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="320" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -29,7 +29,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/sa.cpp" line="33" column="9" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="33" bodyend="33"/>
+        <location file="titan_cpplib_expanded/ahc/sa.cpp" line="321" column="9" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="321" bodyend="321"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1sa_1_1State_1ad633f79ef1a232c4e3acc8198e919a2d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -42,7 +42,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/sa.cpp" line="35" column="14" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="35" bodyend="35"/>
+        <location file="titan_cpplib_expanded/ahc/sa.cpp" line="323" column="14" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="323" bodyend="323"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1sa_1_1State_1aaa524f239b8da0356da8a04ce06f0182" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>ScoreType</type>
@@ -55,7 +55,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/sa.cpp" line="37" column="19" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="37" bodyend="37"/>
+        <location file="titan_cpplib_expanded/ahc/sa.cpp" line="325" column="19" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="325" bodyend="325"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1sa_1_1State_1af26d2e4b247d4c85f32af243a179a778" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>ScoreType</type>
@@ -68,7 +68,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/sa.cpp" line="38" column="19" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="38" bodyend="38"/>
+        <location file="titan_cpplib_expanded/ahc/sa.cpp" line="326" column="19" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="326" bodyend="326"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1sa_1_1State_1a82fe204e2e7552755d7bfec87db739df" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -85,7 +85,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/sa.cpp" line="41" column="14" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="41" bodyend="41"/>
+        <location file="titan_cpplib_expanded/ahc/sa.cpp" line="329" column="14" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="329" bodyend="329"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1sa_1_1State_1a82d9203577e2e76ba5b6de5a63cb4142" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -98,7 +98,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/sa.cpp" line="43" column="14" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="43" bodyend="43"/>
+        <location file="titan_cpplib_expanded/ahc/sa.cpp" line="331" column="14" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="331" bodyend="331"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1sa_1_1State_1abdb76f55ddc61240c267f508e1efe807" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -111,7 +111,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/sa.cpp" line="45" column="14" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="45" bodyend="45"/>
+        <location file="titan_cpplib_expanded/ahc/sa.cpp" line="333" column="14" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="333" bodyend="333"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1sa_1_1State_1a368891e5cbfae0fd1119f7fa1c92775a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -124,14 +124,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/sa.cpp" line="47" column="14" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="47" bodyend="47"/>
+        <location file="titan_cpplib_expanded/ahc/sa.cpp" line="335" column="14" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="335" bodyend="335"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/ahc/sa.cpp" line="30" column="5" bodyfile="titan_cpplib/ahc/sa.cpp" bodystart="30" bodyend="48"/>
+    <location file="titan_cpplib_expanded/ahc/sa.cpp" line="318" column="5" bodyfile="titan_cpplib_expanded/ahc/sa.cpp" bodystart="318" bodyend="336"/>
     <listofallmembers>
       <member refid="classtitan23_1_1sa_1_1State_1abdb76f55ddc61240c267f508e1efe807" prot="public" virt="non-virtual"><scope>titan23::sa::State</scope><name>advance</name></member>
       <member refid="classtitan23_1_1sa_1_1State_1aaa524f239b8da0356da8a04ce06f0182" prot="public" virt="non-virtual"><scope>titan23::sa::State</scope><name>get_score</name></member>

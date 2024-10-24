@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp" line="29" column="9" bodyfile="titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp" bodystart="29" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_lazy_wb_tree.cpp" line="30" column="9" bodyfile="titan_cpplib_expanded/data_structures/persistent_lazy_wb_tree.cpp" bodystart="30" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1PersistentLazyWBTree_1_1Node_1a65a8bb87fabe6c19561c0824e80c35ac" prot="public" static="no" mutable="no">
         <type>T</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp" line="29" column="13" bodyfile="titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp" bodystart="29" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_lazy_wb_tree.cpp" line="30" column="13" bodyfile="titan_cpplib_expanded/data_structures/persistent_lazy_wb_tree.cpp" bodystart="30" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1PersistentLazyWBTree_1_1Node_1a4a2e7e3cc55d8bef5003cc08a94c3ae3" prot="public" static="no" mutable="no">
         <type>NodePtr</type>
@@ -40,7 +40,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp" line="30" column="15" bodyfile="titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp" bodystart="30" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_lazy_wb_tree.cpp" line="31" column="15" bodyfile="titan_cpplib_expanded/data_structures/persistent_lazy_wb_tree.cpp" bodystart="31" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1PersistentLazyWBTree_1_1Node_1a1724f8db4503765bca829ee5210257f1" prot="public" static="no" mutable="no">
         <type>NodePtr</type>
@@ -53,7 +53,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp" line="31" column="15" bodyfile="titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp" bodystart="31" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_lazy_wb_tree.cpp" line="32" column="15" bodyfile="titan_cpplib_expanded/data_structures/persistent_lazy_wb_tree.cpp" bodystart="32" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1PersistentLazyWBTree_1_1Node_1a1d29a5cd39b3b2a476c1942c0e4cf15f" prot="public" static="no" mutable="no">
         <type>F</type>
@@ -66,7 +66,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp" line="32" column="9" bodyfile="titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp" bodystart="32" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_lazy_wb_tree.cpp" line="33" column="9" bodyfile="titan_cpplib_expanded/data_structures/persistent_lazy_wb_tree.cpp" bodystart="33" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1PersistentLazyWBTree_1_1Node_1a4e2987fea655b4ee5a5bc2542ea46a9e" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -79,7 +79,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp" line="33" column="11" bodyfile="titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp" bodystart="33" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_lazy_wb_tree.cpp" line="34" column="11" bodyfile="titan_cpplib_expanded/data_structures/persistent_lazy_wb_tree.cpp" bodystart="34" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1PersistentLazyWBTree_1_1Node_1af0bd085b0fe3303bc8829c3080f2420e" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -92,7 +92,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp" line="33" column="15" bodyfile="titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp" bodystart="33" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_lazy_wb_tree.cpp" line="34" column="15" bodyfile="titan_cpplib_expanded/data_structures/persistent_lazy_wb_tree.cpp" bodystart="34" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -115,7 +115,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp" line="35" column="7" bodyfile="titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp" bodystart="35" bodyend="35"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_lazy_wb_tree.cpp" line="36" column="7" bodyfile="titan_cpplib_expanded/data_structures/persistent_lazy_wb_tree.cpp" bodystart="36" bodyend="36"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1PersistentLazyWBTree_1_1Node_1aa089ee48eb625c72737219fb964ac432" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>NodePtr</type>
@@ -128,7 +128,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp" line="37" column="15" bodyfile="titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp" bodystart="37" bodyend="45"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_lazy_wb_tree.cpp" line="38" column="15" bodyfile="titan_cpplib_expanded/data_structures/persistent_lazy_wb_tree.cpp" bodystart="38" bodyend="46"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1PersistentLazyWBTree_1_1Node_1a4c43e03ef2709f0a6c061768dedcc7cd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>double</type>
@@ -141,7 +141,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp" line="47" column="14" bodyfile="titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp" bodystart="47" bodyend="49"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_lazy_wb_tree.cpp" line="48" column="14" bodyfile="titan_cpplib_expanded/data_structures/persistent_lazy_wb_tree.cpp" bodystart="48" bodyend="50"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1PersistentLazyWBTree_1_1Node_1a36170eb6288a4b9d51455bab90d89288" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -154,7 +154,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp" line="51" column="12" bodyfile="titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp" bodystart="51" bodyend="76"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_lazy_wb_tree.cpp" line="52" column="12" bodyfile="titan_cpplib_expanded/data_structures/persistent_lazy_wb_tree.cpp" bodystart="52" bodyend="77"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1PersistentLazyWBTree_1_1Node_1a7fb1e405004889e522272831eec5df40" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -167,7 +167,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp" line="78" column="12" bodyfile="titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp" bodystart="78" bodyend="89"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_lazy_wb_tree.cpp" line="79" column="12" bodyfile="titan_cpplib_expanded/data_structures/persistent_lazy_wb_tree.cpp" bodystart="79" bodyend="90"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1PersistentLazyWBTree_1_1Node_1aca57c457ca11af17ca7eeb466e7e8801" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -180,14 +180,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp" line="91" column="12" bodyfile="titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp" bodystart="91" bodyend="98"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_lazy_wb_tree.cpp" line="92" column="12" bodyfile="titan_cpplib_expanded/data_structures/persistent_lazy_wb_tree.cpp" bodystart="92" bodyend="99"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp" line="26" column="5" bodyfile="titan_cpplib/data_structures/persistent_lazy_wb_tree.cpp" bodystart="26" bodyend="99"/>
+    <location file="titan_cpplib_expanded/data_structures/persistent_lazy_wb_tree.cpp" line="27" column="5" bodyfile="titan_cpplib_expanded/data_structures/persistent_lazy_wb_tree.cpp" bodystart="27" bodyend="100"/>
     <listofallmembers>
       <member refid="classtitan23_1_1PersistentLazyWBTree_1_1Node_1a4c43e03ef2709f0a6c061768dedcc7cd" prot="public" virt="non-virtual"><scope>titan23::PersistentLazyWBTree::Node</scope><name>balance</name></member>
       <member refid="classtitan23_1_1PersistentLazyWBTree_1_1Node_1aa089ee48eb625c72737219fb964ac432" prot="public" virt="non-virtual"><scope>titan23::PersistentLazyWBTree::Node</scope><name>copy</name></member>

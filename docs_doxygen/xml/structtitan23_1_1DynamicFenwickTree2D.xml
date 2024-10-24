@@ -22,7 +22,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_fenwick_tree_2D.cpp" line="16" column="9" bodyfile="titan_cpplib/data_structures/dynamic_fenwick_tree_2D.cpp" bodystart="16" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_fenwick_tree_2D.cpp" line="17" column="9" bodyfile="titan_cpplib_expanded/data_structures/dynamic_fenwick_tree_2D.cpp" bodystart="17" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structtitan23_1_1DynamicFenwickTree2D_1aae4ee470ebedc1d1de8b439321b3bace" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -35,7 +35,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_fenwick_tree_2D.cpp" line="16" column="12" bodyfile="titan_cpplib/data_structures/dynamic_fenwick_tree_2D.cpp" bodystart="16" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_fenwick_tree_2D.cpp" line="17" column="12" bodyfile="titan_cpplib_expanded/data_structures/dynamic_fenwick_tree_2D.cpp" bodystart="17" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structtitan23_1_1DynamicFenwickTree2D_1a72349bc7f5ce50c6645b5980b3df9202" prot="public" static="no" mutable="no">
         <type>unordered_map&lt; T, unordered_map&lt; T, W &gt; &gt;</type>
@@ -48,7 +48,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_fenwick_tree_2D.cpp" line="17" column="19" bodyfile="titan_cpplib/data_structures/dynamic_fenwick_tree_2D.cpp" bodystart="17" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_fenwick_tree_2D.cpp" line="18" column="19" bodyfile="titan_cpplib_expanded/data_structures/dynamic_fenwick_tree_2D.cpp" bodystart="18" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -63,7 +63,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_fenwick_tree_2D.cpp" line="19" column="5" bodyfile="titan_cpplib/data_structures/dynamic_fenwick_tree_2D.cpp" bodystart="19" bodyend="19"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_fenwick_tree_2D.cpp" line="20" column="5" bodyfile="titan_cpplib_expanded/data_structures/dynamic_fenwick_tree_2D.cpp" bodystart="20" bodyend="20"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1DynamicFenwickTree2D_1a6956bfdd2094390c8f484c069fce95b4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -84,7 +84,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_fenwick_tree_2D.cpp" line="20" column="5" bodyfile="titan_cpplib/data_structures/dynamic_fenwick_tree_2D.cpp" bodystart="20" bodyend="20"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_fenwick_tree_2D.cpp" line="21" column="5" bodyfile="titan_cpplib_expanded/data_structures/dynamic_fenwick_tree_2D.cpp" bodystart="21" bodyend="21"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1DynamicFenwickTree2D_1a44300eee061745b05bc62315be415efe" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -109,7 +109,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_fenwick_tree_2D.cpp" line="22" column="10" bodyfile="titan_cpplib/data_structures/dynamic_fenwick_tree_2D.cpp" bodystart="22" bodyend="39"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_fenwick_tree_2D.cpp" line="23" column="10" bodyfile="titan_cpplib_expanded/data_structures/dynamic_fenwick_tree_2D.cpp" bodystart="23" bodyend="40"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1DynamicFenwickTree2D_1a2e80d5e2a3d2850f4cb8ef97d117a01a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -134,7 +134,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_fenwick_tree_2D.cpp" line="41" column="10" bodyfile="titan_cpplib/data_structures/dynamic_fenwick_tree_2D.cpp" bodystart="41" bodyend="45"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_fenwick_tree_2D.cpp" line="42" column="10" bodyfile="titan_cpplib_expanded/data_structures/dynamic_fenwick_tree_2D.cpp" bodystart="42" bodyend="46"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1DynamicFenwickTree2D_1a112ce83a563c2b71b5317eabbeeb1706" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>W</type>
@@ -155,7 +155,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_fenwick_tree_2D.cpp" line="47" column="7" bodyfile="titan_cpplib/data_structures/dynamic_fenwick_tree_2D.cpp" bodystart="47" bodyend="66"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_fenwick_tree_2D.cpp" line="48" column="7" bodyfile="titan_cpplib_expanded/data_structures/dynamic_fenwick_tree_2D.cpp" bodystart="48" bodyend="67"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1DynamicFenwickTree2D_1ac2ba4b5ec984bdeb7c1a448f9f627d6d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>W</type>
@@ -184,7 +184,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_fenwick_tree_2D.cpp" line="68" column="7" bodyfile="titan_cpplib/data_structures/dynamic_fenwick_tree_2D.cpp" bodystart="68" bodyend="72"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_fenwick_tree_2D.cpp" line="69" column="7" bodyfile="titan_cpplib_expanded/data_structures/dynamic_fenwick_tree_2D.cpp" bodystart="69" bodyend="73"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1DynamicFenwickTree2D_1aef729c1afdde20503dd9e778cf579cf2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>W</type>
@@ -205,7 +205,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_fenwick_tree_2D.cpp" line="74" column="7" bodyfile="titan_cpplib/data_structures/dynamic_fenwick_tree_2D.cpp" bodystart="74" bodyend="78"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_fenwick_tree_2D.cpp" line="75" column="7" bodyfile="titan_cpplib_expanded/data_structures/dynamic_fenwick_tree_2D.cpp" bodystart="75" bodyend="79"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1DynamicFenwickTree2D_1a5e7993f24385668bd2c15a4891857df4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -218,14 +218,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/dynamic_fenwick_tree_2D.cpp" line="80" column="10" bodyfile="titan_cpplib/data_structures/dynamic_fenwick_tree_2D.cpp" bodystart="80" bodyend="81"/>
+        <location file="titan_cpplib_expanded/data_structures/dynamic_fenwick_tree_2D.cpp" line="81" column="10" bodyfile="titan_cpplib_expanded/data_structures/dynamic_fenwick_tree_2D.cpp" bodystart="81" bodyend="82"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/data_structures/dynamic_fenwick_tree_2D.cpp" line="15" column="3" bodyfile="titan_cpplib/data_structures/dynamic_fenwick_tree_2D.cpp" bodystart="15" bodyend="82"/>
+    <location file="titan_cpplib_expanded/data_structures/dynamic_fenwick_tree_2D.cpp" line="16" column="3" bodyfile="titan_cpplib_expanded/data_structures/dynamic_fenwick_tree_2D.cpp" bodystart="16" bodyend="83"/>
     <listofallmembers>
       <member refid="structtitan23_1_1DynamicFenwickTree2D_1a72349bc7f5ce50c6645b5980b3df9202" prot="public" virt="non-virtual"><scope>titan23::DynamicFenwickTree2D</scope><name>_bit</name></member>
       <member refid="structtitan23_1_1DynamicFenwickTree2D_1a41046b6e86cad14d06ae37da632252e3" prot="public" virt="non-virtual"><scope>titan23::DynamicFenwickTree2D</scope><name>_h</name></member>

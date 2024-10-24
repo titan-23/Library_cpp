@@ -48,7 +48,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="18" column="9" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="18" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" line="19" column="9" bodyfile="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" bodystart="19" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-attrib">
@@ -63,7 +63,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="19" column="16" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="19" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" line="20" column="16" bodyfile="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" bodystart="20" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -82,7 +82,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="39" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="39" bodyend="42"/>
+        <location file="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" line="40" column="14" bodyfile="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" bodystart="40" bodyend="43"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a833c0305f9e4c85367db83bf44f3e57b" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -103,7 +103,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="44" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="44" bodyend="50"/>
+        <location file="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" line="45" column="14" bodyfile="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" bodystart="45" bodyend="51"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a6cdde496f87f29709ef8f5768fd2e686" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -120,7 +120,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="52" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="52" bodyend="66"/>
+        <location file="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" line="53" column="14" bodyfile="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" bodystart="53" bodyend="67"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1ae24df9c6d65a081873c57e64c975d392" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -137,7 +137,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="68" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="68" bodyend="85"/>
+        <location file="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" line="69" column="14" bodyfile="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" bodystart="69" bodyend="86"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a20ca47900e04f7ffa85b68b9edd7e9b5" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -154,7 +154,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="87" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="87" bodyend="112"/>
+        <location file="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" line="88" column="14" bodyfile="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" bodystart="88" bodyend="113"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1ab0eb38348b9b33ff6df87581cccb810a" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -171,7 +171,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="114" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="114" bodyend="125"/>
+        <location file="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" line="115" column="14" bodyfile="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" bodystart="115" bodyend="126"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a14b7968e4366b81f8bcc73c04a94e072" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -192,7 +192,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="127" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="127" bodyend="133"/>
+        <location file="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" line="128" column="14" bodyfile="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" bodystart="128" bodyend="134"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1ab2fe7f65ee109a0ebe7f9b32052cc7d0" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -209,7 +209,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="135" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="135" bodyend="140"/>
+        <location file="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" line="136" column="14" bodyfile="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" bodystart="136" bodyend="141"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a43cbadb7c591fe9fc1aa39d4b98a7b27" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>NodePtr</type>
@@ -226,7 +226,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="142" column="17" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="142" bodyend="157"/>
+        <location file="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" line="143" column="17" bodyfile="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" bodystart="143" bodyend="158"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a7b457e4328ca9c1e42acb8d00b8c0dde" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>NodePtr</type>
@@ -243,7 +243,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="159" column="17" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="159" bodyend="168"/>
+        <location file="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" line="160" column="17" bodyfile="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" bodystart="160" bodyend="169"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a9f491c6bdba538eeef16a342132d7b59" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -260,7 +260,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="170" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="170" bodyend="174"/>
+        <location file="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" line="171" column="14" bodyfile="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" bodystart="171" bodyend="175"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -275,7 +275,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="177" column="9" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="177" bodyend="177"/>
+        <location file="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" line="178" column="9" bodyfile="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" bodystart="178" bodyend="178"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a326d0aeb98aab0cd3b425548b716a93d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -292,7 +292,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="179" column="9" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="179" bodyend="184"/>
+        <location file="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" line="180" column="9" bodyfile="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" bodystart="180" bodyend="185"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1acc5d82614e484540939b2731e8a9c280" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -309,7 +309,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="186" column="13" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="186" bodyend="188"/>
+        <location file="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" line="187" column="13" bodyfile="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" bodystart="187" bodyend="189"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a02f5b615983f9c8a63e0988cfcc3540b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -335,7 +335,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="190" column="13" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="190" bodyend="194"/>
+        <location file="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" line="191" column="13" bodyfile="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" bodystart="191" bodyend="195"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a514033473f1c220d597dfc5aae7770df" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -356,7 +356,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="196" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="196" bodyend="198"/>
+        <location file="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" line="197" column="14" bodyfile="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" bodystart="197" bodyend="199"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a2c2a5b3a2cb9d259c9105071ef694ccd" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -373,7 +373,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="200" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="200" bodyend="202"/>
+        <location file="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" line="201" column="14" bodyfile="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" bodystart="201" bodyend="203"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a690d7cd39863d1ce67d65dc275075ada" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -390,7 +390,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="204" column="13" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="204" bodyend="206"/>
+        <location file="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" line="205" column="13" bodyfile="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" bodystart="205" bodyend="207"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a8fc111e798f2c7994db913ee2109dfcb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -411,7 +411,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="208" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="208" bodyend="210"/>
+        <location file="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" line="209" column="14" bodyfile="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" bodystart="209" bodyend="211"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a65ae229b28e5bb44f25ebb37437e295a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -428,7 +428,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="212" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="212" bodyend="214"/>
+        <location file="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" line="213" column="14" bodyfile="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" bodystart="213" bodyend="215"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a915d8a4deb41a0506246d8a4a7fb2176" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -449,7 +449,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="216" column="11" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="216" bodyend="220"/>
+        <location file="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" line="217" column="11" bodyfile="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" bodystart="217" bodyend="221"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1af10b7fc534f1796c821f7b2920fbddb4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -474,7 +474,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="222" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="222" bodyend="227"/>
+        <location file="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" line="223" column="14" bodyfile="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" bodystart="223" bodyend="228"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a0e3e43428cdf95ea63a09e3a05119a69" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -495,7 +495,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="229" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="229" bodyend="234"/>
+        <location file="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" line="230" column="14" bodyfile="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" bodystart="230" bodyend="235"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1ab6a73c84adc59385d32791ef483aaee6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -516,7 +516,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="236" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="236" bodyend="239"/>
+        <location file="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" line="237" column="14" bodyfile="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" bodystart="237" bodyend="240"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a349488ab82d7648a5bdc8b36f4178c1e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -533,7 +533,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="241" column="11" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="241" bodyend="244"/>
+        <location file="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" line="242" column="11" bodyfile="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" bodystart="242" bodyend="245"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1a4e5e7309f5d4d0854fe85829ef88f83f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -554,7 +554,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="246" column="14" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="246" bodyend="251"/>
+        <location file="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" line="247" column="14" bodyfile="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" bodystart="247" bodyend="252"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1LazyLinkCutTree_1aa8730089a70f2f0f2d76431d818188da" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -579,14 +579,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="253" column="13" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="253" bodyend="272"/>
+        <location file="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" line="254" column="13" bodyfile="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" bodystart="254" bodyend="273"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" line="15" column="5" bodyfile="titan_cpplib/data_structures/lazy_link_cut_tree.cpp" bodystart="15" bodyend="273"/>
+    <location file="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" line="16" column="5" bodyfile="titan_cpplib_expanded/data_structures/lazy_link_cut_tree.cpp" bodystart="16" bodyend="274"/>
     <listofallmembers>
       <member refid="classtitan23_1_1LazyLinkCutTree_1a833c0305f9e4c85367db83bf44f3e57b" prot="private" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>_apply_f</name></member>
       <member refid="classtitan23_1_1LazyLinkCutTree_1ac8b3accd99cae9a9aeecdfe6cb67ba3f" prot="private" virt="non-virtual"><scope>titan23::LazyLinkCutTree</scope><name>_apply_rev</name></member>

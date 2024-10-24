@@ -19,7 +19,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/zaatsu.cpp" line="13" column="16" bodyfile="titan_cpplib/algorithm/zaatsu.cpp" bodystart="13" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/algorithm/zaatsu.cpp" line="14" column="16" bodyfile="titan_cpplib_expanded/algorithm/zaatsu.cpp" bodystart="14" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1Zaatsu_1a04a5f195ce43ce165feb98501b7dade7" prot="private" static="no" mutable="no">
         <type>int</type>
@@ -32,7 +32,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/zaatsu.cpp" line="14" column="13" bodyfile="titan_cpplib/algorithm/zaatsu.cpp" bodystart="14" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/algorithm/zaatsu.cpp" line="15" column="13" bodyfile="titan_cpplib_expanded/algorithm/zaatsu.cpp" bodystart="15" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -52,7 +52,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/zaatsu.cpp" line="18" column="9" bodyfile="titan_cpplib/algorithm/zaatsu.cpp" bodystart="18" bodyend="22"/>
+        <location file="titan_cpplib_expanded/algorithm/zaatsu.cpp" line="19" column="9" bodyfile="titan_cpplib_expanded/algorithm/zaatsu.cpp" bodystart="19" bodyend="23"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Zaatsu_1ae2eeb830f7e9a40a6b8a7fc368bfeaa2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -66,7 +66,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/zaatsu.cpp" line="25" column="13" bodyfile="titan_cpplib/algorithm/zaatsu.cpp" bodystart="25" bodyend="27"/>
+        <location file="titan_cpplib_expanded/algorithm/zaatsu.cpp" line="26" column="13" bodyfile="titan_cpplib_expanded/algorithm/zaatsu.cpp" bodystart="26" bodyend="28"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Zaatsu_1aef4f09458e4d96ad4c56c8d379e7cf15" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -84,7 +84,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/zaatsu.cpp" line="30" column="13" bodyfile="titan_cpplib/algorithm/zaatsu.cpp" bodystart="30" bodyend="32"/>
+        <location file="titan_cpplib_expanded/algorithm/zaatsu.cpp" line="31" column="13" bodyfile="titan_cpplib_expanded/algorithm/zaatsu.cpp" bodystart="31" bodyend="33"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1Zaatsu_1a78c5cf1c779aa7407a1b1819ff3cb3bb" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -102,7 +102,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/algorithm/zaatsu.cpp" line="35" column="11" bodyfile="titan_cpplib/algorithm/zaatsu.cpp" bodystart="35" bodyend="37"/>
+        <location file="titan_cpplib_expanded/algorithm/zaatsu.cpp" line="36" column="11" bodyfile="titan_cpplib_expanded/algorithm/zaatsu.cpp" bodystart="36" bodyend="38"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -110,7 +110,7 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/algorithm/zaatsu.cpp" line="11" column="5" bodyfile="titan_cpplib/algorithm/zaatsu.cpp" bodystart="11" bodyend="38"/>
+    <location file="titan_cpplib_expanded/algorithm/zaatsu.cpp" line="12" column="5" bodyfile="titan_cpplib_expanded/algorithm/zaatsu.cpp" bodystart="12" bodyend="39"/>
     <listofallmembers>
       <member refid="classtitan23_1_1Zaatsu_1a04a5f195ce43ce165feb98501b7dade7" prot="private" virt="non-virtual"><scope>titan23::Zaatsu</scope><name>_n</name></member>
       <member refid="classtitan23_1_1Zaatsu_1a81dfc2394c13283f510823e071f94903" prot="private" virt="non-virtual"><scope>titan23::Zaatsu</scope><name>_to_origin</name></member>

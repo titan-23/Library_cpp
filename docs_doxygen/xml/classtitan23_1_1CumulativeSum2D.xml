@@ -19,7 +19,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/cumulative_sum_2D.cpp" line="15" column="13" bodyfile="titan_cpplib/data_structures/cumulative_sum_2D.cpp" bodystart="15" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/cumulative_sum_2D.cpp" line="16" column="13" bodyfile="titan_cpplib_expanded/data_structures/cumulative_sum_2D.cpp" bodystart="16" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1CumulativeSum2D_1a0ec99ff12ccc8061a5c03cdcd6c7c324" prot="private" static="no" mutable="no">
         <type>int</type>
@@ -32,7 +32,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/cumulative_sum_2D.cpp" line="15" column="15" bodyfile="titan_cpplib/data_structures/cumulative_sum_2D.cpp" bodystart="15" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/cumulative_sum_2D.cpp" line="16" column="15" bodyfile="titan_cpplib_expanded/data_structures/cumulative_sum_2D.cpp" bodystart="16" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1CumulativeSum2D_1aeb7b55c71d3382c470858d8cc7719619" prot="private" static="no" mutable="no">
         <type>vector&lt; T &gt;</type>
@@ -45,7 +45,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/cumulative_sum_2D.cpp" line="16" column="16" bodyfile="titan_cpplib/data_structures/cumulative_sum_2D.cpp" bodystart="16" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/cumulative_sum_2D.cpp" line="17" column="16" bodyfile="titan_cpplib_expanded/data_structures/cumulative_sum_2D.cpp" bodystart="17" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -60,7 +60,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/cumulative_sum_2D.cpp" line="19" column="9" bodyfile="titan_cpplib/data_structures/cumulative_sum_2D.cpp" bodystart="19" bodyend="19"/>
+        <location file="titan_cpplib_expanded/data_structures/cumulative_sum_2D.cpp" line="20" column="9" bodyfile="titan_cpplib_expanded/data_structures/cumulative_sum_2D.cpp" bodystart="20" bodyend="20"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1CumulativeSum2D_1a9a2be8ced3afe820c6d1d3406c026c28" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -89,7 +89,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/cumulative_sum_2D.cpp" line="20" column="9" bodyfile="titan_cpplib/data_structures/cumulative_sum_2D.cpp" bodystart="20" bodyend="26"/>
+        <location file="titan_cpplib_expanded/data_structures/cumulative_sum_2D.cpp" line="21" column="9" bodyfile="titan_cpplib_expanded/data_structures/cumulative_sum_2D.cpp" bodystart="21" bodyend="27"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1CumulativeSum2D_1a30ba3157fc1ea72c8b6433c81e1cd67e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -119,7 +119,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/cumulative_sum_2D.cpp" line="29" column="11" bodyfile="titan_cpplib/data_structures/cumulative_sum_2D.cpp" bodystart="29" bodyend="33"/>
+        <location file="titan_cpplib_expanded/data_structures/cumulative_sum_2D.cpp" line="30" column="11" bodyfile="titan_cpplib_expanded/data_structures/cumulative_sum_2D.cpp" bodystart="30" bodyend="34"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -137,7 +137,7 @@
 </parameterlist>
 </para>
     </detaileddescription>
-    <location file="titan_cpplib/data_structures/cumulative_sum_2D.cpp" line="13" column="5" bodyfile="titan_cpplib/data_structures/cumulative_sum_2D.cpp" bodystart="13" bodyend="34"/>
+    <location file="titan_cpplib_expanded/data_structures/cumulative_sum_2D.cpp" line="14" column="5" bodyfile="titan_cpplib_expanded/data_structures/cumulative_sum_2D.cpp" bodystart="14" bodyend="35"/>
     <listofallmembers>
       <member refid="classtitan23_1_1CumulativeSum2D_1aeb7b55c71d3382c470858d8cc7719619" prot="private" virt="non-virtual"><scope>titan23::CumulativeSum2D</scope><name>acc</name></member>
       <member refid="classtitan23_1_1CumulativeSum2D_1a643f9c1b4cbd8d7000e341b8d5cf4d8c" prot="public" virt="non-virtual"><scope>titan23::CumulativeSum2D</scope><name>CumulativeSum2D</name></member>

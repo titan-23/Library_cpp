@@ -19,7 +19,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/min_heap.cpp" line="11" column="16" bodyfile="titan_cpplib/data_structures/min_heap.cpp" bodystart="11" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/min_heap.cpp" line="12" column="16" bodyfile="titan_cpplib_expanded/data_structures/min_heap.cpp" bodystart="12" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -34,7 +34,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/min_heap.cpp" line="13" column="14" bodyfile="titan_cpplib/data_structures/min_heap.cpp" bodystart="13" bodyend="17"/>
+        <location file="titan_cpplib_expanded/data_structures/min_heap.cpp" line="14" column="14" bodyfile="titan_cpplib_expanded/data_structures/min_heap.cpp" bodystart="14" bodyend="18"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1MinHeap_1a69c2816e61f38406895544302ea56409" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -51,7 +51,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/min_heap.cpp" line="19" column="14" bodyfile="titan_cpplib/data_structures/min_heap.cpp" bodystart="19" bodyend="31"/>
+        <location file="titan_cpplib_expanded/data_structures/min_heap.cpp" line="20" column="14" bodyfile="titan_cpplib_expanded/data_structures/min_heap.cpp" bodystart="20" bodyend="32"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1MinHeap_1a5092455ad06cc2dd1b9bc81056d4e4df" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -68,7 +68,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/min_heap.cpp" line="33" column="14" bodyfile="titan_cpplib/data_structures/min_heap.cpp" bodystart="33" bodyend="43"/>
+        <location file="titan_cpplib_expanded/data_structures/min_heap.cpp" line="34" column="14" bodyfile="titan_cpplib_expanded/data_structures/min_heap.cpp" bodystart="34" bodyend="44"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -83,7 +83,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/min_heap.cpp" line="46" column="9" bodyfile="titan_cpplib/data_structures/min_heap.cpp" bodystart="46" bodyend="46"/>
+        <location file="titan_cpplib_expanded/data_structures/min_heap.cpp" line="47" column="9" bodyfile="titan_cpplib_expanded/data_structures/min_heap.cpp" bodystart="47" bodyend="47"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1MinHeap_1ae464ea6bda044b539f1c1f24f1572be1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -100,7 +100,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/min_heap.cpp" line="47" column="9" bodyfile="titan_cpplib/data_structures/min_heap.cpp" bodystart="47" bodyend="47"/>
+        <location file="titan_cpplib_expanded/data_structures/min_heap.cpp" line="48" column="9" bodyfile="titan_cpplib_expanded/data_structures/min_heap.cpp" bodystart="48" bodyend="48"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1MinHeap_1a50982f8b420e35841db48d3d8c92c63f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -114,7 +114,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/min_heap.cpp" line="50" column="11" bodyfile="titan_cpplib/data_structures/min_heap.cpp" bodystart="50" bodyend="52"/>
+        <location file="titan_cpplib_expanded/data_structures/min_heap.cpp" line="51" column="11" bodyfile="titan_cpplib_expanded/data_structures/min_heap.cpp" bodystart="51" bodyend="53"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1MinHeap_1a1fe6c31982d44a3b8573dc21f5948c7e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -128,7 +128,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/min_heap.cpp" line="55" column="11" bodyfile="titan_cpplib/data_structures/min_heap.cpp" bodystart="55" bodyend="61"/>
+        <location file="titan_cpplib_expanded/data_structures/min_heap.cpp" line="56" column="11" bodyfile="titan_cpplib_expanded/data_structures/min_heap.cpp" bodystart="56" bodyend="62"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1MinHeap_1a756931ff9a45c06d4d1896be3cc37405" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -146,7 +146,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/min_heap.cpp" line="64" column="14" bodyfile="titan_cpplib/data_structures/min_heap.cpp" bodystart="64" bodyend="67"/>
+        <location file="titan_cpplib_expanded/data_structures/min_heap.cpp" line="65" column="14" bodyfile="titan_cpplib_expanded/data_structures/min_heap.cpp" bodystart="65" bodyend="68"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1MinHeap_1a782af426c2870fef4c14aa6546676e85" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -164,7 +164,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/min_heap.cpp" line="70" column="11" bodyfile="titan_cpplib/data_structures/min_heap.cpp" bodystart="70" bodyend="76"/>
+        <location file="titan_cpplib_expanded/data_structures/min_heap.cpp" line="71" column="11" bodyfile="titan_cpplib_expanded/data_structures/min_heap.cpp" bodystart="71" bodyend="77"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1MinHeap_1a9bea6b27e1d97e378adfa8a0fc5d278c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -182,7 +182,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/min_heap.cpp" line="79" column="11" bodyfile="titan_cpplib/data_structures/min_heap.cpp" bodystart="79" bodyend="84"/>
+        <location file="titan_cpplib_expanded/data_structures/min_heap.cpp" line="80" column="11" bodyfile="titan_cpplib_expanded/data_structures/min_heap.cpp" bodystart="80" bodyend="85"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1MinHeap_1a07e7aa1f841cf2b32693ca13147e1d1a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -196,7 +196,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/min_heap.cpp" line="87" column="13" bodyfile="titan_cpplib/data_structures/min_heap.cpp" bodystart="87" bodyend="89"/>
+        <location file="titan_cpplib_expanded/data_structures/min_heap.cpp" line="88" column="13" bodyfile="titan_cpplib_expanded/data_structures/min_heap.cpp" bodystart="88" bodyend="90"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1MinHeap_1a85379658724f0fac100148a6b35e3183" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -210,14 +210,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/min_heap.cpp" line="92" column="14" bodyfile="titan_cpplib/data_structures/min_heap.cpp" bodystart="92" bodyend="103"/>
+        <location file="titan_cpplib_expanded/data_structures/min_heap.cpp" line="93" column="14" bodyfile="titan_cpplib_expanded/data_structures/min_heap.cpp" bodystart="93" bodyend="104"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/data_structures/min_heap.cpp" line="9" column="5" bodyfile="titan_cpplib/data_structures/min_heap.cpp" bodystart="9" bodyend="104"/>
+    <location file="titan_cpplib_expanded/data_structures/min_heap.cpp" line="10" column="5" bodyfile="titan_cpplib_expanded/data_structures/min_heap.cpp" bodystart="10" bodyend="105"/>
     <listofallmembers>
       <member refid="classtitan23_1_1MinHeap_1a69c2816e61f38406895544302ea56409" prot="private" virt="non-virtual"><scope>titan23::MinHeap</scope><name>_down</name></member>
       <member refid="classtitan23_1_1MinHeap_1a3be7940bfec62674e6e1a7f320afe288" prot="private" virt="non-virtual"><scope>titan23::MinHeap</scope><name>_heapify</name></member>

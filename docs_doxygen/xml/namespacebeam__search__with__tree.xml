@@ -18,7 +18,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="19" column="1" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="19" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="502" column="1" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="502" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacebeam__search__with__tree_1aa83032ad758aef56dec6deeecbe53d6d" prot="public" static="no">
         <type>unsigned long long</type>
@@ -31,7 +31,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="20" column="1" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="20" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="503" column="1" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="503" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="var">
@@ -47,7 +47,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="21" column="17" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="21" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="504" column="17" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="504" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="func">
@@ -70,7 +70,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="32" column="1" bodyfile="titan_cpplib/ahc/beam_search_euler.cpp" bodystart="32" bodyend="35"/>
+        <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="515" column="1" bodyfile="titan_cpplib_expanded/ahc/beam_search_euler.cpp" bodystart="515" bodyend="518"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -78,6 +78,6 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/ahc/beam_search_euler.cpp" line="17" column="1"/>
+    <location file="titan_cpplib_expanded/ahc/beam_search_euler.cpp" line="500" column="1"/>
   </compounddef>
 </doxygen>

@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/union_find.cpp" line="14" column="13" bodyfile="titan_cpplib/data_structures/union_find.cpp" bodystart="14" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/union_find.cpp" line="15" column="13" bodyfile="titan_cpplib_expanded/data_structures/union_find.cpp" bodystart="15" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1UnionFind_1ae2418469221028c7971f859db782fb1f" prot="private" static="no" mutable="no">
         <type>int</type>
@@ -27,11 +27,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/union_find.cpp" line="14" column="15" bodyfile="titan_cpplib/data_structures/union_find.cpp" bodystart="14" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/union_find.cpp" line="15" column="15" bodyfile="titan_cpplib_expanded/data_structures/union_find.cpp" bodystart="15" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classtitan23_1_1UnionFind_1a7da4e59aef4df48de082a16d0b324e92" prot="private" static="no" mutable="no">
+      <memberdef kind="variable" id="classtitan23_1_1UnionFind_1a06d87e67964796a2cc373d60a709dfe8" prot="private" static="no" mutable="no">
         <type>vector&lt; int &gt;</type>
-        <definition>vector&lt;int&gt; titan23::UnionFind::par</definition>
+        <definition>vector&lt; int &gt; titan23::UnionFind::par</definition>
         <argsstring></argsstring>
         <name>par</name>
         <briefdescription>
@@ -40,11 +40,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/union_find.cpp" line="15" column="16" bodyfile="titan_cpplib/data_structures/union_find.cpp" bodystart="15" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/union_find.cpp" line="16" column="16" bodyfile="titan_cpplib_expanded/data_structures/union_find.cpp" bodystart="16" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="classtitan23_1_1UnionFind_1ae4dd2542fe56eef2d6be5dc5595ca7a7" prot="private" static="no" mutable="no">
+      <memberdef kind="variable" id="classtitan23_1_1UnionFind_1a0b94f9cdce0f881228c759e0c13bf4a3" prot="private" static="no" mutable="no">
         <type>vector&lt; vector&lt; int &gt; &gt;</type>
-        <definition>vector&lt;vector&lt;int&gt; &gt; titan23::UnionFind::G</definition>
+        <definition>vector&lt; vector&lt; int &gt; &gt; titan23::UnionFind::G</definition>
         <argsstring></argsstring>
         <name>G</name>
         <briefdescription>
@@ -53,7 +53,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/union_find.cpp" line="16" column="16" bodyfile="titan_cpplib/data_structures/union_find.cpp" bodystart="16" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/union_find.cpp" line="17" column="16" bodyfile="titan_cpplib_expanded/data_structures/union_find.cpp" bodystart="17" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -68,7 +68,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/union_find.cpp" line="19" column="9" bodyfile="titan_cpplib/data_structures/union_find.cpp" bodystart="19" bodyend="19"/>
+        <location file="titan_cpplib_expanded/data_structures/union_find.cpp" line="20" column="9" bodyfile="titan_cpplib_expanded/data_structures/union_find.cpp" bodystart="20" bodyend="20"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1UnionFind_1a85c25164a09cd403f941fab9d74bff8f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -85,7 +85,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/union_find.cpp" line="20" column="9" bodyfile="titan_cpplib/data_structures/union_find.cpp" bodystart="20" bodyend="20"/>
+        <location file="titan_cpplib_expanded/data_structures/union_find.cpp" line="21" column="9" bodyfile="titan_cpplib_expanded/data_structures/union_find.cpp" bodystart="21" bodyend="21"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1UnionFind_1acf9365b3b97d5d5c8a3a4cc0d92203f9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -102,7 +102,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/union_find.cpp" line="22" column="13" bodyfile="titan_cpplib/data_structures/union_find.cpp" bodystart="22" bodyend="31"/>
+        <location file="titan_cpplib_expanded/data_structures/union_find.cpp" line="23" column="13" bodyfile="titan_cpplib_expanded/data_structures/union_find.cpp" bodystart="23" bodyend="32"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1UnionFind_1a1d3d13023a557d411c7bb6450ff2a141" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -123,7 +123,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/union_find.cpp" line="33" column="14" bodyfile="titan_cpplib/data_structures/union_find.cpp" bodystart="33" bodyend="44"/>
+        <location file="titan_cpplib_expanded/data_structures/union_find.cpp" line="34" column="14" bodyfile="titan_cpplib_expanded/data_structures/union_find.cpp" bodystart="34" bodyend="45"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1UnionFind_1a0a4be76accf9f6e5909313c76d7b7928" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -140,7 +140,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/union_find.cpp" line="46" column="13" bodyfile="titan_cpplib/data_structures/union_find.cpp" bodystart="46" bodyend="48"/>
+        <location file="titan_cpplib_expanded/data_structures/union_find.cpp" line="47" column="13" bodyfile="titan_cpplib_expanded/data_structures/union_find.cpp" bodystart="47" bodyend="49"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1UnionFind_1ae23fd9d1572714d5805a846c51ae6eb4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -161,7 +161,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/union_find.cpp" line="50" column="14" bodyfile="titan_cpplib/data_structures/union_find.cpp" bodystart="50" bodyend="52"/>
+        <location file="titan_cpplib_expanded/data_structures/union_find.cpp" line="51" column="14" bodyfile="titan_cpplib_expanded/data_structures/union_find.cpp" bodystart="51" bodyend="53"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1UnionFind_1af32e79150a28aa8a0d9291e0c4b6766d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>set&lt; int &gt;</type>
@@ -178,7 +178,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/union_find.cpp" line="54" column="13" bodyfile="titan_cpplib/data_structures/union_find.cpp" bodystart="54" bodyend="68"/>
+        <location file="titan_cpplib_expanded/data_structures/union_find.cpp" line="55" column="13" bodyfile="titan_cpplib_expanded/data_structures/union_find.cpp" bodystart="55" bodyend="69"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1UnionFind_1a9eaa735e4984540a8d8ac7481a343c59" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>vector&lt; int &gt;</type>
@@ -191,7 +191,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/union_find.cpp" line="70" column="16" bodyfile="titan_cpplib/data_structures/union_find.cpp" bodystart="70" bodyend="76"/>
+        <location file="titan_cpplib_expanded/data_structures/union_find.cpp" line="71" column="16" bodyfile="titan_cpplib_expanded/data_structures/union_find.cpp" bodystart="71" bodyend="77"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1UnionFind_1a4f6f2889bb25af093ffefac801d02df8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -204,7 +204,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/union_find.cpp" line="78" column="13" bodyfile="titan_cpplib/data_structures/union_find.cpp" bodystart="78" bodyend="80"/>
+        <location file="titan_cpplib_expanded/data_structures/union_find.cpp" line="79" column="13" bodyfile="titan_cpplib_expanded/data_structures/union_find.cpp" bodystart="79" bodyend="81"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1UnionFind_1ac951cdc927b0b2de5f340772778530b3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -217,7 +217,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/union_find.cpp" line="82" column="14" bodyfile="titan_cpplib/data_structures/union_find.cpp" bodystart="82" bodyend="86"/>
+        <location file="titan_cpplib_expanded/data_structures/union_find.cpp" line="83" column="14" bodyfile="titan_cpplib_expanded/data_structures/union_find.cpp" bodystart="83" bodyend="87"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1UnionFind_1af924219dafecda29a9c9984fe783662a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>map&lt; int, vector&lt; int &gt; &gt;</type>
@@ -230,7 +230,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/union_find.cpp" line="88" column="13" bodyfile="titan_cpplib/data_structures/union_find.cpp" bodystart="88" bodyend="94"/>
+        <location file="titan_cpplib_expanded/data_structures/union_find.cpp" line="89" column="13" bodyfile="titan_cpplib_expanded/data_structures/union_find.cpp" bodystart="89" bodyend="95"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1UnionFind_1ab6a12f51739c13818591aabf8f71a847" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -243,30 +243,230 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/union_find.cpp" line="96" column="14" bodyfile="titan_cpplib/data_structures/union_find.cpp" bodystart="96" bodyend="106"/>
+        <location file="titan_cpplib_expanded/data_structures/union_find.cpp" line="97" column="14" bodyfile="titan_cpplib_expanded/data_structures/union_find.cpp" bodystart="97" bodyend="107"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1UnionFind_1a277b695039b93edf4c490f38f476002a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::UnionFind::UnionFind</definition>
+        <argsstring>()</argsstring>
+        <name>UnionFind</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/graph/minimum_spanning_tree.cpp" line="23" column="9" bodyfile="titan_cpplib_expanded/graph/minimum_spanning_tree.cpp" bodystart="23" bodyend="23"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1UnionFind_1a85c25164a09cd403f941fab9d74bff8f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>titan23::UnionFind::UnionFind</definition>
+        <argsstring>(int n)</argsstring>
+        <name>UnionFind</name>
+        <param>
+          <type>int</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/graph/minimum_spanning_tree.cpp" line="24" column="9" bodyfile="titan_cpplib_expanded/graph/minimum_spanning_tree.cpp" bodystart="24" bodyend="24"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1UnionFind_1acf9365b3b97d5d5c8a3a4cc0d92203f9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::UnionFind::root</definition>
+        <argsstring>(int x)</argsstring>
+        <name>root</name>
+        <param>
+          <type>int</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/graph/minimum_spanning_tree.cpp" line="26" column="13" bodyfile="titan_cpplib_expanded/graph/minimum_spanning_tree.cpp" bodystart="26" bodyend="35"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1UnionFind_1a1d3d13023a557d411c7bb6450ff2a141" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool titan23::UnionFind::unite</definition>
+        <argsstring>(int x, int y)</argsstring>
+        <name>unite</name>
+        <param>
+          <type>int</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/graph/minimum_spanning_tree.cpp" line="37" column="14" bodyfile="titan_cpplib_expanded/graph/minimum_spanning_tree.cpp" bodystart="37" bodyend="48"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1UnionFind_1a0a4be76accf9f6e5909313c76d7b7928" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::UnionFind::size</definition>
+        <argsstring>(const int x)</argsstring>
+        <name>size</name>
+        <param>
+          <type>const int</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/graph/minimum_spanning_tree.cpp" line="50" column="13" bodyfile="titan_cpplib_expanded/graph/minimum_spanning_tree.cpp" bodystart="50" bodyend="52"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1UnionFind_1ae23fd9d1572714d5805a846c51ae6eb4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool titan23::UnionFind::same</definition>
+        <argsstring>(const int x, const int y)</argsstring>
+        <name>same</name>
+        <param>
+          <type>const int</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>const int</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/graph/minimum_spanning_tree.cpp" line="54" column="14" bodyfile="titan_cpplib_expanded/graph/minimum_spanning_tree.cpp" bodystart="54" bodyend="56"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1UnionFind_1af32e79150a28aa8a0d9291e0c4b6766d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>set&lt; int &gt;</type>
+        <definition>set&lt;int&gt; titan23::UnionFind::members</definition>
+        <argsstring>(const int x) const</argsstring>
+        <name>members</name>
+        <param>
+          <type>const int</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/graph/minimum_spanning_tree.cpp" line="58" column="13" bodyfile="titan_cpplib_expanded/graph/minimum_spanning_tree.cpp" bodystart="58" bodyend="72"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1UnionFind_1a9eaa735e4984540a8d8ac7481a343c59" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>vector&lt; int &gt;</type>
+        <definition>vector&lt;int&gt; titan23::UnionFind::all_roots</definition>
+        <argsstring>() const</argsstring>
+        <name>all_roots</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/graph/minimum_spanning_tree.cpp" line="74" column="16" bodyfile="titan_cpplib_expanded/graph/minimum_spanning_tree.cpp" bodystart="74" bodyend="80"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1UnionFind_1a4f6f2889bb25af093ffefac801d02df8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int titan23::UnionFind::group_count</definition>
+        <argsstring>() const</argsstring>
+        <name>group_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/graph/minimum_spanning_tree.cpp" line="82" column="13" bodyfile="titan_cpplib_expanded/graph/minimum_spanning_tree.cpp" bodystart="82" bodyend="84"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1UnionFind_1ac951cdc927b0b2de5f340772778530b3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::UnionFind::clear</definition>
+        <argsstring>()</argsstring>
+        <name>clear</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/graph/minimum_spanning_tree.cpp" line="86" column="14" bodyfile="titan_cpplib_expanded/graph/minimum_spanning_tree.cpp" bodystart="86" bodyend="90"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1UnionFind_1af924219dafecda29a9c9984fe783662a" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>map&lt; int, vector&lt; int &gt; &gt;</type>
+        <definition>map&lt;int, vector&lt;int&gt; &gt; titan23::UnionFind::all_group_members</definition>
+        <argsstring>()</argsstring>
+        <name>all_group_members</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/graph/minimum_spanning_tree.cpp" line="92" column="13" bodyfile="titan_cpplib_expanded/graph/minimum_spanning_tree.cpp" bodystart="92" bodyend="98"/>
+      </memberdef>
+      <memberdef kind="function" id="classtitan23_1_1UnionFind_1ab6a12f51739c13818591aabf8f71a847" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void titan23::UnionFind::print</definition>
+        <argsstring>()</argsstring>
+        <name>print</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="titan_cpplib_expanded/graph/minimum_spanning_tree.cpp" line="100" column="14" bodyfile="titan_cpplib_expanded/graph/minimum_spanning_tree.cpp" bodystart="100" bodyend="110"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/data_structures/union_find.cpp" line="12" column="5" bodyfile="titan_cpplib/data_structures/union_find.cpp" bodystart="12" bodyend="107"/>
+    <location file="titan_cpplib_expanded/data_structures/union_find.cpp" line="13" column="5" bodyfile="titan_cpplib_expanded/data_structures/union_find.cpp" bodystart="13" bodyend="108"/>
     <listofallmembers>
       <member refid="classtitan23_1_1UnionFind_1af924219dafecda29a9c9984fe783662a" prot="public" virt="non-virtual"><scope>titan23::UnionFind</scope><name>all_group_members</name></member>
+      <member refid="classtitan23_1_1UnionFind_1af924219dafecda29a9c9984fe783662a" prot="public" virt="non-virtual"><scope>titan23::UnionFind</scope><name>all_group_members</name></member>
+      <member refid="classtitan23_1_1UnionFind_1a9eaa735e4984540a8d8ac7481a343c59" prot="public" virt="non-virtual"><scope>titan23::UnionFind</scope><name>all_roots</name></member>
       <member refid="classtitan23_1_1UnionFind_1a9eaa735e4984540a8d8ac7481a343c59" prot="public" virt="non-virtual"><scope>titan23::UnionFind</scope><name>all_roots</name></member>
       <member refid="classtitan23_1_1UnionFind_1ac951cdc927b0b2de5f340772778530b3" prot="public" virt="non-virtual"><scope>titan23::UnionFind</scope><name>clear</name></member>
-      <member refid="classtitan23_1_1UnionFind_1ae4dd2542fe56eef2d6be5dc5595ca7a7" prot="private" virt="non-virtual"><scope>titan23::UnionFind</scope><name>G</name></member>
+      <member refid="classtitan23_1_1UnionFind_1ac951cdc927b0b2de5f340772778530b3" prot="public" virt="non-virtual"><scope>titan23::UnionFind</scope><name>clear</name></member>
+      <member refid="classtitan23_1_1UnionFind_1a0b94f9cdce0f881228c759e0c13bf4a3" prot="private" virt="non-virtual"><scope>titan23::UnionFind</scope><name>G</name></member>
+      <member refid="classtitan23_1_1UnionFind_1a4f6f2889bb25af093ffefac801d02df8" prot="public" virt="non-virtual"><scope>titan23::UnionFind</scope><name>group_count</name></member>
       <member refid="classtitan23_1_1UnionFind_1a4f6f2889bb25af093ffefac801d02df8" prot="public" virt="non-virtual"><scope>titan23::UnionFind</scope><name>group_count</name></member>
       <member refid="classtitan23_1_1UnionFind_1ae2418469221028c7971f859db782fb1f" prot="private" virt="non-virtual"><scope>titan23::UnionFind</scope><name>group_numbers</name></member>
       <member refid="classtitan23_1_1UnionFind_1af32e79150a28aa8a0d9291e0c4b6766d" prot="public" virt="non-virtual"><scope>titan23::UnionFind</scope><name>members</name></member>
+      <member refid="classtitan23_1_1UnionFind_1af32e79150a28aa8a0d9291e0c4b6766d" prot="public" virt="non-virtual"><scope>titan23::UnionFind</scope><name>members</name></member>
       <member refid="classtitan23_1_1UnionFind_1a9643826bb9353b3ebe475c883b3327e5" prot="private" virt="non-virtual"><scope>titan23::UnionFind</scope><name>n</name></member>
-      <member refid="classtitan23_1_1UnionFind_1a7da4e59aef4df48de082a16d0b324e92" prot="private" virt="non-virtual"><scope>titan23::UnionFind</scope><name>par</name></member>
+      <member refid="classtitan23_1_1UnionFind_1a06d87e67964796a2cc373d60a709dfe8" prot="private" virt="non-virtual"><scope>titan23::UnionFind</scope><name>par</name></member>
+      <member refid="classtitan23_1_1UnionFind_1ab6a12f51739c13818591aabf8f71a847" prot="public" virt="non-virtual"><scope>titan23::UnionFind</scope><name>print</name></member>
       <member refid="classtitan23_1_1UnionFind_1ab6a12f51739c13818591aabf8f71a847" prot="public" virt="non-virtual"><scope>titan23::UnionFind</scope><name>print</name></member>
       <member refid="classtitan23_1_1UnionFind_1acf9365b3b97d5d5c8a3a4cc0d92203f9" prot="public" virt="non-virtual"><scope>titan23::UnionFind</scope><name>root</name></member>
+      <member refid="classtitan23_1_1UnionFind_1acf9365b3b97d5d5c8a3a4cc0d92203f9" prot="public" virt="non-virtual"><scope>titan23::UnionFind</scope><name>root</name></member>
       <member refid="classtitan23_1_1UnionFind_1ae23fd9d1572714d5805a846c51ae6eb4" prot="public" virt="non-virtual"><scope>titan23::UnionFind</scope><name>same</name></member>
+      <member refid="classtitan23_1_1UnionFind_1ae23fd9d1572714d5805a846c51ae6eb4" prot="public" virt="non-virtual"><scope>titan23::UnionFind</scope><name>same</name></member>
+      <member refid="classtitan23_1_1UnionFind_1a0a4be76accf9f6e5909313c76d7b7928" prot="public" virt="non-virtual"><scope>titan23::UnionFind</scope><name>size</name></member>
       <member refid="classtitan23_1_1UnionFind_1a0a4be76accf9f6e5909313c76d7b7928" prot="public" virt="non-virtual"><scope>titan23::UnionFind</scope><name>size</name></member>
       <member refid="classtitan23_1_1UnionFind_1a277b695039b93edf4c490f38f476002a" prot="public" virt="non-virtual"><scope>titan23::UnionFind</scope><name>UnionFind</name></member>
       <member refid="classtitan23_1_1UnionFind_1a85c25164a09cd403f941fab9d74bff8f" prot="public" virt="non-virtual"><scope>titan23::UnionFind</scope><name>UnionFind</name></member>
+      <member refid="classtitan23_1_1UnionFind_1a277b695039b93edf4c490f38f476002a" prot="public" virt="non-virtual"><scope>titan23::UnionFind</scope><name>UnionFind</name></member>
+      <member refid="classtitan23_1_1UnionFind_1a85c25164a09cd403f941fab9d74bff8f" prot="public" virt="non-virtual"><scope>titan23::UnionFind</scope><name>UnionFind</name></member>
+      <member refid="classtitan23_1_1UnionFind_1a1d3d13023a557d411c7bb6450ff2a141" prot="public" virt="non-virtual"><scope>titan23::UnionFind</scope><name>unite</name></member>
       <member refid="classtitan23_1_1UnionFind_1a1d3d13023a557d411c7bb6450ff2a141" prot="public" virt="non-virtual"><scope>titan23::UnionFind</scope><name>unite</name></member>
     </listofallmembers>
   </compounddef>

@@ -19,7 +19,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/max_heap.cpp" line="11" column="16" bodyfile="titan_cpplib/data_structures/max_heap.cpp" bodystart="11" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/max_heap.cpp" line="12" column="16" bodyfile="titan_cpplib_expanded/data_structures/max_heap.cpp" bodystart="12" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -34,7 +34,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/max_heap.cpp" line="14" column="14" bodyfile="titan_cpplib/data_structures/max_heap.cpp" bodystart="14" bodyend="18"/>
+        <location file="titan_cpplib_expanded/data_structures/max_heap.cpp" line="15" column="14" bodyfile="titan_cpplib_expanded/data_structures/max_heap.cpp" bodystart="15" bodyend="19"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1MaxHeap_1a69fa67dcdc91e71442d1ff0bb43436e8" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -51,7 +51,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/max_heap.cpp" line="20" column="14" bodyfile="titan_cpplib/data_structures/max_heap.cpp" bodystart="20" bodyend="32"/>
+        <location file="titan_cpplib_expanded/data_structures/max_heap.cpp" line="21" column="14" bodyfile="titan_cpplib_expanded/data_structures/max_heap.cpp" bodystart="21" bodyend="33"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1MaxHeap_1aec43272dfb4263cedea6e5002a6f69e2" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -68,7 +68,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/max_heap.cpp" line="34" column="14" bodyfile="titan_cpplib/data_structures/max_heap.cpp" bodystart="34" bodyend="44"/>
+        <location file="titan_cpplib_expanded/data_structures/max_heap.cpp" line="35" column="14" bodyfile="titan_cpplib_expanded/data_structures/max_heap.cpp" bodystart="35" bodyend="45"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -83,7 +83,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/max_heap.cpp" line="47" column="9" bodyfile="titan_cpplib/data_structures/max_heap.cpp" bodystart="47" bodyend="47"/>
+        <location file="titan_cpplib_expanded/data_structures/max_heap.cpp" line="48" column="9" bodyfile="titan_cpplib_expanded/data_structures/max_heap.cpp" bodystart="48" bodyend="48"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1MaxHeap_1a5c515fccb5a27909cc1472039e4fee76" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -100,7 +100,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/max_heap.cpp" line="48" column="9" bodyfile="titan_cpplib/data_structures/max_heap.cpp" bodystart="48" bodyend="48"/>
+        <location file="titan_cpplib_expanded/data_structures/max_heap.cpp" line="49" column="9" bodyfile="titan_cpplib_expanded/data_structures/max_heap.cpp" bodystart="49" bodyend="49"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1MaxHeap_1a921c852508978748c5a50b4854a55ae0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -114,7 +114,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/max_heap.cpp" line="51" column="11" bodyfile="titan_cpplib/data_structures/max_heap.cpp" bodystart="51" bodyend="53"/>
+        <location file="titan_cpplib_expanded/data_structures/max_heap.cpp" line="52" column="11" bodyfile="titan_cpplib_expanded/data_structures/max_heap.cpp" bodystart="52" bodyend="54"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1MaxHeap_1a8537c0fa62962802a221270dde36b999" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -128,7 +128,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/max_heap.cpp" line="56" column="11" bodyfile="titan_cpplib/data_structures/max_heap.cpp" bodystart="56" bodyend="62"/>
+        <location file="titan_cpplib_expanded/data_structures/max_heap.cpp" line="57" column="11" bodyfile="titan_cpplib_expanded/data_structures/max_heap.cpp" bodystart="57" bodyend="63"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1MaxHeap_1a135eff8e4402463c4a55cd41b974beec" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -146,7 +146,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/max_heap.cpp" line="65" column="14" bodyfile="titan_cpplib/data_structures/max_heap.cpp" bodystart="65" bodyend="68"/>
+        <location file="titan_cpplib_expanded/data_structures/max_heap.cpp" line="66" column="14" bodyfile="titan_cpplib_expanded/data_structures/max_heap.cpp" bodystart="66" bodyend="69"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1MaxHeap_1a374febc8243c1b07d2fa3ea27a3a8f39" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -164,7 +164,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/max_heap.cpp" line="71" column="11" bodyfile="titan_cpplib/data_structures/max_heap.cpp" bodystart="71" bodyend="77"/>
+        <location file="titan_cpplib_expanded/data_structures/max_heap.cpp" line="72" column="11" bodyfile="titan_cpplib_expanded/data_structures/max_heap.cpp" bodystart="72" bodyend="78"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1MaxHeap_1a25cdcc242221d5ba460673fdd71a78e2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -182,7 +182,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/max_heap.cpp" line="80" column="11" bodyfile="titan_cpplib/data_structures/max_heap.cpp" bodystart="80" bodyend="85"/>
+        <location file="titan_cpplib_expanded/data_structures/max_heap.cpp" line="81" column="11" bodyfile="titan_cpplib_expanded/data_structures/max_heap.cpp" bodystart="81" bodyend="86"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1MaxHeap_1ae1f06da8a697212d7473b4b621a80858" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -196,7 +196,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/max_heap.cpp" line="88" column="13" bodyfile="titan_cpplib/data_structures/max_heap.cpp" bodystart="88" bodyend="90"/>
+        <location file="titan_cpplib_expanded/data_structures/max_heap.cpp" line="89" column="13" bodyfile="titan_cpplib_expanded/data_structures/max_heap.cpp" bodystart="89" bodyend="91"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1MaxHeap_1ad8e0da14383c70201f25324b13405976" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -210,14 +210,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/max_heap.cpp" line="93" column="14" bodyfile="titan_cpplib/data_structures/max_heap.cpp" bodystart="93" bodyend="104"/>
+        <location file="titan_cpplib_expanded/data_structures/max_heap.cpp" line="94" column="14" bodyfile="titan_cpplib_expanded/data_structures/max_heap.cpp" bodystart="94" bodyend="105"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/data_structures/max_heap.cpp" line="9" column="5" bodyfile="titan_cpplib/data_structures/max_heap.cpp" bodystart="9" bodyend="105"/>
+    <location file="titan_cpplib_expanded/data_structures/max_heap.cpp" line="10" column="5" bodyfile="titan_cpplib_expanded/data_structures/max_heap.cpp" bodystart="10" bodyend="106"/>
     <listofallmembers>
       <member refid="classtitan23_1_1MaxHeap_1a69fa67dcdc91e71442d1ff0bb43436e8" prot="private" virt="non-virtual"><scope>titan23::MaxHeap</scope><name>_down</name></member>
       <member refid="classtitan23_1_1MaxHeap_1aa825d5fb3ad1a71ba8c18a88178240b2" prot="private" virt="non-virtual"><scope>titan23::MaxHeap</scope><name>_heapify</name></member>

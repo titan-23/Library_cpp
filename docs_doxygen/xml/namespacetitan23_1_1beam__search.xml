@@ -19,7 +19,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/gomi/beam_search_old.cpp" line="20" column="5" bodyfile="titan_cpplib/ahc/gomi/beam_search_old.cpp" bodystart="20" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/ahc/gomi/beam_search_old.cpp" line="21" column="5" bodyfile="titan_cpplib_expanded/ahc/gomi/beam_search_old.cpp" bodystart="21" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="beam__search__old_8cpp_1ad1e25bd237e86ae396cb6f722e5d3c3b" prot="public" static="no">
         <type>double</type>
@@ -32,7 +32,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/gomi/beam_search_old.cpp" line="25" column="5" bodyfile="titan_cpplib/ahc/gomi/beam_search_old.cpp" bodystart="25" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/ahc/gomi/beam_search_old.cpp" line="26" column="5" bodyfile="titan_cpplib_expanded/ahc/gomi/beam_search_old.cpp" bodystart="26" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="beam__search__old_8cpp_1a84e2669e5846ba561b1abc0e201ee4e7" prot="public" static="no">
         <type>unsigned long long</type>
@@ -45,7 +45,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/gomi/beam_search_old.cpp" line="26" column="5" bodyfile="titan_cpplib/ahc/gomi/beam_search_old.cpp" bodystart="26" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/ahc/gomi/beam_search_old.cpp" line="27" column="5" bodyfile="titan_cpplib_expanded/ahc/gomi/beam_search_old.cpp" bodystart="27" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="var">
@@ -60,7 +60,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/gomi/beam_search_old.cpp" line="21" column="15" bodyfile="titan_cpplib/ahc/gomi/beam_search_old.cpp" bodystart="21" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/ahc/gomi/beam_search_old.cpp" line="22" column="15" bodyfile="titan_cpplib_expanded/ahc/gomi/beam_search_old.cpp" bodystart="22" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="beam__search__old_8cpp_1afbbb0be31dbf15f9a050f6495603c4b6" prot="public" static="no" mutable="no">
         <type><ref refid="classtitan23_1_1StatePool" kindref="compound">StatePool</ref>&lt; <ref refid="structtitan23_1_1beam__search_1_1SubState" kindref="compound">SubState</ref> &gt;</type>
@@ -73,13 +73,13 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/ahc/gomi/beam_search_old.cpp" line="22" column="15" bodyfile="titan_cpplib/ahc/gomi/beam_search_old.cpp" bodystart="22" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/ahc/gomi/beam_search_old.cpp" line="23" column="15" bodyfile="titan_cpplib_expanded/ahc/gomi/beam_search_old.cpp" bodystart="23" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/ahc/gomi/beam_search_old.cpp" line="17" column="1"/>
+    <location file="titan_cpplib_expanded/ahc/gomi/beam_search_old.cpp" line="18" column="1"/>
   </compounddef>
 </doxygen>

@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/graph.cpp" line="9" column="9" bodyfile="titan_cpplib/graph/graph.cpp" bodystart="9" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/graph/graph.cpp" line="10" column="9" bodyfile="titan_cpplib_expanded/graph/graph.cpp" bodystart="10" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="structtitan23_1_1Graph_1a5a786ec8cf25e9e6369c473d91bae6e6" prot="public" static="no" mutable="no">
         <type>vector&lt; vector&lt; int &gt; &gt;</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/graph.cpp" line="10" column="12" bodyfile="titan_cpplib/graph/graph.cpp" bodystart="10" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/graph/graph.cpp" line="11" column="12" bodyfile="titan_cpplib_expanded/graph/graph.cpp" bodystart="11" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -42,7 +42,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/graph.cpp" line="12" column="5" bodyfile="titan_cpplib/graph/graph.cpp" bodystart="12" bodyend="12"/>
+        <location file="titan_cpplib_expanded/graph/graph.cpp" line="13" column="5" bodyfile="titan_cpplib_expanded/graph/graph.cpp" bodystart="13" bodyend="13"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1Graph_1a8a9ba0a2950eeaeb3002c20d56a3f5b7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -59,7 +59,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/graph.cpp" line="14" column="5" bodyfile="titan_cpplib/graph/graph.cpp" bodystart="14" bodyend="14"/>
+        <location file="titan_cpplib_expanded/graph/graph.cpp" line="15" column="5" bodyfile="titan_cpplib_expanded/graph/graph.cpp" bodystart="15" bodyend="15"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1Graph_1aad1998365bb0a168ec0b14a0a758c5a1" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -80,7 +80,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/graph.cpp" line="16" column="10" bodyfile="titan_cpplib/graph/graph.cpp" bodystart="16" bodyend="18"/>
+        <location file="titan_cpplib_expanded/graph/graph.cpp" line="17" column="10" bodyfile="titan_cpplib_expanded/graph/graph.cpp" bodystart="17" bodyend="19"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1Graph_1a8c34afe1df34cceeced99a811f2580bb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>bool</type>
@@ -93,7 +93,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/graph.cpp" line="20" column="10" bodyfile="titan_cpplib/graph/graph.cpp" bodystart="20" bodyend="47"/>
+        <location file="titan_cpplib_expanded/graph/graph.cpp" line="21" column="10" bodyfile="titan_cpplib_expanded/graph/graph.cpp" bodystart="21" bodyend="48"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1Graph_1a448eb0c09469aa3af3f74b179767f1ff" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <templateparamlist>
@@ -115,7 +115,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/graph.cpp" line="50" column="12" bodyfile="titan_cpplib/graph/graph.cpp" bodystart="50" bodyend="66"/>
+        <location file="titan_cpplib_expanded/graph/graph.cpp" line="51" column="12" bodyfile="titan_cpplib_expanded/graph/graph.cpp" bodystart="51" bodyend="67"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1Graph_1ab06d822888079256f09152f5eae2e611" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -128,7 +128,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/graph.cpp" line="68" column="9" bodyfile="titan_cpplib/graph/graph.cpp" bodystart="68" bodyend="70"/>
+        <location file="titan_cpplib_expanded/graph/graph.cpp" line="69" column="9" bodyfile="titan_cpplib_expanded/graph/graph.cpp" bodystart="69" bodyend="71"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1Graph_1af03afc8221e8ad2b7f3861e999ca55f4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>vector&lt; int &gt;</type>
@@ -141,7 +141,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/graph.cpp" line="72" column="12" bodyfile="titan_cpplib/graph/graph.cpp" bodystart="72" bodyend="95"/>
+        <location file="titan_cpplib_expanded/graph/graph.cpp" line="73" column="12" bodyfile="titan_cpplib_expanded/graph/graph.cpp" bodystart="73" bodyend="96"/>
       </memberdef>
       <memberdef kind="function" id="structtitan23_1_1Graph_1a51bf7de17e9703e26daa197200fe9766" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>vector&lt; vector&lt; int &gt; &gt;</type>
@@ -154,14 +154,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/graph/graph.cpp" line="97" column="12" bodyfile="titan_cpplib/graph/graph.cpp" bodystart="97" bodyend="147"/>
+        <location file="titan_cpplib_expanded/graph/graph.cpp" line="98" column="12" bodyfile="titan_cpplib_expanded/graph/graph.cpp" bodystart="98" bodyend="148"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/graph/graph.cpp" line="8" column="3" bodyfile="titan_cpplib/graph/graph.cpp" bodystart="8" bodyend="148"/>
+    <location file="titan_cpplib_expanded/graph/graph.cpp" line="9" column="3" bodyfile="titan_cpplib_expanded/graph/graph.cpp" bodystart="9" bodyend="149"/>
     <listofallmembers>
       <member refid="structtitan23_1_1Graph_1aad1998365bb0a168ec0b14a0a758c5a1" prot="public" virt="non-virtual"><scope>titan23::Graph</scope><name>add_edge</name></member>
       <member refid="structtitan23_1_1Graph_1a448eb0c09469aa3af3f74b179767f1ff" prot="public" virt="non-virtual"><scope>titan23::Graph</scope><name>bfs</name></member>

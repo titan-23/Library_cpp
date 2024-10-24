@@ -20,7 +20,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_array.cpp" line="14" column="9" bodyfile="titan_cpplib/data_structures/persistent_array.cpp" bodystart="14" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_array.cpp" line="15" column="9" bodyfile="titan_cpplib_expanded/data_structures/persistent_array.cpp" bodystart="15" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-attrib">
@@ -35,7 +35,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_array.cpp" line="16" column="17" bodyfile="titan_cpplib/data_structures/persistent_array.cpp" bodystart="16" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_array.cpp" line="17" column="17" bodyfile="titan_cpplib_expanded/data_structures/persistent_array.cpp" bodystart="17" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="classtitan23_1_1PersistentArray_1a964b87c19f8000c07c8a5f1dfb016ecb" prot="private" static="no" mutable="no">
         <type>int</type>
@@ -48,7 +48,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_array.cpp" line="17" column="13" bodyfile="titan_cpplib/data_structures/persistent_array.cpp" bodystart="17" bodyend="-1"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_array.cpp" line="18" column="13" bodyfile="titan_cpplib_expanded/data_structures/persistent_array.cpp" bodystart="18" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -67,7 +67,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_array.cpp" line="34" column="13" bodyfile="titan_cpplib/data_structures/persistent_array.cpp" bodystart="34" bodyend="36"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_array.cpp" line="35" column="13" bodyfile="titan_cpplib_expanded/data_structures/persistent_array.cpp" bodystart="35" bodyend="37"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1PersistentArray_1a5d51d819794b562ac3f1d5f370a5793a" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -84,7 +84,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_array.cpp" line="38" column="14" bodyfile="titan_cpplib/data_structures/persistent_array.cpp" bodystart="38" bodyend="60"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_array.cpp" line="39" column="14" bodyfile="titan_cpplib_expanded/data_structures/persistent_array.cpp" bodystart="39" bodyend="61"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1PersistentArray_1a517ecb3d22b3eff62a9ff73b3c12290d" prot="private" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classtitan23_1_1PersistentArray" kindref="compound">PersistentArray</ref>&lt; T &gt;</type>
@@ -101,7 +101,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_array.cpp" line="62" column="25" bodyfile="titan_cpplib/data_structures/persistent_array.cpp" bodystart="62" bodyend="67"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_array.cpp" line="63" column="25" bodyfile="titan_cpplib_expanded/data_structures/persistent_array.cpp" bodystart="63" bodyend="68"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="public-func">
@@ -116,7 +116,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_array.cpp" line="70" column="9" bodyfile="titan_cpplib/data_structures/persistent_array.cpp" bodystart="70" bodyend="70"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_array.cpp" line="71" column="9" bodyfile="titan_cpplib_expanded/data_structures/persistent_array.cpp" bodystart="71" bodyend="71"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1PersistentArray_1a3cf4a03d4ef6635f1942342d20882584" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -134,7 +134,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_array.cpp" line="73" column="9" bodyfile="titan_cpplib/data_structures/persistent_array.cpp" bodystart="73" bodyend="75"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_array.cpp" line="74" column="9" bodyfile="titan_cpplib_expanded/data_structures/persistent_array.cpp" bodystart="74" bodyend="76"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1PersistentArray_1a6fdc6eaa94c66b7a93aa9f65f2e8f15f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classtitan23_1_1PersistentArray" kindref="compound">PersistentArray</ref>&lt; T &gt;</type>
@@ -156,7 +156,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_array.cpp" line="78" column="25" bodyfile="titan_cpplib/data_structures/persistent_array.cpp" bodystart="78" bodyend="99"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_array.cpp" line="79" column="25" bodyfile="titan_cpplib_expanded/data_structures/persistent_array.cpp" bodystart="79" bodyend="100"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1PersistentArray_1ad84c2d3839850468b50570982cc6f966" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>T</type>
@@ -174,7 +174,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_array.cpp" line="102" column="11" bodyfile="titan_cpplib/data_structures/persistent_array.cpp" bodystart="102" bodyend="116"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_array.cpp" line="103" column="11" bodyfile="titan_cpplib_expanded/data_structures/persistent_array.cpp" bodystart="103" bodyend="117"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1PersistentArray_1ad2a48c88084cf48c8c0c327b852570e0" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type><ref refid="classtitan23_1_1PersistentArray" kindref="compound">PersistentArray</ref>&lt; T &gt;</type>
@@ -188,7 +188,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_array.cpp" line="119" column="25" bodyfile="titan_cpplib/data_structures/persistent_array.cpp" bodystart="119" bodyend="121"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_array.cpp" line="120" column="25" bodyfile="titan_cpplib_expanded/data_structures/persistent_array.cpp" bodystart="120" bodyend="122"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1PersistentArray_1ae9b025b9b3e216ae223d38c9f4b3f42d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>vector&lt; T &gt;</type>
@@ -202,7 +202,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_array.cpp" line="124" column="16" bodyfile="titan_cpplib/data_structures/persistent_array.cpp" bodystart="124" bodyend="134"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_array.cpp" line="125" column="16" bodyfile="titan_cpplib_expanded/data_structures/persistent_array.cpp" bodystart="125" bodyend="135"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1PersistentArray_1afce6b276d9abb23b3ea0d39ab4fc8208" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>int</type>
@@ -216,7 +216,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_array.cpp" line="137" column="13" bodyfile="titan_cpplib/data_structures/persistent_array.cpp" bodystart="137" bodyend="139"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_array.cpp" line="138" column="13" bodyfile="titan_cpplib_expanded/data_structures/persistent_array.cpp" bodystart="138" bodyend="140"/>
       </memberdef>
       <memberdef kind="function" id="classtitan23_1_1PersistentArray_1a230d2c3df6e2ab0fff7bc7e9e8295a5f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
         <type>void</type>
@@ -229,7 +229,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="titan_cpplib/data_structures/persistent_array.cpp" line="141" column="14" bodyfile="titan_cpplib/data_structures/persistent_array.cpp" bodystart="141" bodyend="151"/>
+        <location file="titan_cpplib_expanded/data_structures/persistent_array.cpp" line="142" column="14" bodyfile="titan_cpplib_expanded/data_structures/persistent_array.cpp" bodystart="142" bodyend="152"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -237,7 +237,7 @@
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="titan_cpplib/data_structures/persistent_array.cpp" line="11" column="5" bodyfile="titan_cpplib/data_structures/persistent_array.cpp" bodystart="11" bodyend="152"/>
+    <location file="titan_cpplib_expanded/data_structures/persistent_array.cpp" line="12" column="5" bodyfile="titan_cpplib_expanded/data_structures/persistent_array.cpp" bodystart="12" bodyend="153"/>
     <listofallmembers>
       <member refid="classtitan23_1_1PersistentArray_1a5d51d819794b562ac3f1d5f370a5793a" prot="private" virt="non-virtual"><scope>titan23::PersistentArray</scope><name>_build</name></member>
       <member refid="classtitan23_1_1PersistentArray_1a517ecb3d22b3eff62a9ff73b3c12290d" prot="private" virt="non-virtual"><scope>titan23::PersistentArray</scope><name>_new</name></member>

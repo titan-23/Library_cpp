@@ -4,14 +4,14 @@
     <compoundname>rooted_tree.cpp</compoundname>
     <includes local="no">vector</includes>
     <incdepgraph>
+      <node id="2">
+        <label>vector</label>
+      </node>
       <node id="1">
-        <label>titan_cpplib/graph/rooted_tree.cpp</label>
+        <label>titan_cpplib_expanded/graph/rooted_tree.cpp</label>
         <link refid="rooted__tree_8cpp"/>
         <childnode refid="2" relation="include">
         </childnode>
-      </node>
-      <node id="2">
-        <label>vector</label>
       </node>
     </incdepgraph>
     <innerclass refid="structRootedTree" prot="public">RootedTree</innerclass>
@@ -20,24 +20,26 @@
     <detaileddescription>
     </detaileddescription>
     <programlisting>
-<codeline lineno="1"><highlight class="preprocessor">#include<sp/>&lt;vector&gt;</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="2"><highlight class="normal"></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal">std;</highlight></codeline>
-<codeline lineno="3"><highlight class="normal"></highlight></codeline>
-<codeline lineno="4" refid="structRootedTree" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structRootedTree" kindref="compound">RootedTree</ref><sp/>{</highlight></codeline>
-<codeline lineno="5"><highlight class="normal"><sp/><sp/>vector&lt;vector&lt;pair&lt;int,<sp/>int&gt;&gt;&gt;<sp/>G;</highlight></codeline>
-<codeline lineno="6"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>root;</highlight></codeline>
-<codeline lineno="7"><highlight class="normal"><sp/><sp/>vector&lt;long<sp/>long&gt;<sp/>_dist;</highlight></codeline>
-<codeline lineno="8"><highlight class="normal"></highlight></codeline>
-<codeline lineno="9"><highlight class="normal"><sp/><sp/><ref refid="structRootedTree" kindref="compound">RootedTree</ref>(vector&lt;vector&lt;pair&lt;int,<sp/>int&gt;&gt;&gt;<sp/>G,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>root)<sp/>{</highlight></codeline>
-<codeline lineno="10"><highlight class="normal"><sp/><sp/><sp/><sp/>this-&gt;G<sp/>=<sp/>G;</highlight></codeline>
-<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/>this-&gt;root<sp/>=<sp/>root;</highlight></codeline>
-<codeline lineno="12"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
-<codeline lineno="13"><highlight class="normal"></highlight></codeline>
-<codeline lineno="14"><highlight class="normal"><sp/><sp/>vector&lt;long<sp/>long&gt;<sp/>get_dist()<sp/>{</highlight></codeline>
-<codeline lineno="15"><highlight class="normal"></highlight></codeline>
-<codeline lineno="16"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
-<codeline lineno="17"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="1"><highlight class="comment">//<sp/>#include<sp/>&quot;titan_cpplib/graph/rooted_tree.cpp&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2"><highlight class="normal"></highlight><highlight class="preprocessor">#include<sp/>&lt;vector&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="3"><highlight class="normal"></highlight><highlight class="keyword">using<sp/>namespace<sp/></highlight><highlight class="normal">std;</highlight></codeline>
+<codeline lineno="4"><highlight class="normal"></highlight></codeline>
+<codeline lineno="5" refid="structRootedTree" refkind="compound"><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structRootedTree" kindref="compound">RootedTree</ref><sp/>{</highlight></codeline>
+<codeline lineno="6"><highlight class="normal"><sp/><sp/>vector&lt;vector&lt;pair&lt;int,<sp/>int&gt;&gt;&gt;<sp/>G;</highlight></codeline>
+<codeline lineno="7"><highlight class="normal"><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>root;</highlight></codeline>
+<codeline lineno="8"><highlight class="normal"><sp/><sp/>vector&lt;long<sp/>long&gt;<sp/>_dist;</highlight></codeline>
+<codeline lineno="9"><highlight class="normal"></highlight></codeline>
+<codeline lineno="10"><highlight class="normal"><sp/><sp/><ref refid="structRootedTree" kindref="compound">RootedTree</ref>(vector&lt;vector&lt;pair&lt;int,<sp/>int&gt;&gt;&gt;<sp/>G,<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>root)<sp/>{</highlight></codeline>
+<codeline lineno="11"><highlight class="normal"><sp/><sp/><sp/><sp/>this-&gt;G<sp/>=<sp/>G;</highlight></codeline>
+<codeline lineno="12"><highlight class="normal"><sp/><sp/><sp/><sp/>this-&gt;root<sp/>=<sp/>root;</highlight></codeline>
+<codeline lineno="13"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="14"><highlight class="normal"></highlight></codeline>
+<codeline lineno="15"><highlight class="normal"><sp/><sp/>vector&lt;long<sp/>long&gt;<sp/>get_dist()<sp/>{</highlight></codeline>
+<codeline lineno="16"><highlight class="normal"></highlight></codeline>
+<codeline lineno="17"><highlight class="normal"><sp/><sp/>}</highlight></codeline>
+<codeline lineno="18"><highlight class="normal">};</highlight></codeline>
+<codeline lineno="19"><highlight class="normal"></highlight></codeline>
     </programlisting>
-    <location file="titan_cpplib/graph/rooted_tree.cpp"/>
+    <location file="titan_cpplib_expanded/graph/rooted_tree.cpp"/>
   </compounddef>
 </doxygen>
