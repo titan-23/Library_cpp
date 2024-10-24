@@ -2,6 +2,7 @@
 #include <cmath>
 #include "titan_cpplib/ahc/timer.cpp"
 #include "titan_cpplib/algorithm/random.cpp"
+#include "titan_cpplib/others/print.cpp"
 
 using namespace std;
 
