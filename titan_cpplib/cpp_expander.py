@@ -56,14 +56,14 @@ class CppExpander:
             with open(output_fiepath, "w", encoding="utf-8") as f:
                 f.write(output_code)
         logger.info(to_green("The process completed successfully."))
-        logger.info(to_green(f"Output file: \"{output_fiepath}\"."))
+        logger.info(to_green(f'Output file: "{output_fiepath}".'))
 
     def get_code(self, input_file_path: str) -> None:
         input_lines = 0
         with open(input_file_path, "r", encoding="utf-8") as input_file:
             for line in input_file:
                 input_lines += 1
-                if line.startswith(f"#include \"titan_cpplib"):
+                if line.startswith(f'#include "titan_cpplib'):
                     _, s = line.split()
                     s = s.replace('"', "")
                     if s in self.added_file:
@@ -71,8 +71,8 @@ class CppExpander:
                     self.added_file.add(s)
                     for lib_path in LIB_PATH:
                         new_path = f"{lib_path}{s}"
-                        self.outputs.append(f"// {line}")
                         if os.path.exists(new_path):
+                            self.outputs.append(f"// {line}")
                             logger.info(f"[include] \"{s.replace(lib_path, '')}\"")
                             self.get_code(new_path)
                             break
