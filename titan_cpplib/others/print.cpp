@@ -8,9 +8,9 @@ using namespace std;
 // print
 
 // color
-static const string PRINT_RED = "\033[31m";
-static const string PRINT_GREEN = "\033[32m";
-static const string PRINT_NONE = "\033[m";
+static const string PRINT_RED = "\033[31m"; // 赤字
+static const string PRINT_GREEN = "\033[32m"; // 緑字
+static const string PRINT_NONE = "\033[m"; // 色を元に戻す
 
 // pair<K, V>
 template <typename K, typename V>
