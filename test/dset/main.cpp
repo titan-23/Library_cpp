@@ -8,434 +8,279 @@ using namespace std;
 #define rep(i, n) for (int i = 0; i < (n); ++i)
 #define ll long long
 
+#include "titan_cpplib/others/print.cpp"
+
+// MultisetSum
+namespace titan23 {
+
 template<typename T>
 class MultisetSum {
-  private:
-    struct Node;
-    using NodePtr = Node*;
-    stack<NodePtr> unused_node;
-    NodePtr root;
+  public:
+    const int MAX_BUCKET_SIZE = 2;
+    int n;
+    T missing;
+    vector<vector<T>> data;
+    vector<T> bucket_data;
 
-    struct Node {
-        int size;
-        NodePtr par, left, right;
-        T key, sum;
-
-        Node() : size(0), par(nullptr), left(nullptr), right(nullptr) {}
-        Node(T key) : size(1), par(nullptr), left(nullptr), right(nullptr), key(key), sum(key) {}
-
-        void init(T &key) {
-            this->size = 1;
-            this->par = nullptr;
-            this->left = nullptr;
-            this->right = nullptr;
-            this->key = key;
-            this->sum = key;
-        }
-
-        void update() {
-            this->size = 1;
-            this->sum = this->key;
-            if (this->left) {
-                this->size += this->left->size;
-                this->sum += this->left->sum;
-            }
-            if (this->right) {
-                this->size += this->right->size;
-                this->sum += this->right->sum;
-            }
-        }
-
-        void rotate_right() {
-            NodePtr u = this->left;
-            assert(u);
-            this->left = u->right;
-            u->right = this;
-            if (this->par) {
-                if (this->par->left == this) {
-                    this->par->left = u;
-                } else {
-                    assert(this->par->right == this);
-                    this->par->right = u;
-                }
-            }
-            u->par = this->par;
-            if (this->left) this->left->par = this;
-            this->par = u;
-            this->update();
-            u->update();
-        }
-
-        void rotate_left() {
-            NodePtr u = this->right;
-            assert(u);
-            this->right = u->left;
-            u->left = this;
-            if (this->par) {
-                if (this->par->left == this) {
-                    this->par->left = u;
-                } else {
-                    assert(this->par->right == this);
-                    this->par->right = u;
-                }
-            }
-            u->par = this->par;
-            if (this->right) this->right->par = this;
-            this->par = u;
-            this->update();
-            u->update();
-        }
-
-        void splay() {
-            while (this->par && this->par->par) {
-                if (this->par->left == this) {
-                    if (this->par->par->left == this->par) {
-                        this->par->par->rotate_right();
-                        this->par->rotate_right();
-                    } else {
-                        this->par->rotate_right();
-                        this->par->rotate_left();
-                    }
-                } else {
-                    if (this->par->par->right == this->par) {
-                        this->par->par->rotate_left();
-                        this->par->rotate_left();
-                    } else {
-                        this->par->rotate_left();
-                        this->par->rotate_right();
-                    }
-                }
-            }
-
-            if (this->par) {
-                if (this->par->left == this) {
-                    this->par->rotate_right();
-                } else {
-                    this->par->rotate_left();
-                }
-            }
-
-            assert(this->par == nullptr);
-        }
-
-        NodePtr left_splay() {
-            NodePtr node = this;
-            while (node->left) node = node->left;
-            node->splay();
-            assert(node->left == nullptr);
-            return node;
-        }
-
-        NodePtr right_splay() {
-            NodePtr node = this;
-            while (node->right) node = node->right;
-            node->splay();
-            assert(node->right == nullptr);
-            return node;
-        }
-    };
-
-    NodePtr find_splay(NodePtr node, const T &key) {
-        NodePtr pnode = nullptr;
-        while (node) {
-            if (node->key == key) {
-                node->splay();
-                return node;
-            }
-            pnode = node;
-            if (key < node->key) {
-                node = node->left;
-            } else {
-                node = node->right;
-            }
-        }
-        if (pnode) {
-            pnode->splay();
-            return pnode;
-        }
-        return node;
+    int bisect_left(const vector<T> &a, const T &key) const {
+        return lower_bound(a.begin(), a.end(), key) - a.begin();
     }
 
-    NodePtr kth_splay(NodePtr node, int k) {
-        while (true) {
-            int t = node->left ? node->left->size : 0;
-            if (t == k) {
-                node->splay();
-                return node;
-            }
-            if (t < k) {
-                k -= t + 1;
-                node = node->right;
-            } else {
-                node = node->left;
+    int bisect_right(const vector<T> &a, const T &key) const {
+        return upper_bound(a.begin(), a.end(), key) - a.begin();
+    }
+
+    pair<int, int> get_pos(const T key) const {
+        for (int i = 0; i < data.size(); ++i) {
+            if (key <= data[i].back()) {
+                return {i, bisect_left(data[i], key)};
             }
         }
-    }
-
-    void remove_root() {
-        assert(this->root && this->root->par == nullptr);
-        unused_node.emplace(this->root);
-        NodePtr new_root;
-        if (!this->root->left) {
-            new_root = this->root->right;
-        } else if (!this->root->right) {
-            new_root = this->root->left;
-        } else {
-            new_root = this->root->left;
-            new_root->par = nullptr;
-            new_root = new_root->right_splay();
-            new_root->right = this->root->right;
-            new_root->right->par = new_root;
-            new_root->update();
+        if (data.size() == 0) {
+            return {0, 0};
         }
-        if (new_root) new_root->par = nullptr;
-        this->root = new_root;
-    }
-
-    MultisetSum(NodePtr root) : root(root) {}
-
-    // leftのsize==k
-    pair<NodePtr, NodePtr> split_node_kth(NodePtr node, int k) {
-        if (node == nullptr || k <= 0) return make_pair(nullptr, node);
-        if (k >= node->size) return make_pair(node, nullptr);
-        node = this->kth_splay(node, k);
-        NodePtr left_root = node->left;
-        if (left_root) {
-            left_root->par = nullptr;
-            node->left = nullptr;
-            node->update();
-        }
-        return make_pair(left_root, node);
-    }
-
-    NodePtr merge_node(NodePtr left, NodePtr right) {
-        if (left == nullptr) return right;
-        if (right == nullptr) return left;
-        left = left->right_splay();
-        left->right = right;
-        right->par = left;
-        left->update();
-        return left;
-    }
-
-    MultisetSum<T> gen(NodePtr root_node) const {
-        return MultisetSum<T>(root_node);
+        return {data.size()-1, data.back().size()};
     }
 
   public:
-    MultisetSum() : root(nullptr) {}
+    MultisetSum() {}
 
-    pair<MultisetSum<T>, MultisetSum<T>> split(int k) {
-        auto [left, right] = split_node_kth(this->root, k);
-        return make_pair(gen(left), gen(right));
+    MultisetSum(T missing) {
+        this->n = 0;
+        this->missing = missing;
     }
 
-    void merge(MultisetSum<T> &other) {
-        this->root = merge_node(this->root, other->root);
-    }
-
-    void print_node(NodePtr node) {
-        stack<NodePtr> st;
-        vector<T> a;
-        while ((!st.empty()) || node) {
-            if (node) {
-                st.emplace(node);
-                node = node->left;
-            } else {
-                node = st.top();
-                st.pop();
-                a.emplace_back(node->key);
-                node = node->right;
+    MultisetSum(vector<T> a, T missing) {
+        sort(a.begin(), a.end());
+        this->n = (int)a.size();
+        this->missing = missing;
+        const int bucket_size = sqrt(n) + 1;
+        const int bucket_cnt = (n+bucket_size-1) / bucket_size;
+        bucket_data.resize(bucket_cnt, 0);
+        data.resize(bucket_cnt);
+        for (int k = 0; k < bucket_cnt; ++k) {
+            int size = min(bucket_size, n-k*bucket_size);
+            data[k].resize(size);
+            for (int i = 0; i < size; ++i) {
+                data[k][i] = a[k*bucket_size+i];
+                bucket_data[k] += a[k*bucket_size+i];
             }
         }
+    }
 
-        cout << "[";
-        int n = a.size();
-        for (int i = 0; i < n; ++i) {
-            cout << a[i] << ", ";
+    void rebuild_split(int i) {
+        vector<T> left, right;
+        int m = data[i].size();
+        for (int j = 0; j < m/2; ++j) {
+            left.emplace_back(data[i][j]);
         }
-        cout << "]" << endl;
-    }
-
-    //! [l, r)の和
-    T sum(int l, int r) {
-        NodePtr a, b, c;
-        tie(b, c) = split_node_kth(this->root, r);
-        tie(a, b) = split_node_kth(b, l);
-        T res = b ? b->sum : 0;
-        a = merge_node(a, b);
-        a = merge_node(a, c);
-        this->root = a;
-        return res;
-    }
-
-    bool discard(const T &key) {
-        if (this->root == nullptr) return false;
-        this->root = this->find_splay(this->root, key);
-        if (this->root->key == key) {
-            remove_root();
-            return true;
+        for (int j = m/2; j < m; ++j) {
+            right.emplace_back(data[i][j]);
         }
-        return false;
+        data[i] = left;
+        // data.erase(data.begin() + i);
+        // data.insert(data.begin() + i, left);
+        data.insert(data.begin() + i+1, right);
+        T left_sum = 0;
+        T right_sum = 0;
+        for (const T &key : left) left_sum += key;
+        for (const T &key : right) right_sum += key;
+        bucket_data.erase(bucket_data.begin() + i);
+        bucket_data.insert(bucket_data.begin() + i, left_sum);
+        bucket_data.insert(bucket_data.begin() + i+1, right_sum);
     }
 
-    void remove(const T &key) {
-        assert(this->root != nullptr);
-        this->root = this->find_splay(this->root, key);
-        assert(this->root->key == key);
-        remove_root();
-    }
-
-    T pop(int k) {
-        assert(this->root != nullptr);
-        this->root = this->kth_splay(this->root, k);
-        T res = this->root->key;
-        remove_root();
-        return res;
-    }
-
-    void insert(T key) {
-        this->root = this->find_splay(this->root, key);
-        NodePtr node;
-        if (unused_node.empty()) {
-            node = new Node(key);
-        } else {
-            node = unused_node.top();
-            unused_node.pop();
-            node->init(key);
+    void add(T key) {
+        if (n == 0) {
+            data.push_back({key});
+            bucket_data.push_back(key);
+            n = 1;
+            return;
         }
-        if (this->root) {
-            if (this->root->key >= key) {
-                node->left = this->root->left;
-                if (node->left) node->left->par = node;
-                this->root->left = nullptr;
-                node->right = this->root;
-                node->right->par = node;
-            } else {
-                node->right = this->root->right;
-                if (node->right) node->right->par = node;
-                this->root->right = nullptr;
-                node->left = this->root;
-                node->left->par = node;
+        auto [i, pos] = get_pos(key);
+        data[i].insert(data[i].begin() + pos, key);
+        bucket_data[i] += key;
+        n++;
+        if (data[i].size() > MAX_BUCKET_SIZE) {
+            rebuild_split(i);
+        }
+    }
+
+    bool discard(T key) {
+        auto [i, pos] = get_pos(key);
+        if (i >= data.size() || pos >= data[i].size() || data[i][pos] != key) {
+            return false;
+        }
+        data[i].erase(data[i].begin() + pos);
+        bucket_data[i] -= key;
+        n--;
+        if (data[i].empty()) {
+            data.erase(data.begin() + i);
+            assert(bucket_data[i] == 0);
+            bucket_data.erase(bucket_data.begin() + i);
+        }
+        return true;
+    }
+
+    void remove(T key) {
+        auto [i, pos] = get_pos(key);
+        data[i].erase(data[i].begin() + pos);
+        n--;
+        if (data[i].empty()) {
+            data.erase(data.begin() + i);
+        }
+    }
+
+    T operator[] (int k) const {
+        for (const vector<T> &d : data) {
+            if (k < d.size()) return d[k];
+            k -= d.size();
+        }
+    }
+
+    T lt(const T &key) const {
+        for (auto it = this->data.rbegin(); it != this->data.rend(); ++it) {
+            const vector<T> &d = *it;
+            if (d[0] < key) {
+                int index = bisect_left(d, key) - 1;
+                if (index >= 0) return d[index];
             }
-            this->root->update();
-            node->update();
         }
-        assert(node->par == nullptr);
-        this->root = node;
+        return this->missing;
     }
 
-    T pop_min() {
-        NodePtr node = this->root->left_splay();
-        T res = node->key;
-        remove_root();
-        return res;
+    T le(const T &key) const {
+        for (auto it = this->data.rbegin(); it != this->data.rend(); ++it) {
+            const vector<T> &d = *it;
+            if (d[0] <= key) {
+                int index = bisect_right(d, key) - 1;
+                if (index >= 0) return (d)[index];
+            }
+        }
+        return this->missing;
     }
 
-    T pop_max() {
-        NodePtr node = this->root->right_splay();
-        T res = node->key;
-        remove_root();
-        return res;
+    T gt(const T &key) const {
+        for (const auto &d : this->data) {
+            if (d.back() > key) {
+                int index = bisect_right(d, key);
+                if (index < d.size()) return d[index];
+            }
+        }
+        return this->missing;
     }
 
-    T get(int k) {
-        this->root = this->kth_splay(this->root, k);
-        return this->root->key;
+    T ge(const T &key) const {
+        for (const auto &d : this->data) {
+            if (d.back() >= key) {
+                int index = bisect_left(d, key);
+                if (index < d.size()) return d[index];
+            }
+        }
+        return this->missing;
+    }
+
+    int index(const T &x) const {
+        int ans = 0;
+        for (const vector<T> &d : this->data) {
+            if (d.back() >= x) return ans + bisect_left(d, x);
+            ans += d.size();
+        }
+        return ans;
+    }
+
+    int index_right(const T &x) const {
+        int ans = 0;
+        for (const vector<T> &d : this->data) {
+            if (d.back() > x) return ans + bisect_right(d, x);
+            ans += d.size();
+        }
+        return ans;
+    }
+
+    int count(const T &key) const {
+        return index_right(key) - index(key);
+    }
+
+    bool contains(const T &key) const {
+        auto [i, pos] = get_pos(key);
+        return i < data.size() && pos < data[i].size() && data[i][pos] == key;
+    }
+
+    // [l, r)の総和を返す
+    T sum(int l, int r) const {
+        T sum = 0;
+        int u = 0, v = 0;
+        for (int i = 0; i < data.size(); ++i) {
+            v = u + data[i].size();
+            if (l <= u && v <= r) {
+                sum += bucket_data[i];
+            } else if (v > l && u < r) {
+                int start = max(l, u);
+                int end = min(r, v);
+                for (int j = start; j < end; ++j) {
+                    sum += data[i][j - u];
+                }
+            }
+            u = v;
+            if (u >= r) break;
+        }
+        return sum;
     }
 
     int len() const {
-        return this->root ? this->root->size : 0;
-    }
-
-    int get_height() const {
-        auto rec = [&] (auto &&rec, NodePtr node) -> int {
-            if (node == nullptr) return 0;
-            int h = 0;
-            if (node->left) h = max(h, rec(rec, node->left));
-            if (node->right) h = max(h, rec(rec, node->right));
-            return h + 1;
-        };
-        return rec(rec, this->root);
+        return n;
     }
 
     vector<T> tovector() const {
-        NodePtr node = this->root;
-        stack<NodePtr> st;
         vector<T> a;
-        a.reserve(len());
-        while ((!st.empty()) || node) {
-            if (node) {
-                st.emplace(node);
-                node = node->left;
-            } else {
-                node = st.top();
-                st.pop();
-                a.emplace_back(node->key);
-                node = node->right;
-            }
+        a.reserve(n);
+        for (const vector<T> &d : data) {
+            a.insert(a.end(), d.begin(), d.end());
         }
         return a;
     }
-
-    void test_sorted() const {
-        vector<T> a = tovector();
-        int n = a.size();
-        for (int i = 0; i < n-1; ++i) {
-            assert(a[i] <= a[i+1]);
-        }
-    }
-
-    void test() const {
-        auto dfs = [&] (auto dfs, NodePtr node, NodePtr pnode) {
-            if (node == nullptr) return;
-            assert(node->par == pnode);
-            dfs(dfs, node->left, node);
-            dfs(dfs, node->right, node);
-        };
-
-        dfs(dfs, this->root, nullptr);
-    }
-
-    void print() const {
-        vector<T> a = tovector();
-        int n = a.size();
-        cout << "[";
-        for (int i = 0; i < n-1; ++i) {
-            cout << a[i] << ", ";
-        }
-        if (n-1 >= 0) {
-            cout << a[n-1];
-        }
-        cout << "]" << endl;
-    }
 };
+} // namespace titan23
 
+bool vec_contains(const vector<int> &a, int x) {
+    for (int e : a) {
+        if (e == x) return true;
+    }
+    return false;
+}
 
 void solve() {
     int q;
     cin >> q;
 
     vector<int> naive;
-    MultisetSum<int> s;
+    titan23::MultisetSum<int> s(-1);
 
     rep(query, q) {
         cout << "query : " << query << endl;
         int com;
         cin >> com;
-        if (com == 0) { // insert
+        if (com == 0) { // add
             int v; cin >> v;
-            cout << "  insert(" << v << ")" << endl;
-            s.insert(v);
-
-            naive.push_back(v);
+            cout << "  add(" << v << ")" << endl;
+            if (!s.contains(v)) {
+                s.add(v);
+                naive.push_back(v);
+            } else {
+                cout << s.tovector() << endl;
+                cout << naive << endl;
+                assert(s.contains(v));
+                assert(vec_contains(naive, v));
+            }
         } else if (com == 1) { // discard
             int v; cin >> v;
             cout << "  discard(" << v << ")" << endl;
-            s.discard(v);
-
-            auto it = std::find(naive.begin(), naive.end(), v);
-            if (it != naive.end()) naive.erase(it);
+            if (s.contains(v)) {
+                s.discard(v);
+                auto it = std::find(naive.begin(), naive.end(), v);
+                if (it != naive.end()) naive.erase(it);
+            }
         } else if (com == 2) { // sum
             int l, r; cin >> l >> r;
             cout << "  sum(" << l << ", " << r << ")" << endl;
@@ -444,13 +289,35 @@ void solve() {
             int sum_naive = 0;
             for (int i = l; i < r; ++i) sum_naive += naive[i];
 
+            cout << s.tovector() << endl;
+            cout << naive << endl;
+
             cout << "set : " << sum << " | " << "naive : " << sum_naive << endl;
             assert(sum == sum_naive);
+        } else if (com == 3) {
+            int x; cin >> x;
+            cout << "  ge(" << x << ")" << endl;
+            int ge = s.ge(x);
+
+            int ge_naive = -1;
+            for (int e : naive) {
+                if (e >= x) {
+                    ge_naive = e;
+                    break;
+                }
+            }
+            // cout << s.data << endl;
+            // cout << naive << endl;
+            cout << "set : " << ge << " | " << "naive : " << ge_naive << endl;
+            assert(ge == ge_naive);
         }
 
         sort(naive.begin(), naive.end());
+        cerr << "contains" << endl;
+        for (int x : naive) {
+            assert(s.contains(x));
+        }
         assert(naive == s.tovector());
-        s.test();
     }
 
     cout << "OK" << endl;
