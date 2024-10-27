@@ -103,7 +103,7 @@ namespace titan23 {
         HashString(HashStringBase* hsb, const string &s) : n(s.size()), used_seg(false), hsb(hsb) {
             data.resize(n);
             acc.resize(n+1, 0);
-            if (n > this->hsb->get_cap()) this->hsb->extend(n - this->hsb->get_cap());
+            if (n > this->hsb->get_cap()) this->hsb->extend(n - this->hsb->get_cap() + 1);
             for (int i = 0 ; i < n; ++i) {
                 assert(0 <= n-i-1 && n-i-1 < hsb->powb.size());
                 data[i] = this->hsb->get_mul(this->hsb->powb[n-i-1], s[i]-'a'+1);
