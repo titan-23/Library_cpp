@@ -1,6 +1,8 @@
 #include <iostream>
 #include <cassert>
 #include <memory>
+
+#include "titan_cpplib/others/print.cpp"
 using namespace std;
 
 // DynamicLazySegmentTree
@@ -56,6 +58,7 @@ namespace titan23 {
                     left(nullptr), right(nullptr),
                     l(l), r(r),
                     key(key), data(pow(key, r-l)) {
+                    // key(key), data(r-l == 1 ? key : pow(key, r-l)) {
                 assert(l < r);
             }
 
@@ -102,7 +105,7 @@ namespace titan23 {
         };
 
       private:
-        T inner_prod(NodePtr node, IndexType l, IndexType r) {
+        T inner_prod(NodePtr node, const IndexType l, const IndexType r) {
             if (!node || l >= r || r <= node->l || node->r <= l) return e();
             if (l <= node->l && node->r <= r) return node->data;
             if ((!node->left) && (!node->right)) return pow(node->key, r - l);
@@ -111,6 +114,19 @@ namespace titan23 {
                 inner_prod(node->left, l, min(r, node->mid())),
                 inner_prod(node->right, max(l, node->mid()), r)
             );
+        }
+
+        T inner_prod2(NodePtr node, const IndexType l, const IndexType r, const F f) const {
+            cerr << PRINT_RED << "titan_cpplib-Error: this method has not been impremented yet.\n";
+            cerr << "Do not use .prod2(), use prod()." << PRINT_NONE << endl;
+            assert(false); // NotImeprementedError
+            // if (!node || l >= r || r <= node->l || node->r <= l) return e();
+            // if (l <= node->l && node->r <= r) return mapping(f, node->data);
+            // if ((!node->left) && (!node->right)) return mapping(f, pow(node->key, r - l));
+            // return op(
+            //     mapping(f, inner_prod2(node->left, l, min(r, node->mid()), composition(f, node->lazy))),
+            //     mapping(f, inner_prod2(node->right, max(l, node->mid()), r, composition(f, node->lazy)))
+            // );
         }
 
         void inner_apply(NodePtr node, IndexType l, IndexType r, F f) {
@@ -134,7 +150,6 @@ namespace titan23 {
                 return;
             }
             node->propagate();
-            assert(node->left && node->right);
             if (k < node->mid()) {
                 inner_set(node->left, k, val);
             } else {
@@ -169,21 +184,27 @@ namespace titan23 {
         //! 初期値 `e()` , `[0, u)` の区間を管理する `DynamicLazySegmentTree` を作成する
         DynamicLazySegmentTree(const IndexType u_) {
             assert(u_ > 0);
-            this->u = 1ll << bit_length(u_);
+            this->u = (IndexType)1 << bit_length(u_);
             this->root = new Node(0, this->u, e());
         }
 
         //! 初期値 `init` , `[0, u)` の区間を管理する `DynamicLazySegmentTree` を作成する
         DynamicLazySegmentTree(const IndexType u_, const T init) {
             assert(u_ > 0);
-            this->u = 1ll << bit_length(u_);
+            this->u = (IndexType)1 << bit_length(u_);
             this->root = new Node(0, this->u, init);
         }
 
-        //! `[l, r)` の集約値を返す / `O(logu)` time, `O(1)` space
+        //! `[l, r)` の集約値を返す / `O(logu)` time, `O(logu)` space
         T prod(IndexType l, IndexType r) {
             assert(0 <= l && l <= r && r <= u);
             return inner_prod(this->root, l, r);
+        }
+
+        //! `[l, r)` の集約値を返す / `O(logu)` time, `O(1)` space
+        T prod2(IndexType l, IndexType r) const {
+            assert(0 <= l && l <= r && r <= u);
+            return inner_prod2(this->root, l, r, id());
         }
 
         //! `[l, r)` に `f` を作用させる / `O(logu)` time, `O(logu)` space
