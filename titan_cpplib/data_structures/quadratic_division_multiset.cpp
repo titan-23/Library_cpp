@@ -1,15 +1,17 @@
-#include<bits/stdc++.h>
+#include <vector>
+#include <algorithm>
 using namespace std;
-
-// #include "titan_cpplib/others/print.cpp"
 
 // MultisetSum
 namespace titan23 {
 
 template<typename T>
 class MultisetSum {
+    // ref: https://github.com/tatyam-prime/SortedSet/blob/main/SortedMultiset.py
+
   public:
-    const int MAX_BUCKET_SIZE = 500;
+    const int BUCKET_RATIO = 16;
+    const int SPLIT_RATIO = 24;
     int n;
     T missing;
     vector<vector<T>> data;
@@ -24,66 +26,56 @@ class MultisetSum {
     }
 
     pair<int, int> get_pos(const T key) const {
-        for (int i = 0; i < data.size(); ++i) {
-            if (key <= data[i].back()) {
-                return {i, bisect_left(data[i], key)};
-            }
-        }
-        if (data.size() == 0) {
-            return {0, 0};
-        }
-        return {data.size()-1, data.back().size()};
+        if (data.empty()) return {0, 0};
+        if (key > data.back().back()) return {data.size()-1, data.back().size()};
+        int idx = lower_bound(data.begin(), data.end(), key, [&] (const vector<T> &vec, const T &key) -> bool {
+            return vec.back() < key;
+        }) - data.begin();
+        assert(idx < data.size() && key <= data[idx].back());
+        return {idx, bisect_left(data[idx], key)};
     }
 
   public:
-    MultisetSum() {}
+    MultisetSum() : n(0) {}
 
-    MultisetSum(T missing) {
-        this->n = 0;
-        this->missing = missing;
-    }
+    MultisetSum(T missing) : n(0), missing(missing) {}
 
-    MultisetSum(vector<T> a, T missing) {
-        sort(a.begin(), a.end());
-        this->n = (int)a.size();
-        this->missing = missing;
-        const int bucket_size = sqrt(n) + 1;
-        const int bucket_cnt = (n+bucket_size-1) / bucket_size;
-        bucket_data.resize(bucket_cnt, 0);
+    MultisetSum(vector<T> a, T missing) : n(a.size()), missing(missing) {
+        for (int i = 0; i < n-1; ++i) {
+            if (a[i] > a[i+1]) {
+                sort(a.begin(), a.end());
+                break;
+            }
+        }
+        int bucket_cnt = sqrt(n / BUCKET_RATIO) + 1;
+        int bucket_size = n / bucket_cnt + 1;
         data.resize(bucket_cnt);
+        bucket_data.resize(bucket_cnt, 0);
         for (int k = 0; k < bucket_cnt; ++k) {
             int size = min(bucket_size, n-k*bucket_size);
-            data[k].resize(size);
-            for (int i = 0; i < size; ++i) {
-                data[k][i] = a[k*bucket_size+i];
-                bucket_data[k] += a[k*bucket_size+i];
+            if (size <= 0) {
+                for (int l = k; l < bucket_cnt; ++l) {
+                    data.pop_back();
+                    bucket_data.pop_back();
+                }
+                break;
             }
+            data[k] = vector<T>(a.begin()+k*bucket_size, a.begin()+k*bucket_size+size);
+            for (const T &x : data[k]) bucket_data[k] += x;
         }
     }
 
     void rebuild_split(int i) {
-        vector<T> left, right;
         int m = data[i].size();
-        for (int j = 0; j < m/2; ++j) {
-            left.emplace_back(data[i][j]);
-        }
-        for (int j = m/2; j < m; ++j) {
-            right.emplace_back(data[i][j]);
-        }
-        data[i] = left;
-        // data.erase(data.begin() + i);
-        // data.insert(data.begin() + i, left);
-        data.insert(data.begin() + i+1, right);
-        T left_sum = 0;
+        data.insert(data.begin() + i+1, vector<T>(data[i].begin() + m/2, data[i].end()));
+        data[i].erase(data[i].begin() + m/2, data[i].end());
         T right_sum = 0;
-        for (const T &key : left) left_sum += key;
-        for (const T &key : right) right_sum += key;
-        bucket_data.erase(bucket_data.begin() + i);
-        bucket_data.insert(bucket_data.begin() + i, left_sum);
+        for (const T x : data[i+1]) right_sum += x;
+        bucket_data[i] -= right_sum;
         bucket_data.insert(bucket_data.begin() + i+1, right_sum);
     }
 
-    void add(T key) {
+    void add(const T &key) {
         if (n == 0) {
             data.push_back({key});
             bucket_data.push_back(key);
@@ -94,12 +86,12 @@ class MultisetSum {
         data[i].insert(data[i].begin() + pos, key);
         bucket_data[i] += key;
         n++;
-        if (data[i].size() > MAX_BUCKET_SIZE) {
+        if (data[i].size() > data.size() * SPLIT_RATIO) {
             rebuild_split(i);
         }
     }
 
-    bool discard(T key) {
+    bool discard(const T &key) {
         auto [i, pos] = get_pos(key);
         if (i >= data.size() || pos >= data[i].size() || data[i][pos] != key) {
             return false;
@@ -109,19 +101,13 @@ class MultisetSum {
         n--;
         if (data[i].empty()) {
             data.erase(data.begin() + i);
-            assert(bucket_data[i] == 0);
             bucket_data.erase(bucket_data.begin() + i);
         }
         return true;
     }
 
-    void remove(T key) {
-        auto [i, pos] = get_pos(key);
-        data[i].erase(data[i].begin() + pos);
-        n--;
-        if (data[i].empty()) {
-            data.erase(data.begin() + i);
-        }
+    void remove(const T &key) {
+        assert(discard(key));
     }
 
     T operator[] (int k) const {
@@ -147,14 +133,14 @@ class MultisetSum {
             const vector<T> &d = *it;
             if (d[0] <= key) {
                 int index = bisect_right(d, key) - 1;
-                if (index >= 0) return (d)[index];
+                if (index >= 0) return d[index];
             }
         }
         return this->missing;
     }
 
     T gt(const T &key) const {
-        for (const auto &d : this->data) {
+        for (const vector<T> &d : this->data) {
             if (d.back() > key) {
                 int index = bisect_right(d, key);
                 if (index < d.size()) return d[index];
@@ -164,7 +150,7 @@ class MultisetSum {
     }
 
     T ge(const T &key) const {
-        for (const auto &d : this->data) {
+        for (const vector<T> &d : this->data) {
             if (d.back() >= key) {
                 int index = bisect_left(d, key);
                 if (index < d.size()) return d[index];
@@ -221,6 +207,10 @@ class MultisetSum {
         return sum;
     }
 
+    int size() const {
+        return n;
+    }
+
     int len() const {
         return n;
     }
@@ -235,35 +225,3 @@ class MultisetSum {
     }
 };
 } // namespace titan23
-
-int main() {
-    int n, q;
-    cin >> n >> q;
-    string t;
-    cin >> t;
-    vector<int> a;
-    for (int i = 0; i < n; ++i) {
-        if (t[i] == '1') a.emplace_back(i);
-    }
-    titan23::MultisetSum<int> qd(a, -1);
-    for (int i = 0; i < q; ++i) {
-        int com, k;
-        cin >> com >> k;
-        if (com == 0) {
-            if (!qd.contains(k)) {
-                qd.add(k);
-            }
-        } else if (com == 1) {
-            if (qd.contains(k)) {
-                qd.discard(k);
-            }
-        } else if (com == 2) {
-            cout << (qd.contains(k) ? 1 : 0) << '\n';
-        } else if (com == 3) {
-            cout << qd.ge(k) << "\n";
-        } else {
-            cout << qd.le(k) << "\n";
-        }
-    }
-    return 0;
-}
