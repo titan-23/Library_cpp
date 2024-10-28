@@ -25,7 +25,4 @@ for _ in range(q):
         if l > r:
             l, r = r, l
         print(com, l, r)
-    elif com == 3:
-        x = rand.randint(0, U)
-        print(com, x)
-    a.sort()
+
