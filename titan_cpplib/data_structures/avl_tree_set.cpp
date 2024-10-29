@@ -1,7 +1,6 @@
 #include <iostream>
 #include <algorithm>
 #include <vector>
-#include <optional>
 #include <cassert>
 #include "titan_cpplib/data_structures/bbst_node.cpp"
 using namespace std;
@@ -34,41 +33,10 @@ namespace titan23 {
             }
         };
 
-    public:
+      private:
+        T missing;
         using AVLTreeSetNodePtr = AVLTreeSetNode*;
         AVLTreeSetNodePtr root;
-
-        AVLTreeSetNodePtr build(vector<T> a) {
-            auto _build = [&] (auto &&_build, int l, int r) -> AVLTreeSetNodePtr {
-                int mid = (l + r) / 2;
-                AVLTreeSetNodePtr node = new AVLTreeSetNode(a[mid]);
-                if (l != mid) {
-                    node->left = _build(_build, l, mid);
-                    node->left->par = node;
-                }
-                if (mid+1 != r) {
-                    node->right = _build(_build, mid+1, r);
-                    node->right->par = node;
-                }
-                node->update();
-                return node;
-            };
-
-            if (a.empty()) return nullptr;
-            int n = a.size();
-            bool is_sorted = true;
-            for (int i = 0; i < n-1; ++i) {
-                if (!(a[i] < a[i+1])) {
-                    is_sorted = false;
-                    break;
-                }
-            }
-            if (!is_sorted) {
-                sort(a.begin(), a.end());
-                a.erase(unique(a.begin(), a.end()), a.end());
-            }
-            return _build(_build, 0, a.size());
-        }
 
         void _remove_balance(AVLTreeSetNodePtr node) {
             while (node) {
@@ -141,8 +109,41 @@ namespace titan23 {
 
       public:
         AVLTreeSet() : root(nullptr) {}
-        AVLTreeSet(vector<T> &a) {
+        AVLTreeSet(T missing) : missing(missing), root(nullptr) {}
+        AVLTreeSet(vector<T> &a, T missing) : missing(missing) {
             this->root = build(a);
+        }
+
+        AVLTreeSetNodePtr build(vector<T> a) {
+            auto _build = [&] (auto &&_build, int l, int r) -> AVLTreeSetNodePtr {
+                int mid = (l + r) / 2;
+                AVLTreeSetNodePtr node = new AVLTreeSetNode(a[mid]);
+                if (l != mid) {
+                    node->left = _build(_build, l, mid);
+                    node->left->par = node;
+                }
+                if (mid+1 != r) {
+                    node->right = _build(_build, mid+1, r);
+                    node->right->par = node;
+                }
+                node->update();
+                return node;
+            };
+
+            if (a.empty()) return nullptr;
+            int n = a.size();
+            bool is_sorted = true;
+            for (int i = 0; i < n-1; ++i) {
+                if (!(a[i] < a[i+1])) {
+                    is_sorted = false;
+                    break;
+                }
+            }
+            if (!is_sorted) {
+                sort(a.begin(), a.end());
+                a.erase(unique(a.begin(), a.end()), a.end());
+            }
+            return _build(_build, 0, a.size());
         }
 
         bool add(const T &key) {
@@ -209,8 +210,8 @@ namespace titan23 {
             remove_iter(node);
         }
 
-        optional<T> le(const T &key) const {
-            optional<T> res = nullopt;
+        T le(const T &key) const {
+            T res = missing;
             AVLTreeSetNodePtr node = root;
             while (node) {
                 if (key == node->key) {
@@ -227,8 +228,8 @@ namespace titan23 {
             return res;
         }
 
-        optional<T> lt(const T &key) const {
-            optional<T> res = nullopt;
+        T lt(const T &key) const {
+            T res = missing;
             AVLTreeSetNodePtr node = root;
             while (node) {
                 if (key <= node->key) {
@@ -241,8 +242,8 @@ namespace titan23 {
             return res;
         }
 
-        optional<T> ge(const T &key) const {
-            optional<T> res = nullopt;
+        T ge(const T &key) const {
+            T res = missing;
             AVLTreeSetNodePtr node = root;
             while (node) {
                 if (key == node->key) {
@@ -259,8 +260,8 @@ namespace titan23 {
             return res;
         }
 
-        optional<T> gt(const T &key) const {
-            optional<T> res = nullopt;
+        T gt(const T &key) const {
+            T res = missing;
             AVLTreeSetNodePtr node = root;
             while (node) {
                 if (key < node->key) {
