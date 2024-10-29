@@ -413,12 +413,12 @@ namespace titan23 {
         void print() const {
             vector<T> a = tovector();
             int n = a.size();
-            cout << "[";
+            cout << "{";
             for (int i = 0; i < n-1; ++i) {
                 cout << a[i] << ", ";
             }
             if (n > 0) cout << a.back();
-            cout << "]" << endl;
+            cout << "}" << endl;
         }
 
         void check() const {
@@ -455,6 +455,18 @@ namespace titan23 {
             };
             dfs(dfs, root);
             // cout << "check ok." << endl;
+        }
+
+        friend ostream& operator<<(ostream& os, const titan23::AVLTreeMultiset<T>& s) {
+            vector<T> a = s.tovector();
+            int n = a.size();
+            os << "{";
+            for (int i = 0; i < n - 1; ++i) {
+                os << a[i] << ", ";
+            }
+            if (n > 0) os << a.back();
+            os << "}";
+            return os;
         }
     };
 } // namespace titan23
