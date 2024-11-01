@@ -118,7 +118,7 @@ namespace titan23 {
 
         T inner_prod2(NodePtr node, const IndexType l, const IndexType r, const F f) const {
             cerr << PRINT_RED << "titan_cpplib-Error: this method has not been impremented yet.\n";
-            cerr << "Do not use .prod2(), use prod()." << PRINT_NONE << endl;
+            cerr << "Do not use prod2(), use prod()." << PRINT_NONE << endl;
             assert(false); // NotImeprementedError
             // if (!node || l >= r || r <= node->l || node->r <= l) return e();
             // if (l <= node->l && node->r <= r) return mapping(f, node->data);

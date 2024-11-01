@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 #include <stack>
 using namespace std;
@@ -6,14 +8,16 @@ using namespace std;
 namespace titan23 {
 
     class HLD {
-      private:
+      public:
         vector<vector<int>> G;
         int root, n;
         vector<int> size, par, dep, nodein, nodeout, head, hld;
 
+      private:
         void _dfs() {
             dep[root] = 0;
             stack<int> st;
+            st.emplace(~root);
             st.emplace(root);
             while (!st.empty()) {
                 int v = st.top(); st.pop();
@@ -111,6 +115,22 @@ namespace titan23 {
                 hs = head[s];
             }
             return hld[nodein[s] - k];
+        }
+
+        vector<pair<int, int>> for_each_vertex_path(int u, int v) const {
+            vector<pair<int, int>> res;
+            while (head[u] != head[v]) {
+                if (dep[head[u]] < dep[head[v]]) swap(u, v);
+                res.emplace_back(nodein[head[u]], nodein[u]+1);
+                u = par[head[u]];
+            }
+            if (dep[u] < dep[v]) swap(u, v);
+            res.emplace_back(nodein[v], nodein[u]+1);
+            return res;
+        }
+
+        pair<int, int> for_each_vertex_subtree(int v) const {
+            return {nodein[v], nodeout[v]};
         }
     };
 }  // namespace titan23
