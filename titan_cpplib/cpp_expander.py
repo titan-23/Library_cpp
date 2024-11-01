@@ -98,6 +98,8 @@ class CppExpander:
                         logger.critical(to_red(f"\t{error_underline}"))
                         logger.critical(to_red(f"FileNotFoundError"))
                         exit(1)
+                elif line.startswith("#pragma once"):
+                    pass
                 else:
                     self.outputs.append(line)
         if self.outputs and self.outputs[-1] != "\n":
