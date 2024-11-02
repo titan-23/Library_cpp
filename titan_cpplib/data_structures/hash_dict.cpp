@@ -24,15 +24,6 @@ namespace titan23 {
             return (((((key>>32)&msk) ^ (key&msk) ^ xor_)) * (HashDict::K & msk)) & msk;
         }
 
-        pair<int, bool> get_pos(const u64 &key) const {
-            int h = hash(key);
-            while (true) {
-                if (!(exist[h>>6]>>(h&63)&1)) return {h, false};
-                if (keys[h] == key) return {h, true};
-                h = (h + 1) & msk;
-            }
-        }
-
         int bit_length(const int x) const {
             if (x == 0) return 0;
             return 32 - __builtin_clz(x);
@@ -77,6 +68,15 @@ namespace titan23 {
             size = 0;
         }
 
+        pair<int, bool> get_pos(const u64 &key) const {
+            int h = hash(key);
+            while (true) {
+                if (!(exist[h>>6]>>(h&63)&1)) return {h, false};
+                if (keys[h] == key) return {h, true};
+                h = (h + 1) & msk;
+            }
+        }
+
         V get(const u64 key) const {
             const auto [pos, exist_res] = get_pos(key);
             if (!exist_res) return V();
@@ -93,8 +93,31 @@ namespace titan23 {
             return get_pos(key).second;
         }
 
+        pair<int, bool> pos(const u64 key) const {
+            return get_pos(key);
+        }
+
         V operator[] (const u64 key) const {
             return get(key);
+        }
+
+        V inner_get(const pair<int, bool> &dat) {
+            const auto [pos, is_exist] = dat;
+            if (!is_exist) return V();
+            return vals[pos];
+        }
+
+        void inner_set(const pair<int, bool> &dat, const u64 key, const V val) {
+            const auto [pos, is_exist] = dat;
+            vals[pos] = val;
+            if (!is_exist) {
+                exist[pos>>6] |= 1ull<<(pos&63);
+                keys[pos] = key;
+                ++size;
+                if (HashDict::M*size > keys.size()) {
+                    rebuild();
+                }
+            }
         }
 
         void set(const u64 key, const V val) {
@@ -143,6 +166,28 @@ namespace titan23 {
                 return false;
             }
             return true;
+        }
+
+        vector<V> values() const {
+            vector<V> res;
+            res.reserve(len());
+            for (int i = 0; i < (int)keys.size(); ++i) {
+                if (exist[i>>6]>>(i&63)&1) {
+                    res.emplace_back(vals[i]);
+                }
+            }
+            return res;
+        }
+
+        vector<pair<u64, V>> items() const {
+            vector<pair<u64, V>> res;
+            res.reserve(len());
+            for (int i = 0; i < (int)keys.size(); ++i) {
+                if (exist[i>>6]>>(i&63)&1) {
+                    res.emplace_back(keys[i], vals[i]);
+                }
+            }
+            return res;
         }
 
         //! 全ての要素を削除する / `O(n/w)`
