@@ -1,17 +1,22 @@
 #include <vector>
+#include <stack>
 using namespace std;
 
-struct RootedTree {
-  vector<vector<pair<int, int>>> G;
-  int root;
-  vector<long long> _dist;
+// RootedTree
+namespace titan23 {
 
-  RootedTree(vector<vector<pair<int, int>>> G, int root) {
-    this->G = G;
-    this->root = root;
-  }
+template<typename T>
+class RootedTree {
+  private:
+    vector<vector<pair<int, T>>> G;
 
-  vector<long long> get_dist() {
+  public:
+    int root;
+    vector<int> toposo;
+    vector<T> dist;
 
-  }
+    RootedTree(vector<vector<pair<int, T>>> G, int root) : G(G), root(root) {}
+
+    void calc_dist() {}
 };
+} // namespace titan23
