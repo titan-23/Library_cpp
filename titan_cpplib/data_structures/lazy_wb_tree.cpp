@@ -19,22 +19,39 @@ namespace titan23 {
         class Node;
         using NodePtr = Node*;
         using MyLazyWBTree = LazyWBTree<T, F, op, mapping, composition, e, id>;
-        static constexpr double ALPHA = 1 - sqrt(2) / 2;
-        static constexpr double BETA = (1 - 2 * ALPHA) / (1 - ALPHA);
+        static constexpr int DELTA = 3;
+        static constexpr int GAMMA = 2;
 
         class Node {
           public:
-            T key, data;
             NodePtr left;
             NodePtr right;
+            T key, data;
             F lazy;
             bool rev;
             int size;
 
-            Node(T key, F lazy) : key(key), data(key), left(nullptr), right(nullptr), lazy(lazy), rev(false), size(1) {}
+            Node(T key, F lazy) : left(nullptr), right(nullptr), key(key), data(key), lazy(lazy), rev(false), size(1) {}
 
-            double balance() const {
-                return ((left ? left->size : 0) + 1.0) / (size + 1.0);
+            int weight_right() const {
+                return right ? right->size + 1 : 1;
+            }
+
+            int weight_left() const {
+                return left ? left->size + 1 : 1;
+            }
+
+            void balance_check() const {
+                if (!weight_left()*DELTA >= weight_right()) {
+                    cerr << weight_left() << ", " << weight_right() << endl;
+                    cerr << "not weight_left()*DELTA >= weight_right()." << endl;
+                    assert(false);
+                }
+                if (!weight_right() * DELTA >= weight_left()) {
+                    cerr << weight_left() << ", " << weight_right() << endl;
+                    cerr << "not weight_right() * DELTA >= weight_left()." << endl;
+                    assert(false);
+                }
             }
 
             void update() {
@@ -91,7 +108,11 @@ namespace titan23 {
                 node->update();
                 return node;
             };
-            root = build(build, 0, (int)a.size());
+            if (a.empty()) {
+                this->root = nullptr;
+                return;
+            }
+            this->root = build(build, 0, (int)a.size());
         }
 
         NodePtr _rotate_right(NodePtr node) {
@@ -115,7 +136,7 @@ namespace titan23 {
         NodePtr _balance_left(NodePtr node) {
             NodePtr u = node->right;
             u->propagate();
-            if (u->balance() >= BETA) {
+            if (node->right->weight_left() >= node->right->weight_right() * GAMMA) {
                 u->left->propagate();
                 node->right = _rotate_right(u);
             }
@@ -125,34 +146,35 @@ namespace titan23 {
         NodePtr _balance_right(NodePtr node) {
             NodePtr u = node->left;
             u->propagate();
-            if (u->balance() <= 1.0 - BETA) {
+            if (node->left->weight_right() >= node->left->weight_left() * GAMMA) {
                 u->right->propagate();
                 node->left = _rotate_left(u);
             }
             return _rotate_right(node);
         }
 
+        int weight(NodePtr node) const {
+            return node ? node->size + 1 : 1;
+        }
+
         NodePtr _merge_with_root(NodePtr l, NodePtr root, NodePtr r) {
-            int ls = l ? l->size : 0;
-            int rs = r ? r->size : 0;
-            double diff = (double)(ls+1.0) / (ls+rs+2.0);
-            if (diff > 1.0-ALPHA) {
-                l->propagate();
-                l->right = _merge_with_root(l->right, root, r);
-                l->update();
-                if (!(ALPHA <= l->balance() && l->balance() <= 1.0-ALPHA)) {
-                    return _balance_left(l);
-                }
-                return l;
-            }
-            if (diff < ALPHA) {
+            if (weight(l) * DELTA < weight(r)) {
+                r->propagate();
                 r->propagate();
                 r->left = _merge_with_root(l, root, r->left);
                 r->update();
-                if (!(ALPHA <= r->balance() && r->balance() <= 1.0-ALPHA)) {
+                if (weight(r->right) * DELTA < weight(r->left)) {
                     return _balance_right(r);
                 }
                 return r;
+            } else if (weight(r) * DELTA < weight(l)) {
+                l->propagate();
+                l->right = _merge_with_root(l->right, root, r);
+                l->update();
+                if (weight(l->left) * DELTA < weight(l->right)) {
+                    return _balance_left(l);
+                }
+                return l;
             }
             root->left = l;
             root->right = r;
@@ -161,45 +183,7 @@ namespace titan23 {
         }
 
         pair<NodePtr, NodePtr> _pop_right(NodePtr node) {
-            stack<NodePtr> path;
-            node->propagate();
-            NodePtr mx = node;
-            while (node->right) {
-                path.emplace(node);
-                node = node->right;
-                node->propagate();
-                mx = node;
-            }
-            path.emplace(node->left ? node->left : nullptr);
-            while ((int)path.size() > 1) {
-                node = path.top();
-                path.pop();
-                if (!node) {
-                    path.top()->right = nullptr;
-                    path.top()->update();
-                    continue;
-                }
-                double b = node->balance();
-                if (ALPHA <= b && b <= 1.0-ALPHA) {
-                    path.top()->right = node;
-                } else if (b > 1.0-ALPHA) {
-                    path.top()->right = _balance_right(node);
-                } else {
-                    path.top()->right = _balance_left(node);
-                }
-                path.top()->update();
-            }
-            if (path.top()) {
-                double b = path.top()->balance();
-                if (b > 1.0-ALPHA) {
-                    path.top() = _balance_right(path.top());
-                } else if (b < ALPHA) {
-                    path.top() = _balance_left(path.top());
-                }
-            }
-            mx->left = nullptr;
-            mx->update();
-            return {path.top(), mx};
+            return _split_node(node, node->size-1);
         }
 
         NodePtr _merge_node(NodePtr l, NodePtr r) {
@@ -357,10 +341,9 @@ namespace titan23 {
                 node->update();
                 path.pop();
                 path_d.pop();
-                double b = node->balance();
-                if (b < ALPHA) {
+                if (weight(node->left) * DELTA < weight(node->right)) {
                     new_node = _balance_left(node);
-                } else if (b > 1.0-ALPHA) {
+                } else if (weight(node->right) * DELTA < weight(node->left)) {
                     new_node = _balance_right(node);
                 }
                 if (new_node) {
@@ -379,7 +362,8 @@ namespace titan23 {
         }
 
         void reverse(const int l, const int r) {
-            if (l >= r) return;
+            assert(0 <= l && l <= r && r <= len());
+            if (l == r) return;
             auto [s_, t] = _split_node(root, r);
             auto [u, s] = _split_node(s_, l);
             s->rev ^= 1;
@@ -486,7 +470,7 @@ namespace titan23 {
             return root? root->size: 0;
         }
 
-        void isok() {
+        void check() const {
             auto rec = [&] (auto &&rec, NodePtr node) -> pair<int, int> {
                 int ls = 0, rs = 0;
                 int height = 0;
@@ -503,15 +487,14 @@ namespace titan23 {
                     h = res.second;
                     height = max(height, h);
                 }
+                node->balance_check();
                 int s = ls + rs + 1;
-                double b = (double)(ls+1) / (s+1);
                 assert(s == node->size);
-                assert(ALPHA <= b && b <= 1-ALPHA);
                 return {s, height+1};
             };
             if (root == nullptr) return;
             auto [_, h] = rec(rec, root);
-            // printf("height=%d\n", h);
+            cerr << PRINT_GREEN << "OK : height=" << h << PRINT_NONE << endl;
         }
     };
 } // namespace titan23
