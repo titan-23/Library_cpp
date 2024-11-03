@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <stack>
 #include <cmath>
 #include <cassert>
 #include <memory>
@@ -30,9 +31,10 @@ namespace titan23 {
       NodePtr left;
       NodePtr right;
       F lazy;
-      int rev, size;
+      bool rev;
+      int size;
 
-      Node(T key, F lazy) : key(key), data(key), left(nullptr), right(nullptr), lazy(lazy), rev(0), size(1) {}
+      Node(T key, F lazy) : key(key), data(key), left(nullptr), right(nullptr), lazy(lazy), rev(false), size(1) {}
 
       double balance() const {
         return ((left ? left->size : 0) + 1.0) / (size + 1.0);
@@ -134,8 +136,8 @@ namespace titan23 {
     }
 
     NodePtr _merge_with_root(NodePtr l, NodePtr root, NodePtr r) {
-      int ls = l? l->size: 0;
-      int rs = r? r->size: 0;
+      int ls = l ? l->size : 0;
+      int rs = r ? r->size : 0;
       double diff = (double)(ls+1.0) / (ls+rs+2.0);
       if (diff > 1.0-ALPHA) {
         l->_propagate();
@@ -162,45 +164,45 @@ namespace titan23 {
     }
 
     pair<NodePtr, NodePtr> _pop_right(NodePtr node) {
-      vector<NodePtr> path;
+      stack<NodePtr> path;
       node->_propagate();
       NodePtr mx = node;
       while (node->right) {
-        path.emplace_back(node);
+        path.emplace(node);
         node = node->right;
         node->_propagate();
         mx = node;
       }
-      path.emplace_back(node->left? node->left: nullptr);
+      path.emplace(node->left ? node->left : nullptr);
       while ((int)path.size() > 1) {
-        node = path.back();
-        path.pop_back();
+        node = path.top();
+        path.pop();
         if (!node) {
-          path.back()->right = nullptr;
-          path.back()->_update();
+          path.top()->right = nullptr;
+          path.top()->_update();
           continue;
         }
         double b = node->balance();
         if (ALPHA <= b && b <= 1.0-ALPHA) {
-          path.back()->right = node;
+          path.top()->right = node;
         } else if (b > 1.0-ALPHA) {
-          path.back()->right = _balance_right(node);
+          path.top()->right = _balance_right(node);
         } else {
-          path.back()->right = _balance_left(node);
+          path.top()->right = _balance_left(node);
         }
-        path.back()->_update();
+        path.top()->_update();
       }
-      if (path[0]) {
-        double b = path[0]->balance();
+      if (path.top()) {
+        double b = path.top()->balance();
         if (b > 1.0-ALPHA) {
-          path[0] = _balance_right(path[0]);
+          path.top() = _balance_right(path.top());
         } else if (b < ALPHA) {
-          path[0] = _balance_left(path[0]);
+          path.top() = _balance_left(path.top());
         }
       }
       mx->left = nullptr;
       mx->_update();
-      return {path[0], mx};
+      return {path.top(), mx};
     }
 
     NodePtr _merge_node(NodePtr l, NodePtr r) {
@@ -214,7 +216,7 @@ namespace titan23 {
     pair<NodePtr, NodePtr> _split_node(NodePtr node, int k) {
       if (!node) return {nullptr, nullptr};
       node->_propagate();
-      int tmp = node->left? k-node->left->size: k;
+      int tmp = node->left ? k-node->left->size : k;
       NodePtr nl = node->left;
       NodePtr nr = node->right;
       if (tmp == 0) {
@@ -236,7 +238,6 @@ namespace titan23 {
     LazyWBTree(NodePtr &root): root(root) {}
 
    public:
-
     NodePtr root;
 
     LazyWBTree() : root(nullptr) {}
@@ -252,6 +253,13 @@ namespace titan23 {
       return {_new(l), _new(r)};
     }
 
+    void all_apply(const F f) {
+      if (!this->root) return;
+      this->root->key = mapping(f, this->root->key);
+      this->root->data = mapping(f, this->root->data);
+      this->root->lazy = composition(f, this->root->lazy);
+    }
+
     void apply(const int l, const int r, const F f) {
       if (l >= r) return;
       auto [s_, t] = _split_node(root, r);
@@ -260,6 +268,10 @@ namespace titan23 {
       s->data = mapping(f, s->data);
       s->lazy = composition(f, s->lazy);
       this->root = _merge_node(_merge_node(u, s), t);
+    }
+
+    T all_prod() const {
+      return this->root ? this->root->data : e();
     }
 
     T prod(const int l, const int r) {
@@ -362,17 +374,17 @@ namespace titan23 {
 
     vector<T> tovector() {
       NodePtr node = root;
-      vector<NodePtr> stack;
+      stack<NodePtr> s;
       vector<T> a;
       a.reserve(len());
-      while ((!stack.empty()) || node) {
+      while ((!s.empty()) || node) {
         if (node) {
           node->_propagate();
-          stack.emplace_back(node);
+          s.emplace(node);
           node = node->left;
         } else {
-          node = stack.back();
-          stack.pop_back();
+          node = s.top();
+          s.pop();
           a.emplace_back(node->key);
           node = node->right;
         }
