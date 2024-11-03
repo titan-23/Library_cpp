@@ -36,37 +36,38 @@ class CppExpander:
                 pyperclip.set_clipboard(command)
                 break
 
-    def __init__(self, input_path: str) -> None:
-        """与えられた入力ファイルのパスをもつ`CppExpander`をインスタンス化する
-
-        Args:
-            input_path (str): 入力ファイルのパス
-        """
-        if not os.path.exists(input_path):
-            logger.critical(to_red(f'input_path : "{input_path}" does not exist.'))
-            logger.critical(to_red(f"FileNotFoundError"))
-            exit(1)
-        self.input_path: str = input_path
+    def __init__(self) -> None:
+        """`CppExpander`をインスタンス化する"""
+        self.input_file_path: str = "None"
         self.outputs: list[str] = []
         self.added_file: set[str] = set()
 
-    def expand(self, output_fiepath: str) -> None:
-        """コードを展開してoutput_fiepathに書き出す
+    def expand(self, input_file_path: str, output_fie_path: str) -> None:
+        """input_filepathのコードを展開してoutput_fiepathに書き出す
 
         Args:
-            output_fiepath (str): 出力ファイル / `clip`のとき、クリップボードに貼り付ける
+            input_file_path (str): 入力ファイル
+            output_fie_path (str): 出力ファイル / `clip`のとき、クリップボードに貼り付ける
         """
-        self.outputs = []
-        self._get_code(self.input_path)
+        if not os.path.exists(input_file_path):
+            logger.critical(
+                to_red(f'input_file_path : "{input_file_path}" does not exist.')
+            )
+            logger.critical(to_red(f"FileNotFoundError"))
+            exit(1)
+        self.input_file_path: str = input_file_path
+        self.outputs.clear()
+        self.added_file.clear()
+        self._get_code(self.input_file_path)
         output_code = "".join(self.outputs)
-        if output_fiepath in ["clip"]:
-            output_fiepath = "clipboard"
+        if output_fie_path in ["clip"]:
+            output_fie_path = "clipboard"
             pyperclip.copy(output_code)
         else:
-            with open(output_fiepath, "w", encoding="utf-8") as f:
+            with open(output_fie_path, "w", encoding="utf-8") as f:
                 f.write(output_code)
         logger.info(to_green("The process completed successfully."))
-        logger.info(to_green(f'Output file: "{output_fiepath}".'))
+        logger.info(to_green(f'Output file: "{output_fie_path}".'))
 
     def _get_code(self, input_file_path: str) -> None:
         input_line_num = 0
@@ -116,7 +117,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "input_path",
+        "input_file_path",
     )
     parser.add_argument(
         "-o",
@@ -127,5 +128,5 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    expander = CppExpander(args.input_path)
-    expander.expand(args.output_path)
+    expander = CppExpander()
+    expander.expand(args.input_file_path, args.output_path)
