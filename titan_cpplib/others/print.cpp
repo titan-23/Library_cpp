@@ -27,6 +27,13 @@ ostream &operator<<(ostream &os, const tuple<T1, T2, T3> &t) {
     return os;
 }
 
+// tuple<T1, T2, T3, T4>
+template<typename T1, typename T2, typename T3, typename T4>
+ostream &operator<<(ostream &os, const tuple<T1, T2, T3, T4> &t) {
+    os << "( " << get<0>(t) << ", " << get<1>(t) << ", " << get<2>(t) << ", " << get<3>(t) << " )";
+    return os;
+}
+
 // vector<T>
 template <typename T>
 ostream& operator<<(ostream& os, const vector<T>& a) {
