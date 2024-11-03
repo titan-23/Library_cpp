@@ -40,7 +40,7 @@ namespace titan23 {
         return ((left ? left->size : 0) + 1.0) / (size + 1.0);
       }
 
-      void _update() {
+      void update() {
         size = 1;
         data = key;
         if (left) {
@@ -53,7 +53,7 @@ namespace titan23 {
         }
       }
 
-      void _propagate() {
+      void propagate() {
         if (rev) {
           swap(left, right);
           if (left) left->rev ^= 1;
@@ -91,7 +91,7 @@ namespace titan23 {
         NodePtr node = new Node(a[mid], id());
         if (l != mid) node->left = build(build, l, mid);
         if (mid+1 != r) node->right = build(build, mid+1, r);
-        node->_update();
+        node->update();
         return node;
       };
       root = build(build, 0, (int)a.size());
@@ -101,8 +101,8 @@ namespace titan23 {
       NodePtr u = node->left;
       node->left = u->right;
       u->right = node;
-      node->_update();
-      u->_update();
+      node->update();
+      u->update();
       return u;
     }
 
@@ -110,16 +110,16 @@ namespace titan23 {
       NodePtr u = node->right;
       node->right = u->left;
       u->left = node;
-      node->_update();
-      u->_update();
+      node->update();
+      u->update();
       return u;
     }
 
     NodePtr _balance_left(NodePtr node) {
       NodePtr u = node->right;
-      u->_propagate();
+      u->propagate();
       if (u->balance() >= BETA) {
-        u->left->_propagate();
+        u->left->propagate();
         node->right = _rotate_right(u);
       }
       return _rotate_left(node);
@@ -127,9 +127,9 @@ namespace titan23 {
 
     NodePtr _balance_right(NodePtr node) {
       NodePtr u = node->left;
-      u->_propagate();
+      u->propagate();
       if (u->balance() <= 1.0 - BETA) {
-        u->right->_propagate();
+        u->right->propagate();
         node->left = _rotate_left(u);
       }
       return _rotate_right(node);
@@ -140,18 +140,18 @@ namespace titan23 {
       int rs = r ? r->size : 0;
       double diff = (double)(ls+1.0) / (ls+rs+2.0);
       if (diff > 1.0-ALPHA) {
-        l->_propagate();
+        l->propagate();
         l->right = _merge_with_root(l->right, root, r);
-        l->_update();
+        l->update();
         if (!(ALPHA <= l->balance() && l->balance() <= 1.0-ALPHA)) {
           return _balance_left(l);
         }
         return l;
       }
       if (diff < ALPHA) {
-        r->_propagate();
+        r->propagate();
         r->left = _merge_with_root(l, root, r->left);
-        r->_update();
+        r->update();
         if (!(ALPHA <= r->balance() && r->balance() <= 1.0-ALPHA)) {
           return _balance_right(r);
         }
@@ -159,18 +159,18 @@ namespace titan23 {
       }
       root->left = l;
       root->right = r;
-      root->_update();
+      root->update();
       return root;
     }
 
     pair<NodePtr, NodePtr> _pop_right(NodePtr node) {
       stack<NodePtr> path;
-      node->_propagate();
+      node->propagate();
       NodePtr mx = node;
       while (node->right) {
         path.emplace(node);
         node = node->right;
-        node->_propagate();
+        node->propagate();
         mx = node;
       }
       path.emplace(node->left ? node->left : nullptr);
@@ -179,7 +179,7 @@ namespace titan23 {
         path.pop();
         if (!node) {
           path.top()->right = nullptr;
-          path.top()->_update();
+          path.top()->update();
           continue;
         }
         double b = node->balance();
@@ -190,7 +190,7 @@ namespace titan23 {
         } else {
           path.top()->right = _balance_left(node);
         }
-        path.top()->_update();
+        path.top()->update();
       }
       if (path.top()) {
         double b = path.top()->balance();
@@ -201,7 +201,7 @@ namespace titan23 {
         }
       }
       mx->left = nullptr;
-      mx->_update();
+      mx->update();
       return {path.top(), mx};
     }
 
@@ -215,7 +215,7 @@ namespace titan23 {
 
     pair<NodePtr, NodePtr> _split_node(NodePtr node, int k) {
       if (!node) return {nullptr, nullptr};
-      node->_propagate();
+      node->propagate();
       int tmp = node->left ? k-node->left->size : k;
       NodePtr nl = node->left;
       NodePtr nr = node->right;
@@ -262,12 +262,22 @@ namespace titan23 {
 
     void apply(const int l, const int r, const F f) {
       if (l >= r) return;
-      auto [s_, t] = _split_node(root, r);
-      auto [u, s] = _split_node(s_, l);
-      s->key = mapping(f, s->key);
-      s->data = mapping(f, s->data);
-      s->lazy = composition(f, s->lazy);
-      this->root = _merge_node(_merge_node(u, s), t);
+      auto dfs = [&] (auto &&dfs, NodePtr node, int left, int right) -> void {
+        if (right <= l || r <= left) return;
+        node->propagate();
+        if (l <= left && right < r) {
+          node->key = mapping(f, node->key);
+          node->data = mapping(f, node->data);
+          node->lazy = composition(f, node->lazy);
+          return;
+        }
+        int lsize = node->left ? node->left->size : 0;
+        if (node->left) dfs(dfs, node->left, left, left+lsize);
+        if (l <= left+lsize && left+lsize < r) node->key = mapping(f, node->key);;
+        if (node->right) dfs(dfs, node->right, left+lsize+1, right);
+        node->update();
+      };
+      dfs(dfs, root, 0, len());
     }
 
     T all_prod() const {
@@ -276,11 +286,18 @@ namespace titan23 {
 
     T prod(const int l, const int r) {
       if (l >= r) return e();
-      auto [s_, t] = _split_node(root, r);
-      auto [u, s] = _split_node(s_, l);
-      T res = s->data;
-      this->root = _merge_node(_merge_node(u, s), t);
-      return res;
+      auto dfs = [&] (auto &&dfs, NodePtr node, int left, int right) -> T {
+        if (right <= l || r <= left) return e();
+        node->propagate();
+        if (l <= left && right < r) return node->data;
+        int lsize = node->left ? node->left->size : 0;
+        T res = e();
+        if (node->left) res = dfs(dfs, node->left, left, left+lsize);
+        if (l <= left+lsize && left+lsize < r) res = op(res, node->key);
+        if (node->right) res = op(res, dfs(dfs, node->right, left+lsize+1, right));
+        return res;
+      };
+      return dfs(dfs, root, 0, len());
     }
 
     void insert(int k, const T key) {
@@ -292,21 +309,21 @@ namespace titan23 {
     T pop(int k) {
       if (k < 0) k += len();
       assert(0 <= k && k < len());
-      vector<NodePtr> path;
-      vector<short> path_d;
+      stack<NodePtr> path;
+      stack<short> path_d;
       NodePtr node = this->root;
       T res;
       int d = 0;
       while (1) {
-        node->_propagate();
+        node->propagate();
         int t = node->left? node->left->size: 0;
         if (t == k) {
           res = node->key;
           break;
         }
         int d = (t < k)? 0: 1;
-        path.emplace_back(node);
-        path_d.emplace_back(d);
+        path.emplace(node);
+        path_d.emplace(d);
         if (d) {
           node = node->left;
         } else {
@@ -315,34 +332,34 @@ namespace titan23 {
         }
       }
       if (node->left && node->right) {
-        node->_propagate();
+        node->propagate();
         NodePtr lmax = node->left;
-        path.emplace_back(node);
-        path_d.emplace_back(1);
-        lmax->_propagate();
+        path.emplace(node);
+        path_d.emplace(1);
+        lmax->propagate();
         while (lmax->right) {
-          path.emplace_back(lmax);
-          path_d.emplace_back(0);
+          path.emplace(lmax);
+          path_d.emplace(0);
           lmax = lmax->right;
-          lmax->_propagate();
+          lmax->propagate();
         }
         node->key = lmax->key;
         node = lmax;
       }
       NodePtr cnode = (node->left)? node->left: node->right;
       if (!path.empty()) {
-        if (path_d.back()) path.back()->left = cnode;
-        else path.back()->right = cnode;
+        if (path_d.top()) path.top()->left = cnode;
+        else path.top()->right = cnode;
       } else {
         this->root = cnode;
         return res;
       }
       while (!path.empty()) {
         NodePtr new_node = nullptr;
-        node = path.back();
-        node->_update();
-        path.pop_back();
-        path_d.pop_back();
+        node = path.top();
+        node->update();
+        path.pop();
+        path_d.pop();
         double b = node->balance();
         if (b < ALPHA) {
           new_node = _balance_left(node);
@@ -354,10 +371,10 @@ namespace titan23 {
             this->root = new_node;
             break;
           }
-          if (path_d.back()) {
-            path.back()->left = new_node;
+          if (path_d.top()) {
+            path.top()->left = new_node;
           } else {
-            path.back()->right = new_node;
+            path.top()->right = new_node;
           }
         }
       }
@@ -379,7 +396,7 @@ namespace titan23 {
       a.reserve(len());
       while ((!s.empty()) || node) {
         if (node) {
-          node->_propagate();
+          node->propagate();
           s.emplace(node);
           node = node->left;
         } else {
@@ -401,7 +418,7 @@ namespace titan23 {
       int d = 0;
       vector<NodePtr> path = {node};
       while (1) {
-        node->_propagate();
+        node->propagate();
         int t = node->left? node->left->size: 0;
         if (t == k) {
           node->key = v;
@@ -411,7 +428,7 @@ namespace titan23 {
             else pnode->right = node;
           }
           while (!path.empty()) {
-            path.back()->_update();
+            path.back()->update();
             path.pop_back();
           }
           return;
@@ -433,7 +450,7 @@ namespace titan23 {
       assert(0 <= k && k < len());
       NodePtr node = root;
       while (1) {
-        node->_propagate();
+        node->propagate();
         int t = node->left? node->left->size: 0;
         if (t == k) {
           return node->key;
