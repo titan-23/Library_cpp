@@ -25,15 +25,15 @@ namespace titan23 {
         int _size;
 
         int bit_length(const int n) const {
-            return 32 - __builtin_clz(n);
+            return n == 0 ? 0 : 32 - __builtin_clz(n);
         }
 
         int bit_length(const long long n) const {
-            return 64 - __builtin_clz(n);
+            return n == 0 ? 0 : 64 - __builtin_clz(n);
         }
 
         int bit_length(const unsigned long long n) const {
-            return 64 - __builtin_clz(n);
+            return n == 0 ? 0 : 64 - __builtin_clz(n);
         }
 
         void _build(vector<T> a) {

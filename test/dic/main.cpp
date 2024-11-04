@@ -41,8 +41,7 @@ namespace titan23 {
         }
 
         static int bit_length(const int x) {
-            if (x == 0) return 0;
-            return 32 - __builtin_clz(x);
+            return x == 0 ? 0 : 32 - __builtin_clz(x);
         }
 
         void rebuild() {
