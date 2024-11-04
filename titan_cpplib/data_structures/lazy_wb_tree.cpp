@@ -1,7 +1,6 @@
 #include <iostream>
 #include <vector>
 #include <stack>
-#include <cmath>
 #include <cassert>
 using namespace std;
 
@@ -160,7 +159,6 @@ namespace titan23 {
         NodePtr _merge_with_root(NodePtr l, NodePtr root, NodePtr r) {
             if (weight(l) * DELTA < weight(r)) {
                 r->propagate();
-                r->propagate();
                 r->left = _merge_with_root(l, root, r->left);
                 r->update();
                 if (weight(r->right) * DELTA < weight(r->left)) {
@@ -211,12 +209,11 @@ namespace titan23 {
             }
         }
 
-        LazyWBTree _new(NodePtr root) {
-            LazyWBTree p(root);
-            return p;
-        }
-
         LazyWBTree(NodePtr &root): root(root) {}
+
+        MyLazyWBTree _new(NodePtr root) {
+            return MyLazyWBTree(root);
+        }
 
     public:
         NodePtr root;
@@ -242,7 +239,8 @@ namespace titan23 {
         }
 
         void apply(const int l, const int r, const F f) {
-            if (l >= r) return;
+            assert(0 <= l && l <= r && r <= len());
+            if (l == r) return;
             auto dfs = [&] (auto &&dfs, NodePtr node, int left, int right) -> void {
                 if (right <= l || r <= left) return;
                 node->propagate();
@@ -266,7 +264,8 @@ namespace titan23 {
         }
 
         T prod(const int l, const int r) {
-            if (l >= r) return e();
+            assert(0 <= l && l <= r && r <= len());
+            if (l == r) return e();
             auto dfs = [&] (auto &&dfs, NodePtr node, int left, int right) -> T {
                 if (right <= l || r <= left) return e();
                 node->propagate();
@@ -282,13 +281,13 @@ namespace titan23 {
         }
 
         void insert(int k, const T key) {
+            assert(0 <= k && k <= len());
             auto [s, t] = _split_node(root, k);
             NodePtr new_node = new Node(key, id());
             this->root = _merge_with_root(s, new_node, t);
         }
 
         T pop(int k) {
-            if (k < 0) k += len();
             assert(0 <= k && k < len());
             stack<NodePtr> path;
             stack<short> path_d;
@@ -327,7 +326,7 @@ namespace titan23 {
                 node->key = lmax->key;
                 node = lmax;
             }
-            NodePtr cnode = (node->left)? node->left: node->right;
+            NodePtr cnode = (node->left) ? node->left : node->right;
             if (!path.empty()) {
                 if (path_d.top()) path.top()->left = cnode;
                 else path.top()->right = cnode;
@@ -391,43 +390,41 @@ namespace titan23 {
         }
 
         void set(int k, T v) {
-            if (k < 0) k += len();
             assert(0 <= k && k < len());
             NodePtr node = root;
             NodePtr root = node;
             NodePtr pnode = nullptr;
             int d = 0;
-            vector<NodePtr> path = {node};
+            stack<NodePtr> path = {node};
             while (1) {
                 node->propagate();
                 int t = node->left? node->left->size: 0;
                 if (t == k) {
                     node->key = v;
-                    path.emplace_back(node);
+                    path.emplace(node);
                     if (pnode) {
                         if (d) pnode->left = node;
                         else pnode->right = node;
                     }
                     while (!path.empty()) {
-                        path.back()->update();
-                        path.pop_back();
+                        path.top()->update();
+                        path.pop();
                     }
                     return;
                 }
                 pnode = node;
-                d = (t < k)? 0: 1;
+                d = (t < k) ? 0 : 1;
                 if (d) {
                     pnode->left = node = node->left;
                 } else {
                     k -= t + 1;
                     pnode->right = node = node->right;
                 }
-                path.emplace_back(node);
+                path.emplace(node);
             }
         }
 
         T get(int k) {
-            if (k < 0) k += len();
             assert(0 <= k && k < len());
             NodePtr node = root;
             while (1) {
@@ -467,7 +464,7 @@ namespace titan23 {
         }
 
         int len() const {
-            return root? root->size: 0;
+            return root ? root->size : 0;
         }
 
         void check() const {
