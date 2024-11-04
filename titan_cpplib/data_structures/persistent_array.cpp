@@ -139,7 +139,7 @@ namespace titan23 {
         }
 
         void print() const {
-            vector<T> a = tolist();
+            vector<T> a = tovector();
             cout << "[";
             for (int i = 0; i < (int)a.size(); ++i) {
                 cout << a[i];
