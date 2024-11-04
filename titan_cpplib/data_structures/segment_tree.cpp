@@ -44,11 +44,12 @@ namespace titan23 {
         }
 
         T get(int const k) const {
+            assert(0 <= k && k < _n);
             return data[(k<0 ? (k+n+_size) : (k+_size))];
         }
 
         void set(int k, const T v) {
-            if (k < 0) k += n;
+            assert(0 <= k && k < _n);
             k += _size;
             data[k] = v;
             for (int i = 0; i < _log; ++i) {
@@ -58,6 +59,7 @@ namespace titan23 {
         }
 
         T prod(int l, int r) const {
+            assert(0 <= l && l <= r && r <= _n);
             l += _size;
             r += _size;
             T lres = e(), rres = e();
