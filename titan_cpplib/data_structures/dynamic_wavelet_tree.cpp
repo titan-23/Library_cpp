@@ -90,7 +90,7 @@ namespace titan23 {
         //! 位置 `k` に `x` を挿入する / `O(log(n)log(σ))`
         void insert(int k, T x) {
             assert(0 <= k && k <= len());
-            assert(0 <= x && x < sigma);
+            assert(0 <= x && x < _sigma);
             Node* node = root;
             for (int bit = _log-1; bit >= 0; --bit) {
                 if ((x >> bit) & 1) {

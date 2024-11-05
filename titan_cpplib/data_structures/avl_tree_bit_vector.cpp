@@ -466,16 +466,32 @@ class AVLTreeBitVector {
         vector<uint8_t> a(len());
         if (!_root) return a;
         int indx = 0;
-        auto rec = [&] (auto &&rec, Node node) -> void {
-            if (_left[node]) rec(rec, _left[node]);
-            uint128 key = _key[node];
-            for (int i = _bit_len[node]-1; i >= 0; --i) {
-                a[indx++] = key >> i & 1;
+        stack<Node> st;
+        Node node = _root;
+        while ((!st.empty()) || node) {
+            if (node) {
+                st.emplace(node);
+                node = _left[node];
+            } else {
+                node = st.top(); st.pop();
+                uint128 key = _key[node];
+                for (int i = _bit_len[node]-1; i >= 0; --i) {
+                    a[indx++] = key >> i & 1;
+                }
+                node = _right[node];
             }
-            if (_right[node]) rec(rec, _right[node]);
-        };
-        rec(rec, _root);
+        }
         return a;
+        // auto rec = [&] (auto &&rec, Node node) -> void {
+        //     if (_left[node]) rec(rec, _left[node]);
+        //     uint128 key = _key[node];
+        //     for (int i = _bit_len[node]-1; i >= 0; --i) {
+        //         a[indx++] = key >> i & 1;
+        //     }
+        //     if (_right[node]) rec(rec, _right[node]);
+        // };
+        // rec(rec, _root);
+        // return a;
     }
 
     bool access(int k) const {
