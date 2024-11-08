@@ -9,7 +9,7 @@ template<typename T>
 class MultisetSum {
     // ref: https://github.com/tatyam-prime/SortedSet/blob/main/SortedMultiset.py
 
-  public:
+  private:
     const int BUCKET_RATIO = 16;
     const int SPLIT_RATIO = 24;
     int n;
