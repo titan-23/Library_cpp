@@ -35,6 +35,15 @@ namespace titan23 {
             n = (int)data.size();
         }
 
+        // コンストラクタ以外で使用するとき専用のメソッド
+        void build(vector<T> a, T missing) {
+            this->data = a;
+            this->missing = missing;
+            sort(data.begin(), data.end());
+            data.erase(unique(data.begin(), data.end()), data.end());
+            n = (int)data.size();
+        }
+
         //! 表示する
         void print() const {
             cout << "{";

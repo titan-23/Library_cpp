@@ -21,7 +21,7 @@ namespace titan23 {
             for (int i = 0; i < bucketn; ++i) {
                 int start = s*i/bucketn;
                 int stop = min((int)len(), (int)(s*(i+1)/bucketn));
-                data[i] = vector<T> d(a.begin()+start, a.begin()+stop);
+                data[i] = vector<T>(a.begin()+start, a.begin()+stop);
             }
         }
 

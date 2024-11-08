@@ -1,23 +1,19 @@
 #include <iostream>
 #include <vector>
-#include <cassert>
-#include <stack>
 #include <map>
-#include <set>
+#include <cassert>
 using namespace std;
 
 // UnionFind
 namespace titan23 {
 
-    class UnionFind {
-      private:
+    struct UnionFind {
+      public:
         int n, group_numbers;
         vector<int> par;
-        vector<vector<int>> G;
 
-      public:
         UnionFind() {}
-        UnionFind(int n) : n(n), group_numbers(n), par(n, -1), G(n) {}
+        UnionFind(int n) : n(n), group_numbers(n), par(n, -1) {}
 
         int root(int x) {
             int a = x, y;
@@ -35,8 +31,6 @@ namespace titan23 {
             y = root(y);
             if (x == y) return false;
             --group_numbers;
-            G[x].emplace_back(y);
-            G[y].emplace_back(x);
             if (par[x] >= par[y]) swap(x, y);
             par[x] += par[y];
             par[y] = x;
@@ -51,38 +45,12 @@ namespace titan23 {
             return root(x) == root(y);
         }
 
-        set<int> members(const int x) const {
-            set<int> seen;
-            seen.emplace(x);
-            stack<int> todo;
-            todo.emplace(x);
-            while (!todo.empty()) {
-                int v = todo.top(); todo.pop();
-                for (const int &x: G[v]) {
-                    if (seen.find(x) != seen.end()) continue;
-                    todo.emplace(x);
-                    seen.emplace(x);
-                }
-            }
-            return seen;
-        }
-
         vector<int> all_roots() const {
             vector<int> res;
             for (int i = 0; i < n; ++i) {
                 if (par[i] < 0) res.emplace_back(i);
             }
             return res;
-        }
-
-        int group_count() const {
-            return group_numbers;
-        }
-
-        void clear() {
-            group_numbers = n;
-            for (int i = 0; i < n; ++i) par[i] = -1;
-            for (int i = 0; i < n; ++i) G[i].clear();
         }
 
         map<int, vector<int>> all_group_members() {
@@ -93,16 +61,26 @@ namespace titan23 {
             return res;
         }
 
-        void print() {
-            map<int, vector<int>> group_members = all_group_members();
-            printf("<UnionFind>\n");
+        int group_count() const {
+            return group_numbers;
+        }
+
+        void clear() {
+            group_numbers = n;
+            fill(par.begin(), par.end(), -1);
+        }
+
+        friend ostream& operator<<(ostream& os, titan23::UnionFind &uf) {
+            map<int, vector<int>> group_members = uf.all_group_members();
+            os << "<UnionFind>\n";
             for (auto &[key, val]: group_members) {
-                printf(" %d:", key);
-                for (const int &v: val) {
-                    printf(" %d", v);
+                os << "  " << key << " : ";
+                for (const int &v : val) {
+                    os << v << ", ";
                 }
-                cout << endl;
+                os << endl;
             }
+            return os;
         }
     };
 }  // namespace titan23

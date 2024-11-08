@@ -4,5 +4,6 @@ others
 .. toctree::
    :maxdepth: 1
 
-   print_cpp.rst
+   itertools_cpp.rst
    other_cpp.rst
+   print_cpp.rst

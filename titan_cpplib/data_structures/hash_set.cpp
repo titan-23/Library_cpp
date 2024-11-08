@@ -78,29 +78,22 @@ namespace titan23 {
 
         void insert(const u64 key) {
             const auto [pos, is_exist] = get_pos(key);
-            if (!is_exist) {
-                exist[pos>>6] |= 1ull<<(pos&63);
-                keys[pos] = key;
-                ++size;
-                if (HashSet::M*size > keys.size()) {
-                    rebuild();
-                }
-            }
+            if (is_exist) return;
+            exist[pos>>6] |= 1ull<<(pos&63);
+            keys[pos] = key;
+            ++size;
+            if (HashSet::M*size > keys.size()) rebuild();
         }
 
         //! keyがすでにあればtrue, なければ挿入してfalse / `O(1)`
         bool contains_insert(const u64 key) {
             const auto [pos, is_exist] = get_pos(key);
-            if (!is_exist) {
-                exist[pos>>6] |= 1ull<<(pos&63);
-                keys[pos] = key;
-                ++size;
-                if (HashSet::M*size > keys.size()) {
-                    rebuild();
-                }
-                return false;
-            }
-            return true;
+            if (is_exist) return true;
+            exist[pos>>6] |= 1ull<<(pos&63);
+            keys[pos] = key;
+            ++size;
+            if (HashSet::M*size > keys.size()) rebuild();
+            return false;
         }
 
         //! 全ての要素を削除する / `O(n/w)`

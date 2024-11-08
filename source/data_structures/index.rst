@@ -4,53 +4,58 @@ data_structures
 .. toctree::
    :maxdepth: 1
 
-   dynamic_fenwick_tree_2D_cpp.rst
-   weight_union_find_cpp.rst
-   lazy_wb_tree_cpp.rst
-   static_set_cpp.rst
-   sparse_table_cpp.rst
-   fenwick_tree_2D_cpp.rst
-   dynamic_wavelet_matrix_cpp.rst
-   persistent_lazy_wb_tree_cpp.rst
-   persistent_stack_cpp.rst
-   bit_vector_cpp.rst
-   segment_tree_cpp.rst
+   area_of_union_of_rectangles_cpp.rst
+   array_cpp.rst
    avl_tree_bit_vector_cpp.rst
-   dynamic_segment_tree_cpp.rst
    avl_tree_multiset_cpp.rst
-   dynamic_segment_tree_init_cpp.rst
-   wavelet_matrix_cumulative_sum_cpp.rst
    avl_tree_set_cpp.rst
-   deque_cpp.rst
-   offline_dynamic_connectivity_cpp.rst
-   cumulative_sum_cpp.rst
+   bbst_node_cpp.rst
+   binary_trie_multiset_cpp.rst
    binary_trie_set_cpp.rst
-   union_find_light_cpp.rst
-   link_cut_tree_cpp.rst
-   quadratic_division_set_cpp.rst
+   bit_vector_cpp.rst
+   cuckoo_hash_table_cpp.rst
+   cumulative_sum_cpp.rst
+   cumulative_sum_2D_cpp.rst
+   deque_cpp.rst
    dual_commutative_segment_tree_cpp.rst
    dual_segment_tree_cpp.rst
-   undoable_union_find_cpp.rst
-   euler_tour_tree_cpp.rst
-   cumulative_sum_2D_cpp.rst
-   dynamic_wavelet_tree_cpp.rst
-   wb_tree_cpp.rst
-   wavelet_matrix_cpp.rst
-   lazy_link_cut_tree_cpp.rst
-   hash_dict_cpp.rst
-   binary_trie_multiset_cpp.rst
-   static_multiset_cpp.rst
-   persistent_segment_tree_cpp.rst
-   dynamic_list_cpp.rst
-   dynamic_lazy_segment_tree_cpp.rst
-   undoable_union_find_sum_cpp.rst
-   array_cpp.rst
-   hash_set_cpp.rst
-   offline_dynamic_connectivity_sum_cpp.rst
-   min_heap_cpp.rst
-   fenwick_tree_cpp.rst
-   union_find_cpp.rst
    dynamic_bit_vector_cpp.rst
-   bbst_node_cpp.rst
-   persistent_array_cpp.rst
+   dynamic_fenwick_tree_2D_cpp.rst
+   dynamic_lazy_segment_tree_cpp.rst
+   dynamic_lazy_segment_tree_util_cpp.rst
+   dynamic_list_cpp.rst
+   dynamic_segment_tree_cpp.rst
+   dynamic_segment_tree_init_cpp.rst
+   dynamic_wavelet_matrix_cpp.rst
+   dynamic_wavelet_tree_cpp.rst
+   euler_tour_tree_cpp.rst
+   fenwick_tree_cpp.rst
+   fenwick_tree_2D_cpp.rst
+   hash_dict_cpp.rst
+   hash_set_cpp.rst
+   lazy_link_cut_tree_cpp.rst
+   lazy_segment_tree_cpp.rst
+   lazy_wb_tree_cpp.rst
+   link_cut_tree_cpp.rst
    max_heap_cpp.rst
+   min_heap_cpp.rst
+   multiset_sum_qd_cpp.rst
+   multiset_sum_splay_cpp.rst
+   offline_dynamic_connectivity_cpp.rst
+   offline_dynamic_connectivity_sum_cpp.rst
+   persistent_array_cpp.rst
+   persistent_lazy_wb_tree_cpp.rst
+   persistent_segment_tree_cpp.rst
+   persistent_stack_cpp.rst
+   segment_tree_cpp.rst
+   sparse_table_cpp.rst
+   static_multiset_cpp.rst
+   static_set_cpp.rst
+   undoable_union_find_cpp.rst
+   undoable_union_find_sum_cpp.rst
+   union_find_cpp.rst
+   union_find_advance_cpp.rst
+   wavelet_matrix_cpp.rst
+   wavelet_matrix_cumulative_sum_cpp.rst
+   wb_tree_cpp.rst
+   weight_union_find_cpp.rst

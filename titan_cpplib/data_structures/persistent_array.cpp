@@ -32,7 +32,7 @@ namespace titan23 {
         };
 
         int bit_length(const int n) const {
-            return 32 - __builtin_clz(n);
+            return n == 0 ? 0 : 32 - __builtin_clz(n);
         }
 
         void _build(const vector<T> &a) {
@@ -139,7 +139,7 @@ namespace titan23 {
         }
 
         void print() const {
-            vector<T> a = tolist();
+            vector<T> a = tovector();
             cout << "[";
             for (int i = 0; i < (int)a.size(); ++i) {
                 cout << a[i];

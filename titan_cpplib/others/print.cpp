@@ -3,14 +3,15 @@
 #include <set>
 #include <unordered_set>
 #include <map>
+#include <unordered_map>
 using namespace std;
 
 // print
 
 // color
-static const string PRINT_RED = "\033[31m";
-static const string PRINT_GREEN = "\033[32m";
-static const string PRINT_NONE = "\033[m";
+static const string PRINT_RED = "\033[31m"; // 赤字
+static const string PRINT_GREEN = "\033[32m"; // 緑字
+static const string PRINT_NONE = "\033[m"; // 色を元に戻す
 
 // pair<K, V>
 template <typename K, typename V>
@@ -23,6 +24,13 @@ ostream& operator<<(ostream& os, const pair<K, V>& p) {
 template<typename T1, typename T2, typename T3>
 ostream &operator<<(ostream &os, const tuple<T1, T2, T3> &t) {
     os << "( " << get<0>(t) << ", " << get<1>(t) << ", " << get<2>(t) << " )";
+    return os;
+}
+
+// tuple<T1, T2, T3, T4>
+template<typename T1, typename T2, typename T3, typename T4>
+ostream &operator<<(ostream &os, const tuple<T1, T2, T3, T4> &t) {
+    os << "( " << get<0>(t) << ", " << get<1>(t) << ", " << get<2>(t) << ", " << get<3>(t) << " )";
     return os;
 }
 
@@ -55,11 +63,13 @@ ostream& operator<<(ostream& os, const vector<vector<T>>& a) {
 
 // set<T>
 template <typename T>
-ostream& operator<<(ostream& os, const set<T>& a) {
+ostream& operator<<(ostream& os, const set<T>& s) {
     os << "{";
-    for (const T &x: a) {
-        os << x;
-        if (x != *(--a.end())) {
+    auto it = s.begin();
+    while (it != s.end()) {
+        os << *it;
+        ++it;
+        if (it != s.end()) {
             os << ", ";
         }
     }
@@ -91,5 +101,16 @@ ostream& operator<<(ostream& os, const map<K, V>& mp) {
         }
     }
     os << "}";
+    return os;
+}
+
+// unordered_map<K, V>
+template <typename K, typename V>
+ostream& operator<<(ostream& os, const unordered_map<K, V>& mp) {
+    map<K, V> m;
+    for (const auto &[k, v] : mp) {
+        m[k] = v;
+    }
+    os << m;
     return os;
 }

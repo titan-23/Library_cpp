@@ -17,7 +17,7 @@ namespace titan23 {
         int n;
 
         int bit_length(const int n) const {
-            return 32 - __builtin_clz(n);
+            return n == 0 ? 0 : 32 - __builtin_clz(n);
         }
 
         void build(vector<T> a) {

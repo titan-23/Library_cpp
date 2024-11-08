@@ -6,7 +6,7 @@ using namespace std;
 namespace titan23 {
 
     /**
-     * @brief セグ木搭載HLD
+     * @brief セグ木搭載HLD / 非可換に対応
      * 
      * @tparam T 
      * @tparam (*op)(T, T) 
@@ -18,33 +18,36 @@ namespace titan23 {
     class HLDSegmentTree {
       private:
         titan23::HLD hld;
-        titan23::SegmentTree<T, op, e> seg;
+        titan23::SegmentTree<T, op, e> seg, rseg;
 
       public:
-        HLDSegmentTree(const titan23::HLD &hld) {
-            this->hld = hld;
-            this->seg = titan23::SegmentTree<T, op, e>(hld.n);
-        }
+        HLDSegmentTree(const titan23::HLD &hld) : hld(hld), seg(hld.n) {}
 
-        HLDSegmentTree(const titan23::HLD &hld, constvector<T> &a) {
-            this->hld = hld;
-            this->seg = titan23::SegmentTree<T, op, e>(hld.build_list(a));
+        HLDSegmentTree(const titan23::HLD &hld, constvector<T> &a) : hld(hld) {
+            vector<T> b = hld.build_list(a);
+            this->seg = titan23::SegmentTree<T, op, e>(hld.build_list(b));
+            reverse(b.begin(), b.end());
+            this->rseg = titan23::SegmentTree<T, op, e>(hld.build_list(b));
         }
 
         //! `u` から `v` へのパスの総積を返す / `O(logn)`
         T path_prod(int u, int v) const {
-            T res = e();
+            T lres = e(), rres = e();
             while (hld.head[u] != hld.head[v]) {
-                if (hld.dep[hld.head[u]] < hld.dep[hld.head[v]]) {
-                    swap(u, v);
+                if (hld.dep[hld.head[u]] > hld.dep[hld.head[v]]) {
+                    lres = op(lres, rseg.prod(n - nodein[u] - 1, n - nodein[hld.head[u]]));
+                    u = par[hld.head[u]];
+                } else {
+                    rres = op(seg.prod(nodein[hld.head[v]], nodein[v] + 1), rres);
+                    v = par[hld.head[v]];
                 }
-                res = op(res, seg.prod(hld.nodein[hld.head[u]], hld.nodein[u]+1));
-                u = hld.par[hld.head[u]];
             }
-            if (hld.dep[u] < hld.dep[v]) {
-                swap(u, v);
+            if (hld.dep[u] > hld.dep[v]) {
+                lres = op(lres, rseg.prod(n - nodein[u] - 1, n - nodein[v]));
+            } else {
+                lres = op(lres, seg.prod(nodein[u], nodein[v] + 1));
             }
-            return op(res, seg.prod(hld.nodein[v], hld.nodein[u]+1));
+            return op(lres, rres);
         }
 
         //! 頂点 `k` の値を返す / `O(1)`
@@ -55,6 +58,7 @@ namespace titan23 {
         //! 頂点 `k` の値を `v` に更新する / `O(logn)`
         void set(const int k, const T v) {
             seg.set(hld.nodein[k], v);
+            rseg.set(hld.n - hld.nodein[k] - 1, v);
         }
 
         //! 頂点 `v` の部分木の総積を返す / `O(logn)`
