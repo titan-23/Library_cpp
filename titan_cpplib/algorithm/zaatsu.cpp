@@ -14,6 +14,8 @@ namespace titan23 {
         int n;
 
       public:
+        Zaatsu() : n(0) {}
+
         //! `used_items` からなる集合を管理するインスタンスを生成
         Zaatsu(vector<T> &used_items) : _to_origin(used_items) {
             sort(_to_origin.begin(), _to_origin.end());
