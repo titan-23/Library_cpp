@@ -17,7 +17,7 @@ namespace titan23 {
 
       public:
         CumulativeSum2D() {}
-        CumulativeSum2D(int h, int w, vector<vector<T>> &a, T e) :
+        CumulativeSum2D(int h, int w, const vector<vector<T>> &a, T e) :
                 h(h), w(w), acc((h+1)*(w+1), e) {
             for (int ij = 0; ij < h*w; ++ij) {
                 int i = ij / w, j = ij % w;
