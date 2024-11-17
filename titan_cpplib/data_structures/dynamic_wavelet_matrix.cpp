@@ -3,6 +3,7 @@
 #include <tuple>
 #include <queue>
 #include "titan_cpplib/data_structures/avl_tree_bit_vector.cpp"
+#include "titan_cpplib/others/print.cpp"
 using namespace std;
 
 // DynamicWaveletMatrix
@@ -225,12 +226,18 @@ namespace titan23 {
             return range_freq(l, r, y) - range_freq(l, r, x);
         }
 
+        //! 区間[l, r)で、x未満のうち最大の要素を返す
         T prev_value(int l, int r, T x) const {
-            return kth_smallest(l, r, _range_freq(l, r, x)-1);
+            int k = range_freq(l, r, x)-1;
+            if (k < 0) return -1;
+            return kth_smallest(l, r, k);
         }
 
+        //! 区間[l, r)で、x以上のうち最小の要素を返す
         T next_value(int l, int r, T x) const {
-            return kth_smallest(l, r, _range_freq(l, r, x));
+            int k = range_freq(l, r, x);
+            if (k >= r-l) return -1;
+            return kth_smallest(l, r, k);
         }
 
         int range_count(int l, int r, T x) const {
@@ -238,7 +245,6 @@ namespace titan23 {
         }
 
         vector<T> tovector() const {
-
             vector<T> a(_size);
             for (int i = 0; i < _size; ++i) {
                 a[i] = access(i);
@@ -258,6 +264,12 @@ namespace titan23 {
             }
             cout << "]";
             cout << endl;
+        }
+
+        friend ostream& operator<<(ostream& os, const titan23::DynamicWaveletMatrix<T> &dwm) {
+            vector<T> a = dwm.tovector();
+            os << a;
+            return os;
         }
     };
 } // namespace titan23
