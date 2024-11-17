@@ -20,14 +20,15 @@ class IndexSet {
         que.push_back(v);
     }
 
-    void discard(int v) {
+    bool discard(int v) {
         int p = pos[v];
-        if (p == -1) return;
+        if (p == -1) return false;
         int b = que.back();
         que[p] = b;
         que.pop_back();
         pos[b] = p;
         pos[v] = -1;
+        return true;
     }
 
     void remove(int v) {
@@ -66,12 +67,12 @@ class IndexSet {
         vector<int> a = ist.que;
         sort(a.begin(), a.end());
         int n = a.size();
-        os << "[";
+        os << "{";
         for (int i = 0; i < n; ++i) {
             os << a[i];
             if (i != n-1) os << ", ";
         }
-        os << "]";
+        os << "}";
         return os;
     }
 };
