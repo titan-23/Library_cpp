@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include "titan_cpplib/data_structures/avl_tree_bit_vector.cpp"
+#include "titan_cpplib/others/print.cpp"
 using namespace std;
 
 // DynamicWaveletTree
@@ -114,6 +115,7 @@ namespace titan23 {
 
         //! 位置 `k` の値を削除して返す / `O(log(n)log(σ))`
         T pop(int k) {
+            assert(0 <= k && k < len());
             Node* node = root;
             T ans = 0;
             for (int bit = _log-1; node && bit >= 0; --bit) {
@@ -133,6 +135,8 @@ namespace titan23 {
 
         //! 位置 `k` の値を `x` に更新する / `O(log(n)log(σ))`
         void set(int k, T x) {
+            assert(0 <= k && k < len());
+            assert(0 <= x && x < _sigma);
             pop(k);
             insert(k, x);
         }
@@ -332,6 +336,12 @@ namespace titan23 {
             }
             cout << "]";
             cout << endl;
+        }
+
+        friend ostream& operator<<(ostream& os, const titan23::DynamicWaveletTree<T> &dwm) {
+            vector<T> a = dwm.tovector();
+            os << a;
+            return os;
         }
     };
 } // namespace titan23

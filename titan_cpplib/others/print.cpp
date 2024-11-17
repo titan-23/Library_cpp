@@ -13,6 +13,14 @@ static const string PRINT_RED = "\033[31m"; // 赤字
 static const string PRINT_GREEN = "\033[32m"; // 緑字
 static const string PRINT_NONE = "\033[m"; // 色を元に戻す
 
+string to_red(const string s) {
+    return PRINT_RED + s + PRINT_NONE;
+}
+
+string to_green(const string s) {
+    return PRINT_GREEN + s + PRINT_NONE;
+}
+
 // pair<K, V>
 template <typename K, typename V>
 ostream& operator<<(ostream& os, const pair<K, V>& p) {
