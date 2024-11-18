@@ -9,7 +9,7 @@ namespace titan23 {
     template<typename T>
     class WaveletMatrix {
 
-    private:
+      private:
         T sigma;
         int log;
         vector<BitVector> v;
@@ -40,7 +40,7 @@ namespace titan23 {
             }
         }
 
-    public:
+      public:
         WaveletMatrix() {}
 
         WaveletMatrix(const T sigma)
@@ -198,15 +198,15 @@ namespace titan23 {
             return n;
         }
 
-        void print() const {
-            cout << "WaveletMatrix([";
-            for (int i = 0; i < len()-1; ++i) {
-                cout << access(i) << ", ";
+        friend ostream& operator<<(ostream& os, const titan23::WaveletMatrix<T>& wm) {
+            int n = wm.len();
+            os << "[";
+            for (int i = 0; i < n; ++i) {
+                os << wm.access(i);
+                if (i != n-1) os << ", ";
             }
-            if (len() > 0) {
-                cout << access(len()-1);
-            }
-            cout << "])" << endl;
+            os << "]";
+            return os;
         }
     };
 }  // namespace titan23
