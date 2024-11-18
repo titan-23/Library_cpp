@@ -9,11 +9,13 @@ namespace titan23 {
      * @brief 静的な全順序集合を管理するデータ構造
      */
     template<typename T>
-    struct StaticSet {
+    class StaticSet {
+      private:
         vector<T> data;
         T missing;
         int n;
 
+      public:
         StaticSet() {}
 
         /**
@@ -44,18 +46,6 @@ namespace titan23 {
             n = (int)data.size();
         }
 
-        //! 表示する
-        void print() const {
-            cout << "{";
-            for (int i = 0; i < n-1; ++i) {
-                cout << data[i] << ", ";
-            }
-            if (n > 0) {
-                cout << data.back();
-            }
-            cout << "}" << endl;
-        }
-
         //! 要素数を返す / `O(1)`
         int len() const {
             return n;
@@ -78,7 +68,7 @@ namespace titan23 {
             int l = -1, r = n-1;
             while (r - l > 1) {
                 int mid = (l + r) >> 1;
-                ((data[mid] >= key)? r : l) = mid;
+                (data[mid] >= key ? r : l) = mid;
             }
             return data[r];
         }
@@ -89,7 +79,7 @@ namespace titan23 {
             int l = -1, r = n-1;
             while (r - l > 1) {
                 int mid = (l + r) >> 1;
-                ((data[mid] > key)? r : l) = mid;
+                (data[mid] > key ? r : l) = mid;
             }
             return data[r];
         }
@@ -100,7 +90,7 @@ namespace titan23 {
             int l = 0, r = n;
             while (r - l > 1) {
                 int mid = (l + r) >> 1;
-                ((data[mid] <= key)? l : r) = mid;
+                (data[mid] <= key ? l : r) = mid;
             }
             return data[l];
         }
@@ -111,49 +101,60 @@ namespace titan23 {
             int l = 0, r = n;
             while (r - l > 1) {
                 int mid = (l + r) >> 1;
-                ((data[mid] < key)? l : r) = mid;
+                (data[mid] < key ? l : r) = mid;
             }
             return data[l];
         }
 
         //! `upper` 未満の要素数を返す / `O(logn)`
-        int index(T upper) const {
+        int index(const T &upper) const {
             int l = -1, r = n;
             while (r - l > 1) {
                 int mid = (l + r) >> 1;
-                ((data[mid] < upper)? l : r) = mid;
+                (data[mid] < upper ? l : r) = mid;
             }
             return r;
         }
 
         //! `upper` 以下の要素数を返す / `O(logn)`
-        int index_right(T upper) const {
+        int index_right(const T &upper) const {
             int l = -1, r = n;
             while (r - l > 1) {
                 int mid = (l + r) >> 1;
-                ((data[mid] <= upper)? l : r) = mid;
+                (data[mid] <= upper ? l : r) = mid;
             }
             return r;
         }
 
         //! `key` の要素数を返す / `O(logn)`
-        int count(T key) const {
-            return index_right(key) - index(key);
+        int count(const T &key) const {
+            return contains(key) ? 1 : 0;
         }
 
         //! `[lower, upper)` の要素数を返す / `O(logn)`
-        int count_range(T lower, T upper) const {
+        int count_range(const T &lower, const T &upper) const {
             assert(lower <= upper);
             return index(upper) - index(lower);
         }
 
         //! `key` の存在判定 / `O(logn)`
-        bool contains(T key) const {
+        bool contains(const T &key) const {
             int idx = index(key);
             if (idx == (int)data.size()) {
                 return false;
             }
             return data[idx] == key;
+        }
+
+        friend ostream& operator<<(ostream& os, const titan23::StaticSet<T>& s) {
+            int n = s.len();
+            os << "{";
+            for (int i = 0; i < n; ++i) {
+                os << s.data[i];
+                if (i != n-1) os << ", ";
+            }
+            os << "}";
+            return os;
         }
     };
 }
