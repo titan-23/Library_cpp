@@ -87,8 +87,10 @@ namespace titan23 {
     };
 
     class HashString {
-      private:
+      public:
         using u64 = unsigned long long;
+
+      private:
         HashStringBase* hsb;
         int n;
         bool used_seg;

@@ -371,17 +371,6 @@ namespace titan23 {
             return root ? root->size : 0;
         }
 
-        void print() const {
-            vector<T> a = tovector();
-            int n = a.size();
-            cout << "{";
-            for (int i = 0; i < n-1; ++i) {
-                cout << a[i] << ", ";
-            }
-            if (n > 0) cout << a.back();
-            cout << "}" << endl;
-        }
-
         void check() const {
             if (!root) {
                 cout << "height=0" << endl;;
