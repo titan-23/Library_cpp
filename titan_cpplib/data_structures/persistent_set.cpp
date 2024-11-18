@@ -10,7 +10,7 @@ using namespace std;
 namespace titan23 {
 
 template <typename T>
-class PersistentMultiset {
+class PersistentSet {
   private:
     class Node;
     using NodePtr = shared_ptr<Node>;
@@ -22,17 +22,15 @@ class PersistentMultiset {
     class Node {
       public:
         T key;
-        int size, cnt, cnt_subtree;
+        int size;
         NodePtr left;
         NodePtr right;
 
-        Node(T key, int cnt = 1) : key(key), size(1), cnt(cnt), cnt_subtree(cnt), left(nullptr), right(nullptr) {}
+        Node(T key) : key(key), size(1), left(nullptr), right(nullptr) {}
 
         NodePtr copy() const {
             NodePtr node = make_shared<Node>(key);
             node->size = size;
-            node->cnt = cnt;
-            node->cnt_subtree = cnt_subtree;
             node->left = left;
             node->right = right;
             return node;
@@ -48,15 +46,8 @@ class PersistentMultiset {
 
         void update() {
             size = 1;
-            cnt_subtree = cnt;
-            if (left) {
-                size += left->size;
-                cnt_subtree += left->cnt_subtree;
-            }
-            if (right) {
-                size += right->size;
-                cnt_subtree += right->cnt_subtree;
-            }
+            if (left) size += left->size;
+            if (right) size += right->size;
         }
 
         void balance_check() const {
@@ -215,74 +206,36 @@ class PersistentMultiset {
         }
     }
 
-    PersistentMultiset<T> _new(NodePtr root) const {
-        return PersistentMultiset<T>(root);
+    PersistentSet<T> _new(NodePtr root) const {
+        return PersistentSet<T>(root);
     }
 
-    PersistentMultiset(NodePtr root) : root(root) {}
+    PersistentSet(NodePtr root) : root(root) {}
 
   public:
-    PersistentMultiset() : root(nullptr) {}
+    PersistentSet() : root(nullptr) {}
 
-    PersistentMultiset(vector<T> &a) { _build(a); }
+    PersistentSet(vector<T> &a) { _build(a); }
 
-    PersistentMultiset<T> merge(PersistentMultiset<T> other) {
+    PersistentSet<T> merge(PersistentSet<T> other) {
         NodePtr root = _merge_node(this->root, other.root);
         return _new(root);
     }
 
-    pair<PersistentMultiset<T>, PersistentMultiset<T>> split(int k) {
+    pair<PersistentSet<T>, PersistentSet<T>> split(int k) {
         auto [l, r] = _split_node(this->root, k);
         return {_new(l), _new(r)};
     }
 
-    NodePtr find(T key) const {
-        NodePtr node = root;
-        while (node) {
-            s.emplace(node);
-            if (key == node->key) return node;
-            node = key < node->key ? node->left : node->right;
-        }
-        return nullptr;
-    }
-
-    PersistentMultiset<T> add(T key, int cnt = 1) {
-        NodePtr it = find(key);
-        if (it != nullptr) {
-            assert(this->root);
-            NodePtr new_root = this->root->copy();
-            NodePtr node = new_root;
-            while (node) {
-                node->cnt_subtree += cnt;
-                if (key == node->key) {
-                    node->cnt += cnt;
-                    break;
-                }
-                node = key < node->key ? node->left->copy() : node->right->copy();
-            }
-            return _new(new_root);
-        }
+    PersistentSet<T> add(T key) {
+        if (contains(key)) return _new(this->root->copy());
         auto [s, t] = _split_node_key(root, key);
-        NodePtr new_node = make_shared<Node>(key, cnt);
+        NodePtr new_node = make_shared<Node>(key);
         return _new(_merge_with_root(s, new_node, t));
     }
 
-    PersistentMultiset<T> remove(T key) {
-        NodePtr it = find(key);
-        if (it != nullptr && it->cnt > 1) {
-            assert(this->root);
-            NodePtr new_root = this->root->copy();
-            NodePtr node = new_root;
-            while (node) {
-                node->cnt_subtree -= cnt;
-                if (key == node->key) {
-                    node->cnt -= cnt;
-                    break;
-                }
-                node = key < node->key ? node->left->copy() : node->right->copy();
-            }
-            return _new(new_root);
-        }
+    PersistentSet<T> remove(T key) {
+        if (!contains(key)) return _new(this->root ? this->root->copy() : nullptr);
         auto [s_, t] = _split_node_key(this->root, key);
         auto [s, tmp] = _pop_right(s_);
         assert(tmp->key == key);
@@ -304,8 +257,8 @@ class PersistentMultiset {
         NodePtr node = root;
         while (true) {
             assert(node);
-            int t = node->left ? (node->cnt + node->left->cnt_subtree) : node->cnt;
-            if (t-node->cnt <= k && k < t) return node->key;
+            int t = node->left ? (1 + node->left->size) : 1;
+            if (t-1 <= k && k < t) return node->key;
             if (t > k) {
                 node = node->left;
             } else {
@@ -320,13 +273,13 @@ class PersistentMultiset {
         NodePtr node = root;
         while (node) {
             if (key == node->key) {
-                k += node->left ? node->left->cnt_subtree : 0;
+                k += node->left ? node->left->size : 0;
                 break;
             }
             if (key < node->key) {
                 node = node->left;
             } else {
-                k += node->left ? (node->left->cnt_subtree + node->cnt) : node->cnt;
+                k += node->left ? (node->left->size + 1) : 1;
                 node = node->right;
             }
         }
@@ -338,20 +291,20 @@ class PersistentMultiset {
         NodePtr node = root;
         while (node) {
             if (key == node->key) {
-                k += node->left ? (node->left->cnt_subtree + node->cnt) : node->cnt;
+                k += node->left ? (node->left->size + 1) : 1;
                 break;
             }
             if (key < node->key) {
                 node = node->left;
             } else {
-                k += node->left ? (node->left->cnt_subtree + node->cnt) : node->cnt;
+                k += node->left ? (node->left->size + 1) : 1;
                 node = node->right;
             }
         }
         return k;
     }
 
-    pair<PersistentMultiset<T>, T> pop(int k) {
+    pair<PersistentSet<T>, T> pop(int k) {
         assert(0 <= k && k < len());
         auto [s_, t] = _split_node(this->root, k+1);
         auto [s, tmp] = _pop_right(s_);
@@ -377,7 +330,7 @@ class PersistentMultiset {
         return a;
     }
 
-    PersistentMultiset<T> copy() const {
+    PersistentSet<T> copy() const {
         return _new(this->root ? this->root->copy() : nullptr);
     }
 
@@ -429,7 +382,7 @@ class PersistentMultiset {
         cerr << PRINT_GREEN << "OK : height=" << h << PRINT_NONE << endl;
     }
 
-    friend ostream& operator<<(ostream& os, PersistentMultiset<T> &tree) {
+    friend ostream& operator<<(ostream& os, PersistentSet<T> &tree) {
         vector<T> a = tree.tovector();
         os << "{";
         for (int i = 0; i < (int)a.size()-1; ++i) {
