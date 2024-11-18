@@ -9,8 +9,9 @@ using namespace std;
 // print
 
 // color
-static const string PRINT_RED = "\033[31m"; // 赤字
-static const string PRINT_GREEN = "\033[32m"; // 緑字
+static const string PRINT_RED = "\033[91m"; // 赤字
+static const string PRINT_GREEN = "\033[92m"; // 緑字
+static const string PRINT_BLUE = "\033[94m";  // 青字
 static const string PRINT_NONE = "\033[m"; // 色を元に戻す
 
 string to_red(const string s) {
@@ -19,6 +20,10 @@ string to_red(const string s) {
 
 string to_green(const string s) {
     return PRINT_GREEN + s + PRINT_NONE;
+}
+
+string to_blue(const string s) {
+    return PRINT_BLUE + s + PRINT_NONE;
 }
 
 // pair<K, V>
