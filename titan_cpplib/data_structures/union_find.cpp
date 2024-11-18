@@ -7,7 +7,7 @@ using namespace std;
 // UnionFind
 namespace titan23 {
 
-    struct UnionFind {
+    class UnionFind {
       public:
         int n, group_numbers;
         vector<int> par;
@@ -67,7 +67,7 @@ namespace titan23 {
 
         void clear() {
             group_numbers = n;
-            fill(par.begin(), par.end(), -1);
+            std::fill(par.begin(), par.end(), -1);
         }
 
         friend ostream& operator<<(ostream& os, titan23::UnionFind &uf) {
@@ -78,7 +78,6 @@ namespace titan23 {
                 for (const int &v : val) {
                     os << v << ", ";
                 }
-                os << endl;
             }
             return os;
         }
