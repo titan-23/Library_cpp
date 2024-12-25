@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <vector>
 #include <cassert>
+#include <stack>
 #include "titan_cpplib/data_structures/bbst_node.cpp"
 using namespace std;
 
@@ -343,15 +344,15 @@ namespace titan23 {
         vector<T> tovector() const {
             vector<T> a;
             a.reserve(len());
-            vector<AVLTreeSetNodePtr> st;
+            stack<AVLTreeSetNodePtr> st;
             AVLTreeSetNodePtr node = root;
             while ((!st.empty()) || node) {
                 if (node) {
-                    st.emplace_back(node);
+                    st.emplace(node);
                     node = node->left;
                 } else {
-                    node = st.back();
-                    st.pop_back();
+                    node = st.top();
+                    st.pop();
                     a.emplace_back(node->key);
                     node = node->right;
                 }

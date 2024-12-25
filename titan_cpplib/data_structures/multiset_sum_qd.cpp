@@ -35,6 +35,16 @@ class MultisetSum {
         return {idx, bisect_left(data[idx], key)};
     }
 
+    void rebuild_split(int i) {
+        int m = data[i].size();
+        data.insert(data.begin() + i+1, vector<T>(data[i].begin() + m/2, data[i].end()));
+        data[i].erase(data[i].begin() + m/2, data[i].end());
+        T right_sum = 0;
+        for (const T x : data[i+1]) right_sum += x;
+        bucket_data[i] -= right_sum;
+        bucket_data.insert(bucket_data.begin() + i+1, right_sum);
+    }
+
   public:
     MultisetSum() : n(0) {}
 
@@ -63,16 +73,6 @@ class MultisetSum {
             data[k] = vector<T>(a.begin()+k*bucket_size, a.begin()+k*bucket_size+size);
             for (const T &x : data[k]) bucket_data[k] += x;
         }
-    }
-
-    void rebuild_split(int i) {
-        int m = data[i].size();
-        data.insert(data.begin() + i+1, vector<T>(data[i].begin() + m/2, data[i].end()));
-        data[i].erase(data[i].begin() + m/2, data[i].end());
-        T right_sum = 0;
-        for (const T x : data[i+1]) right_sum += x;
-        bucket_data[i] -= right_sum;
-        bucket_data.insert(bucket_data.begin() + i+1, right_sum);
     }
 
     void add(const T &key) {
@@ -222,6 +222,18 @@ class MultisetSum {
             a.insert(a.end(), d.begin(), d.end());
         }
         return a;
+    }
+
+    friend ostream& operator<<(ostream& os, const titan23::MultisetSum<T> &ms) {
+        vector<T> a = ms.tovector();
+        os << "{";
+        int n = ms.len();
+        for (int i = 0; i < n; ++i) {
+            os << a[i];
+            if (i != n-1) os << ", ";
+        }
+        os << "}";
+        return os;
     }
 };
 } // namespace titan23

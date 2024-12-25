@@ -28,7 +28,7 @@ namespace titan23 {
         }
 
         T sum(const int l, const int r) const {
-            assert(0 <= l && l <= r && r < this->n);
+            assert(0 <= l && l <= r && r <= this->n);
             return acc[r] - acc[l];
         }
 
