@@ -28,6 +28,22 @@ string to_blue(const string s) {
     return PRINT_BLUE + s + PRINT_NONE;
 }
 
+string spacefill(const string s, const int f) {
+    int n = s.size();
+    string t;
+    for (int i = 0; i < f-n; ++i) t += " ";
+    t += s;
+    return t;
+}
+
+string zfill(const string s, const int f) {
+    int n = s.size();
+    string t;
+    for (int i = 0; i < f-n; ++i) t += "0";
+    t += s;
+    return t;
+}
+
 // pair<K, V>
 template <typename K, typename V>
 ostream& operator<<(ostream& os, const pair<K, V>& p) {
