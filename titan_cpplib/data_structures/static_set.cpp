@@ -146,6 +146,14 @@ namespace titan23 {
             return data[idx] == key;
         }
 
+        T neighbor(const T &key) const {
+            T ge_key = ge(key);
+            T le_key = le(key);
+            if (ge_key == missing) return le_key;
+            if (le_key == missing) return ge_key;
+            return (ge_key-key < key-le_key) ? ge_key : le_key;
+        }
+
         friend ostream& operator<<(ostream& os, const titan23::StaticSet<T>& s) {
             int n = s.len();
             os << "{";
