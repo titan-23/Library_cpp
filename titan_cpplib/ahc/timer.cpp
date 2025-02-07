@@ -10,10 +10,10 @@ namespace titan23 {
      * @brief 時間計測クラス
      */
     class Timer {
-      private:
+    private:
         chrono::time_point<chrono::high_resolution_clock> start_timepoint;
 
-      public:
+    public:
         Timer() : start_timepoint(chrono::high_resolution_clock::now()) {}
 
         //! リセットする
