@@ -123,6 +123,7 @@ namespace titan23 {
 
         template <typename T>
         T choice(const vector<T> &a) {
+            assert(!a.empty());
             return a[randrange(a.size())];
         }
 
