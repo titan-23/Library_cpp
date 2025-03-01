@@ -35,17 +35,17 @@ namespace titan23 {
             T lres = e(), rres = e();
             while (hld.head[u] != hld.head[v]) {
                 if (hld.dep[hld.head[u]] > hld.dep[hld.head[v]]) {
-                    lres = op(lres, rseg.prod(n - nodein[u] - 1, n - nodein[hld.head[u]]));
-                    u = par[hld.head[u]];
+                    lres = op(lres, rseg.prod(hld.n - hld.nodein[u] - 1, hld.n - hld.nodein[hld.head[u]]));
+                    u = hld.par[hld.head[u]];
                 } else {
-                    rres = op(seg.prod(nodein[hld.head[v]], nodein[v] + 1), rres);
-                    v = par[hld.head[v]];
+                    rres = op(seg.prod(hld.nodein[hld.head[v]], hld.nodein[v] + 1), rres);
+                    v = hld.par[hld.head[v]];
                 }
             }
             if (hld.dep[u] > hld.dep[v]) {
-                lres = op(lres, rseg.prod(n - nodein[u] - 1, n - nodein[v]));
+                lres = op(lres, rseg.prod(hld.n - hld.nodein[u] - 1, hld.n - hld.nodein[v]));
             } else {
-                lres = op(lres, seg.prod(nodein[u], nodein[v] + 1));
+                lres = op(lres, seg.prod(hld.nodein[u], hld.nodein[v] + 1));
             }
             return op(lres, rres);
         }
