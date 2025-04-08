@@ -56,6 +56,7 @@ public:
     /// 正規分布 N(mu, sigma) に対して、観測した値が区間 [a, b] に含まれる確率を返す
     static double probability_in_range(double l, double r, double mu, double sigma) {
         assert(l <= r);
+        assert(cdf(r, mu, sigma) - cdf(l, mu, sigma) >= 0);
         return cdf(r, mu, sigma) - cdf(l, mu, sigma);
     }
 
