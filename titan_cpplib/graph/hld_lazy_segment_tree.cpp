@@ -33,7 +33,7 @@ namespace titan23 {
             this->rseg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(hld.build_list(b));
         }
 
-        T path_prod(int u, int v) const {
+        T path_prod(int u, int v) {
             T lres = e(), rres = e();
             while (hld.head[u] != hld.head[v]) {
                 if (hld.dep[hld.head[u]] > hld.dep[hld.head[v]]) {
