@@ -59,7 +59,7 @@ class IndexSet {
     }
 
     int get(int v) const {
-        assert(0 <= v && v < len());
+        // assert(0 <= v && v < len());
         return que[v];
     }
 
