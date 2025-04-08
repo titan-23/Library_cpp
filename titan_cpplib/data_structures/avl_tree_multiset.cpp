@@ -10,7 +10,7 @@ namespace titan23 {
 
     template<typename T>
     class AVLTreeMultiset {
-      private:
+      public:
         class AVLTreeMultisetNode {
           public:
             using AVLTreeMultisetNodePtr = AVLTreeMultisetNode*;

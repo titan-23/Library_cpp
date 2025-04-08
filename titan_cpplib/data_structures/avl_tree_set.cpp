@@ -109,9 +109,9 @@ namespace titan23 {
         }
 
       public:
-        AVLTreeSet() : root(nullptr) {}
-        AVLTreeSet(T missing) : missing(missing), root(nullptr) {}
-        AVLTreeSet(vector<T> &a, T missing) : missing(missing) {
+        AVLTreeSet() : missing(-1), root(nullptr) {}
+        AVLTreeSet(T missing) : missing(-1), root(nullptr) {}
+        AVLTreeSet(vector<T> &a, T missing) : missing(-1) {
             this->root = build(a);
         }
 
