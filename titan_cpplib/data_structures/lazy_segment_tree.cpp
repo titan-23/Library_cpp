@@ -2,6 +2,7 @@
 #include <cassert>
 using namespace std;
 
+// LazySegmentTree
 namespace titan23 {
 
     template <class T,

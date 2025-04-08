@@ -209,9 +209,9 @@ class PersistentLazyWBTree {
     }
 
     NodePtr _merge_node(NodePtr l, NodePtr r) {
-        if ((!l) && (!r)) {return nullptr;}
-        if (!l) {return r->copy();}
-        if (!r) {return l->copy();}
+        if ((!l) && (!r)) { return nullptr; }
+        if (!l) { return r->copy(); }
+        if (!r) { return l->copy(); }
         l = l->copy();
         r = r->copy();
         auto [l_, root_] = _pop_right(l);
@@ -277,7 +277,8 @@ class PersistentLazyWBTree {
     }
 
     T prod(int l, int r) {
-        if (l >= r) return e();
+        assert(0 <= l && l <= r && r <= len());
+        if (l == r) return e();
         auto dfs = [&] (auto &&dfs, NodePtr node, int left, int right) -> T {
             if (right <= l || r <= left) return e();
             node->propagate();
@@ -405,7 +406,7 @@ class PersistentLazyWBTree {
         cout << "]" << endl;
     }
 
-        int len() const {
+    int len() const {
         return root ? root->size : 0;
     }
 
