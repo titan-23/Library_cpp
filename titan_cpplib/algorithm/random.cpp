@@ -13,7 +13,7 @@ namespace titan23 {
       private:
         unsigned int _x, _y, _z, _w;
 
-        unsigned int _xor128() {
+        constexpr unsigned int _xor128() {
             const unsigned int t = _x ^ (_x << 11);
             _x = _y;
             _y = _z;
@@ -29,39 +29,39 @@ namespace titan23 {
                    _w(88675123) {}
 
         //! `[0, 1]` の乱数を返す(実数)
-        double random() { return (double)(_xor128()) / 0xFFFFFFFF; }
+        constexpr double random() { return (double)(_xor128()) / 0xFFFFFFFF; }
 
         //! `[0, end]` の乱数を返す(整数)
-        int randint(const int end) {
+        constexpr int randint(const int end) {
             assert(0 <= end);
             return (((unsigned long long)_xor128() * (end+1)) >> 32);
         }
 
         //! `[begin, end]` の乱数を返す(整数)
-        int randint(const int begin, const int end) {
+        constexpr int randint(const int begin, const int end) {
             assert(begin <= end);
             return begin + (((unsigned long long)_xor128() * (end-begin+1)) >> 32);
         }
 
         //! `[0, end)` の乱数を返す(整数)
-        int randrange(const int end) {
+        constexpr int randrange(const int end) {
             assert(0 < end);
             return (((unsigned long long)_xor128() * end) >> 32);
         }
 
         //! `[begin, end)` の乱数を返す(整数)
-        int randrange(const int begin, const int end) {
+        constexpr int randrange(const int begin, const int end) {
             assert(begin < end);
             return begin + (((unsigned long long)_xor128() * (end-begin)) >> 32);
         }
 
         //! `[0, u64_MAX)` の乱数を返す / zobrist hash等の使用を想定
-        unsigned long long rand_u64() {
+        constexpr unsigned long long rand_u64() {
             return ((unsigned long long)_xor128() << 32) | _xor128();
         }
 
         //! `[0, end)` の異なる乱数を2つ返す
-        pair<int, int> rand_pair(const int end) {
+        constexpr pair<int, int> rand_pair(const int end) {
             assert(end >= 2);
             int u = randrange(end);
             int v = u + randrange(1, end);
@@ -71,7 +71,7 @@ namespace titan23 {
         }
 
         //! `[begin, end)` の異なる乱数を2つ返す
-        pair<int, int> rand_pair(const int begin, const int end) {
+        constexpr pair<int, int> rand_pair(const int begin, const int end) {
             assert(end - begin >= 2);
             int u = randrange(begin, end);
             int v = (u + randrange(1, end-begin));
@@ -92,14 +92,14 @@ namespace titan23 {
         }
 
         //! `[begin, end)` の乱数を返す(実数)
-        double randdouble(const double begin, const double end) {
+        constexpr double randdouble(const double begin, const double end) {
             assert(begin < end);
             return begin + random() * (end-begin);
         }
 
         //! `vector` をインプレースにシャッフルする / `O(n)`
         template <typename T>
-        void shuffle(vector<T> &a) {
+        constexpr void shuffle(vector<T> &a) {
             int n = a.size();
             for (int i = 0; i < n-1; ++i) {
                 int j = randrange(i, n);
@@ -122,13 +122,13 @@ namespace titan23 {
         }
 
         template <typename T>
-        T choice(const vector<T> &a) {
+        constexpr T choice(const vector<T> &a) {
             assert(!a.empty());
             return a[randrange(a.size())];
         }
 
         template <typename T>
-        T choice(const vector<T> &a, const vector<int> &w, bool normal) {
+        constexpr T choice(const vector<T> &a, const vector<int> &w, bool normal) {
             assert(normal == false);
             assert(a.size() == w.size());
             double sum = 0.0;
@@ -143,7 +143,7 @@ namespace titan23 {
         }
 
         template <typename T>
-        T choice(const vector<T> &a, const vector<double> &w) {
+        constexpr T choice(const vector<T> &a, const vector<double> &w) {
             double i = random();
             int l = -1, r = a.size()-1;
             while (r - l > 1) {
