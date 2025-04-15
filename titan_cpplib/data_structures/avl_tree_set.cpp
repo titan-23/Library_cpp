@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <vector>
 #include <cassert>
+#include <stack>
 #include "titan_cpplib/data_structures/bbst_node.cpp"
 using namespace std;
 
@@ -108,9 +109,9 @@ namespace titan23 {
         }
 
       public:
-        AVLTreeSet() : root(nullptr) {}
-        AVLTreeSet(T missing) : missing(missing), root(nullptr) {}
-        AVLTreeSet(vector<T> &a, T missing) : missing(missing) {
+        AVLTreeSet() : missing(-1), root(nullptr) {}
+        AVLTreeSet(T missing) : missing(-1), root(nullptr) {}
+        AVLTreeSet(vector<T> &a, T missing) : missing(-1) {
             this->root = build(a);
         }
 
@@ -343,15 +344,15 @@ namespace titan23 {
         vector<T> tovector() const {
             vector<T> a;
             a.reserve(len());
-            vector<AVLTreeSetNodePtr> st;
+            stack<AVLTreeSetNodePtr> st;
             AVLTreeSetNodePtr node = root;
             while ((!st.empty()) || node) {
                 if (node) {
-                    st.emplace_back(node);
+                    st.emplace(node);
                     node = node->left;
                 } else {
-                    node = st.back();
-                    st.pop_back();
+                    node = st.top();
+                    st.pop();
                     a.emplace_back(node->key);
                     node = node->right;
                 }
@@ -369,17 +370,6 @@ namespace titan23 {
 
         int len() const {
             return root ? root->size : 0;
-        }
-
-        void print() const {
-            vector<T> a = tovector();
-            int n = a.size();
-            cout << "{";
-            for (int i = 0; i < n-1; ++i) {
-                cout << a[i] << ", ";
-            }
-            if (n > 0) cout << a.back();
-            cout << "}" << endl;
         }
 
         void check() const {

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include "titan_cpplib/data_structures/avl_tree_bit_vector.cpp"
+#include "titan_cpplib/others/print.cpp"
 using namespace std;
 
 // DynamicWaveletTree
@@ -114,6 +115,7 @@ namespace titan23 {
 
         //! 位置 `k` の値を削除して返す / `O(log(n)log(σ))`
         T pop(int k) {
+            assert(0 <= k && k < len());
             Node* node = root;
             T ans = 0;
             for (int bit = _log-1; node && bit >= 0; --bit) {
@@ -133,12 +135,15 @@ namespace titan23 {
 
         //! 位置 `k` の値を `x` に更新する / `O(log(n)log(σ))`
         void set(int k, T x) {
+            assert(0 <= k && k < len());
+            assert(0 <= x && x < _sigma);
             pop(k);
             insert(k, x);
         }
 
         //! 区間 `[0, r)` の `x` の個数を返す / `O(log(n)log(σ))`
         int rank(int r, T x) const {
+            assert(0 <= r && r <= len());
             Node* node = root;
             int l = 0;
             for (int bit = _log-1; node && bit >= 0; --bit) {
@@ -157,6 +162,7 @@ namespace titan23 {
 
         //! 区間 `[l, r)` の `x` の個数を返す / `O(log(n)log(σ))`
         int range_count(int l, int r, T x) const {
+            assert(0 <= l && l <= r && r <= len());
             return rank(r, x) - rank(l, x);
         }
 
@@ -181,6 +187,8 @@ namespace titan23 {
 
         //! 区間 `[l, r)` で昇順 `k` 番目の値を返す / `O(log(n)log(σ))`
         T kth_smallest(int l, int r, int k) const {
+            assert(0 <= l && l <= r && r <= len());
+            assert(0 <= k && k < r-l);
             Node* node = root;
             T s = 0;
             for (int bit = _log-1; node && bit >= 0; --bit) {
@@ -208,7 +216,7 @@ namespace titan23 {
         }
 
         //! 区間 `[l, r)` で `x` 未満の要素の個数を返す / `O(log(n)log(σ))`
-        int range_freq(int l, int r,  const T &x) const {
+        int range_freq(int l, int r, const T &x) const {
             Node* node = root;
             int ans = 0;
             for (int bit = _log-1; node && bit >= 0; --bit) {
@@ -277,6 +285,20 @@ namespace titan23 {
             return k;
         }
 
+        //! 区間[l, r)で、x未満のうち最大の要素を返す
+        T prev_value(int l, int r, T x) const {
+            int k = range_freq(l, r, x)-1;
+            if (k < 0) return -1;
+            return kth_smallest(l, r, k);
+        }
+
+        //! 区間[l, r)で、x以上のうち最小の要素を返す
+        T next_value(int l, int r, T x) const {
+            int k = range_freq(l, r, x);
+            if (k >= r-l) return -1;
+            return kth_smallest(l, r, k);
+        }
+
         //! 要素数を返す / `O(1)`
         int len() const {
             return _size;
@@ -332,6 +354,12 @@ namespace titan23 {
             }
             cout << "]";
             cout << endl;
+        }
+
+        friend ostream& operator<<(ostream& os, const titan23::DynamicWaveletTree<T> &dwm) {
+            vector<T> a = dwm.tovector();
+            os << a;
+            return os;
         }
     };
 } // namespace titan23

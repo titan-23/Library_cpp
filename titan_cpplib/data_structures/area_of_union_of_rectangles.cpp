@@ -30,7 +30,7 @@ S e() {
 F id() {
     return 0;
 }
-}
+} // namespace AOUFR
 
 template<typename T>
 class AreaOfUnionOfRectangles {

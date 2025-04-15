@@ -18,7 +18,7 @@ namespace titan23 {
         int msk, xor_;
         int size;
 
-        int hash(const u64 &key) const {
+        constexpr int hash(const u64 &key) const {
             return (((((key>>32)&msk) ^ (key&msk) ^ xor_)) * (HashSet::K & msk)) & msk;
         }
 

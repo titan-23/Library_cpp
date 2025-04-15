@@ -25,7 +25,7 @@ namespace titan23 {
         while (!hq.empty()) {
             auto [d, v] = hq.top();
             hq.pop();
-            if (dist[v] > d) continue;
+            if (dist[v] < d) continue;
             for (const auto &[x, c] : G[v]) {
                 if (dist[x] > d + c) {
                     dist[x] = d + c;

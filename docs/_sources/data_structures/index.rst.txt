@@ -33,9 +33,11 @@ data_structures
    fenwick_tree_2D_cpp.rst
    hash_dict_cpp.rst
    hash_set_cpp.rst
+   index_set_cpp.rst
    lazy_link_cut_tree_cpp.rst
    lazy_segment_tree_cpp.rst
    lazy_wb_tree_cpp.rst
+   linear_cum_sum_cpp.rst
    link_cut_tree_cpp.rst
    max_heap_cpp.rst
    min_heap_cpp.rst
@@ -45,7 +47,9 @@ data_structures
    offline_dynamic_connectivity_sum_cpp.rst
    persistent_array_cpp.rst
    persistent_lazy_wb_tree_cpp.rst
+   persistent_multiset_cpp.rst
    persistent_segment_tree_cpp.rst
+   persistent_set_cpp.rst
    persistent_stack_cpp.rst
    segment_tree_cpp.rst
    sparse_table_cpp.rst
@@ -58,4 +62,5 @@ data_structures
    wavelet_matrix_cpp.rst
    wavelet_matrix_cumulative_sum_cpp.rst
    wb_tree_cpp.rst
+   wb_tree_seg_cpp.rst
    weight_union_find_cpp.rst

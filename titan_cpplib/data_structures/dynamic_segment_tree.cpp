@@ -111,7 +111,7 @@ namespace titan23 {
             inner_set(root, k, val);
         }
 
-        void print() {
+        void print() const {
             for (int i = 0; i < u; ++i) {
                 cout << get(i) << ", ";
             }

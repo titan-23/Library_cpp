@@ -47,6 +47,10 @@ namespace titan23 {
         MaxHeap() {}
         MaxHeap(vector<T> a) : a(a) { _heapify(); }
 
+        void clear() {
+            a.clear();
+        }
+
         //! 最大の要素を返す / `O(1)`
         T get_max() const {
             return a[0];
@@ -82,6 +86,10 @@ namespace titan23 {
             a[0] = key;
             _down(0);
             return res;
+        }
+
+        vector<T> tolist() const {
+            return a;
         }
 
         //! 要素数を返す / `O(1)`

@@ -15,5 +15,4 @@ graph
    maximum_independent_set_cpp.rst
    minimum_spanning_tree_cpp.rst
    minimum_steiner_tree_cpp.rst
-   rooted_tree_cpp.rst
    warshall_floyd_path_cpp.rst
