@@ -117,16 +117,16 @@ namespace titan23 {
         }
 
         T inner_prod2(NodePtr node, const IndexType l, const IndexType r, const F f) const {
-            cerr << PRINT_RED << "titan_cpplib-Error: this method has not been impremented yet.\n";
-            cerr << "Do not use prod2(), use prod()." << PRINT_NONE << endl;
-            assert(false); // NotImeprementedError
-            // if (!node || l >= r || r <= node->l || node->r <= l) return e();
-            // if (l <= node->l && node->r <= r) return mapping(f, node->data);
-            // if ((!node->left) && (!node->right)) return mapping(f, pow(node->key, r - l));
-            // return op(
-            //     mapping(f, inner_prod2(node->left, l, min(r, node->mid()), composition(f, node->lazy))),
-            //     mapping(f, inner_prod2(node->right, max(l, node->mid()), r, composition(f, node->lazy)))
-            // );
+            // cerr << PRINT_RED << "titan_cpplib-Error: this method has not been impremented yet.\n";
+            // cerr << "Do not use prod2(), use prod()." << PRINT_NONE << endl;
+            // assert(false); // NotImeprementedError
+            if (!node || l >= r || r <= node->l || node->r <= l) return mapping(f, e());
+            if (l <= node->l && node->r <= r) return mapping(f, node->data);
+            if ((!node->left) && (!node->right)) return mapping(f, pow(node->key, r - l));
+            return op(
+                inner_prod2(node->left, l, min(r, node->mid()), composition(f, node->lazy)),
+                inner_prod2(node->right, max(l, node->mid()), r, composition(f, node->lazy))
+            );
         }
 
         void inner_apply(NodePtr node, IndexType l, IndexType r, F f) {
