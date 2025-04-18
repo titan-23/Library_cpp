@@ -27,12 +27,12 @@ struct Action {
 
     Action() {}
     Action(const char d) : d(d), pre_score(INF), nxt_score(INF), pre_hash(0), nxt_hash(0) {}
-};
 
-ostream& operator<<(ostream& os, const Action &action) {
-    os << action.d;
-    return os;
-}
+    friend ostream& operator<<(ostream& os, const Action &action) {
+        os << action.d;
+        return os;
+    }
+};
 
 class State {
 private:

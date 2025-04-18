@@ -1,4 +1,6 @@
+#include <iostream>
 #include <vector>
+#include <cassert>
 #include <algorithm>
 
 #include "titan_cpplib/others/print.cpp"
@@ -6,6 +8,7 @@
 #include "titan_cpplib/ahc/state_pool.cpp"
 #include "titan_cpplib/ahc/timer.cpp"
 #include "titan_cpplib/data_structures/hash_set.cpp"
+
 using namespace std;
 
 //! 木上のビームサーチライブラリ
@@ -13,59 +16,81 @@ namespace beam_search_with_tree {
 
 using ScoreType = long long;
 using HashType = unsigned long long;
+const ScoreType INF = 1e18;
 
 struct Action {
+    char d;
+    ScoreType pre_score, nxt_score;
+    HashType pre_hash, nxt_hash;
+
     Action() {}
+    Action(const char d) : d(d), pre_score(INF), nxt_score(INF), pre_hash(0), nxt_hash(0) {}
 
     friend ostream& operator<<(ostream& os, const Action &action) {
+        os << action.d;
         return os;
     }
 };
 
 class State {
-  private:
+private:
     titan23::Random srand;
     ScoreType score;
     HashType hash;
 
-  public:
+public:
     // TODO Stateを初期化する
     void init() {
         this->score = 0;
+        this->hash = 0;
     }
 
     // TODO
     //! `action` をしたときの評価値とハッシュ値を返す
     //! ロールバックに必要な情報はすべてactionにメモしておく
     pair<ScoreType, HashType> try_op(Action &action) const {
+        action.pre_score = score;
+        action.pre_hash = hash;
+        ScoreType nxt_score = score;
+        HashType nxt_hash = hash;
+
+        // TODO
+
+        action.nxt_score = nxt_score;
+        action.nxt_hash = nxt_hash;
+        return {nxt_score, nxt_hash};
     }
 
     // TODO
     //! `action` をする
     void apply_op(const Action &action) {
+        // TODO
+        score = action.nxt_score;
+        hash = action.nxt_hash;
     }
 
     // TODO
     //! `action` を戻す
     void rollback(const Action &action) {
+        // TODO
+        score = action.pre_score;
+        hash = action.pre_hash;        
     }
 
     // TODO
     //! 現状態から遷移可能な `Action` の `vector` を返す
     vector<Action> get_actions() const {
-    }
-
-    ScoreType get_score() {
-        return this->score;
+        vector<Action> actions;
+        return actions;
     }
 
     void print() const {
     }
 };
 
+
 struct BeamParam {
-    int MAX_TURN;
-    int BEAM_WIDTH;
+    int MAX_TURN, BEAM_WIDTH;
 };
 
 using TreeNodeID = int;
@@ -100,7 +125,9 @@ titan23::StatePool<SubState> substate_pool;
 
 
 class BeamSearchWithTree {
-  private:
+private:
+    titan23::Random rnd;
+    titan23::Timer beam_timer;
     ScoreType best_score;
     TreeNodeID best_id;
     titan23::HashSet seen;
@@ -194,7 +221,7 @@ class BeamSearchWithTree {
         return result;
     }
 
-  public:
+public:
     /**
      * @brief ビームサーチをする
      *
@@ -202,7 +229,10 @@ class BeamSearchWithTree {
      * @param verbose 途中結果のスコアを標準エラー出力するかどうか
      * @return vector<Action>
      */
-    vector<Action> search(const BeamParam &param, const bool verbose = false) {
+    vector<Action> search(const BeamParam &param, const bool verbose=false) {
+        beam_timer.reset();
+        if (verbose) cerr << PRINT_GREEN << "Info: start search()" << PRINT_NONE << endl;
+        rnd = titan23::Random();
         TreeNodeID root = treenode_pool.gen();
         treenode_pool.get(root)->child.clear();
         treenode_pool.get(root)->par = -1;
@@ -215,15 +245,16 @@ class BeamSearchWithTree {
         int now_turn = 0;
 
         for (int turn = 0; turn < param.MAX_TURN; ++turn) {
-            if (verbose) cerr << "# turn : " << turn << endl;
+            if (verbose) cerr << "\nInfo: # turn : " << turn+1 << " | " << beam_timer.elapsed() << " ms" << endl;
 
             // 次のビーム候補を求める
             auto [apply_only_turn, next_root, next_beam] = get_next_beam(state, root, turn-now_turn, param.BEAM_WIDTH);
+            rnd.shuffle(next_beam); // シャッフルして多様性を確保(できているのか？)
             root = next_root;
             now_turn += apply_only_turn;
             assert(!next_beam.empty());
             if (verbose) {
-                cerr << "min_score=" << substate_pool.get((*min_element(next_beam.begin(), next_beam.end(), [] (const SubStateID &left, const SubStateID &right) {
+                cerr << "\tmin_score=" << substate_pool.get((*min_element(next_beam.begin(), next_beam.end(), [] (const SubStateID &left, const SubStateID &right) {
                     return substate_pool.get(left)->score < substate_pool.get(right)->score;
                 })))->score << endl;
             }
@@ -248,16 +279,9 @@ class BeamSearchWithTree {
         }
 
         // 答えを復元する
+        if (verbose) cerr << PRINT_GREEN << "Info: MAX_TURN finished." << PRINT_NONE << endl;
         vector<Action> result = get_result(root);
         return result;
     }
 };
 } // namespace beam_search
-
-// int main() {
-//     beam_search_with_tree::BeamParam param;
-//     param.MAX_TURN = 2500;
-//     param.BEAM_WIDTH = 1000;
-//     beam_search_with_tree::BeamSearchWithTree bs;
-//     vector<beam_search_with_tree::Action> ans = bs.search(param, true);
-// }
