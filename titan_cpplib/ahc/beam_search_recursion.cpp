@@ -12,7 +12,7 @@
 using namespace std;
 
 //! 木上のビームサーチライブラリ
-namespace beam_search_with_tree {
+namespace beam_search_rec {
 
 using ScoreType = long long;
 using HashType = unsigned long long;
@@ -284,4 +284,4 @@ public:
         return result;
     }
 };
-} // namespace beam_search
+} // namespace beam_search_rec
