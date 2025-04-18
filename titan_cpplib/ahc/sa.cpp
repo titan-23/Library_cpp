@@ -1,5 +1,6 @@
 #include <vector>
 #include <cmath>
+
 #include "titan_cpplib/ahc/timer.cpp"
 #include "titan_cpplib/algorithm/random.cpp"
 #include "titan_cpplib/others/print.cpp"
@@ -7,8 +8,6 @@
 using namespace std;
 
 // sa 最小化
-namespace titan23 {
-
 namespace sa {
 
 struct Param {
@@ -28,12 +27,16 @@ struct Changed {
 Changed changed;
 
 class State {
-    public:
+public:
+    bool is_valid;
     ScoreType score;
     State() {}
 
-    void init() {}
+    void init() {
+        score = 0;
+    }
 
+    void reset_is_valid() { is_valid = true; }
     ScoreType get_score() const { return score; }
     ScoreType get_true_score() const { return score; }
 
@@ -74,9 +77,10 @@ State sa_run(const double TIME_LIMIT, const bool verbose = false) {
         ++cnt;
         ScoreType threshold = score - (START_TEMP-TEMP_VAL*now_time) * log(sa_random.random());
         changed.pre_score = ans.score;
+        ans.reset_is_valid();
         ans.modify(threshold);
         ScoreType new_score = ans.get_score();
-        if (new_score <= threshold) {
+        if (ans.is_valid && new_score <= threshold) {
             ++upd_cnt;
             ans.advance();
             score = new_score;
@@ -101,5 +105,4 @@ State sa_run(const double TIME_LIMIT, const bool verbose = false) {
     }
     return best_ans;
 }
-}
-}  // namespace titan23
+} // namespace sa
