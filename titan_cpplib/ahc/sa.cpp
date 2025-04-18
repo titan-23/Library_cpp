@@ -37,7 +37,7 @@ class State {
     ScoreType get_score() const { return score; }
     ScoreType get_true_score() const { return score; }
 
-    // thresholdを超えたら、だめ
+    // thresholdを超えたらダメ(同じなら遷移する)
     void modify(const ScoreType threshold) {}
 
     void rollback() {}
@@ -94,6 +94,7 @@ State sa_run(const double TIME_LIMIT, const bool verbose = false) {
         }
     }
     if (verbose) {
+        cerr << "Info: best_score = " << best_score << endl;
         cerr << "Info: bst=" << bst_cnt << endl;
         cerr << "Info: upd=" << upd_cnt << endl;
         cerr << "Info: cnt=" << cnt << endl;
