@@ -10,7 +10,7 @@ using namespace std;
 namespace titan23 {
 
     class OfflineDynamicConnectivity {
-      private:
+      public:
         int _n, _query_count, _size, _q;
         long long _bit, _msk;
         unordered_map<long long, pair<int, int>> start;
