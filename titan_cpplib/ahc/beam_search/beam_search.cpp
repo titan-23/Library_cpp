@@ -12,7 +12,7 @@
 using namespace std;
 
 //! 木上のビームサーチライブラリ
-namespace flysquirrel { // flying squirrel over trees
+namespace flying_squirrel { // flying squirrel over trees
 
 
 struct BeamParam {
@@ -247,4 +247,4 @@ public:
         return result;
     }
 };
-} // namespace beam_search
+} // namespace flying_squirrel

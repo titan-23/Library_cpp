@@ -5,7 +5,7 @@
 
 #include "titan_cpplib/algorithm/random.cpp"
 #include "titan_cpplib/others/print.cpp"
-#include "titan_cpplib/ahc/beam_search.cpp"
+#include "titan_cpplib/ahc/beam_search/beam_search.cpp"
 
 using namespace std;
 
@@ -16,7 +16,7 @@ using ScoreType = long long;
 using HashType = unsigned long long;
 const ScoreType INF = 1e18;
 
-// Action
+// TODO Action
 // メモリ量は少ない方がよく、score,hash のメモは無くしたい
 struct Action {
     char d;
@@ -88,12 +88,13 @@ public:
     }
 };
 
-struct BeamParam {
-    int MAX_TURN, BEAM_WIDTH;
-};
+flying_squirrel::BeamSearchWithTree<ScoreType, HashType, Action, State> bs;
 
-vector<Action> search(const BeamParam &param, const bool verbose=false) {
-    flysquirrel::BeamSearchWithTree<ScoreType, HashType, Action, State> bs;
+flying_squirrel::BeamParam gen_param(int max_turn, int beam_width) {
+    return {max_turn, beam_width};
+}
+
+vector<Action> search(const flying_squirrel::BeamParam &param, const bool verbose=false) {
     return bs.search(param, verbose);
 }
 } // namespace beam_search
