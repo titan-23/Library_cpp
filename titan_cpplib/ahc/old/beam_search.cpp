@@ -1,3 +1,5 @@
+// Stateとsearchの一体化
+
 #include <iostream>
 #include <vector>
 #include <cassert>
@@ -14,13 +16,87 @@ using namespace std;
 //! 木上のビームサーチライブラリ
 namespace flysquirrel { // flying squirrel over trees
 
+using ScoreType = long long;
+using HashType = unsigned long long;
+const ScoreType INF = 1e18;
+
+// Action
+// メモリ量は少ない方がよく、score,hash のメモは無くしたい
+struct Action {
+    char d;
+    ScoreType pre_score, nxt_score;
+    HashType pre_hash, nxt_hash;
+
+    Action() {}
+    Action(const char d) : d(d), pre_score(INF), nxt_score(INF), pre_hash(0), nxt_hash(0) {}
+
+    friend ostream& operator<<(ostream& os, const Action &action) {
+        os << action.d;
+        return os;
+    }
+};
+
+class State {
+private:
+    titan23::Random srand;
+    ScoreType score;
+    HashType hash;
+
+public:
+    // TODO Stateを初期化する
+    void init() {
+        this->score = 0;
+        this->hash = 0;
+    }
+
+    // TODO
+    //! `action` をしたときの評価値とハッシュ値を返す
+    //! ロールバックに必要な情報はすべてactionにメモしておく
+    pair<ScoreType, HashType> try_op(Action &action) const {
+        action.pre_score = score;
+        action.pre_hash = hash;
+        ScoreType nxt_score = score;
+        HashType nxt_hash = hash;
+
+        // TODO
+
+        action.nxt_score = nxt_score;
+        action.nxt_hash = nxt_hash;
+        return {nxt_score, nxt_hash};
+    }
+
+    // TODO
+    //! `action` をする
+    void apply_op(const Action &action) {
+        // TODO
+        score = action.nxt_score;
+        hash = action.nxt_hash;
+    }
+
+    // TODO
+    //! `action` を戻す
+    void rollback(const Action &action) {
+        // TODO
+        score = action.pre_score;
+        hash = action.pre_hash;
+    }
+
+    // TODO
+    //! 現状態から遷移可能な `Action` の `vector` を返す
+    vector<Action> get_actions() const {
+        vector<Action> actions;
+        return actions;
+    }
+
+    void print() const {
+    }
+};
+
 
 struct BeamParam {
     int MAX_TURN, BEAM_WIDTH;
 };
 
-
-template<typename ScoreType, typename HashType, typename Action, typename State>
 class BeamSearchWithTree {
     // ref: https://eijirou-kyopro.hatenablog.com/entry/2024/02/01/115639
 
@@ -47,7 +123,7 @@ private:
 
     void get_next_beam(State* state, const int turn) {
         next_beam.clear();
-        // next_beam.reserve(tree.size()); // TODO
+        next_beam.reserve(tree.size()); // TODO
         seen.clear();
 
         if (turn == 0) {
@@ -93,7 +169,7 @@ private:
         vector<tuple<int, Action, ActionIDType>> new_tree;
         new_tree.reserve(tree.size());
         if (turn == 0) {
-            for (const auto &[par, _, __, new_action, action_id] : next_beam) {
+            for (auto &[par, _, __, new_action, action_id] : next_beam) {
                 assert(par == -1);
                 new_tree.emplace_back(0, new_action, action_id);
             }
@@ -123,7 +199,7 @@ private:
                 if (next_beam_data[dir_or_leaf_id].empty()) continue;
                 new_tree.emplace_back(PRE_ORDER, action, action_id);
                 for (const int beam_idx : next_beam_data[dir_or_leaf_id]) {
-                    const auto &[_, __, ___, new_action, new_action_id] = next_beam[beam_idx];
+                    auto &[_, __, ___, new_action, new_action_id] = next_beam[beam_idx];
                     new_tree.emplace_back(dir_or_leaf_id, new_action, new_action_id);
                 }
                 new_tree.emplace_back(POST_ORDER, action, action_id);
@@ -146,7 +222,7 @@ private:
     void get_result() {
         int best_id = -1;
         ScoreType best_score = 0;
-        for (const auto &[par, ch_idx, score, _, __] : next_beam) {
+        for (auto [par, ch_idx, score, _, __] : next_beam) {
             if (best_id == -1 || score < best_score) {
                 best_score = score;
                 best_id = par;
@@ -169,15 +245,8 @@ private:
         assert(false);
     }
 
-    void init_bs(const BeamParam &param) {
-        beam_timer.reset();
-        rnd = titan23::Random();
-        this->seen = titan23::HashSet(param.BEAM_WIDTH); // TODO
-        ActionID = 0;
-        result.clear();
-    }
-
 public:
+
     /**
      * @brief ビームサーチをする
      *
@@ -186,10 +255,14 @@ public:
      * @return vector<Action>
      */
     vector<Action> search(const BeamParam &param, const bool verbose=false) {
-        init_bs(param);
+        beam_timer.reset();
         if (verbose) cerr << PRINT_GREEN << "Info: start search()" << PRINT_NONE << endl;
+        rnd = titan23::Random();
+        ActionID = 0;
         State* state = new State;
         state->init();
+
+        this->seen = titan23::HashSet(param.BEAM_WIDTH); // TODO
 
         int now_turn = 0;
         for (int turn = 0; turn < param.MAX_TURN; ++turn) {
@@ -200,7 +273,7 @@ public:
             rnd.shuffle(next_beam); // シャッフルして多様性を確保(できているのか？)
 
             if (next_beam.empty()) {
-                cerr << to_red("Error: \t次の候補が見つかりませんでした") << endl;
+                cerr << PRINT_RED << "Error: \t次の候補が見つかりませんでした" << PRINT_NONE << endl;
                 assert(!next_beam.empty());
             }
 
@@ -221,7 +294,7 @@ public:
             });
             if (verbose) cerr << "Info: \tbest_score = " << std::get<2>(bests) << endl;
             if (std::get<2>(bests) == 0) { // TODO 終了条件:ベストスコアを元に判定している
-                cerr << to_green("Info: find valid solution.") << endl;
+                cerr << PRINT_GREEN << "Info: find valid solution." << PRINT_NONE << endl;
                 get_result();
                 result.emplace_back(std::get<3>(bests));
                 return result;
@@ -242,7 +315,7 @@ public:
         }
 
         // 答えを復元する
-        if (verbose) cerr << to_green("Info: MAX_TURN finished.") << endl;
+        if (verbose) cerr << PRINT_GREEN << "Info: MAX_TURN finished." << PRINT_NONE << endl;
         get_result();
         return result;
     }
