@@ -33,6 +33,7 @@ private:
     using ActionIDType = int;
     ActionIDType ActionID;
     vector<Action> result;
+    Action DAMMY_ACTION;
 
     // ビームサーチの過程を表す木
     // <dir or id, action, action_id>
@@ -41,17 +42,24 @@ private:
     vector<tuple<int, Action, ActionIDType>> tree;
 
     // 次のビーム候補を保持する配列
-    vector<tuple<int, int, ScoreType, Action, ActionIDType>> next_beam; // <par, ch_dx, score, action, action_id>
+    vector<tuple<int, int, ScoreType, Action, ActionIDType>> next_beam; // <par, ch_idx, score, action, action_id>
 
     vector<vector<int>> next_beam_data;
 
-    void get_next_beam(State* state, const int turn) {
+    /**
+     * @brief 次のビームを求める
+     * 
+     * @param state スタートのState
+     * @param t_turn 次のビームのターン数
+     * @param turn 謎
+     */
+    void get_next_beam(State* state, const int t_turn, const int turn) {
         next_beam.clear();
         // next_beam.reserve(tree.size()); // TODO
         seen.clear();
 
         if (turn == 0) {
-            vector<Action> actions = state->get_actions();
+            vector<Action> actions = state->get_actions(t_turn, (result.empty() ? DAMMY_ACTION : result.back()));
             int idx = 0;
             for (Action &action : actions) {
                 auto [score, hash] = state->try_op(action);
@@ -68,7 +76,7 @@ private:
             auto [dir_or_leaf_id, action, _] = tree[i];
             if (dir_or_leaf_id >= 0) {
                 state->apply_op(action);
-                vector<Action> actions = state->get_actions();
+                vector<Action> actions = state->get_actions(t_turn, action);
                 std::get<0>(tree[i]) = leaf_id;
                 int idx = 0;
                 for (Action &action : actions) {
@@ -196,8 +204,8 @@ public:
             if (verbose) cerr << "\nInfo: # turn : " << turn+1 << " | " << beam_timer.elapsed() << " ms" << endl;
 
             // 次のビーム候補を求める
-            get_next_beam(state, turn-now_turn);
-            rnd.shuffle(next_beam); // シャッフルして多様性を確保(できているのか？)
+            get_next_beam(state, turn, turn-now_turn);
+            rnd.shuffle(next_beam); // シャッフルして多様性を確保(できたらいいな)
 
             if (next_beam.empty()) {
                 cerr << to_red("Error: \t次の候補が見つかりませんでした") << endl;

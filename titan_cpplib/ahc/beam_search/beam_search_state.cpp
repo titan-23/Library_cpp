@@ -79,7 +79,7 @@ public:
 
     // TODO
     //! 現状態から遷移可能な `Action` の `vector` を返す
-    vector<Action> get_actions() const {
+    vector<Action> get_actions(const int turn, const Action &last_action) const {
         vector<Action> actions;
         return actions;
     }
