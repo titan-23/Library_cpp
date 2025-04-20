@@ -10,7 +10,7 @@
 using namespace std;
 
 //! 木上のビームサーチライブラリ
-namespace beam_serach { // flying squirrel over trees
+namespace beam_search { // flying squirrel over trees
 
 using ScoreType = long long;
 using HashType = unsigned long long;
