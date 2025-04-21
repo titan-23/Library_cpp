@@ -16,7 +16,35 @@ namespace flying_squirrel { // flying squirrel over trees
 
 
 struct BeamParam {
-    int MAX_TURN, BEAM_WIDTH;
+    int max_turn, beam_width;
+    double time_limit;
+    bool is_adjusting;
+
+    int pool_size_sum, beam_width_sum, turn_sum;
+    double time_sum;
+
+    BeamParam() : max_turn(-1), beam_width(-1), time_limit(-1), is_adjusting(false), pool_size_sum(0), beam_width_sum(0), turn_sum(0), time_sum(0) {}
+
+    BeamParam(int max_turn, int beam_width, double time_limit, bool is_adjusting=false)
+         : max_turn(max_turn), beam_width(beam_width), time_limit(time_limit), is_adjusting(is_adjusting),
+           pool_size_sum(0), beam_width_sum(0), turn_sum(0), time_sum(0) {}
+
+    void timestamp(int pool_size, int beam_width, double time) {
+        pool_size_sum += pool_size;
+        beam_width_sum += beam_width;
+        time_sum += time;
+        turn_sum++;
+    }
+
+    int get_beam_width(int remain_turn, int now_pool_size, double remain_time, int prev_beam_width) {
+        if (!is_adjusting || turn_sum == 0) {
+            return beam_width;
+        }
+        double can_use_time = (double)remain_time / remain_turn;
+        double pred_one_time = (double)time_sum / beam_width_sum;
+        int pred_width = max(1.0, can_use_time / pred_one_time);
+        return (pred_width + prev_beam_width) / 2;
+    }
 };
 
 
@@ -48,7 +76,7 @@ private:
 
     /**
      * @brief 次のビームを求める
-     * 
+     *
      * @param state スタートのState
      * @param t_turn 次のビームのターン数
      * @param turn 謎
@@ -180,7 +208,7 @@ private:
     void init_bs(const BeamParam &param) {
         beam_timer.reset();
         rnd = titan23::Random();
-        this->seen = titan23::HashSet(param.BEAM_WIDTH); // TODO
+        this->seen = titan23::HashSet(param.beam_width); // TODO
         ActionID = 0;
         result.clear();
     }
@@ -193,15 +221,18 @@ public:
      * @param verbose ログ出力するかどうか
      * @return vector<Action>
      */
-    vector<Action> search(const BeamParam &param, const bool verbose=false) {
+    vector<Action> search(BeamParam &param, const bool verbose=false) {
         init_bs(param);
         if (verbose) cerr << PRINT_GREEN << "Info: start search()" << PRINT_NONE << endl;
         State* state = new State;
         state->init();
 
         int now_turn = 0;
-        for (int turn = 0; turn < param.MAX_TURN; ++turn) {
-            if (verbose) cerr << "\nInfo: # turn : " << turn+1 << " | " << beam_timer.elapsed() << " ms" << endl;
+        int prev_beam_width = 0;
+        for (int turn = 0; turn < param.max_turn; ++turn) {
+            double now_time = beam_timer.elapsed();
+            if (verbose) cerr << "\nInfo: # turn : " << turn+1 << " | " << now_time << " ms" << endl;
+            // cerr << "\nInfo: # turn : " << turn+1 << " | " << now_time << " ms" << endl;
 
             // 次のビーム候補を求める
             get_next_beam(state, turn, turn-now_turn);
@@ -213,8 +244,14 @@ public:
             }
 
             // ビームを絞る
-            int beam_width = min(param.BEAM_WIDTH, (int)next_beam.size());
-            assert(beam_width <= param.BEAM_WIDTH);
+            // int beam_width = min(param.beam_width, (int)next_beam.size());
+            // cerr << "next_beam.size()=" << next_beam.size() << endl;
+            int beam_width = min(param.get_beam_width(param.max_turn-turn, tree.size(), param.time_limit-beam_timer.elapsed(), prev_beam_width), (int)next_beam.size());
+            // cerr << "beam_width=" << beam_width << " " << tree.size() << endl;
+            // cout << beam_width << " " << next_beam.size() << endl;
+            prev_beam_width = beam_width;
+
+            // assert(beam_width <= param.beam_width);
 
             nth_element(next_beam.begin(), next_beam.begin() + beam_width, next_beam.end(), [&] (const tuple<int, int, ScoreType, Action, ActionIDType> &left, const tuple<int, int, ScoreType, Action, ActionIDType> &right) {
                 if (std::get<2>(left) == std::get<2>(right)) {
@@ -247,10 +284,12 @@ public:
             }
             int apply_only_turn = update_tree(state, turn);
             now_turn += apply_only_turn;
+
+            param.timestamp(tree.size(), beam_width, beam_timer.elapsed()-now_time);
         }
 
         // 答えを復元する
-        if (verbose) cerr << to_green("Info: MAX_TURN finished.") << endl;
+        if (verbose) cerr << to_green("Info: max_turn finished.") << endl;
         get_result();
         return result;
     }

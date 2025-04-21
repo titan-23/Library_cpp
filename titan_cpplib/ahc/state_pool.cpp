@@ -14,7 +14,7 @@ namespace titan23 {
     class StatePool {
       private:
         vector<T*> pool;
-        stack<int> unused_indx;
+        stack<int> unused_idx;
 
       public:
         StatePool() {}
@@ -22,9 +22,9 @@ namespace titan23 {
 
         //! clear
         void clear() {
-            while (!unused_indx.empty()) unused_indx.pop();
+            while (!unused_idx.empty()) unused_idx.pop();
             for (int i = (int)pool.size()-1; i >= 0; --i) {
-                unused_indx.emplace(i);
+                unused_idx.emplace(i);
             }
         }
 
@@ -33,7 +33,7 @@ namespace titan23 {
             for (int i = 0; i < n; ++i) {
                 T* state = new T;
                 pool.emplace_back(state);
-                unused_indx.emplace(i);
+                unused_idx.emplace(i);
             }
         }
 
@@ -46,19 +46,19 @@ namespace titan23 {
         //! idに対応するTを仮想的に削除する。
         void del(int id) {
             assert(0 <= id && id < pool.size());
-            unused_indx.emplace(id);
+            unused_idx.emplace(id);
         }
 
         //! T を作成し、それに対応する id を返す。
         int gen() {
             int state_id;
-            if (unused_indx.empty()) {
+            if (unused_idx.empty()) {
                 T* state = new T;
                 state_id = pool.size();
                 pool.emplace_back(state);
             } else {
-                state_id = unused_indx.top();
-                unused_indx.pop();
+                state_id = unused_idx.top();
+                unused_idx.pop();
             }
             return state_id;
         }
@@ -69,6 +69,10 @@ namespace titan23 {
             int new_id = gen();
             pool[id]->copy(pool[new_id]);
             return new_id;
+        }
+
+        int used_size() const {
+            return (int)pool.size() - (int)unused_idx.size();
         }
 
         //! 内部サイズを呼び出す
