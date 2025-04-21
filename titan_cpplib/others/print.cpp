@@ -15,6 +15,7 @@ static const string PRINT_RED = "\033[91m"; // 赤字
 static const string PRINT_GREEN = "\033[92m"; // 緑字
 static const string PRINT_BLUE = "\033[94m";  // 青字
 static const string PRINT_NONE = "\033[m"; // 色を元に戻す
+static const string PRINT_BOLD = "\u001b[1m"; // 太字
 
 string to_red(const string &s) {
     return PRINT_RED + s + PRINT_NONE;
@@ -26,6 +27,10 @@ string to_green(const string &s) {
 
 string to_blue(const string &s) {
     return PRINT_BLUE + s + PRINT_NONE;
+}
+
+string to_bold(const string &s) {
+    return PRINT_BOLD + s + PRINT_NONE;
 }
 
 string spacefill(const string s, const int f) {
