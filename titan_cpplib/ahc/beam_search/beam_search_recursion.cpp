@@ -8,133 +8,59 @@
 #include "titan_cpplib/ahc/state_pool.cpp"
 #include "titan_cpplib/ahc/timer.cpp"
 #include "titan_cpplib/data_structures/hash_set.cpp"
+#include "titan_cpplib/ahc/beam_search/beam_param.cpp"
 
 using namespace std;
 
 //! 木上のビームサーチライブラリ
-namespace beam_search_rec {
+namespace flying_squirrel_recursion {
 
-using ScoreType = long long;
-using HashType = unsigned long long;
-const ScoreType INF = 1e18;
+using BeamParam = flying_squirrel::BeamParam;
 
-struct Action {
-    char d;
-    ScoreType pre_score, nxt_score;
-    HashType pre_hash, nxt_hash;
-
-    Action() {}
-    Action(const char d) : d(d), pre_score(INF), nxt_score(INF), pre_hash(0), nxt_hash(0) {}
-
-    friend ostream& operator<<(ostream& os, const Action &action) {
-        os << action.d;
-        return os;
-    }
-};
-
-class State {
-private:
-    titan23::Random srand;
-    ScoreType score;
-    HashType hash;
-
-public:
-    // TODO Stateを初期化する
-    void init() {
-        this->score = 0;
-        this->hash = 0;
-    }
-
-    // TODO
-    //! `action` をしたときの評価値とハッシュ値を返す
-    //! ロールバックに必要な情報はすべてactionにメモしておく
-    pair<ScoreType, HashType> try_op(Action &action) const {
-        action.pre_score = score;
-        action.pre_hash = hash;
-        ScoreType nxt_score = score;
-        HashType nxt_hash = hash;
-
-        // TODO
-
-        action.nxt_score = nxt_score;
-        action.nxt_hash = nxt_hash;
-        return {nxt_score, nxt_hash};
-    }
-
-    // TODO
-    //! `action` をする
-    void apply_op(const Action &action) {
-        // TODO
-        score = action.nxt_score;
-        hash = action.nxt_hash;
-    }
-
-    // TODO
-    //! `action` を戻す
-    void rollback(const Action &action) {
-        // TODO
-        score = action.pre_score;
-        hash = action.pre_hash;        
-    }
-
-    // TODO
-    //! 現状態から遷移可能な `Action` の `vector` を返す
-    vector<Action> get_actions() const {
-        vector<Action> actions;
-        return actions;
-    }
-
-    void print() const {
-    }
-};
-
-
-struct BeamParam {
-    int MAX_TURN, BEAM_WIDTH;
-};
-
-using TreeNodeID = int;
-using SubStateID = int;
-
-//! try_opした結果をメモしておく構造体
-struct SubState {
-    TreeNodeID par;
-    Action action;
-    ScoreType score;
-
-    SubState() : par(-1) {}
-    SubState(TreeNodeID par, const Action &action, ScoreType score) : par(par), action(action), score(score) {}
-};
-
-//! ビームサーチの過程を表す木のノード
-struct TreeNode {
-    TreeNodeID par;
-    Action pre_action;
-    ScoreType score;
-    vector<TreeNodeID> child;
-
-    TreeNode() : par(-1) {}
-
-    bool is_leaf() const {
-        return child.empty();
-    }
-};
-
-titan23::StatePool<TreeNode> treenode_pool;
-titan23::StatePool<SubState> substate_pool;
-
-
+template<typename ScoreType, typename HashType, typename Action, typename State>
 class BeamSearchWithTree {
 private:
+    using TreeNodeID = int;
+    using SubStateID = int;
+
+    //! try_opした結果をメモしておく構造体
+    struct SubState {
+        TreeNodeID par;
+        Action action;
+        ScoreType score;
+
+        SubState() : par(-1) {}
+        SubState(TreeNodeID par, const Action &action, ScoreType score) : par(par), action(action), score(score) {}
+    };
+
+    //! ビームサーチの過程を表す木のノード
+    struct TreeNode {
+        TreeNodeID par;
+        Action pre_action;
+        ScoreType score;
+        vector<TreeNodeID> child;
+
+        TreeNode() : par(-1) {}
+
+        bool is_leaf() const {
+            return child.empty();
+        }
+    };
+
+    titan23::StatePool<TreeNode> treenode_pool;
+    titan23::StatePool<SubState> substate_pool;
+
     titan23::Random rnd;
     titan23::Timer beam_timer;
     ScoreType best_score;
     TreeNodeID best_id;
     titan23::HashSet seen;
+    int now_turn;
+    Action DAMMY_ACTION;
 
-    void get_next_beam_recursion(State* state, TreeNodeID node, vector<SubStateID> &next_beam, int depth, const int beam_width) {
+    void get_next_beam_recursion(State* state, TreeNodeID node, vector<SubStateID> &next_beam, const Action &last_action, int depth) {
         if (depth == 0) { // 葉
-            vector<Action> actions = state->get_actions();
+            vector<Action> actions = state->get_actions(now_turn, last_action);
             for (Action &action : actions) {
                 auto [score, hash] = state->try_op(action);
                 if (seen.contains_insert(hash)) continue;
@@ -147,23 +73,26 @@ private:
             return;
         }
         for (const TreeNodeID nxt_node : treenode_pool.get(node)->child) {
-            state->apply_op(treenode_pool.get(nxt_node)->pre_action);
-            get_next_beam_recursion(state, nxt_node, next_beam, depth-1, beam_width);
-            state->rollback(treenode_pool.get(nxt_node)->pre_action);
+            const Action &action = treenode_pool.get(nxt_node)->pre_action;
+            state->apply_op(action);
+            get_next_beam_recursion(state, nxt_node, next_beam, action, depth-1);
+            state->rollback(action);
         }
     }
 
-    tuple<int, TreeNodeID, vector<SubStateID>> get_next_beam(State* state, TreeNodeID node, int turn, const int beam_width) {
+    tuple<int, TreeNodeID, vector<SubStateID>> get_next_beam(State* state, TreeNodeID node, int turn) {
         int cnt = 0;
+        Action action = DAMMY_ACTION;
         while (true) { // 一本道は行くだけ
             if (treenode_pool.get(node)->child.size() != 1) break;
             ++cnt;
             node = treenode_pool.get(node)->child[0];
+            action = treenode_pool.get(node)->pre_action;
             state->apply_op(treenode_pool.get(node)->pre_action);
         }
         vector<SubStateID> next_beam;
         seen.clear();
-        get_next_beam_recursion(state, node, next_beam, turn-cnt, beam_width);
+        get_next_beam_recursion(state, node, next_beam, action, turn-cnt);
         return make_tuple(cnt, node, next_beam);
     }
 
@@ -221,6 +150,15 @@ private:
         return result;
     }
 
+    void init_bs(const BeamParam &param) {
+        now_turn = 0;
+        beam_timer.reset();
+        rnd = titan23::Random();
+        this->seen = titan23::HashSet(param.beam_width); // TODO
+        treenode_pool.clear();
+        substate_pool.clear();
+    }
+
 public:
     /**
      * @brief ビームサーチをする
@@ -229,10 +167,9 @@ public:
      * @param verbose 途中結果のスコアを標準エラー出力するかどうか
      * @return vector<Action>
      */
-    vector<Action> search(const BeamParam &param, const bool verbose=false) {
-        beam_timer.reset();
+    vector<Action> search(BeamParam &param, const bool verbose=false) {
         if (verbose) cerr << PRINT_GREEN << "Info: start search()" << PRINT_NONE << endl;
-        rnd = titan23::Random();
+        init_bs(param);
         TreeNodeID root = treenode_pool.gen();
         treenode_pool.get(root)->child.clear();
         treenode_pool.get(root)->par = -1;
@@ -240,27 +177,28 @@ public:
         State* state = new State;
         state->init();
 
-        this->seen = titan23::HashSet(param.BEAM_WIDTH * 4); // TODO
-
         int now_turn = 0;
 
-        for (int turn = 0; turn < param.MAX_TURN; ++turn) {
-            if (verbose) cerr << "\nInfo: # turn : " << turn+1 << " | " << beam_timer.elapsed() << " ms" << endl;
+        for (int turn = 0; turn < param.max_turn; ++turn) {
+            now_turn = turn;
+            double now_time = beam_timer.elapsed();
+            if (verbose) cerr << "\nInfo: # turn : " << turn+1 << " | " << now_time << " ms" << endl;
 
             // 次のビーム候補を求める
-            auto [apply_only_turn, next_root, next_beam] = get_next_beam(state, root, turn-now_turn, param.BEAM_WIDTH);
+            auto [apply_only_turn, next_root, next_beam] = get_next_beam(state, root, turn-now_turn);
             rnd.shuffle(next_beam); // シャッフルして多様性を確保(できているのか？)
             root = next_root;
             now_turn += apply_only_turn;
             assert(!next_beam.empty());
             if (verbose) {
-                cerr << "\tmin_score=" << substate_pool.get((*min_element(next_beam.begin(), next_beam.end(), [] (const SubStateID &left, const SubStateID &right) {
+                cerr << "\tmin_score=" << substate_pool.get((*min_element(next_beam.begin(), next_beam.end(), [this] (const SubStateID &left, const SubStateID &right) {
                     return substate_pool.get(left)->score < substate_pool.get(right)->score;
                 })))->score << endl;
             }
 
             // ビームを絞る
-            int beam_width = min(param.BEAM_WIDTH, (int)next_beam.size());
+            // int beam_width = min(param.beam_width, (int)next_beam.size());
+            int beam_width = min(param.get_beam_width(param.max_turn-turn, treenode_pool.used_size(), param.time_limit-beam_timer.elapsed()), (int)next_beam.size());
             nth_element(next_beam.begin(), next_beam.begin() + beam_width, next_beam.end(), [&] (const SubStateID &left, const SubStateID &right) {
                 return substate_pool.get(left)->score < substate_pool.get(right)->score;
             });
@@ -276,6 +214,8 @@ public:
             }
             substate_pool.clear();
             update_tree(root, turn-now_turn+1);
+
+            param.timestamp(treenode_pool.used_size(), beam_width, beam_timer.elapsed()-now_time);
         }
 
         // 答えを復元する
@@ -284,4 +224,4 @@ public:
         return result;
     }
 };
-} // namespace beam_search_rec
+} // namespace flying_squirrel_recursion
