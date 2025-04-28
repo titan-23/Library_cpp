@@ -52,7 +52,7 @@ struct BeamParam {
     }
 
     int get_beam_width(int remain_turn, int now_pool_size, double remain_time) {
-        return beam_width;
+        // return beam_width;
         if (!is_adjusting || turn_sum <= 10) {
             return beam_width;
         }

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <vector>
 #include <cassert>
@@ -13,7 +15,7 @@
 using namespace std;
 
 //! 木上のビームサーチライブラリ
-namespace flying_squirrel { // flying squirrel over trees
+namespace flying_squirrel {
 
 template<typename ScoreType, typename HashType, typename Action, typename State>
 class BeamSearchWithTree {
@@ -155,7 +157,21 @@ private:
                 best_id = par;
             }
         }
-        assert(best_id != -1);
+        if (best_id == -1) {
+            int best_ch_idx = -1;
+            Action best_action;
+            ScoreType best_score = 0;
+            for (const auto &[_, ch_idx, score, action, __] : next_beam) {
+                if (best_ch_idx == -1 || score < best_score) {
+                    best_score = score;
+                    best_ch_idx = ch_idx;
+                    best_action = action;
+                }
+            }
+            assert(best_ch_idx != -1);
+            result.emplace_back(best_action);
+            return;
+        }
         for (const auto &[dir_or_leaf_id, action, _] : tree) {
             if (dir_or_leaf_id >= 0) {
                 if (best_id == dir_or_leaf_id) {
@@ -230,6 +246,7 @@ public:
                 cerr << to_green("Info: find valid solution.") << endl;
                 get_result();
                 result.emplace_back(std::get<3>(bests));
+                if (verbose) param.report();
                 return result;
             }
 
