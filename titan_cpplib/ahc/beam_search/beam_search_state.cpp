@@ -10,7 +10,7 @@
 using namespace std;
 
 //! 木上のビームサーチライブラリ
-namespace beam_search { // flying squirrel over trees
+namespace beam_search {
 
 using ScoreType = long long;
 using HashType = unsigned long long;
@@ -91,10 +91,14 @@ public:
 flying_squirrel::BeamSearchWithTree<ScoreType, HashType, Action, State> bs;
 
 flying_squirrel::BeamParam gen_param(int max_turn, int beam_width) {
-    return {max_turn, beam_width};
+    return {max_turn, beam_width, -1};
 }
 
-vector<Action> search(const flying_squirrel::BeamParam &param, const bool verbose=false) {
+flying_squirrel::BeamParam gen_param(int max_turn, int beam_width, double time_limit, bool is_adjusting) {
+    return {max_turn, beam_width, time_limit, is_adjusting};
+}
+
+vector<Action> search(flying_squirrel::BeamParam &param, const bool verbose=false) {
     return bs.search(param, verbose);
 }
 } // namespace beam_search
