@@ -113,6 +113,22 @@ ostream& operator<<(ostream& os, const set<T>& s) {
     return os;
 }
 
+// multiset<T>
+template <typename T>
+ostream& operator<<(ostream& os, const multiset<T>& s) {
+    os << "{";
+    auto it = s.begin();
+    while (it != s.end()) {
+        os << *it;
+        ++it;
+        if (it != s.end()) {
+            os << ", ";
+        }
+    }
+    os << "}";
+    return os;
+}
+
 // unordered_set<T>
 template <typename T>
 ostream& operator<<(ostream& os, const unordered_set<T>& a) {
