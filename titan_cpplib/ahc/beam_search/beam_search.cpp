@@ -70,7 +70,7 @@ private:
 
         int leaf_id = 0;
         for (int i = 0; i < tree.size(); ++i) {
-            auto [dir_or_leaf_id, action, _] = tree[i];
+            auto &[dir_or_leaf_id, action, _] = tree[i];
             if (dir_or_leaf_id >= 0) {
                 state->apply_op(action);
                 vector<Action> actions = state->get_actions(t_turn, action);
@@ -123,24 +123,24 @@ private:
         }
 
         for (; i < tree.size(); ++i) {
-            const auto &[dir_or_leaf_id, action, action_id] = tree[i];
+            auto &[dir_or_leaf_id, action, action_id] = tree[i];
             if (dir_or_leaf_id >= 0) {
                 if (next_beam_data[dir_or_leaf_id].empty()) continue;
                 new_tree.emplace_back(PRE_ORDER, action, action_id);
-                for (const int beam_idx : next_beam_data[dir_or_leaf_id]) {
-                    const auto &[_, __, ___, new_action, new_action_id] = next_beam[beam_idx];
-                    new_tree.emplace_back(dir_or_leaf_id, new_action, new_action_id);
+                for (int beam_idx : next_beam_data[dir_or_leaf_id]) {
+                    auto &[_, __, ___, new_action, new_action_id] = next_beam[beam_idx];
+                    new_tree.emplace_back(dir_or_leaf_id, std::move(new_action), new_action_id);
                 }
                 new_tree.emplace_back(POST_ORDER, action, action_id);
                 next_beam_data[dir_or_leaf_id].clear();
             } else if (dir_or_leaf_id == PRE_ORDER) {
-                new_tree.emplace_back(PRE_ORDER, action, action_id);
+                new_tree.emplace_back(PRE_ORDER, std::move(action), action_id);
             } else {
                 int pre_dir = std::get<0>(new_tree.back());
                 if (pre_dir == PRE_ORDER) {
                     new_tree.pop_back(); // 一つ前が行きがけなら、削除して追加しない
                 } else {
-                    new_tree.emplace_back(POST_ORDER, action, action_id);
+                    new_tree.emplace_back(POST_ORDER, std::move(action), action_id);
                 }
             }
         }
