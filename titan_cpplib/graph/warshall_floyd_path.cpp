@@ -1,11 +1,11 @@
 #include <vector>
 using namespace std;
 
-// warshall_floyd_path
+// WarshallFloydPath
 namespace titan23 {
 
 template<typename T>
-class warshall_floyd_path {
+class WarshallFloydPath {
   private:
     int n;
     T INF;
@@ -13,10 +13,10 @@ class warshall_floyd_path {
     vector<T> dist;
 
   public:
-    warshall_floyd_path() {}
+    WarshallFloydPath() {}
 
     // 時間 O(|V|^3), 空間 O(|V|^2)
-    warshall_floyd_path(const vector<vector<pair<int, T>>> &G, const T INF) :
+    WarshallFloydPath(const vector<vector<pair<int, T>>> &G, const T INF) :
             n(G.size()), INF(INF), nxt(n*n), dist(n*n, INF) {
         for (int v = 0; v < n; ++v) {
             for (int x = 0; x < n; ++x) {
@@ -34,8 +34,8 @@ class warshall_floyd_path {
                 for (int j = 0; j < n; ++j) {
                     if (dist[k*n+j] == INF) continue;
                     if (dist[i*n+j] > dik + dist[k*n+j]) {
-                    dist[i*n+j] = dik + dist[k*n+j];
-                    nxt[i*n+j] = nxt[i*n+k];
+                        dist[i*n+j] = dik + dist[k*n+j];
+                        nxt[i*n+j] = nxt[i*n+k];
                     }
                 }
             }
