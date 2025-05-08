@@ -251,6 +251,7 @@ class MultisetSum {
 
     //! [l, r)の和
     T sum(int l, int r) {
+        assert(0 <= l && l <= r && r <= len());
         NodePtr a, b, c;
         tie(b, c) = split_node_kth(this->root, r);
         tie(a, b) = split_node_kth(b, l);
@@ -374,17 +375,18 @@ class MultisetSum {
         dfs(dfs, this->root, nullptr);
     }
 
-    void print() const {
-        vector<T> a = tovector();
+    friend ostream& operator<<(ostream& os, const MultisetSum &S) {
+        vector<T> a = S.tovector();
         int n = a.size();
-        cout << "[";
+        os << "{";
         for (int i = 0; i < n-1; ++i) {
-            cout << a[i] << ", ";
+            os << a[i] << ", ";
         }
         if (n-1 >= 0) {
-            cout << a[n-1];
+            os << a[n-1];
         }
-        cout << "]" << endl;
+        os << "}";
+        return os;
     }
 };
 }
