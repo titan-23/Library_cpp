@@ -11,35 +11,34 @@ namespace titan23 {
 
 template<typename T>
 class AVLTreeSet {
-    public:
+public:
     class AVLTreeSetNode {
-        public:
+    public:
         using AVLTreeSetNodePtr = AVLTreeSetNode*;
         T key;
-        int size, height;
+        int size;
+        char height;
         AVLTreeSetNodePtr par, left, right;
 
         AVLTreeSetNode() : size(0), height(0), par(nullptr), left(nullptr), right(nullptr) {}
         AVLTreeSetNode(const T &key) : key(key), size(1), height(1), par(nullptr), left(nullptr), right(nullptr) {}
 
-        int balance() const {
-            int hl = left ? left->height : 0;
-            int hr = right ? right->height : 0;
-            return hl - hr;
+        constexpr char balance() const {
+            return (left ? left->height : 0) - (right ? right->height : 0);
         }
 
-        void update() {
+        constexpr void update() {
             size = 1 + (left ? left->size : 0) + (right ? right->size : 0);
             height = 1 + max((left ? left->height : 0), (right ? right->height : 0));
         }
     };
 
-    private:
+private:
     T missing;
     using AVLTreeSetNodePtr = AVLTreeSetNode*;
     AVLTreeSetNodePtr root;
 
-    void _remove_balance(AVLTreeSetNodePtr node) {
+    constexpr void _remove_balance(AVLTreeSetNodePtr node) {
         while (node) {
             AVLTreeSetNodePtr new_node = nullptr;
             node->update();
@@ -73,7 +72,7 @@ class AVLTreeSet {
         }
     }
 
-    void _add_balance(AVLTreeSetNodePtr node) {
+    constexpr void _add_balance(AVLTreeSetNodePtr node) {
         AVLTreeSetNodePtr new_node = nullptr;
         while (node) {
             node->update();
@@ -188,9 +187,9 @@ class AVLTreeSet {
         }
         if (pnode) {
             if (node->key <= pnode->key) {
-            pnode->left = cnode;
+                pnode->left = cnode;
             } else {
-            pnode->right = cnode;
+                pnode->right = cnode;
             }
             _remove_balance(pnode);
         } else {
@@ -365,7 +364,17 @@ class AVLTreeSet {
     }
 
     T get(int k) const {
-        return find_kth(k)->key;
+        AVLTreeSetNodePtr node = root;
+        while (true) {
+            int t = node->left ? node->left->size : 0;
+            if (t == k) return node->key;
+            if (t < k) {
+                k -= t + 1;
+                node = node->right;
+            } else {
+                node = node->left;
+            }
+        }
     }
 
     int len() const {
