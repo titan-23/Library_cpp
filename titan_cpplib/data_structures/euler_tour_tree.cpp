@@ -215,7 +215,7 @@ namespace titan23 {
         }
 
       public:
-        EulerTourTree(int n) : n(0), group_numbers(0) {}
+        EulerTourTree() : n(0), group_numbers(0) {}
 
         EulerTourTree(int n) : n(n), group_numbers(n) {
             vector<T> a(n, e());
