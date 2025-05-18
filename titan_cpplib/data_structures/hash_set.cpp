@@ -100,8 +100,13 @@ namespace titan23 {
 
         //! 全ての要素を削除する / `O(n/w)`
         void clear() {
+            if (empty()) return;
             this->size = 0;
             fill(exist.begin(), exist.end(), 0);
+        }
+
+        bool empty() const {
+            return size == 0;
         }
 
         int len() const {
