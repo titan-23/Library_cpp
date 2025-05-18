@@ -23,7 +23,7 @@ namespace titan23 {
       public:
         HLDSegmentTree(const titan23::HLD &hld) : hld(hld), seg(hld.n) {}
 
-        HLDSegmentTree(const titan23::HLD &hld, constvector<T> &a) : hld(hld) {
+        HLDSegmentTree(const titan23::HLD &hld, const vector<T> &a) : hld(hld) {
             vector<T> b = hld.build_list(a);
             this->seg = titan23::SegmentTree<T, op, e>(hld.build_list(b));
             reverse(b.begin(), b.end());
