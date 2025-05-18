@@ -63,11 +63,11 @@ namespace titan23 {
                         int x = G[v][i];
                         if (x == par[v]) continue;
                         head[x] = (x == G_v0? head[v]: x);
-                        st.emplace(~x); 
-                        st.emplace(x); 
+                        st.emplace(~x);
+                        st.emplace(x);
                     }
                 } else {
-                    nodeout[~v] = curtime;          
+                    nodeout[~v] = curtime;
                 }
             }
         }
@@ -131,6 +131,10 @@ namespace titan23 {
 
         pair<int, int> for_each_vertex_subtree(int v) const {
             return {nodein[v], nodeout[v]};
+        }
+
+        int dist(int u, int v) const {
+            return dep[u] + dep[v] - 2 * dep[lca(u, v)];
         }
     };
 }  // namespace titan23
