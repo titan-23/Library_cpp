@@ -250,6 +250,13 @@ namespace titan23 {
             _update(node);
         }
 
+        int path_length(int s, int t) {
+            evert(s);
+            expose(t);
+            NodePtr node = pool[t];
+            return node->size;
+        }
+
         int path_kth_elm(int s, int t, int k) {
             evert(s);
             expose(t);
