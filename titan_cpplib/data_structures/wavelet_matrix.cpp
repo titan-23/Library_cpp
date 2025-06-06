@@ -180,9 +180,13 @@ namespace titan23 {
             return range_freq(l, r, y) - range_freq(l, r, x);
         }
 
-        //`a[l, r)` で、`x` 以上 `y` 未満であるような要素のうち最大の要素を返します。
-        T prev_value(int l, int r, int x) const {
-            return kth_smallest(l, r, range_freq(l, r, x)-1);
+        //`a[l, r)` で、`y`未満であるような要素のうち最大の要素を返します。
+        T prev_value(int l, int r, int y) const {
+            int x = range_freq(l, r, y);
+            if (x == 0) {
+                return -1;
+            }
+            return kth_smallest(l, r, x-1);
         }
 
         T next_value(int l, int r, int x) const {
