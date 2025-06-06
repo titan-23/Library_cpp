@@ -310,6 +310,10 @@ private:
         return k;
     }
 
+    int range_count(int l, int r) const {
+        return index(r) - index(l);
+    }
+
     AVLTreeSetNodePtr find_key(const T &key) const {
         AVLTreeSetNodePtr node = root;
         while (node) {
