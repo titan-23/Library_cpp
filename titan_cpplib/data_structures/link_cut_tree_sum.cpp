@@ -156,7 +156,7 @@ public:
     LinkCutTreeSum(int n) {
         pool.resize(n);
         for (int i = 0; i < n; ++i) {
-            pool[i] = new Node(i, e(), id());
+            pool[i] = new Node(i, e());
         }
     }
 
