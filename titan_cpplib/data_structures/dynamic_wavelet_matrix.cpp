@@ -161,6 +161,30 @@ namespace titan23 {
             return kth_smallest(l, r, r-l-k-1);
         }
 
+        pair<bool, T> has_majority(int l, int r) const {
+            int length = (r - l) / 2 + 1;
+            T s = 0;
+            for (int bit = _log-1; bit >= 0; --bit) {
+                int l0 = _v[bit].rank0(l);
+                int r0 = _v[bit].rank0(r);
+                int cnt0 = r0 - l0;
+                int cnt1 = (r - l) - cnt0;
+                if (cnt0 >= length) {
+                    l = l0;
+                    r = r0;
+                    continue;
+                }
+                if (cnt1 >= length) {
+                    s |= (T)1 << bit;
+                    l = l - l0 + _mid[bit];
+                    r = r - r0 + _mid[bit];
+                    continue;
+                }
+                return {false, 0};
+            }
+            return {true, s};
+        }
+
         vector<pair<T, int>> topk(int l, int r, int k) {
             priority_queue<tuple<int, T, int, char>> hq;
             hq.emplace(r-l, 0, l, _log-1);
