@@ -2,7 +2,7 @@
 #include <cassert>
 using namespace std;
 
-// LazyLinkCutTree
+// LinkCutTreeSum(可換)
 namespace titan23 {
 
 template <class T,
