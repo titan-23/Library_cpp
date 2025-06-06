@@ -8,7 +8,7 @@ namespace titan23 {
 template <class T,
           T (*op)(T, T),
           T (*e)()>
-class LazyLinkCutTree {
+class LinkCutTreeSum {
 private:
     struct Node;
     using NodePtr = Node*;
@@ -151,9 +151,9 @@ private:
     }
 
 public:
-    LazyLinkCutTree() {}
+    LinkCutTreeSum() {}
 
-    LazyLinkCutTree(int n) {
+    LinkCutTreeSum(int n) {
         pool.resize(n);
         for (int i = 0; i < n; ++i) {
             pool[i] = new Node(i, e(), id());
