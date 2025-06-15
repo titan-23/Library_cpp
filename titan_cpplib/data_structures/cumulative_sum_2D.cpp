@@ -1,3 +1,4 @@
+#include <iostream>
 #include <vector>
 #include <cassert>
 using namespace std;
@@ -11,11 +12,11 @@ namespace titan23 {
  */
 template<typename T>
 class CumulativeSum2D {
-  private:
+private:
     int h, w;
     vector<T> acc;
 
-  public:
+public:
     CumulativeSum2D() {}
     CumulativeSum2D(int h, int w, const vector<vector<T>> &a, T e) :
             h(h), w(w), acc((h+1)*(w+1), e) {
@@ -31,5 +32,16 @@ class CumulativeSum2D {
         assert(0 <= w1 && w1 <= w2 && w2 <= w);
         return acc[h2*(w+1)+w2] - acc[h2*(w+1)+w1] - acc[h1*(w+1)+w2] + acc[h1*(w+1)+w1];
     }
+
+    friend ostream& operator<<(ostream& os, const CumulativeSum2D<T>& cs) {
+        for (int i = 0; i < cs.h; ++i) {
+            for (int j = 0; j < cs.w; ++j) {
+                os << cs.sum(i, j, i + 1, j + 1);
+                if (j + 1 < cs.w) os << " ";
+            }
+            os << "\n";
+        }
+        return os;
+}
 };
 }  // namespace titan23
