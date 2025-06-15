@@ -10,6 +10,29 @@ using namespace std;
 
 // print
 
+// -------------------------
+// pair<K, V>
+template<typename K, typename V> ostream& operator<<(ostream& os, const pair<K, V>& p);
+// tuple<T1, T2, T3>
+template<typename T1, typename T2, typename T3> ostream &operator<<(ostream &os, const tuple<T1, T2, T3> &t);
+// tuple<T1, T2, T3, T4>
+template<typename T1, typename T2, typename T3, typename T4> ostream &operator<<(ostream &os, const tuple<T1, T2, T3, T4> &t);
+// vector<T>
+template<typename T> ostream& operator<<(ostream& os, const vector<T>& a);
+// vector<vector<T>>
+template<typename T> ostream& operator<<(ostream& os, const vector<vector<T>>& a);
+// set<T>
+template<typename T> ostream& operator<<(ostream& os, const set<T>& s);
+// multiset<T>
+template<typename T> ostream& operator<<(ostream& os, const multiset<T>& s);
+// unordered_set<T>
+template<typename T> ostream& operator<<(ostream& os, const unordered_set<T>& a);
+// map<K, V>
+template<typename K, typename V> ostream& operator<<(ostream& os, const map<K, V>& mp);
+// unordered_map<K, V>
+template<typename K, typename V> ostream& operator<<(ostream& os, const unordered_map<K, V>& mp);
+// -------------------------
+
 // color
 static const string PRINT_RED = "\033[91m"; // 赤字
 static const string PRINT_GREEN = "\033[92m"; // 緑字
@@ -50,7 +73,7 @@ string zfill(const string s, const int f) {
 }
 
 // pair<K, V>
-template <typename K, typename V>
+template<typename K, typename V>
 ostream& operator<<(ostream& os, const pair<K, V>& p) {
     os << "(" << p.first << ", " << p.second << ")";
     return os;
@@ -71,7 +94,7 @@ ostream &operator<<(ostream &os, const tuple<T1, T2, T3, T4> &t) {
 }
 
 // vector<T>
-template <typename T>
+template<typename T>
 ostream& operator<<(ostream& os, const vector<T>& a) {
     int n = (int)a.size();
     os << "[";
@@ -86,7 +109,7 @@ ostream& operator<<(ostream& os, const vector<T>& a) {
 }
 
 // vector<vector<T>>
-template <typename T>
+template<typename T>
 ostream& operator<<(ostream& os, const vector<vector<T>>& a) {
     os << "[\n";
     int h = (int)a.size();
@@ -98,7 +121,7 @@ ostream& operator<<(ostream& os, const vector<vector<T>>& a) {
 }
 
 // set<T>
-template <typename T>
+template<typename T>
 ostream& operator<<(ostream& os, const set<T>& s) {
     os << "{";
     auto it = s.begin();
@@ -114,7 +137,7 @@ ostream& operator<<(ostream& os, const set<T>& s) {
 }
 
 // multiset<T>
-template <typename T>
+template<typename T>
 ostream& operator<<(ostream& os, const multiset<T>& s) {
     os << "{";
     auto it = s.begin();
@@ -130,7 +153,7 @@ ostream& operator<<(ostream& os, const multiset<T>& s) {
 }
 
 // unordered_set<T>
-template <typename T>
+template<typename T>
 ostream& operator<<(ostream& os, const unordered_set<T>& a) {
     set<T> s;
     for (const T &x : a) {
@@ -141,7 +164,7 @@ ostream& operator<<(ostream& os, const unordered_set<T>& a) {
 }
 
 // map<K, V>
-template <typename K, typename V>
+template<typename K, typename V>
 ostream& operator<<(ostream& os, const map<K, V>& mp) {
     os << "{";
     auto it = mp.begin();
@@ -157,7 +180,7 @@ ostream& operator<<(ostream& os, const map<K, V>& mp) {
 }
 
 // unordered_map<K, V>
-template <typename K, typename V>
+template<typename K, typename V>
 ostream& operator<<(ostream& os, const unordered_map<K, V>& mp) {
     map<K, V> m;
     for (const auto &[k, v] : mp) {
