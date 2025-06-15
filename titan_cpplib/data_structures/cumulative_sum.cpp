@@ -19,7 +19,7 @@ namespace titan23 {
         }
 
         T pref(const int r) const {
-            assert(0 <= r && r <= this->n);
+            assert(0 <= r && r <= n);
             return acc[r];
         }
 
@@ -28,12 +28,12 @@ namespace titan23 {
         }
 
         T sum(const int l, const int r) const {
-            assert(0 <= l && l <= r && r <= this->n);
+            assert(0 <= l && l <= r && r <= n);
             return acc[r] - acc[l];
         }
 
         T prod(const int l, const int r) const {
-            assert(0 <= l && l <= r && r < this->n);
+            assert(0 <= l && l <= r && r <= n);
             return acc[r] - acc[l];
         }
 
