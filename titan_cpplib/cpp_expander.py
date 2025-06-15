@@ -6,6 +6,9 @@ LIB_PATH = (
     "/mnt/c/Users/titan/source/Library_cpp/",
     "C:\\Users\\titan\\source\\Library_cpp\\",
     "/home/titan/source/Library_cpp/",
+
+    "/mnt/c/Users/titan/source/akai_koibito/",
+    "C:\\Users\\titan\\source\\akai_koibito\\",
 )
 #  ---------------------------------------------------------------
 
