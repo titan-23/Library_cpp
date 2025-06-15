@@ -133,6 +133,20 @@ namespace titan23 {
             }
         }
 
+        void add(const u64 key, const V val) {
+            const auto [pos, is_exist] = get_pos(key);
+            vals[pos] += val;
+            if (!is_exist) {
+                vals[pos] = val;
+                exist[pos>>6] |= 1ull<<(pos&63);
+                keys[pos] = key;
+                ++size;
+                if (HashDict::M*size > keys.size()) {
+                    rebuild();
+                }
+            }
+        }
+
         //! keyがすでにあればtrue, なければ挿入してfalse / `O(1)`
         bool contains_set(const u64 key, const V val) {
             const auto [pos, is_exist] = get_pos(key);
@@ -192,12 +206,17 @@ namespace titan23 {
 
         //! 全ての要素を削除する / `O(n/w)`
         void clear() {
+            if (empty()) return;
             this->size = 0;
             fill(exist.begin(), exist.end(), 0);
         }
 
         int len() const {
             return size;
+        }
+
+        bool empty() const {
+            return size == 0;
         }
     };
 } // namespaced titan23
