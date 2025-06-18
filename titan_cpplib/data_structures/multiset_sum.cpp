@@ -367,7 +367,7 @@ namespace titan23 {
             return k;
         }
 
-        int sum(T high) const {
+        T sum(T high) const {
             T s = 0;
             MultisetSumNodePtr node = root;
             while (node) {
