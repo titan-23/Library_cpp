@@ -211,6 +211,7 @@ class MultisetSum {
         left->update();
         return left;
     }
+
     MultisetSum<T> gen(NodePtr root_node) const {
         return MultisetSum<T>(root_node);
     }
@@ -249,8 +250,8 @@ class MultisetSum {
         cout << "]" << endl;
     }
 
-    //! [l, r)の和
-    T sum(int l, int r) {
+    //! vectorにしたときの区間[l, r)の和
+    T sum_range_idx(int l, int r) {
         assert(0 <= l && l <= r && r <= len());
         NodePtr a, b, c;
         tie(b, c) = split_node_kth(this->root, r);
