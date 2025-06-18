@@ -15,11 +15,12 @@ namespace titan23 {
           public:
             using AVLTreeMultisetNodePtr = AVLTreeMultisetNode*;
             T key;
-            int val, valsize, height;
+            long long val, valsize;
+            int height;
             AVLTreeMultisetNodePtr par, left, right;
 
             AVLTreeMultisetNode() {}
-            AVLTreeMultisetNode(const T &key, const int val) : key(key), val(val), valsize(val), height(1), par(nullptr), left(nullptr), right(nullptr) {}
+            AVLTreeMultisetNode(const T &key, const long long val) : key(key), val(val), valsize(val), height(1), par(nullptr), left(nullptr), right(nullptr) {}
 
             int balance() const {
                 int hl = left ? left->height : 0;
