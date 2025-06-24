@@ -84,10 +84,13 @@ private:
 
 public:
     DoubleEndedHeap() {}
+
+    /// 構築する / O(N)のはず
     DoubleEndedHeap(const vector<T> &a) : data(a) {
         heapify();
     }
 
+    /// keyを追加する / O(logN)
     void insert(T key) {
         data.push_back(key);
         up((int)data.size()-1);
@@ -131,6 +134,10 @@ public:
     /// 最大の要素を返す / O(1)
     T get_max() {
         return data[0];
+    }
+
+    void clear() {
+        data.clear();
     }
 
     bool empty() const {
