@@ -215,6 +215,33 @@ namespace titan23 {
             return kth_smallest(l, r, r-l-k-1);
         }
 
+        pair<bool, T> has_majority(int l, int r) const {
+            Node* node = root;
+            int length = (r - l) / 2 + 1;
+            T s = 0;
+            for (int bit = _log-1; node && bit >= 0; --bit) {
+                int l0 = node->v.rank0(l);
+                int r0 = node->v.rank0(r);
+                int cnt0 = r0 - l0;
+                int cnt1 = (r - l) - cnt0;
+                if (cnt0 >= length) {
+                    l = l0;
+                    r = r0;
+                    node = node->left;
+                    continue;
+                }
+                if (cnt1 >= length) {
+                    s |= (T)1 << bit;
+                    l -= l0;
+                    r -= r0;
+                    node = node->right;
+                    continue;
+                }
+                return {false, 0};
+            }
+            return {true, s};
+        }
+
         //! 区間 `[l, r)` で `x` 未満の要素の個数を返す / `O(log(n)log(σ))`
         int range_freq(int l, int r, const T &x) const {
             Node* node = root;
