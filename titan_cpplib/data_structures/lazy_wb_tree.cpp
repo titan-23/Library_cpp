@@ -211,7 +211,7 @@ namespace titan23 {
 
         LazyWBTree(NodePtr &root): root(root) {}
 
-        MyLazyWBTree _new(NodePtr root) {
+        MyLazyWBTree _new(NodePtr root) const {
             return MyLazyWBTree(root);
         }
 
