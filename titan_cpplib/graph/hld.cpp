@@ -141,5 +141,15 @@ public:
     bool is_on_path(int u, int v, int a) const {
         return dist(u, a) + dist(a, v) == dist(u, v);
     }
+
+    // vはtの祖先か？
+    bool is_ancestor(int v, int t) const {
+        return nodein[v] <= nodein[t] && nodeout[t] <= nodeout[v];
+    }
+
+    // vはtの子孫か？
+    bool is_descendant(int v, int t) const {
+        return nodein[t] <= nodein[v] && nodeout[v] <= nodeout[t];
+    }
 };
 }  // namespace titan23
