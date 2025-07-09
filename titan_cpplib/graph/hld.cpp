@@ -136,5 +136,10 @@ public:
     int dist(int u, int v) const {
         return dep[u] + dep[v] - 2 * dep[lca(u, v)];
     }
+
+    // Return True if (a is on path(u - v)) else False. / O(logN)
+    bool is_on_path(int u, int v, int a) const {
+        return dist(u, a) + dist(a, v) == dist(u, v);
+    }
 };
 }  // namespace titan23
