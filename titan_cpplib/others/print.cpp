@@ -72,6 +72,20 @@ string zfill(const string s, const int f) {
     return t;
 }
 
+string bin(long long s) {
+    string t;
+    while (s) {
+        if (s & 1) {
+            t += '1';
+        } else {
+            t += '0';
+        }
+        s >>= 1;
+    }
+    reverse(t.begin(), t.end());
+    return t;
+}
+
 // pair<K, V>
 template<typename K, typename V>
 ostream& operator<<(ostream& os, const pair<K, V>& p) {
