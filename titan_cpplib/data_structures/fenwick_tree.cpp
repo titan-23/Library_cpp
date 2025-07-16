@@ -11,6 +11,8 @@ namespace titan23 {
         int _n, _s;
         vector<T> _tree;
 
+        FenwickTree() {}
+
         FenwickTree(const int n) {
             _n = n;
             _s = 1 << (32 - __builtin_clz(_n));
