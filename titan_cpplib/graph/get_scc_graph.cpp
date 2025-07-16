@@ -6,8 +6,14 @@ using namespace std;
 
 namespace titan23 {
 
-/// scc, 頂点を縮約した隣接リスト, もとの頂点->新たなグラフの頂点, 新たなグラフの頂点->もとの頂点
-/// {groups, F, ids, ids_inv}
+/**
+ * @brief scc
+ *
+ * @param G
+ * @return tuple<vector<vector<int>>, vector<vector<int>>, vector<int>, vector<vector<int>>>
+ * scc, 頂点を縮約した隣接リスト, もとの頂点->新たなグラフの頂点, 新たなグラフの頂点->もとの頂点
+ * {groups, F, ids, ids_inv}
+ */
 tuple<vector<vector<int>>, vector<vector<int>>, vector<int>, vector<vector<int>>> get_scc_graph(vector<vector<int>> G) {
     int n = G.size();
     vector<int> st(n, 0);
