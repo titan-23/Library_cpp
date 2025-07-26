@@ -42,16 +42,23 @@ public:
         }
     }
 
-    // 辺(s, t)の重みをwに更新する / O(N^2)
+    // 重みwの辺(s, t)を追加する / O(|V|^2)
     void update(int s, int t, T w) {
         if (w >= dist[s*n+t]) return;
         dist[s*n+t] = w;
         nxt[s*n+t] = t;
         for (int i = 0; i < n; ++i) {
+            if (dist[i*n+s] == INF) continue;
             for (int j = 0; j < n; ++j) {
-                if (dist[i*n+j] > dist[i*n+s] + dist[t*n+j] + w) {
-                    dist[i*n+j] = dist[i*n+s] + dist[t*n+j] + w;
-                    nxt[i*n+j] = nxt[i*n+t];
+                if (dist[t*n+j] == INF) continue;
+                T new_dist = dist[i*n+s] + dist[t*n+j] + w;
+                if (dist[i*n+j] > new_dist) {
+                    dist[i*n+j] = new_dist;
+                    if (i != s) {
+                        nxt[i*n+j] = nxt[i*n+s];
+                    } else {
+                        nxt[i*n+j] = nxt[s*n+t];
+                    }
                 }
             }
         }
