@@ -34,7 +34,7 @@ struct Action {
 
 class State {
 private:
-    titan23::Random srand;
+    static titan23::Random srand;
     ScoreType score;
     HashType hash;
 
@@ -45,8 +45,7 @@ public:
         this->hash = 0;
     }
 
-    // TODO
-    //! `action` をしたときの評価値とハッシュ値を返す
+    // TODO 現在の状態に `action` を適用したときのスコアとハッシュ値を返す
     //! ロールバックに必要な情報はすべてactionにメモしておく
     pair<ScoreType, HashType> try_op(Action &action) const {
         action.pre_score = score;
@@ -61,7 +60,7 @@ public:
         return {nxt_score, nxt_hash};
     }
 
-    // TODO
+    // TODO 現在の状態に `action` を適用する
     //! `action` をする
     void apply_op(const Action &action) {
         // TODO
@@ -88,7 +87,6 @@ public:
     }
 };
 
-flying_squirrel::BeamSearchWithTree<ScoreType, HashType, Action, State> bs;
 
 flying_squirrel::BeamParam gen_param(int max_turn, int beam_width) {
     return {max_turn, beam_width, -1};
@@ -99,6 +97,7 @@ flying_squirrel::BeamParam gen_param(int max_turn, int beam_width, double time_l
 }
 
 vector<Action> search(flying_squirrel::BeamParam &param, const bool verbose=false) {
+    flying_squirrel::BeamSearchWithTree<ScoreType, HashType, Action, State> bs;
     return bs.search(param, verbose);
 }
 } // namespace beam_search
