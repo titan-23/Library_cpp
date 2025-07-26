@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <set>
+#include <tuple>
 #include <unordered_set>
 #include <map>
 #include <unordered_map>
@@ -40,21 +41,10 @@ static const string PRINT_BLUE = "\033[94m";  // 青字
 static const string PRINT_NONE = "\033[m"; // 色を元に戻す
 static const string PRINT_BOLD = "\u001b[1m"; // 太字
 
-string to_red(const string &s) {
-    return PRINT_RED + s + PRINT_NONE;
-}
-
-string to_green(const string &s) {
-    return PRINT_GREEN + s + PRINT_NONE;
-}
-
-string to_blue(const string &s) {
-    return PRINT_BLUE + s + PRINT_NONE;
-}
-
-string to_bold(const string &s) {
-    return PRINT_BOLD + s + PRINT_NONE;
-}
+string to_red(const string &s)   { return PRINT_RED + s + PRINT_NONE; }
+string to_green(const string &s) { return PRINT_GREEN + s + PRINT_NONE; }
+string to_blue(const string &s)  { return PRINT_BLUE + s + PRINT_NONE; }
+string to_bold(const string &s)  { return PRINT_BOLD + s + PRINT_NONE; }
 
 string spacefill(const string s, const int f) {
     int n = s.size();
@@ -75,16 +65,14 @@ string zfill(const string s, const int f) {
 string bin(long long s) {
     string t;
     while (s) {
-        if (s & 1) {
-            t += '1';
-        } else {
-            t += '0';
-        }
+        t += (s & 1) ? '1' : '0';
         s >>= 1;
     }
     reverse(t.begin(), t.end());
     return t;
 }
+
+void DEBUG_LINE() { cerr << "[Line] : " << __LINE__ << std::endl; }
 
 // pair<K, V>
 template<typename K, typename V>
@@ -110,13 +98,10 @@ ostream &operator<<(ostream &os, const tuple<T1, T2, T3, T4> &t) {
 // vector<T>
 template<typename T>
 ostream& operator<<(ostream& os, const vector<T>& a) {
-    int n = (int)a.size();
     os << "[";
-    for (int i = 0; i < n-1; ++i) {
-        os << a[i] << ", ";
-    }
-    if (n > 0) {
-        os << a.back();
+    for (int i = 0; i < (int)a.size(); ++i) {
+        if (i > 0) os << ", ";
+        os << a[i];
     }
     os << "]";
     return os;
@@ -169,10 +154,7 @@ ostream& operator<<(ostream& os, const multiset<T>& s) {
 // unordered_set<T>
 template<typename T>
 ostream& operator<<(ostream& os, const unordered_set<T>& a) {
-    set<T> s;
-    for (const T &x : a) {
-        s.insert(x);
-    }
+    set<T> s(a.begin(), a.end());
     os << s;
     return os;
 }
@@ -196,10 +178,7 @@ ostream& operator<<(ostream& os, const map<K, V>& mp) {
 // unordered_map<K, V>
 template<typename K, typename V>
 ostream& operator<<(ostream& os, const unordered_map<K, V>& mp) {
-    map<K, V> m;
-    for (const auto &[k, v] : mp) {
-        m[k] = v;
-    }
+    map<K, V> m(mp.begin(), mp.end());
     os << m;
     return os;
 }
