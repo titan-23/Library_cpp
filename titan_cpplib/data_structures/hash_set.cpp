@@ -20,8 +20,16 @@ namespace titan23 {
         int msk, xor_;
         int size;
 
+        // constexpr int hash(const u64 &key) const {
+        //     return (((((key>>32)&msk) ^ (key&msk) ^ xor_)) * HashSet::K) & msk;
+        // }
+
         constexpr int hash(const u64 &key) const {
-            return (((((key>>32)&msk) ^ (key&msk) ^ xor_)) * (HashSet::K & msk)) & msk;
+            u64 h = key ^ xor_;
+            h = (h ^ (h >> 30)) * 0xbf58476d1ce4e5b9;
+            h = (h ^ (h >> 27)) * 0x94d049bb133111eb;
+            h = h ^ (h >> 31);
+            return h & msk;
         }
 
         pair<int, bool> get_pos(const u64 &key) const {
