@@ -16,7 +16,7 @@ class MinimumSteinerTree {
     private:
     int n;
     T INF;
-    titan23::warshall_floyd_path<T> dist_path;
+    titan23::WarshallFloydPath<T> dist_path;
 
     public:
     MinimumSteinerTree() {}
@@ -24,7 +24,7 @@ class MinimumSteinerTree {
     // 時間 O(|V|^3), 空間 O(|V|^2)
     MinimumSteinerTree(const vector<vector<pair<int, T>>> &G, const T INF) :
             n((int)G.size()), INF(INF) {
-        dist_path = titan23::warshall_floyd_path<T>(G, INF);
+        dist_path = titan23::WarshallFloydPath<T>(G, INF);
     }
 
     // terminal を含むシュタイナー木の辺集合を返す
