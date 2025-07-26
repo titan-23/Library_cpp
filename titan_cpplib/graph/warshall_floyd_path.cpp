@@ -42,8 +42,31 @@ class WarshallFloydPath {
         }
     }
 
+    // 辺(s, t)の重みをwに更新する / O(N^2)
+    void update(int s, int t, T w) {
+        if (w >= dist[s*n+t]) return;
+        dist[s*n+t] = w;
+        nxt[s*n+t] = t;
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (dist[i*n+j] > dist[i*n+s] + dist[s*n+j]) {
+                    dist[i*n+j] = dist[i*n+s] + dist[s*n+j];
+                    nxt[i*n+j] = nxt[i*n+s];
+                }
+            }
+        }
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (dist[i*n+j] > dist[i*n+t] + dist[t*n+j]) {
+                    dist[i*n+j] = dist[i*n+t] + dist[t*n+j];
+                    nxt[i*n+j] = nxt[i*n+t];
+                }
+            }
+        }
+    }
+
     // O(1)
-    T get_dist(const int s, const int t) const {
+    T dist(const int s, const int t) const {
         return dist[s*n+t];
     }
 
