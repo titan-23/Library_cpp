@@ -6,9 +6,6 @@ LIB_PATH = (
     "/mnt/c/Users/titan/source/Library_cpp/",
     "C:\\Users\\titan\\source\\Library_cpp\\",
     "/home/titan/source/Library_cpp/",
-
-    "/mnt/c/Users/titan/source/akai_koibito/",
-    "C:\\Users\\titan\\source\\akai_koibito\\",
 )
 #  ---------------------------------------------------------------
 
@@ -106,8 +103,6 @@ class CppExpander:
                     pass
                 else:
                     self.outputs.append(line)
-        if self.outputs and self.outputs[-1] != "\n":
-            self.outputs.append("\n")
 
 
 if __name__ == "__main__":
