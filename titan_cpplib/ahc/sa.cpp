@@ -14,7 +14,7 @@ struct Param {
     double start_temp = 1000, end_temp = 1;
 } param;
 
-titan23::Random sa_random;
+titan23::Random sarnd;
 using ScoreType = double;
 
 struct Changed {
@@ -83,7 +83,7 @@ State sa_run(const double TIME_LIMIT, const bool verbose = false) {
         now_time = sa_timer.elapsed();
         if (now_time > TIME_LIMIT) break;
         ++cnt;
-        ScoreType threshold = score - (START_TEMP-TEMP_VAL*now_time) * LOG_TABLE[sa_random.randrange(LOG_TABLE_SIZE)];
+        ScoreType threshold = score - (START_TEMP-TEMP_VAL*now_time) * LOG_TABLE[sarnd.randrange(LOG_TABLE_SIZE)];
         changed.pre_score = state.score;
         double progress = now_time / TIME_LIMIT;
         state.reset_is_valid();

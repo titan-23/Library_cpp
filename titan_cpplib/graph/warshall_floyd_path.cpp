@@ -6,13 +6,13 @@ namespace titan23 {
 
 template<typename T>
 class WarshallFloydPath {
-  private:
+private:
     int n;
     T INF;
     vector<int> nxt;
     vector<T> dist;
 
-  public:
+public:
     WarshallFloydPath() {}
 
     // 時間 O(|V|^3), 空間 O(|V|^2)
@@ -42,8 +42,30 @@ class WarshallFloydPath {
         }
     }
 
+    // 重みwの辺(s, t)を追加する / O(|V|^2)
+    void update(int s, int t, T w) {
+        if (w >= dist[s*n+t]) return;
+        dist[s*n+t] = w;
+        nxt[s*n+t] = t;
+        for (int i = 0; i < n; ++i) {
+            if (dist[i*n+s] == INF) continue;
+            for (int j = 0; j < n; ++j) {
+                if (dist[t*n+j] == INF) continue;
+                T new_dist = dist[i*n+s] + dist[t*n+j] + w;
+                if (dist[i*n+j] > new_dist) {
+                    dist[i*n+j] = new_dist;
+                    if (i != s) {
+                        nxt[i*n+j] = nxt[i*n+s];
+                    } else {
+                        nxt[i*n+j] = nxt[s*n+t];
+                    }
+                }
+            }
+        }
+    }
+
     // O(1)
-    T get_dist(const int s, const int t) const {
+    T get_dist(int s, int t) const {
         return dist[s*n+t];
     }
 
