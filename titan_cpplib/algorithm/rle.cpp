@@ -6,6 +6,7 @@ namespace titan23 {
 
 template<typename T>
 vector<pair<T, int>> rle(const vector<T> &a) {
+    if (a.empty()) return {};
     int n = (int)a.size();
     vector<pair<T, int>> res;
     T now = a[0];
