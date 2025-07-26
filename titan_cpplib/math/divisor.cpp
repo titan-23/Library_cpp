@@ -42,10 +42,9 @@ vector<pair<long long, int>> factorization(long long n) {
 // Nの約数の個数を求める / O(√N)
 int divisors_num(long long n) {
     int cnt = 0;
-    for (long long i = 1; i <= n; ++i) {
+    for (long long i = 1; i * i <= n; ++i) {
         if (n % i == 0) {
-            cnt++;
-            if (i != n/i) cnt++;
+            cnt += (i * i == n) ? 1 : 2;
         }
     }
     return cnt;
@@ -101,37 +100,22 @@ vector<int> get_primelist(int n) {
     return res;
 }
 
-// N以下の素数の個数を求める / O(NloglogN)
-int get_prime_count(int n) {
-    int ret = 0;
-    for (int i = 2; i <= n; ++i) {
-        bool ok = false;
-        for (int j = 2; j*j <= n; ++j) {
-            if (i % j == 0) {
-                ok = true;
-                break;
-            }
-        }
-        if (!ok) ret++;
-    }
-    return ret;
-}
-
 // 事前にエラトステネスとかでsart(N)以下の素数を全列挙しておく
 // O(sqrt(N)log(log(sqrt(N)) + log(N))
-vector<int> factorization_eratos(int n, const vector<int> &primes) {
-    vector<int> res;
+vector<pair<int, int>> factorization_eratos(int n, const vector<int> &primes) {
+    vector<pair<int, int>> res;
     for (int p : primes) {
         if (p * p > n) break;
         if (n % p == 0) {
-            n /= p;
+            int cnt = 0;
             while (n % p == 0) {
+                cnt++;
                 n /= p;
             }
-            res.emplace_back(p);
+            res.emplace_back(p, cnt);
         }
     }
-    if (n != 1) res.emplace_back(n);
+    if (n != 1) res.emplace_back(n, 1);
     return res;
 }
 

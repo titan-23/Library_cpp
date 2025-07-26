@@ -7,12 +7,12 @@ namespace titan23 {
 
 template<typename T>
 class StaticMultiset {
-    private:
+private:
     vector<T> data;
     T missing;
     int n;
 
-    public:
+public:
     StaticMultiset() {}
     StaticMultiset(T missing) : missing(missing) {}
     StaticMultiset(vector<T> &a, T missing) : data(a), missing(missing) {
