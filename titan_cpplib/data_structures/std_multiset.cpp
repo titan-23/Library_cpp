@@ -66,6 +66,10 @@ public:
         return it == s.end() ? 0 : it->second;
     }
 
+    bool empty() const {
+        return size == 0;
+    }
+
     int len() const {
         return size;
     }
