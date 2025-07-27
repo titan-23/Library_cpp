@@ -38,7 +38,7 @@ public:
     }
 
     // 重みwの辺(s, t)を追加する / O(|V|^2)
-    void update(int s, int t, T w) {
+    void add_edge(int s, int t, T w) {
         if (w >= dist[s*n+t]) return;
         dist[s*n+t] = w;
         for (int i = 0; i < n; ++i) {
