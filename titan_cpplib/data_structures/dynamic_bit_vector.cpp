@@ -5,7 +5,7 @@ using namespace std;
 namespace titan23 {
 
 class DynamicBitVector {
-    private:
+private:
     static const int BUCKET_MAX = 1000;
     vector<vector<uint8_t>> data;
     vector<int> bucket_data;
@@ -48,7 +48,7 @@ class DynamicBitVector {
         assert(false);
     }
 
-    public:
+public:
     DynamicBitVector() : _size(0), tot_one(0) {}
         DynamicBitVector(const vector<uint8_t> &a) : _size(a.size()), tot_one(0) {
         build(a);

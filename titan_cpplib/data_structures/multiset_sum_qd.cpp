@@ -9,7 +9,7 @@ template<typename T>
 class MultisetSum {
     // ref: https://github.com/tatyam-prime/SortedSet/blob/main/SortedMultiset.py
 
-  private:
+private:
     const int BUCKET_RATIO = 16;
     const int SPLIT_RATIO = 24;
     int n;
@@ -45,7 +45,7 @@ class MultisetSum {
         bucket_data.insert(bucket_data.begin() + i+1, right_sum);
     }
 
-  public:
+public:
     MultisetSum() : n(0) {}
 
     MultisetSum(T missing) : n(0), missing(missing) {}

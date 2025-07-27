@@ -10,9 +10,9 @@ namespace titan23 {
 
 template<typename T>
 class MultisetSum {
-    public:
+public:
     class MultisetSumNode {
-        public:
+    public:
         using MultisetSumNodePtr = MultisetSumNode*;
         T key, data;
         long long val, valsize;
@@ -184,7 +184,7 @@ class MultisetSum {
         }
     }
 
-    public:
+public:
     MultisetSum() : root(nullptr) {}
     MultisetSum(T missing) : missing(missing), root(nullptr) {}
     MultisetSum(vector<T> &a, T missing) : missing(missing) {

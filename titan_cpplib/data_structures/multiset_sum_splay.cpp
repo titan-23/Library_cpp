@@ -5,7 +5,7 @@ namespace titan23 {
 
 template<typename T>
 class MultisetSum {
-  private:
+private:
     struct Node;
     using NodePtr = Node*;
     stack<NodePtr> unused_node;
@@ -216,7 +216,7 @@ class MultisetSum {
         return MultisetSum<T>(root_node);
     }
 
-  public:
+public:
     MultisetSum() : root(nullptr) {}
 
     pair<MultisetSum<T>, MultisetSum<T>> split(int k) {

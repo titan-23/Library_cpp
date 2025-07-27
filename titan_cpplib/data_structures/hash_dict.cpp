@@ -104,8 +104,15 @@ public:
         return get_pos(key);
     }
 
-    V operator[] (const u64 key) const {
-        return get(key);
+    V& operator[] (const u64 key) {
+        const auto [pos, exist_res] = get_pos(key);
+        if (!exist_res) {
+            set(key, V());
+            const auto [pos2, _] = get_pos(key);
+            return vals[pos2];
+        } else {
+            return vals[pos];
+        }
     }
 
     V inner_get(const pair<int, bool> &dat) {

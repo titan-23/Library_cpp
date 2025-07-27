@@ -10,7 +10,7 @@ template <class IndexType,
             T (*op)(T, T),
             T (*e)()>
 class DynamicSegmentTree {
-    private:
+private:
     static int bit_length(IndexType x) {
         return x == 0 ? 0 : 64 - __builtin_clzll(x);
     }
@@ -53,7 +53,7 @@ class DynamicSegmentTree {
         }
     };
 
-    private:
+private:
     T inner_prod(NodePtr node, IndexType l, IndexType r) const {
         if (!node || l >= r || r <= node->l || node->r <= l) return e();
         if (l <= node->l && node->r <= r) return node->data;

@@ -42,6 +42,6 @@ public:
             os << "\n";
         }
         return os;
-}
+    }
 };
 }  // namespace titan23
