@@ -3,6 +3,8 @@
 #include <optional>
 #include <iostream>
 
+using namespace std;
+
 namespace titan23 {
 
 template<typename T>
@@ -14,21 +16,27 @@ private:
 public:
     StdSet() : missing(-1) {}
     StdSet(T missing) : missing(missing) {}
-    StdSet(const vector<T>& a, T missing = T()) : missing(missing) {
-        for (const T& x : a) s.insert(x);
-    }
+    StdSet(const vector<T>& a, T missing = T()) : s(a.begin(), a.end()) missing(missing) {}
 
-    bool add(const T& key) {
+    bool insert(const T& key) {
         return s.insert(key).second;
     }
 
-    bool discard(const T& key) {
+    bool erase(const T& key) {
         return s.erase(key) > 0;
+    }
+
+    bool discard(const T& key) {
+        return erase(key);
     }
 
     void remove(const T& key) {
         bool erased = discard(key);
         if (!erased) throw runtime_error("key not found");
+    }
+
+    int count(const T& key) const {
+        return contains(key);
     }
 
     bool contains(const T& key) const {
