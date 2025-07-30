@@ -15,6 +15,7 @@ namespace beam_search {
 using ScoreType = long long;
 using HashType = unsigned long long;
 const ScoreType INF = 1e18;
+titan23::Random srand;
 
 // TODO Action
 // メモリ量は少ない方がよく、score,hash のメモは無くしたい
@@ -34,7 +35,6 @@ struct Action {
 
 class State {
 private:
-    static titan23::Random srand;
     ScoreType score;
     HashType hash;
 
