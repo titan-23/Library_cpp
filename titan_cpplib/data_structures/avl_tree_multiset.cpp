@@ -366,6 +366,11 @@ class AVLTreeMultiset {
         return k;
     }
 
+    // low以上hight未満の個数
+    int count_range(const T low, const T high) const {
+        return index(high) - index(low);
+    }
+
     T pop(int k=-1) {
         AVLTreeMultisetNodePtr node = find_kth(k);
         T key = node->key;
