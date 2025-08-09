@@ -46,12 +46,7 @@ public:
 
     void remove(const T key, u64 cnt = 1) {
         auto it = s.find(key);
-        if (it == s.end()) {
-            throw runtime_error("key not found in multiset (remove operation)");
-        }
-        if (it->second < cnt) {
-            throw runtime_error("attempted to remove more elements than present");
-        }
+        if (it == s.end() || it->second < cnt) throw runtime_error("key not found in multiset");
         size -= cnt;
         it->second -= cnt;
         if (it->second == 0) s.erase(it);
