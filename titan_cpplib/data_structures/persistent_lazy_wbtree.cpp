@@ -329,7 +329,8 @@ private:
     }
 
     PLTM apply(SizeType l, SizeType r, F f) {
-        if (l >= r) return _new(ma.copy(root));
+        assert(0 <= l && l <= r && r <= len());
+        if (l == r) return _new(ma.copy(root));
         auto dfs = [&] (auto &&dfs, SizeType node, SizeType left, SizeType right) -> SizeType {
             if (right <= l || r <= left) return node;
             propagate(node);
