@@ -7,8 +7,6 @@
 #include "titan_cpplib/others/print.cpp"
 using namespace std;
 
-int cnt = 0;
-
 namespace titan23 {
 
 template <class SizeType, class T, class F,
@@ -37,7 +35,6 @@ public:
         }
 
         SizeType copy(SizeType node) {
-            cnt++;
             SizeType idx = new_node(keys[node], lazy[node]);
             left[idx] = left[node];
             right[idx] = right[node];
@@ -388,7 +385,7 @@ private:
 
     PLTM reverse(SizeType l, SizeType r) {
         assert(0 <= l && l <= r && r <= len());
-        if (l >= r) return _new(copy(root));
+        if (l >= r) return _new(ma.copy(root));
         auto [s_, t] = _split_node(root, r);
         auto [u, s] = _split_node(s_, l);
         ma.rev[s] ^= 1;
