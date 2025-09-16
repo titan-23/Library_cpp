@@ -24,9 +24,9 @@ public:
         vector<T> keys, data;
         vector<F> lazy;
         vector<short> rev;
-        size_t ptr;
+        size_t ptr, cap;
 
-        MemoeyAllocator() : ptr(1) {
+        MemoeyAllocator() : ptr(1), cap(1) {
             left.emplace_back(0);
             right.emplace_back(0);
             size.emplace_back(0);
@@ -64,23 +64,31 @@ public:
                 data.emplace_back(key);
                 lazy.emplace_back(f);
                 rev.emplace_back(0);
+                if (left.size() >= cap) {
+                    cap++;
+                }
             }
             ptr++;
             return ptr - 1;
         }
 
-        void reserve(SizeType cap) {
-            left.reserve(cap);
-            right.reserve(cap);
-            keys.reserve(cap);
-            size.reserve(cap);
-            data.reserve(cap);
-            lazy.reserve(cap);
-            rev.reserve(cap);
+        void reserve(SizeType n) {
+            left.reserve(n);
+            right.reserve(n);
+            keys.reserve(n);
+            size.reserve(n);
+            data.reserve(n);
+            lazy.reserve(n);
+            rev.reserve(n);
+            cap += n;
         }
 
         void reset() {
             ptr = 1;
+        }
+
+        bool almost_full() const {
+            return (double)ptr > max(1.0, cap*0.99);
         }
     };
 
