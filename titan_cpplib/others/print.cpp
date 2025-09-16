@@ -5,6 +5,7 @@
 #include <set>
 #include <tuple>
 #include <unordered_set>
+#include <algorithm>
 #include <map>
 #include <unordered_map>
 using namespace std;
