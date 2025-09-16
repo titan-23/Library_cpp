@@ -8,8 +8,8 @@ using namespace std;
 namespace titan23 {
 
     /**
-     * @brief 
-     * 
+     * @brief
+     *
      * @tparam T 点の座標を表す型
      * @tparam W 重みを表す型
      */
@@ -57,11 +57,11 @@ namespace titan23 {
 
         template<typename S>
         static void sort_unique(vector<S> &a) {
-            std::sort(a.begin(), a.end());
-            a.erase(std::unique(a.begin(), a.end()), a.end());
+            sort(a.begin(), a.end());
+            a.erase(unique(a.begin(), a.end()), a.end());
         }
 
-        W _sum(int l, int r, int x) const {
+        W _sum(int l, int r, T x) const {
             W ans = 0;
             for (int bit = log-1; bit >= 0; --bit) {
                 int l0 = v[bit].rank0(l);
@@ -94,7 +94,7 @@ namespace titan23 {
 
         void build() {
             xy.reserve(pos.size());
-            for (const auto &[x, y, w]: pos) {
+            for (const auto &[x, y, _]: pos) {
                 xy.emplace_back(x, y);
             }
             sort_unique(xy);
@@ -107,18 +107,19 @@ namespace titan23 {
             }
             sort_unique(y);
 
-            vector<int> a;
+            vector<T> a;
+            a.reserve(xy.size());
             for (const auto &[x, y_]: xy) {
                 a.emplace_back(lower_bound(y.begin(), y.end(), y_) - y.begin());
             }
             _build(a);
 
-            vector<vector<W>> ws(log, vector<W>(n, 0));
+            vector<vector<W>> ws(log, vector<W>(n+1, 0));
             for (const auto [x, y_, w]: pos) {
                 int k = lower_bound(xy.begin(), xy.end(), make_pair(x, y_)) - xy.begin();
                 int i_y = lower_bound(y.begin(), y.end(), y_) - y.begin();
                 for (int bit = log-1; bit >= 0; --bit) {
-                    if ((i_y >> bit) & 1) {
+                    if (((T)i_y >> bit) & 1) {
                         k = v[bit].rank1(k) + mid[bit];
                     } else {
                         k = v[bit].rank0(k);
@@ -128,13 +129,15 @@ namespace titan23 {
             }
 
             for (int i = 0; i < log; ++i) {
-                cumsum[i] = titan23::CumulativeSum<W>(ws[i], 0);
+                cumsum[i] = titan23::CumulativeSum<W>(ws[i], (T)0);
             }
         }
 
-        W sum(int w1, int w2, int h1, int h2) const {
-            int l = lower_bound(xy.begin(), xy.end(), make_pair(w1, 0)) - xy.begin();
-            int r = lower_bound(xy.begin(), xy.end(), make_pair(w2, 0)) - xy.begin();
+        W sum(T w1, T w2, T h1, T h2) const {
+            assert(0 <= w1 && w1 <= w2);
+            assert(0 <= h1 && h1 <= h2);
+            int l = lower_bound(xy.begin(), xy.end(), make_pair(w1, (T)0)) - xy.begin();
+            int r = lower_bound(xy.begin(), xy.end(), make_pair(w2, (T)0)) - xy.begin();
             return _sum(l, r, lower_bound(y.begin(), y.end(), h2) - y.begin())
                     - _sum(l, r, lower_bound(y.begin(), y.end(), h1) - y.begin());
         }
