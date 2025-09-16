@@ -232,16 +232,16 @@ private:
         }
     }
 
+    PTM _new(SizeType root) {
+        return PTM(root);
+    }
+
     PersistentWBTree(SizeType root) : root(root) {}
 
   public:
     PersistentWBTree() : root(0) {}
 
     PersistentWBTree(vector<T> &a) { _build(a); }
-
-    PTM _new(SizeType root) {
-        return PTM(root);
-    }
 
     PTM merge(PTM other) {
         SizeType root = _merge_node(this->root, other.root);
