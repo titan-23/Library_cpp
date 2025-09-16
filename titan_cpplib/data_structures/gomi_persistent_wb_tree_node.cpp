@@ -4,17 +4,18 @@
 #include <cassert>
 #include <stack>
 #include <memory>
+#include "titan_cpplib/others/print.cpp"
 using namespace std;
 
 namespace titan23 {
 
-template <class T>
-class PersistentLazyWBTree {
+template <class T, typename SizeType=int>
+class PersistentWBTree {
   private:
     class Node;
     using NodePtr = shared_ptr<Node>;
     // using NodePtr = Node*;
-    using MyPersistentLazyWBTree = PersistentLazyWBTree<T>;
+    using MyPersistentWBTree = PersistentWBTree<T, SizeType>;
     static constexpr int DELTA = 3;
     static constexpr int GAMMA = 2;
     NodePtr root;
@@ -24,7 +25,7 @@ class PersistentLazyWBTree {
         T key;
         NodePtr left;
         NodePtr right;
-        int size;
+        SizeType size;
 
         Node(T key) : key(key), left(nullptr), right(nullptr), size(1) {}
 
@@ -37,11 +38,11 @@ class PersistentLazyWBTree {
             return node;
         }
 
-        int weight_right() const {
+        SizeType weight_right() const {
             return right ? right->size + 1 : 1;
         }
 
-        int weight_left() const {
+        SizeType weight_left() const {
             return left ? left->size + 1 : 1;
         }
 
@@ -52,6 +53,19 @@ class PersistentLazyWBTree {
             }
             if (right) {
                 size += right->size;
+            }
+        }
+
+        void balance_check() const {
+            if (!weight_left()*DELTA >= weight_right()) {
+                cerr << weight_left() << ", " << weight_right() << endl;
+                cerr << "not weight_left()*DELTA >= weight_right()." << endl;
+                assert(false);
+            }
+            if (!weight_right() * DELTA >= weight_left()) {
+                cerr << weight_left() << ", " << weight_right() << endl;
+                cerr << "not weight_right() * DELTA >= weight_left()." << endl;
+                assert(false);
             }
         }
     };
@@ -107,7 +121,7 @@ class PersistentLazyWBTree {
         return u;
     }
 
-    int weight(NodePtr node) const {
+    SizeType weight(NodePtr node) const {
         return node ? node->size + 1 : 1;
     }
 
@@ -150,9 +164,9 @@ class PersistentLazyWBTree {
         return _merge_with_root(l_, root_, r);
     }
 
-    pair<NodePtr, NodePtr> _split_node(NodePtr &node, int k) {
-        if (!node) {return {nullptr, nullptr};}
-        int tmp = node->left ? k-node->left->size : k;
+    pair<NodePtr, NodePtr> _split_node(NodePtr &node, SizeType k) {
+        if (!node) { return {nullptr, nullptr}; }
+        SizeType tmp = node->left ? k-node->left->size : k;
         if (tmp == 0) {
             return {node->left, _merge_with_root(nullptr, node, node->right)};
         } else if (tmp < 0) {
@@ -164,28 +178,66 @@ class PersistentLazyWBTree {
         }
     }
 
-  public:
-    PersistentLazyWBTree() : root(nullptr) {}
-
-    PersistentLazyWBTree(vector<T> &a) { _build(a); }
-
-    PersistentLazyWBTree(NodePtr root) : root(root) {}
-
-    MyPersistentLazyWBTree _new(NodePtr root) {
-        return MyPersistentLazyWBTree(root);
+    NodePtr _split_node_left(NodePtr &node, SizeType k) {
+        if (!node) { return nullptr; }
+        SizeType tmp = node->left ? k-node->left->size : k;
+        if (tmp == 0) {
+            return node->left;
+        } else if (tmp < 0) {
+            auto l = _split_node_left(node->left, k);
+            return l;
+        } else {
+            auto l = _split_node_left(node->right, tmp-1);
+            return _merge_with_root(node->left, node, l);
+        }
     }
 
-    MyPersistentLazyWBTree merge(MyPersistentLazyWBTree other) {
+    NodePtr _split_node_right(NodePtr &node, SizeType k) {
+        if (!node) { return nullptr; }
+        SizeType tmp = node->left ? k-node->left->size : k;
+        if (tmp == 0) {
+            return _merge_with_root(nullptr, node, node->right);
+        } else if (tmp < 0) {
+            auto r = _split_node_right(node->left, k);
+            return _merge_with_root(r, node, node->right);
+        } else {
+            auto r = _split_node_right(node->right, tmp-1);
+            return r;
+        }
+    }
+
+  public:
+    PersistentWBTree() : root(nullptr) {}
+
+    PersistentWBTree(vector<T> &a) { _build(a); }
+
+    PersistentWBTree(NodePtr root) : root(root) {}
+
+    MyPersistentWBTree _new(NodePtr root) {
+        return MyPersistentWBTree(root);
+    }
+
+    MyPersistentWBTree merge(MyPersistentWBTree other) {
         NodePtr root = _merge_node(this->root, other.root);
         return _new(root);
     }
 
-    pair<MyPersistentLazyWBTree, MyPersistentLazyWBTree> split(int k) {
+    pair<MyPersistentWBTree, MyPersistentWBTree> split(SizeType k) {
         auto [l, r] = _split_node(this->root, k);
         return {_new(l), _new(r)};
     }
 
-    MyPersistentLazyWBTree insert(int k, T key) {
+    MyPersistentWBTree split_left(SizeType k) {
+        auto l = _split_node_left(this->root, k);
+        return _new(l);
+    }
+
+    MyPersistentWBTree split_right(SizeType k) {
+        auto r = _split_node_right(this->root, k);
+        return _new(r);
+    }
+
+    MyPersistentWBTree insert(SizeType k, T key) {
         assert(0 <= k && k <= len());
         auto [s, t] = _split_node(root, k);
         NodePtr new_node = make_shared<Node>(key);
@@ -193,7 +245,7 @@ class PersistentLazyWBTree {
         return _new(_merge_with_root(s, new_node, t));
     }
 
-    pair<MyPersistentLazyWBTree, T> pop(int k) {
+    pair<MyPersistentWBTree, T> pop(SizeType k) {
         assert(0 <= k && k < len());
         auto [s_, t] = _split_node(this->root, k+1);
         auto [s, tmp] = _pop_right(s_);
@@ -219,15 +271,15 @@ class PersistentLazyWBTree {
         return a;
     }
 
-    MyPersistentLazyWBTree copy() {
+    MyPersistentWBTree copy() {
         return _new(root ? root->copy() : nullptr);
     }
 
-    T get(int k) {
+    T get(SizeType k) {
         assert(0 <= k && k < len());
         NodePtr node = root;
         while (1) {
-            int t = node->left ? node->left->size : 0;
+            SizeType t = node->left ? node->left->size : 0;
             if (t == k) {
                 return node->key;
             }
@@ -250,29 +302,29 @@ class PersistentLazyWBTree {
         cout << "]" << endl;
     }
 
-    int len() const {
+    SizeType len() const {
         return root ? root->size : 0;
     }
 
     void check() const {
-        auto rec = [&] (auto &&rec, NodePtr node) -> pair<int, int> {
-            int ls = 0, rs = 0;
+        auto rec = [&] (auto &&rec, NodePtr node) -> pair<SizeType, int> {
+            SizeType ls = 0, rs = 0;
             int height = 0;
             int h;
             if (node->left) {
-                pair<int, int> res = rec(rec, node->left);
+                pair<SizeType, int> res = rec(rec, node->left);
                 ls = res.first;
                 h = res.second;
                 height = max(height, h);
             }
             if (node->right) {
-                pair<int, int> res = rec(rec, node->right);
+                pair<SizeType, int> res = rec(rec, node->right);
                 rs = res.first;
                 h = res.second;
                 height = max(height, h);
             }
             node->balance_check();
-            int s = ls + rs + 1;
+            SizeType s = ls + rs + 1;
             assert(s == node->size);
             return {s, height+1};
         };
@@ -281,7 +333,7 @@ class PersistentLazyWBTree {
         cerr << PRINT_GREEN << "OK : height=" << h << PRINT_NONE << endl;
     }
 
-    friend ostream& operator<<(ostream& os, PersistentLazyWBTree<T> &tree) {
+    friend ostream& operator<<(ostream& os, PersistentWBTree<T> &tree) {
         vector<T> a = tree.tovector();
         os << "[";
         for (int i = 0; i < (int)a.size()-1; ++i) {
