@@ -105,6 +105,10 @@ private:
             update(node);
             return node;
         };
+        if (a.empty()) {
+            root = 0;
+            return;
+        }
         root = build(build, 0, (SizeType)a.size());
     }
 

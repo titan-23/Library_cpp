@@ -161,6 +161,10 @@ private:
             update(node);
             return node;
         };
+        if (a.empty()) {
+            root = 0;
+            return;
+        }
         root = build(build, 0, (SizeType)a.size());
     }
 
@@ -193,7 +197,7 @@ private:
         return u;
     }
 
-    SizeType _balance_right(SizeType &node) {
+    SizeType _balance_right(SizeType node) {
         propagate(ma.left[node]);
         SizeType u = ma.left[node];
         if (weight_right(ma.left[node]) >= weight_left(ma.left[node]) * GAMMA) {
