@@ -21,7 +21,7 @@ public:
         vector<SizeType> left, right, size;
         vector<T> keys, data;
         vector<F> lazy;
-        vector<short> rev;
+        vector<int8_t> rev;
         size_t ptr, cap;
 
         MemoeyAllocator() : ptr(1), cap(1) {
@@ -44,7 +44,7 @@ public:
             return idx;
         }
 
-        SizeType new_node(T key, F f) {
+        SizeType new_node(const T &key, const F &f) {
             if (left.size() > ptr) {
                 left[ptr] = 0;
                 right[ptr] = 0;
@@ -97,12 +97,16 @@ private:
     static constexpr int GAMMA = 2;
     SizeType root;
 
-    SizeType weight_right(SizeType node) const {
+    inline SizeType weight_right(SizeType node) const {
         return ma.size[ma.right[node]] + 1;
     }
 
-    SizeType weight_left(SizeType node) const {
+    inline SizeType weight_left(SizeType node) const {
         return ma.size[ma.left[node]] + 1;
+    }
+
+    inline SizeType weight(SizeType node) const {
+        return ma.size[node] + 1;
     }
 
     void update(SizeType node) {
@@ -208,10 +212,6 @@ private:
         return u;
     }
 
-    SizeType weight(SizeType node) const {
-        return ma.size[node] + 1;
-    }
-
     SizeType _merge_with_root(SizeType l, SizeType root, SizeType r) {
         if (weight(r) * DELTA < weight(l)) {
             propagate(l);
@@ -277,10 +277,10 @@ private:
         if (tmp == 0) {
             return lch;
         } else if (tmp < 0) {
-            auto l = _split_node_left(lch, k);
+            SizeType l = _split_node_left(lch, k);
             return l;
         } else {
-            auto l = _split_node_left(rch, tmp-1);
+            SizeType l = _split_node_left(rch, tmp-1);
             return _merge_with_root(lch, node, l);
         }
     }
@@ -293,10 +293,10 @@ private:
         if (tmp == 0) {
             return _merge_with_root(0, node, rch);
         } else if (tmp < 0) {
-            auto r = _split_node_right(lch, k);
+            SizeType r = _split_node_right(lch, k);
             return _merge_with_root(r, node, rch);
         } else {
-            auto r = _split_node_right(rch, tmp-1);
+            SizeType r = _split_node_right(rch, tmp-1);
             return r;
         }
     }
@@ -323,12 +323,12 @@ private:
     }
 
     PLTM split_left(SizeType k) {
-        auto l = _split_node_left(this->root, k);
+        SizeType l = _split_node_left(this->root, k);
         return _new(l);
     }
 
     PLTM split_right(SizeType k) {
-        auto r = _split_node_right(this->root, k);
+        SizeType r = _split_node_right(this->root, k);
         return _new(r);
     }
 
@@ -528,6 +528,12 @@ private:
         os << "]";
         return os;
     }
+
+    static void rebuild(PLTM &tree) {
+        PLTM::ma.reset();
+        vector<T> a = tree.tovector();
+        tree = PLTM(a);
+    }
 };
 
 template <class SizeType, class T, class F,
@@ -537,17 +543,5 @@ template <class SizeType, class T, class F,
         T (*e)(),
         F (*id)()>
 typename PersistentLazyWBTree<SizeType, T, F, op, mapping, composition, e, id>::MemoeyAllocator PersistentLazyWBTree<SizeType, T, F, op, mapping, composition, e, id>::ma;
-
-template <class SizeType, class T, class F,
-        T (*op)(T, T),
-        T (*mapping)(F, T),
-        F (*composition)(F, F),
-        T (*e)(),
-        F (*id)()>
-void rebuild_pltm(PersistentLazyWBTree<SizeType, T, F, op, mapping, composition, e, id> &tree) {
-    vector<T> a = tree.tovector();
-    PersistentLazyWBTree<SizeType, T, F, op, mapping, composition, e, id>::ma.reset();
-    tree = PersistentLazyWBTree<SizeType, T, F, op, mapping, composition, e, id>(a);
-}
 
 }  // namespace titan23
