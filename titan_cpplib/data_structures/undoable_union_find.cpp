@@ -5,61 +5,58 @@ using namespace std;
 // UndoableUnionFind
 namespace titan23 {
 
-    class UndoableUnionFind {
-      private:
-        int _n, _group_count;
-        vector<int> _parents;
-        stack<pair<int, int>> _history;
+class UndoableUnionFind {
+private:
+    int n, cnt;
+    vector<int> par;
+    stack<pair<int, int>> history;
 
-      public:
-        UndoableUnionFind() {}
-        UndoableUnionFind(int n) :
-            _n(n), _group_count(n), _parents(n, -1) {}
+public:
+    UndoableUnionFind() {}
+    UndoableUnionFind(int n) : n(n), cnt(n), par(n, -1) {}
 
-        void undo() {
-            auto [y, py] = _history.top();
-            _history.pop();
-            if (y == -1) return;
-            auto [x, px] = _history.top();
-            _history.pop();
-            ++_group_count;
-            _parents[y] = py;
-            _parents[x] = px;
+    void undo() {
+        auto [y, py] = history.top(); history.pop();
+        if (y == -1) return;
+        auto [x, px] = history.top(); history.pop();
+        ++cnt;
+        par[y] = py;
+        par[x] = px;
+    }
+
+    int root(int x) const {
+        while (par[x] >= 0) {
+            x = par[x];
         }
+        return x;
+    }
 
-        int root(int x) const {
-            while (_parents[x] >= 0) {
-                x = _parents[x];
-            }
-            return x;
+    bool unite(int x, int y) {
+        x = root(x);
+        y = root(y);
+        if (x == y) {
+            history.emplace(-1, -1);
+            return false;
         }
+        if (par[x] > par[y]) swap(x, y);
+        cnt--;
+        history.emplace(x, par[x]);
+        history.emplace(y, par[y]);
+        par[x] += par[y];
+        par[y] = x;
+        return true;
+    }
 
-        bool unite(int x, int y) {
-            x = root(x);
-            y = root(y);
-            if (x == y) {
-                _history.emplace(-1, -1);
-                return false;
-            }
-            if (_parents[x] > _parents[y]) swap(x, y);
-            _group_count -= 1;
-            _history.emplace(x, _parents[x]);
-            _history.emplace(y, _parents[y]);
-            _parents[x] += _parents[y];
-            _parents[y] = x;
-            return true;
-        }
+    int size(const int x) const {
+        return -par[root(x)];
+    }
 
-        int size(const int x) const {
-            return -_parents[root(x)];
-        }
+    bool same(const int x, const int y) const {
+        return root(x) == root(y);
+    }
 
-        bool same(const int x, const int y) const {
-            return root(x) == root(y);
-        }
-
-        int group_count() const {
-            return _group_count;
-        }
-    };
+    int group_count() const {
+        return cnt;
+    }
+};
 } // namespace titan23
