@@ -1,3 +1,7 @@
+#include <vector>
+#include <cassert>
+using namespace std;
+
 // pow ----------------
 long long pow_mod(long long a, long long b, const long long mod) {
     long long res = 1;
@@ -45,30 +49,41 @@ vector<int> get_primelist(int MAX) {
 }
 // get_primelist -----------------
 
+using int128 = __int128_t;
+
+template<class T>
+T pow_mod(T a, T b, const T mod) {
+    T res = 1;
+    a %= mod;
+    while (b) {
+        if (b & 1) res = res * a % mod;
+        a = a * a % mod;
+        b >>= 1;
+    }
+    return res;
+}
+
+const vector<long long> A1 = {2, 7, 61};
+const vector<long long> A2 = {2, 325, 9375, 28178, 450775, 9780504, 1795265022};
 
 bool is_primell(long long n) {
-    if (n == 1) return false;
-    if (n == 2) return true;
-    if (!(n & 1ll)) return false;
-    vector<long long> p = {2, 7, 61, 325, 9375, 28178, 450775, 9780504, 1795265022};
+    if (n <= 1) return false;
+    if (n == 2 || n == 7 || n == 61) return true;
+    if (n % 2 == 0) return false;
     long long d = n - 1;
-    long long dd = d & (-d);
-    long long cnt = 0;
-    while (dd) {
-        ++cnt;
-        dd >>= 1ll;
-    }
-    d >>= cnt - 1ll;
-    for (long long a : p) {
-        if (n <= a) break;
-            long long t = d;
-            long long y = pow_mod(a, t, n);
-            while (t != n-1ll && y != 1ll && y != n-1ll) {
-            y = pow_mod(y, 2ll, n);
-            t <<= 1ll;
+    long long s = __builtin_ctzll(d);
+    d >>= s;
+    const auto &A = n < 4759123141 ? A1 : A2;
+    for (const long long &a : A) {
+        if (n <= a) return true;
+        long long t, x = pow_mod<int128>(a, d, n);
+        if (x != 1) {
+            for (t = 0; t < s; ++t) {
+                if (x == n - 1) break;
+                x = (int128)x * x % n;
+            }
+            if (t == s) return false;
         }
-        if (y != n-1ll && (!(t&1ll))) return false;
     }
     return true;
 }
-
