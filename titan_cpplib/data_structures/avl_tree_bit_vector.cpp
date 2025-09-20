@@ -5,6 +5,7 @@
 #include <tuple>
 #include <nmmintrin.h>
 #include <stdint.h>
+#include "titan_cpplib/data_structures/fast_stack.cpp"
 using namespace std;
 
 // AVLTreeBitVector
@@ -17,6 +18,9 @@ class AVLTreeBitVector {
     // static constexpr const char _W = 63;
     using uint128 = __uint128_t;
     static constexpr const char _W = 127;
+
+    FastStack<Node> path;
+
     Node _root, _end;
     vector<uint128> _key;
     vector<Node> _left, _right;
@@ -203,7 +207,7 @@ class AVLTreeBitVector {
         return ((v >> bl) << ((bl-1))) | (v & (((uint128)1<<(bl-1))-1));
     }
 
-    void _pop_under(stack<Node> &path, int d, Node node, int res) {
+    void _pop_under(int d, Node node, int res) {
         int fd = 0, lmax_total = 0;
         char lmax_bit_len = 0;
         if (_left[node] && _right[node]) {
@@ -281,7 +285,7 @@ class AVLTreeBitVector {
           _key(1, 0),
           _left(1, 0), _right(1, 0),
           _size(1, 0), _total(1, 0),
-          _bit_len(1, 0), _balance(1, 0) {
+          _bit_len(1, 0), _balance(1, 0), path(30) {
     }
 
     AVLTreeBitVector(const vector<uint8_t> &a)
@@ -289,7 +293,7 @@ class AVLTreeBitVector {
           _key(1, 0),
           _left(1, 0), _right(1, 0),
           _size(1, 0), _total(1, 0),
-          _bit_len(1, 0), _balance(1, 0) {
+          _bit_len(1, 0), _balance(1, 0), path(30) {
         if (!a.empty()) _build(a);
     }
 
@@ -312,7 +316,7 @@ class AVLTreeBitVector {
         }
         Node node = _root;
         int d = 0;
-        stack<Node> path;
+        path.clear();
         while (node) {
             int t = _size[_left[node]] + _bit_len[node];
             if (t - _bit_len[node] <= k && k <= t) break;
@@ -405,7 +409,7 @@ class AVLTreeBitVector {
     bool pop(int k) {
         Node node = _root;
         int d = 0;
-        stack<Node> path;
+        path.clear();
         while (node) {
             int t = _size[_left[node]] + _bit_len[node];
             if (t - _bit_len[node] <= k && k < t) break;
@@ -419,7 +423,7 @@ class AVLTreeBitVector {
         uint128 v = _key[node];
         bool res = (v >> (_bit_len[node] - k - 1)) & 1;
         if (_bit_len[node] == 1) {
-            _pop_under(path, d, node, res);
+            _pop_under(d, node, res);
             return res;
         }
         _key[node] = _bit_pop(v, _bit_len[node]-k);
@@ -436,7 +440,7 @@ class AVLTreeBitVector {
 
     void set(int k, bool v) {
         Node node = _root;
-        stack<Node> path;
+        path.clear();
         while (true) {
             int t = _size[_left[node]] + _bit_len[node];
             path.emplace(node);
@@ -586,7 +590,7 @@ class AVLTreeBitVector {
         }
         Node node = _root;
         int s = 0;
-        stack<Node> path;
+        path.clear();
         int d = 0;
         while (node) {
             int t = _size[_left[node]] + _bit_len[node];
@@ -681,7 +685,7 @@ class AVLTreeBitVector {
     int _access_pop_and_rank1(int k) {
         int s = 0, d = 0;
         Node node = _root;
-        stack<Node> path;
+        path.clear();
         while (node) {
             int t = _size[_left[node]] + _bit_len[node];
             if (t - _bit_len[node] <= k && k < t) break;
@@ -699,7 +703,7 @@ class AVLTreeBitVector {
         uint128 v = _key[node];
         bool res = v >> (_bit_len[node] - k - 1) & 1;
         if (_bit_len[node] == 1) {
-            _pop_under(path, d, node, res);
+            _pop_under(d, node, res);
             return (s << 1) | res;
         }
         _key[node] = _bit_pop(v, _bit_len[node]-k);

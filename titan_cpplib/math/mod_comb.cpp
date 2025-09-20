@@ -8,7 +8,6 @@ namespace titan23 {
 template<typename mint>
 class ModComb {
 private:
-    // using mint = atcoder::modint998244353;
     vector<mint> _fact, _factinv, _inv;
 
 public:

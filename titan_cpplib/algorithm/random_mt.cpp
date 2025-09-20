@@ -41,6 +41,13 @@ public:
         return dist(_mt);
     }
 
+    //! `[begin, end]` の乱数を返す
+    ll randll(const ll begin, const ll end) {
+        assert(begin <= end);
+        std::uniform_int_distribution<ll> dist(begin, end);
+        return dist(_mt);
+    }
+
     //! `[0, end)` の乱数を返す
     int randrange(const int end) {
         assert(0 < end);
