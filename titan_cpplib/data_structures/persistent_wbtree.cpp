@@ -13,28 +13,34 @@ template <class T, typename SizeType=int>
 class PersistentWBTree {
 public:
     struct MemoeyAllocator {
-        vector<SizeType> left, right, size;
+
+        // #pragma pack(push, 1)
+        struct Node {
+            SizeType left, right, size;
+            Node() {}
+            Node(SizeType l, SizeType r, SizeType s) : left(l), right(r), size(s) {}
+        };
+        // #pragma pack(pop)
+
+        vector<Node> d;
         vector<T> keys;
-        size_t ptr;
+        SizeType ptr;
 
         MemoeyAllocator() : ptr(1) {
-            left.emplace_back(0);
-            right.emplace_back(0);
-            size.emplace_back(0);
-            keys.emplace_back(T{});
+            d.resize(1);
+            d[0] = {0, 0, 0};
+            keys.resize(1);
         }
 
         SizeType new_node(const T &key) {
-            if (left.size() > ptr) {
-                left[ptr] = 0;
-                right[ptr] = 0;
-                size[ptr] = 1;
+            if (d.size() > ptr) {
                 keys[ptr] = key;
+                d[ptr].left = 0;
+                d[ptr].right = 0;
+                d[ptr].size = 1;
             } else {
-                left.emplace_back(0);
-                right.emplace_back(0);
-                size.emplace_back(1);
                 keys.emplace_back(key);
+                d.emplace_back(0, 0, 1);
             }
             ptr++;
             return ptr - 1;
@@ -42,17 +48,15 @@ public:
 
         SizeType copy(SizeType node) {
             SizeType v = new_node(keys[node]);
-            left[v] = left[node];
-            right[v] = right[node];
-            size[v] = size[node];
+            d[v].left = d[node].left;
+            d[v].right = d[node].right;
+            d[v].size = d[node].size;
             return v;
         }
 
         void reserve(SizeType cap) {
-            left.reserve(cap);
-            right.reserve(cap);
             keys.reserve(cap);
-            size.reserve(cap);
+            d.reserve(cap);
         }
 
         void reset() {
@@ -68,28 +72,22 @@ private:
     static constexpr int GAMMA = 2;
     SizeType root;
 
-    inline SizeType weight_right(SizeType node) const {
-        return ma.size[ma.right[node]] + 1;
-    }
+    inline SizeType weight_right(SizeType node) const { return ma.d[ma.d[node].right].size + 1; }
 
-    inline SizeType weight_left(SizeType node) const {
-        return ma.size[ma.left[node]] + 1;
-    }
+    inline SizeType weight_left(SizeType node) const { return ma.d[ma.d[node].left].size + 1; }
 
-    inline SizeType weight(SizeType node) const {
-        return ma.size[node] + 1;
-    }
+    inline SizeType weight(SizeType node) const { return ma.d[node].size + 1; }
 
     void update(SizeType node) {
-        ma.size[node] = 1 + ma.size[ma.left[node]] + ma.size[ma.right[node]];
+        ma.d[node].size = 1 + ma.d[ma.d[node].left].size + ma.d[ma.d[node].right].size;
     }
 
     void _build(vector<T> const &a) {
         auto build = [&] (auto &&build, SizeType l, SizeType r) -> SizeType {
             SizeType mid = (l + r) >> 1;
             SizeType node = ma.new_node(a[mid]);
-            if (l != mid) ma.left[node] = build(build, l, mid);
-            if (mid+1 != r) ma.right[node] = build(build, mid+1, r);
+            if (l != mid) ma.d[node].left = build(build, l, mid);
+            if (mid+1 != r) ma.d[node].right = build(build, mid+1, r);
             update(node);
             return node;
         };
@@ -101,36 +99,36 @@ private:
     }
 
     SizeType _rotate_right(SizeType node) {
-        SizeType u = ma.copy(ma.left[node]);
-        ma.left[node] = ma.right[u];
-        ma.right[u] = node;
+        SizeType u = ma.copy(ma.d[node].left);
+        ma.d[node].left = ma.d[u].right;
+        ma.d[u].right = node;
         update(node);
         update(u);
         return u;
     }
 
     SizeType _rotate_left(SizeType node) {
-        SizeType u = ma.copy(ma.right[node]);
-        ma.right[node] = ma.left[u];
-        ma.left[u] = node;
+        SizeType u = ma.copy(ma.d[node].right);
+        ma.d[node].right = ma.d[u].left;
+        ma.d[u].left = node;
         update(node);
         update(u);
         return u;
     }
 
     SizeType _balance_left(SizeType node) {
-        SizeType u = ma.right[node];
-        if (weight_left(ma.right[node]) >= weight_right(ma.right[node]) * GAMMA) {
-            ma.right[node] = _rotate_right(u);
+        SizeType u = ma.d[node].right;
+        if (weight_left(u) >= weight_right(u) * GAMMA) {
+            ma.d[node].right = _rotate_right(u);
         }
         u = _rotate_left(node);
         return u;
     }
 
     SizeType _balance_right(SizeType node) {
-        SizeType u = ma.left[node];
-        if (weight_right(ma.left[node]) >= weight_left(ma.left[node]) * GAMMA) {
-            ma.left[node] = _rotate_left(u);
+        SizeType u = ma.d[node].left;
+        if (weight_right(u) >= weight_left(u) * GAMMA) {
+            ma.d[node].left = _rotate_left(u);
         }
         u = _rotate_right(node);
         return u;
@@ -139,30 +137,30 @@ private:
     SizeType _merge_with_root(SizeType l, SizeType root, SizeType r) {
         if (weight(r) * DELTA < weight(l)) {
             l = ma.copy(l);
-            ma.right[l] = _merge_with_root(ma.right[l], root, r);
+            ma.d[l].right = _merge_with_root(ma.d[l].right, root, r);
             update(l);
-            if (weight(ma.left[l]) * DELTA < weight(ma.right[l])) {
+            if (weight(ma.d[l].left) * DELTA < weight(ma.d[l].right)) {
                 return _balance_left(l);
             }
             return l;
         } else if (weight(l) * DELTA < weight(r)) {
             r = ma.copy(r);
-            ma.left[r] = _merge_with_root(l, root, ma.left[r]);
+            ma.d[r].left = _merge_with_root(l, root, ma.d[r].left);
             update(r);
-            if (weight(ma.right[r]) * DELTA < weight(ma.left[r])) {
+            if (weight(ma.d[r].right) * DELTA < weight(ma.d[r].left)) {
                 return _balance_right(r);
             }
             return r;
         }
         root = ma.copy(root);
-        ma.left[root] = l;
-        ma.right[root] = r;
+        ma.d[root].left = l;
+        ma.d[root].right = r;
         update(root);
         return root;
     }
 
     pair<SizeType, SizeType> _pop_right(SizeType node) {
-        return _split_node(node, ma.size[node]-1);
+        return _split_node(node, ma.d[node].size-1);
     }
 
     SizeType _merge_node(SizeType l, SizeType r) {
@@ -177,8 +175,8 @@ private:
 
     pair<SizeType, SizeType> _split_node(SizeType node, SizeType k) {
         if (!node) { return {0, 0}; }
-        SizeType lch = ma.left[node], rch = ma.right[node];
-        SizeType tmp = lch ? k-ma.size[lch] : k;
+        SizeType lch = ma.d[node].left, rch = ma.d[node].right;
+        SizeType tmp = lch ? k-ma.d[lch].size : k;
         if (tmp == 0) {
             return {lch, _merge_with_root(0, node, rch)};
         } else if (tmp < 0) {
@@ -192,8 +190,8 @@ private:
 
     SizeType _split_node_left(SizeType node, SizeType k) {
         if (!node) { return 0; }
-        SizeType lch = ma.left[node], rch = ma.right[node];
-        SizeType tmp = lch ? k-ma.size[lch] : k;
+        SizeType lch = ma.d[node].left, rch = ma.d[node].right;
+        SizeType tmp = lch ? k-ma.d[lch].size : k;
         if (tmp == 0) {
             return lch;
         } else if (tmp < 0) {
@@ -207,8 +205,8 @@ private:
 
     SizeType _split_node_right(SizeType node, SizeType k) {
         if (!node) { return 0; }
-        SizeType lch = ma.left[node], rch = ma.right[node];
-        SizeType tmp = lch ? k-ma.size[lch] : k;
+        SizeType lch = ma.d[node].left, rch = ma.d[node].right;
+        SizeType tmp = lch ? k-ma.d[lch].size : k;
         if (tmp == 0) {
             return _merge_with_root(0, node, rch);
         } else if (tmp < 0) {
@@ -254,7 +252,7 @@ private:
     PTM insert(SizeType k, T key) {
         assert(0 <= k && k <= len());
         auto [s, t] = _split_node(root, k);
-        SizeType v = ma.new_nodme(key);
+        SizeType v = ma.new_node(key);
         return _new(_merge_with_root(s, v, t));
     }
 
@@ -274,11 +272,11 @@ private:
         while (!s.empty() || node) {
             if (node) {
                 s.emplace(node);
-                node = ma.left[node];
+                node = ma.d[node].left;
             } else {
                 node = s.top(); s.pop();
                 a.emplace_back(ma.keys[node]);
-                node = ma.right[node];
+                node = ma.d[node].right;
             }
         }
         return a;
@@ -292,15 +290,15 @@ private:
         assert(0 <= k && k < len());
         SizeType node = root;
         while (1) {
-            SizeType t = ma.size[ma.left[node]];
+            SizeType t = ma.d[ma.d[node].left].size;
             if (t == k) {
                 return ma.keys[node];
             }
             if (t < k) {
                 k -= t + 1;
-                node = ma.right[node];
+                node = ma.d[node].right;
             } else {
-                node = ma.left[node];
+                node = ma.d[node].left;
             }
         }
     }
@@ -316,7 +314,7 @@ private:
     }
 
     SizeType len() const {
-        return ma.size[root];
+        return ma.d[root].size;
     }
 
     static void reserve(SizeType cap) {
