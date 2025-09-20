@@ -4,6 +4,8 @@
 #include <cassert>
 #include <memory>
 using namespace std;
+const double ALPHA = 1 - sqrt(2) / 2;
+const double BETA = (1 - 2 * ALPHA) / (1 - ALPHA);
 
 namespace titan23 {
 
@@ -11,8 +13,6 @@ template <typename T>
 class WBTree {
 
 private:
-    static const double ALPHA = 1 - sqrt(2) / 2;
-    static const double BETA = (1 - 2 * ALPHA) / (1 - ALPHA);
 
     class Node;
     using NodePtr = Node*;

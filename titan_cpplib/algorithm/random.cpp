@@ -155,5 +155,14 @@ class Random {
         }
         return a[r];
     }
+
+    template <typename T>
+    constexpr T rand_pop(vector<T> &a) {
+        assert(!a.empty());
+        int idx = randrange(a.size());
+        T res = a[idx];
+        a.erase(a.begin() + idx);
+        return res;
+    }
 };
 } // namespace titan23

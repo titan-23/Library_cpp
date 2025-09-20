@@ -22,6 +22,8 @@ template<typename T1, typename T2, typename T3, typename T4> ostream &operator<<
 template<typename T> ostream& operator<<(ostream& os, const vector<T>& a);
 // vector<vector<T>>
 template<typename T> ostream& operator<<(ostream& os, const vector<vector<T>>& a);
+// array<T, 2>
+template<typename T> ostream& operator<<(ostream& os, const array<T, 2>& a);
 // set<T>
 template<typename T> ostream& operator<<(ostream& os, const set<T>& s);
 // multiset<T>
@@ -92,6 +94,18 @@ ostream &operator<<(ostream &os, const tuple<T1, T2, T3> &t) {
 template<typename T1, typename T2, typename T3, typename T4>
 ostream &operator<<(ostream &os, const tuple<T1, T2, T3, T4> &t) {
     os << "(" << get<0>(t) << ", " << get<1>(t) << ", " << get<2>(t) << ", " << get<3>(t) << ")";
+    return os;
+}
+
+// array<T, 2>
+template<typename T>
+ostream& operator<<(ostream& os, const array<T, 2>& a) {
+    os << "[";
+    for (int i = 0; i < (int)a.size(); ++i) {
+        if (i > 0) os << ", ";
+        os << a[i];
+    }
+    os << "]";
     return os;
 }
 

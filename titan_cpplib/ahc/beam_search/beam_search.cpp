@@ -52,7 +52,7 @@ private:
      */
     void get_next_beam(State* state, const int t_turn, const int turn) {
         next_beam.clear();
-        // next_beam.reserve(tree.size()); // TODO
+        next_beam.reserve(tree.size());
         seen.clear();
 
         if (turn == 0) {
@@ -191,7 +191,7 @@ private:
     void init_bs(const BeamParam &param) {
         beam_timer.reset();
         rnd = titan23::Random();
-        this->seen = titan23::HashSet(param.beam_width); // TODO
+        this->seen = titan23::HashSet(param.beam_width*10);
         ActionID = 0;
         result.clear();
     }
@@ -213,7 +213,7 @@ public:
         int now_turn = 0;
         for (int turn = 0; turn < param.max_turn; ++turn) {
             double now_time = beam_timer.elapsed();
-            if (verbose) cerr << "\nInfo: # turn : " << turn+1 << " | " << now_time << " ms" << endl;
+            // if (verbose) cerr << "\nInfo: # turn : " << turn+1 << " | " << now_time << " ms" << endl;
 
             // 次のビーム候補を求める
             get_next_beam(state, turn, turn-now_turn);
@@ -228,7 +228,6 @@ public:
             // int beam_width = min(param.beam_width, (int)next_beam.size());
             // cerr << "next_beam.size()=" << next_beam.size() << endl;
             int beam_width = min(param.get_beam_width(param.max_turn-turn, tree.size(), param.time_limit-beam_timer.elapsed()), (int)next_beam.size());
-            // cout << beam_width << " " << next_beam.size() << endl;
 
             nth_element(next_beam.begin(), next_beam.begin() + beam_width, next_beam.end(), [&] (const tuple<int, int, ScoreType, Action, ActionIDType> &left, const tuple<int, int, ScoreType, Action, ActionIDType> &right) {
                 if (std::get<2>(left) == std::get<2>(right)) {
@@ -241,7 +240,7 @@ public:
             tuple<int, int, ScoreType, Action, ActionIDType> bests = *min_element(next_beam.begin(), next_beam.begin() + beam_width, [&] (const tuple<int, int, ScoreType, Action, ActionIDType> &left, const tuple<int, int, ScoreType, Action, ActionIDType> &right) {
                 return std::get<2>(left) < std::get<2>(right);
             });
-            if (verbose) cerr << "Info: \tbest_score = " << std::get<2>(bests) << endl;
+            // if (verbose) cerr << "Info: \tbest_score = " << std::get<2>(bests) << endl;
             if (std::get<2>(bests) == 0) { // TODO 終了条件:ベストスコアを元に判定している
                 cerr << to_green("Info: find valid solution.") << endl;
                 get_result();
