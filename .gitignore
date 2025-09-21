@@ -6,5 +6,6 @@ __pycache__
 *.txt
 *.exe
 *.pyc
+*.data
 
 atcoder/

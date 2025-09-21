@@ -42,9 +42,9 @@ public:
     }
 
     //! `[begin, end]` の乱数を返す
-    ll randll(const ll begin, const ll end) {
+    long long randll(const long long begin, const long long end) {
         assert(begin <= end);
-        std::uniform_int_distribution<ll> dist(begin, end);
+        std::uniform_int_distribution<long long> dist(begin, end);
         return dist(_mt);
     }
 
