@@ -210,22 +210,20 @@ private:
     }
 
     // fromの[l, r)を自身の[l, r)にコピーしたものを返す(自身は不変)
-    PSEG copy_from(const PSEG &from, int l, int r) {
         assert(0 <= l && l <= r && r <= len());
-        assert(from.len() == len());
-
-        auto dfs = [&](auto &&dfs, int fr, int to, int l, int r) -> int {
-            if (!to || r <= l || r <= l) return fr;
-            if (l <= l && r <= r) return to;
-            int new_node = ma.copy(fr);
-            int mid = (l + r) / 2;
-            ma.tree[new_node].left = dfs(dfs, ma.tree[fr].left, ma.tree[to].left, l, mid);
-            ma.tree[new_node].right = dfs(dfs, ma.tree[fr].right, ma.tree[to].right, mid, r);
-            update(new_node);
-            return new_node;
+        auto dfs = [&] (auto &&dfs, int fr, int to, int left, int right) -> int {
+            if (!fr && !to) return fr;
+            to = ma.copy(to);
+            if (right <= l || r <= left) { return to; }
+            if (l <= left && right <= r) { return fr; }
+            int mid = (left + right) / 2;
+            // data[node].dataはこの後updateする / .lazyは伝播済み
+            ma.tree[to].left = dfs(dfs, ma.tree[fr].left, ma.tree[to].left, left, mid);
+            ma.tree[to].right = dfs(dfs, ma.tree[fr].right, ma.tree[to].right, mid, right);
+            update(to);
+            return to;
         };
-
-        int new_root = dfs(dfs, root, from.root, 0, len());
+        int new_root = dfs(dfs, ma.copy(from.root), ma.copy(root), 0, len());
         return PSEG(new_root, len());
     }
 
