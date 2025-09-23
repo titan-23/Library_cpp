@@ -152,44 +152,43 @@ private:
 
     PSEG set(int k, T v) {
         assert(0 <= k && k < len());
-        int node = ma.copy(root);
-        int root = node;
+        int new_root = ma.copy(root);
+        if (len() <= 1) {
+            ma.data[new_root].key = v;
+            ma.data[new_root].data = v;
+            return PSEG(new_root, len());
+        }
+        int node = new_root;
         int pnode = 0;
-        int d = -1;
         int l = 0, r = len();
+        int d = 0;
         path.clear(); path.emplace(node);
         while (1) {
             int mid = (l + r) / 2;
-            if (k == mid) {
-                // node = ma.copy(node);
-                ma.data[node].key = v;
-                if (d == -1) {
-                    update(node);
-                    return PSEG(node, len());
-                }
-                path.emplace(node);
-                if (d) ma.tree[pnode].left = node;
-                else ma.tree[pnode].right = node;
-                while (!path.empty()) {
-                    update(path.top());
-                    path.pop();
-                }
-                return PSEG(root, len());
-            }
+            if (k == mid) break;
             pnode = node;
             if (k < mid) {
-                node = ma.copy(ma.tree[node].left);
+                node = ma.copy(ma.tree[pnode].left);
+                ma.tree[pnode].left = node;
                 r = mid;
                 d = 1;
             } else {
-                node = ma.copy(ma.tree[node].right);
+                node = ma.copy(ma.tree[pnode].right);
+                ma.tree[pnode].right = node;
                 l = mid+1;
                 d = 0;
             }
             path.emplace(node);
-            if (d) ma.tree[pnode].left = node;
-            else ma.tree[pnode].right = node;
         }
+        ma.data[node].key = v;
+        if (d) ma.tree[pnode].left = node;
+        else ma.tree[pnode].right = node;
+        update(node);
+        while (!path.empty()) {
+            update(path.top());
+            path.pop();
+        }
+        return PSEG(new_root, len());
     }
 
     T get(int k) {
