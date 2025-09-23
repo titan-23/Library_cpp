@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include "titan_cpplib/others/print.cpp"
+#include "titan_cpplib/data_structures/fast_stack.cpp"
 using namespace std;
 
 namespace titan23 {
@@ -13,6 +14,8 @@ template <class T, class F,
         F (*id)()>
 class PersistentLazySegmentTree {
 public:
+    static FastStack<int> path;
+
     struct MemoeyAllocator {
 
         // #pragma pack(push, 1)
@@ -202,7 +205,7 @@ private:
         int pnode = 0;
         int d = -1;
         int l = 0, r = len();
-        stack<int> path; path.emplace(node);
+        path.clear(); path.emplace(node);
         while (1) {
             propagate(node);
             int mid = (l + r) / 2;
@@ -320,5 +323,13 @@ template<class T, class F,
         T (*e)(),
         F (*id)()>
 typename PersistentLazySegmentTree<T, F, op, mapping, composition, e, id>::MemoeyAllocator PersistentLazySegmentTree<T, F, op, mapping, composition, e, id>::ma;
+
+template<class T, class F,
+        T (*op)(T, T),
+        T (*mapping)(F, T),
+        F (*composition)(F, F),
+        T (*e)(),
+        F (*id)()>
+FastStack<int> PersistentLazySegmentTree<T, F, op, mapping, composition, e, id>::path;
 
 }  // namespace titan23
