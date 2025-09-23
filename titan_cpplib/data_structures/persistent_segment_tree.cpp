@@ -75,7 +75,7 @@ public:
     static MemoeyAllocator ma;
 
 private:
-    using PLSEG = PersistentSegmentTree<T, op, e>;
+    using PSEG = PersistentSegmentTree<T, op, e>;
     int root;
     int _len;
 
@@ -143,11 +143,11 @@ private:
         return a;
     }
 
-    PLSEG copy() {
-        return PLSEG(ma.copy(root), len());
+    PSEG copy() {
+        return PSEG(ma.copy(root), len());
     }
 
-    PLSEG set(int k, T v) {
+    PSEG set(int k, T v) {
         assert(0 <= k && k < len());
         int node = ma.copy(root);
         int root = node;
@@ -162,7 +162,7 @@ private:
                 ma.data[node].key = v;
                 if (d == -1) {
                     update(node);
-                    return PLSEG(node, len());
+                    return PSEG(node, len());
                 }
                 path.emplace(node);
                 if (d) ma.tree[pnode].left = node;
@@ -171,7 +171,7 @@ private:
                     update(path.top());
                     path.pop();
                 }
-                return PLSEG(root, len());
+                return PSEG(root, len());
             }
             pnode = node;
             if (k < mid) {
@@ -195,7 +195,7 @@ private:
         int l = 0, r = len();
         while (1) {
             int mid = (l + r) / 2;
-            if (r - l == 1) {
+            if (k == mid) {
                 return ma.data[node].key;
             }
             if (k < mid) {
@@ -219,7 +219,7 @@ private:
     }
 
     // fromの[l, r)を自身の[l, r)にコピーしたものを返す(自身は不変)
-    PLSEG copy_from(PLSEG &from, int l, int r) {
+    PSEG copy_from(PSEG &from, int l, int r) {
         assert(0 <= l && l <= r && r <= len());
         auto dfs = [&] (auto &&dfs, int fr, int to, int left, int right) -> int {
             if (!fr && !to) return fr;
@@ -237,7 +237,7 @@ private:
             return to;
         };
         int new_root = dfs(dfs, ma.copy(from.root), ma.copy(root), 0, len());
-        return PLSEG(new_root, len());
+        return PSEG(new_root, len());
     }
 
     int len() const {
@@ -255,10 +255,10 @@ private:
         return os;
     }
 
-    static void rebuild(PLSEG &tree) {
-        PLSEG::ma.reset();
+    static void rebuild(PSEG &tree) {
+        PSEG::ma.reset();
         vector<T> a = tree.tovector();
-        tree = PLSEG(a);
+        tree = PSEG(a);
     }
 };
 

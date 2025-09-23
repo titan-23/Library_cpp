@@ -245,7 +245,7 @@ private:
         while (1) {
             propagate(node);
             int mid = (l + r) / 2;
-            if (r - l == 1) {
+            if (k == mid) {
                 return ma.data[node].key;
             }
             if (k < mid) {
