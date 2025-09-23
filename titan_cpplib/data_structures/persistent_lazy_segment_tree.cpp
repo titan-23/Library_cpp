@@ -206,7 +206,7 @@ private:
         while (1) {
             propagate(node);
             int mid = (l + r) / 2;
-            if (r - l == 1) {
+            if (k == mid) {
                 node = ma.copy(node);
                 ma.data[node].key = v;
                 if (d == -1) {
@@ -224,13 +224,13 @@ private:
             }
             pnode = node;
             if (k < mid) {
-                node = ma.tree[node].left;
+                node = ma.copy(ma.tree[node].left);
                 r = mid;
-                d = 0;
-            } else {
-                node = ma.tree[node].right;
-                l = mid+1;
                 d = 1;
+            } else {
+                node = ma.copy(ma.tree[node].right);
+                l = mid+1;
+                d = 0;
             }
             path.emplace(node);
             if (d) ma.tree[pnode].left = node;

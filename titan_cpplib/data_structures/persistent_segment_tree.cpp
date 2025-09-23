@@ -164,7 +164,6 @@ private:
                     update(node);
                     return PLSEG(node, len());
                 }
-                assert(pnode);
                 path.emplace(node);
                 if (d) ma.tree[pnode].left = node;
                 else ma.tree[pnode].right = node;
