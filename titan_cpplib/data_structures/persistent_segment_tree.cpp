@@ -1,209 +1,269 @@
+#include <iostream>
 #include <vector>
-#include <stack>
-#include <memory>
+#include "titan_cpplib/others/print.cpp"
 using namespace std;
 
-// PersistentSegmentTree
 namespace titan23 {
 
-    template <class T,
-              T (*op)(T, T),
-              T (*e)()>
-    class PersistentSegmentTree {
-      private:
-        struct Node;
+template<class T, T (*op)(T, T), T (*e)()>
+class PersistentSegmentTree {
+public:
+    struct MemoeyAllocator {
 
-        using NodePtr = shared_ptr<Node>;
-        // using NodePtr = Node*;
-
-        NodePtr root;
-
+        // #pragma pack(push, 1)
         struct Node {
-            T key, data;
-            int size;
-            NodePtr left, right;
-
-            Node() : size(0), left(nullptr), right(nullptr) {}
-            Node(T key) : key(key), data(key), size(1), left(nullptr), right(nullptr) {}
-
-            NodePtr copy() {
-                NodePtr node = make_shared<Node>(this->key);
-                // NodePtr node = new Node(this->key);
-                node->data = this->data;
-                node->size = this->size;
-                node->left = this->left;
-                node->right = this->right;
-                return node;
-            }
-
-            void update() {
-                this->size = 1;
-                this->data = this->key;
-                if (this->left) {
-                    this->size += this->left->size;
-                    this->data = op(this->left->data, this->data);
-                }
-                if (this->right) {
-                    this->size += this->right->size;
-                    this->data = op(this->data, this->right->data);
-                }
-            }
+            int left, right;
+            Node() : left(0), right(0) {}
+            Node(int l, int r) : left(l), right(r) {}
         };
+        // #pragma pack(pop)
 
-        void _build(const vector<T> &a) {
-            auto build = [&] (auto &&build, int l, int r) -> NodePtr {
-                int mid = (l + r) >> 1;
-                NodePtr node = make_shared<Node>(a[mid]);
-                // NodePtr node = new Node(a[mid]);
-                if (l != mid) node->left = build(build, l, mid);
-                if (mid+1 != r) node->right = build(build, mid+1, r);
-                node->update();
-                return node;
-            };
+        // #pragma pack(push, 1)
+        struct Data {
+            T key, data;
+            Data() {}
+            Data(T k, T d) : key(k), data(d) {}
+        };
+        // #pragma pack(pop)
 
-            if (a.empty()) {
-                this->root = nullptr;
-                return;
-            }
-            this->root = build(build, 0, (int)a.size());
+        vector<Node> tree;
+        vector<Data> data;
+        size_t ptr, cap;
+
+        MemoeyAllocator() : ptr(1), cap(1) {
+            tree.emplace_back(0, 0);
+            data.emplace_back(T{}, T{});
         }
 
-        PersistentSegmentTree(NodePtr root) : root(root) {}
-
-        PersistentSegmentTree<T, op, e> _new(NodePtr root) const {
-            return PersistentSegmentTree<T, op, e>(root);;
+        int copy(int node) {
+            int idx = new_node(data[node].key);
+            tree[idx] = {tree[node].left, tree[node].right};
+            data[idx].data = data[node].data;
+            return idx;
         }
 
-      public:
-        PersistentSegmentTree() : root(nullptr) {}
-        PersistentSegmentTree(const vector<T> a) {
-            _build(a);
-        }
-
-        T prod(int l, int r) const {
-            assert(0 <= l && l <= r && r <= len());
-
-            auto dfs = [&] (auto &&dfs, NodePtr node, int left, int right) -> T {
-                if (right <= l || r <= left) return e();
-                if (l <= left && right < r) return node->data;
-                int lsize = node->left ? node->left->size : 0;
-                T res = e();
-                if (node->left) {
-                    res = dfs(dfs, node->left, left, left+lsize);
-                }
-                if (l <= left + lsize && left + lsize < r) {
-                    res = op(res, node->key);
-                }
-                if (node->right) {
-                    res = op(res, dfs(dfs, node->right, left+lsize+1, right));
-                }
-                return res;
-            };
-
-            return dfs(dfs, this->root, 0, len());
-        }
-
-        PersistentSegmentTree<T, op, e> set(int k, T v) const {
-            assert(this->root);
-            NodePtr node = this->root->copy();
-            NodePtr nroot = node;
-            NodePtr pnode = nullptr;
-            int d = 0;
-            stack<NodePtr> path;
-            path.emplace(node);
-            while (true) {
-                int t = (node->left) ? node->left->size : 0;
-                if (t == k) {
-                    node = node->copy();
-                    node->key = v;
-                    path.emplace(node);
-                    if (pnode) {
-                        if (d) {
-                            pnode->left = node;
-                        } else {
-                            pnode->right = node;
-                        }
-                    } else {
-                        nroot = node;
-                    }
-                    while (!path.empty()) {
-                        node = path.top();
-                        path.pop();
-                        node->update();
-                    }
-                    return _new(nroot);
-                }
-
-                pnode = node;
-                if (t < k) {
-                    k -= t + 1;
-                    d = 0;
-                    node = node->right->copy();
-                    pnode->right = node;
-                } else {
-                    d = 1;
-                    node = node->left->copy();
-                    pnode->left = node;
-                }
-                path.emplace(node);
-            }
-        }
-
-        T get(int k) const {
-            assert(0 <= k && k < len());
-            assert(this->root);
-            NodePtr node = this->root;
-            while (true) {
-                int t = node->left ? node->left->size : 0;
-                if (t == k) {
-                    return node->key;
-                }
-                if (t < k) {
-                    k -= t + 1;
-                    node = node->right;
-                } else {
-                    node = node->left;
+        int new_node(const T key) {
+            if (tree.size() > ptr) {
+                tree[ptr] = {0, 0};
+                data[ptr] = {key, key};
+            } else {
+                tree.emplace_back(0, 0);
+                data.emplace_back(key, key);
+                if (tree.size() >= cap) {
+                    cap++;
                 }
             }
+            ptr++;
+            return ptr - 1;
         }
 
-        PersistentSegmentTree<T, op, e> copy() {
-            return _new(this->root ? this->root->copy() : nullptr);
+        void reserve(int n) {
+            tree.reserve(n);
+            data.reserve(n);
+            cap += n;
         }
 
-        vector<T> tolist() const {
-            vector<T> a;
-            a.reserve(len());
-            NodePtr node = root;
-            stack<NodePtr> s;
-            while (!s.empty() || node) {
-                if (node) {
-                    s.emplace(node);
-                    node = node->left;
-                } else {
-                    node = s.top();
-                    s.pop();
-                    a.emplace_back(node->key);
-                    node = node->right;
-                }
-            }
-            return a;
+        void reset() {
+            ptr = 1;
         }
 
-        int len() const {
-            return this->root ? this->root->size : 0;
-        }
-
-        void print() const {
-            vector<T> a = tolist();
-            cout << "[";
-            for (int i = 0; i < (int)a.size(); ++i) {
-                cout << a[i];
-                if (i != (int)a.size()-1) {
-                    cout << ", ";
-                }
-            }
-            cout << "]" << endl;
+        bool almost_full() const {
+            return (double)ptr > max(1.0, cap*0.99);
         }
     };
+
+    static MemoeyAllocator ma;
+
+private:
+    using PLSEG = PersistentSegmentTree<T, op, e>;
+    int root;
+    int _len;
+
+    void update(int node) {
+        ma.data[node].data = ma.data[node].key;
+        if (ma.tree[node].left) ma.data[node].data = op(ma.data[ma.tree[node].left].data, ma.data[node].key);
+        if (ma.tree[node].right) ma.data[node].data = op(ma.data[node].data, ma.data[ma.tree[node].right].data);
+    }
+
+    void _build(vector<T> const &a) {
+        auto build = [&] (auto &&build, int l, int r) -> int {
+            int mid = (l + r) >> 1;
+            int node = ma.new_node(a[mid]);
+            if (l != mid) ma.tree[node].left = build(build, l, mid);
+            if (mid+1 != r) ma.tree[node].right = build(build, mid+1, r);
+            update(node);
+            return node;
+        };
+        _len = a.size();
+        if (a.empty()) {
+            root = 0;
+            return;
+        }
+        root = build(build, 0, (int)a.size());
+    }
+
+    PersistentSegmentTree(int root, int l) : root(root), _len(l) {}
+
+  public:
+    PersistentSegmentTree() : root(0), _len(0) {}
+
+    PersistentSegmentTree(vector<T> &a) { _build(a); }
+
+    T prod(int l, int r) {
+        assert(0 <= l && l <= r && r <= len());
+        if (l == r) return e();
+        auto dfs = [&] (auto &&dfs, int node, int left, int right) -> T {
+            if (right <= l || r <= left) return e();
+            if (l <= left && right < r) return ma.data[node].data;
+            int mid = (left + right) / 2;
+            T res = e();
+            if (ma.tree[node].left) res = dfs(dfs, ma.tree[node].left, left, mid);
+            if (l <= mid && mid < r) res = op(res, ma.data[node].key);
+            if (ma.tree[node].right) res = op(res, dfs(dfs, ma.tree[node].right, mid+1, right));
+            return res;
+        };
+        return dfs(dfs, root, 0, len());
+    }
+
+    vector<T> tovector() {
+        int node = root;
+        stack<int> s;
+        vector<T> a;
+        a.reserve(len());
+        while (!s.empty() || node) {
+            if (node) {
+                s.emplace(node);
+                node = ma.tree[node].left;
+            } else {
+                node = s.top(); s.pop();
+                a.emplace_back(ma.data[node].key);
+                node = ma.tree[node].right;
+            }
+        }
+        return a;
+    }
+
+    PLSEG copy() {
+        return PLSEG(ma.copy(root), len());
+    }
+
+    PLSEG set(int k, T v) {
+        assert(0 <= k && k < len());
+        int node = ma.copy(root);
+        int root = node;
+        int pnode = 0;
+        int d = -1;
+        int l = 0, r = len();
+        stack<int> path; path.emplace(node);
+        while (1) {
+            int mid = (l + r) / 2;
+            if (k == mid) {
+                node = ma.copy(node);
+                ma.data[node].key = v;
+                if (d == -1) {
+                    update(node);
+                    return PLSEG(node, len());
+                }
+                assert(pnode);
+                path.emplace(node);
+                if (d) ma.tree[pnode].left = node;
+                else ma.tree[pnode].right = node;
+                while (!path.empty()) {
+                    update(path.top());
+                    path.pop();
+                }
+                return PLSEG(root, len());
+            }
+            pnode = node;
+            if (k < mid) {
+                node = ma.copy(ma.tree[node].left);
+                r = mid;
+                d = 1;
+            } else {
+                node = ma.copy(ma.tree[node].right);
+                l = mid+1;
+                d = 0;
+            }
+            path.emplace(node);
+            if (d) ma.tree[pnode].left = node;
+            else ma.tree[pnode].right = node;
+        }
+    }
+
+    T get(int k) {
+        assert(0 <= k && k < len());
+        int node = root;
+        int l = 0, r = len();
+        while (1) {
+            int mid = (l + r) / 2;
+            if (r - l == 1) {
+                return ma.data[node].key;
+            }
+            if (k < mid) {
+                node = ma.tree[node].left;
+                r = mid;
+            } else {
+                node = ma.tree[node].right;
+                l = mid+1;
+            }
+        }
+    }
+
+    void print() {
+        vector<T> a = tovector();
+        cout << "[";
+        for (int i = 0; i < (int)a.size()-1; ++i) {
+            cout << a[i] << ", ";
+        }
+        if (!a.empty()) cout << a.back();
+        cout << "]" << endl;
+    }
+
+    // fromの[l, r)を自身の[l, r)にコピーしたものを返す(自身は不変)
+    PLSEG copy_from(PLSEG &from, int l, int r) {
+        assert(0 <= l && l <= r && r <= len());
+        auto dfs = [&] (auto &&dfs, int fr, int to, int left, int right) -> int {
+            if (!fr && !to) return fr;
+            to = ma.copy(to);
+            if (right <= l || r <= left) { return to; }
+            if (l <= left && right < r) { return fr; }
+            int mid = (left + right) / 2;
+            ma.tree[to].left = dfs(dfs, ma.tree[fr].left,  ma.tree[to].left,  left, mid);
+            if (l <= mid && mid < r) {
+                // data,sizeはこの後updateする
+                ma.data[to].key = ma.data[fr].key;
+            }
+            ma.tree[to].right = dfs(dfs, ma.tree[fr].right, ma.tree[to].right, mid+1, right);
+            update(to);
+            return to;
+        };
+        int new_root = dfs(dfs, ma.copy(from.root), ma.copy(root), 0, len());
+        return PLSEG(new_root, len());
+    }
+
+    int len() const {
+        return _len;
+    }
+
+    friend ostream& operator<<(ostream& os, PersistentSegmentTree<T, op, e> &tree) {
+        vector<T> a = tree.tovector();
+        os << "[";
+        for (int i = 0; i < (int)a.size()-1; ++i) {
+            os << a[i] << ", ";
+        }
+        if (!a.empty()) os << a.back();
+        os << "]";
+        return os;
+    }
+
+    static void rebuild(PLSEG &tree) {
+        PLSEG::ma.reset();
+        vector<T> a = tree.tovector();
+        tree = PLSEG(a);
+    }
+};
+
+template<class T, T (*op)(T, T), T (*e)()>
+typename PersistentSegmentTree<T, op, e>::MemoeyAllocator PersistentSegmentTree<T, op, e>::ma;
+
 }  // namespace titan23
