@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include "titan_cpplib/others/print.cpp"
+#include "titan_cpplib/data_structures/fast_stack.cpp"
 using namespace std;
 
 namespace titan23 {
@@ -8,6 +9,8 @@ namespace titan23 {
 template<class T, T (*op)(T, T), T (*e)()>
 class PersistentSegmentTree {
 public:
+    static FastStack<int> path;
+
     struct MemoeyAllocator {
 
         // #pragma pack(push, 1)
@@ -154,11 +157,11 @@ private:
         int pnode = 0;
         int d = -1;
         int l = 0, r = len();
-        stack<int> path; path.emplace(node);
+        path.clear(); path.emplace(node);
         while (1) {
             int mid = (l + r) / 2;
             if (k == mid) {
-                node = ma.copy(node);
+                // node = ma.copy(node);
                 ma.data[node].key = v;
                 if (d == -1) {
                     update(node);
@@ -264,5 +267,8 @@ private:
 
 template<class T, T (*op)(T, T), T (*e)()>
 typename PersistentSegmentTree<T, op, e>::MemoeyAllocator PersistentSegmentTree<T, op, e>::ma;
+
+template<class T, T (*op)(T, T), T (*e)()>
+FastStack<int> PersistentSegmentTree<T, op, e>::path;
 
 }  // namespace titan23
