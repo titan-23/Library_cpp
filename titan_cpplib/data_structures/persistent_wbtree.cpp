@@ -32,7 +32,7 @@ public:
             keys.resize(1);
         }
 
-        SizeType new_node(const T &key) {
+        SizeType new_node(const T key) {
             if (d.size() > ptr) {
                 keys[ptr] = key;
                 d[ptr].left = 0;

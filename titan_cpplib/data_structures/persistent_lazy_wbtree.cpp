@@ -44,7 +44,7 @@ public:
             return idx;
         }
 
-        SizeType new_node(const T &key, const F &f) {
+        SizeType new_node(const T key, const F f) {
             if (left.size() > ptr) {
                 left[ptr] = 0;
                 right[ptr] = 0;
@@ -116,6 +116,12 @@ private:
         if (ma.right[node]) ma.data[node] = op(ma.data[node], ma.data[ma.right[node]]);
     }
 
+    void push(SizeType node, F f) {
+        ma.keys[node] = mapping(f, ma.keys[node]);
+        ma.data[node] = mapping(f, ma.data[node]);
+        ma.lazy[node] = composition(f, ma.lazy[node]);
+    }
+
     void propagate(SizeType node) {
         if (ma.rev[node]) {
             SizeType l = ma.left[node] ? ma.copy(ma.left[node]) : 0;
@@ -129,15 +135,11 @@ private:
         if (ma.lazy[node] != id()) {
             if (ma.left[node]) {
                 ma.left[node] = ma.copy(ma.left[node]);
-                ma.keys[ma.left[node]] = mapping(ma.lazy[node], ma.keys[ma.left[node]]);
-                ma.data[ma.left[node]] = mapping(ma.lazy[node], ma.data[ma.left[node]]);
-                ma.lazy[ma.left[node]] = composition(ma.lazy[node], ma.lazy[ma.left[node]]);
+                push(ma.left[node], ma.lazy[node]);
             }
             if (ma.right[node]) {
                 ma.right[node] = ma.copy(ma.right[node]);
-                ma.keys[ma.right[node]] = mapping(ma.lazy[node], ma.keys[ma.right[node]]);
-                ma.data[ma.right[node]] = mapping(ma.lazy[node], ma.data[ma.right[node]]);
-                ma.lazy[ma.right[node]] = composition(ma.lazy[node], ma.lazy[ma.right[node]]);
+                push(ma.right[node], ma.lazy[node]);
             }
             ma.lazy[node] = id();
         }
@@ -145,13 +147,9 @@ private:
 
     void balance_check(SizeType node) const {
         if (!(weight_left(node)*DELTA >= weight_right(node))) {
-            cerr << weight_left(node) << ", " << weight_right(node) << endl;
-            cerr << "not weight_left()*DELTA >= weight_right()." << endl;
             assert(false);
         }
         if (!(weight_right(node) * DELTA >= weight_left(node))) {
-            cerr << weight_left(node) << ", " << weight_right(node) << endl;
-            cerr << "not weight_right() * DELTA >= weight_left()." << endl;
             assert(false);
         }
     }
@@ -332,6 +330,11 @@ private:
         return _new(r);
     }
 
+    PLTM split_range(SizeType l, SizeType r) {
+        assert(0 <= l && l <= r && r <= len());
+        return split_left(r).split_right(l);
+    }
+
     PLTM apply(SizeType l, SizeType r, F f) {
         assert(0 <= l && l <= r && r <= len());
         if (l == r) return _new(ma.copy(root));
@@ -340,9 +343,7 @@ private:
             propagate(node);
             SizeType nnode = ma.copy(node);
             if (l <= left && right < r) {
-                ma.keys[nnode] = mapping(f, ma.keys[nnode]);
-                ma.data[nnode] = mapping(f, ma.data[nnode]);
-                ma.lazy[nnode] = composition(f, ma.lazy[nnode]);
+                push(nnode, f);
                 return nnode;
             }
             SizeType lsize = ma.size[ma.left[nnode]];
@@ -360,8 +361,8 @@ private:
         if (l == r) return e();
         auto dfs = [&] (auto &&dfs, SizeType node, SizeType left, SizeType right) -> T {
             if (right <= l || r <= left) return e();
-            propagate(node);
             if (l <= left && right < r) return ma.data[node];
+            propagate(node);
             SizeType lsize = ma.size[ma.left[node]];
             T res = e();
             if (ma.left[node]) res = dfs(dfs, ma.left[node], left, left+lsize);
@@ -509,13 +510,11 @@ private:
             }
             SizeType s = ls + rs + 1;
             assert(s == ma.size[node]);
-            cerr << ls << " " << rs << " " << endl;
             balance_check(node);
             return {s, height+1};
         };
         if (root == 0) return;
         auto [_, h] = rec(rec, root);
-        cerr << PRINT_GREEN << "OK : height=" << h << PRINT_NONE << endl;
     }
 
     friend ostream& operator<<(ostream& os, PersistentLazyWBTree<SizeType, T, F, op, mapping, composition, e, id> &tree) {
