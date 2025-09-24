@@ -1,4 +1,5 @@
 #include <vector>
+#include <stack>
 using namespace std;
 
 // UndoableUnionFindSum
@@ -6,14 +7,14 @@ namespace titan23 {
 
 template<typename T>
 class UndoableUnionFindSum {
-    private:
+private:
     int _n, _group_count;
     T _e;
     vector<int> _parents;
     vector<T> _all_sum, _one_sum;
-    vector<tuple<int, int, T>> _history;
+    stack<tuple<int, int, T>> _history;
 
-    public:
+public:
     UndoableUnionFindSum() {}
     UndoableUnionFindSum(int n, T e) :
         _n(n),
@@ -24,11 +25,11 @@ class UndoableUnionFindSum {
         _one_sum(n, e) {}
 
     void undo() {
-        auto [y, py, all_sum_y] = _history.back();
-        _history.pop_back();
+        auto [y, py, all_sum_y] = _history.top();
+        _history.pop();
         if (y == -1) return;
-        auto [x, px, all_sum_x] = _history.back();
-        _history.pop_back();
+        auto [x, px, all_sum_x] = _history.top();
+        _history.pop();
         ++_group_count;
         _parents[y] = py;
         _parents[x] = px;
@@ -49,13 +50,13 @@ class UndoableUnionFindSum {
         x = root(x);
         y = root(y);
         if (x == y) {
-            _history.emplace_back(-1, -1, _e);
+            _history.emplace(-1, -1, _e);
             return false;
         }
         if (_parents[x] > _parents[y]) swap(x, y);
         _group_count -= 1;
-        _history.emplace_back(x, _parents[x], _all_sum[x]);
-        _history.emplace_back(y, _parents[y], _all_sum[y]);
+        _history.emplace(x, _parents[x], _all_sum[x]);
+        _history.emplace(y, _parents[y], _all_sum[y]);
         _all_sum[x] += _all_sum[y];
         _one_sum[x] += _one_sum[y];
         _parents[x] += _parents[y];
