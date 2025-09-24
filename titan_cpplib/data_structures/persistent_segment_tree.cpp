@@ -210,6 +210,7 @@ private:
     }
 
     // fromの[l, r)を自身の[l, r)にコピーしたものを返す(自身は不変)
+    PSEG copy_from(PSEG &from, int l, int r) {
         assert(0 <= l && l <= r && r <= len());
         auto dfs = [&] (auto &&dfs, int fr, int to, int left, int right) -> int {
             if (!fr && !to) return fr;

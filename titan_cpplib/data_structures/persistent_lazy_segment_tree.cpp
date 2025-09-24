@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <cassert>
 #include "titan_cpplib/others/print.cpp"
 #include "titan_cpplib/data_structures/fast_stack.cpp"
 using namespace std;
