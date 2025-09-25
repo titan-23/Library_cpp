@@ -157,12 +157,10 @@ public:
         int v = 0;
         vector<int> a(_len);
         int idx = 0;
-        {
-            if (contains(v)) {
-                a[0] = 0;
-                idx++;
-                v = gt(v);
-            }
+        if (contains(v)) {
+            a[0] = 0;
+            idx++;
+            v = gt(v);
         }
         while (1) {
             int nxt = gt(v);
