@@ -8,11 +8,10 @@ namespace titan23 {
 class WordsizeTreeSet {
 private:
     using u64 = unsigned long long;
-    static constexpr const int W = 64;
     int u, _len;
     vector<vector<u64>> data;
 
-    inline constexpr int bit_length(const u64 x) {
+    inline constexpr int bit_length(const u64 x) const {
         return x ? 64-__builtin_clzll(x) : 0;
     }
 
@@ -21,15 +20,25 @@ private:
         int dep = 1;
         while (u) {
             data[dep] = vector<u64>((u>>6)+1);
-            const auto &a = data[dep-1];
+            auto &a = data[dep];
+            const auto &b = data[dep-1];
             for (int i = 0; i <= u; ++i) {
-                if (a[i]) {
-                    data[dep][i>>6] |= 1ull << (i&63);
+                if (b[i]) {
+                    a[i>>6] |= 1ull << (i&63);
                 }
             }
             dep++;
             u >>= 6;
         }
+    }
+
+    int get_dep(int u) const {
+        int dep = 1;
+        while (u) {
+            u >>= 6;
+            dep++;
+        }
+        return dep;
     }
 
 public:
@@ -42,11 +51,9 @@ public:
 
     WordsizeTreeSet(int u, const string &s) : u(u+1), _len(0) {
         u >>= 6;
-        int x = u, dep = 1;
-        while (x) { x >>= 6; dep++; }
-        data.resize(dep);
+        data.resize(get_dep(u));
         vector<u64> A(u+1);
-        u64 n = s.size();
+        int n = s.size();
         for (int i = 0; i < n; ++i) {
             if (s[i] == '1') {
                 ++_len;
@@ -58,11 +65,7 @@ public:
 
     WordsizeTreeSet(int u, const vector<int> &a) : u(u+1), _len(0) {
         u >>= 6;
-        int x = u, dep = 1;
-        while (x) {
-            x >>= 6; dep++;
-        }
-        data.resize(dep);
+        data.resize(get_dep(u));
         vector<u64> A(u+1);
         for (int e : a) {
             if (((A[e>>6] >> (e&63)) & 1) == 0) {
@@ -96,10 +99,12 @@ public:
     }
 
     void remove(u64 v) {
-        discard(v);
+        if (!discard(v)) {
+            assert(false);
+        }
     }
 
-    int ge(u64 v) {
+    int ge(int v) {
         int d = 0;
         while (1) {
             if (d >= (int)data.size() || ((v>>6) >= data[d].size())) { return -1; }
@@ -109,7 +114,6 @@ public:
                 v = (v >> 6) + 1;
             } else {
                 v = (v >> 6 << 6) + bit_length(m & -m);
-                if (v == 0) return -1;
                 v--;
                 if (d == 0) break;
                 v <<= 6;
@@ -119,18 +123,17 @@ public:
         return v;
     }
 
-    int gt(u64 v) {
+    int gt(int v) {
         return ge(v+1);
     }
 
-    int le(u64 v) {
+    int le(int v) {
         int d = 0;
         while (1) {
             if (v < 0 || d >= (int)data.size()) return -1;
             u64 m = data[d][v >> 6] & ~((~1ull) << (v & 63));
             if (m == 0) {
                 d++;
-                if ((v>>6) == 0) return -1;
                 v = (v >> 6) - 1;
             } else {
                 v = (v >> 6 << 6) + bit_length(m) - 1;
@@ -143,7 +146,7 @@ public:
         return v;
     }
 
-    int lt(u64 v) {
+    int lt(int v) {
         return le(v+1);
     }
 
