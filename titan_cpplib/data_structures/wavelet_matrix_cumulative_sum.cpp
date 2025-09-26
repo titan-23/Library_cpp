@@ -75,7 +75,7 @@ private:
         return ans;
     }
 
-    public:
+public:
     WaveletMatrixCumulativeSum() {}
     WaveletMatrixCumulativeSum(const T sigma)
         : sigma(sigma), log(bit_length(sigma-1)), v(log), mid(log), cumsum(log) {
