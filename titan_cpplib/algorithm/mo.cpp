@@ -54,6 +54,30 @@ public:
     }
 
     //! 追加されたクエリを一括処理する / `O(q√n)`
+    // F1~F3: lambda関数
+    template<typename F1, typename F2, typename F3>
+    void run_light(F1 &&add, F2 &&del, F3 &&out) {
+        vector<int> qi(query_count);
+        iota(qi.begin(), qi.end(), 0);
+        vector<long long> eval(query_count);
+        for (int i = 0; i < query_count; ++i) {
+            eval[i] = hilbertorder(_l[i], _r[i]);
+        }
+        sort(qi.begin(), qi.end(), [&] (const int &i, const int &j) {
+            return eval[i] < eval[j];
+        });
+        int nl = 0, nr = 0;
+        for (const int i : qi) {
+            const int li = _l[i], ri = _r[i];
+            while (nl > li) add(--nl);
+            while (nr < ri) add(nr++);
+            while (nl < li) del(nl++);
+            while (nr > ri) del(--nr);
+            out(i);
+        }
+    }
+
+    //! 追加されたクエリを一括処理する / `O(q√n)`
     // F1~F5: lambda関数
     template<typename F1, typename F2, typename F3, typename F4, typename F5>
     void run(F1 &&add_left, F2 &&add_right, F3 &&del_left, F4 &&del_right, F5 &&out) {
@@ -73,6 +97,30 @@ public:
             while (nr < ri) add_right(nr++);
             while (nl < li) del_left(nl++);
             while (nr > ri) del_right(--nr);
+            out(i);
+        }
+    }
+
+    //! 追加されたクエリを一括処理する / `O(q√n)`
+    // F1~F5: lambda関数
+    template<typename F1, typename F2, typename F3, typename F4, typename F5>
+    void run_range(F1 &&add_left, F2 &&add_right, F3 &&del_left, F4 &&del_right, F5 &&out) {
+        vector<int> qi(query_count);
+        iota(qi.begin(), qi.end(), 0);
+        vector<long long> eval(query_count);
+        for (int i = 0; i < query_count; ++i) {
+            eval[i] = hilbertorder(_l[i], _r[i]);
+        }
+        sort(qi.begin(), qi.end(), [&] (const int &i, const int &j) {
+            return eval[i] < eval[j];
+        });
+        int nl = 0, nr = 0;
+        for (const int i : qi) {
+            const int li = _l[i], ri = _r[i];
+            while (nl > li) add_left(--nl, nr);
+            while (nr < ri) add_right(nl, nr++);
+            while (nl < li) del_left(nl++, nr);
+            while (nr > ri) del_right(nl, --nr);
             out(i);
         }
     }
