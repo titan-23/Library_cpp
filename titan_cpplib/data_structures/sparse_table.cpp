@@ -10,22 +10,30 @@ template <class T, T (*op)(T, T), T (*e)()>
 struct SparseTable {
 private:
     int n;
-    vector<vector<T>> data;
+    vector<T> data;
+    vector<int> offset;
 
 public:
     SparseTable() {}
     SparseTable(vector<T> &a) : n((int)a.size()) {
         int log = 32 - __builtin_clz(n) - 1;
-        data.resize(log+1);
-        data[0] = a;
+        offset.resize(log+1);
+        int sm = 0;
+        for (int i = 0; i <= log; ++i) {
+            offset[i] = sm;
+            sm += n - (1<<i) + 1;
+        }
+        data.resize(sm);
+        memcpy(data.data(), a.data(), n*sizeof(T));
         for (int i = 0; i < log; ++i) {
             int l = 1 << i;
-            const vector<T> &pre = data[i];
-            vector<T> &nxt = data[i+1];
-            int s = pre.size();
-            nxt.resize(s-l);
-            for (int j = 0; j < s-l; ++j) {
-                nxt[j] = op(pre[j], pre[j+l]);
+            int s = n - l + 1;
+            const int x = s - l;
+            const auto pre1 = &data[offset[i]];
+            const auto pre2 = &data[offset[i]+l];
+            auto nxt = &data[offset[i+1]];
+            for (int j = 0; j < x; ++j) {
+                nxt[j] = op(pre1[j], pre2[j]);
             }
         }
     }
@@ -34,12 +42,12 @@ public:
         assert(0 <= l && l <= r && r < n);
         if (l == r) return e();
         int u = 32 - __builtin_clz(r-l) - 1;
-        return op(data[u][l], data[u][r-(1<<u)]);
+        return min(data[offset[u]+l], data[offset[u]+r-(1<<u)]);
     }
 
     T get(const int k) const {
         assert(0 <= k && k < n);
-        return data[0][k];
+        return data[k];
     }
 
     int len() const {
@@ -49,10 +57,10 @@ public:
     void print() const {
         cout << '[';
         for (int i = 0; i < n-1; ++i) {
-            cout << data[0][i] << ", ";
+            cout << data[i] << ", ";
         }
         if (n > 0) {
-            cout << data[0][n-1];
+            cout << data[n-1];
         }
         cout << ']' << endl;
     }

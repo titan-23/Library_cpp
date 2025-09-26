@@ -1,7 +1,6 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
-#include <immintrin.h>
 using namespace std;
 
 // SparseTableMin
