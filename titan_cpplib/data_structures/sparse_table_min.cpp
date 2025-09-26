@@ -3,41 +3,40 @@
 #include <cassert>
 using namespace std;
 
-// SparseTable
+// SparseTableMin
 namespace titan23 {
 
-template <class T, T (*op)(T, T), T (*e)()>
-struct SparseTable {
+struct SparseTableMin {
 private:
     int n;
-    vector<vector<T>> data;
+    vector<vector<int>> data;
 
 public:
-    SparseTable() {}
-    SparseTable(vector<T> &a) : n((int)a.size()) {
+    SparseTableMin() {}
+    SparseTableMin(vector<int> &a) : n((int)a.size()) {
         int log = 32 - __builtin_clz(n) - 1;
         data.resize(log+1);
         data[0] = a;
         for (int i = 0; i < log; ++i) {
+            const vector<int> &pre = data[i];
+            vector<int> &nxt = data[i+1];
             int l = 1 << i;
-            const vector<T> &pre = data[i];
-            vector<T> &nxt = data[i+1];
             int s = pre.size();
             nxt.resize(s-l);
             for (int j = 0; j < s-l; ++j) {
-                nxt[j] = op(pre[j], pre[j+l]);
+                nxt[j] = min(pre[j], pre[j+l]);
             }
         }
     }
 
-    T prod(const int l, const int r) const {
+    int prod(const int l, const int r) const {
         assert(0 <= l && l <= r && r < n);
-        if (l == r) return e();
+        if (l == r) return -1;
         int u = 32 - __builtin_clz(r-l) - 1;
-        return op(data[u][l], data[u][r-(1<<u)]);
+        return min(data[u][l], data[u][r-(1<<u)]);
     }
 
-    T get(const int k) const {
+    int get(const int k) const {
         assert(0 <= k && k < n);
         return data[0][k];
     }

@@ -2,7 +2,7 @@
 #include <cassert>
 #include <stack>
 #include <climits>
-#include "titan_cpplib/data_structures/sparse_table.cpp"
+#include "titan_cpplib/data_structures/sparse_table_min.cpp"
 using namespace std;
 
 // LCA
@@ -13,14 +13,12 @@ namespace titan23 {
  * <O(nlogn), O(1)>
  */
 class LCA {
-    private:
-    static int __LCA_op(int s, int t) { return min(s, t); }
-    static int __LCA_e() { return INT_MAX; }
+private:
     int n;
     vector<int> path, nodein, par;
-    SparseTable<int, __LCA_op, __LCA_e> st;
+    SparseTableMin st;
 
-    public:
+public:
     LCA() {}
 
     //! 隣接リスト `G` 、根 `root` として前計算をする / `O(nlogn)`
@@ -46,7 +44,7 @@ class LCA {
         for (int i = 0; i < n; ++i) {
             a[i] = nodein[path[i]];
         }
-        st = SparseTable<int, __LCA_op, __LCA_e>(a);
+        st = SparseTableMin(a);
     }
 
     //! `u`, `v` の lca を求める / `O(1)`
