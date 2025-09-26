@@ -15,7 +15,7 @@ namespace titan23 {
 class LCA {
 private:
     int n;
-    vector<int> path, nodein, par;
+    vector<int> path, nodein;
     SparseTableMin st;
 
 public:
@@ -23,7 +23,8 @@ public:
 
     //! 隣接リスト `G` 、根 `root` として前計算をする / `O(nlogn)`
     LCA(const vector<vector<int>> &G, const int root) :
-            n((int)G.size()), path(n), nodein(n, -1), par(n, -1) {
+            n((int)G.size()), path(n), nodein(n, -1) {
+        vector<int> par(n, -1);
         int time = -1, ptr = 0;
         int s[n];
         s[ptr++] = root;
