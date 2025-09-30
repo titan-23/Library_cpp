@@ -12,7 +12,7 @@ class Osa_k {
 private:
     vector<int> min_factor;
 
-    vector<pair<int, int>> rle(const vector<int>& A) const {
+    vector<pair<int, int>> rle(const vector<int> &A) const {
         vector<pair<int, int>> ret;
         if (A.empty()) return ret;
         int now = A[0];
