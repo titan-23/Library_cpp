@@ -5,10 +5,8 @@ using namespace std;
 
 namespace titan23 {
 
-template <class T,
-            T (*op)(T, T),
-            T (*e)()>
-struct SegmentTree {
+template <class T, T (*op)(T, T), T (*e)()>
+class SegmentTree {
 private:
     int n, _size, _log;
     vector<T> data;
@@ -85,17 +83,17 @@ public:
         T s = e();
         while (1) {
             while ((l & 1) == 0) {
-            l >>= 1;
+                l >>= 1;
             }
             if (!f(op(s, data[l]))) {
-            while (l < _size) {
-                l <<= 1;
-                if (f(op(s, data[l]))) {
-                s = op(s, data[l]);
-                l |= 1;
+                while (l < _size) {
+                    l <<= 1;
+                    if (f(op(s, data[l]))) {
+                        s = op(s, data[l]);
+                        l |= 1;
+                    }
                 }
-            }
-            return l - _size;
+                return l - _size;
             }
             s = op(s, data[l]);
             ++l;
@@ -114,17 +112,17 @@ public:
         while (r > 0) {
             --r;
             while (r > 1 && (r & 1)) {
-            r >>= 1;
+                r >>= 1;
             }
             if (!f(op(data[r], s))) {
-            while (r < _size) {
-                r = (r << 1) | 1;
-                if (f(op(data[r], s))) {
-                s = op(data[r], s);
-                r ^= 1;
+                while (r < _size) {
+                    r = (r << 1) | 1;
+                    if (f(op(data[r], s))) {
+                        s = op(data[r], s);
+                        r ^= 1;
+                    }
                 }
-            }
-            return r + 1 - _size;
+                return r + 1 - _size;
             }
             s = op(data[r], s);
             if ((r & (-r)) == r) break;

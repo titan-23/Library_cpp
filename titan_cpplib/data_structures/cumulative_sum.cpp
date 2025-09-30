@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include "titan_cpplib/others/print.cpp"
 using namespace std;
 
 // CumulativeSum
@@ -7,13 +8,13 @@ namespace titan23 {
 
 template<typename T>
 class CumulativeSum {
-    private:
+private:
     int n;
     vector<T> acc;
 
-    public:
+public:
     CumulativeSum() {}
-    CumulativeSum(vector<T> &a, T e) : n((int)a.size()), acc(n+1, e) {
+    CumulativeSum(const vector<T> &a, T e) : n((int)a.size()), acc(n+1, e) {
         for (int i = 0; i < n; ++i) {
             acc[i+1] = acc[i] + a[i];
         }
@@ -54,5 +55,12 @@ class CumulativeSum {
         if (n > 0) cout << acc.back();
         cout << ']' << endl;
     }
+
+
+    friend ostream& operator<<(ostream& os, CumulativeSum<T> &s) {
+        os << s.acc;
+        return os;
+    }
+
 };
 }  // namespace titan23
