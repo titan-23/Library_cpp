@@ -11,7 +11,7 @@ private:
     vector<mint> _fact, _factinv, _inv;
 
 public:
-
+    ModComb() {}
     ModComb(int n) {
         const int mod = mint::mod();
         n = max(n, 1) + 1;
@@ -35,7 +35,7 @@ public:
 
     mint nPr(int n, int r) const {
         if (r < 0 || n < r) return mint::raw(0);
-        return _fact[n] * _factinv[n - r];
+        return _fact[n] * _factinv[n-r];
     }
 
     mint nCr(int n, int r) const {
@@ -44,7 +44,7 @@ public:
     }
 
     mint nHr(int n, int r) const {
-        return nCr(n+r-1, n-1);
+        return nCr(n+r-1, r);
     }
 
     mint fact(int n) const { return _fact[n]; }
