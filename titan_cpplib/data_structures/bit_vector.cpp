@@ -8,12 +8,12 @@ using namespace std;
 namespace titan23 {
 
 class BitVector {
-    private:
+private:
     using u64 = unsigned long long;
     int n, bsize;
     vector<u64> bit, acc;
 
-    public:
+public:
     BitVector() {}
     BitVector(const int n) :
         n(n), bsize((n+63)>>6), bit(bsize+1, 0), acc(bsize+1, 0) {}
