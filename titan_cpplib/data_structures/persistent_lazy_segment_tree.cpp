@@ -1,13 +1,19 @@
 #include <iostream>
 #include <vector>
+#include <cassert>
 #include "titan_cpplib/others/print.cpp"
 #include "titan_cpplib/data_structures/fast_stack.cpp"
 using namespace std;
 
 namespace titan23 {
 
-template<class T, T (*op)(T, T), T (*e)()>
-class PersistentSegmentTree {
+template <class T, class F,
+        T (*op)(T, T),
+        T (*mapping)(F, T),
+        F (*composition)(F, F),
+        T (*e)(),
+        F (*id)()>
+class PersistentLazySegmentTree {
 public:
     static FastStack<int> path;
 
@@ -21,28 +27,37 @@ public:
         };
         // #pragma pack(pop)
 
+        // #pragma pack(push, 1)
+        struct Data {
+            T data; F lazy;;
+            Data() {}
+            Data(T d, F l) : data(d), lazy(l) {}
+        };
+        // #pragma pack(pop)
+
         vector<Node> tree;
-        vector<T> data;
+        vector<Data> data;
         size_t ptr, cap;
 
         MemoeyAllocator() : ptr(1), cap(1) {
             tree.emplace_back(0, 0);
-            data.emplace_back(e());
+            data.emplace_back(e(), id());
         }
 
         int copy(int node) {
-            int idx = new_node(data[node]);
-            tree[idx] = {tree[node].left, tree[node].right};
+            int idx = new_node(data[node].data, data[node].lazy);
+            tree[idx].left = tree[node].left;
+            tree[idx].right = tree[node].right;
             return idx;
         }
 
-        int new_node(const T key) {
+        int new_node(const T key, const F f) {
             if (tree.size() > ptr) {
                 tree[ptr] = {0, 0};
-                data[ptr] = key;
+                data[ptr] = {key, f};
             } else {
                 tree.emplace_back(0, 0);
-                data.emplace_back(key);
+                data.emplace_back(key, f);
                 if (tree.size() >= cap) {
                     cap++;
                 }
@@ -69,26 +84,43 @@ public:
     static MemoeyAllocator ma;
 
 private:
-    using PSEG = PersistentSegmentTree<T, op, e>;
+    using PLSEG = PersistentLazySegmentTree<T, F, op, mapping, composition, e, id>;
     int root;
     int _len;
 
-    int bit_length(int x) {
-        return x ? 32 - __builtin_clz(x) : 0;
+    void update(int node) {
+        ma.data[node].data = op(ma.data[ma.tree[node].left].data, ma.data[ma.tree[node].right].data);
     }
 
-    void update(int node) {
-        ma.data[node] = op(ma.data[ma.tree[node].left], ma.data[ma.tree[node].right]);
+    void push(int node, F f) {
+        ma.data[node].data = mapping(f, ma.data[node].data);
+        if (ma.tree[node].left || ma.tree[node].right) {
+            ma.data[node].lazy = composition(f, ma.data[node].lazy);  // 葉なら不要
+        }
+    }
+
+    void propagate(int node) {
+        if (ma.data[node].lazy != id()) {
+            if (ma.tree[node].left) {
+                ma.tree[node].left = ma.copy(ma.tree[node].left);
+                push(ma.tree[node].left, ma.data[node].lazy);
+            }
+            if (ma.tree[node].right) {
+                ma.tree[node].right = ma.copy(ma.tree[node].right);
+                push(ma.tree[node].right, ma.data[node].lazy);
+            }
+            ma.data[node].lazy = id();
+        }
     }
 
     void _build(vector<T> const &a) {
         auto build = [&] (auto &&build, int l, int r) -> int {
             if (r - l == 1) {
-                int node = ma.new_node(a[l]);
+                int node = ma.new_node(a[l], id());
                 return node;
             }
             int mid = (l + r) / 2;
-            int node = ma.new_node(e());
+            int node = ma.new_node(e(), id());
             ma.tree[node].left = build(build, l, mid);
             ma.tree[node].right = build(build, mid, r);
             update(node);
@@ -102,19 +134,40 @@ private:
         root = build(build, 0, (int)a.size());
     }
 
-    PersistentSegmentTree(int root, int l) : root(root), _len(l) {}
+    PersistentLazySegmentTree(int root, int l) : root(root), _len(l) {}
 
   public:
-    PersistentSegmentTree() : root(0), _len(0) {}
+    PersistentLazySegmentTree() : root(0), _len(0) {}
 
-    PersistentSegmentTree(vector<T> &a) { _build(a); }
+    PersistentLazySegmentTree(vector<T> &a) { _build(a); }
+
+    PLSEG apply(int l, int r, F f) {
+        assert(0 <= l && l <= r && r <= len());
+        if (l == r) return PLSEG(ma.copy(root), len());
+        auto dfs = [&] (auto &&dfs, int node, int left, int right) -> int {
+            if (right <= l || r <= left) return node;
+            propagate(node);
+            int nnode = ma.copy(node);
+            if (l <= left && right <= r) {
+                push(nnode, f);
+                return nnode;
+            }
+            int mid = (left + right) / 2;
+            if (ma.tree[nnode].left) ma.tree[nnode].left = dfs(dfs, ma.tree[nnode].left, left, mid);
+            if (ma.tree[nnode].right) ma.tree[nnode].right = dfs(dfs, ma.tree[nnode].right, mid, right);
+            update(nnode);
+            return nnode;
+        };
+        return PLSEG(dfs(dfs, root, 0, len()), len());
+    }
 
     T prod(int l, int r) {
         assert(0 <= l && l <= r && r <= len());
         if (l == r) return e();
         auto dfs = [&] (auto &&dfs, int node, int left, int right) -> T {
             if (right <= l || r <= left) return e();
-            if (l <= left && right <= r) return ma.data[node];
+            if (l <= left && right <= r) return ma.data[node].data;
+            propagate(node);
             int mid = (left + right) / 2;
             T res = e();
             if (ma.tree[node].left) {
@@ -133,8 +186,9 @@ private:
         vector<T> a(len());
         a.resize(_len);
         auto dfs = [&](auto &&dfs, int node, int l, int r) -> void {
+            propagate(node);
             if (r - l == 1) {
-                a[l] = ma.data[node];
+                a[l] = ma.data[node].data;
                 return;
             }
             int mid = (l + r) / 2;
@@ -145,21 +199,23 @@ private:
         return a;
     }
 
-    PSEG copy() {
-        return PSEG(ma.copy(root), len());
+    PLSEG copy() {
+        return PLSEG(ma.copy(root), len());
     }
 
-    PSEG set(int k, T v) {
+    PLSEG set(int k, T v) {
         assert(0 <= k && k < len());
+        propagate(root);
         int new_root = ma.copy(root);
         if (len() <= 1) {
-            ma.data[new_root] = v;
-            return PSEG(new_root, len());
+            ma.data[new_root].data = v;
+            return PLSEG(new_root, len());
         }
         int node = new_root;
         int l = 0, r = len();
         path.clear(); path.emplace(node);
         while (r - l > 1) {
+            propagate(node);
             int pnode = node;
             int mid = (l + r) / 2;
             if (k < mid) {
@@ -173,13 +229,13 @@ private:
             }
             path.emplace(node);
         }
-        ma.data[node] = v;
+        ma.data[node].data = v;
         path.pop();
         while (!path.empty()) {
             update(path.top());
             path.pop();
         }
-        return PSEG(new_root, len());
+        return PLSEG(new_root, len());
     }
 
     T get(int k) {
@@ -187,6 +243,7 @@ private:
         int node = root;
         int l = 0, r = len();
         while (r - l > 1) {
+            propagate(node);
             int mid = (l + r) / 2;
             if (k < mid) {
                 node = ma.tree[node].left;
@@ -196,7 +253,7 @@ private:
                 l = mid;
             }
         }
-        return ma.data[node];
+        return ma.data[node].data;
     }
 
     void print() {
@@ -210,10 +267,11 @@ private:
     }
 
     // fromの[l, r)を自身の[l, r)にコピーしたものを返す(自身は不変)
-    PSEG copy_from(PSEG &from, int l, int r) {
+    PLSEG copy_from(PLSEG &from, int l, int r) {
         assert(0 <= l && l <= r && r <= len());
         auto dfs = [&] (auto &&dfs, int fr, int to, int left, int right) -> int {
             if (!fr && !to) return fr;
+            propagate(fr); propagate(to);
             to = ma.copy(to);
             if (right <= l || r <= left) { return to; }
             if (l <= left && right <= r) { return fr; }
@@ -225,14 +283,14 @@ private:
             return to;
         };
         int new_root = dfs(dfs, ma.copy(from.root), ma.copy(root), 0, len());
-        return PSEG(new_root, len());
+        return PLSEG(new_root, len());
     }
 
     int len() const {
         return _len;
     }
 
-    friend ostream& operator<<(ostream& os, PersistentSegmentTree<T, op, e> &tree) {
+    friend ostream& operator<<(ostream& os, PersistentLazySegmentTree<T, F, op, mapping, composition, e, id> &tree) {
         vector<T> a = tree.tovector();
         os << "[";
         for (int i = 0; i < (int)a.size()-1; ++i) {
@@ -243,17 +301,27 @@ private:
         return os;
     }
 
-    static void rebuild(PSEG &tree) {
-        PSEG::ma.reset();
+    static void rebuild(PLSEG &tree) {
+        PLSEG::ma.reset();
         vector<T> a = tree.tovector();
-        tree = PSEG(a);
+        tree = PLSEG(a);
     }
 };
 
-template<class T, T (*op)(T, T), T (*e)()>
-typename PersistentSegmentTree<T, op, e>::MemoeyAllocator PersistentSegmentTree<T, op, e>::ma;
+template<class T, class F,
+        T (*op)(T, T),
+        T (*mapping)(F, T),
+        F (*composition)(F, F),
+        T (*e)(),
+        F (*id)()>
+typename PersistentLazySegmentTree<T, F, op, mapping, composition, e, id>::MemoeyAllocator PersistentLazySegmentTree<T, F, op, mapping, composition, e, id>::ma;
 
-template<class T, T (*op)(T, T), T (*e)()>
-FastStack<int> PersistentSegmentTree<T, op, e>::path;
+template<class T, class F,
+        T (*op)(T, T),
+        T (*mapping)(F, T),
+        F (*composition)(F, F),
+        T (*e)(),
+        F (*id)()>
+FastStack<int> PersistentLazySegmentTree<T, F, op, mapping, composition, e, id>::path;
 
 }  // namespace titan23

@@ -9,7 +9,7 @@ using namespace std;
 namespace titan23 {
 
 class OfflineDynamicConnectivity {
-public:
+private:
     int n, query_count, size, q;
     long long bit, msk;
     long long bits, msks;

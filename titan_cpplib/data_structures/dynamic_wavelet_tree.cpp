@@ -9,12 +9,12 @@ namespace titan23 {
 
 /**
  * @brief 動的ウェーブレット木
- * 
+ *
  * @tparam T 値の型
  */
 template<typename T>
 class DynamicWaveletTree {
-    private:
+private:
     struct Node;
     Node* root;
     T _sigma;
@@ -38,12 +38,13 @@ class DynamicWaveletTree {
 
     void _build(const vector<T> &a) {
         vector<int> buff0(a.size()), buff1;
-        auto build = [&] (auto &&build,
-                            int bit,
-                            bool flag01,
-                            int s0, int g0,
-                            int s1, int g1
-                            ) -> Node* {
+        auto build = [&] (
+            auto &&build,
+            int bit,
+            bool flag01,
+            int s0, int g0,
+            int s1, int g1
+        ) -> Node* {
             int s = flag01 ? s1 : s0;
             int g = flag01 ? g1 : g0;
             if (s == g || bit < 0) return nullptr;
@@ -336,13 +337,14 @@ class DynamicWaveletTree {
     vector<T> tovector() const {
         vector<T> a(len(), 0);
         vector<int> buff0(a.size()), buff1;
-        auto dfs = [&] (auto &&dfs,
-                        Node* node,
-                        int bit,
-                        bool flag01,
-                        int s0, int g0,
-                        int s1, int g1
-                        ) -> void {
+        auto dfs = [&] (
+            auto &&dfs,
+            Node* node,
+            int bit,
+            bool flag01,
+            int s0, int g0,
+            int s1, int g1
+        ) -> void {
             int s = flag01 ? s1 : s0;
             int g = flag01 ? g1 : g0;
             if (s == g || bit < 0) return;

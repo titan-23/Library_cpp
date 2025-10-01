@@ -18,48 +18,50 @@ template <class SizeType, class T, class F,
 class PersistentLazyWBTree {
 public:
     struct MemoeyAllocator {
-
-        // #pragma pack(push, 1)
-        struct Node {
-            SizeType left, right, size;
-            Node() : left(0), right(0), size(0) {}
-            Node(SizeType l, SizeType r, SizeType s) : left(l), right(r), size(s) {}
-        };
-        // #pragma pack(pop)
-
-        // #pragma pack(push, 1)
-        struct Data {
-            T key, data; F lazy; int8_t rev;
-            Data() : rev(0) {}
-            Data(T k, T d, F l, int8_t r) : key(k), data(d), lazy(l), rev(r) {}
-        };
-        // #pragma pack(pop)
-
-        vector<Node> tree;
-        vector<Data> data;
+        vector<SizeType> left, right, size;
+        vector<T> keys, data;
+        vector<F> lazy;
+        vector<int8_t> rev;
         size_t ptr, cap;
 
         MemoeyAllocator() : ptr(1), cap(1) {
-            tree.emplace_back(0, 0, 0);
-            data.emplace_back(T{}, T{}, F{}, 0);
+            left.emplace_back(0);
+            right.emplace_back(0);
+            size.emplace_back(0);
+            keys.emplace_back(T{});
+            data.emplace_back(T{});
+            lazy.emplace_back(F{});
+            rev.emplace_back(0);
         }
 
         SizeType copy(SizeType node) {
-            SizeType idx = new_node(data[node].key, data[node].lazy);
-            tree[idx] = {tree[node].left, tree[node].right, tree[node].size};
-            data[idx].data = data[node].data;
-            data[idx].rev = data[node].rev;
+            SizeType idx = new_node(keys[node], lazy[node]);
+            left[idx] = left[node];
+            right[idx] = right[node];
+            size[idx] = size[node];
+            data[idx] = data[node];
+            rev[idx] = rev[node];
             return idx;
         }
 
         SizeType new_node(const T key, const F f) {
-            if (tree.size() > ptr) {
-                tree[ptr] = {0, 0, 1};
-                data[ptr] = {key, key, f, 0};
+            if (left.size() > ptr) {
+                left[ptr] = 0;
+                right[ptr] = 0;
+                size[ptr] = 1;
+                keys[ptr] = key;
+                data[ptr] = key;
+                lazy[ptr] = f;
+                rev[ptr] = 0;
             } else {
-                tree.emplace_back(0, 0, 1);
-                data.emplace_back(key, key, f, 0);
-                if (tree.size() >= cap) {
+                left.emplace_back(0);
+                right.emplace_back(0);
+                size.emplace_back(1);
+                keys.emplace_back(key);
+                data.emplace_back(key);
+                lazy.emplace_back(f);
+                rev.emplace_back(0);
+                if (left.size() >= cap) {
                     cap++;
                 }
             }
@@ -68,8 +70,13 @@ public:
         }
 
         void reserve(SizeType n) {
-            tree.reserve(n);
+            left.reserve(n);
+            right.reserve(n);
+            keys.reserve(n);
+            size.reserve(n);
             data.reserve(n);
+            lazy.reserve(n);
+            rev.reserve(n);
             cap += n;
         }
 
@@ -91,50 +98,50 @@ private:
     SizeType root;
 
     inline SizeType weight_right(SizeType node) const {
-        return ma.tree[ma.tree[node].right].size + 1;
+        return ma.size[ma.right[node]] + 1;
     }
 
     inline SizeType weight_left(SizeType node) const {
-        return ma.tree[ma.tree[node].left].size + 1;
+        return ma.size[ma.left[node]] + 1;
     }
 
     inline SizeType weight(SizeType node) const {
-        return ma.tree[node].size + 1;
+        return ma.size[node] + 1;
     }
 
     void update(SizeType node) {
-        ma.tree[node].size = 1 + ma.tree[ma.tree[node].left].size + ma.tree[ma.tree[node].right].size;
-        ma.data[node].data = ma.data[node].key;
-        if (ma.tree[node].left) ma.data[node].data = op(ma.data[ma.tree[node].left].data, ma.data[node].key);
-        if (ma.tree[node].right) ma.data[node].data = op(ma.data[node].data, ma.data[ma.tree[node].right].data);
+        ma.size[node] = 1 + ma.size[ma.left[node]] + ma.size[ma.right[node]];
+        ma.data[node] = ma.keys[node];
+        if (ma.left[node]) ma.data[node] = op(ma.data[ma.left[node]], ma.keys[node]);
+        if (ma.right[node]) ma.data[node] = op(ma.data[node], ma.data[ma.right[node]]);
     }
 
     void push(SizeType node, F f) {
-        ma.data[node].key = mapping(f, ma.data[node].key);
-        ma.data[node].data = mapping(f, ma.data[node].data);
-        ma.data[node].lazy = composition(f, ma.data[node].lazy);
+        ma.keys[node] = mapping(f, ma.keys[node]);
+        ma.data[node] = mapping(f, ma.data[node]);
+        ma.lazy[node] = composition(f, ma.lazy[node]);
     }
 
     void propagate(SizeType node) {
-        if (ma.data[node].rev) {
-            SizeType l = ma.tree[node].left ? ma.copy(ma.tree[node].left) : 0;
-            SizeType r = ma.tree[node].right ? ma.copy(ma.tree[node].right) : 0;
-            ma.tree[node].left = r;
-            ma.tree[node].right = l;
-            if (ma.tree[node].left) ma.data[ma.tree[node].left].rev ^= 1;
-            if (ma.tree[node].right) ma.data[ma.tree[node].right].rev ^= 1;
-            ma.data[node].rev = 0;
+        if (ma.rev[node]) {
+            SizeType l = ma.left[node] ? ma.copy(ma.left[node]) : 0;
+            SizeType r = ma.right[node] ? ma.copy(ma.right[node]) : 0;
+            ma.left[node] = r;
+            ma.right[node] = l;
+            if (ma.left[node]) ma.rev[ma.left[node]] ^= 1;
+            if (ma.right[node]) ma.rev[ma.right[node]] ^= 1;
+            ma.rev[node] = 0;
         }
-        if (ma.data[node].lazy != id()) {
-            if (ma.tree[node].left) {
-                ma.tree[node].left = ma.copy(ma.tree[node].left);
-                push(ma.tree[node].left, ma.data[node].lazy);
+        if (ma.lazy[node] != id()) {
+            if (ma.left[node]) {
+                ma.left[node] = ma.copy(ma.left[node]);
+                push(ma.left[node], ma.lazy[node]);
             }
-            if (ma.tree[node].right) {
-                ma.tree[node].right = ma.copy(ma.tree[node].right);
-                push(ma.tree[node].right, ma.data[node].lazy);
+            if (ma.right[node]) {
+                ma.right[node] = ma.copy(ma.right[node]);
+                push(ma.right[node], ma.lazy[node]);
             }
-            ma.data[node].lazy = id();
+            ma.lazy[node] = id();
         }
     }
 
@@ -151,8 +158,8 @@ private:
         auto build = [&] (auto &&build, SizeType l, SizeType r) -> SizeType {
             SizeType mid = (l + r) >> 1;
             SizeType node = ma.new_node(a[mid], id());
-            if (l != mid) ma.tree[node].left = build(build, l, mid);
-            if (mid+1 != r) ma.tree[node].right = build(build, mid+1, r);
+            if (l != mid) ma.left[node] = build(build, l, mid);
+            if (mid+1 != r) ma.right[node] = build(build, mid+1, r);
             update(node);
             return node;
         };
@@ -164,40 +171,40 @@ private:
     }
 
     SizeType _rotate_right(SizeType node) {
-        SizeType u = ma.copy(ma.tree[node].left);
-        ma.tree[node].left = ma.tree[u].right;
-        ma.tree[u].right = node;
+        SizeType u = ma.copy(ma.left[node]);
+        ma.left[node] = ma.right[u];
+        ma.right[u] = node;
         update(node);
         update(u);
         return u;
     }
 
     SizeType _rotate_left(SizeType node) {
-        SizeType u = ma.copy(ma.tree[node].right);
-        ma.tree[node].right = ma.tree[u].left;
-        ma.tree[u].left = node;
+        SizeType u = ma.copy(ma.right[node]);
+        ma.right[node] = ma.left[u];
+        ma.left[u] = node;
         update(node);
         update(u);
         return u;
     }
 
     SizeType _balance_left(SizeType node) {
-        propagate(ma.tree[node].right);
-        SizeType u = ma.tree[node].right;
-        if (weight_left(ma.tree[node].right) >= weight_right(ma.tree[node].right) * GAMMA) {
-            propagate(ma.tree[u].left);
-            ma.tree[node].right = _rotate_right(u);
+        propagate(ma.right[node]);
+        SizeType u = ma.right[node];
+        if (weight_left(ma.right[node]) >= weight_right(ma.right[node]) * GAMMA) {
+            propagate(ma.left[u]);
+            ma.right[node] = _rotate_right(u);
         }
         u = _rotate_left(node);
         return u;
     }
 
     SizeType _balance_right(SizeType node) {
-        propagate(ma.tree[node].left);
-        SizeType u = ma.tree[node].left;
-        if (weight_right(ma.tree[node].left) >= weight_left(ma.tree[node].left) * GAMMA) {
-            propagate(ma.tree[u].right);
-            ma.tree[node].left = _rotate_left(u);
+        propagate(ma.left[node]);
+        SizeType u = ma.left[node];
+        if (weight_right(ma.left[node]) >= weight_left(ma.left[node]) * GAMMA) {
+            propagate(ma.right[u]);
+            ma.left[node] = _rotate_left(u);
         }
         u = _rotate_right(node);
         return u;
@@ -207,31 +214,31 @@ private:
         if (weight(r) * DELTA < weight(l)) {
             propagate(l);
             l = ma.copy(l);
-            ma.tree[l].right = _merge_with_root(ma.tree[l].right, root, r);
+            ma.right[l] = _merge_with_root(ma.right[l], root, r);
             update(l);
-            if (weight(ma.tree[l].left) * DELTA < weight(ma.tree[l].right)) {
+            if (weight(ma.left[l]) * DELTA < weight(ma.right[l])) {
                 return _balance_left(l);
             }
             return l;
         } else if (weight(l) * DELTA < weight(r)) {
             propagate(r);
             r = ma.copy(r);
-            ma.tree[r].left = _merge_with_root(l, root, ma.tree[r].left);
+            ma.left[r] = _merge_with_root(l, root, ma.left[r]);
             update(r);
-            if (weight(ma.tree[r].right) * DELTA < weight(ma.tree[r].left)) {
+            if (weight(ma.right[r]) * DELTA < weight(ma.left[r])) {
                 return _balance_right(r);
             }
             return r;
         }
         root = ma.copy(root);
-        ma.tree[root].left = l;
-        ma.tree[root].right = r;
+        ma.left[root] = l;
+        ma.right[root] = r;
         update(root);
         return root;
     }
 
     pair<SizeType, SizeType> _pop_right(SizeType node) {
-        return _split_node(node, ma.tree[node].size-1);
+        return _split_node(node, ma.size[node]-1);
     }
 
     SizeType _merge_node(SizeType l, SizeType r) {
@@ -247,8 +254,8 @@ private:
     pair<SizeType, SizeType> _split_node(SizeType node, SizeType k) {
         if (!node) { return {0, 0}; }
         propagate(node);
-        SizeType lch = ma.tree[node].left, rch = ma.tree[node].right;
-        SizeType tmp = lch ? k-ma.tree[lch].size : k;
+        SizeType lch = ma.left[node], rch = ma.right[node];
+        SizeType tmp = lch ? k-ma.size[lch] : k;
         if (tmp == 0) {
             return {lch, _merge_with_root(0, node, rch)};
         } else if (tmp < 0) {
@@ -263,8 +270,8 @@ private:
     SizeType _split_node_left(SizeType node, SizeType k) {
         if (!node) { return 0; }
         propagate(node);
-        SizeType lch = ma.tree[node].left, rch = ma.tree[node].right;
-        SizeType tmp = lch ? k-ma.tree[lch].size : k;
+        SizeType lch = ma.left[node], rch = ma.right[node];
+        SizeType tmp = lch ? k-ma.size[lch] : k;
         if (tmp == 0) {
             return lch;
         } else if (tmp < 0) {
@@ -279,8 +286,8 @@ private:
     SizeType _split_node_right(SizeType node, SizeType k) {
         if (!node) { return 0; }
         propagate(node);
-        SizeType lch = ma.tree[node].left, rch = ma.tree[node].right;
-        SizeType tmp = lch ? k-ma.tree[lch].size : k;
+        SizeType lch = ma.left[node], rch = ma.right[node];
+        SizeType tmp = lch ? k-ma.size[lch] : k;
         if (tmp == 0) {
             return _merge_with_root(0, node, rch);
         } else if (tmp < 0) {
@@ -339,10 +346,10 @@ private:
                 push(nnode, f);
                 return nnode;
             }
-            SizeType lsize = ma.tree[ma.tree[nnode].left].size;
-            if (ma.tree[nnode].left) ma.tree[nnode].left = dfs(dfs, ma.tree[nnode].left, left, left+lsize);
-            if (l <= left+lsize && left+lsize < r) ma.data[nnode].key = mapping(f, ma.data[nnode].key);
-            if (ma.tree[nnode].right) ma.tree[nnode].right = dfs(dfs, ma.tree[nnode].right, left+lsize+1, right);
+            SizeType lsize = ma.size[ma.left[nnode]];
+            if (ma.left[nnode]) ma.left[nnode] = dfs(dfs, ma.left[nnode], left, left+lsize);
+            if (l <= left+lsize && left+lsize < r) ma.keys[nnode] = mapping(f, ma.keys[nnode]);
+            if (ma.right[nnode]) ma.right[nnode] = dfs(dfs, ma.right[nnode], left+lsize+1, right);
             update(nnode);
             return nnode;
         };
@@ -354,13 +361,13 @@ private:
         if (l == r) return e();
         auto dfs = [&] (auto &&dfs, SizeType node, SizeType left, SizeType right) -> T {
             if (right <= l || r <= left) return e();
-            if (l <= left && right < r) return ma.data[node].data;
+            if (l <= left && right < r) return ma.data[node];
             propagate(node);
-            SizeType lsize = ma.tree[ma.tree[node].left].size;
+            SizeType lsize = ma.size[ma.left[node]];
             T res = e();
-            if (ma.tree[node].left) res = dfs(dfs, ma.tree[node].left, left, left+lsize);
-            if (l <= left+lsize && left+lsize < r) res = op(res, ma.data[node].key);
-            if (ma.tree[node].right) res = op(res, dfs(dfs, ma.tree[node].right, left+lsize+1, right));
+            if (ma.left[node]) res = dfs(dfs, ma.left[node], left, left+lsize);
+            if (l <= left+lsize && left+lsize < r) res = op(res, ma.keys[node]);
+            if (ma.right[node]) res = op(res, dfs(dfs, ma.right[node], left+lsize+1, right));
             return res;
         };
         return dfs(dfs, root, 0, len());
@@ -377,7 +384,7 @@ private:
         assert(0 <= k && k < len());
         auto [s_, t] = _split_node(this->root, k+1);
         auto [s, tmp] = _pop_right(s_);
-        T res = ma.data[tmp].key;
+        T res = ma.keys[tmp];
         SizeType root = _merge_node(s, t);
         return {_new(root), res};
     }
@@ -387,7 +394,7 @@ private:
         if (l >= r) return _new(ma.copy(root));
         auto [s_, t] = _split_node(root, r);
         auto [u, s] = _split_node(s_, l);
-        ma.data[s].rev ^= 1;
+        ma.rev[s] ^= 1;
         SizeType root = _merge_node(_merge_node(u, s), t);
         return _new(root);
     }
@@ -401,11 +408,11 @@ private:
             if (node) {
                 propagate(node);
                 s.emplace(node);
-                node = ma.tree[node].left;
+                node = ma.left[node];
             } else {
                 node = s.top(); s.pop();
-                a.emplace_back(ma.data[node].key);
-                node = ma.tree[node].right;
+                a.emplace_back(ma.keys[node]);
+                node = ma.right[node];
             }
         }
         return a;
@@ -424,13 +431,13 @@ private:
         stack<SizeType> path = {node};
         while (1) {
             propagate(node);
-            SizeType t = ma.tree[ma.tree[node].left].size;
+            SizeType t = ma.size[ma.left[node]];
             if (t == k) {
                 node = ma.copy(node);
-                ma.data[node].key = v;
+                ma.keys[node] = v;
                 path.emplace(node);
-                if (d) ma.tree[pnode].left = node;
-                else ma.tree[pnode].right = node;
+                if (d) ma.left[pnode] = node;
+                else ma.right[pnode] = node;
                 while (!path.empty()) {
                     update(path.top());
                     path.pop();
@@ -440,15 +447,15 @@ private:
             pnode = node;
             if (t < k) {
                 k -= t + 1;
-                node = ma.copy(ma.tree[node].right);
+                node = ma.copy(ma.right[node]);
                 d = 0;
             } else {
                 d = 1;
-                node = ma.copy(ma.tree[node].left);
+                node = ma.copy(ma.left[node]);
             }
             path.emplace_back(node);
-            if (d) ma.tree[pnode].left = node;
-            else ma.tree[pnode].right = node;
+            if (d) ma.left[pnode] = node;
+            else ma.right[pnode] = node;
         }
     }
 
@@ -457,15 +464,15 @@ private:
         SizeType node = root;
         while (1) {
             propagate(node);
-            SizeType t = ma.tree[ma.tree[node].left].size;
+            SizeType t = ma.size[ma.left[node]];
             if (t == k) {
-                return ma.data[node].key;
+                return ma.keys[node];
             }
             if (t < k) {
                 k -= t + 1;
-                node = ma.tree[node].right;
+                node = ma.right[node];
             } else {
-                node = ma.tree[node].left;
+                node = ma.left[node];
             }
         }
     }
@@ -481,7 +488,7 @@ private:
     }
 
     SizeType len() const {
-        return ma.tree[root].size;
+        return ma.size[root];
     }
 
     void check() const {
@@ -489,20 +496,20 @@ private:
             SizeType ls = 0, rs = 0;
             SizeType height = 0;
             SizeType h;
-            if (ma.tree[node].left) {
-                pair<SizeType, SizeType> res = rec(rec, ma.tree[node].left);
+            if (ma.left[node]) {
+                pair<SizeType, SizeType> res = rec(rec, ma.left[node]);
                 ls = res.first;
                 h = res.second;
                 height = max(height, h);
             }
-            if (ma.tree[node].right) {
-                pair<SizeType, SizeType> res = rec(rec, ma.tree[node].right);
+            if (ma.right[node]) {
+                pair<SizeType, SizeType> res = rec(rec, ma.right[node]);
                 rs = res.first;
                 h = res.second;
                 height = max(height, h);
             }
             SizeType s = ls + rs + 1;
-            assert(s == ma.tree[node].size);
+            assert(s == ma.size[node]);
             balance_check(node);
             return {s, height+1};
         };

@@ -3,19 +3,17 @@
 #include <cassert>
 using namespace std;
 
-// SparseTable
+// SparseTableMin
 namespace titan23 {
 
-template <class T, T (*op)(T, T), T (*e)()>
-struct SparseTable {
+struct SparseTableMin {
 private:
     int n;
-    vector<T> data;
-    vector<int> offset;
+    vector<int> data, offset;
 
 public:
-    SparseTable() {}
-    SparseTable(vector<T> &a) : n((int)a.size()) {
+    SparseTableMin() {}
+    SparseTableMin(vector<int> &a) : n((int)a.size()) {
         int log = 32 - __builtin_clz(n) - 1;
         offset.resize(log+1);
         int sm = 0;
@@ -24,7 +22,7 @@ public:
             sm += n - (1<<i) + 1;
         }
         data.resize(sm);
-        memcpy(data.data(), a.data(), n*sizeof(T));
+        memcpy(data.data(), a.data(), n*sizeof(int));
         for (int i = 0; i < log; ++i) {
             int l = 1 << i;
             int s = n - l + 1;
@@ -33,19 +31,19 @@ public:
             const auto pre2 = &data[offset[i]+l];
             auto nxt = &data[offset[i+1]];
             for (int j = 0; j < x; ++j) {
-                nxt[j] = op(pre1[j], pre2[j]);
+                nxt[j] = min(pre1[j], pre2[j]);
             }
         }
     }
 
-    T prod(const int l, const int r) const {
+    int prod(const int l, const int r) const {
         assert(0 <= l && l <= r && r < n);
-        if (l == r) return e();
+        if (l == r) return INT_MAX;
         int u = 32 - __builtin_clz(r-l) - 1;
         return min(data[offset[u]+l], data[offset[u]+r-(1<<u)]);
     }
 
-    T get(const int k) const {
+    int get(const int k) const {
         assert(0 <= k && k < n);
         return data[k];
     }
