@@ -8,6 +8,9 @@
 using namespace std;
 
 namespace titan23 {
+
+/// 区間ソートが可能なセグ木
+/// Tには `<` と `==` 演算子が必要
 template <class T, T (*op)(T, T), T (*e)()>
 class SortableSegmentTree {
 private:
@@ -119,6 +122,7 @@ public:
     }
 
     T get(int k) {
+        assert(0 <= k && k < n);
         make_kyokai(k);
         make_kyokai(k+1);
         auto [idx, tree_idx] = get_index(k);
@@ -127,6 +131,7 @@ public:
     }
 
     void set(int k, T key) {
+        assert(0 <= k && k < n);
         make_kyokai(k);
         make_kyokai(k+1);
         auto [idx, tree_idx] = get_index(k);
@@ -138,6 +143,8 @@ public:
     }
 
     void sort(int l, int r, bool reverse=false) {
+        assert(0 <= l && l <= r && r <= n);
+        if (l == r) return;
         make_kyokai(l);
         make_kyokai(r);
         typename BST::NodePtr pre = nodeptr[l];
@@ -164,6 +171,7 @@ public:
     }
 
     T prod(int l, int r) {
+        assert(0 <= l && l <= r && r <= n);
         make_kyokai(l);
         make_kyokai(r);
         return seg.prod(l, r);

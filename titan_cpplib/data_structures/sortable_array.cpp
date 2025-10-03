@@ -7,6 +7,9 @@
 using namespace std;
 
 namespace titan23 {
+
+/// 区間ソートが可能な配列
+/// Tには `<` と `==` 演算子が必要
 template <class T>
 class SortableArray {
 private:
