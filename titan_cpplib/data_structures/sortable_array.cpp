@@ -29,24 +29,18 @@ private:
         typename BST::NodePtr p = nodeptr[idx];
         p->splay();
         int tree_size = p->size;
-
+        int split_idx = is_rev[idx] ? tree_size-tree_idx : tree_idx;
+        // idx, ..., k, ..., idx+tree_size
+        p = stree.kth_splay(p, split_idx);
+        typename BST::NodePtr left = p->left;
+        p->left = nullptr;
+        p->update();
+        if (left) left->par = nullptr;
+        p = p->left_splay();
         if (!is_rev[idx]) { // 普通
-            p = stree.kth_splay(p, tree_idx);
-            // idx, ..., k, ..., idx+tree_size
-            typename BST::NodePtr left = p->left;
-            p->left = nullptr;
-            p->update();
-            if (left) left->par = nullptr;
-            p = p->left_splay();
             nodeptr[idx] = left;
             nodeptr[k] = p;
         } else {
-            p = stree.kth_splay(p, tree_size-tree_idx);
-            typename BST::NodePtr left = p->left;
-            p->left = nullptr;
-            p->update();
-            if (left) left->par = nullptr;
-            p = p->left_splay();
             nodeptr[idx] = p;
             nodeptr[k] = left;
         }
