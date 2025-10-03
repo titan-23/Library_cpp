@@ -267,7 +267,7 @@ public:
         NodePtr node = root;
         path.clear();
         while (1) {
-            node->propagate(node);
+            node->propagate();
             path.emplace(node);
             int t = node->left ? node->left->size : 0;
             if (t == k) {
