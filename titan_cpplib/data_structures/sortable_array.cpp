@@ -31,7 +31,7 @@ private:
         int tree_size = p->size;
 
         if (!is_rev[idx]) { // 普通
-            p = stree.kth_splay(p, tree_idx); // TODO revでないときだけ
+            p = stree.kth_splay(p, tree_idx);
             // idx, ..., k, ..., idx+tree_size
             typename BST::NodePtr left = p->left;
             p->left = nullptr;

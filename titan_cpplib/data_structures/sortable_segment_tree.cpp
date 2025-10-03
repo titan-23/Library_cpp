@@ -31,26 +31,20 @@ private:
         typename BST::NodePtr p = nodeptr[idx];
         p->splay();
         int tree_size = p->size;
-
+        int split_idx = is_rev[idx] ? tree_size-tree_idx : tree_idx;
+        // idx, ..., k, ..., idx+tree_size
+        p = stree.kth_splay(p, split_idx);
+        typename BST::NodePtr left = p->left;
+        p->left = nullptr;
+        p->update();
+        if (left) left->par = nullptr;
+        p = p->left_splay();
         if (!is_rev[idx]) { // 普通
-            p = stree.kth_splay(p, tree_idx); // TODO revでないときだけ
-            // idx, ..., k, ..., idx+tree_size
-            typename BST::NodePtr left = p->left;
-            p->left = nullptr;
-            p->update();
-            if (left) left->par = nullptr;
-            p = p->left_splay();
             seg.set(idx, left ? left->data : e());
             seg.set(k, p->data);
             nodeptr[idx] = left;
             nodeptr[k] = p;
         } else {
-            p = stree.kth_splay(p, tree_size-tree_idx);
-            typename BST::NodePtr left = p->left;
-            p->left = nullptr;
-            p->update();
-            if (left) left->par = nullptr;
-            p = p->left_splay();
             seg.set(idx, p->rdata);
             seg.set(k, left ? left->rdata : e());
             nodeptr[idx] = p;
@@ -65,7 +59,7 @@ private:
     // tree_idx: nodeptr[idx]内でk番目のノードのインデックス
     pair<int, int> get_index(int k) {
         int idx = fw.bisect_right(k);
-        int tree_idx = k - fw.sum(0, idx);
+        int tree_idx = k - fw.pref(idx);
         return {idx, tree_idx};
     }
 
