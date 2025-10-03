@@ -134,25 +134,19 @@ public:
     }
 
     NodePtr find_splay(NodePtr node, T key) {
-        NodePtr pnode = nullptr;
+        if (!node) return nullptr;
+        NodePtr res = nullptr;
         while (node) {
             node->propagate();
-            if (node->key == key) {
-                node->splay();
-                return node;
-            }
-            pnode = node;
-            if (key < node->key) {
-                node = node->left;
-            } else {
+            if (node->key < key || node->key == key) {
+                res = node;
                 node = node->right;
+            } else {
+                node = node->left;
             }
         }
-        if (pnode) {
-            pnode->splay();
-            return pnode;
-        }
-        return node;
+        if (res) res->splay();
+        return res;
     }
 
     pair<NodePtr, NodePtr> split(NodePtr node, T key) {
@@ -288,22 +282,20 @@ public:
 
     NodePtr find_splay(NodePtr node, T key) {
         if (!node) return nullptr;
-        NodePtr pnode = nullptr;
+        NodePtr res = nullptr;
         while (node) {
-            if (node->key == key) {
-                node->splay();
-                return node;
+            if (node->key < key || node->key == key) {
+                res = node;
+                node = node->right;
+            } else {
+                node = node->left;
             }
-            pnode = node;
-            node = key < node->key ? node->left : node->right;
         }
-        if (pnode) {
-            pnode->splay();
-            return pnode;
-        }
-        return node;
+        if (res) res->splay();
+        return res;
     }
 
+    // key以下の要素を持つ部分木, keyより大きい要素を持つ部分木
     pair<NodePtr, NodePtr> split(NodePtr node, T key) {
         if (!node) { return {nullptr, nullptr}; }
         node->splay();
@@ -425,20 +417,17 @@ public:
 
     NodePtr find_splay(NodePtr node, T key) {
         if (!node) return nullptr;
-        NodePtr pnode = nullptr;
+        NodePtr res = nullptr;
         while (node) {
-            if (node->key == key) {
-                node->splay();
-                return node;
+            if (node->key < key || node->key == key) {
+                res = node;
+                node = node->right;
+            } else {
+                node = node->left;
             }
-            pnode = node;
-            node = key < node->key ? node->left : node->right;
         }
-        if (pnode) {
-            pnode->splay();
-            return pnode;
-        }
-        return node;
+        if (res) res->splay();
+        return res;
     }
 
     pair<NodePtr, NodePtr> split(NodePtr node, T key) {
