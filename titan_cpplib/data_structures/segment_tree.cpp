@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <vector>
 #include <cassert>
@@ -42,8 +43,7 @@ public:
     }
 
     T get(int const k) const {
-        assert(0 <= k && k < n);
-        return data[(k<0 ? (k+n+_size) : (k+_size))];
+        return data[k+_size];
     }
 
     void set(int k, const T v) {

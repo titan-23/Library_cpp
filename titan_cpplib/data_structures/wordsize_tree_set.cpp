@@ -1,3 +1,4 @@
+#pragma once
 #include <vector>
 #include <cassert>
 #include "titan_cpplib/others/print.cpp"
@@ -42,6 +43,7 @@ private:
     }
 
 public:
+    WordsizeTreeSet() : u(0), _len(0) {}
     WordsizeTreeSet(int u) : u(u+1), _len(0) {
         while (u) {
             u >>= 6;
@@ -152,6 +154,19 @@ public:
 
     bool contains(int v) {
         return (data[0][v>>6] >> (v&63) & 1) == 1;
+    }
+
+    void fill(int n) {
+        _len = n;
+        for (int d = 0; d < data.size(); ++d) {
+            for (int i = 0; i < data[d].size(); ++i) {
+                data[d][i] = ~0ull;
+            }
+        }
+        int rem = n & 63;
+        if (rem != 0) {
+            data[0].back() &= (1ull << rem) - 1;
+        }
     }
 
     int len() { return _len; }
