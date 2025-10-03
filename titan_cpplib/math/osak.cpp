@@ -39,7 +39,7 @@ public:
         for (int i = 2; i*i <= n; ++i) {
             if (min_factor[i] == i) {
                 for (int j = 2; j <= n/i; ++j) {
-                        if (min_factor[i*j] > i) {
+                    if (min_factor[i*j] > i) {
                         min_factor[i*j] = i;
                     }
                 }
