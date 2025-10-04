@@ -1,8 +1,7 @@
+#include <bits/stdc++.h>
 #include "titan_cpplib/data_structures/fenwick_tree.cpp"
 #include "titan_cpplib/data_structures/wordsize_tree_set.cpp"
 #include "titan_cpplib/others/print.cpp"
-
-#include <bits/stdc++.h>
 using namespace std;
 
 namespace titan23 {
