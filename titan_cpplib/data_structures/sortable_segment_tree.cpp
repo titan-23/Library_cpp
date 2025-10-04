@@ -70,8 +70,11 @@ private:
                 left = pnode;
             }
             pnode->par = this;
+            this->data = pnode->data;
+            this->rdata = pnode->rdata;
+            this->size = pnode->size;
             pnode->update();
-            update();
+            // update();
         }
 
         void splay() {
@@ -174,7 +177,7 @@ private:
         int tree_size = p->size;
         int split_idx = is_rev[idx] ? tree_size-tree_idx : tree_idx;
         // idx, ..., k, ..., idx+tree_size
-        p = stree.kth_splay(p, split_idx);
+        p = kth_splay(p, split_idx);
         NodePtr left = p->left;
         p->left = nullptr;
         p->update();
@@ -234,7 +237,7 @@ private:
             a = a->left_splay();
             b = b->left_splay();
             if (!(a->key < b->key || a->key == b->key)) swap(a, b);
-            auto [left, right] = stree.split(a, b->key);
+            auto [left, right] = split(a, b->key);
             a = right;
             X = concat(X, left);
         }
