@@ -316,6 +316,10 @@ public:
         return seg.prod(l, r);
     }
 
+    T all_prod() {
+        return seg.all_prod();
+    }
+
     vector<T> tovector() {
         vector<T> a; a.reserve(n);
         for (int i = 0; i < n; ++i) {
