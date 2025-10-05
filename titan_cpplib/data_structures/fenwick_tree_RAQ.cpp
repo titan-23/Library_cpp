@@ -1,56 +1,31 @@
 #include <iostream>
 #include <vector>
+#include "titan_cpplib/data_structures/fenwick_tree.cpp"
 using namespace std;
 
 namespace titan23 {
 
-/// 定数倍の軽い range add range sum
+/// 定数倍の軽い range add point get
 template<typename T>
 class FenwickTreeRAQ {
 private:
     int n;
-    vector<T> bit0, bit1;
-    int bit_size;
-
-    void _add(vector<T> &bit, int k, T x) {
-        k += 1;
-        while (k <= bit_size) {
-            bit[k] += x;
-            k += k & -k;
-        }
-    }
-
-    T _pref(const vector<T> &bit, int r) const {
-        T ret = 0;
-        while (r > 0) {
-            ret += bit[r];
-            r -= r & -r;
-        }
-        return ret;
-    }
+    titan23::FenwickTree<T> fw;
 
 public:
-    FenwickTreeRAQ() : n(0), bit_size(0) {}
-    FenwickTreeRAQ(int n) : n(n), bit0(n+2, 0), bit1(n+2, 0), bit_size(n+1) {}
-
-    FenwickTreeRAQ(vector<T> a) : n(a.size()), bit0(n+2, 0), bit1(n+2, 0), bit_size(n+1) {
-        for (int i = 0; i < n; ++i) {
-            add(i, a[i]);
-        }
-    }
+    FenwickTreeRAQ() : n(0), fw(0) {}
+    FenwickTreeRAQ(int n) : n(n), fw(n) {}
+    FenwickTreeRAQ(vector<T> a) : n(n), fw(a) {}
 
     /// all 0
     void clear() {
-        fill(bit0.begin(), bit0.end(), (T)0);
-        fill(bit1.begin(), bit1.end(), (T)0);
+        fw.clear();
     }
 
     /// add x to a[l, r)
     void add_range(int l, int r, T x) {
-        _add(bit0, l, -x * l);
-        _add(bit0, r, x * r);
-        _add(bit1, l, x);
-        _add(bit1, r, -x);
+        fw.add(l, x);
+        if (r < n) fw.add(r, -x);
     }
 
     /// a[k] += x;
@@ -58,20 +33,15 @@ public:
         add_range(k, k+1, x);
     }
 
-    /// sum(a[l, r))
-    T sum(int l, int r) const {
-        return _pref(bit0, r) + (T)r*_pref(bit1, r) - _pref(bit0, l) - (T)l*_pref(bit1, l);
+    /// a[k]
+    T get(int k) const {
+        return fw.pref(k+1);
     }
 
     /// a[k] <- x
     void set(int k, T x) {
         T pre = get(k);
         add(k, x-pre);
-    }
-
-    /// a[k]
-    T get(int k) const {
-        return sum(k, k+1);
     }
 
     vector<T> tovector() const {

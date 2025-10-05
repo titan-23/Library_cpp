@@ -97,6 +97,10 @@ struct FenwickTree {
         return res;
     }
 
+    void clear() {
+        fill(_tree.begin(), _tree.end(), 0);
+    }
+
     void print() const {
         vector<T> fw = tovector();
         cout << "[";
