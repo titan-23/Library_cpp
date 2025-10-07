@@ -179,21 +179,21 @@ private:
         NodePtr left = p->left;
         p->left = nullptr;
         p->update();
-        if (left) left->par = nullptr;
+        assert(left);  // k not in ws より、idxより左に必ず要素がある
         p = p->left_splay();
-        if (!is_rev[idx]) { // 普通
-            seg.set(idx, left ? left->data : e());
+        if (!is_rev[idx]) {
+            seg.set(idx, left->data);
             seg.set(k, p->data);
             nodeptr[idx] = left;
             nodeptr[k] = p;
         } else {
             seg.set(idx, p->rdata);
-            seg.set(k, left ? left->rdata : e());
+            seg.set(k, left->rdata);
             nodeptr[idx] = p;
             nodeptr[k] = left;
         }
-        fw.set(idx, tree_idx);
-        fw.set(k, tree_size-tree_idx);
+        fw.add(idx, -(tree_size-tree_idx));
+        fw.add(k, tree_size-tree_idx);
         is_rev[k] = is_rev[idx];
     }
 
@@ -293,10 +293,11 @@ public:
             int gt = ws.gt(idx);
             // make_kyokaiより、gt=rでとまる(r!=n)
             if (gt == r || gt == -1) break;
-            s += fw.get(gt);
+            int gt_size = fw.get(gt);
+            s += gt_size;
             pre = merge(pre, nodeptr[gt]);
             is_rev[gt] = false;
-            fw.set(gt, 0);
+            fw.add(gt, -gt_size);
             nodeptr[gt] = nullptr;
             seg.set(gt, e());
             ws.remove(gt);

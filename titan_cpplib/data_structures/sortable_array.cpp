@@ -67,20 +67,6 @@ private:
             }
             if (par) rotate();
         }
-
-        NodePtr left_splay() {
-            NodePtr node = this;
-            while (node->left) node = node->left;
-            node->splay();
-            return node;
-        }
-
-        NodePtr right_splay() {
-            NodePtr node = this;
-            while (node->right) node = node->right;
-            node->splay();
-            return node;
-        }
     };
 
     NodePtr kth_splay(NodePtr node, int k) {
@@ -114,21 +100,37 @@ private:
         return res;
     }
 
+    NodePtr left_splay(NodePtr node) {
+        while (node->left) node = node->left;
+        node->splay();
+        return node;
+    }
+
+    NodePtr right_splay(NodePtr node) {
+        while (node->right) node = node->right;
+        node->splay();
+        return node;
+    }
+
     pair<NodePtr, NodePtr> split(NodePtr node, T key) {
         if (!node) { return {nullptr, nullptr}; }
         node->splay();
         node = find_splay(node, key);
         if (node->key < key || node->key == key) {
             NodePtr r = node->right;
-            node->right = nullptr;
-            if (r) r->par = nullptr;
-            node->update();
+            if (r) {
+                node->right = nullptr;
+                r->par = nullptr;
+                node->update();
+            }
             return {node, r};
         } else {
             NodePtr l = node->left;
-            node->left = nullptr;
-            if (l) l->par = nullptr;
-            node->update();
+            if (l) {
+                node->left = nullptr;
+                l->par = nullptr;
+                node->update();
+            }
             return {l, node};
         }
     }
@@ -161,10 +163,12 @@ private:
         // idx, ..., k, ..., idx+tree_size
         p = kth_splay(p, split_idx);
         NodePtr left = p->left;
-        p->left = nullptr;
-        p->update();
-        if (left) left->par = nullptr;
-        p = p->left_splay();
+        if (left) {
+            p->left = nullptr;
+            p->update();
+            left->par = nullptr;
+        }
+        p = left_splay(p);
         if (!is_rev[idx]) { // 普通
             nodeptr[idx] = left;
             nodeptr[k] = p;
@@ -196,13 +200,13 @@ private:
             if (!r) return l;
             // 小さい方をsplayする
             if (l->size < r->size) {
-                l = l->right_splay();
+                l = right_splay(l);
                 l->right = r;
                 r->par = l;
                 l->update();
                 return l;
             } else {
-                r = r->left_splay();
+                r = left_splay(r);
                 r->left = l;
                 l->par = r;
                 r->update();
@@ -212,8 +216,8 @@ private:
 
         NodePtr X = nullptr;
         while (a && b) {
-            a = a->left_splay();
-            b = b->left_splay();
+            a = left_splay(a);
+            b = left_splay(b);
             if (!(a->key < b->key || a->key == b->key)) swap(a, b);
             auto [left, right] = split(a, b->key);
             a = right;
