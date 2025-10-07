@@ -163,11 +163,10 @@ private:
         // idx, ..., k, ..., idx+tree_size
         p = kth_splay(p, split_idx);
         NodePtr left = p->left;
-        if (left) {
-            p->left = nullptr;
-            p->update();
-            left->par = nullptr;
-        }
+        p->left = nullptr;
+        left->par = nullptr;
+        p->update();
+        // assert(left);  // k not in ws より、idxより左に必ず要素がある
         p = left_splay(p);
         if (!is_rev[idx]) { // 普通
             nodeptr[idx] = left;
@@ -185,7 +184,7 @@ private:
     // tree_idx: nodeptr[idx]内でk番目のノードのインデックス
     pair<int, int> get_index(int k) {
         int idx = fw.bisect_right(k);
-        int tree_idx = k - fw.sum(0, idx);
+        int tree_idx = k - fw.pref(idx);
         return {idx, tree_idx};
     }
 
@@ -245,6 +244,7 @@ public:
     }
 
     T get(int k) {
+        assert(0 <= k && k < n);
         make_kyokai(k);
         make_kyokai(k+1);
         auto [idx, tree_idx] = get_index(k);
@@ -253,6 +253,7 @@ public:
     }
 
     void set(int k, T key) {
+        assert(0 <= k && k < n);
         make_kyokai(k);
         make_kyokai(k+1);
         auto [idx, tree_idx] = get_index(k);
@@ -263,6 +264,8 @@ public:
     }
 
     void sort(int l, int r, bool reverse=false) {
+        assert(0 <= l && l <= r && r <= n);
+        if (r - l <= 1) return;
         make_kyokai(l);
         make_kyokai(r);
         NodePtr pre = nodeptr[l];

@@ -84,18 +84,6 @@ private:
         }
     };
 
-    NodePtr left_splay(NodePtr node) {
-        while (node->left) node = node->left;
-        node->splay();
-        return node;
-    }
-
-    NodePtr right_splay(NodePtr node) {
-        while (node->right) node = node->right;
-        node->splay();
-        return node;
-    }
-
     NodePtr kth_splay(NodePtr node, int k) {
         node->splay();
         while (1) {
@@ -125,6 +113,18 @@ private:
         }
         if (res) res->splay();
         return res;
+    }
+
+    NodePtr left_splay(NodePtr node) {
+        while (node->left) node = node->left;
+        node->splay();
+        return node;
+    }
+
+    NodePtr right_splay(NodePtr node) {
+        while (node->right) node = node->right;
+        node->splay();
+        return node;
     }
 
     // key以下の要素を持つ部分木, keyより大きい要素を持つ部分木
@@ -176,8 +176,9 @@ private:
         p = kth_splay(p, split_idx);
         NodePtr left = p->left;
         p->left = nullptr;
+        left->par = nullptr;
         p->update();
-        assert(left);  // k not in ws より、idxより左に必ず要素がある
+        // assert(left);  // k not in ws より、idxより左に必ず要素がある
         p = left_splay(p);
         if (!is_rev[idx]) {
             seg.set(idx, left->data);
