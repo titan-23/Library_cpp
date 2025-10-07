@@ -82,21 +82,19 @@ private:
             }
             if (par) rotate();
         }
-
-        NodePtr left_splay() {
-            NodePtr node = this;
-            while (node->left) node = node->left;
-            node->splay();
-            return node;
-        }
-
-        NodePtr right_splay() {
-            NodePtr node = this;
-            while (node->right) node = node->right;
-            node->splay();
-            return node;
-        }
     };
+
+    NodePtr left_splay(NodePtr node) {
+        while (node->left) node = node->left;
+        node->splay();
+        return node;
+    }
+
+    NodePtr right_splay(NodePtr node) {
+        while (node->right) node = node->right;
+        node->splay();
+        return node;
+    }
 
     NodePtr kth_splay(NodePtr node, int k) {
         node->splay();
@@ -180,7 +178,7 @@ private:
         p->left = nullptr;
         p->update();
         assert(left);  // k not in ws より、idxより左に必ず要素がある
-        p = p->left_splay();
+        p = left_splay(p);
         if (!is_rev[idx]) {
             seg.set(idx, left->data);
             seg.set(k, p->data);
@@ -216,13 +214,13 @@ private:
             if (!r) return l;
             // 小さい方をsplayする
             if (l->size < r->size) {
-                l = l->right_splay();
+                l = right_splay(l);
                 l->right = r;
                 r->par = l;
                 l->update();
                 return l;
             } else {
-                r = r->left_splay();
+                r = left_splay(r);
                 r->left = l;
                 l->par = r;
                 r->update();
@@ -232,8 +230,8 @@ private:
 
         NodePtr X = nullptr;
         while (a && b) {
-            a = a->left_splay();
-            b = b->left_splay();
+            a = left_splay(a);
+            b = left_splay(b);
             if (!(a->key < b->key || a->key == b->key)) swap(a, b);
             auto [left, right] = split(a, b->key);
             a = right;
@@ -283,7 +281,7 @@ public:
 
     void sort(int l, int r, bool reverse=false) {
         assert(0 <= l && l <= r && r <= n);
-        if (l == r) return;
+        if (r - l <= 1) return;
         make_kyokai(l);
         make_kyokai(r);
         NodePtr pre = nodeptr[l];
