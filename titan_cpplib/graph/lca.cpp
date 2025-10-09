@@ -2,7 +2,7 @@
 #include <cassert>
 #include <stack>
 #include <climits>
-#include "titan_cpplib/data_structures/sparse_table_min.cpp"
+#include "titan_cpplib/data_structures/static_RmQ.cpp"
 using namespace std;
 
 // LCA
@@ -16,7 +16,7 @@ class LCA {
 private:
     int n;
     vector<int> path, nodein;
-    SparseTableMin st;
+    titan23::StaticRmQ<int> st;
 
 public:
     LCA() {}
@@ -45,7 +45,7 @@ public:
         for (int i = 0; i < n; ++i) {
             a[i] = nodein[path[i]];
         }
-        st = SparseTableMin(a);
+        st = titan23::StaticRmQ<int>(a, INT_MAX);
     }
 
     //! `u`, `v` の lca を求める / `O(1)`
