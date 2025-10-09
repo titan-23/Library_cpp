@@ -224,6 +224,7 @@ public:
         auto [s2, t] = _split_node(root, r);
         auto [u, s] = _split_node(s2, l);
         s->rev ^= 1;
+        s->propagate();
         root = _merge_node(_merge_node(u, s), t);
     }
 

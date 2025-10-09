@@ -67,20 +67,6 @@ private:
             }
             if (par) rotate();
         }
-
-        NodePtr left_splay() {
-            NodePtr node = this;
-            while (node->left) node = node->left;
-            node->splay();
-            return node;
-        }
-
-        NodePtr right_splay() {
-            NodePtr node = this;
-            while (node->right) node = node->right;
-            node->splay();
-            return node;
-        }
     };
 
     NodePtr kth_splay(NodePtr node, int k) {
@@ -114,21 +100,37 @@ private:
         return res;
     }
 
+    NodePtr left_splay(NodePtr node) {
+        while (node->left) node = node->left;
+        node->splay();
+        return node;
+    }
+
+    NodePtr right_splay(NodePtr node) {
+        while (node->right) node = node->right;
+        node->splay();
+        return node;
+    }
+
     pair<NodePtr, NodePtr> split(NodePtr node, T key) {
         if (!node) { return {nullptr, nullptr}; }
         node->splay();
         node = find_splay(node, key);
         if (node->key < key || node->key == key) {
             NodePtr r = node->right;
-            node->right = nullptr;
-            if (r) r->par = nullptr;
-            node->update();
+            if (r) {
+                node->right = nullptr;
+                r->par = nullptr;
+                node->update();
+            }
             return {node, r};
         } else {
             NodePtr l = node->left;
-            node->left = nullptr;
-            if (l) l->par = nullptr;
-            node->update();
+            if (l) {
+                node->left = nullptr;
+                l->par = nullptr;
+                node->update();
+            }
             return {l, node};
         }
     }
@@ -162,9 +164,10 @@ private:
         p = kth_splay(p, split_idx);
         NodePtr left = p->left;
         p->left = nullptr;
+        left->par = nullptr;
         p->update();
-        if (left) left->par = nullptr;
-        p = p->left_splay();
+        // assert(left);  // k not in ws より、idxより左に必ず要素がある
+        p = left_splay(p);
         if (!is_rev[idx]) { // 普通
             nodeptr[idx] = left;
             nodeptr[k] = p;
@@ -181,7 +184,7 @@ private:
     // tree_idx: nodeptr[idx]内でk番目のノードのインデックス
     pair<int, int> get_index(int k) {
         int idx = fw.bisect_right(k);
-        int tree_idx = k - fw.sum(0, idx);
+        int tree_idx = k - fw.pref(idx);
         return {idx, tree_idx};
     }
 
@@ -196,13 +199,13 @@ private:
             if (!r) return l;
             // 小さい方をsplayする
             if (l->size < r->size) {
-                l = l->right_splay();
+                l = right_splay(l);
                 l->right = r;
                 r->par = l;
                 l->update();
                 return l;
             } else {
-                r = r->left_splay();
+                r = left_splay(r);
                 r->left = l;
                 l->par = r;
                 r->update();
@@ -212,8 +215,8 @@ private:
 
         NodePtr X = nullptr;
         while (a && b) {
-            a = a->left_splay();
-            b = b->left_splay();
+            a = left_splay(a);
+            b = left_splay(b);
             if (!(a->key < b->key || a->key == b->key)) swap(a, b);
             auto [left, right] = split(a, b->key);
             a = right;
@@ -241,6 +244,7 @@ public:
     }
 
     T get(int k) {
+        assert(0 <= k && k < n);
         make_kyokai(k);
         make_kyokai(k+1);
         auto [idx, tree_idx] = get_index(k);
@@ -249,6 +253,7 @@ public:
     }
 
     void set(int k, T key) {
+        assert(0 <= k && k < n);
         make_kyokai(k);
         make_kyokai(k+1);
         auto [idx, tree_idx] = get_index(k);
@@ -259,6 +264,8 @@ public:
     }
 
     void sort(int l, int r, bool reverse=false) {
+        assert(0 <= l && l <= r && r <= n);
+        if (r - l <= 1) return;
         make_kyokai(l);
         make_kyokai(r);
         NodePtr pre = nodeptr[l];
