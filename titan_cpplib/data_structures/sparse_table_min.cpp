@@ -37,7 +37,7 @@ public:
     }
 
     int prod(const int l, const int r) const {
-        assert(0 <= l && l <= r && r < n);
+        assert(0 <= l && l <= r && r <= n);
         if (l == r) return INT_MAX;
         int u = 32 - __builtin_clz(r-l) - 1;
         return min(data[offset[u]+l], data[offset[u]+r-(1<<u)]);
