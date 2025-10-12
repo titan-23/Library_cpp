@@ -59,6 +59,7 @@ public:
         suffix_link[idx1] = idx0;
         suffix_link_dep[idx0] = 0;
         suffix_link_dep[idx1] = 0;
+        par[idx0] = 0; // self
         par[idx1] = 0;
         last_idx = idx1;
     }
