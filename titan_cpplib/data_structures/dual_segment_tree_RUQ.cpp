@@ -23,9 +23,9 @@ public:
     DualSegmentTreeRUQ(const int n, const T init) : n(n), time(0) {
         this->log = bit_length(n);
         this->size = 1 << log;
-        this->data.resize(2*size, {-1, T{}});
+        this->data.resize(2*size, {-1, init});
         for (int i = 0; i < n; ++i) {
-            data[i+size] = {time, init};
+            data[i+size].first = time;
         }
     }
 
@@ -69,19 +69,19 @@ public:
 
     void all_apply(T f) {
         time++;
-        data[1] = {time, f};
+        data[1].first = time;
+        data[1].second = f;
     }
 
     vector<T> tovector() {
-        auto all_apply = [&] (int k, pair<int, T> f) -> void {
-            if (data[k].first < f.first) {
-                data[k] = f;
-            }
-        };
-
         for (int k = 1; k < size; ++k) {
-            all_apply(k<<1, data[k]);
-            all_apply(k<<1|1, data[k]);
+            int t = data[k].first;
+            if (data[k<<1].first < t) {
+                data[k<<1] = data[k];
+            }
+            if (data[k<<1|1].first < t) {
+                data[k<<1|1] = data[k];
+            }
             data[k].first = -1;
         }
         vector<T> res(n);
@@ -91,7 +91,7 @@ public:
         return res;
     }
 
-    T get(int k) {
+    T get(int k) const {
         k += size;
         auto [t, ans] = data[k];
         for (int i = log; i > 0; --i) {
