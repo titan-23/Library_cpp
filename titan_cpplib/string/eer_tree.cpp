@@ -7,8 +7,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// 空間O(n)?, 時間O(nlogσ)
-/// 文字列に含まれる相異なる回文の個数O(1)と頻度O(?)
+/// 空間O(n), 時間O(nlogσ)
 /// ref: https://math314.hateblo.jp/entry/2016/12/19/005919
 /// ref: https://mojashi.hatenablog.com/entry/2017/07/17/155520
 /// ref: https://arxiv.org/abs/1506.04862
@@ -18,12 +17,19 @@ private:
     long long all_count;
     string s;
     vector<map<char, int>> child;
+    // vector<array<int, 26>> child;
     vector<int> par, len, suffix_link, count, start, suffix_link_dep;
     vector<int> pref; // pref[i]:= s[:i+1]の最大回文接尾辞に対応する頂点番号(s[i]を含んで終わる)
 
     int new_node() {
         int idx = suffix_link.size();
         child.emplace_back();
+        // static const array<int, 26> INIT_CHILD = [] {
+        //     array<int, 26> a{};
+        //     a.fill(-1);
+        //     return a;
+        // } ();
+        // child.emplace_back(INIT_CHILD);
         suffix_link.emplace_back();
         len.emplace_back();
         par.emplace_back();
@@ -53,6 +59,7 @@ public:
         suffix_link[idx1] = idx0;
         suffix_link_dep[idx0] = 0;
         suffix_link_dep[idx1] = 0;
+        par[idx1] = 0;
         last_idx = idx1;
     }
 
@@ -73,6 +80,8 @@ public:
         int now = get_upper(last_idx, c);
         if (child[now].find(c) != child[now].end()) {
             last_idx = child[now][c];
+        // if (child[now][c-'a'] != -1) {
+        //     last_idx = child[now][c-'a'];
             pref.emplace_back(last_idx);
             n++;
             count[last_idx]++;
@@ -82,6 +91,7 @@ public:
         int idx = new_node();
         len[idx] = len[now]+2;
         child[now][c] = idx;
+        // child[now][c-'a'] = idx;
         par[idx] = now;
         count[idx] = 1;
         start[idx] = n+1-len[idx];
@@ -92,18 +102,19 @@ public:
         } else {
             int k = get_upper(suffix_link[now], c);
             suffix_link[idx] = child[k][c];
+            // suffix_link[idx] = child[k][c-'a'];
         }
         suffix_link_dep[idx] = suffix_link_dep[suffix_link[idx]]+1;
         all_count += suffix_link_dep[idx];
         n++;
     }
 
-    // s[i]を末尾に持つ回文の個数 / O(1)
+    // s[i]を末尾に持つ空でない回文の個数 / O(1)
     int count_suffix_palindromes(int i) {
         return suffix_link_dep[i];
     }
 
-    // s[i]を末尾に持つ回文のidx全列挙 / O(?)
+    // s[i]を末尾に持つ空でない回文のidx全列挙 / O(?)
     vector<int> enumerate_suffix(int i) {
         vector<int> res(count_suffix_palindromes(i));
         int k = 0;
@@ -115,12 +126,12 @@ public:
         return res;
     }
 
-    // すべての回文の個数 / O(1)
+    // 空でないすべての回文の個数 / O(1)
     long long count_all_palindromes() const {
         return all_count;
     }
 
-    // 相異なる回文の総数 / O(1)
+    // 相異なる空でない回文の総数 / O(1)
     int count_unique_palindromes() const {
         return (int)child.size() - 2;
     }
@@ -154,6 +165,8 @@ public:
             }
             for (auto [_, c] : child[node]) {
                 dfs(dfs, c, node);
+            // for (int i = 0; i < 26; ++i) if (child[node][i] != -1) {
+            //     dfs(dfs, child[node][i], node);
             }
         };
 
