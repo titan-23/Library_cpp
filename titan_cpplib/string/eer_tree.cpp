@@ -6,8 +6,12 @@
 using namespace std;
 
 namespace titan23 {
+
 /// 空間O(n)?, 時間O(nlogσ)
 /// 文字列に含まれる相異なる回文の個数O(1)と頻度O(?)
+/// ref: https://math314.hateblo.jp/entry/2016/12/19/005919
+/// ref: https://mojashi.hatenablog.com/entry/2017/07/17/155520
+/// ref: https://arxiv.org/abs/1506.04862
 class EerTree {
 private:
     int last_idx, n;
