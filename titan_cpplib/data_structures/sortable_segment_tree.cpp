@@ -127,24 +127,17 @@ private:
         return node;
     }
 
-    // key以下の要素を持つ部分木, keyより大きい要素を持つ部分木
+    // key以下の要素を持つ部分木, keyより大きい要素を持つ部分木 / 返り値のノードはsplay済み
     pair<NodePtr, NodePtr> split(NodePtr node, T key) {
-        if (!node) { return {nullptr, nullptr}; }
+        if (!node) return {nullptr, nullptr};
         node->splay();
-        node = find_splay(node, key);
-        if (node->key < key || node->key == key) {
-            NodePtr r = node->right;
-            node->right = nullptr;
-            if (r) r->par = nullptr;
-            node->update();
-            return {node, r};
-        } else {
-            NodePtr l = node->left;
-            node->left = nullptr;
-            if (l) l->par = nullptr;
-            node->update();
-            return {l, node};
-        }
+        NodePtr nxt = find_splay(node, key);
+        if (!nxt) return {nullptr, node}; // nodeはsplay済み
+        NodePtr r = nxt->right;
+        nxt->right = nullptr;
+        if (r) r->par = nullptr;
+        nxt->update();
+        return {nxt, r};
     }
 
     void print_node(NodePtr node) {
@@ -207,26 +200,16 @@ private:
     NodePtr merge(NodePtr a, NodePtr b) {
         if (!a) return b;
         if (!b) return a;
-        a->splay();
-        b->splay();
+        a->splay(); b->splay();
 
         auto concat = [&] (NodePtr l, NodePtr r) -> NodePtr {
             if (!l) return r;
             if (!r) return l;
-            // 小さい方をsplayする
-            if (l->size < r->size) {
-                l = right_splay(l);
-                l->right = r;
-                r->par = l;
-                l->update();
-                return l;
-            } else {
-                r = left_splay(r);
-                r->left = l;
-                l->par = r;
-                r->update();
-                return r;
-            }
+            r = left_splay(r);
+            r->left = l;
+            l->par = r;
+            r->update();
+            return r;
         };
 
         NodePtr X = nullptr;
@@ -238,9 +221,7 @@ private:
             a = right;
             X = concat(X, left);
         }
-        if (a) X = concat(X, a);
-        if (b) X = concat(X, b);
-        return X;
+        return concat(concat(X, a), b);
     }
 
     NodePtr build(int l, int r) {
