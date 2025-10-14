@@ -56,8 +56,9 @@ private:
                 left = pnode;
             }
             pnode->par = this;
+            this->size = pnode->size;
             pnode->update();
-            update();
+            // update();
         }
 
         void splay() {
@@ -112,29 +113,20 @@ private:
         return node;
     }
 
+    // key以下の要素を持つ部分木, keyより大きい要素を持つ部分木 / 返り値のノードはsplay済み
     pair<NodePtr, NodePtr> split(NodePtr node, T key) {
-        if (!node) { return {nullptr, nullptr}; }
+        if (!node) return {nullptr, nullptr};
         node->splay();
-        node = find_splay(node, key);
-        if (node->key < key || node->key == key) {
-            NodePtr r = node->right;
-            if (r) {
-                node->right = nullptr;
-                r->par = nullptr;
-                node->update();
-            }
-            return {node, r};
-        } else {
-            NodePtr l = node->left;
-            if (l) {
-                node->left = nullptr;
-                l->par = nullptr;
-                node->update();
-            }
-            return {l, node};
-        }
+        NodePtr nxt = find_splay(node, key);
+        if (!nxt) return {nullptr, node}; // nodeはsplay済み
+        NodePtr r = nxt->right;
+        nxt->right = nullptr;
+        if (r) r->par = nullptr;
+        nxt->update();
+        return {nxt, r};
     }
 
+    // デバッグ用
     void print_node(NodePtr node) {
         while (node && node->par) node = node->par;
         auto dfs = [&] (auto &&dfs, NodePtr node) {
@@ -191,26 +183,16 @@ private:
     NodePtr merge(NodePtr a, NodePtr b) {
         if (!a) return b;
         if (!b) return a;
-        a->splay();
-        b->splay();
+        a->splay(); b->splay();
 
         auto concat = [&] (NodePtr l, NodePtr r) -> NodePtr {
             if (!l) return r;
             if (!r) return l;
-            // 小さい方をsplayする
-            if (l->size < r->size) {
-                l = right_splay(l);
-                l->right = r;
-                r->par = l;
-                l->update();
-                return l;
-            } else {
-                r = left_splay(r);
-                r->left = l;
-                l->par = r;
-                r->update();
-                return r;
-            }
+            r = left_splay(r);
+            r->left = l;
+            l->par = r;
+            r->update();
+            return r;
         };
 
         NodePtr X = nullptr;
@@ -222,25 +204,91 @@ private:
             a = right;
             X = concat(X, left);
         }
-        if (a) X = concat(X, a);
-        if (b) X = concat(X, b);
-        return X;
+        return concat(concat(X, a), b);
+    }
+
+    NodePtr build(int l, int r) {
+        auto _build = [&] (auto &&_build, int L, int R) -> NodePtr {
+            int mid = (L + R) / 2;
+            NodePtr node = nodeptr[mid];
+            if (L != mid) {
+                node->left = _build(_build, L, mid);
+                node->left->par = node;
+            }
+            if (mid+1 != R) {
+                node->right = _build(_build, mid+1, R);
+                node->right->par = node;
+            }
+            node->update();
+            return node;
+        };
+        return _build(_build, l, r);
     }
 
 public:
     SortableArray() {}
-    SortableArray(int n) : n(n), fw(vector<int>(n, 1)), ws(n), ws(n), nodeptr(n), is_rev(n, false) {
-        ws.fill(n);
+    // SortableArray(int n) : n(n), fw(vector<int>(n, 1)), ws(n), ws(n), nodeptr(n), is_rev(n, false) {
+    //     ws.fill(n);
+    //     for (int i = 0; i < n; ++i) {
+    //         nodeptr[i] = new Node(T{});
+    //     }
+    // }
+
+    // SortableArray(vector<T> a) : n(a.size()), fw(vector<int>(n, 1)), ws(n), nodeptr(n), is_rev(n, false) {
+    //     ws.fill(n);
+    //     for (int i = 0; i < n; ++i) {
+    //         nodeptr[i] = new Node(a[i]);
+    //     }
+    // }
+
+    SortableArray(int n) : n(n), ws(n), nodeptr(n), is_rev(n, false) {
         for (int i = 0; i < n; ++i) {
             nodeptr[i] = new Node(T{});
         }
+        vector<int> fw_init(n, 0); fw_init[0] = n;
+        fw = titan23::FenwickTree<int>(fw_init);
+        ws.add(0);
+        nodeptr[0] = build(0, n);
+        for (int i = 1; i < n; ++i) nodeptr[i] = nullptr;
     }
 
-    SortableArray(vector<T> a) : n(a.size()), fw(vector<int>(n, 1)), ws(n), nodeptr(n), is_rev(n, false) {
+    SortableArray(vector<T> a) : n(a.size()), ws(n), nodeptr(n), is_rev(n, false) {
         ws.fill(n);
         for (int i = 0; i < n; ++i) {
             nodeptr[i] = new Node(a[i]);
         }
+
+        vector<int> fw_init(n, 1);
+        int i = 0;
+        while (i < n) {
+            { // 昇順
+                int p = i;
+                i++;
+                while (i < n && (a[i] < a[i] || a[i-1] == a[i])) ++i;
+                nodeptr[p] = build(p, i);
+                for (int j = p+1; j < i; ++j) {
+                    fw_init[j] = 0;
+                    nodeptr[j] = nullptr;
+                    ws.remove(j);
+                }
+                fw_init[p] = i-p;
+            }
+            if (i < n) { // 降順
+                int p = i;
+                i++;
+                while (i < n && (!(a[i-1] < a[i]))) ++i;
+                reverse(nodeptr.begin()+p, nodeptr.begin()+i);
+                nodeptr[p] = build(p, i);
+                for (int j = p+1; j < i; ++j) {
+                    fw_init[j] = 0;
+                    nodeptr[j] = nullptr;
+                    ws.remove(j);
+                }
+                is_rev[p] = true;
+                fw_init[p] = i-p;
+            }
+        }
+        fw = titan23::FenwickTree<int>(fw_init);
     }
 
     T get(int k) {

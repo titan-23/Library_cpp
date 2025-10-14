@@ -140,6 +140,7 @@ private:
         return {nxt, r};
     }
 
+    // デバッグ用
     void print_node(NodePtr node) {
         while (node && node->par) node = node->par;
         auto dfs = [&] (auto &&dfs, NodePtr node) {
@@ -267,31 +268,30 @@ public:
         while (i < n) {
             { // 昇順
                 int p = i;
-                while (i+1 < n && (a[i] < a[i+1] || a[i] == a[i+1])) {
-                    i++;
-                    fw_init[i] = 0;
-                    seg_init[i] = e();
-                    ws.remove(i);
-                }
                 i++;
+                while (i < n && (a[i] < a[i] || a[i-1] == a[i])) ++i;
                 nodeptr[p] = build(p, i);
-                for (int j = p+1; j < i; ++j) nodeptr[j] = nullptr;
+                for (int j = p+1; j < i; ++j) {
+                    fw_init[j] = 0;
+                    seg_init[j] = e();
+                    nodeptr[j] = nullptr;
+                    ws.remove(j);
+                }
                 seg_init[p] = nodeptr[p]->data;
-                is_rev[p] = false;
                 fw_init[p] = i-p;
             }
             if (i < n) { // 降順
                 int p = i;
-                while (i+1 < n && (!(a[i] < a[i+1]))) {
-                    i++;
-                    fw_init[i] = 0;
-                    seg_init[i] = e();
-                    ws.remove(i);
-                }
                 i++;
+                while (i < n && (!(a[i-1] < a[i]))) ++i;
                 reverse(nodeptr.begin()+p, nodeptr.begin()+i);
                 nodeptr[p] = build(p, i);
-                for (int j = p+1; j < i; ++j) nodeptr[j] = nullptr;
+                for (int j = p+1; j < i; ++j) {
+                    fw_init[j] = 0;
+                    seg_init[j] = e();
+                    nodeptr[j] = nullptr;
+                    ws.remove(j);
+                }
                 seg_init[p] = nodeptr[p]->rdata;
                 is_rev[p] = true;
                 fw_init[p] = i-p;
