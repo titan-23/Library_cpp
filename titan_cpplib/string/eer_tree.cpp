@@ -19,7 +19,7 @@ private:
     vector<map<char, int>> child;
     // vector<array<int, 26>> child;
     vector<int> par, len, suffix_link, count, start, suffix_link_dep;
-    vector<int> pref; // pref[i]:= s[:i+1]の最大回文接尾辞に対応する頂点番号(s[i]を含んで終わる)
+    vector<int> suff; // suff[i]:= s[:i+1]の最大回文接尾辞に対応する頂点番号(s[i]を含んで終わる)
 
     int new_node() {
         int idx = suffix_link.size();
@@ -31,11 +31,11 @@ private:
         // } ();
         // child.emplace_back(INIT_CHILD);
         suffix_link.emplace_back();
-        len.emplace_back();
-        par.emplace_back();
+        len.emplace_back(0);
+        par.emplace_back(0);
         count.emplace_back(0);
-        start.emplace_back();
-        suffix_link_dep.emplace_back();
+        start.emplace_back(0);
+        suffix_link_dep.emplace_back(0);
         return idx;
     }
 
@@ -83,7 +83,7 @@ public:
             last_idx = child[now][c];
         // if (child[now][c-'a'] != -1) {
         //     last_idx = child[now][c-'a'];
-            pref.emplace_back(last_idx);
+            suff.emplace_back(last_idx);
             n++;
             count[last_idx]++;
             all_count += suffix_link_dep[last_idx];
@@ -96,7 +96,7 @@ public:
         par[idx] = now;
         count[idx] = 1;
         start[idx] = n+1-len[idx];
-        pref.emplace_back(idx);
+        suff.emplace_back(idx);
         last_idx = idx;
         if (len[idx] == 1) {
             suffix_link[idx] = 1;
@@ -110,6 +110,21 @@ public:
         n++;
     }
 
+    // 回文idxに対応するsの区間[l, r) / O(1)
+    pair<int, int> get_range_from_idx(int idx) {
+        return {start[idx], start[idx]+len[idx]};
+    }
+
+    // s[i]で終わる回文の中で最長のもののidx
+    int get_suff(int i) const {
+        return suff[i];
+    }
+
+    // s[i]で終わる回文の中で最長のものの長さ
+    int get_max_length_suffix(int i) {
+        return len[suff[i]];
+    }
+
     // s[i]を末尾に持つ空でない回文の個数 / O(1)
     int count_suffix_palindromes(int i) {
         return suffix_link_dep[i];
@@ -119,7 +134,7 @@ public:
     vector<int> enumerate_suffix(int i) {
         vector<int> res(count_suffix_palindromes(i));
         int k = 0;
-        int idx = pref[i];
+        int idx = suff[i];
         while (idx > 1) {
             res[k] = idx; k++;
             idx = suffix_link[idx];
@@ -138,7 +153,7 @@ public:
     }
 
     // 回文のidxと頻度配列 / O(?)
-    vector<int> get_freq() {
+    vector<int> get_freq() const {
         vector<int> cnt((int)count.size()-2, 0);
         for (int i = (int)child.size()-1; i >= 2; --i) {
             cnt[i-2] += count[i];
@@ -179,9 +194,15 @@ public:
             cout << p << " " << s << "\n";
         }
         for (int i = 0; i < n; ++i) {
-            cout << pref[i]-1 << " ";
+            cout << suff[i]-1 << " ";
         }
         cout << endl;
+
+        cout << "---" << endl;
+        auto freq = get_freq();
+        for (int i = 0; i < count_unique_palindromes(); ++i) {
+            cout << i << " : " << idx_to_string(i) << ", " << freq[i] << endl;
+        }
     }
 };
 } // namespace titan23

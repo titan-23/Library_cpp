@@ -18,22 +18,16 @@ private:
     int msk, xor_;
     int size;
 
-    // static constexpr const u64 K = 0x517cc1b727220a95;
-    // constexpr int hash(const u64 &key) const {
-    //     return (((((key>>32)&msk) ^ (key&msk) ^ xor_)) * HashSet::K) & msk;
-    // }
-
-    constexpr int hash(const u64 &key) const {
-        u64 h = key ^ xor_;
-        h = (h ^ (h >> 30)) * 0xbf58476d1ce4e5b9;
-        h = (h ^ (h >> 27)) * 0x94d049bb133111eb;
-        h = h ^ (h >> 31);
-        return h & msk;
+    constexpr int hash(u64 key) const {
+        key ^= xor_;
+        key = (key ^ (key >> 30)) * 0xbf58476d1ce4e5b9;
+        key = (key ^ (key >> 27)) * 0x94d049bb133111eb;
+        key = key ^ (key >> 31);
+        return key & msk;
     }
 
-    int bit_length(const int x) const {
-        if (x == 0) return 0;
-        return 32 - __builtin_clz(x);
+    constexpr int bit_length(const int x) const {
+        return x == 0 ? 0 : 32 - __builtin_clz(x);
     }
 
     void rebuild() {
@@ -48,7 +42,7 @@ private:
         msk = (1<<bit_length(keys.size()-1))-1;
         random_device rd;
         mt19937 gen(rd());
-        uniform_int_distribution<int> dis(0, msk);
+        uniform_int_distribution<u64> dis(0, UINT64_MAX);
         xor_ = dis(gen);
         for (int i = 0; i < (int)old_keys.size(); ++i) {
             if (old_exist[i>>6]>>(i&63)&1) {
@@ -70,13 +64,19 @@ public:
         msk = (1<<bit_length(keys.size()-1))-1;
         random_device rd;
         mt19937 gen(rd());
-        uniform_int_distribution<int> dis(0, msk);
+        uniform_int_distribution<u64> dis(0, UINT64_MAX);
         xor_ = dis(gen);
         size = 0;
     }
 
     pair<int, bool> get_pos(const u64 &key) const {
         int h = hash(key);
+        if (!(exist[h>>6]>>(h&63)&1)) return {h, false};
+        if (keys[h] == key) return {h, true};
+        h = (h + 1) & msk;
+        if (!(exist[h>>6]>>(h&63)&1)) return {h, false};
+        if (keys[h] == key) return {h, true};
+        h = (h + 1) & msk;
         while (true) {
             if (!(exist[h>>6]>>(h&63)&1)) return {h, false};
             if (keys[h] == key) return {h, true};
@@ -104,12 +104,12 @@ public:
         return get_pos(key);
     }
 
-    V& operator[] (const u64 key) {
+    V operator[] (const u64 key) {
         const auto [pos, exist_res] = get_pos(key);
         if (!exist_res) {
-            set(key, V());
-            const auto [pos2, _] = get_pos(key);
-            return vals[pos2];
+            V res = V{};
+            set(key, res);
+            return res;
         } else {
             return vals[pos];
         }
