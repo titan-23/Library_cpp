@@ -243,20 +243,81 @@ private:
         return X;
     }
 
+    NodePtr build(int l, int r) {
+        auto _build = [&] (auto &&_build, int L, int R) -> NodePtr {
+            int mid = (L + R) / 2;
+            NodePtr node = nodeptr[mid];
+            if (L != mid) {
+                node->left = _build(_build, L, mid);
+                node->left->par = node;
+            }
+            if (mid+1 != R) {
+                node->right = _build(_build, mid+1, R);
+                node->right->par = node;
+            }
+            node->update();
+            return node;
+        };
+        return _build(_build, l, r);
+    }
+
 public:
     SortableSegmentTree() {}
-    SortableSegmentTree(int n) : n(n), seg(n), fw(vector<int>(n, 1)), ws(n), ws(n), nodeptr(n), is_rev(n, false) {
-        ws.fill(n);
+    SortableSegmentTree(int n) : n(n), seg(n), ws(n), nodeptr(n), is_rev(n, false) {
         for (int i = 0; i < n; ++i) {
             nodeptr[i] = new Node(e());
         }
+        vector<int> fw_init(n, 0); fw_init[0] = n;
+        fw = titan23::FenwickTree<int>(fw_init);
+        ws.add(0);
+        nodeptr[0] = build(0, n);
+        for (int i = 1; i < n; ++i) nodeptr[i] = nullptr;
     }
 
-    SortableSegmentTree(vector<T> a) : n(a.size()), seg(a), fw(vector<int>(n, 1)), ws(n), nodeptr(n), is_rev(n, false) {
+    SortableSegmentTree(vector<T> a) : n(a.size()), ws(n), nodeptr(n), is_rev(n, false) {
         ws.fill(n);
         for (int i = 0; i < n; ++i) {
             nodeptr[i] = new Node(a[i]);
         }
+
+        vector<int> fw_init(n, 1);
+        vector<T> seg_init = a;
+        int i = 0;
+        while (i < n) {
+            { // 昇順
+                int p = i;
+                while (i+1 < n && (a[i] < a[i+1] || a[i] == a[i+1])) {
+                    i++;
+                    fw_init[i] = 0;
+                    seg_init[i] = e();
+                    ws.remove(i);
+                }
+                i++;
+                nodeptr[p] = build(p, i);
+                for (int j = p+1; j < i; ++j) nodeptr[j] = nullptr;
+                seg_init[p] = nodeptr[p]->data;
+                is_rev[p] = false;
+                fw_init[p] = i-p;
+            }
+            if (i < n) { // 降順
+                int p = i;
+                while (i+1 < n && (!(a[i] < a[i+1]))) {
+                    i++;
+                    fw_init[i] = 0;
+                    seg_init[i] = e();
+                    ws.remove(i);
+                }
+                i++;
+                reverse(nodeptr.begin()+p, nodeptr.begin()+i);
+                nodeptr[p] = build(p, i);
+                for (int j = p+1; j < i; ++j) nodeptr[j] = nullptr;
+                seg_init[p] = nodeptr[p]->rdata;
+                is_rev[p] = true;
+                fw_init[p] = i-p;
+            }
+        }
+        seg = titan23::SegmentTree<T, op, e>(seg_init);
+        fw = titan23::FenwickTree<int>(fw_init);
     }
 
     T get(int k) {
@@ -316,7 +377,7 @@ public:
         return seg.prod(l, r);
     }
 
-    T all_prod() {
+    T all_prod() const {
         return seg.all_prod();
     }
 
