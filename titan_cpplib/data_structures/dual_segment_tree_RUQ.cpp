@@ -10,30 +10,22 @@ template <class T>
 class DualSegmentTreeRUQ {
 private:
     int bit_length(const int x) const {
-        if (x == 0) return 0;
-        return 32 - __builtin_clz(x);
+        return x == 0 ? 0 : 32 - __builtin_clz(x);
     }
 
-    int n, size, log;
-    int time;
+    int n, time, log, size;
     vector<pair<int, T>> data;
 
 public:
     DualSegmentTreeRUQ() : time(0) {}
-    DualSegmentTreeRUQ(const int n, const T init) : n(n), time(0) {
-        this->log = bit_length(n);
-        this->size = 1 << log;
+    DualSegmentTreeRUQ(const int n, const T init) : n(n), time(0), log(bit_length(n)), size(1<<log) {
         this->data.resize(2*size, {-1, init});
         for (int i = 0; i < n; ++i) {
             data[i+size].first = time;
         }
     }
 
-    DualSegmentTreeRUQ(const vector<T> a) : time(0) {
-        int n = (int)a.size();
-        this->n = n;
-        this->log = bit_length(n);
-        this->size = 1 << log;
+    DualSegmentTreeRUQ(const vector<T> a) : n(a.size()), time(0), log(bit_length(n)), size(1<<log) {
         this->data.resize(2*size, {-1, T{}});
         for (int i = 0; i < n; ++i) {
             data[i+size] = {time, a[i]};
@@ -82,7 +74,6 @@ public:
             if (data[k<<1|1].first < t) {
                 data[k<<1|1] = data[k];
             }
-            data[k].first = -1;
         }
         vector<T> res(n);
         for (int i = 0; i < n; ++i) {
@@ -94,9 +85,10 @@ public:
     T get(int k) const {
         k += size;
         auto [t, ans] = data[k];
-        for (int i = log; i > 0; --i) {
-            if (t < data[k>>1].first) {
-                ans = data[k>>1].second;
+        for (int i = 1; i <= log; ++i) {
+            if (t < data[k>>i].first) {
+                t = data[k>>i].first;
+                ans = data[k>>i].second;
             }
         }
         return ans;
