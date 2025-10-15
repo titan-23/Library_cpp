@@ -10,7 +10,7 @@ namespace titan23 {
 
 /**
  * @brief 静的なグラフに対しLCAを求めるだけのライブラリ
- * <O(nlogn), O(1)>
+ * <O(n), O(1)>
  */
 class LCA {
 private:
@@ -21,7 +21,7 @@ private:
 public:
     LCA() {}
 
-    //! 隣接リスト `G` 、根 `root` として前計算をする / `O(nlogn)`
+    //! 隣接リスト `G` 、根 `root` として前計算をする / `O(n)`
     LCA(const vector<vector<int>> &G, const int root) :
             n((int)G.size()), path(n), nodein(n, -1) {
         vector<int> par(n, -1);
