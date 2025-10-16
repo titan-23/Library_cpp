@@ -52,6 +52,8 @@ public:
 
     // (y, x) <- v / O(log(h)log(w))
     void set(int y, int x, T v) {
+        assert(0 <= y && y < h);
+        assert(0 <= x && x < w);
         y += hs; x += ws;
         data[y][x] = v;
         for (int nx = x; nx > 1; nx >>= 1) {
