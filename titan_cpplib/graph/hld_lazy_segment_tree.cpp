@@ -14,11 +14,11 @@ template <class T,
         F (*composition)(F, F),
         F (*id)()>
 class HLDLazySegmentTree {
-    private:
+private:
     titan23::HLD hld;
     titan23::LazySegmentTree<T, op, e, F, mapping, composition, id> seg, rseg;
 
-    public:
+public:
     HLDLazySegmentTree() {}
 
     HLDLazySegmentTree(titan23::HLD &hld, int n) : hld(hld) {
@@ -28,12 +28,12 @@ class HLDLazySegmentTree {
 
     HLDLazySegmentTree(titan23::HLD &hld, vector<T> a) : hld(hld) {
         vector<T> b = hld.build_list(a);
-        this->seg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(hld.build_list(b));
+        this->seg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(b);
         reverse(b.begin(), b.end());
-        this->rseg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(hld.build_list(b));
+        this->rseg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(b);
     }
 
-    T path_prod(int u, int v) {
+    T path_prod(int u, int v) const {
         T lres = e(), rres = e();
         while (hld.head[u] != hld.head[v]) {
             if (hld.dep[hld.head[u]] > hld.dep[hld.head[v]]) {
@@ -64,7 +64,7 @@ class HLDLazySegmentTree {
         rseg.apply(hld.n - (hld.nodein[u] + 1 - 1) - 1, hld.n - hld.nodein[v] - 1 + 1, f);
     }
 
-    T get(int k) {
+    T get(int k) const {
         return seg.get(hld.nodein[k]);
     }
 
@@ -73,7 +73,7 @@ class HLDLazySegmentTree {
         rseg.set(hld.n - hld.nodein[k] - 1, v);
     }
 
-    T subtree_prod(int v) {
+    T subtree_prod(int v) const {
         return seg.prod(hld.nodein[v], hld.nodeout[v]);
     }
 

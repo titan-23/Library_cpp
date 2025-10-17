@@ -7,27 +7,25 @@ namespace titan23 {
 
 /**
  * @brief セグ木搭載HLD / 非可換に対応
- * 
- * @tparam T 
- * @tparam (*op)(T, T) 
- * @tparam (*e)() 
+ *
+ * @tparam T
+ * @tparam (*op)(T, T)
+ * @tparam (*e)()
  */
-template <class T,
-            T (*op)(T, T),
-            T (*e)()>
+template <class T, T (*op)(T, T), T (*e)()>
 class HLDSegmentTree {
-    private:
+private:
     titan23::HLD hld;
     titan23::SegmentTree<T, op, e> seg, rseg;
 
-    public:
-    HLDSegmentTree(const titan23::HLD &hld) : hld(hld), seg(hld.n) {}
+public:
+    HLDSegmentTree(const titan23::HLD &hld) : hld(hld), seg(hld.n), rseg(hld.n) {}
 
     HLDSegmentTree(const titan23::HLD &hld, const vector<T> &a) : hld(hld) {
         vector<T> b = hld.build_list(a);
-        this->seg = titan23::SegmentTree<T, op, e>(hld.build_list(b));
+        this->seg = titan23::SegmentTree<T, op, e>(b);
         reverse(b.begin(), b.end());
-        this->rseg = titan23::SegmentTree<T, op, e>(hld.build_list(b));
+        this->rseg = titan23::SegmentTree<T, op, e>(b);
     }
 
     //! `u` から `v` へのパスの総積を返す / `O(logn)`
