@@ -1,6 +1,7 @@
 #include <vector>
 #include <cassert>
 #include <unordered_map>
+#include <algorithm>
 
 #include "titan_cpplib/data_structures/undoable_union_find.cpp"
 using namespace std;
