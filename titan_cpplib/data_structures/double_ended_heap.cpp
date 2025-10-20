@@ -29,7 +29,7 @@ private:
     int down(int k) {
         int n = data.size();
         if (k & 1) {
-            while ((k << 1) | (1 < n)) {
+            while (2 * k + 1 < n) {
                 int c = 2 * k + 3;
                 if (n <= c || data[c - 2] < data[c]) {
                     c -= 2;
