@@ -1,3 +1,10 @@
+#include <vector>
+#include <cassert>
+#include <queue>
+using namespace std;
+
+namespace titan23 {
+
 template<typename T>
 class DeletableMinHeap {
 private:
@@ -55,18 +62,22 @@ public:
     }
 
     T pop_max() {
+        assert(!hq.empty());
         while (!lazy.empty() && lazy.top() == hq.top()) {
             hq.pop(); lazy.pop();
         }
+        assert(!hq.empty());
         T key = hq.top();
         hq.pop();
         return key;
     }
 
     T get_max() {
+        assert(!hq.empty());
         while (!lazy.empty() && lazy.top() == hq.top()) {
             hq.pop(); lazy.pop();
         }
+        assert(!hq.empty());
         return hq.top();
     }
 
@@ -77,4 +88,10 @@ public:
     int len() const {
         return hq.size() - lazy.size();
     }
+
+    friend ostream& operator<<(ostream& os, const titan23::DeletableMaxHeap<T> &hq) {
+        os << action.d;
+        return os;
+    }
 };
+} // namespace titan23
