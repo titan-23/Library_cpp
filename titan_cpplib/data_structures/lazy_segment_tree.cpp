@@ -8,7 +8,7 @@ namespace titan23 {
 template <class T, T (*op)(T, T), T (*e)(),
         class F, T (*mapping)(F, T), F (*composition)(F, F), F (*id)()>
 class LazySegmentTree {
-    private:
+private:
     int n, log, size;
     vector<T> data;
     vector<F> lazy;
@@ -46,7 +46,7 @@ class LazySegmentTree {
         }
     }
 
-    public:
+public:
     LazySegmentTree() : n(0), log(0), size(0) {}
     LazySegmentTree(int n) {
         this->n = n;
