@@ -12,7 +12,7 @@ namespace titan23 {
 template <class T, typename SizeType=int>
 class PersistentWBTree {
 public:
-    struct MemoeyAllocator {
+    struct MemoryAllocator {
 
         // #pragma pack(push, 1)
         struct Node {
@@ -26,7 +26,7 @@ public:
         vector<T> keys;
         SizeType ptr;
 
-        MemoeyAllocator() : ptr(1) {
+        MemoryAllocator() : ptr(1) {
             d.resize(1);
             d[0] = {0, 0, 0};
             keys.resize(1);
@@ -64,7 +64,7 @@ public:
         }
     };
 
-    static MemoeyAllocator ma;
+    static MemoryAllocator ma;
 
 private:
     using PTM = PersistentWBTree<T, SizeType>;
@@ -340,6 +340,6 @@ private:
 };
 
 template <class T, typename SizeType>
-typename PersistentWBTree<T, SizeType>::MemoeyAllocator PersistentWBTree<T, SizeType>::ma;
+typename PersistentWBTree<T, SizeType>::MemoryAllocator PersistentWBTree<T, SizeType>::ma;
 
 }  // namespace titan23
