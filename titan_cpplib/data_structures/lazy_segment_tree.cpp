@@ -112,7 +112,7 @@ public:
     }
 
     void all_apply(F f) {
-        lazy[1] = f == id() ? f : composition(f, lazy[1]);
+        all_apply(1, f);
     }
 
     T prod(int l, int r) {
@@ -155,7 +155,7 @@ public:
 
     template<typename Func>
     int max_right(int l, Func f) {
-        assert(0 <= l <= n);
+        assert(0 <= l && l <= n);
         if (l == size) return n;
         l += size;
         for (int i = log; i > 0; --i) {
@@ -163,7 +163,7 @@ public:
         }
         T s = e();
         while (true) {
-            while (l & 1 == 0) {
+            while ((l & 1) == 0) {
                 l >>= 1;
             }
             if (!f(op(s, data[l]))) {
@@ -179,14 +179,14 @@ public:
             }
             s = op(s, data[l]);
             l++;
-            if (l & (-l) == l) break;
+            if ((l & (-l)) == l) break;
         }
         return n;
     }
 
     template<typename Func>
     int min_left(int r, Func f) {
-        assert(0 <= r <= n);
+        assert(0 <= r && r <= n);
         if (r == 0) return 0;
         r += size;
         for (int i = log; i > 0; --i) {
@@ -210,7 +210,7 @@ public:
                 return r + 1 - size;
             }
             s = op(data[r], s);
-            if (r & (-r) == r) break;
+            if ((r & (-r)) == r) break;
         }
         return 0;
     }
