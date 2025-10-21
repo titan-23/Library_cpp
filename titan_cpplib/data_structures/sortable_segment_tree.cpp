@@ -102,8 +102,9 @@ private:
 
     NodePtr find_splay(NodePtr node, T key) {
         if (!node) return nullptr;
-        NodePtr res = nullptr;
+        NodePtr res = nullptr, pnode = node;
         while (node) {
+            pnode = node;
             if (node->key < key || node->key == key) {
                 res = node;
                 node = node->right;
@@ -111,6 +112,7 @@ private:
                 node = node->left;
             }
         }
+        pnode->splay();
         if (res) res->splay();
         return res;
     }
