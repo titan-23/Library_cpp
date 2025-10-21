@@ -127,7 +127,7 @@ public:
 
     // s[i]を末尾に持つ空でない回文の個数 / O(1)
     int count_suffix_palindromes(int i) {
-        return suffix_link_dep[i];
+        return suffix_link_dep[suff[i]];
     }
 
     // s[i]を末尾に持つ空でない回文のidx全列挙 / O(?)
@@ -162,14 +162,16 @@ public:
         return cnt;
     }
 
-    // 回文のidxから文字列への変換 / O(|s|)
+    // 回文のidxが文字列s[l,r)で登場する / O(1)
+    pair<int, int> idx_to_range(int idx) const {
+        idx += 2;
+        return {start[idx], start[idx]+len[idx]};
+    }
+
+    // 回文のidxから文字列tへの変換 / O(|t|)
     string idx_to_string(int idx) const {
         idx += 2;
-        string t = "";
-        for (int i = start[idx]; i < start[idx]+len[idx]; ++i) {
-            t += s[i];
-        }
-        return t;
+        return s.substr(start[idx], len[idx]);
     }
 
     void print() const {
