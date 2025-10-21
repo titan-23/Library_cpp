@@ -207,6 +207,28 @@ public:
         return sum;
     }
 
+    // 総和がw未満となるように先頭からとるとき、いくつとれるか？
+    int count_by_sum_limit(T w) const {
+        int ans = 0;
+        for (int i = 0; i < data.size(); ++i) {
+            if (w > bucket_data[i]) {
+                w -= bucket_data[i];
+                ans += data[i].size();
+                continue;
+            }
+            for (int j = 0; j < data[i].size(); ++j) {
+                if (w > data[i][j]) {
+                    w -= data[i][j];
+                    ans++;
+                    continue;
+                }
+                break;
+            }
+            break;
+        }
+        return ans;
+    }
+
     int size() const {
         return n;
     }

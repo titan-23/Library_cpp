@@ -4,242 +4,237 @@ using namespace std;
 namespace titan23 {
 
 template<typename T>
-class MultisetSum {
+class MultisetSumSplay {
 private:
-    struct Node;
-    using NodePtr = Node*;
-    stack<NodePtr> unused_node;
-    NodePtr root;
+    int root;
 
-    struct Node {
-        int size;
-        NodePtr par, left, right;
-        T key, sum;
+    struct MemoryAllocator {
 
-        Node() : size(0), par(nullptr), left(nullptr), right(nullptr) {}
+        struct Node {
+            int par, left, right;
+            T key, sum;
+            int size;
+            Node() : par(0), left(0), right(0), key(T{}), sum(key), size(0) {}
+            Node(int par, int left, int right, T &key, T &sum, int size) :
+                    par(par), left(left), right(right), key(key), sum(sum), size(size) {}
+        };
 
-        Node(T key) : size(1), par(nullptr), left(nullptr), right(nullptr), key(key), sum(key) {}
-
-        void init(T &key) {
-            this->size = 1;
-            this->par = nullptr;
-            this->left = nullptr;
-            this->right = nullptr;
-            this->key = key;
-            this->sum = key;
+        vector<Node> d;
+        int ptr;
+        MemoryAllocator() : ptr(1) {
+            d.resize(1);
+            d[0].par = 0;
+            d[0].left = 0;
+            d[0].right = 0;
+            d[0].key = T{};
+            d[0].sum = T{};
+            d[0].size = 0;
         }
 
-        void update() {
-            this->size = 1;
-            this->sum = this->key;
-            if (this->left) {
-                this->size += this->left->size;
-                this->sum += this->left->sum;
+        int new_node(T key) {
+            if (d.size() > ptr) {
+                d[ptr].par = 0;
+                d[ptr].left = 0;
+                d[ptr].right = 0;
+                d[ptr].key = key;
+                d[ptr].sum = key;
+                d[ptr].size = 1;
+            } else {
+                d.emplace_back(0, 0, 0, key, key, 1);
             }
-            if (this->right) {
-                this->size += this->right->size;
-                this->sum += this->right->sum;
-            }
+            ptr++;
+            return ptr - 1;
         }
 
-        void rotate_right() {
-            NodePtr u = this->left;
-            assert(u);
-            this->left = u->right;
-            u->right = this;
-            if (this->par) {
-                if (this->par->left == this) {
-                    this->par->left = u;
-                } else {
-                    assert(this->par->right == this);
-                    this->par->right = u;
-                }
-            }
-            u->par = this->par;
-            if (this->left) this->left->par = this;
-            this->par = u;
-            this->update();
-            u->update();
+        void reserve(int cap) {
+            d.reserve(cap);
         }
 
-        void rotate_left() {
-            NodePtr u = this->right;
-            assert(u);
-            this->right = u->left;
-            u->left = this;
-            if (this->par) {
-                if (this->par->left == this) {
-                    this->par->left = u;
-                } else {
-                    assert(this->par->right == this);
-                    this->par->right = u;
-                }
-            }
-            u->par = this->par;
-            if (this->right) this->right->par = this;
-            this->par = u;
-            this->update();
-            u->update();
-        }
-
-        void splay() {
-            while (this->par && this->par->par) {
-                if (this->par->left == this) {
-                    if (this->par->par->left == this->par) {
-                        this->par->par->rotate_right();
-                        this->par->rotate_right();
-                    } else {
-                        this->par->rotate_right();
-                        this->par->rotate_left();
-                    }
-                } else {
-                    if (this->par->par->right == this->par) {
-                        this->par->par->rotate_left();
-                        this->par->rotate_left();
-                    } else {
-                        this->par->rotate_left();
-                        this->par->rotate_right();
-                    }
-                }
-            }
-            if (this->par) {
-                if (this->par->left == this) {
-                    this->par->rotate_right();
-                } else {
-                    this->par->rotate_left();
-                }
-            }
-            assert(this->par == nullptr);
-        }
-
-        NodePtr left_splay() {
-            NodePtr node = this;
-            while (node->left) node = node->left;
-            node->splay();
-            assert(node->left == nullptr);
-            return node;
-        }
-
-        NodePtr right_splay() {
-            NodePtr node = this;
-            while (node->right) node = node->right;
-            node->splay();
-            assert(node->right == nullptr);
-            return node;
+        void reset() {
+            ptr = 1;
         }
     };
+    static MemoryAllocator ma;
 
-    NodePtr find_splay(NodePtr node, const T &key) {
-        NodePtr pnode = nullptr;
-        while (node) {
-            if (node->key == key) {
-                node->splay();
-                return node;
-            }
-            pnode = node;
-            if (key < node->key) {
-                node = node->left;
+    void update(int node) {
+        auto &nx = ma.d[node];
+        nx.size = 1 + ma.d[nx.left].size + ma.d[nx.right].size;
+        nx.sum = nx.key + ma.d[nx.left].sum + ma.d[nx.right].sum;
+    }
+
+    void rotate(int node) {
+        auto &nx = ma.d[node];
+        int pnode = nx.par;
+        auto &np = ma.d[pnode];
+        int gnode = np.par;
+        if (gnode) {
+            if (ma.d[gnode].left == pnode) {
+                ma.d[gnode].left = node;
             } else {
-                node = node->right;
+                ma.d[gnode].right = node;
             }
         }
-        if (pnode) {
-            pnode->splay();
-            return pnode;
+        nx.par = gnode;
+        if (np.left == node) {
+            np.left = nx.right;
+            if (nx.right) ma.d[nx.right].par = pnode;
+            nx.right = pnode;
+        } else {
+            np.right = nx.left;
+            if (nx.left) ma.d[nx.left].par = pnode;
+            nx.left = pnode;
         }
+        np.par = node;
+
+        nx.sum = np.sum;
+        nx.size = np.size;
+        update(pnode);
+        // update(node);
+    }
+
+    int splay(int node) {
+        while (ma.d[node].par && ma.d[ma.d[node].par].par) {
+            int p = ma.d[node].par;
+            bool a = ma.d[ma.d[p].par].left == p;
+            bool b = ma.d[p].left == node;
+            rotate(a == b ? p : node);
+            rotate(node);
+        }
+        if (ma.d[node].par) rotate(node);
         return node;
     }
 
-    NodePtr kth_splay(NodePtr node, int k) {
-        while (true) {
-            int t = node->left ? node->left->size : 0;
-            if (t == k) {
-                node->splay();
-                return node;
-            }
-            if (t < k) {
-                k -= t + 1;
-                node = node->right;
+    int left_splay(int node) {
+        while (ma.d[node].left) node = ma.d[node].left;
+        return splay(node);
+    }
+
+    int right_splay(int node) {
+        while (ma.d[node].right) node = ma.d[node].right;
+        return splay(node);
+    }
+
+    int find_splay(int node, T key) {
+        if (!node) return 0;
+        int res = node, pnode = node;
+        while (node) {
+            pnode = node;
+            if (ma.d[node].key < key || ma.d[node].key == key) {
+                res = node;
+                node = ma.d[node].right;
             } else {
-                node = node->left;
+                node = ma.d[node].left;
             }
         }
+        splay(pnode);
+        return splay(res);
+    }
+
+    int kth_splay(int node, int k) {
+        while (1) {
+            int t = ma.d[ma.d[node].left].size;
+            if (t == k) break;
+            if (t > k) {
+                node = ma.d[node].left;
+            } else {
+                node = ma.d[node].right;
+                k -= t + 1;
+            }
+        }
+        return splay(node);
     }
 
     void remove_root() {
-        assert(this->root && this->root->par == nullptr);
-        unused_node.emplace(this->root);
-        NodePtr new_root;
-        if (!this->root->left) {
-            new_root = this->root->right;
-        } else if (!this->root->right) {
-            new_root = this->root->left;
+        assert(root && ma.d[root].par == 0);
+        int new_root = 0;
+        if (!ma.d[root].left) {
+            new_root = ma.d[root].right;
+        } else if (!ma.d[root].right) {
+            new_root = ma.d[root].left;
         } else {
-            new_root = this->root->left;
-            new_root->par = nullptr;
-            new_root = new_root->right_splay();
-            new_root->right = this->root->right;
-            new_root->right->par = new_root;
-            new_root->update();
+            new_root = ma.d[root].left;
+            ma.d[new_root].par = 0;
+            new_root = right_splay(new_root);
+            ma.d[new_root].right = ma.d[root].right;
+            ma.d[ma.d[new_root].right].par = new_root;
+            update(new_root);
         }
-        if (new_root) new_root->par = nullptr;
-        this->root = new_root;
+        if (new_root) ma.d[new_root].par = 0;
+        root = new_root;
     }
 
-    MultisetSum(NodePtr root) : root(root) {}
+    MultisetSumSplay(int root) : root(root) {}
 
     // leftのsize==k
-    pair<NodePtr, NodePtr> split_node_kth(NodePtr node, int k) {
-        if (node == nullptr || k <= 0) return make_pair(nullptr, node);
-        if (k >= node->size) return make_pair(node, nullptr);
-        node = this->kth_splay(node, k);
-        NodePtr left_root = node->left;
+    pair<int, int> split_node_kth(int node, int k) {
+        if (node == 0 || k <= 0) return make_pair(0, node);
+        if (k >= ma.d[node].size) return make_pair(node, 0);
+        node = kth_splay(node, k);
+        int left_root = ma.d[node].left;
         if (left_root) {
-            left_root->par = nullptr;
-            node->left = nullptr;
-            node->update();
+            ma.d[left_root].par = 0;
+            ma.d[node].left = 0;
+            update(node);
         }
         return make_pair(left_root, node);
     }
 
-    NodePtr merge_node(NodePtr left, NodePtr right) {
-        if (left == nullptr) return right;
-        if (right == nullptr) return left;
-        left = left->right_splay();
-        left->right = right;
-        right->par = left;
-        left->update();
+    int merge_node(int left, int right) {
+        if (left == 0) return right;
+        if (right == 0) return left;
+        left = right_splay(left);
+        ma.d[left].right = right;
+        ma.d[right].par = left;
+        update(left);
         return left;
     }
 
-    MultisetSum<T> gen(NodePtr root_node) const {
-        return MultisetSum<T>(root_node);
-    }
-
 public:
-    MultisetSum() : root(nullptr) {}
-
-    pair<MultisetSum<T>, MultisetSum<T>> split(int k) {
-        auto [left, right] = split_node_kth(this->root, k);
-        return make_pair(gen(left), gen(right));
+    MultisetSumSplay() : root(0) {}
+    MultisetSumSplay(vector<T> a) {
+        if (a.empty()) {
+            root = nullptr;
+            return;
+        }
+        auto build = [&] (auto &&build, int l, int r) -> int {
+            int mid = (l + r) / 2;
+            int node = ma.new_node(a[mid]);
+            if (l != mid) {
+                ma.d[node].left = build(build, l, mid);
+                ma.d[node].left->par = node;
+            }
+            if (mid+1 != r) {
+                ma.d[node].right = build(build, mid+1, r);
+                ma.d[node].right->par = node;
+            }
+            update(ma.d[node]);
+            return node;
+        };
+        root = build(build, 0, a.size());
     }
 
-    void merge(MultisetSum<T> &other) {
-        this->root = merge_node(this->root, other->root);
+    pair<MultisetSumSplay<T>, MultisetSumSplay<T>> split(int k) {
+        auto [left, right] = split_node_kth(root, k);
+        return {MultisetSumSplay(left), MultisetSumSplay(right)};
     }
 
-    void print_node(NodePtr node) {
-        stack<NodePtr> st;
+    void merge(MultisetSumSplay<T> &other) {
+        root = merge_node(root, other.root);
+        other.root = nullptr;
+    }
+
+    void print_node(int node) {
+        stack<int> st;
         vector<T> a;
         while ((!st.empty()) || node) {
             if (node) {
                 st.emplace(node);
-                node = node->left;
+                node = ma.d[node].left;
             } else {
                 node = st.top();
                 st.pop();
-                a.emplace_back(node->key);
-                node = node->right;
+                a.emplace_back(ma.d[node].key);
+                node = ma.d[node].right;
             }
         }
         cout << "[";
@@ -251,108 +246,169 @@ public:
     }
 
     //! vectorにしたときの区間[l, r)の和
-    T sum_range_idx(int l, int r) {
+    T range_sum_at(int l, int r) {
         assert(0 <= l && l <= r && r <= len());
-        NodePtr a, b, c;
-        tie(b, c) = split_node_kth(this->root, r);
+        int a, b, c;
+        tie(b, c) = split_node_kth(root, r);
         tie(a, b) = split_node_kth(b, l);
-        T res = b ? b->sum : 0;
+        T res = ma.d[b].sum;
         a = merge_node(a, b);
         a = merge_node(a, c);
-        this->root = a;
+        root = a;
         return res;
     }
 
-    bool discard(const T &key) {
-        if (this->root == nullptr) return false;
-        this->root = this->find_splay(this->root, key);
-        if (this->root->key == key) {
+    bool discard(const T key) {
+        if (root == 0) return false;
+        root = find_splay(root, key);
+        if (ma.d[root].key == key) {
             remove_root();
             return true;
         }
         return false;
     }
 
-    void remove(const T &key) {
-        assert(this->root != nullptr);
-        this->root = this->find_splay(this->root, key);
-        assert(this->root->key == key);
+    void remove(const T key) {
+        root = find_splay(root, key);
+        assert(ma.d[root].key == key);
         remove_root();
     }
 
     T pop(int k) {
-        assert(this->root != nullptr);
-        this->root = this->kth_splay(this->root, k);
-        T res = this->root->key;
+        assert(0 <= k && k < len());
+        root = kth_splay(root, k);
+        T res = ma.d[root].key;
         remove_root();
         return res;
     }
 
     void add(T key) {
-        this->root = this->find_splay(this->root, key);
-        NodePtr node;
-        if (unused_node.empty()) {
-            node = new Node(key);
+        int node = ma.new_node(key);
+        if (!root) {
+            root = node;
+            return;
+        }
+        root = find_splay(root, key);
+        if (ma.d[root].key <= ma.d[node].key) {
+            ma.d[node].right = ma.d[root].right;
+            if (ma.d[node].right) ma.d[ma.d[node].right].par = node;
+            ma.d[root].right = 0;
+            ma.d[node].left = root;
+            ma.d[ma.d[node].left].par = node;
         } else {
-            node = unused_node.top();
-            unused_node.pop();
-            node->init(key);
+            ma.d[node].right = root;
+            if (ma.d[node].right) ma.d[ma.d[node].right].par = node;
         }
-        if (this->root) {
-            if (this->root->key >= key) {
-                node->left = this->root->left;
-                if (node->left) node->left->par = node;
-                this->root->left = nullptr;
-                node->right = this->root;
-                node->right->par = node;
-            } else {
-                node->right = this->root->right;
-                if (node->right) node->right->par = node;
-                this->root->right = nullptr;
-                node->left = this->root;
-                node->left->par = node;
-            }
-            this->root->update();
-            node->update();
-        }
-        assert(node->par == nullptr);
-        this->root = node;
+        update(root);
+        update(node);
+        root = node;
     }
 
     T get(int k) {
-        this->root = this->kth_splay(this->root, k);
-        return this->root->key;
+        assert(0 <= k && k < len());
+        root = kth_splay(root, k);
+        return ma.d[root].key;
     }
 
     int len() const {
-        return this->root ? this->root->size : 0;
+        return ma.d[root].size;
     }
 
     int get_height() const {
-        auto rec = [&] (auto &&rec, NodePtr node) -> int {
-            if (node == nullptr) return 0;
+        auto rec = [&] (auto &&rec, int node) -> int {
+            if (node == 0) return 0;
             int h = 0;
-            if (node->left) h = max(h, rec(rec, node->left));
-            if (node->right) h = max(h, rec(rec, node->right));
+            if (ma.d[node].left) h = max(h, rec(rec, ma.d[node].left));
+            if (ma.d[node].right) h = max(h, rec(rec, ma.d[node].right));
             return h + 1;
         };
-        return rec(rec, this->root);
+        return rec(rec, root);
+    }
+
+    // 総和がw未満となるように先頭からとるとき、いくつとれるか？
+    int count_sumlim(T w) {
+        int ans = 0;
+        T now = 0;
+        int node = root, pnode = 0;
+        while (node) {
+            pnode = node;
+            if (now + ma.d[ma.d[node].left].sum+ma.d[node].key < w) {
+                now += ma.d[ma.d[node].left].sum+ma.d[node].key;
+                ans += ma.d[ma.d[node].left].size + 1;
+                node = ma.d[node].right;
+            } else {
+                node = ma.d[node].left;
+            }
+        }
+        if (pnode) root = splay(pnode);
+        return ans;
+    }
+
+    // key未満の要素数を返す
+    int index(T key) {
+        if (!root) return 0;
+        int ans = 0;
+        int node = root, pnode = 0;
+        while (node) {
+            pnode = node;
+            if (ma.d[node].key < key) {
+                ans += ma.d[ma.d[node].left].size + 1;
+                node = ma.d[node].right;
+            } else {
+                node = ma.d[node].left;
+            }
+        }
+        if (pnode) root = splay(pnode);
+        return ans;
+    }
+
+    // key以下の要素数を返す
+    int index_right(T key) {
+        if (!root) return 0;
+        int ans = 0;
+        int node = root, pnode = 0;
+        while (node) {
+            pnode = node;
+            if (ma.d[node].key <= key) {
+                ans += ma.d[ma.d[node].left].size + 1;
+                node = ma.d[node].right;
+            } else {
+                node = ma.d[node].left;
+            }
+        }
+        if (pnode) root = splay(pnode);
+        return ans;
+    }
+
+    // low以上high未満の要素数を返す
+    int count_range(T low, T high) {
+        assert(low <= high);
+        return index(high) - index(low);
+    }
+
+    void reserve(int cap) {
+        ma.reserve(cap);
+    }
+
+    void clear() {
+        ma.reset();
+        root = 0;
     }
 
     vector<T> tovector() const {
-        NodePtr node = this->root;
-        stack<NodePtr> st;
+        int node = root;
+        stack<int> st;
         vector<T> a;
         a.reserve(len());
         while ((!st.empty()) || node) {
             if (node) {
                 st.emplace(node);
-                node = node->left;
+                node = ma.d[node].left;
             } else {
                 node = st.top();
                 st.pop();
-                a.emplace_back(node->key);
-                node = node->right;
+                a.emplace_back(ma.d[node].key);
+                node = ma.d[node].right;
             }
         }
         return a;
@@ -367,16 +423,16 @@ public:
     }
 
     void test() const {
-        auto dfs = [&] (auto dfs, NodePtr node, NodePtr pnode) {
-            if (node == nullptr) return;
-            assert(node->par == pnode);
-            dfs(dfs, node->left, node);
-            dfs(dfs, node->right, node);
+        auto dfs = [&] (auto &&dfs, int node, int pnode) {
+            if (node == 0) return;
+            assert(ma.d[node].par == pnode);
+            dfs(dfs, ma.d[node].left, node);
+            dfs(dfs, ma.d[node].right, node);
         };
-        dfs(dfs, this->root, nullptr);
+        dfs(dfs, root, 0);
     }
 
-    friend ostream& operator<<(ostream& os, const MultisetSum &S) {
+    friend ostream& operator<<(ostream& os, const MultisetSumSplay<T> &S) {
         vector<T> a = S.tovector();
         int n = a.size();
         os << "{";
@@ -390,4 +446,6 @@ public:
         return os;
     }
 };
+
+template<typename T> typename MultisetSumSplay<T>::MemoryAllocator MultisetSumSplay<T>::ma;
 }
