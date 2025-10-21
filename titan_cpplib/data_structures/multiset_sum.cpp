@@ -16,15 +16,15 @@ public:
         using MultisetSumNodePtr = MultisetSumNode*;
         T key, data;
         long long val, valsize;
-        int height;
+        char height;
         MultisetSumNodePtr par, left, right;
 
         MultisetSumNode() {}
         MultisetSumNode(const T &key, const long long val) : key(key), data(key*val), val(val), valsize(val), height(1), par(nullptr), left(nullptr), right(nullptr) {}
 
-        int balance() const {
-            int hl = left ? left->height : 0;
-            int hr = right ? right->height : 0;
+        char balance() const {
+            char hl = left ? left->height : 0;
+            char hr = right ? right->height : 0;
             return hl - hr;
         }
 
@@ -365,6 +365,42 @@ public:
             }
         }
         return k;
+    }
+
+    // 総和がwを超えないように先頭からとるとき、いくつとれるか？
+    long long bisect_left_sum(T w) const {
+        long long s = 0;
+        MultisetSumNodePtr node = root;
+        T rem = w;
+        while (node) {
+            if (node->left) {
+                if (node->left->data <= rem) {
+                    s += node->left->valsize;
+                    rem -= node->left->data;
+                } else {
+                    node = node->left;
+                    continue;
+                }
+            }
+            T sm = node->key * node->val;
+            if (sm <= rem) {
+                s += node->val;
+                rem -= sm;
+                node = node->right;
+            } else {
+                if (node->key == (T)0) {
+                    s += node->val;
+                    node = node->right;
+                    continue;
+                }
+                long long ok = (long long)(rem / node->key);
+                if (ok > node->val) ok = node->val;
+                if (ok < 0) ok = 0;
+                s += ok;
+                return s;
+            }
+        }
+        return s;
     }
 
     T sum(T high) const {
