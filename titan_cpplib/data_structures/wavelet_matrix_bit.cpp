@@ -1,54 +1,51 @@
 #include <vector>
 #include <queue>
+#include <array>
 #include "titan_cpplib/data_structures/bit_vector.cpp"
 using namespace std;
 
 // WaveletMatrix
 namespace titan23 {
 
-template<typename T>
+template<typename T, int log = 31>
 class WaveletMatrix {
 private:
-    T sigma;
-    int log;
-    vector<BitVector> v;
-    vector<int> mid;
     int n;
+    T sigma;
+    array<BitVector, log> v;
+    array<int, log> mid;
 
-    int bit_length(const int n) const {
-        return n == 0 ? 0 : 32 - __builtin_clz(n);
-    }
-
-    void build(vector<T> a) {
+    void build(vector<T> &a) {
+        vector<T> b(n);
         for (int bit = log-1; bit >= 0; --bit) {
-            vector<T> zero, one;
+            int zero_cnt = 0;
             v[bit] = BitVector(n);
             for (int i = 0; i < n; ++i) {
                 if ((a[i] >> bit) & 1) {
                     v[bit].set(i);
-                    one.emplace_back(a[i]);
                 } else {
-                    zero.emplace_back(a[i]);
+                    zero_cnt++;
                 }
             }
             v[bit].build();
-            mid[bit] = zero.size();
-            a = zero;
-            a.insert(a.end(), one.begin(), one.end());
-            assert(a.size() == n);
+            mid[bit] = zero_cnt;
+            int idx0 = 0, idx1 = zero_cnt;
+            for (int i = 0; i < n; ++i) {
+                if (a[i] >> bit & 1) {
+                    b[idx1++] = a[i];
+                } else {
+                    b[idx0++] = a[i];
+                }
+            }
+            a.swap(b);
         }
     }
 
 public:
     WaveletMatrix() {}
+    WaveletMatrix(vector<T> a) : n(a.size()), sigma((1ull<<log)-1) { build(a); }
 
-    WaveletMatrix(const T sigma)
-        : sigma(sigma), log(bit_length(sigma-1)), v(log), mid(log), n(0) {}
-
-    WaveletMatrix(const T sigma, const vector<T> &a)
-        : sigma(sigma), log(bit_length(sigma-1)), v(log), mid(log), n(a.size()) {
-        build(a);
-    }
+    T get_sigma() const { return sigma; }
 
     T access(int k) const {
         T s = 0;
@@ -102,6 +99,7 @@ public:
     // `a[l, r)` の中で k 番目に **小さい** 値を返します。
     T kth_smallest(int l, int r, int k) const {
         T s = 0;
+        #pragma unroll(log)
         for (int bit = log-1; bit >= 0; --bit) {
             const int r0 = v[bit].rank0(r), l0 = v[bit].rank0(l);
             const int cnt = r0 - l0;
@@ -160,6 +158,7 @@ public:
     // a[l, r) で x 未満の要素の数を返す'''
     int range_freq(int l, int r, T x) const {
         int ans = 0;
+        #pragma unroll(log)
         for (int bit = log-1; bit >= 0; --bit) {
             int l0 = v[bit].rank0(l), r0 = v[bit].rank0(r);
             if ((x >> bit) & 1) {
@@ -213,3 +212,22 @@ public:
     }
 };
 }  // namespace titan23
+
+
+
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    int n, q;
+    cin >> n >> q;
+    vector<int> A(n);
+    for (int i = 0; i < n; ++i) cin >> A[i];
+    titan23::WaveletMatrix<int> wm(A);
+    for (int i = 0; i < q; ++i) {
+        int l, r, k;
+        cin >> l >> r >> k;
+        cout << wm.kth_smallest(l, r, k) << '\n';
+    }
+    return 0;
+}

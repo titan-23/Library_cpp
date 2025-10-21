@@ -25,12 +25,7 @@ private:
     int n;
 
     int bit_length(T n) const {
-        int b = 0;
-        while (n) {
-            n >>= 1;
-            ++b;
-        }
-        return b;
+        return n ? 0 : 32-__builtin_clz(n);
     }
 
     void _build(vector<T> a) {
@@ -63,7 +58,7 @@ private:
         for (int bit = log-1; bit >= 0; --bit) {
             int l0 = v[bit].rank0(l);
             int r0 = v[bit].rank0(r);
-            if ((x>>bit) & 1) {
+            if (x>>bit & 1) {
                 l += mid[bit] - l0;
                 r += mid[bit] - r0;
                 ans += cumsum[bit].sum(l0, r0);
@@ -77,8 +72,13 @@ private:
 
 public:
     WaveletMatrixCumulativeSum() {}
-    WaveletMatrixCumulativeSum(const T sigma)
-        : sigma(sigma), log(bit_length(sigma-1)), v(log), mid(log), cumsum(log) {
+    WaveletMatrixCumulativeSum(const T sigma) : sigma(sigma), log(bit_length(sigma-1)), v(log), mid(log), cumsum(log) {}
+    WaveletMatrixCumulativeSum(const T sigma, const vector<W> a) : sigma(sigma), log(bit_length(sigma-1)), v(log), mid(log), cumsum(log) {
+        reserve(a.size());
+        for (int i = 0; i < a.size(); ++i) {
+            set_point(i, A[i], A[i]);
+        }
+        build();
     }
 
     void reserve(const int cap) {
@@ -126,7 +126,7 @@ public:
         }
 
         for (int i = 0; i < log; ++i) {
-            cumsum[i] = titan23::CumulativeSum<W>(ws[i], (T)0);
+            cumsum[i] = titan23::CumulativeSum<W>(ws[i], (W)0);
         }
     }
 
