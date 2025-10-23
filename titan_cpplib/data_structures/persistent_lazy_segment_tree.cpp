@@ -31,7 +31,7 @@ public:
         struct Data {
             T data; F lazy;;
             Data() {}
-            Data(T d, F l) : data(d), lazy(l) {}
+            Data(T d, F l) : data(std::move(d)), lazy(std::move(l)) {}
         };
         // #pragma pack(pop)
 
@@ -94,23 +94,22 @@ private:
 
     void push(int node, F f) {
         ma.data[node].data = mapping(f, ma.data[node].data);
-        if (ma.tree[node].left || ma.tree[node].right) {
+        if (ma.tree[node].left) {
             ma.data[node].lazy = composition(f, ma.data[node].lazy);  // 葉なら不要
         }
     }
 
     void propagate(int node) {
-        if (ma.data[node].lazy != id()) {
-            if (ma.tree[node].left) {
-                ma.tree[node].left = ma.copy(ma.tree[node].left);
-                push(ma.tree[node].left, ma.data[node].lazy);
-            }
-            if (ma.tree[node].right) {
-                ma.tree[node].right = ma.copy(ma.tree[node].right);
-                push(ma.tree[node].right, ma.data[node].lazy);
-            }
-            ma.data[node].lazy = id();
+        if (ma.data[node].lazy == id()) return;
+        if (ma.tree[node].left) {
+            ma.tree[node].left = ma.copy(ma.tree[node].left);
+            push(ma.tree[node].left, ma.data[node].lazy);
         }
+        if (ma.tree[node].right) {
+            ma.tree[node].right = ma.copy(ma.tree[node].right);
+            push(ma.tree[node].right, ma.data[node].lazy);
+        }
+        ma.data[node].lazy = id();
     }
 
     void _build(vector<T> const &a) {
@@ -138,7 +137,6 @@ private:
 
   public:
     PersistentLazySegmentTree() : root(0), _len(0) {}
-
     PersistentLazySegmentTree(vector<T> &a) { _build(a); }
 
     PLSEG apply(int l, int r, F f) {
