@@ -12,7 +12,7 @@ namespace titan23 {
  */
 class Mo {
 private:
-    int n, query_count;
+    int n, q;
     long long max_n;
     vector<int> _l, _r;
 
@@ -32,12 +32,12 @@ private:
     }
 
 public:
-    Mo() {}
+    Mo() : n(0) {}
 
     //! 長さ `n` の列に対する Mo's algorithm インスタンスを生成 / `O(1)`
     Mo(const int n) {
         this->max_n = 1 << 25;
-        this->query_count = 0;
+        this->q = 0;
         this->n = n;
         while (max_n < n) {
             max_n <<= 1;
@@ -50,17 +50,17 @@ public:
         assert(0 <= l && l <= r && r <= n);
         _l.emplace_back(l);
         _r.emplace_back(r);
-        ++query_count;
+        ++q;
     }
 
     //! 追加されたクエリを一括処理する / `O(q√n)`
     // F1~F3: lambda関数
     template<typename F1, typename F2, typename F3>
     void run_light(F1 &&add, F2 &&del, F3 &&out) {
-        vector<int> qi(query_count);
+        vector<int> qi(q);
         iota(qi.begin(), qi.end(), 0);
-        vector<long long> eval(query_count);
-        for (int i = 0; i < query_count; ++i) {
+        vector<long long> eval(q);
+        for (int i = 0; i < q; ++i) {
             eval[i] = hilbertorder(_l[i], _r[i]);
         }
         sort(qi.begin(), qi.end(), [&] (const int &i, const int &j) {
@@ -81,10 +81,10 @@ public:
     // F1~F5: lambda関数
     template<typename F1, typename F2, typename F3, typename F4, typename F5>
     void run(F1 &&add_left, F2 &&add_right, F3 &&del_left, F4 &&del_right, F5 &&out) {
-        vector<int> qi(query_count);
+        vector<int> qi(q);
         iota(qi.begin(), qi.end(), 0);
-        vector<long long> eval(query_count);
-        for (int i = 0; i < query_count; ++i) {
+        vector<long long> eval(q);
+        for (int i = 0; i < q; ++i) {
             eval[i] = hilbertorder(_l[i], _r[i]);
         }
         sort(qi.begin(), qi.end(), [&] (const int &i, const int &j) {
@@ -105,10 +105,10 @@ public:
     // F1~F5: lambda関数
     template<typename F1, typename F2, typename F3, typename F4, typename F5>
     void run_range(F1 &&add_left, F2 &&add_right, F3 &&del_left, F4 &&del_right, F5 &&out) {
-        vector<int> qi(query_count);
+        vector<int> qi(q);
         iota(qi.begin(), qi.end(), 0);
-        vector<long long> eval(query_count);
-        for (int i = 0; i < query_count; ++i) {
+        vector<long long> eval(q);
+        for (int i = 0; i < q; ++i) {
             eval[i] = hilbertorder(_l[i], _r[i]);
         }
         sort(qi.begin(), qi.end(), [&] (const int &i, const int &j) {
