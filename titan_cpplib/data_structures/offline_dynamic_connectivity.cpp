@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <algorithm>
 
+#include "titan_cpplib/data_structures/hash_dict.cpp"
 #include "titan_cpplib/data_structures/undoable_union_find.cpp"
 using namespace std;
 
@@ -19,8 +20,7 @@ private:
     vector<pair<long long, long long>> edge_data;
 
     int bit_length(const int n) const {
-        if (n == 0) return 0;
-        return 32 - __builtin_clz(n);
+        return n ? 32 - __builtin_clz(n) : 0;
     }
 
     void _internal_add(int l, int r, const long long edge) {
@@ -40,14 +40,13 @@ public:
     OfflineDynamicConnectivity(const int n, const int q) :
             n(n),
             query_count(0),
-            size(1 << (bit_length(q))),
+            size(-1),
             q(q),
             bit(bit_length(n) + 1),
             msk((1ll << (bit_length(n) + 1)) - 1),
-            data(size<<1),
             uf(n) {
         bits = max(31, bit_length(max(n, q)) + 1);
-        msks = (1ll << bits) - 1;
+        msks = (1ull << bits) - 1;
     }
 
     void reserve(int cap) {
@@ -89,6 +88,8 @@ public:
     template<typename F> // void out(int k) {}
     void run(F &&out) {
         assert(query_count <= q);
+        size = 1 << bit_length(query_count),
+        data.resize(size<<1);
         for (const auto &[edge, p]: start) {
             int a = p >> bits, b = p & msks;
             if (a != 0) {
@@ -100,7 +101,7 @@ public:
         }
         int size2 = size<<1;
         int ptr = 0;
-        int todo[bit_length(q)<<2];
+        int todo[bit_length(query_count)<<2];
         todo[++ptr] = 1;
         while (ptr) {
             int v = todo[ptr--];
