@@ -1,3 +1,8 @@
+#include <vector>
+using namespace std;
+
+namespace titan23 {
+
 template <class IndexType, class T, T (*op)(T, T), T (*e)()>
 class SparseSegmentTree2D {
 private:
@@ -107,21 +112,25 @@ public:
 public:
     SparseSegmentTree2D() : root(0) {}
     SparseSegmentTree2D(IndexType h, IndexType w) : h(h), w(w) {
-        X.reserve(1e7);
-        Y.reserve(1e7);
         new_node_y(0, h); // for dammy
         new_node_x(0, w); // for dammy
         root = new_node_y(0, h);
         Y[root].root = new_node_x(0, w);
     }
 
+    void reserve(int cap) {
+        X.reserve(cap);
+        Y.reserve(cap);
+    }
+
     void set(IndexType y, IndexType x, T v) {
         inner_setY(root, y, x, v);
     }
 
-    T prod(IndexType u, IndexType d, IndexType l, IndexType r) {
+    T prod(IndexType u, IndexType d, IndexType l, IndexType r) const {
         assert(0 <= u && u <= d && d <= h);
         assert(0 <= l && l <= r && r <= w);
         return inner_prodY(root, u, d, l, r);
     }
 };
+} // namespace titan23

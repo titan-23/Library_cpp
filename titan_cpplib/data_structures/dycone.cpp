@@ -5,14 +5,12 @@ using namespace std;
 template<typename T>
 class OfflineDynamicConnectivity {
 private:
-    static constexpr int ADD = 0;
-    static constexpr int DEL = 1;
-    static constexpr int ADD_POINT = 2;
-    static constexpr int GET_SUM = 3;
-    static constexpr int GET_COUNT = 4;
+    static const int ADD = 0;
+    static const int DEL = 1;
+    static const int ADD_POINT = 2;
+    static const int GET_SUM = 3;
 
     int n, q, t;
-    int group_count;
     vector<tuple<int, int, int, T>> Q;
     vector<int> P, W, S, rd;
     vector<T> sum;
@@ -57,12 +55,6 @@ private:
     void sub_add_edge(int u, int v, int w) {
         disconnect(u);
         disconnect(v);
-        if (find(u) == find(v)) {
-            connect(u);
-            connect(v);
-            return;
-        }
-        group_count--;
         while (u != v) {
             u = connect(u, w);
             v = connect(v, w);
@@ -76,19 +68,16 @@ private:
         connect(u);
     }
 
-    void sub_delete_edge(int u, int v, int w) {
+    void sub_delete_edge(int u, int w) {
         while (P[u] != u) {
             if (W[u] == w) {
-                disconnect(v);
-                int x = u;
-                while (P[x] != x) {
-                    x = P[x];
-                    sum[x] -= sum[u];
+                int v = u;
+                while (P[v] != v) {
+                    v = P[v];
+                    sum[v] -= sum[u];
                 }
                 P[u] = u;
                 W[u] = 1;
-                if (find(u) != find(v)) group_count++;
-                connect(v);
                 return;
             }
             while (W[P[u]] <= W[u]) {
@@ -104,15 +93,14 @@ private:
         if (p == -1) {
             sub_add_edge(u, v, w);
         } else if (W[p] > w) {
-            sub_delete_edge(p, P[p], W[p]);
-            sub_delete_edge(P[p], p, W[p]);
+            sub_delete_edge(p, W[p]);
             sub_add_edge(u, v, w);
         }
     }
 
     void inner_delete_edge(int u, int v, int w) {
-        sub_delete_edge(u, v, w);
-        sub_delete_edge(v, u, w);
+        sub_delete_edge(u, w);
+        sub_delete_edge(v, w);
     }
 
     void inner_add_point(int u, T v) {
@@ -129,7 +117,7 @@ private:
 
 public:
     OfflineDynamicConnectivity() {}
-    OfflineDynamicConnectivity(int n, int q, uint64_t seed=-1) : n(n), q(q), t(0), group_count(n), P(n), W(n), rd(n), sum(n), S(q) {
+    OfflineDynamicConnectivity(int n, int q) : n(n), q(q), t(0), P(n), W(n), rd(n), sum(n), S(q) {
         for (int i = 0; i < n; ++i) {
             P[i] = i;
             W[i] = 1;
@@ -138,57 +126,36 @@ public:
         for (int i = 0; i < q; ++i) {
             S[i] = -INT_MAX;
         }
-        if (seed == -1) seed = chrono::high_resolution_clock::now().time_since_epoch().count();
+        uint64_t seed = 41435421;
         shuffle(rd.begin(), rd.end(), mt19937(seed));
     }
 
-    void reserve(int cap) {
-        mp.reserve(cap);
-        Q.reserve(cap);
-    }
-
-    int add_edge(int u, int v) {
-        assert(t < q);
+    void add_edge(int u, int v) {
         if (u > v) swap(u, v);
         Q.emplace_back(ADD, u, v, -1);
         mp[(long long)u*n+v] = t;
         t++;
-        return t-1;
     }
 
-    int delete_edge(int u, int v) {
-        assert(t < q);
+    void delete_edge(int u, int v) {
         if (u > v) swap(u, v);
         Q.emplace_back(DEL, u, v, -1);
         S[mp[(long long)u*n+v]] = -t;
         S[t] = -t;
         t++;
-        return t-1;
     }
 
-    int add_point(int u, T v) {
-        assert(t < q);
+    void add_point(int u, T v) {
         Q.emplace_back(ADD_POINT, u, -1, v);
         t++;
-        return t-1;
     }
 
-    int get_sum(int u) {
-        assert(t < q);
+    void get_sum(int u) {
         Q.emplace_back(GET_SUM, u, -1, -1);
         t++;
-        return t-1;
-    }
-
-    int get_component_count() {
-        assert(t < q);
-        Q.emplace_back(GET_COUNT, -1, -1, -1);
-        t++;
-        return t-1;
     }
 
     vector<T> run() {
-        assert(t <= q);
         vector<T> res(Q.size());
         for (int i = 0; i < Q.size(); ++i) {
             auto [type, u, v, w] = Q[i];
@@ -209,13 +176,10 @@ public:
                     res[i] = inner_get_sum(u);
                     break;
                 }
-                case GET_COUNT : {
-                    res[i] = group_count;
-                    break;
-                }
                 default: assert(false);
             }
         }
         return res;
     }
 };
+
