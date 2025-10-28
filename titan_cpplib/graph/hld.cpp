@@ -99,6 +99,10 @@ public:
         }
     }
 
+    int get(int v) const {
+        return nodein[v];
+    }
+
     vector<pair<int, int>> for_each_vertex_path(int u, int v) const {
         vector<pair<int, int>> res;
         while (head[u] != head[v]) {

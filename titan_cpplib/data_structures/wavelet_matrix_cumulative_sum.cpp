@@ -25,7 +25,8 @@ private:
     int n;
 
     int bit_length(T n) const {
-        return n ? 0 : 32-__builtin_clz(n);
+        unsigned long long x = static_cast<unsigned long long>(n);
+        return x == 0 ? 0 : 64 - __builtin_clzll(x);
     }
 
     void _build(vector<T> a) {
@@ -76,7 +77,7 @@ public:
     WaveletMatrixCumulativeSum(const T sigma, const vector<W> a) : sigma(sigma), log(bit_length(sigma-1)), v(log), mid(log), cumsum(log) {
         reserve(a.size());
         for (int i = 0; i < a.size(); ++i) {
-            set_point(i, A[i], A[i]);
+            set_point(i, a[i], a[i]);
         }
         build();
     }

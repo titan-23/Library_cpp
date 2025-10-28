@@ -15,8 +15,9 @@ private:
     vector<int> mid;
     int n;
 
-    int bit_length(const int n) const {
-        return n == 0 ? 0 : 32 - __builtin_clz(n);
+    int bit_length(T n) const {
+        unsigned long long x = static_cast<unsigned long long>(n);
+        return x == 0 ? 0 : 64 - __builtin_clzll(x);
     }
 
     void build(vector<T> a) {
@@ -182,14 +183,14 @@ public:
     //`a[l, r)` で、`y`未満であるような要素のうち最大の要素を返します。
     T prev_value(int l, int r, T y) const {
         int x = range_freq(l, r, y);
-        if (x == 0) {
-            return -1;
-        }
+        if (x == 0) return -1;
         return kth_smallest(l, r, x-1);
     }
 
     T next_value(int l, int r, T x) const {
-        return kth_smallest(l, r, range_freq(l, r, x));
+        int c = range_freq(l, r, x);
+        if (c == r - l) return -1;
+        return kth_smallest(l, r, c);
     }
 
     //`a[l, r)` に含まれる `x` の個数を返します。
