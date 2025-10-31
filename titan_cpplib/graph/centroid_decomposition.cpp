@@ -61,9 +61,8 @@ public:
         return {C, T};
     }
 
-    // vをまたぐパスについて考える
-    // vのみ / vを端点 / vを端点としない などの場合分け
-    // 元の木と重心分解の木の混同に注意
+    // vをまたぐパスについて考える vのみ / vを端点 / vを端点としない などの場合分け
+    // パスの重複に注意 / 元の木と重心分解の木の混同に注意
     // bannedを見てはいけない
     // cd.solve([&] (int v, const vector<bool>& banned) {});
     template <typename F>
