@@ -35,6 +35,11 @@ template<typename T> ostream& operator<<(ostream& os, const unordered_set<T>& a)
 template<typename K, typename V> ostream& operator<<(ostream& os, const map<K, V>& mp);
 // unordered_map<K, V>
 template<typename K, typename V> ostream& operator<<(ostream& os, const unordered_map<K, V>& mp);
+// __int128_t
+ostream& operator<<(ostream& os, __int128_t x);
+// __uint128_t
+ostream& operator<<(ostream& os, __uint128_t x);
+
 // -------------------------
 
 // color
@@ -76,6 +81,43 @@ string bin(long long s) {
 }
 
 void DEBUG_LINE() { cerr << "[Line] : " << __LINE__ << std::endl; }
+
+string to_string_int128(__int128_t x) {
+    if (x == 0) return "0";
+    bool neg = false;
+    if (x < 0) { neg = true; x = -x; }
+    string s;
+    while (x > 0) {
+        s += char('0' + (int)(x % 10));
+        x /= 10;
+    }
+    if (neg) s += '-';
+    reverse(s.begin(), s.end());
+    return s;
+}
+
+string to_string_uint128(__uint128_t x) {
+    if (x == 0) return "0";
+    string s;
+    while (x > 0) {
+        s += char('0' + (int)(x % 10));
+        x /= 10;
+    }
+    reverse(s.begin(), s.end());
+    return s;
+}
+
+// __int128_t
+ostream& operator<<(ostream& os, __int128_t x) {
+    os << to_string_int128(x);
+    return os;
+}
+
+// __uint128_t
+ostream& operator<<(ostream& os, __uint128_t x) {
+    os << to_string_uint128(x);
+    return os;
+}
 
 // pair<K, V>
 template<typename K, typename V>
