@@ -145,32 +145,24 @@ public:
             T need = k - now;
             if (need <= 0) break;
             if (need <= c) {
-                if (d == 'L') {
-                    res = res.left(need);
-                } else {
-                    res = res.right(need);
-                }
+                res = d == 'L' ? res.left(need) : res.right(need);
                 break;
             } else {
-                if (d == 'L') {
-                    res = res.left(c);
-                } else {
-                    res = res.right(c);
-                }
+                res = d == 'L' ? res.left(c) : res.right(c);
                 now += c;
             }
         }
         return {true, res};
     }
 
-    /// @brief SBT上で単調性を持つ判定関数 f の境界(true | false)を探索する
+    /// @brief SBT上で単調性を持つ判定関数fの境界(true | false)を探索する
     /// @brief O(log d)
     /// @tparam F 判定関数 bool(T num, T den)
-    /// @param f (0, inf) において [true, ..., true, false, ..., false] と変化する単調関数
+    /// @param f (0, INF) において(true, ..., true, false, ..., false)と変化する単調関数
     /// @param d 探索する分母の上限(含む)
     /// @return 境界の区間を持つノード
-    /// node.p/node.q: fがTrueとなる最大の分数
-    /// node.r/node.s: fがFalseとなる最小の分数
+    /// node.p/node.q: fがtrueとなる最大の分数
+    /// node.r/node.s: fがfalseとなる最小の分数
     template<class F>
     Node search(F f, T d) {
         Node now = root();
@@ -193,11 +185,11 @@ public:
                 now = ok1;
                 continue;
             }
-            T ok = k, ng = k * 2;
+            T ok = k, ng = k*2;
             while (ng - ok > 1) {
-                T mid = ok + (ng - ok) / 2;
-                Node mid_node = toR ? now.right(mid) : now.left(mid);
-                if (mid_node.den() <= d && f(mid_node.num(), mid_node.den()) == toR) {
+                T mid = ok + (ng-ok)/2;
+                Node node = toR ? now.right(mid) : now.left(mid);
+                if (node.den() <= d && f(node.num(), node.den()) == toR) {
                     ok = mid;
                 } else {
                     ng = mid;
