@@ -11,6 +11,7 @@ class SegmentTree {
 private:
     int n, _size, _log;
     vector<T> data;
+    vector<int> lazy;
 
     int bit_length(const int x) const {
         if (x == 0) return 0;
@@ -145,6 +146,28 @@ public:
         }
         if (n > 0) cout << get(n-1);
         cout << ']' << endl;
+    }
+
+    void lazy_set(int k, T v) {
+        k += _size;
+        data[k] = v;
+        k >>= 1;
+        if (k) lazy.emplace_back(k);
+    }
+
+    T lazy_all_prod() {
+        sort(lazy.begin(), lazy.end());
+        int idx = 0;
+        while (idx < lazy.size()) {
+            int k = lazy[idx]; idx++;
+            data[k] = op(data[k<<1], data[k<<1|1]);
+            k >>= 1;
+            if (k == 0) break;
+            if (idx < lazy.size() && lazy.back() == k) continue;
+            lazy.emplace_back(k);
+        }
+        lazy.clear();
+        return data[1];
     }
 };
 }  // namespace titan23
