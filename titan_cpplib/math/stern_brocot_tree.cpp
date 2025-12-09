@@ -131,51 +131,6 @@ public:
         return decode_path(res);
     }
 
-    /// @brief SBT上で単調性を持つ判定関数 f の境界( True | False )を二分探索する
-    /// @tparam F 判定関数 bool(T num, T den)
-    /// @param f (0, inf) において [True, ..., True, False, ..., False] と変化する単調関数
-    /// @param den_limit 探索する分母の上限(含む)
-    /// @return 境界の区間を持つノード
-    /// node.p/node.q: fがTrueとなる最大の分数
-    /// node.r/node.s: fがFalseとなる最小の分数
-    template<class F>
-    Node binary_search(F f, T den_limit) {
-        Node now = root();
-        while (1) {
-            if (now.den() > den_limit) break;
-            bool toR = f(now.num(), now.den());
-            T k = 1;
-            while (1) {
-                Node next = toR ? now.right(k * 2) : now.left(k * 2);
-                if (next.den() > den_limit) break;
-                if (f(next.num(), next.den()) != toR) break;
-                k *= 2;
-            }
-            T best_k = 0;
-            Node check_one = toR ? now.right(1) : now.left(1);
-            if (check_one.den() > den_limit) {
-                if (toR) now = check_one;
-                break;
-            }
-            if (f(check_one.num(), check_one.den()) != toR) {
-                now = check_one;
-                continue;
-            }
-            T ok = k, ng = k * 2;
-            while (ng - ok > 1) {
-                T mid = ok + (ng - ok) / 2;
-                Node mid_node = toR ? now.right(mid) : now.left(mid);
-                if (mid_node.den() <= den_limit && f(mid_node.num(), mid_node.den()) == toR) {
-                    ok = mid;
-                } else {
-                    ng = mid;
-                }
-            }
-            now = toR ? now.right(ok) : now.left(ok);
-        }
-        return now;
-    }
-
     /// @brief nodeの祖先であって、深さがkのノードを返す
     pair<bool, Node> ancestor(const Node &node, T k) {
         auto path = encode_path(node);
@@ -208,11 +163,49 @@ public:
         return {true, res};
     }
 
-    template <class F>
-    optional<Node> binary_search_approx(F f, T b) {
-        auto [t, fz] = binary_search(f, b);
-        if (t.has_value()) return t;
-        return fz;
+    /// @brief SBT上で単調性を持つ判定関数 f の境界(true | false)を探索する
+    /// @brief O(log d)
+    /// @tparam F 判定関数 bool(T num, T den)
+    /// @param f (0, inf) において [true, ..., true, false, ..., false] と変化する単調関数
+    /// @param d 探索する分母の上限(含む)
+    /// @return 境界の区間を持つノード
+    /// node.p/node.q: fがTrueとなる最大の分数
+    /// node.r/node.s: fがFalseとなる最小の分数
+    template<class F>
+    Node search(F f, T d) {
+        Node now = root();
+        while (1) {
+            if (now.den() > d) break;
+            bool toR = f(now.num(), now.den());
+            T k = 1;
+            while (1) {
+                Node next = toR ? now.right(k*2) : now.left(k*2);
+                if (next.den() > d) break;
+                if (f(next.num(), next.den()) != toR) break;
+                k *= 2;
+            }
+            Node ok1 = toR ? now.right(1) : now.left(1);
+            if (ok1.den() > d) {
+                if (toR) now = ok1;
+                break;
+            }
+            if (f(ok1.num(), ok1.den()) != toR) {
+                now = ok1;
+                continue;
+            }
+            T ok = k, ng = k * 2;
+            while (ng - ok > 1) {
+                T mid = ok + (ng - ok) / 2;
+                Node mid_node = toR ? now.right(mid) : now.left(mid);
+                if (mid_node.den() <= d && f(mid_node.num(), mid_node.den()) == toR) {
+                    ok = mid;
+                } else {
+                    ng = mid;
+                }
+            }
+            now = toR ? now.right(ok) : now.left(ok);
+        }
+        return now;
     }
 };
 } // namespace titan23
