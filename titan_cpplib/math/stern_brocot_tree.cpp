@@ -42,6 +42,12 @@ public:
             return {{p, q}, {r, s}};
         }
 
+        friend bool operator<(const Node &a, const Node &b) { return a.num()*b.den() < b.num()*a.den(); }
+        friend bool operator>(const Node &a, const Node &b) { return b < a; }
+        friend bool operator<=(const Node &a, const Node &b) { return !(b < a); }
+        friend bool operator>=(const Node &a, const Node &b) { return !(a < b); }
+        friend bool operator==(const Node &a, const Node &b) { return a.num() == b.num() && a.den() == b.den(); }
+        friend bool operator!=(const Node &a, const Node &b) { return !(a == b); }
         friend ostream& operator<<(ostream& os, const Node n) {
             os << n.num() << "/" << n.den();
             return os;
@@ -66,10 +72,19 @@ private:
         }
     }
 
+    constexpr T internal_gcd(T a, T b) {
+        while (b != 0) {
+            T temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
+    }
+
 public:
     /// @brief p/qに対応するノードを返す
     Node get_node(T p, T q) {
-        T g = gcd(p, q);
+        T g = internal_gcd(p, q);
         p /= g;
         q /= g;
         Node now = root();
