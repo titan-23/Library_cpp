@@ -170,49 +170,50 @@ public:
         return {true, res};
     }
 
-    /// @brief SBT上で単調性を持つ判定関数fの境界(true | false)を探索する
-    /// @brief O(log d)
-    /// @tparam F 判定関数 bool(T num, T den)
-    /// @param f (0, INF) において(true, ..., true, false, ..., false)と変化する単調関数
-    /// @param d 探索する分母の上限(含む)
+    /// @brief SBT上で単調性を持つ判定関数fの境界を探索する / O(log d)
+    /// @brief f(0/1) != f(1/0) であること
+    /// @param f 単調関数
+    /// @param d 探索する分母の上限
     /// @return 境界の区間を持つノード
-    /// node.p/node.q: fがtrueとなる最大の分数
-    /// node.r/node.s: fがfalseとなる最小の分数
+    /// node.p/node.q: 境界の左側の分数(f(0/1)と同じ値を返す最大の分数)
+    /// node.r/node.s: 境界の右側の分数(f(1/0)と同じ値を返す最小の分数)
     template<class F>
-    Node search(F f, T d) {
+    Node binary_search(F f, T d) {
         Node now = root();
+        bool bl = f(now.p, now.q);
+        bool bm = f(now.num(), now.den());
         while (1) {
-            if (now.den() > d) break;
-            bool toR = f(now.num(), now.den());
+            bool go_right = (bl == bm);
+            T x = go_right ? now.q : now.s;
+            T y = go_right ? now.s : now.q;
+            if (y == 0) return now;
+            T maxk = (d - x) / y;
+            if (maxk == 0) return now;
+            auto get_next = [&] (T k) { return go_right ? now.right(k) : now.left(k); };
+            bool target = go_right ? bl : !bl;
+            auto check = [&] (const Node &n) {
+                return (go_right ? f(n.p, n.q) : f(n.r, n.s)) == target;
+            };
             T k = 1;
-            while (1) {
-                Node next = toR ? now.right(k*2) : now.left(k*2);
-                if (next.den() > d) break;
-                if (f(next.num(), next.den()) != toR) break;
+            while (k <= maxk) {
+                if (!check(get_next(k))) break;
+                if (k > maxk/2) {
+                    k = maxk+1;
+                    break;
+                }
                 k *= 2;
             }
-            Node ok1 = toR ? now.right(1) : now.left(1);
-            if (ok1.den() > d) {
-                if (toR) now = ok1;
-                break;
+            T ng = max((T)1, k/2);
+            T ok = (k > maxk) ? maxk + 1 : k;
+            while (ok - ng > 1) {
+                T mid = ng + (ok - ng) / 2;
+                (check(get_next(mid)) ? ng : ok) = mid;
             }
-            if (f(ok1.num(), ok1.den()) != toR) {
-                now = ok1;
-                continue;
-            }
-            T ok = k, ng = k*2;
-            while (ng - ok > 1) {
-                T mid = ok + (ng-ok)/2;
-                Node node = toR ? now.right(mid) : now.left(mid);
-                if (node.den() <= d && f(node.num(), node.den()) == toR) {
-                    ok = mid;
-                } else {
-                    ng = mid;
-                }
-            }
-            now = toR ? now.right(ok) : now.left(ok);
+            if (ng > maxk) ng = maxk;
+            now = get_next(ng);
+            if (ng == maxk) return now;
+            bm = f(now.num(), now.den());
         }
-        return now;
     }
 };
 } // namespace titan23
