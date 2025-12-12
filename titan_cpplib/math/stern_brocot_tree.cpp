@@ -173,45 +173,43 @@ public:
     /// @brief SBT上で単調性を持つ判定関数fの境界を探索する / O(log d)
     /// @brief f(0/1) != f(1/0) であること
     /// @param f 単調関数
-    /// @param d 探索する分母の上限
+    /// @param d 探索する分母分子の上限
     /// @return 境界の区間を持つノード
     /// node.p/node.q: 境界の左側の分数(f(0/1)と同じ値を返す最大の分数)
     /// node.r/node.s: 境界の右側の分数(f(1/0)と同じ値を返す最小の分数)
     template<class F>
     Node binary_search(F f, T d) {
         Node now = root();
-        bool bl = f(now.p, now.q);
-        bool bm = f(now.num(), now.den());
+        bool bl = f(0, 1), bm = f(1, 1);
         while (1) {
-            bool go_right = (bl == bm);
-            T x = go_right ? now.q : now.s;
-            T y = go_right ? now.s : now.q;
-            if (y == 0) return now;
-            T maxk = (d - x) / y;
-            if (maxk == 0) return now;
-            auto get_next = [&] (T k) { return go_right ? now.right(k) : now.left(k); };
-            bool target = go_right ? bl : !bl;
-            auto check = [&] (const Node &n) {
-                return (go_right ? f(n.p, n.q) : f(n.r, n.s)) == target;
+            bool R = (bl == bm);
+            T cx = R ? now.p : now.r, cy = R ? now.q : now.s;
+            T sx = R ? now.r : now.p, sy = R ? now.s : now.q;
+            T lim = d;
+            if (sx) lim = min(lim, (d - cx) / sx);
+            if (sy) lim = min(lim, (d - cy) / sy);
+            if (lim == 0) return now;
+            auto nxt = [&] (T k) { return R ? now.right(k) : now.left(k); };
+            auto check = [&] (T k) {
+                Node n = nxt(k);
+                return (R ? f(n.p, n.q) : f(n.r, n.s)) == (R ? bl : !bl);
             };
             T k = 1;
-            while (k <= maxk) {
-                if (!check(get_next(k))) break;
-                if (k > maxk/2) {
-                    k = maxk+1;
+            while (k <= lim && check(k)) {
+                if (k > lim / 2) {
+                    k = lim + 1;
                     break;
                 }
                 k *= 2;
             }
-            T ng = max((T)1, k/2);
-            T ok = (k > maxk) ? maxk + 1 : k;
-            while (ok - ng > 1) {
-                T mid = ng + (ok - ng) / 2;
-                (check(get_next(mid)) ? ng : ok) = mid;
+            T ok = max((T)1, k / 2), ng = min(k, lim + 1);
+            while (ng - ok > 1) {
+                T mid = ok + (ng - ok) / 2;
+                (check(mid) ? ok : ng) = mid;
             }
-            if (ng > maxk) ng = maxk;
-            now = get_next(ng);
-            if (ng == maxk) return now;
+            if (ok > lim) ok = lim;
+            now = nxt(ok);
+            if (ok == lim) return now;
             bm = f(now.num(), now.den());
         }
     }
