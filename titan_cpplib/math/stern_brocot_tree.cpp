@@ -1,10 +1,6 @@
 #include <algorithm>
-#include <numeric>
-#include <optional>
 #include <utility>
 #include <vector>
-#include <type_traits>
-
 using namespace std;
 
 namespace titan23 {
@@ -18,36 +14,20 @@ public:
         T p, q, r, s;
 
         /// @brief 分母
-        T den() const {
-            return q + s;
-        }
+        T den() const { return q + s; }
 
         /// @brief 分子
-        T num() const {
-            return p + r;
-        }
+        T num() const { return p + r; }
 
         /// @brief 左の子へd進む
-        Node left(T d) const {
-            return {p, q, r + p * d, s + q * d};
-        }
+        Node left(T d) const { return {p, q, r+p*d, s+q*d}; }
 
         /// @brief 右の子へd進む
-        Node right(T d) const {
-            return {p + r * d, q + s * d, r, s};
-        }
+        Node right(T d) const { return {p+r*d, q+s*d, r, s}; }
 
         /// @brief 開区間を返す
-        pair<pair<T, T>, pair<T, T>> range() const {
-            return {{p, q}, {r, s}};
-        }
+        pair<pair<T, T>, pair<T, T>> range() const { return {{p, q}, {r, s}}; }
 
-        friend bool operator<(const Node &a, const Node &b) { return a.num()*b.den() < b.num()*a.den(); }
-        friend bool operator>(const Node &a, const Node &b) { return b < a; }
-        friend bool operator<=(const Node &a, const Node &b) { return !(b < a); }
-        friend bool operator>=(const Node &a, const Node &b) { return !(a < b); }
-        friend bool operator==(const Node &a, const Node &b) { return a.num() == b.num() && a.den() == b.den(); }
-        friend bool operator!=(const Node &a, const Node &b) { return !(a == b); }
         friend ostream& operator<<(ostream& os, const Node n) {
             os << n.num() << "/" << n.den();
             return os;
