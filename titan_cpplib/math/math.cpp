@@ -2,6 +2,23 @@
 #include <cassert>
 using namespace std;
 
+i128 isqrt(i128 v) {
+    if (v < 0) return 0;
+    if (v == 0) return 0;
+    i128 x = sqrt((long double)v);
+    while ((x-1)*(x-1) >= v) x--;
+    while ((x+1)*(x+1) <= v) x++;
+    return x;
+}
+
+template<typename T>
+tuple<bool, T, T> solve_quadratic_equation(T a, T b, T c) {
+    T D = b*b - 4*a*c;
+    if (D < 0) return {false, T{}, T{}};
+    T v = isqrt(D);
+    return {true, (-b-v)/2, (-b+v)/2};
+}
+
 // pow ----------------
 template<class T>
 T pow_mod(T a, T b, const T mod) {
