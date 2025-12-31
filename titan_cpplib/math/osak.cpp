@@ -3,6 +3,7 @@
 #include <vector>
 #include <algorithm>
 #include <map>
+#include "titan_cpplib/algorithm/run_length_encoding.cpp"
 using namespace std;
 
 // Osa_k
@@ -12,23 +13,6 @@ class Osa_k {
 private:
     vector<int> min_factor;
 
-    vector<pair<int, int>> rle(const vector<int> &A) const {
-        vector<pair<int, int>> ret;
-        if (A.empty()) return ret;
-        int now = A[0];
-        int cnt = 1;
-        for (int i = 1; i < (int)A.size(); ++i) {
-            if (A[i] == now) {
-                ++cnt;
-            } else {
-                ret.emplace_back(now, cnt);
-                now = A[i];
-                cnt = 1;
-            }
-        }
-        ret.emplace_back(now, cnt);
-        return ret;
-    }
 public:
     Osa_k() : min_factor(0) {}
 
@@ -71,7 +55,7 @@ public:
         }
         vector<int> g = p_factorization(n);
         sort(g.begin(), g.end());
-        auto f = rle(g);
+        vector<pair<int, int>> f = rle(g);
         int m = f.size();
         vector<int> ret;
 
