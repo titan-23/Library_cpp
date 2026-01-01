@@ -15,7 +15,7 @@ template<typename T>
 tuple<bool, T, T> solve_quadratic_equation(T a, T b, T c) {
     T D = b*b - 4*a*c;
     if (D < 0) return {false, T{}, T{}};
-    T v = isqrt(D);
+    T v = sqrt(D);
     return {true, (-b-v)/2, (-b+v)/2};
 }
 
