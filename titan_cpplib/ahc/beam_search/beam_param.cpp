@@ -60,6 +60,7 @@ struct BeamParam {
         if (turn_sum % 10 != 0 && prev_beam_width != -1) {
             return prev_beam_width;
         }
+        if (remain_turn <= 0) return beam_width;
         int ave_beam_width = (double)beam_width_sum / turn_sum;
         double can_use_time = (double)remain_time / remain_turn;
         double pred_one_time = (double)time_sum / beam_width_sum;
