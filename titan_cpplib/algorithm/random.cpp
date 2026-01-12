@@ -12,7 +12,7 @@ namespace titan23 {
  * @brief (疑似)乱数生成クラス(XOR shift)
  */
 class Random {
-    private:
+private:
     unsigned int _x, _y, _z, _w;
 
     constexpr unsigned int _xor128() {
@@ -24,11 +24,8 @@ class Random {
         return _w;
     }
 
-    public:
-    Random() : _x(123456789),
-                _y(362436069),
-                _z(521288629),
-                _w(88675123) {}
+public:
+    Random() : _x(123456789), _y(362436069), _z(521288629), _w(88675123) {}
 
     //! `[0, 1]` の乱数を返す(実数)
     constexpr double random() { return (double)(_xor128()) / 0xFFFFFFFF; }
