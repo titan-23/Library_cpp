@@ -191,7 +191,7 @@ private:
     void init_bs(const BeamParam &param) {
         beam_timer.reset();
         rnd = titan23::Random();
-        this->seen = titan23::HashSet(param.beam_width*10);
+        this->seen = titan23::HashSet(param.beam_width*10); // TODO
         ActionID = 0;
         result.clear();
     }
@@ -225,15 +225,8 @@ public:
             }
 
             // ビームを絞る
-            // int beam_width = min(param.beam_width, (int)next_beam.size());
-            // cerr << "next_beam.size()=" << next_beam.size() << endl;
             int beam_width = min(param.get_beam_width(param.max_turn-turn, tree.size(), param.time_limit-beam_timer.elapsed()), (int)next_beam.size());
-
             nth_element(next_beam.begin(), next_beam.begin() + beam_width, next_beam.end(), [&] (const tuple<int, int, ScoreType, Action, ActionIDType> &left, const tuple<int, int, ScoreType, Action, ActionIDType> &right) {
-                if (std::get<2>(left) == std::get<2>(right)) {
-                    // 評価値が同じ場合、各親から何番目のアクションかを比較して多様性を確保する
-                    return std::get<1>(left) < std::get<1>(right);
-                }
                 return std::get<2>(left) < std::get<2>(right);
             });
 
