@@ -10,7 +10,7 @@ class Fraction {
 public:
     T p, q;
 
-    Fraction(T p = 0, T q = 1) : p(p), q(q) {
+    Fraction(T p_ = 0, T q_ = 1) : p(p_), q(q_) {
         if (q == 0) {
             if (p > 0) { p = 1; q = 0; }
             else if (p < 0) { p = -1; q = 0; }
