@@ -25,6 +25,8 @@ template<typename T> ostream& operator<<(ostream& os, const vector<T>& a);
 template<typename T> ostream& operator<<(ostream& os, const vector<vector<T>>& a);
 // array<T, 2>
 template<typename T> ostream& operator<<(ostream& os, const array<T, 2>& a);
+// deque<T>
+template<typename T> ostream& operator<<(ostream& os, const deque<T>& dq);
 // set<T>
 template<typename T> ostream& operator<<(ostream& os, const set<T>& s);
 // multiset<T>
@@ -173,6 +175,14 @@ ostream& operator<<(ostream& os, const vector<vector<T>>& a) {
         os << "  " << a[i] << '\n';
     }
     os << "]";
+    return os;
+}
+
+// deque<T>
+template<typename T>
+ostream& operator<<(ostream& os, const deque<T>& dq) {
+    vector<T> a(dq.begin(), dq.end());
+    os << a;
     return os;
 }
 

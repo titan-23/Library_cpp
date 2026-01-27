@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
+#include "titan_cpplib/others/print.cpp"
 using namespace std;
 
 namespace titan23 {
@@ -139,13 +140,9 @@ public:
         return res;
     }
 
-    void print() const {
-        cout << '[';
-        for (int i = 0; i < n-1; ++i) {
-            cout << get(i) << ", ";
-        }
-        if (n > 0) cout << get(n-1);
-        cout << ']' << endl;
+    friend ostream& operator<<(ostream& os, const SegmentTree &seg) {
+        os << seg.tovector();
+        return os;
     }
 
     void lazy_set(int k, T v) {

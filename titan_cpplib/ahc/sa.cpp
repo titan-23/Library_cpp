@@ -10,19 +10,7 @@ using namespace std;
 // sa 最小化
 namespace sa {
 
-struct Param {
-    double start_temp = 1000, end_temp = 1;
-} param;
-
 titan23::Random sarnd;
-using ScoreType = double;
-
-struct Changed {
-    int type;
-    ScoreType pre_score;
-    Changed() {}
-} changed;
-
 const int LOG_TABLE_SIZE = 4096;
 double LOG_TABLE[LOG_TABLE_SIZE]; // 線形補間
 static bool is_log_initialized = [] {
@@ -32,6 +20,22 @@ static bool is_log_initialized = [] {
     return true;
 }();
 
+// TODO
+using ScoreType = double;
+
+struct Param {
+    double start_temp = 1000, end_temp = 1;
+} param;
+
+// TODO
+struct Changed {
+    int TYPE_CNT = 0; // TODO
+    int type;
+    ScoreType pre_score;
+    Changed() {}
+} changed;
+
+// TODO
 void sa_init() {}
 
 class State {
@@ -40,6 +44,7 @@ public:
     ScoreType score;
     State() {}
 
+    // TODO
     void init() {
         score = 0;
     }
@@ -48,15 +53,20 @@ public:
     ScoreType get_score() const { return score; } // TODO 最大化なら `-score` などにする
     ScoreType get_true_score() const { return score; }
 
+    // TODO
     // thresholdを超えたらダメ(同じなら遷移する)
     // is_validをfalseにすると必ずrejectする、rollbackはする
     // progress:焼きなまし進行度 0.0~1.0 まで
     void modify(const ScoreType threshold, const double progress) {}
 
+    // TODO
+    // scoreはもう戻してある
     void rollback() {}
 
+    // TODO
     void advance() {}
 
+    // TODO
     void print() const {}
 };
 
@@ -75,9 +85,8 @@ State sa_run(const double TIME_LIMIT, const bool verbose = false) {
     ScoreType best_score = score;
     double now_time;
 
-    int cnt = 0;
-    int bst_cnt = 0;
-    int upd_cnt = 0;
+    long long cnt = 0, bst_cnt = 0, upd_cn = 0;
+    vector<long long> accept(changed.TYPE_CNT), modify(changed.TYPE_CNT);
     while (true) {
         // if ((cnt & 31) == 0) now_time = sa_timer.elapsed();
         now_time = sa_timer.elapsed();
@@ -88,9 +97,11 @@ State sa_run(const double TIME_LIMIT, const bool verbose = false) {
         double progress = now_time / TIME_LIMIT;
         state.reset_is_valid();
         state.modify(threshold, progress);
+        modify[changed.type]++;
         ScoreType new_score = state.get_score();
         if (state.is_valid && new_score <= threshold) {
             ++upd_cnt;
+            accept[changed.type]++;
             state.advance();
             score = new_score;
             if (score < best_score) {
@@ -107,9 +118,16 @@ State sa_run(const double TIME_LIMIT, const bool verbose = false) {
         }
     }
     if (verbose) {
-        cerr << "Info: best_score = " << best_score << endl;
+        cerr << "=============" << endl;
+        for (int i = 0; i < modify.size(); ++i) {
+            cerr << "Info: Type=" << i << " | " << accept[i] << " / " << modify[i] << endl;
+        }
         cerr << "Info: bst=" << bst_cnt << endl;
-        cerr << "Info: upd=" << upd_cnt << endl;
+        cerr << "Info: ac=" << upd_cnt << endl;
+        cerr << "Info: loop=" << cnt << endl;
+        cerr << "Info: accept rate=" << (cnt > 0 ? (int)((double)upd_cnt/cnt*100) : 0) << "%" << endl;
+        cerr << "Info: update best rate=" << (cnt > 0 ? (int)((double)bst_cnt/cnt*100) : 0) << "%" << endl;
+        cerr << "Info: best_score = " << best_score << endl;
         cerr << "Info: cnt=" << cnt << endl;
     }
     return best_state;

@@ -64,7 +64,7 @@ vector<T> rerooting_dp(const vector<vector<pair<int, E>>> G) {
 }
 
 /*
-apply_vertex(dp_x: T, v: int) -> T:
+T apply_vertex(T dp_x, int v) {}
        v            } return
  --------------   }
 |  /   |   \  |   } dp_x (mergeしたもの)
@@ -72,7 +72,7 @@ apply_vertex(dp_x: T, v: int) -> T:
 | △   △   △ |
  --------------
 
-apply_edge(dp_x: T, e: E, x: int, v: int) -> T:
+T apply_edge(T dp_x, E e, int x, int v) {}
   v
   | } e       } return
   x | } dp_x  }

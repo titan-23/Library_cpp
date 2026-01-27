@@ -15,14 +15,14 @@ public:
 
     RootedTree() {}
     RootedTree(vector<vector<int>> &G, int root) : G(G), root(root) {
-        titan23::HLD hld(G, root);
-        size    = hld.size;
-        par     = hld.par;
-        dep     = hld.dep;
-        nodein  = hld.nodein;
-        nodeout = hld.nodeout;
-        head    = hld.head;
-        hld     = hld.hld;
+        titan23::HLD H(G, root);
+        size    = H.size;
+        par     = H.par;
+        dep     = H.dep;
+        nodein  = H.nodein;
+        nodeout = H.nodeout;
+        head    = H.head;
+        hld     = H.hld;
     }
 
     int lca(int u, int v) const {

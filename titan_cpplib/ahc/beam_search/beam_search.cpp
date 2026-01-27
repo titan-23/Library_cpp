@@ -191,7 +191,7 @@ private:
     void init_bs(const BeamParam &param) {
         beam_timer.reset();
         rnd = titan23::Random();
-        this->seen = titan23::HashSet(param.beam_width*10); // TODO
+        this->seen = titan23::HashSet(param.beam_width*8); // TODO
         ActionID = 0;
         result.clear();
     }
