@@ -3,6 +3,7 @@
 #include <queue>
 using namespace std;
 
+/// @brief Aho-Corasick
 namespace titan23 {
 class AhoCorasick {
 private:
@@ -16,9 +17,10 @@ private:
 
 public:
     vector<Node> node;
+    vector<vector<int>> trie, failtree;
     int B, root;
 
-    AhoCorasick(int B) : node(1), B(B), root(0) {
+    AhoCorasick(int B) : node(1), B(B), root(0), trie(1), failtree(1) {
         node[0].fail = 0;
     }
 
@@ -26,17 +28,21 @@ public:
         node.reserve(cap);
     }
 
-    void add_string(string s) {
+    int add_string(const string &s) {
         int now = 0;
         for (char c : s) {
             c -= B;
             if (node[now].child[c] == -1) {
                 node[now].child[c] = node.size();
                 node.emplace_back();
+                trie.emplace_back();
             }
+            trie[now].push_back(node[now].child[c]);
+            trie[node[now].child[c]].push_back(now);
             now = node[now].child[c];
         }
         node[now].cnt++;
+        return now;
     }
 
     void build() {
@@ -61,6 +67,17 @@ public:
                     node[v].child[i] = node[node[v].fail].child[i];
                 }
             }
+        }
+
+        trie.resize(node.size());
+        for (vector<int> &t : trie) {
+            sort(t.begin(), t.end());
+            t.erase(unique(t.begin(), t.end()), t.end());
+        }
+        failtree.resize(node.size());
+        for (int i = 1; i < (int)node.size(); ++i) {
+            failtree[i].push_back(node[i].fail);
+            failtree[node[i].fail].push_back(i);
         }
     }
 
