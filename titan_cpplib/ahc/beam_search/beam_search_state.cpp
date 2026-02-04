@@ -47,7 +47,8 @@ public:
 
     // TODO 現在の状態に `action` を適用したときのスコアとハッシュ値を返す
     //! ロールバックに必要な情報はすべてactionにメモしておく
-    pair<ScoreType, HashType> try_op(Action &action) const {
+    //! threshold以上であれば計算しなくてよい
+    pair<ScoreType, HashType> try_op(Action &action, const ScoreType threshold) const {
         action.pre_score = score;
         action.pre_hash = hash;
         ScoreType nxt_score = score;
@@ -77,10 +78,8 @@ public:
     }
 
     // TODO
-    //! 現状態から遷移可能な `Action` の `vector` を返す
-    vector<Action> get_actions(const int turn, const Action &last_action) const {
-        vector<Action> actions;
-        return actions;
+    //! 現状態から遷移可能な `Action` の `vector` を `actions` に入れる
+    void get_actions(vector<Action> &actions, const int turn, const Action &last_action) const {
     }
 
     void print() const {
