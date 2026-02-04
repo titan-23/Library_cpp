@@ -42,6 +42,7 @@ private:
             b = nxt;
             a[i].empty = true;
             a[i].S.clear();
+            a[i].aho = titan23::AhoCorasick(B);
         }
         a.push_back(b);
     }
@@ -60,13 +61,26 @@ public:
         add_block(p, neg);
     }
 
-    void search(const string &s) const {
-        for (const Block &b : pos) {
+    /// @brief 文字列 s に含まれるパターンの出現回数の総和を返す
+    long long search(const string &s) const {
+        long long ans = 0;
+        for (const Block &b : pos) if (!b.empty) {
             // TODO b.ahoを使ってクエリに答える
+            int now = b.aho.root;
+            for (char c : s) {
+                now = b.aho.next(now, c);
+                ans += b.aho.node[now].cnt;
+            }
         }
-        for (const Block &b : neg) {
+        for (const Block &b : neg) if (!b.empty) {
             // TODO b.ahoを使ってクエリに答える
+            int now = b.aho.root;
+            for (char c : s) {
+                now = b.aho.next(now, c);
+                ans -= b.aho.node[now].cnt;
+            }
         }
+        return ans;
     }
 };
 } // namespace titan23
