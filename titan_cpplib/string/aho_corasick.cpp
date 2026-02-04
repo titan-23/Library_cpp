@@ -7,6 +7,7 @@ using namespace std;
 namespace titan23 {
 class AhoCorasick {
 private:
+    char B;
     struct Node {
         int cnt, fail;
         array<int, 26> child;
@@ -18,9 +19,9 @@ private:
 public:
     vector<Node> node;
     vector<vector<int>> trie, failtree;
-    int B, root;
+    int root;
 
-    AhoCorasick(int B) : node(1), B(B), root(0), trie(1), failtree(1) {
+    AhoCorasick(char B) : B(B), node(1), root(0), trie(1), failtree(1) {
         node[0].fail = 0;
     }
 
@@ -29,20 +30,20 @@ public:
     }
 
     int add_string(const string &s) {
-        int now = 0;
+        int v = 0;
         for (char c : s) {
             c -= B;
-            if (node[now].child[c] == -1) {
-                node[now].child[c] = node.size();
+            if (node[v].child[c] == -1) {
+                node[v].child[c] = node.size();
                 node.emplace_back();
                 trie.emplace_back();
             }
-            trie[now].push_back(node[now].child[c]);
-            trie[node[now].child[c]].push_back(now);
-            now = node[now].child[c];
+            trie[v].push_back(node[v].child[c]);
+            trie[node[v].child[c]].push_back(v);
+            v = node[v].child[c];
         }
-        node[now].cnt++;
-        return now;
+        node[v].cnt++;
+        return v;
     }
 
     void build() {
@@ -81,12 +82,12 @@ public:
         }
     }
 
-    int next(int v, char c) {
+    int next(int v, char c) const {
         return node[v].child[c-B];
     }
 
-    Node get(int id) {
-        return node[id];
+    Node get(int v) const {
+        return node[v];
     }
 };
 } // namespace titan23
