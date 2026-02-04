@@ -115,6 +115,12 @@ public:
         }
     }
 
+    V inner_get(const pair<int, bool> &dat, const V missing) const {
+        const auto [pos, is_exist] = dat;
+        if (!is_exist) return missing;
+        return vals[pos];
+    }
+
     V inner_get(const pair<int, bool> &dat) {
         const auto [pos, is_exist] = dat;
         if (!is_exist) return V();
@@ -212,6 +218,10 @@ public:
 
     int len() const {
         return size;
+    }
+
+    int inner_len() const {
+        return keys.size();
     }
 
     bool empty() const {
