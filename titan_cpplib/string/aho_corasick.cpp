@@ -1,3 +1,4 @@
+#pragma once
 #include <vector>
 #include <array>
 #include <queue>
@@ -21,6 +22,7 @@ public:
     vector<vector<int>> trie, failtree;
     int root;
 
+    AhoCorasick() {}
     AhoCorasick(char B) : B(B), node(1), root(0), trie(1), failtree(1) {
         node[0].fail = 0;
     }
