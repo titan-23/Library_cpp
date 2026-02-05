@@ -12,7 +12,8 @@ namespace lazy_segment_tree {
 
     template<typename T>
     struct Dat {
-        T val, size;
+        T val;
+        int size;
     };
     template<typename T> Dat<T> op_sum_size(Dat<T> a, Dat<T> b) { return {a.val + b.val, a.size + b.size}; }
     template<typename T> Dat<T> e_sum_size() { return {0, 0}; }
@@ -29,7 +30,10 @@ namespace lazy_segment_tree {
     template<typename T> T comp_set(T f, T g) { return (f == ID<T>) ? g : f; }
     template<typename T> T id_set() { return ID<T>; }
 
-    template<typename T> Dat<T> map_set_sum(T f, Dat<T> s) { return (f == ID<T>) ? s : {f * s.size, s.size}; }
+    template<typename T> Dat<T> map_set_sum(T f, Dat<T> s) {
+        if (f == ID<T>) return s;
+        return Dat<T>{f * s.size, s.size};
+    }
 
     // =========================================================
 
@@ -73,6 +77,34 @@ namespace lazy_segment_tree {
     using LazySegSetSum = titan23::LazySegmentTree<
         Dat<T>, op_sum_size<T>, e_sum_size<T>,
         T, map_set_sum<T>, comp_set<T>, id_set<T>
+    >;
+
+    // 区間chmin / 区間最小値
+    template<typename T>
+    using LazySegChminMin = titan23::LazySegmentTree<
+        T, op_min<T>, e_min<T>,
+        T, op_min<T>, op_min<T>, e_min<T>
+    >;
+
+    // 区間chmin / 区間最大値
+    template<typename T>
+    using LazySegChminMax = titan23::LazySegmentTree<
+        T, op_max<T>, e_max<T>,
+        T, op_min<T>, op_min<T>, e_min<T>
+    >;
+
+    // 区間chmax / 区間最小値
+    template<typename T>
+    using LazySegChmaxMin = titan23::LazySegmentTree<
+        T, op_min<T>, e_min<T>,
+        T, op_max<T>, op_max<T>, e_max<T>
+    >;
+
+    // 区間chmax / 区間最大値
+    template<typename T>
+    using LazySegChmaxMax = titan23::LazySegmentTree<
+        T, op_max<T>, e_max<T>,
+        T, op_max<T>, op_max<T>, e_max<T>
     >;
 } // namespace lazy_segment_tree
 } // namespace titan23
