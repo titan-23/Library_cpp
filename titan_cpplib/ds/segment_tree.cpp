@@ -140,7 +140,7 @@ public:
         return res;
     }
 
-    friend ostream& operator<<(ostream& os, const SegmentTree &seg) {
+    friend ostream& operator<<(ostream& os, const SegmentTree<T, op, e> &seg) {
         os << seg.tovector();
         return os;
     }

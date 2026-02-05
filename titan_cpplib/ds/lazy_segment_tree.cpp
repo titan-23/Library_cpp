@@ -222,5 +222,10 @@ public:
         vector<T> res(data.begin()+size, data.begin()+size+n);
         return res;
     }
+
+    friend ostream& operator<<(ostream& os, LazySegmentTree<T, op, e, F, mapping, composition, id> &seg) {
+        os << seg.tovector();
+        return os;
+    }
 };
 } // namespace titan23
