@@ -1,6 +1,6 @@
 #include <vector>
 #include "titan_cpplib/graph/hld.cpp"
-#include "titan_cpplib/data_structures/segment_tree.cpp"
+#include "titan_cpplib/ds/segment_tree.cpp"
 using namespace std;
 
 namespace titan23 {

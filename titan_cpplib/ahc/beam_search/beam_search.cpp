@@ -10,7 +10,7 @@
 #include "titan_cpplib/algorithm/random.cpp"
 #include "titan_cpplib/ahc/state_pool.cpp"
 #include "titan_cpplib/ahc/timer.cpp"
-#include "titan_cpplib/data_structures/hash_dict.cpp"
+#include "titan_cpplib/ds/hash_dict.cpp"
 #include "titan_cpplib/ahc/beam_search/beam_param.cpp"
 
 using namespace std;

@@ -1,8 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#include "titan_cpplib/data_structures/static_set.cpp"
-#include "titan_cpplib/data_structures/static_multiset.cpp"
+#include "titan_cpplib/ds/static_set.cpp"
+#include "titan_cpplib/ds/static_multiset.cpp"
 
 void solve() {
     int n;

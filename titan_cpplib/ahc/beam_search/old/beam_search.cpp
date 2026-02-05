@@ -8,7 +8,7 @@
 #include "titan_cpplib/algorithm/random.cpp"
 #include "titan_cpplib/ahc/state_pool.cpp"
 #include "titan_cpplib/ahc/timer.cpp"
-#include "titan_cpplib/data_structures/hash_set.cpp"
+#include "titan_cpplib/ds/hash_set.cpp"
 #include "titan_cpplib/others/print.cpp"
 
 using namespace std;

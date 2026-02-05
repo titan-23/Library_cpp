@@ -1,7 +1,7 @@
 #include <vector>
 #include <cassert>
-#include "titan_cpplib/data_structures/multiset_sum.cpp"
-#include "titan_cpplib/data_structures/cumulative_sum.cpp"
+#include "titan_cpplib/ds/multiset_sum.cpp"
+#include "titan_cpplib/ds/cumulative_sum.cpp"
 using namespace std;
 
 // DoubleSigma

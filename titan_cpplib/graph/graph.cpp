@@ -4,7 +4,7 @@
 #include <cassert>
 #include <algorithm>
 
-#include "titan_cpplib/data_structures/union_find.cpp"
+#include "titan_cpplib/ds/union_find.cpp"
 using namespace std;
 
 namespace titan23 {

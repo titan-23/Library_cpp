@@ -2,7 +2,7 @@
 #include <cassert>
 #include <stack>
 #include <climits>
-#include "titan_cpplib/data_structures/static_RmQ.cpp"
+#include "titan_cpplib/ds/static_RmQ.cpp"
 using namespace std;
 
 // LCA

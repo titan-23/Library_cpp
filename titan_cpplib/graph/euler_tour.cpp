@@ -1,7 +1,7 @@
 #include <vector>
 #include <stack>
-#include "titan_cpplib/data_structures/fenwick_tree.cpp"
-#include "titan_cpplib/data_structures/segment_tree.cpp"
+#include "titan_cpplib/ds/fenwick_tree.cpp"
+#include "titan_cpplib/ds/segment_tree.cpp"
 using namespace std;
 
 namespace titan23 {

@@ -1,7 +1,7 @@
 #include <vector>
 #include <random>
 #include <cassert>
-#include "titan_cpplib/data_structures/segment_tree.cpp"
+#include "titan_cpplib/ds/segment_tree.cpp"
 using namespace std;
 
 // HashString
