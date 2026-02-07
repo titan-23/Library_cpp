@@ -64,5 +64,46 @@ public:
         os << f.p << "/" << f.q;
         return os;
     }
+    string to_string() const { return to_string(p) + "/" + to_string(q); }
+    Fraction inv() const { return Fraction(q, p); }
+    Fraction pow(long long k) const {
+        if (k < 0) return inv().pow(-k);
+        Fraction res(1, 1), base = *this;
+        while (k > 0) {
+            if (k & 1) res *= base;
+            base *= base;
+            k >>= 1;
+        }
+        return res;
+    }
+
+    friend Fraction operator+(const Fraction& f, T v) { return Fraction(f.p + v * f.q, f.q); }
+    friend Fraction operator+(T v, const Fraction& f) { return Fraction(v * f.q + f.p, f.q); }
+    friend Fraction operator-(const Fraction& f, T v) { return Fraction(f.p - v * f.q, f.q); }
+    friend Fraction operator-(T v, const Fraction& f) { return Fraction(v * f.q - f.p, f.q); }
+    friend Fraction operator*(const Fraction& f, T v) { return Fraction(f.p * v, f.q); }
+    friend Fraction operator*(T v, const Fraction& f) { return Fraction(v * f.p, f.q); }
+    friend Fraction operator/(const Fraction& f, T v) { return Fraction(f.p, f.q * v); }
+    friend Fraction operator/(T v, const Fraction& f) { return Fraction(v * f.q, f.p); }
+    Fraction& operator+=(T v) { *this = *this + v; return *this; }
+    Fraction& operator-=(T v) { *this = *this - v; return *this; }
+    Fraction& operator*=(T v) { *this = *this * v; return *this; }
+    Fraction& operator/=(T v) { *this = *this / v; return *this; }
+    size_t hash() const {
+        std::hash<T> hasher;
+        size_t seed = 0;
+        size_t h_p = hasher(p);
+        seed ^= h_p + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+        size_t h_q = hasher(q);
+        seed ^= h_q + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+        return seed;
+    }
 };
 } // namespace titan23
+
+template<typename T>
+struct hash<titan23::Fraction<T>> {
+    size_t operator()(const titan23::Fraction<T>& f) const {
+        return f.hash();
+    }
+};
