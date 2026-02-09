@@ -25,8 +25,9 @@ int LIS(const vector<T>& a, bool strict=true) {
 }
 
 /// @brief LISを復元する
+/// @return {idx, val}の列
 template <typename T>
-vector<T> LIS_vec(const vector<T>& a, bool strict=true) {
+vector<pair<int, T>> LIS_vec(const vector<T>& a, bool strict=true) {
     int n = a.size();
     if (n == 0) return {};
     vector<T> dp(n);
@@ -45,11 +46,11 @@ vector<T> LIS_vec(const vector<T>& a, bool strict=true) {
             prev[i] = pos[idx - 1];
         }
     }
-    vector<T> res;
+    vector<pair<int, T>> res;
     if (sz > 0) {
         int now = pos[sz - 1];
         while (now != -1) {
-            res.push_back(a[now]);
+            res.push_back({now, a[now]});
             now = prev[now];
         }
         reverse(res.begin(), res.end());
