@@ -106,5 +106,34 @@ namespace lazy_segment_tree {
         T, op_max<T>, e_max<T>,
         T, op_max<T>, op_max<T>, e_max<T>
     >;
+
+    // =========================================================
+    // 区間等差数列加算 / 区間和
+    // =========================================================
+
+    template<typename T>
+    struct S_AP {
+        T val;
+        int size;
+        T idx_sum;
+    };
+    template<typename T>
+    struct F_AP {
+        T a, b;
+        bool operator==(const F_AP &rhs) const { return a == rhs.a && b == rhs.b; }
+        bool operator!=(const F_AP &rhs) const { return !(*this == rhs); }
+    };
+    template<typename T> S_AP<T> op_ap_sum_size(S_AP<T> l, S_AP<T> r) { return {l.val+r.val, l.size+r.size, l.idx_sum+r.idx_sum}; }
+    template<typename T> S_AP<T> e_ap_sum_size() { return {0, 0, 0}; }
+    template<typename T> S_AP<T> map_ap_add(F_AP<T> f, S_AP<T> s) { return {s.val+f.a*s.size+f.b*s.idx_sum, s.size, s.idx_sum}; }
+    template<typename T> F_AP<T> comp_ap_add(F_AP<T> f, F_AP<T> g) { return {f.a+g.a, f.b+g.b}; }
+    template<typename T> F_AP<T> id_ap_add() { return {0, 0}; }
+    // 初期化: `{val, 1, index}`
+    // クエリ: 初項x、公差dの等差数列を加算->`seg.apply(l, r, {x-l*d, d});`
+    template<typename T>
+    using LazySegAddAPSum = titan23::LazySegmentTree<
+        S_AP<T>, op_ap_sum_size<T>, e_ap_sum_size<T>,
+        F_AP<T>, map_ap_add<T>, comp_ap_add<T>, id_ap_add<T>
+    >;
 } // namespace lazy_segment_tree
 } // namespace titan23
