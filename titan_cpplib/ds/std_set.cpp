@@ -1,3 +1,4 @@
+#pragma once
 #include <set>
 #include <vector>
 #include <optional>
@@ -43,7 +44,7 @@ public:
         return s.find(key) != s.end();
     }
 
-    int len() const {
+    int size() const {
         return s.size();
     }
 
@@ -85,9 +86,22 @@ public:
         return *it;
     }
 
-    friend ostream& operator<<(ostream& os, const StdSet<T>& s) {
+    T neighbour(const T& key) const {
+        T l = le(key);
+        T g = ge(key);
+        if (g == missing && l == missing) return missing;
+        if (g == missing) return l;
+        if (l == missing) return r;
+        return key-l <= r-key ? l : r;
+    }
+
+    void clear() {
+        s.clear();
+    }
+
+    friend ostream& operator<<(ostream& os, const titan23::StdSet<T>& s) {
         os << "{";
-        int n = s.len();
+        int n = s.size();
         int i = 0;
         for (const auto& x : s.s) {
             os << x;
