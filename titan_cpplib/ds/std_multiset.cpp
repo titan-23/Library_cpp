@@ -1,3 +1,4 @@
+#pragma once
 #include <map>
 #include <vector>
 #include <cassert>
@@ -11,43 +12,43 @@ namespace titan23 {
 template<typename T>
 class StdMultiset {
 private:
-    using u64 = long long;
-    map<T, u64> s;
+    using ll = long long;
+    map<T, ll> s;
     T missing;
-    int size;
+    ll len;
 
 public:
-    StdMultiset() : missing(T()), size(0) {}
-    StdMultiset(T missing) : missing(missing), size(0) {}
-    StdMultiset(const vector<T> &a, T missing = T()) : missing(missing), size(0) {
+    StdMultiset() : missing(T()), len(0) {}
+    StdMultiset(T missing) : missing(missing), len(0) {}
+    StdMultiset(const vector<T> &a, T missing = T()) : missing(missing), len(0) {
         for (const T &x : a) {
             s[x]++;
         }
-        size = a.size();
+        len = a.size();
     }
 
-    void insert(const T key, u64 cnt = 1) {
+    void insert(const T key, ll cnt = 1) {
         s[key] += cnt;
-        size += cnt;
+        len += cnt;
     }
 
-    void erase(const T key, u64 cnt = 1) {
+    void erase(const T key, ll cnt = 1) {
         auto it = s.find(key);
         if (it == s.end()) return;
-        cnt = max(0ULL, it->second - cnt);
-        size -= it->second - cnt;
+        cnt = max(0, it->second - cnt);
+        len -= it->second - cnt;
         it->second = cnt;
         if (it->second == 0) s.erase(it);
     }
 
-    void discard(const T key, u64 cnt = 1) {
+    void discard(const T key, ll cnt = 1) {
         erase(key, cnt);
     }
 
-    void remove(const T key, u64 cnt = 1) {
+    void remove(const T key, ll cnt = 1) {
         auto it = s.find(key);
-        if (it == s.end() || it->second < cnt) throw runtime_error("key not found in multiset");
-        size -= cnt;
+        if (it == s.end() || it->second < cnt) throw runtime_error("key not found in titan23::StdMultiset");
+        len -= cnt;
         it->second -= cnt;
         if (it->second == 0) s.erase(it);
     }
@@ -56,20 +57,20 @@ public:
         return s.find(key) != s.end();
     }
 
-    int count(const T key) const {
+    ll count(const T key) const {
         auto it = s.find(key);
         return it == s.end() ? 0 : it->second;
     }
 
     bool empty() const {
-        return size == 0;
+        return size() == 0;
     }
 
-    int len() const {
-        return size;
+    ll size() const {
+        return len;
     }
 
-    int len_unique() const {
+    ll size_unique() const {
         return s.size();
     }
 
@@ -86,7 +87,7 @@ public:
 
     vector<T> to_vector_unique() const {
         vector<T> a;
-        a.reserve(len_unique());
+        a.reserve(size_unique());
         for (auto [k, v] : s) {
             a.emplace_back(k);
         }
@@ -95,7 +96,7 @@ public:
 
     vector<T> to_vector() const {
         vector<T> a;
-        a.reserve(len());
+        a.reserve(size());
         for (auto [k, v] : s) {
             for (int i = 0; i < v; ++i) {
                 a.emplace_back(k);
@@ -104,33 +105,47 @@ public:
         return a;
     }
 
-    T le(const T key) const {
+    T le(const T& key) const {
         auto it = s.upper_bound(key);
         if (it == s.begin()) return missing;
         --it;
         return it->first;
     }
 
-    T lt(const T key) const {
+    T lt(const T& key) const {
         auto it = s.lower_bound(key);
         if (it == s.begin()) return missing;
         --it;
         return it->first;
     }
 
-    T ge(const T key) const {
+    T ge(const T& key) const {
         auto it = s.lower_bound(key);
         if (it == s.end()) return missing;
         return it->first;
     }
 
-    T gt(const T key) const {
+    T gt(const T& key) const {
         auto it = s.upper_bound(key);
         if (it == s.end()) return missing;
         return it->first;
     }
 
-    friend ostream& operator<<(ostream& os, const StdMultiset<T> &ms) {
+    T neighbour(const T& key) const {
+        T l = le(key);
+        T g = ge(key);
+        if (g == missing && l == missing) return missing;
+        if (g == missing) return l;
+        if (l == missing) return r;
+        return key-l <= r-key ? l : r;
+    }
+
+    void clear() {
+        s.clear();
+        len = 0;
+    }
+
+    friend ostream& operator<<(ostream& os, const titan23::StdMultiset<T> &ms) {
         os << "{";
         bool f = false;
         for (auto [k, v] : ms.s) {
