@@ -9,10 +9,10 @@ namespace titan23 {
 template<typename T>
 struct FenwickTree2D {
     long long _h, _w;
-    vector<T> _bit;
+    vector<T> a;
 
     FenwickTree2D() {}
-    FenwickTree2D(int h, int w) : _h(h+1), _w(w+1), _bit(_h*_w, 0) {
+    FenwickTree2D(int h, int w) : _h(h+1), _w(w+1), a(_h*_w, 0) {
         assert(_h * _w < 1e9);
     }
 
@@ -23,7 +23,7 @@ struct FenwickTree2D {
         while (h < _h) {
             int j = w;
             while (j < _w) {
-                _bit[h*_w+j] += x;
+                a[h*_w+j] += x;
                 j += (j & (-j));
             }
             h += (h & (-h));
@@ -43,7 +43,7 @@ struct FenwickTree2D {
         while (h > 0) {
             int j = w;
             while (j > 0) {
-                res += _bit[h*_w + j];
+                res += a[h*_w + j];
                 j -= (j & (-j));
             }
             h -= (h & (-h));
