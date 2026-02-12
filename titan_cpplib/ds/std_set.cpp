@@ -91,8 +91,8 @@ public:
         T g = ge(key);
         if (g == missing && l == missing) return missing;
         if (g == missing) return l;
-        if (l == missing) return r;
-        return key-l <= r-key ? l : r;
+        if (l == missing) return g;
+        return key-l <= g-key ? l : g;
     }
 
     void clear() {
