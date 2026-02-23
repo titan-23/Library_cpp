@@ -73,6 +73,7 @@ string zfill(const string s, const int f) {
 }
 
 string bin(long long s) {
+    if (s == 0) return "0";
     string t;
     while (s) {
         t += (s & 1) ? '1' : '0';
