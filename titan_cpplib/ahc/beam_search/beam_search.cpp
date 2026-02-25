@@ -32,11 +32,29 @@ private:
     vector<Action> result;
     Action DAMMY_ACTION;
 
+    struct TreeNode {
+        int dir_or_leaf_id;
+        Action action;
+        ActionIDType action_id;
+
+        TreeNode(int d, Action a, ActionIDType id) : dir_or_leaf_id(d), action(move(a)), action_id(id) {}
+    };
+
+    struct BeamCandidate {
+        int par;
+        ScoreType score;
+        Action action;
+        ActionIDType action_id;
+
+        BeamCandidate() : par(0), score(0), action(), action_id(0) {}
+        BeamCandidate(int p, ScoreType s, Action a, ActionIDType id) : par(p), score(s), action(move(a)), action_id(id) {}
+    };
+
     // ビームサーチの過程を表す木
     // <dir or id, action, action_id>
     // dir or id := 葉のとき、leaf_id
     //              そうでないとき、行きがけなら-1、帰りがけなら-2
-    vector<tuple<int, Action, ActionIDType>> tree, nxt_tree;
+    vector<TreeNode> tree, nxt_tree;
 
     class Candidates {
     private:
@@ -58,7 +76,7 @@ private:
 
     public:
         // 次のビーム候補を保持する配列
-        vector<tuple<int, ScoreType, Action, ActionIDType>> next_beam; // <par, score, action, action_id>
+        vector<BeamCandidate> next_beam;
 
         Candidates() {}
 
@@ -127,16 +145,15 @@ private:
         }
 
         void shuffle(titan23::Random &rnd) {
-            // shuffle
             for (int i = 0; i < entry-1; ++i) {
                 int j = rnd.randrange(i, entry);
                 swap(next_beam[i], next_beam[j]);
             }
         }
 
-        tuple<int, ScoreType, Action, ActionIDType> get_best() {
-            return *min_element(next_beam.begin(), next_beam.begin() + entry, [&] (const tuple<int, ScoreType, Action, ActionIDType> &left, const tuple<int, ScoreType, Action, ActionIDType> &right) {
-                return std::get<1>(left) < std::get<1>(right);
+        BeamCandidate get_best() {
+            return *min_element(next_beam.begin(), next_beam.begin() + entry, [&] (const BeamCandidate &left, const BeamCandidate &right) {
+                return left.score < right.score;
             });
         }
     } candidates;
@@ -170,7 +187,7 @@ private:
                 state->apply_op(move(action));
                 actions.clear();
                 state->get_actions(actions, t_turn, action);
-                std::get<0>(tree[i]) = leaf_id;
+                tree[i].dir_or_leaf_id = leaf_id;
                 for (Action &action : actions) {
                     auto [score, hash] = state->try_op(action, candidates.threshold());
                     if (candidates.push(score, hash, leaf_id, move(action), ActionID)) {
@@ -205,7 +222,7 @@ private:
         while (true) {
             const auto &[dir_or_leaf_id, action, action_id] = tree[i];
             // 行きがけかつ帰りがけのaction_idが一致しているなら、一本道なので行くだけ
-            if (dir_or_leaf_id == PRE_ORDER && action_id == std::get<2>(tree.back())) {
+            if (dir_or_leaf_id == PRE_ORDER && action_id == tree.back().action_id) {
                 ++i;
                 result.emplace_back(action);
                 state->apply_op(action);
@@ -224,7 +241,7 @@ private:
                 bool has_child = false;
                 int start_idx = next_beam_idx;
                 while(next_beam_idx < num_candidates) {
-                    if (std::get<0>(candidates.next_beam[next_beam_idx]) != dir_or_leaf_id) {
+                    if (candidates.next_beam[next_beam_idx].par != dir_or_leaf_id) {
                         break;
                     }
                     has_child = true;
@@ -240,7 +257,7 @@ private:
             } else if (dir_or_leaf_id == PRE_ORDER) {
                 nxt_tree.emplace_back(PRE_ORDER, move(action), action_id);
             } else {
-                int pre_dir = std::get<0>(nxt_tree.back());
+                int pre_dir = nxt_tree.back().dir_or_leaf_id;
                 if (pre_dir == PRE_ORDER) {
                     nxt_tree.pop_back(); // 一つ前が行きがけなら、削除して追加しない
                 } else {
@@ -331,15 +348,15 @@ public:
                 assert(candidates.size() > 0);
             }
 
-            tuple<int, ScoreType, Action, ActionIDType> bests = candidates.get_best();
+            BeamCandidate bests = candidates.get_best();
 
-            if (verbose) cerr << "Info: \tbest_score = " << std::get<1>(bests) << endl;
-            if (std::get<1>(bests) == 0) { // TODO 終了条件
-                cerr << to_green("Info: find valid solution.") << endl;
+            if (verbose) cerr << "Info: \tbest_score = " << bests.score << endl;
+            if (bests.score == 0) { // TODO 終了条件
+                if (verbose) cerr << to_green("Info: find valid solution.") << endl;
                 candidates.next_beam.clear();
                 candidates.next_beam.push_back(bests);
                 get_result();
-                result.emplace_back(std::get<2>(candidates.next_beam[0]));
+                result.emplace_back(candidates.next_beam[0].action);
                 if (verbose) param.report();
                 return result;
             }
@@ -348,7 +365,7 @@ public:
             if (turn != 0) {
                 sort(candidates.next_beam.begin(), candidates.next_beam.begin() + candidates.size(),
                     [] (const auto& a, const auto& b) {
-                        return std::get<0>(a) < std::get<0>(b);
+                        return a.par < b.par;
                     }
                 );
             }
