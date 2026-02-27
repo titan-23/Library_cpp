@@ -85,7 +85,7 @@ State sa_run(const double TIME_LIMIT, const bool verbose = false) {
     ScoreType best_score = score;
     double now_time;
 
-    long long cnt = 0, bst_cnt = 0, upd_cn = 0;
+    long long cnt = 0, bst_cnt = 0, upd_cnt = 0;
     vector<long long> accept(changed.TYPE_CNT), modify(changed.TYPE_CNT);
     while (true) {
         // if ((cnt & 31) == 0) now_time = sa_timer.elapsed();
