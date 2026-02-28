@@ -2,6 +2,7 @@
 #include <vector>
 #include <array>
 #include <queue>
+#include <algorithm>
 using namespace std;
 
 /// @brief Aho-Corasick
