@@ -27,6 +27,13 @@ private:
 public:
     Random() : _x(123456789), _y(362436069), _z(521288629), _w(88675123) {}
 
+    void set_seed(unsigned int seed) {
+        _x = seed;
+        _y = _x * 1812433253U + 1;
+        _z = _y * 1812433253U + 1;
+        _w = _z * 1812433253U + 1;
+    }
+
     //! `[0, 1]` の乱数を返す(実数)
     constexpr double random() { return (double)(_xor128()) / 0xFFFFFFFF; }
 
