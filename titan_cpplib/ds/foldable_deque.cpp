@@ -104,7 +104,7 @@ public:
     }
 
     friend ostream& operator<<(ostream& os, const FoldableDeque<T, op, e> &dq) {
-        return os << dq.tolist();
+        return os << dq.tovector();
     }
 };
 } // namespace titan23
