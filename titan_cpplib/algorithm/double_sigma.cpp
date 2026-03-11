@@ -11,7 +11,7 @@ class DoubleSigma {
 public:
 
 /// `Σ|A[r]-A[l]|`
-template<typename T> static T sigma_abs(const vector<T> &A) {
+template<typename T> static T sigma_abs_online(const vector<T> &A) {
     T ans = 0;
     const int n = A.size();
     titan23::MultisetSum<T> S;
@@ -23,6 +23,18 @@ template<typename T> static T sigma_abs(const vector<T> &A) {
         ans += (sum-sum_a) - a*(S.len()-cnt);
         S.add(a);
         sum += a;
+    }
+    return ans;
+}
+
+/// `Σ|A[r]-A[l]|`
+template<typename T> static T sigma_abs(vector<T> A) {
+    sort(A.begin(), A.end());
+    T ans = 0;
+    int n = A.size();
+    for (int i = 0; i < n; i++) {
+        ans += (T)i * A[i];
+        ans -= (T)(n - 1 - i) * A[i];
     }
     return ans;
 }
@@ -41,7 +53,7 @@ template<typename T> static T sigma_minus(const vector<T> &A) {
 }
 
 /// `Σmax(A[r], A[l])`
-template<typename T> static T sigma_max(const vector<T> &A) {
+template<typename T> static T sigma_max_online(const vector<T> &A) {
     const int n = A.size();
     T ans = 0;
     T s = 0;
@@ -58,7 +70,7 @@ template<typename T> static T sigma_max(const vector<T> &A) {
 }
 
 /// `Σmin(A[r], A[l])`
-template<typename T> static T sigma_min(const vector<T> &A) {
+template<typename T> static T sigma_min_online(const vector<T> &A) {
     const int n = A.size();
     T ans = 0;
     T s = 0;
@@ -71,6 +83,23 @@ template<typename T> static T sigma_min(const vector<T> &A) {
         s += a;
         S.add(a);
     }
+    return ans;
+}
+
+/// `Σmax(A[r], A[l])`
+template<typename T> static T sigma_max(vector<T> A) {
+    sort(A.begin(), A.end());
+    T ans = 0;
+    for (int i = 0; i < A.size(); i++) ans += (T)i * A[i];
+    return ans;
+}
+
+/// `Σmin(A[r], A[l])`
+template<typename T> static T sigma_min(vector<T> A) {
+    sort(A.begin(), A.end());
+    T ans = 0;
+    int n = A.size();
+    for (int i = 0; i < n; i++) ans += (T)(n - 1 - i) * A[i];
     return ans;
 }
 
