@@ -56,12 +56,12 @@ public:
         while (hld.head[u] != hld.head[v]) {
             if (hld.dep[hld.head[u]] < hld.dep[hld.head[v]]) swap(u, v);
             seg.apply(hld.nodein[hld.head[u]], hld.nodein[u] + 1, f);
-            rseg.apply(hld.n - (hld.nodein[u] + 1 - 1) - 1, hld.n - hld.nodein[hld.head[u]] - 1 + 1, f);
+            rseg.apply(hld.n - (hld.nodein[u]) - 1, hld.n - hld.nodein[hld.head[u]], f);
             u = hld.par[hld.head[u]];
         }
         if (hld.dep[u] < hld.dep[v]) swap(u, v);
         seg.apply(hld.nodein[v], hld.nodein[u] + 1, f);
-        rseg.apply(hld.n - (hld.nodein[u] + 1 - 1) - 1, hld.n - hld.nodein[v] - 1 + 1, f);
+        rseg.apply(hld.n - (hld.nodein[u]) - 1, hld.n - hld.nodein[v], f);
     }
 
     T get(int k) const {

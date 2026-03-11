@@ -32,11 +32,15 @@ private:
             } else {
                 v = ~v;
                 for (int i = 0; i < (int)G[v].size(); ++i) {
-                    int x = G[v][i];
-                    if (dep[x] < dep[v]) {
-                        par[v] = x;
-                        continue;
+                    if (dep[G[v][i]] < dep[v]) {
+                        par[v] = G[v][i];
+                        swap(G[v][i], G[v].back());
+                        G[v].pop_back();
+                        break;
                     }
+                }
+                for (int i = 0; i < (int)G[v].size(); ++i) {
+                    int x = G[v][i];
                     size[v] += size[x];
                     if (size[x] > size[G[v][0]]) {
                         swap(G[v][0], G[v][i]);
@@ -61,7 +65,6 @@ private:
                 int G_v0 = (int)G[v][0];
                 for (int i = (int)G[v].size()-1; i >= 0; --i) {
                     int x = G[v][i];
-                    if (x == par[v]) continue;
                     head[x] = (x == G_v0? head[v]: x);
                     st.emplace(~x);
                     st.emplace(x);
