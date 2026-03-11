@@ -125,5 +125,29 @@ public:
     int dist(int u, int v) const {
         return dep[u] + dep[v] - 2 * dep[lca(u, v)];
     }
+
+    int la(int v, int k) const {
+        if (k < 0 || dep[v] < k) return -1;
+        while (1) {
+            int h = head[v];
+            int dist_to_head = dep[v] - dep[h];
+            if (k <= dist_to_head) {
+                return hld[nodein[v] - k];
+            }
+            k -= dist_to_head + 1;
+            v = par[h];
+        }
+    }
+
+    int path_kth_elm(int s, int t, int k) const {
+        int l = lca(s, t);
+        int d = dep[s] + dep[t] - 2 * dep[l];
+        if (k < 0 || k > d) return -1;
+        if (k <= dep[s] - dep[l]) {
+            return la(s, k);
+        } else {
+            return la(t, d - k);
+        }
+    }
 };
 }  // namespace titan23
