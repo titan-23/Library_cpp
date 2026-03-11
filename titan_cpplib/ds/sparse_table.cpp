@@ -15,7 +15,8 @@ private:
 
 public:
     SparseTable() {}
-    SparseTable(vector<T> &a) : n((int)a.size()) {
+    SparseTable(const vector<T> &a) : n((int)a.size()) {
+        if (n == 0) return;
         int log = 32 - __builtin_clz(n) - 1;
         offset.resize(log+1);
         int sm = 0;
@@ -24,7 +25,7 @@ public:
             sm += n - (1<<i) + 1;
         }
         data.resize(sm);
-        memcpy(data.data(), a.data(), n*sizeof(T));
+        copy(a.begin(), a.end(), data.begin());
         for (int i = 0; i < log; ++i) {
             int l = 1 << i;
             int s = n - l + 1;
@@ -45,12 +46,16 @@ public:
         return op(data[offset[u]+l], data[offset[u]+r-(1<<u)]);
     }
 
+    T all_prod() const {
+        return prod(0, n);
+    }
+
     T get(const int k) const {
         assert(0 <= k && k < n);
         return data[k];
     }
 
-    int len() const {
+    int size() const {
         return n;
     }
 
