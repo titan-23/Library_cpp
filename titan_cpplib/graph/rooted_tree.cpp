@@ -83,6 +83,14 @@ public:
         return dep_weight[u] + dep_weight[v] - 2 * dep_weight[lca(u, v)];
     }
 
+    int lca(int u, int v) const {
+        while (true) {
+            if (nodein[u] > nodein[v]) swap(u, v);
+            if (head[u] == head[v]) return u;
+            v = par[head[v]];
+        }
+    }
+
     int la(int v, int k) const {
         if (k < 0 || dep[v] < k) return -1;
         while (1) {
@@ -251,7 +259,7 @@ public:
     }
 
     /// @brief デバッグ用
-    void debug_tree(int root = 0) {
+    void debug(int root = 0) {
         auto dfs = [&] (auto &&dfs, int v, int p, const string &pref, bool is_last) -> void {
             cerr << pref;
             if (v != root) {
