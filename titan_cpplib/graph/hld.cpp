@@ -49,7 +49,7 @@ private:
             }
         }
 
-        int curtime = 0;
+        int time = 0;
         st.emplace(~root);
         st.emplace(root);
         while (!st.empty()) {
@@ -58,9 +58,9 @@ private:
                 if (par[v] == -1) {
                     head[v] = v;
                 }
-                nodein[v] = curtime;
-                hld[curtime] = v;
-                ++curtime;
+                nodein[v] = time;
+                hld[time] = v;
+                ++time;
                 if (G[v].empty()) continue;
                 int G_v0 = (int)G[v][0];
                 for (int i = (int)G[v].size()-1; i >= 0; --i) {
@@ -70,7 +70,7 @@ private:
                     st.emplace(x);
                 }
             } else {
-                nodeout[~v] = curtime;
+                nodeout[~v] = time;
             }
         }
     }
@@ -93,15 +93,6 @@ public:
         return res;
     }
 
-    //! `u`, `v` の lca を返す / `O(logn)`
-    int lca(int u, int v) const {
-        while (true) {
-            if (nodein[u] > nodein[v]) swap(u, v);
-            if (head[u] == head[v]) return u;
-            v = par[head[v]];
-        }
-    }
-
     int get(int v) const {
         return nodein[v];
     }
@@ -120,34 +111,6 @@ public:
 
     pair<int, int> for_each_vertex_subtree(int v) const {
         return {nodein[v], nodeout[v]};
-    }
-
-    int dist(int u, int v) const {
-        return dep[u] + dep[v] - 2 * dep[lca(u, v)];
-    }
-
-    int la(int v, int k) const {
-        if (k < 0 || dep[v] < k) return -1;
-        while (1) {
-            int h = head[v];
-            int dist_to_head = dep[v] - dep[h];
-            if (k <= dist_to_head) {
-                return hld[nodein[v] - k];
-            }
-            k -= dist_to_head + 1;
-            v = par[h];
-        }
-    }
-
-    int path_kth_elm(int s, int t, int k) const {
-        int l = lca(s, t);
-        int d = dep[s] + dep[t] - 2 * dep[l];
-        if (k < 0 || k > d) return -1;
-        if (k <= dep[s] - dep[l]) {
-            return la(s, k);
-        } else {
-            return la(t, d - k);
-        }
     }
 };
 }  // namespace titan23
