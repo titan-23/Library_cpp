@@ -9,6 +9,9 @@ using namespace std;
 // Osa_k
 namespace titan23 {
 
+/// @brief 素因数分解, 約数列挙
+/// 前計算: <O(nloglogn), O(n)>
+/// クエリ: O(logn) 時間
 class Osa_k {
 private:
     vector<int> min_factor;
@@ -16,6 +19,8 @@ private:
 public:
     Osa_k() : min_factor(0) {}
 
+    /// @brief <O(nloglogn), O(n)>
+    /// @param n 最大値
     Osa_k(const int n) : min_factor(n+1) {
         for (int i = 0; i <= n; ++i) {
             min_factor[i] = i;
@@ -31,6 +36,7 @@ public:
         }
     }
 
+    /// @brief 素因数分解する / O(logn)
     vector<int> p_factorization(int n) const {
         vector<int> ret;
         while (n > 1) {
@@ -40,6 +46,7 @@ public:
         return ret;
     }
 
+    /// @brief 素因数分解する / O(logn)
     map<int, int> p_factorization_map(int n) const {
         map<int, int> ret;
         while (n > 1) {
@@ -49,6 +56,8 @@ public:
         return ret;
     }
 
+    /// @brief 約数列挙
+    /// O(logn + d(n)logd(n)) / d(n)はnの約数の個数
     vector<int> get_divisors(int n) const {
         if (n == 1) {
             return {1};
