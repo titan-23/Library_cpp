@@ -2,7 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include <cassert>
-#include <cstring>
+
 using namespace std;
 
 namespace titan23 {
@@ -56,32 +56,32 @@ private:
 public:
     StaticRmQ() {}
     StaticRmQ(const vector<T> &a, T INF) : n(a.size()), INF(INF) {
+        if (n == 0) return;
         int bucket_cnt = (n + W - 1) / W;
-        bucket.resize(W*bucket_cnt, INF);
+        bucket.assign(W * bucket_cnt, INF);
         copy(a.begin(), a.end(), bucket.begin());
+        bucket_bit.assign(W * bucket_cnt, 0);
         vector<T> init(bucket_cnt);
         for (int i = 0; i < bucket_cnt; ++i) {
-            init[i] = *min_element(bucket.begin()+i*W, bucket.begin()+(i+1)*W);
+            const int start = i * W;
+            u64 mask = 0;
+            T mn = bucket[start];
+            for (int j = 0; j < W; ++j) {
+                while (mask) {
+                    int p = 63 - __builtin_clzll(mask);
+                    if (bucket[start + p] > bucket[start + j]) {
+                        mask ^= (1ull << p);
+                    } else {
+                        break;
+                    }
+                }
+                mask |= (1ull << j);
+                bucket_bit[start + j] = mask;
+                mn = min(mn, bucket[start + j]);
+            }
+            init[i] = mn;
         }
         build_sparse_table(init);
-        bucket_bit.resize(W*bucket_cnt, 0);
-
-        int s[65];
-        int ptr;
-        for (int i = 0; i < bucket_cnt; ++i) {
-            ptr = 0;
-            const int start = W*i;
-            for (int j = 0; j < W; ++j) {
-                int g = -1;
-                while (ptr && bucket[start+s[ptr-1]] > bucket[start+j]) {
-                    ptr--;
-                }
-                if (ptr) g = s[ptr-1];
-                s[ptr] = j; ptr++;
-                if (g == -1) continue;
-                bucket_bit[i*W+j] = bucket_bit[i*W+g] | (1ull<<g);
-            }
-        }
     }
 
     // min a[l, r) / O(1)
@@ -89,21 +89,20 @@ public:
         assert(0 <= l && l <= r && r <= n);
         if (l == r) return INF;
         const int k1 = l / W;
-        const int k2 = (r-1) / W;
-        l -= k1 * W;
-        r -= k2 * W + 1;
+        const int k2 = (r - 1) / W;
+        const int rem_l = l & 63;
+        const int rem_r = (r - 1) & 63;
         if (k1 == k2) {
-            const u64 bit = bucket_bit[k1*W+r] >> l;
-            return bucket[k1*W + (bit ? bit_length(bit&(-bit))+l-1 : r)];
+            const u64 mask = bucket_bit[k1 * W + rem_r] & ~((1ull << rem_l) - 1);
+            return bucket[k1 * W + __builtin_ctzll(mask)];
         }
-        const u64 bitL = bucket_bit[k1*W+W-1] >> l;
-        const u64 bitR = bucket_bit[k2*W+r];
+        const u64 maskL = bucket_bit[k1 * W + 63] & ~((1ull << rem_l) - 1);
+        const u64 maskR = bucket_bit[k2 * W + rem_r];
         T ans = min(
-            bucket[k1*W + (bitL ? bit_length(bitL&(-bitL))+l-1 : W-1)],
-            bucket[k2*W + (bitR ? bit_length(bitR&(-bitR))-1 : r)]
+            bucket[k1 * W + __builtin_ctzll(maskL)],
+            bucket[k2 * W + __builtin_ctzll(maskR)]
         );
-        ans = min(ans, prod_sp(k1+1, k2));
-        return ans;
+        return min(ans, prod_sp(k1 + 1, k2));
     }
 };
-} // namespace
+} // namespace titan23
