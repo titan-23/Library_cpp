@@ -58,7 +58,7 @@ public:
                 if (deg[x] == 1) todo.push(x);
             }
         }
-        vector<vector<vector<int>>> F(N);
+        vector<vector<vector<int>>> F(n);
         vector<int> seen(n, false);
         for (int v = 0; v < n; ++v) if (is_cycle[v]) {
             vector<vector<int>> tree;
