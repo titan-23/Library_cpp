@@ -310,6 +310,7 @@ private:
         return k;
     }
 
+    // [l, r)
     int range_count(int l, int r) const {
         return index(r) - index(l);
     }
@@ -337,7 +338,8 @@ private:
         }
     }
 
-    T pop(int k=-1) {
+    T pop(int k) {
+        assert(0 <= k && k < len());
         AVLTreeSetNodePtr node = find_kth(k);
         T key = node->key;
         remove_iter(node);
@@ -368,6 +370,7 @@ private:
     }
 
     T get(int k) const {
+        assert(0 <= k && k < len());
         AVLTreeSetNodePtr node = root;
         while (true) {
             int t = node->left ? node->left->size : 0;
