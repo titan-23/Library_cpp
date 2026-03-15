@@ -71,9 +71,25 @@ class CppExpander:
 
     def _get_code(self, input_file_path: str) -> None:
         input_line_num = 0
+        in_intellisense = False
+        intellisense_depth = 0
         with open(input_file_path, "r", encoding="utf-8") as input_file:
             for line in input_file:
                 input_line_num += 1
+                stripped_line = line.strip()
+                if in_intellisense:
+                    if stripped_line.startswith("#if"):
+                        intellisense_depth += 1
+                    elif stripped_line.startswith("#endif"):
+                        intellisense_depth -= 1
+                        if intellisense_depth == 0:
+                            in_intellisense = False
+                    continue
+                if stripped_line.startswith("#ifdef __INTELLISENSE__"):
+                    in_intellisense = True
+                    intellisense_depth = 1
+                    continue
+
                 if line.startswith(f'#include "titan_cpplib'):
                     _, s = line.split()
                     target_file = s.replace('"', "")
