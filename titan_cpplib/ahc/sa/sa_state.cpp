@@ -1,8 +1,6 @@
 #pragma once
 
-// #include <omp.h>
-// -fopenmp
-// OMP_NUM_THREADS=8 ./main
+// OMP_NUM_THREADS=8 time ./a.out < in/0000.txt > out.txt
 
 #include <bits/stdc++.h>
 #include "titan_cpplib/ahc/timer.cpp"
