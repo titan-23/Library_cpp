@@ -11,9 +11,9 @@
 #include "titan_cpplib/others/print.cpp"
 using namespace std;
 
-#ifdef __INTELLISENSE__
-#include "titan_cpplib/ahc/sa/sa_state.cpp"
-#endif
+// #ifdef __INTELLISENSE__
+// #include "titan_cpplib/ahc/sa/sa_state.cpp"
+// #endif
 
 // minimize SA
 namespace sa {
