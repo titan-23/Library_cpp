@@ -1,3 +1,5 @@
+#pragma once
+
 // #include <omp.h>
 // -fopenmp
 // OMP_NUM_THREADS=8 ./main
