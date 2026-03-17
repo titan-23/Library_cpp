@@ -52,7 +52,6 @@ Result sa_run(const double TIME_LIMIT, const bool verbose = false) {
         if (now_time > TIME_LIMIT) break;
         ++cnt;
         ScoreType threshold = score - (START_TEMP-TEMP_VAL*now_time) * LOG_TABLE[sarnd.randrange(LOG_TABLE_SIZE)];
-        changed.pre_score = state.score;
         double progress = now_time / TIME_LIMIT;
         state.reset_is_valid();
         state.modify(threshold, progress);
@@ -71,7 +70,6 @@ Result sa_run(const double TIME_LIMIT, const bool verbose = false) {
                 }
             }
         } else {
-            state.score = changed.pre_score;
             state.rollback();
         }
     }
@@ -167,8 +165,6 @@ Result replica_run(
 
                 for (int step = 0; step < SWAP_ITER_INTERVAL; ++step) {
                     ScoreType threshold = states[r].get_score() - now_temp * LOG_TABLE[sarnd.randrange(LOG_TABLE_SIZE)];
-
-                    changed.pre_score = states[r].score;
                     states[r].reset_is_valid();
                     states[r].modify(threshold, progress);
                     modify[tid][changed.type]++;
@@ -181,7 +177,6 @@ Result replica_run(
                             thread_best_results[tid] = states[r].get_result();
                         }
                     } else {
-                        states[r].score = changed.pre_score;
                         states[r].rollback();
                     }
                 }

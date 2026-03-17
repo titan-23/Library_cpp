@@ -22,7 +22,6 @@ struct Param {
 struct Changed {
     int TYPE_CNT = 0; // TODO
     int type;
-    ScoreType pre_score;
     Changed() {}
 };
 
@@ -57,13 +56,12 @@ public:
     ScoreType get_true_score() const { return score; }
 
     // TODO
-    // thresholdを超えたらダメ(同じなら遷移する)
-    // is_validをfalseにすると必ずrejectする、rollbackはする
+    // thresholdを超えたら必ずreject(同じなら遷移する)
+    // is_validをfalseにすると必ずrejectする
     // progress:焼きなまし進行度 0.0~1.0 まで
     void modify(const ScoreType threshold, const double progress) {}
 
     // TODO
-    // scoreはもう戻してある
     void rollback() {}
 
     // TODO
