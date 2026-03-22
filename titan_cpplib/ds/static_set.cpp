@@ -16,7 +16,7 @@ private:
     int n;
 
 public:
-    StaticSet() {}
+    StaticSet() : missing(-1), n(0) {}
 
     /**
      * @brief Construct a new Static Set object / `O(1)`
@@ -32,15 +32,6 @@ public:
      * @param missing 使用しない値
      */
     StaticSet(vector<T> &a, T missing) : data(a), missing(missing) {
-        sort(data.begin(), data.end());
-        data.erase(unique(data.begin(), data.end()), data.end());
-        n = (int)data.size();
-    }
-
-    // コンストラクタ以外で使用するとき専用のメソッド
-    void build(vector<T> a, T missing) {
-        this->data = a;
-        this->missing = missing;
         sort(data.begin(), data.end());
         data.erase(unique(data.begin(), data.end()), data.end());
         n = (int)data.size();
@@ -64,66 +55,42 @@ public:
 
     //! `key` 以上で最小 / `O(logn)`
     T ge(const T &key) const {
-        if (key > data.back() || empty()) return missing;
-        int l = -1, r = n-1;
-        while (r - l > 1) {
-            int mid = (l + r) >> 1;
-            (data[mid] >= key ? r : l) = mid;
-        }
-        return data[r];
+        auto it = lower_bound(data.begin(), data.end(), key);
+        if (it == data.end()) return missing;
+        return *it;
     }
 
     //! `key` より大きくて最小 / `O(logn)`
     T gt(const T &key) const {
-        if (key >= data.back() || empty()) return missing;
-        int l = -1, r = n-1;
-        while (r - l > 1) {
-            int mid = (l + r) >> 1;
-            (data[mid] > key ? r : l) = mid;
-        }
-        return data[r];
+        auto it = upper_bound(data.begin(), data.end(), key);
+        if (it == data.end()) return missing;
+        return *it;
     }
 
     //! `key` 以下で最大 / `O(logn)`
     T le(const T &key) const {
-        if (key < data[0] || empty()) return missing;
-        int l = 0, r = n;
-        while (r - l > 1) {
-            int mid = (l + r) >> 1;
-            (data[mid] <= key ? l : r) = mid;
-        }
-        return data[l];
+        auto it = upper_bound(data.begin(), data.end(), key);
+        if (it == data.begin()) return missing;
+        return *(--it);
     }
 
     //! `key` 未満で最大 / `O(logn)`
     T lt(const T &key) const {
-        if (key <= data[0] || empty()) return missing;
-        int l = 0, r = n;
-        while (r - l > 1) {
-            int mid = (l + r) >> 1;
-            (data[mid] < key ? l : r) = mid;
-        }
-        return data[l];
+        auto it = lower_bound(data.begin(), data.end(), key);
+        if (it == data.begin()) return missing;
+        return *(--it);
     }
 
     //! `upper` 未満の要素数を返す / `O(logn)`
     int index(const T &upper) const {
-        int l = -1, r = n;
-        while (r - l > 1) {
-            int mid = (l + r) >> 1;
-            (data[mid] < upper ? l : r) = mid;
-        }
-        return r;
+        auto it = lower_bound(data.begin(), data.end(), upper);
+        return distance(data.begin(), it);
     }
 
     //! `upper` 以下の要素数を返す / `O(logn)`
     int index_right(const T &upper) const {
-        int l = -1, r = n;
-        while (r - l > 1) {
-            int mid = (l + r) >> 1;
-            (data[mid] <= upper ? l : r) = mid;
-        }
-        return r;
+        auto it = upper_bound(data.begin(), data.end(), upper);
+        return distance(data.begin(), it);
     }
 
     //! `key` の要素数を返す / `O(logn)`
