@@ -78,6 +78,11 @@ public:
         return {u, v};
     }
 
+    template <class RandomIt>
+    void shuffle(RandomIt first, RandomIt last) {
+        std::shuffle(first, last, _mt);
+    }
+
     //! `[begin, end)` の異なる乱数を2つ返す
     pair<int, int> rand_pair(const int begin, const int end) {
         assert(end - begin >= 2);
