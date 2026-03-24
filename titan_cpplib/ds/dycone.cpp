@@ -126,7 +126,6 @@ private:
 public:
   OfflineDynamicConnectivity(int n, int q)
     : n(n), q(q), t(0), group_count(n), P(n), W(n), sz(n), rd(n), sum(n), S(q) {
-    // rep is used elsewhere in original code; keep initialization explicit here
     for (int i = 0; i < n; ++i) {
       P[i] = i;
       rd[i] = i;

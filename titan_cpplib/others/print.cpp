@@ -25,8 +25,14 @@ template<typename T> ostream& operator<<(ostream& os, const vector<T>& a);
 template<typename T> ostream& operator<<(ostream& os, const vector<vector<T>>& a);
 // array<T, 2>
 template<typename T> ostream& operator<<(ostream& os, const array<T, 2>& a);
+// stack<T>
+template<typename T> ostream& operator<<(ostream& os, const stack<T>& s);
+// queue<T>
+template<typename T> ostream& operator<<(ostream& os, const queue<T>& q);
 // deque<T>
 template<typename T> ostream& operator<<(ostream& os, const deque<T>& dq);
+// priority_queue<T, Container, Compare>
+template<typename T, typename Container, typename Compare> ostream& operator<<(ostream& os, const priority_queue<T, Container, Compare>& pq);
 // set<T>
 template<typename T> ostream& operator<<(ostream& os, const set<T>& s);
 // multiset<T>
@@ -179,11 +185,58 @@ ostream& operator<<(ostream& os, const vector<vector<T>>& a) {
     return os;
 }
 
+// stack<T>
+template<typename T> ostream& operator<<(ostream& os, const stack<T>& s) {
+    stack<T> tmp = s;
+    vector<T> v;
+    while (!tmp.empty()) {
+        v.push_back(tmp.top());
+        tmp.pop();
+    }
+    os << "[";
+    for (int i = (int)v.size()-1; i >= 0; --i) {
+        if (i != (int)v.size()-1) os << ", ";
+        os << v[i];
+    }
+    os << "]";
+    return os;
+}
+
+// queue<T>
+template<typename T> ostream& operator<<(ostream& os, const queue<T>& q) {
+    queue<T> tmp = q;
+    os << "[";
+    bool first = true;
+    while (!tmp.empty()) {
+        if (!first) os << ", ";
+        first = false;
+        os << tmp.front();
+        tmp.pop();
+    }
+    os << "]";
+    return os;
+}
+
 // deque<T>
 template<typename T>
 ostream& operator<<(ostream& os, const deque<T>& dq) {
     vector<T> a(dq.begin(), dq.end());
     os << a;
+    return os;
+}
+
+// priority_queue<T, Container, Compare>
+template<typename T, typename Container, typename Compare> ostream& operator<<(ostream& os, const priority_queue<T, Container, Compare>& pq) {
+    priority_queue<T, Container, Compare> tmp = pq;
+    os << "[";
+    bool first = true;
+    while (!tmp.empty()) {
+        if (!first) os << ", ";
+        first = false;
+        os << tmp.top();
+        tmp.pop();
+    }
+    os << "]";
     return os;
 }
 
