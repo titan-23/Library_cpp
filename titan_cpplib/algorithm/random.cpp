@@ -26,6 +26,7 @@ private:
 
 public:
     Random() : _x(123456789), _y(362436069), _z(521288629), _w(88675123) {}
+    Random(unsigned int seed) { set_seed(seed); }
 
     void set_seed(unsigned int seed) {
         _x = seed;
@@ -99,30 +100,38 @@ public:
 
     //! `[begin, end)` の乱数を返す(実数)
     constexpr double randdouble(const double begin, const double end) {
-        assert(begin < end);
+        assert(begin <= end);
         return begin + random() * (end-begin);
+    }
+
+    template <typename RandomIt>
+    void shuffle(RandomIt first, RandomIt last) {
+        int n = distance(first, last);
+        for (int i = 0; i < n-1; ++i) {
+            int j = randrange(i, n);
+            iter_swap(first+i, first+j);
+        }
     }
 
     //! `vector` をインプレースにシャッフルする / `O(n)`
     template <typename T>
-    constexpr void shuffle(vector<T> &a) {
-        int n = a.size();
-        for (int i = 0; i < n-1; ++i) {
-            int j = randrange(i, n);
-            swap(a[i], a[j]);
-        }
+    void shuffle(vector<T> &a) {
+        shuffle(a.begin(), a.end());
     }
 
     template <typename T>
     vector<T> choices(const vector<T> &a, const int k) {
-        assert(a.size() >= k);
-        vector<T> r(k);
-        unordered_set<int> seen;
+        int n = a.size();
+        assert(n >= k);
+        vector<int> idx(n);
+        iota(idx.begin(), idx.end(), 0);
         for (int i = 0; i < k; ++i) {
-            int x = randrange(a.size());
-            while (seen.find(x) != seen.end()) x = randrange(a.size());
-            seen.insert(x);
-            r[i] = a[x];
+            int j = randrange(i, n);
+            swap(idx[i], idx[j]);
+        }
+        vector<T> r(k);
+        for (int i = 0; i < k; ++i) {
+            r[i] = a[idx[i]];
         }
         return r;
     }

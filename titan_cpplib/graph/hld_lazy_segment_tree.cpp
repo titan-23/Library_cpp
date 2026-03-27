@@ -33,7 +33,7 @@ public:
         this->rseg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(b);
     }
 
-    T path_prod(int u, int v) const {
+    T path_prod(int u, int v) {
         T lres = e(), rres = e();
         while (hld.head[u] != hld.head[v]) {
             if (hld.dep[hld.head[u]] > hld.dep[hld.head[v]]) {
@@ -64,7 +64,7 @@ public:
         rseg.apply(hld.n - (hld.nodein[u]) - 1, hld.n - hld.nodein[v], f);
     }
 
-    T get(int k) const {
+    T get(int k) {
         return seg.get(hld.nodein[k]);
     }
 
@@ -73,7 +73,7 @@ public:
         rseg.set(hld.n - hld.nodein[k] - 1, v);
     }
 
-    T subtree_prod(int v) const {
+    T subtree_prod(int v) {
         return seg.prod(hld.nodein[v], hld.nodeout[v]);
     }
 
