@@ -1,14 +1,7 @@
 #pragma once
-
-#include <iostream>
-#include <vector>
-#include <cassert>
-#include <algorithm>
-#include <tuple>
-
+#include <bits/stdc++.h>
 #include "titan_cpplib/others/print.cpp"
 #include "titan_cpplib/algorithm/random.cpp"
-#include "titan_cpplib/ahc/state_pool.cpp"
 #include "titan_cpplib/ahc/timer.cpp"
 #include "titan_cpplib/ds/hash_dict.cpp"
 #include "titan_cpplib/ahc/beam_search/beam_param.cpp"
@@ -18,7 +11,7 @@ using namespace std;
 //! 木上のビームサーチライブラリ
 namespace flying_squirrel {
 
-template<typename ScoreType, typename HashType, class Action, class State>
+template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=true>
 class BeamSearchWithTree {
     // ref: https://eijirou-kyopro.hatenablog.com/entry/2024/02/01/115639
 
@@ -31,6 +24,11 @@ private:
     ActionIDType ActionID;
     vector<Action> result;
     Action DAMMY_ACTION;
+
+    bool found_finished;
+    ScoreType best_finished_score;
+    int best_finished_par;
+    Action best_finished_action;
 
     struct TreeNode {
         int dir_or_leaf_id;
@@ -55,6 +53,58 @@ private:
     // dir or id := 葉のとき、leaf_id
     //              そうでないとき、行きがけなら-1、帰りがけなら-2
     vector<TreeNode> tree, nxt_tree;
+    int last_fixed_node_id;
+
+    struct HistoryNode {
+        int node_id;
+        int parent_id;
+        int turn;
+        ScoreType score;
+        HashType hash;
+        string action_str;
+        string state_info;
+        int status; // 0: 採用, 1: 破棄, 2: 無効
+    };
+    struct TurnSnapshot {
+        int turn;
+        vector<int> active_node_ids;
+    };
+    vector<TurnSnapshot> snapshots;
+    vector<HistoryNode> history;
+    int node_id_counter;
+    void dump_history_json(const string& filename) const {
+        ofstream ofs(filename);
+        ofs << "{\n  \"INF\": " << INF << ",\n  \"nodes\": [\n";
+        for (size_t i = 0; i < history.size(); ++i) {
+            const auto& node = history[i];
+            ofs << "    {\n"
+                << "      \"node_id\": " << node.node_id << ",\n"
+                << "      \"parent_id\": " << node.parent_id << ",\n"
+                << "      \"turn\": " << node.turn << ",\n"
+                << "      \"score\": " << node.score << ",\n"
+                << "      \"hash\": " << node.hash << ",\n"
+                << "      \"action\": \"" << node.action_str << "\",\n"
+                << "      \"state_info\": " << (node.state_info.empty() ? "{}" : node.state_info) << ",\n"
+                << "      \"status\": " << node.status << "\n"
+                << "    }";
+            if (i + 1 < history.size()) ofs << ",";
+            ofs << "\n";
+        }
+        ofs << "  ],\n  \"snapshots\": [\n";
+        for (size_t i = 0; i < snapshots.size(); ++i) {
+            ofs << "    {\n"
+                << "      \"turn\": " << snapshots[i].turn << ",\n"
+                << "      \"active_node_ids\": [";
+            for (size_t j = 0; j < snapshots[i].active_node_ids.size(); ++j) {
+                ofs << snapshots[i].active_node_ids[j];
+                if (j + 1 < snapshots[i].active_node_ids.size()) ofs << ", ";
+            }
+            ofs << "]\n    }";
+            if (i + 1 < snapshots.size()) ofs << ",";
+            ofs << "\n";
+        }
+        ofs << "  ]\n}\n";
+    }
 
     class Candidates {
     private:
@@ -80,14 +130,10 @@ private:
 
         Candidates() {}
 
-        int size() const {
-            return entry;
-        }
+        int size() const { return entry; }
 
         /// @brief 現在のworstを返す / これ以上なら意味ない
-        ScoreType threshold() const {
-            return entry < beam_width ? numeric_limits<ScoreType>::max() : seg[1].first;
-        }
+        ScoreType threshold() const { return entry < beam_width ? INF : seg[1].first; }
 
         /// 追加できたらtrueを返す
         bool push(
@@ -132,7 +178,7 @@ private:
             if (seg.size() < 2*s) {
                 seg.resize(2*s);
             }
-            fill(seg.begin(), seg.begin()+(2*w), make_pair(numeric_limits<ScoreType>::lowest(), -1));
+            fill(seg.begin(), seg.begin()+(2*w), make_pair(-INF, -1));
             if (hashidx.size() < w) {
                 hashidx.resize(w);
                 next_beam.resize(w);
@@ -170,32 +216,68 @@ private:
     void get_next_beam(State* state, const int t_turn, const int turn) {
         if (turn == 0) {
             actions.clear();
-            state->get_actions(actions, t_turn, (result.empty() ? DAMMY_ACTION : result.back()));
+            state->get_actions(actions, t_turn, (result.empty() ? DAMMY_ACTION : result.back()), candidates.threshold());
+            int parent_id = (t_turn == 0) ? -1 : last_fixed_node_id;
             for (Action &action : actions) {
-                auto [score, hash] = state->try_op(action, candidates.threshold());
-                if (candidates.push(score, hash, PRE_ORDER, move(action), ActionID)) {
-                    ActionID++;
+                auto [score, hash, finished] = state->try_op(action, candidates.threshold());
+                int current_node_id = node_id_counter++;
+                int status = 0;
+                if (score >= INF) {
+                    status = 2;
+                } else if (finished) {
+                    if (!found_finished || score < best_finished_score) {
+                        found_finished = true;
+                        best_finished_score = score;
+                        best_finished_par = PRE_ORDER;
+                        best_finished_action = action;
+                    }
+                } else {
+                    if (!candidates.push(score, hash, PRE_ORDER, action, current_node_id)) {
+                        status = 1;
+                    }
+                }
+                if (record_history) {
+                    string action_str = action.to_string();
+                    history.push_back({current_node_id, parent_id, t_turn + 1, score, hash, move(action_str), state->get_state_info(), status});
                 }
             }
             return;
         }
 
         int leaf_id = 0;
-        for (int i = 0; i < tree.size(); ++i) {
-            auto &[dir_or_leaf_id, action, _] = tree[i];
+        for (int i = 0; i < (int)tree.size(); ++i) {
+            auto &[dir_or_leaf_id, action, action_id] = tree[i];
             if (dir_or_leaf_id >= 0) {
-                state->apply_op(move(action));
+                state->apply_op(action);
                 actions.clear();
-                state->get_actions(actions, t_turn, action);
+                int parent_id = action_id;
+                state->get_actions(actions, t_turn, action, candidates.threshold());
                 tree[i].dir_or_leaf_id = leaf_id;
                 for (Action &action : actions) {
-                    auto [score, hash] = state->try_op(action, candidates.threshold());
-                    if (candidates.push(score, hash, leaf_id, move(action), ActionID)) {
-                        ActionID++;
+                    auto [score, hash, finished] = state->try_op(action, candidates.threshold());
+                    int current_node_id = node_id_counter++;
+                    int status = 0;
+                    if (score >= INF) {
+                        status = 2;
+                    } else if (finished) {
+                        if (!found_finished || score < best_finished_score) {
+                            found_finished = true;
+                            best_finished_score = score;
+                            best_finished_par = leaf_id;
+                            best_finished_action = action;
+                        }
+                    } else {
+                        if (!candidates.push(score, hash, leaf_id, action, current_node_id)) {
+                            status = 1;
+                        }
+                    }
+                    if (record_history) {
+                        string action_str = action.to_string();
+                        history.push_back({current_node_id, parent_id, t_turn + 1, score, hash, move(action_str), state->get_state_info(), status});
                     }
                 }
                 ++leaf_id;
-                state->rollback(move(action));
+                state->rollback(action);
             } else if (dir_or_leaf_id == PRE_ORDER) {
                 state->apply_op(move(action));
             } else {
@@ -208,7 +290,7 @@ private:
     int update_tree(State* state, const int turn) {
         nxt_tree.clear();
         if (turn == 0) {
-            for (int i = 0; i < candidates.size(); ++i) {
+            for (int i = 0; i < (int)candidates.size(); ++i) {
                 const auto &[par, _, new_action, action_id] = candidates.next_beam[i];
                 assert(par == -1);
                 nxt_tree.emplace_back(0, move(new_action), action_id);
@@ -226,6 +308,7 @@ private:
                 ++i;
                 result.emplace_back(action);
                 state->apply_op(action);
+                last_fixed_node_id = action_id;
                 tree.pop_back();
                 apply_only_turn++;
             } else {
@@ -271,8 +354,8 @@ private:
 
     void get_result() {
         int best_id = -1;
-        ScoreType best_score = 0;
-        for (int i = 0; i < candidates.size(); ++i) {
+        ScoreType best_score = -INF;
+        for (int i = 0; i < (int)candidates.size(); ++i) {
             const auto &[par, score, _, __] = candidates.next_beam[i];
             if (best_id == -1 || score < best_score) {
                 best_score = score;
@@ -282,8 +365,8 @@ private:
         if (best_id == -1) {
             int best_ch_idx = -1;
             Action best_action;
-            ScoreType best_score = 0;
-            for (int i = 0; i < candidates.size(); ++i) {
+            ScoreType best_score = -INF;
+            for (int i = 0; i < (int)candidates.size(); ++i) {
                 const auto &[_, score, action, __] = candidates.next_beam[i];
                 if (best_ch_idx == -1 || score < best_score) {
                     best_score = score;
@@ -307,15 +390,20 @@ private:
                 result.pop_back();
             }
         }
-        cerr << PRINT_RED << "Error: 解が見つかりませんでした" << PRINT_NONE << endl;
+        cerr << "[BeamSearch] " << to_red("Error: 解が見つかりませんでした") << endl;
         assert(false);
     }
 
     void init_bs(const BeamParam &param) {
         beam_timer.reset();
         rnd = titan23::Random();
-        ActionID = 0;
+        node_id_counter = 0;
+        history.clear();
+        snapshots.clear();
         result.clear();
+        found_finished = false;
+        last_fixed_node_id = -1;
+        best_finished_score = INF;
     }
 
 public:
@@ -326,39 +414,56 @@ public:
      * @param verbose ログ出力するかどうか
      * @return vector<Action>
      */
-    vector<Action> search(BeamParam &param, const bool verbose=false) {
+    vector<Action> search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
         init_bs(param);
-        if (verbose) cerr << PRINT_GREEN << "Info: start search()" << PRINT_NONE << endl;
+        if (verbose) cerr << PRINT_GREEN << "[BeamSearch] Info: start search()" << PRINT_NONE << endl;
         State* state = new State;
         state->init();
 
         int now_turn = 0;
         for (int turn = 0; turn < param.max_turn; ++turn) {
             double now_time = beam_timer.elapsed();
-            if (verbose) cerr << "\nInfo: # turn : " << turn+1 << " | " << now_time << " ms" << endl;
+            if (verbose) cerr << "\n[BeamSearch] Info: # turn : " << turn+1 << " | " << now_time << " [ms]" << endl;
 
             // 次のビーム候補を求める
             int w = param.get_beam_width(param.max_turn-turn, tree.size(), param.time_limit-beam_timer.elapsed());
             candidates.reset(w);
             get_next_beam(state, turn, turn-now_turn);
-            candidates.shuffle(rnd);
 
-            if (candidates.size() == 0) {
-                cerr << to_red("Error: \t次の候補が見つかりませんでした") << endl;
-                assert(candidates.size() > 0);
-            }
-
-            BeamCandidate bests = candidates.get_best();
-
-            if (verbose) cerr << "Info: \tbest_score = " << bests.score << endl;
-            if (bests.score == 0) { // TODO 終了条件
-                if (verbose) cerr << to_green("Info: find valid solution.") << endl;
+            if (found_finished) {
+                if (verbose) cerr << "[BeamSearch] Info: find valid solution." << endl;
                 candidates.next_beam.clear();
-                candidates.next_beam.push_back(bests);
+                candidates.next_beam.emplace_back(best_finished_par, best_finished_score, best_finished_action, 0);
                 get_result();
                 result.emplace_back(candidates.next_beam[0].action);
                 if (verbose) param.report();
+                if (record_history) dump_history_json(history_file);
                 return result;
+            }
+
+            if (candidates.size() == 0) {
+                cerr << to_red("[BeamSearch] Error: \t次の候補が見つかりませんでした") << endl;
+                assert(candidates.size() > 0);
+            }
+
+            if (verbose) {
+                BeamCandidate bests = candidates.get_best();
+                cerr << "[BeamSearch] Info: \tbest_score = " << bests.score << endl;
+            }
+
+            if (record_history) {
+                unordered_set<int> survived_nodes;
+                for (int i = 0; i < candidates.size(); ++i) {
+                    survived_nodes.insert(candidates.next_beam[i].action_id);
+                }
+                for (int i = history.size() - 1; i >= 0; --i) {
+                    if (history[i].turn != turn + 1) break;
+                    if (history[i].status == 0 && survived_nodes.find(history[i].node_id) == survived_nodes.end()) {
+                        history[i].status = 1;
+                    }
+                }
+                vector<int> active_ids(survived_nodes.begin(), survived_nodes.end());
+                snapshots.push_back({turn + 1, active_ids});
             }
 
             // 探索木の更新
@@ -369,6 +474,41 @@ public:
                     }
                 );
             }
+            if (turn != 0) {
+                // sort(candidates.next_beam.begin(), candidates.next_beam.begin() + candidates.size(),
+                //     [] (const auto& a, const auto& b) {
+                //         if (a.par != b.par) return a.par < b.par;
+                //         return a.score < b.score;
+                //     }
+                // );
+                int max_par = 0;
+                for (int i = 0; i < candidates.size(); ++i) {
+                    if (candidates.next_beam[i].par > max_par) {
+                        max_par = candidates.next_beam[i].par;
+                    }
+                }
+                vector<ScoreType> par_top_score(max_par + 1, INF);
+                for (int i = 0; i < candidates.size(); ++i) {
+                    int par = candidates.next_beam[i].par;
+                    ScoreType score = candidates.next_beam[i].score;
+                    if (score < par_top_score[par]) {
+                        par_top_score[par] = score;
+                    }
+                }
+                sort(candidates.next_beam.begin(), candidates.next_beam.begin() + candidates.size(),
+                    [&par_top_score] (const auto& a, const auto& b) {
+                        if (par_top_score[a.par] != par_top_score[b.par]) return par_top_score[a.par] < par_top_score[b.par];
+                        if (a.par != b.par) return a.par < b.par;
+                        return a.score < b.score;
+                    }
+                );
+            } else {
+                sort(candidates.next_beam.begin(), candidates.next_beam.begin() + candidates.size(),
+                    [] (const auto& a, const auto& b) {
+                        return a.score < b.score;
+                    }
+                );
+            }
             int apply_only_turn = update_tree(state, turn);
             now_turn += apply_only_turn;
 
@@ -376,9 +516,12 @@ public:
         }
 
         // 答えを復元する
-        if (verbose) cerr << to_green("Info: max_turn finished.") << endl;
-        if (verbose) param.report();
+        if (verbose) {
+            cerr << to_green("[BeamSearch] Info: max_turn finished.") << endl;
+            param.report();
+        }
         get_result();
+        if (record_history) dump_history_json(history_file);
         return result;
     }
 };

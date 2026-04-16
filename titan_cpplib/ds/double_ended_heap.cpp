@@ -1,5 +1,7 @@
 #pragma once
 #include <vector>
+#include <utility>
+#include <algorithm>
 #include <cassert>
 #include "titan_cpplib/others/print.cpp"
 using namespace std;
@@ -8,34 +10,36 @@ namespace titan23 {
 
 template<typename T>
 class DoubleEndedHeap {
-private:
-    vector<T> data;
+public:
+    vector<T> a;
 
+private:
     void heapify() {
-        int n = data.size();
-        for (int i = n-1; i >= 0; --i) {
-            if ((i & 1) && data[i-1] < data[i]) {
-                swap(data[i-1], data[i]);
+        int n = a.size();
+        for (int i = n - 1; i >= 0; --i) {
+            if ((i & 1) && a[i - 1] < a[i]) {
+                std::swap(a[i - 1], a[i]);
             }
             int k = down(i);
             up(k, i);
         }
     }
 
-    int parent(int k) const {
+    inline int parent(int k) const {
         return ((k >> 1) - 1) & (~1);
     }
 
     int down(int k) {
-        int n = data.size();
+        int n = a.size();
+        T temp = std::move(a[k]);
         if (k & 1) {
             while (2 * k + 1 < n) {
                 int c = 2 * k + 3;
-                if (n <= c || data[c - 2] < data[c]) {
+                if (n <= c || a[c - 2] < a[c]) {
                     c -= 2;
                 }
-                if (c < n && data[c] < data[k]) {
-                    swap(data[k], data[c]);
+                if (c < n && a[c] < temp) {
+                    a[k] = std::move(a[c]);
                     k = c;
                 } else {
                     break;
@@ -44,119 +48,137 @@ private:
         } else {
             while (2 * k + 2 < n) {
                 int c = 2 * k + 4;
-                if (n <= c || data[c] < data[c - 2]) {
+                if (n <= c || a[c] < a[c - 2]) {
                     c -= 2;
                 }
-                if (c < n && data[k] < data[c]) {
-                    swap(data[k], data[c]);
+                if (c < n && temp < a[c]) {
+                    a[k] = std::move(a[c]);
                     k = c;
                 } else {
                     break;
                 }
             }
         }
+        a[k] = std::move(temp);
         return k;
     }
 
     int up(int k, int root = 1) {
-        if ((k | 1) < (int)data.size() && data[k & (~1)] < data[k | 1]) {
-            swap(data[k & (~1)], data[k | 1]);
-            k ^= 1;
+        T temp = std::move(a[k]);
+        if ((k | 1) < (int)a.size()) {
+            int other = k ^ 1;
+            bool swap_needed = (k & 1) ? (temp > a[other]) : (temp < a[other]);
+            if (swap_needed) {
+                a[k] = std::move(a[other]);
+                k = other;
+            }
         }
         while (root < k) {
-            int p = parent(k);
-            if (data[p] >= data[k]) {
+            int p_max = parent(k);
+            int p_min = p_max | 1;
+
+            if (temp > a[p_max]) {
+                a[k] = std::move(a[p_max]);
+                k = p_max;
+            } else if (temp < a[p_min]) {
+                a[k] = std::move(a[p_min]);
+                k = p_min;
+            } else {
                 break;
             }
-            swap(data[p], data[k]);
-            k = p;
         }
-        while (root < k) {
-            int p = parent(k) | 1;
-            if (data[k] >= data[p]) {
-                break;
-            }
-            swap(data[p], data[k]);
-            k = p;
-        }
+        a[k] = std::move(temp);
         return k;
     }
 
 public:
     DoubleEndedHeap() {}
 
-    /// 構築する / O(N)のはず
-    DoubleEndedHeap(const vector<T> &a) : data(a) {
+    DoubleEndedHeap(const vector<T> &v) : a(v) {
         heapify();
     }
 
-    /// keyを追加する / O(logN)
-    void insert(T key) {
-        data.push_back(key);
-        up((int)data.size()-1);
+    void reserve(int cap) {
+        a.reserve(cap);
     }
 
-    /// 最小の要素を削除して返す / O(logN)
+    void insert(const T& key) {
+        a.push_back(key);
+        up((int)a.size() - 1);
+    }
+
     T pop_min() {
-        if ((int)data.size() < 3) {
-            T res = data.back();
-            data.pop_back();
+        if ((int)a.size() < 3) {
+            T res = std::move(a.back());
+            a.pop_back();
             return res;
         }
-        swap(data[1], data.back());
-        T res = data.back();
-        data.pop_back();
+        T res = std::move(a[1]);
+        a[1] = std::move(a.back());
+        a.pop_back();
         int k = down(1);
         up(k);
         return res;
     }
 
-    /// 最大の要素を削除して返す / O(logN)
     T pop_max() {
-        if ((int)data.size() < 2) {
-            T res = data.back();
-            data.pop_back();
+        if ((int)a.size() < 2) {
+            T res = std::move(a.back());
+            a.pop_back();
             return res;
         }
-        swap(data[0], data.back());
-        T res = data.back();
-        data.pop_back();
+        T res = std::move(a[0]);
+        a[0] = std::move(a.back());
+        a.pop_back();
         int k = down(0);
         up(k);
         return res;
     }
 
-    /// 最小の要素を返す / O(1)
-    T get_min() {
-        return (int)data.size() < 2 ? data[0] : data[1];
+    const T& get_min() const {
+        return (int)a.size() < 2 ? a[0] : a[1];
     }
 
-    /// 最大の要素を返す / O(1)
-    T get_max() {
-        return data[0];
+    /// 最大の要素を pop して返し、新たに key を挿入する / O(logN)
+    void replace_max(const T& key) {
+        a[0] = key;
+        int k = down(0);
+        up(k);
+    }
+
+    T& get_min() {
+        return (int)a.size() < 2 ? a[0] : a[1];
+    }
+
+    const T& get_max() const {
+        return a[0];
+    }
+
+    T& get_max() {
+        return a[0];
     }
 
     void clear() {
-        data.clear();
+        a.clear();
     }
 
     bool empty() const {
-        return data.empty();
+        return a.empty();
     }
 
     int size() const {
-        return (int)data.size();
+        return (int)a.size();
     }
 
     vector<T> tovector() const {
-        vector<T> a = data;
-        sort(a.begin(), a.end());
-        return a;
+        vector<T> b = a;
+        sort(b.begin(), b.end());
+        return b;
     }
 
     friend ostream& operator<<(ostream& os, const titan23::DoubleEndedHeap<T> &hq) {
-        vector<T> a = hq.tovector();
-        os << a;
+        vector<T> b = hq.tovector();
+        os << b;
         return os;
     }
 };

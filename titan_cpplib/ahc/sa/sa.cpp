@@ -45,6 +45,7 @@ Result sa_run(const double TIME_LIMIT, const bool verbose = false) {
     double now_time;
 
     long long cnt = 0, bst_cnt = 0, upd_cnt = 0;
+    long long valid_cnt = 0;
     vector<long long> accept(changed.TYPE_CNT), modify(changed.TYPE_CNT);
     while (true) {
         // if ((cnt & 31) == 0) now_time = sa_timer.elapsed();
@@ -57,6 +58,7 @@ Result sa_run(const double TIME_LIMIT, const bool verbose = false) {
         state.modify(threshold, progress);
         modify[changed.type]++;
         ScoreType new_score = state.get_score();
+        if (state.is_valid) valid_cnt++;
         if (state.is_valid && new_score <= threshold) {
             ++upd_cnt;
             accept[changed.type]++;
@@ -81,6 +83,7 @@ Result sa_run(const double TIME_LIMIT, const bool verbose = false) {
         cerr << "Info: bst=" << bst_cnt << endl;
         cerr << "Info: ac=" << upd_cnt << endl;
         cerr << "Info: loop=" << cnt << endl;
+        cerr << "Info: vaid_cnt=" << valid_cnt << ", " << (cnt > 0 ? (int)((double)valid_cnt/cnt*100) : 0) << "%" << endl;;
         cerr << "Info: accept rate=" << (cnt > 0 ? (int)((double)upd_cnt/cnt*100) : 0) << "%" << endl;
         cerr << "Info: update best rate=" << (cnt > 0 ? (int)((double)bst_cnt/cnt*100) : 0) << "%" << endl;
         cerr << "Info: best_score = " << best_result.score << endl;

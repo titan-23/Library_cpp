@@ -1,13 +1,6 @@
 #pragma once
 
-#include <iostream>
-#include <vector>
-#include <set>
-#include <tuple>
-#include <unordered_set>
-#include <algorithm>
-#include <map>
-#include <unordered_map>
+#include <bits/stdc++.h>
 using namespace std;
 
 // print
@@ -68,6 +61,11 @@ string spacefill(const string s, const int f) {
     for (int i = 0; i < f-n; ++i) t += " ";
     t += s;
     return t;
+}
+
+string spacefill(const int x, const int f) {
+    string s = to_string(x);
+    return spacefill(s, f);
 }
 
 string zfill(const string s, const int f) {
