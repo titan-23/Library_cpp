@@ -170,7 +170,7 @@ private:
             return true;
         }
 
-        void reset(int w) {
+        void reset(int turn, int w) {
             beam_width = w;
             while (s < w) {
                 s <<= 1;
@@ -427,7 +427,7 @@ public:
 
             // 次のビーム候補を求める
             int w = param.get_beam_width(param.max_turn-turn, tree.size(), param.time_limit-beam_timer.elapsed());
-            candidates.reset(w);
+            candidates.reset(turn, w);
             get_next_beam(state, turn, turn-now_turn);
 
             if (found_finished) {
@@ -470,34 +470,6 @@ public:
             if (turn != 0) {
                 sort(candidates.next_beam.begin(), candidates.next_beam.begin() + candidates.size(),
                     [] (const auto& a, const auto& b) {
-                        return a.par < b.par;
-                    }
-                );
-            }
-            if (turn != 0) {
-                // sort(candidates.next_beam.begin(), candidates.next_beam.begin() + candidates.size(),
-                //     [] (const auto& a, const auto& b) {
-                //         if (a.par != b.par) return a.par < b.par;
-                //         return a.score < b.score;
-                //     }
-                // );
-                int max_par = 0;
-                for (int i = 0; i < candidates.size(); ++i) {
-                    if (candidates.next_beam[i].par > max_par) {
-                        max_par = candidates.next_beam[i].par;
-                    }
-                }
-                vector<ScoreType> par_top_score(max_par + 1, INF);
-                for (int i = 0; i < candidates.size(); ++i) {
-                    int par = candidates.next_beam[i].par;
-                    ScoreType score = candidates.next_beam[i].score;
-                    if (score < par_top_score[par]) {
-                        par_top_score[par] = score;
-                    }
-                }
-                sort(candidates.next_beam.begin(), candidates.next_beam.begin() + candidates.size(),
-                    [&par_top_score] (const auto& a, const auto& b) {
-                        if (par_top_score[a.par] != par_top_score[b.par]) return par_top_score[a.par] < par_top_score[b.par];
                         if (a.par != b.par) return a.par < b.par;
                         return a.score < b.score;
                     }
