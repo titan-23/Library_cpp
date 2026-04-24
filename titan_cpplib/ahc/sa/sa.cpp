@@ -9,10 +9,6 @@
 #include "titan_cpplib/others/print.cpp"
 using namespace std;
 
-// #ifdef __INTELLISENSE__
-// #include "titan_cpplib/ahc/sa/sa_state.cpp"
-// #endif
-
 // minimize SA
 namespace sa {
 
@@ -25,43 +21,45 @@ static bool is_log_initialized = [] {
     return true;
 }();
 
-// TIME_LIMIT: ms
-Result sa_run(const double TIME_LIMIT, const bool verbose = false) {
+template<class State>
+typename State::Result sa_run(const double TIME_LIMIT, const bool verbose = false) {
     titan23::Timer sa_timer;
-
-    const double START_TEMP = param.start_temp;
-    const double END_TEMP   = param.end_temp;
-    const double TEMP_VAL = (START_TEMP - END_TEMP) / TIME_LIMIT;
+    titan23::Random sa_rnd;
 
     State state;
     state.init();
+
+    const double START_TEMP = state.param.start_temp;
+    const double END_TEMP   = state.param.end_temp;
+    const double TEMP_VAL = (START_TEMP - END_TEMP) / TIME_LIMIT;
+
     if (verbose) {
         cerr << "init-fin" << endl;
         cerr << sa_timer.elapsed() << endl;
         cerr << state.get_true_score() << endl;
     }
-    Result best_result = state.get_result();
-    ScoreType score = best_result.score;
+    typename State::Result best_result = state.get_result();
+    typename State::ScoreType score = best_result.score;
     double now_time;
 
     long long cnt = 0, bst_cnt = 0, upd_cnt = 0;
     long long valid_cnt = 0;
-    vector<long long> accept(changed.TYPE_CNT), modify(changed.TYPE_CNT);
+    vector<long long> accept(state.changed.TYPE_CNT), modify(state.changed.TYPE_CNT);
     while (true) {
         // if ((cnt & 31) == 0) now_time = sa_timer.elapsed();
         now_time = sa_timer.elapsed();
         if (now_time > TIME_LIMIT) break;
         ++cnt;
-        ScoreType threshold = score - (START_TEMP-TEMP_VAL*now_time) * LOG_TABLE[sarnd.randrange(LOG_TABLE_SIZE)];
+        typename State::ScoreType threshold = score - (START_TEMP-TEMP_VAL*now_time) * LOG_TABLE[sa_rnd.randrange(LOG_TABLE_SIZE)];
         double progress = now_time / TIME_LIMIT;
         state.reset_is_valid();
         state.modify(threshold, progress);
-        modify[changed.type]++;
-        ScoreType new_score = state.get_score();
+        modify[state.changed.type]++;
+        typename State::ScoreType new_score = state.get_score();
         if (state.is_valid) valid_cnt++;
         if (state.is_valid && new_score <= threshold) {
             ++upd_cnt;
-            accept[changed.type]++;
+            accept[state.changed.type]++;
             state.advance();
             score = new_score;
             if (score < best_result.score) {
@@ -93,7 +91,8 @@ Result sa_run(const double TIME_LIMIT, const bool verbose = false) {
     return best_result;
 }
 
-Result replica_run(
+template<class State>
+typename State::Result replica_run(
     const double TIME_LIMIT,
     const int NUM_REPLICAS=8,
     const int SWAP_ITER_INTERVAL=100,
@@ -101,22 +100,24 @@ Result replica_run(
     const bool record=false
 ) {
     titan23::Timer sa_timer;
+    thread_local titan23::Random sa_rnd;
 
+    State dummy_state;
     vector<double> temps(NUM_REPLICAS);
     for (int i = 0; i < NUM_REPLICAS; ++i) {
-        temps[i] = param.start_temp * pow(param.end_temp / param.start_temp, (double)i / max(1, NUM_REPLICAS - 1));
+        temps[i] = dummy_state.param.start_temp * pow(dummy_state.param.end_temp / dummy_state.param.start_temp, (double)i / max(1, NUM_REPLICAS - 1));
     }
     vector<State> states(NUM_REPLICAS);
     vector<int> rep_idx(NUM_REPLICAS);
 
     int max_threads = omp_get_max_threads();
-    int type_cnt = max(1, changed.TYPE_CNT);
+    int type_cnt = max(1, dummy_state.changed.TYPE_CNT);
     vector<vector<long long>> accept(max_threads, vector<long long>(type_cnt, 0));
     vector<vector<long long>> modify(max_threads, vector<long long>(type_cnt, 0));
 
     #pragma omp parallel
     {
-        sarnd.set_seed(1000 + omp_get_thread_num());
+        sa_rnd.set_seed(1000 + omp_get_thread_num());
         #pragma omp for schedule(static)
         for (int i = 0; i < NUM_REPLICAS; ++i) {
             states[i].init();
@@ -124,7 +125,7 @@ Result replica_run(
         }
     }
 
-    Result best_result = states[0].get_result();
+    typename State::Result best_result = states[0].get_result();
     for (int i = 1; i < NUM_REPLICAS; ++i) {
         if (states[i].get_score() < best_result.score) {
             best_result = states[i].get_result();
@@ -136,7 +137,7 @@ Result replica_run(
     long long swap_accept_total = 0;
     long long total_iter = 0;
     double now_time = sa_timer.elapsed();
-    vector<Result> thread_best_results(max_threads, best_result);
+    vector<typename State::Result> thread_best_results(max_threads, best_result);
 
     ofstream score_log;
     string timestamp_str = "";
@@ -168,15 +169,15 @@ Result replica_run(
                 double progress = now_time / TIME_LIMIT;
 
                 for (int step = 0; step < SWAP_ITER_INTERVAL; ++step) {
-                    ScoreType threshold = states[r].get_score() - now_temp * LOG_TABLE[sarnd.randrange(LOG_TABLE_SIZE)];
+                    typename State::ScoreType threshold = states[r].get_score() - now_temp * LOG_TABLE[sa_rnd.randrange(LOG_TABLE_SIZE)];
                     states[r].reset_is_valid();
                     states[r].modify(threshold, progress);
-                    modify[tid][changed.type]++;
-                    ScoreType new_score = states[r].get_score();
+                    modify[tid][states[r].changed.type]++;
+                    typename State::ScoreType new_score = states[r].get_score();
 
                     if (states[r].is_valid && new_score <= threshold) {
                         states[r].advance();
-                        accept[tid][changed.type]++;
+                        accept[tid][states[r].changed.type]++;
                         if (new_score < thread_best_results[tid].score) {
                             thread_best_results[tid] = states[r].get_result();
                         }
@@ -234,10 +235,10 @@ Result replica_run(
             int r1 = rep_idx[i], r2 = rep_idx[i+1];
             double T1 = temps[i];
             double T2 = temps[i+1];
-            ScoreType E1 = states[r1].get_score();
-            ScoreType E2 = states[r2].get_score();
+            typename State::ScoreType E1 = states[r1].get_score();
+            typename State::ScoreType E2 = states[r2].get_score();
             double delta = (E1 - E2) * (1.0 / T1 - 1.0 / T2);
-            bool do_swap = delta >= 0.0 || LOG_TABLE[sarnd.randrange(LOG_TABLE_SIZE)] < delta;
+            bool do_swap = delta >= 0.0 || LOG_TABLE[sa_rnd.randrange(LOG_TABLE_SIZE)] < delta;
 
             swap_attempt_total++;
             if (do_swap) {

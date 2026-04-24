@@ -6,41 +6,44 @@
 #include "titan_cpplib/ahc/timer.cpp"
 #include "titan_cpplib/algorithm/random.cpp"
 #include "titan_cpplib/others/print.cpp"
+#include "titan_cpplib/ahc/sa/sa.cpp"
 using namespace std;
 
 // minimize SA
 namespace sa {
 
-using ScoreType = double; // TODO
-
-struct Param {
-    double start_temp = 1e3;
-    double end_temp = 1e0;
-} param;
-
-// TODO
-struct Changed {
-    int TYPE_CNT = 0; // TODO
-    int type;
-    Changed() {}
-};
-
-thread_local Changed changed;
 thread_local titan23::Random sarnd;
 
-// TODO
 void sa_init() {}
-
-// TODO
-struct Result {
-    ScoreType score, true_score;
-    Result() {}
-    Result(ScoreType s, ScoreType ts) : score(s), true_score(ts) {}
-    void print(ostream &os = cout) const {}
-};
 
 class State {
 public:
+    using ScoreType = double; // TODO
+
+    // TODO
+    struct Param {
+        double start_temp = 1e3;
+        double end_temp = 1e0;
+    };
+
+    // TODO
+    struct Changed {
+        int TYPE_CNT = 0; // TODO
+        int type;
+        Changed() {}
+    };
+
+    // TODO
+    struct Result {
+        ScoreType score, true_score;
+        Result() {}
+        Result(ScoreType s, ScoreType ts) : score(s), true_score(ts) {}
+        void print(ostream &os = cout) const {}
+    };
+
+    Param param;
+    Changed changed;
+
     bool is_valid;
     ScoreType score;
 
@@ -72,7 +75,3 @@ public:
     }
 };
 }
-
-// includeのタイミングはここ
-#include "titan_cpplib/ahc/sa/sa.cpp"
-// sa::Result ans = sa::sa_run(1900, true);
