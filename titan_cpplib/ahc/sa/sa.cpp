@@ -30,14 +30,21 @@ typename State::Result sa_run(const double TIME_LIMIT, const bool verbose = fals
     state.init();
 
     const double START_TEMP = state.param.start_temp;
-    const double END_TEMP   = state.param.end_temp;
+    const double END_TEMP   = max(state.param.end_temp, 1e-9);
     const double TEMP_VAL = (START_TEMP - END_TEMP) / TIME_LIMIT;
+
+    const int TEMP_TABLE_SIZE = 4096;
+    vector<double> TEMP_TABLE(TEMP_TABLE_SIZE);
+    for (int i = 0; i < TEMP_TABLE_SIZE; ++i) {
+        TEMP_TABLE[i] = START_TEMP * pow(END_TEMP / START_TEMP, (double)i / (TEMP_TABLE_SIZE - 1));
+    }
 
     if (verbose) {
         cerr << "init-fin" << endl;
         cerr << sa_timer.elapsed() << endl;
         cerr << state.get_true_score() << endl;
     }
+
     typename State::Result best_result = state.get_result();
     typename State::ScoreType score = best_result.score;
     double now_time;
@@ -50,8 +57,15 @@ typename State::Result sa_run(const double TIME_LIMIT, const bool verbose = fals
         now_time = sa_timer.elapsed();
         if (now_time > TIME_LIMIT) break;
         ++cnt;
-        typename State::ScoreType threshold = score - (START_TEMP-TEMP_VAL*now_time) * LOG_TABLE[sa_rnd.randrange(LOG_TABLE_SIZE)];
         double progress = now_time / TIME_LIMIT;
+
+        // typename State::ScoreType threshold = score - (START_TEMP-TEMP_VAL*now_time) * LOG_TABLE[sa_rnd.randrange(LOG_TABLE_SIZE)];
+        int temp_idx = (int)(progress * (TEMP_TABLE_SIZE - 1));
+        if (temp_idx >= TEMP_TABLE_SIZE) temp_idx = TEMP_TABLE_SIZE - 1;
+        else if (temp_idx < 0) temp_idx = 0;
+        double current_temp = TEMP_TABLE[temp_idx];
+        typename State::ScoreType threshold = score - current_temp * LOG_TABLE[sa_rnd.randrange(LOG_TABLE_SIZE)];
+
         state.reset_is_valid();
         state.modify(threshold, progress);
         modify[state.changed.type]++;

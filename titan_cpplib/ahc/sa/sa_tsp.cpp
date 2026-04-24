@@ -1,9 +1,12 @@
+// OMP_NUM_THREADS=8 time ./a.out < in/0000.txt > out.txt
 #include <bits/stdc++.h>
 #include "titan_cpplib/ahc/timer.cpp"
 #include "titan_cpplib/algorithm/random.cpp"
 #include "titan_cpplib/others/print.cpp"
+#include "titan_cpplib/ahc/sa/sa.cpp"
 using namespace std;
 using ll = long long;
+
 
 int N;
 vector<pair<ll, ll>> YX;
@@ -11,25 +14,9 @@ vector<vector<ll>> DIST;
 vector<vector<int>> nearest_neighbors;
 int K_CAND;
 
+// minimize SA
 namespace sa {
 
-using ScoreType = ll;
-
-struct Param {
-    double start_temp = 1e2;
-    double end_temp = 0;
-} param;
-
-struct Changed {
-    int TYPE_CNT = 3;
-    int type;
-    int u, v;
-    int length;
-    long long diff;
-    Changed() {}
-};
-
-thread_local Changed changed;
 thread_local titan23::Random sarnd;
 
 void sa_init() {
@@ -42,7 +29,7 @@ void sa_init() {
         }
     }
 
-    K_CAND = min(N - 1, 5);
+    K_CAND = min(N - 1, 10);
     nearest_neighbors.assign(N, vector<int>(K_CAND));
     for (int i = 0; i < N; ++i) {
         vector<pair<ll, int>> dist_idx;
@@ -56,25 +43,43 @@ void sa_init() {
     }
 }
 
-struct Result {
-    ScoreType score, true_score;
-    vector<int> tour;
-    Result() {}
-    Result(ScoreType s, ScoreType ts, const vector<int> &t) : score(s), true_score(ts), tour(t) {}
-    void print(ostream &os = cout) const {
-        for (int i = 0; i < N; ++i) {
-            os << tour[i] << (i == N - 1 ? "" : " ");
-        }
-        os << "\n";
-    }
-};
-
 class State {
 public:
+    using ScoreType = ll;
+
+    struct Param {
+        double start_temp = 1e2;
+        double end_temp = 1e0;
+    };
+
+    struct Changed {
+        int TYPE_CNT = 3;
+        int type;
+        int u, v;
+        int length;
+        ScoreType diff;
+        Changed() {}
+    };
+
+    struct Result {
+        ScoreType score, true_score;
+        vector<int> tour;
+        Result() {}
+        Result(ScoreType s, ScoreType ts, const vector<int> &t) : score(s), true_score(ts), tour(t) {}
+        void print(ostream &os = cout) const {
+            for (int i = 0; i < N; ++i) {
+                os << tour[i] << (i == N - 1 ? "" : " ");
+            }
+            os << "\n";
+        }
+    };
+
+    Param param;
+    Changed changed;
+
     bool is_valid;
     ScoreType score;
-    vector<int> tour;
-    vector<int> pos;
+    vector<int> tour, pos;
 
     State() {}
 
@@ -110,7 +115,6 @@ public:
 
     void reset_is_valid() { is_valid = true; }
     ScoreType get_score() const { return score; }
-    
     ScoreType get_true_score() const {
         ScoreType ts = 0;
         for (int i = 0; i < N; ++i) {
@@ -119,7 +123,10 @@ public:
         return ts;
     }
 
-    void modify(const ScoreType threshold, const double progress) {
+    // thresholdを超えたら必ずreject(同じなら遷移する)
+    // is_validをfalseにすると必ずrejectする
+    // progress:焼きなまし進行度 0.0~1.0 まで
+        void modify(const ScoreType threshold, const double progress) {
         if (N <= 3) {
             is_valid = false;
             return;
@@ -135,12 +142,12 @@ public:
             int u_prev = (u - 1 + N) % N;
             int cand = nearest_neighbors[tour[u_prev]][sarnd.randrange(K_CAND)];
             int v = pos[cand];
-            
+
             if (u >= v || v - u == N - 1) {
                 is_valid = false;
                 return;
             }
-            
+
             changed.u = u;
             changed.v = v;
             int v_next = (v + 1) % N;
@@ -148,18 +155,18 @@ public:
             ScoreType added_dist = DIST[tour[u_prev]][tour[v]] + DIST[tour[u]][tour[v_next]];
             changed.diff = added_dist - removed_dist;
             score += changed.diff;
-            
+
         } else if (changed.type == 1) {
             int L = sarnd.randrange(3) + 1;
             int u = sarnd.randrange(N);
             int cand = nearest_neighbors[tour[u]][sarnd.randrange(K_CAND)];
             int v = pos[cand];
-            
+
             if (u + L > N || (v >= u && v < u + L) || v == (u - 1 + N) % N) {
                 is_valid = false;
                 return;
             }
-            
+
             changed.u = u;
             changed.v = v;
             changed.length = L;
@@ -175,19 +182,19 @@ public:
                                  + DIST[tour[u_last]][tour[v_next]];
             changed.diff = added_dist - removed_dist;
             score += changed.diff;
-            
+
         } else {
             int L = sarnd.randrange(2) + 2;
             int u = sarnd.randrange(N);
             int u_last_node = tour[(u + L - 1) % N];
             int cand = nearest_neighbors[u_last_node][sarnd.randrange(K_CAND)];
             int v = pos[cand];
-            
+
             if (u + L > N || (v >= u && v < u + L) || v == (u - 1 + N) % N) {
                 is_valid = false;
                 return;
             }
-            
+
             changed.u = u;
             changed.v = v;
             changed.length = L;
@@ -206,6 +213,7 @@ public:
         }
     }
 
+    // TODO
     void rollback() {
         if (!is_valid) return;
         score -= changed.diff;
@@ -244,9 +252,7 @@ public:
         return Result(get_score(), get_true_score(), tour);
     }
 };
-} // namespace sa
-
-#include "titan_cpplib/ahc/sa/sa.cpp"
+}
 
 void input() {
     string token;
@@ -280,7 +286,7 @@ void input() {
 
 void solve() {
     sa::sa_init();
-    sa::Result result = sa::sa_run(10000, true);
+    sa::State::Result result = sa::sa_run<sa::State>(10000, true);
     result.print();
     cerr << "Score = " << result.true_score << endl;
 }
