@@ -81,7 +81,7 @@ def main():
         if not tour:
             continue
         d = calc_tour_score(coords, tour)
-        total_dist += d
+        total_dist += d * d
         max_dist = max(max_dist, d)
 
         tx = [coords[i][0] for i in tour] + [coords[tour[0]][0]]
@@ -110,8 +110,8 @@ def main():
     plt.title(f"mTSP: MaxDist={max_dist}, TotalDist={total_dist}")
     plt.legend()
     plt.grid(True)
-    plt.savefig("result.png")
-    print(f"Saved to result.png (Total: {total_dist}, Max: {max_dist})")
+    plt.savefig("result2.png")
+    print(f"Saved to result2.png (Total: {total_dist}, Max: {max_dist})")
 
 
 if __name__ == "__main__":

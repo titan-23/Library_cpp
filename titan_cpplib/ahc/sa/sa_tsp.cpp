@@ -72,7 +72,7 @@ public:
     using ScoreType = ll;
 
     struct Param {
-        double start_temp = 1e2;
+        double start_temp = 1e6;
         double end_temp = 1e0;
     };
 
@@ -159,7 +159,7 @@ public:
         for (int k = 0; k < K; ++k) {
             int start_node = START_NODES[k];
             tours[k].push_back(start_node);
-            
+
             vector<int>& cluster_cities = clusters[k];
             vector<bool> visited(cluster_cities.size(), false);
             int current_node = start_node;
@@ -257,7 +257,6 @@ public:
                 int u_prev = u_idx - 1;
                 int cand = nearest_neighbors[tr[u_prev]][sarnd.randrange(NEIBHORS)];
 
-                // ★candが別ルートにいる場合は棄却
                 if (pos_route[cand] != r1) { is_valid = false; return; }
                 int v_idx = pos_idx[cand];
                 if (v_idx == 0) { is_valid = false; return; } // 始点0を保護
@@ -357,14 +356,17 @@ public:
             int u_prev = u_idx - 1, v_next = (v_idx + 1) % sz1;
             int u_node = tours[r1][u_idx], v_node = tours[r1][v_idx];
             int w_node = tours[r2][w_idx], w_next_node = tours[r2][(w_idx + 1) % sz2];
-
+            ll block_internal = 0;
+            for (int i = u_idx; i < v_idx; ++i) {
+                block_internal += DIST[tours[r1][i]][tours[r1][i + 1]];
+            }
             ll removed1 = DIST[tours[r1][u_prev]][u_node] + DIST[v_node][tours[r1][v_next]];
             ll added1   = DIST[tours[r1][u_prev]][tours[r1][v_next]];
-            changed.diff_d1 = added1 - removed1;
+            changed.diff_d1 = added1 - removed1 - block_internal;
 
             ll removed2 = DIST[w_node][w_next_node];
             ll added2   = DIST[w_node][u_node] + DIST[v_node][w_next_node];
-            changed.diff_d2 = added2 - removed2;
+            changed.diff_d2 = added2 - removed2 + block_internal;
 
             ll old_d1 = dists[r1], old_d2 = dists[r2];
             changed.diff = ((old_d1 + changed.diff_d1) * (old_d1 + changed.diff_d1) - old_d1 * old_d1) +
@@ -393,15 +395,22 @@ public:
 
             int u1 = tours[r1][u1_idx], v1 = tours[r1][v1_idx];
             int u2 = tours[r2][u2_idx], v2 = tours[r2][v2_idx];
-
+            ll block_internal1 = 0;
+            for (int i = u1_idx; i < v1_idx; ++i) {
+                block_internal1 += DIST[tours[r1][i]][tours[r1][i + 1]];
+            }
+            ll block_internal2 = 0;
+            for (int i = u2_idx; i < v2_idx; ++i) {
+                block_internal2 += DIST[tours[r2][i]][tours[r2][i + 1]];
+            }
             ll removed1 = DIST[tours[r1][u1_prev]][u1] + DIST[v1][tours[r1][v1_next]];
             ll removed2 = DIST[tours[r2][u2_prev]][u2] + DIST[v2][tours[r2][v2_next]];
 
             ll added1 = DIST[tours[r1][u1_prev]][u2] + DIST[v2][tours[r1][v1_next]];
             ll added2 = DIST[tours[r2][u2_prev]][u1] + DIST[v1][tours[r2][v2_next]];
 
-            changed.diff_d1 = added1 - removed1;
-            changed.diff_d2 = added2 - removed2;
+            changed.diff_d1 = added1 - removed1 + (block_internal2 - block_internal1);
+            changed.diff_d2 = added2 - removed2 + (block_internal1 - block_internal2);
 
             ll old_d1 = dists[r1], old_d2 = dists[r2];
             changed.diff = ((old_d1 + changed.diff_d1) * (old_d1 + changed.diff_d1) - old_d1 * old_d1) +
@@ -527,7 +536,7 @@ void input() {
         YX[id] = {x, y};
     }
 
-    K = 3;
+    K = 10;
     START_NODES.resize(K);
     rep(k, K) {
         START_NODES[k] = N+k;
