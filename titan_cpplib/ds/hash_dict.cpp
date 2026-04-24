@@ -2,86 +2,115 @@
 #include <vector>
 #include <random>
 #include <cassert>
+#include <algorithm>
+#include <emmintrin.h>
 
 using namespace std;
 
-// HashDict
 namespace titan23 {
 
 template<typename V>
 class HashDict {
 private:
-    using u64 = unsigned long long;
-    static constexpr const int M = 2;
-    vector<u64> exist;
+    using u64 = uint64_t;
+    static constexpr const uint8_t EMPTY = 0x80;
+
+    vector<uint8_t> meta;
     vector<u64> keys;
     vector<V> vals;
-    int msk, xor_;
+    int cap;
+    int msk;
+    u64 xor_;
     int size;
 
-    constexpr int hash(u64 key) const {
+    constexpr u64 hash(u64 key) const {
         key ^= xor_;
         key = (key ^ (key >> 30)) * 0xbf58476d1ce4e5b9;
         key = (key ^ (key >> 27)) * 0x94d049bb133111eb;
         key = key ^ (key >> 31);
-        return key & msk;
+        return key;
     }
 
-    constexpr int bit_length(const int x) const {
-        return x == 0 ? 0 : 32 - __builtin_clz(x);
-    }
-
-    void rebuild() {
-        vector<u64> old_exist = exist;
-        vector<u64> old_keys = keys;
-        vector<V> old_vals = vals;
-        exist.resize(HashDict::M*old_exist.size()+1);
-        fill(exist.begin(), exist.end(), 0);
-        keys.resize(HashDict::M*old_keys.size());
-        vals.resize(HashDict::M*old_vals.size());
-        size = 0;
-        msk = (1<<bit_length(keys.size()-1))-1;
+    void init_seed() {
         random_device rd;
         mt19937 gen(rd());
         uniform_int_distribution<u64> dis(0, UINT64_MAX);
         xor_ = dis(gen);
-        for (int i = 0; i < (int)old_keys.size(); ++i) {
-            if (old_exist[i>>6]>>(i&63)&1) {
+    }
+
+    void rebuild() {
+        vector<uint8_t> old_meta = move(meta);
+        vector<u64> old_keys = move(keys);
+        vector<V> old_vals = move(vals);
+        int old_cap = cap;
+
+        cap *= 2;
+        msk = cap - 1;
+        meta.assign(cap + 16, EMPTY);
+        keys.resize(cap);
+        vals.resize(cap);
+        size = 0;
+
+        for (int i = 0; i < old_cap; ++i) {
+            if (old_meta[i] != EMPTY) {
                 set(old_keys[i], old_vals[i]);
             }
         }
     }
 
 public:
-    HashDict() : exist(1, 0), keys(1), vals(1), msk(0), xor_(0), size(0) {}
+    HashDict() {
+        cap = 16;
+        meta.assign(cap + 16, EMPTY);
+        keys.resize(cap);
+        vals.resize(cap);
+        msk = cap - 1;
+        init_seed();
+        size = 0;
+    }
 
     HashDict(const int n) {
-        int s = 1<<bit_length(n);
-        s *= HashDict::M;
-        assert(s > 0);
-        exist.resize((s>>6)+1, 0);
-        keys.resize(s);
-        vals.resize(s);
-        msk = (1<<bit_length(keys.size()-1))-1;
-        random_device rd;
-        mt19937 gen(rd());
-        uniform_int_distribution<u64> dis(0, UINT64_MAX);
-        xor_ = dis(gen);
+        cap = 16;
+        while (cap < n * 2) {
+            cap *= 2;
+        }
+        meta.assign(cap + 16, EMPTY);
+        keys.resize(cap);
+        vals.resize(cap);
+        msk = cap - 1;
+        init_seed();
         size = 0;
     }
 
     pair<int, bool> get_pos(const u64 &key) const {
-        int h = hash(key);
-        if (!(exist[h>>6]>>(h&63)&1)) return {h, false};
-        if (keys[h] == key) return {h, true};
-        h = (h + 1) & msk;
-        if (!(exist[h>>6]>>(h&63)&1)) return {h, false};
-        if (keys[h] == key) return {h, true};
-        h = (h + 1) & msk;
+        u64 h = hash(key);
+        uint8_t h2 = h & 0x7F;
+        int idx = (h >> 7) & msk;
+
+        __m128i match = _mm_set1_epi8(h2);
+        __m128i empty_match = _mm_set1_epi8(EMPTY);
+
         while (true) {
-            if (!(exist[h>>6]>>(h&63)&1)) return {h, false};
-            if (keys[h] == key) return {h, true};
-            h = (h + 1) & msk;
+            __m128i meta_data = _mm_loadu_si128(reinterpret_cast<const __m128i*>(&meta[idx]));
+
+            int mask = _mm_movemask_epi8(_mm_cmpeq_epi8(meta_data, match));
+            while (mask != 0) {
+                int bit_pos = __builtin_ctz(mask);
+                int target = (idx + bit_pos) & msk;
+                if (keys[target] == key) {
+                    return {target, true};
+                }
+                mask &= (mask - 1);
+            }
+
+            int empty_mask = _mm_movemask_epi8(_mm_cmpeq_epi8(meta_data, empty_match));
+            if (empty_mask != 0) {
+                int bit_pos = __builtin_ctz(empty_mask);
+                int target = (idx + bit_pos) & msk;
+                return {target, false};
+            }
+
+            idx = (idx + 16) & msk;
         }
     }
 
@@ -109,7 +138,7 @@ public:
         const auto [pos, exist_res] = get_pos(key);
         if (!exist_res) {
             V res = V{};
-            set(key, res);
+            inner_set({pos, false}, key, res);
             return res;
         } else {
             return vals[pos];
@@ -132,10 +161,12 @@ public:
         const auto [pos, is_exist] = dat;
         vals[pos] = val;
         if (!is_exist) {
-            exist[pos>>6] |= 1ull<<(pos&63);
+            uint8_t h2 = hash(key) & 0x7F;
+            meta[pos] = h2;
+            if (pos < 16) meta[cap + pos] = h2;
             keys[pos] = key;
             ++size;
-            if (HashDict::M*size > keys.size()) {
+            if (size * 2 > cap) {
                 rebuild();
             }
         }
@@ -143,56 +174,38 @@ public:
 
     void set(const u64 key, const V val) {
         const auto [pos, is_exist] = get_pos(key);
-        vals[pos] = val;
-        if (!is_exist) {
-            exist[pos>>6] |= 1ull<<(pos&63);
-            keys[pos] = key;
-            ++size;
-            if (HashDict::M*size > keys.size()) {
-                rebuild();
-            }
-        }
+        inner_set({pos, is_exist}, key, val);
     }
 
     void add(const u64 key, const V val) {
         const auto [pos, is_exist] = get_pos(key);
-        vals[pos] += val;
         if (!is_exist) {
-            vals[pos] = val;
-            exist[pos>>6] |= 1ull<<(pos&63);
-            keys[pos] = key;
-            ++size;
-            if (HashDict::M*size > keys.size()) {
-                rebuild();
-            }
+            inner_set({pos, false}, key, val);
+        } else {
+            vals[pos] += val;
         }
     }
 
-    //! keyがすでにあればtrue, なければ挿入してfalse / `O(1)`
     bool contains_set(const u64 key, const V val) {
         const auto [pos, is_exist] = get_pos(key);
-        if (val < vals[pos]) {
-            vals[pos] = val;
-        } else {
-            return false;
-        }
-        if (!is_exist) {
-            exist[pos>>6] |= 1ull<<(pos&63);
-            keys[pos] = key;
-            ++size;
-            if (HashDict::M*size > keys.size()) {
-                rebuild();
+        if (is_exist) {
+            if (val < vals[pos]) {
+                vals[pos] = val;
+            } else {
+                return false;
             }
+            return true;
+        } else {
+            inner_set({pos, false}, key, val);
             return false;
         }
-        return true;
     }
 
     vector<V> values() const {
         vector<V> res;
-        res.reserve(len());
-        for (int i = 0; i < (int)keys.size(); ++i) {
-            if (exist[i>>6]>>(i&63)&1) {
+        res.reserve(size);
+        for (int i = 0; i < cap; ++i) {
+            if (meta[i] != EMPTY) {
                 res.emplace_back(vals[i]);
             }
         }
@@ -201,20 +214,19 @@ public:
 
     vector<pair<u64, V>> items() const {
         vector<pair<u64, V>> res;
-        res.reserve(len());
-        for (int i = 0; i < (int)keys.size(); ++i) {
-            if (exist[i>>6]>>(i&63)&1) {
+        res.reserve(size);
+        for (int i = 0; i < cap; ++i) {
+            if (meta[i] != EMPTY) {
                 res.emplace_back(keys[i], vals[i]);
             }
         }
         return res;
     }
 
-    //! 全ての要素を削除する / `O(n/w)`
     void clear() {
         if (empty()) return;
-        this->size = 0;
-        fill(exist.begin(), exist.end(), 0);
+        size = 0;
+        fill(meta.begin(), meta.end(), EMPTY);
     }
 
     int len() const {
@@ -222,11 +234,12 @@ public:
     }
 
     int inner_len() const {
-        return keys.size();
+        return cap;
     }
 
     bool empty() const {
         return size == 0;
     }
 };
-} // namespaced titan23
+
+} // namespace titan23

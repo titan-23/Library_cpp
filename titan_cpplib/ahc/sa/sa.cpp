@@ -73,6 +73,7 @@ Result sa_run(const double TIME_LIMIT, const bool verbose = false) {
             }
         } else {
             state.rollback();
+            state.score = score;
         }
     }
     if (verbose) {

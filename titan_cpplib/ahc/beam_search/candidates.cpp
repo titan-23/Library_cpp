@@ -44,7 +44,7 @@ public:
 
     bool push(
         ScoreType score, HashType hash,
-        int parent_leaf, const Action &action
+        int parent_leaf, Action action
     ) {
         if (entry == beam_width && score >= seg[1].first) {
             return false;
@@ -53,7 +53,7 @@ public:
         int idx = func.inner_get(dat, -1);
         if (idx != -1) {
             if (score < seg[idx+s].first) {
-                next_beam[idx] = {parent_leaf, score, action};
+                next_beam[idx] = {parent_leaf, score, move(action)};
                 set(idx, {score, idx});
                 return true;
             }
@@ -61,14 +61,14 @@ public:
         }
         if (entry < beam_width) {
             func.inner_set(dat, hash, entry);
-            next_beam[entry] = {parent_leaf, score, action};
+            next_beam[entry] = {parent_leaf, score, move(action)};
             hashidx[entry] = hash;
             set(entry, {score, entry});
             entry++;
             return true;
         }
         auto [_, i] = seg[1];
-        next_beam[i] = {parent_leaf, score, action};
+        next_beam[i] = {parent_leaf, score, move(action)};
         func.set(hashidx[i], -1);
         func.inner_set(dat, hash, i);
         hashidx[i] = hash;
@@ -89,7 +89,7 @@ public:
             hashidx.resize(w);
             next_beam.resize(w);
         }
-        func.clear();
+        func.clear(); // TODO
         if (func.inner_len() == 1) {
             func = titan23::HashDict<int>(beam_width*8);
         }

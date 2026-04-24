@@ -6,6 +6,7 @@
 #include "titan_cpplib/algorithm/random.cpp"
 #include "titan_cpplib/others/print.cpp"
 #include "titan_cpplib/ahc/beam_search/beam_search.cpp"
+#include "titan_cpplib/ahc/beam_search/beam_fast.cpp"
 
 using namespace std;
 

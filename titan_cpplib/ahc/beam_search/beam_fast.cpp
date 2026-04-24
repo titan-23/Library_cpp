@@ -57,7 +57,7 @@ public:
      */
     vector<Action> search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
         init_bs();
-        if (verbose) cerr << PRINT_GREEN << "[BeamSearch] Info: start search()" << PRINT_NONE << endl;
+        if (verbose) cerr << "[BeamSearch] Info: start search()" << endl;
         State* state = new State;
         state->init();
 
@@ -73,21 +73,20 @@ public:
                 if (!found_finished || score < best_finished_score) {
                     found_finished = true;
                     best_finished_score = score;
-                    best_finished_path = {action};
+                    best_finished_path = {move(action)};
                 }
             } else {
-                candidates.push(score, hash, 0, action);
+                candidates.push(score, hash, 0, move(action));
             }
         }
 
         if (found_finished) {
-            delete state;
             return best_finished_path;
         }
 
         cand.clear();
-        for (int i = 0; i < candidates.size(); ++i) {
-            cand.push_back(candidates.next_beam[i]);
+        for (int i = 0; i < (int)candidates.size(); ++i) {
+            cand.push_back(move(candidates.next_beam[i]));
         }
         leaf = {0};
 
@@ -112,21 +111,19 @@ public:
                 const auto &c = cand[i];
 
                 int lca_dist = 0;
-                int current_lca = leaf[li];
+                int now_lca = leaf[li];
                 for (int k = li - 1; k >= c.parent_leaf; --k) {
-                    if (current_lca - leaf[k] > lca_dist) {
-                        lca_dist = current_lca - leaf[k];
+                    if (now_lca - leaf[k] > lca_dist) {
+                        lca_dist = now_lca - leaf[k];
                     }
-                    current_lca = leaf[k];
+                    now_lca = leaf[k];
                 }
 
                 for (int k = 0; k < lca_dist + f; ++k) {
                     state->rollback(trace[turn - 1 + f - k]);
                 }
 
-                for (int k = 0; k <= lca_dist; ++k) {
-                    next_tour.push_back(trace[turn - lca_dist + k]);
-                }
+                next_tour.insert(next_tour.end(), trace.begin() + (turn - lca_dist), trace.begin() + (turn + 1));
                 f = 1;
 
                 trace[turn] = c.action;
@@ -137,9 +134,7 @@ public:
                     int rank = w1 - w0;
                     if (prog < rank) {
                         int copy_len = rank - prog;
-                        for (int j = 0; j < copy_len; ++j) {
-                            trace[turn - rank + j] = tour[w0 + j];
-                        }
+                        copy(tour.begin() + w0, tour.begin() + w0 + copy_len, trace.begin() + (turn - rank));
                         prog = rank;
                     }
                 }
@@ -150,7 +145,7 @@ public:
 
                 actions.clear();
                 state->get_actions(actions, turn, c.action, candidates.threshold());
-                int current_leaf_idx = next_leaf.size();
+                int now_leaf_idx = next_leaf.size();
 
                 for (Action &action : actions) {
                     auto [score, hash, finished] = state->try_op(action, candidates.threshold());
@@ -159,12 +154,11 @@ public:
                         if (!found_finished || score < best_finished_score) {
                             found_finished = true;
                             best_finished_score = score;
-                            best_finished_path.clear();
-                            for (int k = 1; k <= turn; ++k) best_finished_path.push_back(trace[k]);
+                            best_finished_path.assign(trace.begin() + 1, trace.begin() + turn + 1);
                             best_finished_path.push_back(action);
                         }
                     } else {
-                        candidates.push(score, hash, current_leaf_idx, action);
+                        candidates.push(score, hash, now_leaf_idx, action);
                     }
                 }
                 next_leaf.push_back(next_tour.size());
@@ -173,26 +167,25 @@ public:
 
             if (found_finished) {
                 if (verbose) cerr << "[BeamSearch] Info: find valid solution." << endl;
-                delete state;
                 return best_finished_path;
             }
 
             if (candidates.size() == 0) {
-                cerr << "[BeamSearch] Error: \t次の候補が見つかりませんでした" << endl;
+                cerr << "[BeamSearch] " << to_red("Error: \t次の候補が見つかりませんでした") << endl;
                 assert(candidates.size() > 0);
             }
 
             if (verbose) {
                 BeamCandidate<ScoreType, Action> bests = candidates.get_best();
-                cerr << "[BeamSearch] Info: \tbest_score = " << bests.score << endl;
+                cerr << "[BeamSearch] " << PRINT_GREEN << "Info: \tbest_score = " << bests.score << PRINT_NONE << endl;
             }
 
             swap(tour, next_tour);
             swap(leaf, next_leaf);
 
             cand.clear();
-            for (int i = 0; i < candidates.size(); ++i) {
-                cand.push_back(candidates.next_beam[i]);
+            for (int i = 0; i < (int)candidates.size(); ++i) {
+                cand.push_back(move(candidates.next_beam[i]));
             }
             sort(cand.begin(), cand.end(), [](const BeamCandidate<ScoreType, Action>& a, const BeamCandidate<ScoreType, Action>& b) {
                 if (a.parent_leaf != b.parent_leaf) return a.parent_leaf < b.parent_leaf;
@@ -216,8 +209,7 @@ public:
             }
         }
 
-        vector<Action> ret;
-        for (int i = 1; i < trace.size(); ++i) ret.push_back(trace[i]);
+        vector<Action> ret(trace.begin() + 1, trace.end());
         int len = ret.size();
         int prog = 0;
         for (int k = cand[best_idx].parent_leaf; k < (int)leaf.size() - 1; ++k) {
@@ -226,9 +218,7 @@ public:
             int rank = w1 - w0;
             if (prog < rank) {
                 int copy_len = rank - prog;
-                for (int j = 0; j < copy_len; ++j) {
-                    ret[len - rank + j] = tour[w0 + j];
-                }
+                copy(tour.begin() + w0, tour.begin() + w0 + copy_len, ret.begin() + (len - rank));
                 prog = rank;
             }
         }
