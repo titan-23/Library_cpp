@@ -1,7 +1,10 @@
+#pragma once
+
 #include <vector>
 #include <set>
 #include <cassert>
 #include "titan_cpplib/algorithm/random.cpp"
+#include <atcoder/mincostflow>
 using namespace std;
 
 // Kmeans
@@ -9,27 +12,22 @@ namespace titan23 {
 
 template <class DistType, class ElmType, DistType (*dist)(const ElmType&, const ElmType&), ElmType (*mean)(const vector<ElmType>&)>
 class Kmeans {
-    private:
+private:
     int k, max_iter;
-    titan23::Random my_random;
+    titan23::Random krnd;
 
-    public:
+public:
     Kmeans() : k(0), max_iter(0) {}
     Kmeans(const int k, const int max_iter) : k(k), max_iter(max_iter) {}
 
-    // 初期クラスターを指定して実行する fit
     pair<vector<int>, vector<ElmType>> fit(const vector<ElmType> &X, const vector<ElmType> &init_centers) {
         int n = (int)X.size();
         assert(k <= n);
         assert((int)init_centers.size() == k);
-
         vector<ElmType> cluster_centers = init_centers;
         vector<int> labels(n, -1);
-
         for (int _ = 0; _ < max_iter; ++_) {
             bool changed = false;
-
-            // 1. 各データ点を最も近いクラスター中心に割り当てる
             for (int i = 0; i < n; ++i) {
                 DistType min_d = dist(X[i], cluster_centers[0]);
                 int best_k = 0;
@@ -45,11 +43,7 @@ class Kmeans {
                     changed = true;
                 }
             }
-
-            // 中心が変化しなければ早期終了
             if (!changed && _ > 0) break;
-
-            // 2. 各クラスターの新しい中心を計算する
             vector<vector<ElmType>> syuukei(k);
             for (int i = 0; i < n; ++i) {
                 syuukei[labels[i]].emplace_back(X[i]);
@@ -57,7 +51,6 @@ class Kmeans {
 
             cluster_centers.clear();
             for (int j = 0; j < k; ++j) {
-                // ※ syuukei[j] が空になった時のエラー処理が必要な場合は mean 関数側で対応するか、ここに分岐を入れます
                 cluster_centers.emplace_back(mean(syuukei[j]));
             }
         }
@@ -65,22 +58,18 @@ class Kmeans {
         return {labels, cluster_centers};
     }
 
-    // 従来の fit (k-means++ で初期化して実行)
     pair<vector<int>, vector<ElmType>> fit(const vector<ElmType> &X) {
         int n = (int)X.size();
         assert(k <= n);
-        vector<ElmType> first_cluster = {my_random.choice(X)};
+        vector<ElmType> first_cluster = {krnd.choice(X)};
         set<ElmType> cluster_set;
         cluster_set.insert(first_cluster[0]);
-
-        // 初期クラスターの選定 (k-means++)
         while ((int)first_cluster.size() < k) {
             vector<int> p_f(n, 0);
             bool flag = false;
             for (int i = 0; i < n; ++i) {
                 if (cluster_set.find(X[i]) == cluster_set.end()) {
                     DistType min_d = dist(X[i], first_cluster[0]);
-                    // バグ修正: 変数 i のシャドウイングを避けるため j を使用
                     for (int j = 1; j < (int)first_cluster.size(); ++j) {
                         min_d = min(min_d, dist(X[i], first_cluster[j]));
                     }
@@ -89,14 +78,107 @@ class Kmeans {
                 }
             }
             assert(flag);
-            ElmType tmpk = my_random.choice(X, p_f, false);
+            ElmType tmpk = krnd.choice(X, p_f, false);
             assert(cluster_set.find(tmpk) == cluster_set.end());
             first_cluster.emplace_back(tmpk);
             cluster_set.insert(tmpk);
         }
-
-        // 選んだ初期中心を渡してメインのロジックを実行
         return fit(X, first_cluster);
+    }
+
+    // cost_scale=1e6など
+    pair<vector<int>, vector<ElmType>> fit_flow(
+        const vector<ElmType> &X,
+        const vector<ElmType> &init_centers,
+        const vector<int> &target_sizes,
+        double cost_scale = 1.0)
+    {
+        int n = (int)X.size();
+        assert(k <= n);
+        assert((int)init_centers.size() == k);
+        assert((int)target_sizes.size() == k);
+        long long sum_sizes = 0;
+        for(int s : target_sizes) sum_sizes += s;
+        assert(sum_sizes == n);
+        vector<ElmType> cluster_centers = init_centers;
+        vector<int> labels(n, -1);
+        for (int _ = 0; _ < max_iter; ++_) {
+            atcoder::mcf_graph<int, long long> graph(n + k + 2);
+            int S = n + k;
+            int T = n + k + 1;
+            for (int i = 0; i < n; ++i) {
+                graph.add_edge(S, i, 1, 0);
+            }
+            for (int j = 0; j < k; ++j) {
+                graph.add_edge(n + j, T, target_sizes[j], 0);
+            }
+            for (int i = 0; i < n; ++i) {
+                for (int j = 0; j < k; ++j) {
+                    DistType d = dist(X[i], cluster_centers[j]);
+                    long long cost = std::round(static_cast<double>(d) * cost_scale);
+                    graph.add_edge(i, n + j, 1, cost);
+                }
+            }
+            auto result = graph.flow(S, T, n);
+            assert(result.first == n);
+            bool changed = false;
+            for (const auto& edge : graph.edges()) {
+                if (edge.from < n && edge.to >= n && edge.to < n + k && edge.flow == 1) {
+                    int c_id = edge.to - n;
+                    if (labels[edge.from] != c_id) {
+                        labels[edge.from] = c_id;
+                        changed = true;
+                    }
+                }
+            }
+            if (!changed && _ > 0) break;
+            vector<vector<ElmType>> syuukei(k);
+            for (int i = 0; i < n; ++i) {
+                syuukei[labels[i]].emplace_back(X[i]);
+            }
+            cluster_centers.clear();
+            for (int j = 0; j < k; ++j) {
+                if (!syuukei[j].empty()) {
+                    cluster_centers.emplace_back(mean(syuukei[j]));
+                } else {
+                    cluster_centers.emplace_back(init_centers[j]);
+                }
+            }
+        }
+        return {labels, cluster_centers};
+    }
+
+    // cost_scale=1e6など
+    pair<vector<int>, vector<ElmType>> fit_flow(
+        const vector<ElmType> &X,
+        const vector<int> &target_sizes,
+        double cost_scale = 1.0)
+    {
+        int n = (int)X.size();
+        assert(k <= n);
+        vector<ElmType> first_cluster = {krnd.choice(X)};
+        set<ElmType> cluster_set;
+        cluster_set.insert(first_cluster[0]);
+        while ((int)first_cluster.size() < k) {
+            vector<int> p_f(n, 0);
+            bool flag = false;
+            for (int i = 0; i < n; ++i) {
+                if (cluster_set.find(X[i]) == cluster_set.end()) {
+                    DistType min_d = dist(X[i], first_cluster[0]);
+                    for (int j = 1; j < (int)first_cluster.size(); ++j) {
+                        min_d = min(min_d, dist(X[i], first_cluster[j]));
+                    }
+                    flag = true;
+                    p_f[i] = min_d + 1;
+                }
+            }
+            assert(flag);
+            ElmType tmpk = krnd.choice(X, p_f, false);
+            assert(cluster_set.find(tmpk) == cluster_set.end());
+            first_cluster.emplace_back(tmpk);
+            cluster_set.insert(tmpk);
+        }
+        return fit_flow(X, first_cluster, target_sizes, cost_scale);
     }
 };
 }

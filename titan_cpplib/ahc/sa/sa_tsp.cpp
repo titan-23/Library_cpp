@@ -49,14 +49,12 @@ void sa_init() {
 // 座標の型
 using ElmType = pair<long double, long double>;
 
-// 2点間の距離（K-means用なので平方根を取らなくても順序は変わらないため、高速化のため2乗のまま）
 long double kmeans_dist(const ElmType &a, const ElmType &b) {
     long double dx = a.first - b.first;
     long double dy = a.second - b.second;
     return dx * dx + dy * dy;
 }
 
-// 都市群の重心を計算
 ElmType kmeans_mean(const vector<ElmType> &pts) {
     if (pts.empty()) return {0.0, 0.0};
     long double sx = 0, sy = 0;
