@@ -46,10 +46,10 @@ void solve() {
     vector<pair<double, double>> points(n);
     rep(i, n) cin >> points[i].first >> points[i].second;
 
-    int max_iter = 1;
+    int max_iter = 10;
     titan23::Kmeans<double, pair<double, double>, calc_dist, calc_mean> kmeans(k, max_iter);
     auto result = kmeans.fit_flow(points, A, 1e6);
-    const vector<int>& labels = result.first;
+    vector<int> labels = result.first;
     rep(i, n) {
         cout << labels[i] << (i == n-1 ? "" : " ");
     }

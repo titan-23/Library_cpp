@@ -1,6 +1,6 @@
 #pragma once
 
-// OMP_NUM_THREADS=8 time ./a.out < in/0000.txt > out.txt
+// OMP_NUM_THREADS=32 time ./a.out < in/0000.txt > out.txt
 
 #include <bits/stdc++.h>
 #include "titan_cpplib/ahc/timer.cpp"
