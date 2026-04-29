@@ -1,124 +1,133 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
+#include <algorithm>
 using namespace std;
 
 namespace titan23 {
 
 template<typename T>
 struct Deque {
-    vector<T> front, back;
+    vector<T> front_vec, back_vec;
 
     Deque() {}
 
-    Deque(vector<T> a) : back(a) {}
+    Deque(vector<T> a) : back_vec(a) {}
 
     void _rebuild() {
-        int n = (int)(front.size() + back.size()) / 2;
+        int n = (int)(front_vec.size() + back_vec.size()) / 2;
         int idx_front = 0, idx_back = 0;
         vector<T> new_front, new_back;
         new_front.reserve(n);
         new_back.reserve(n);
         for (int i = 0; i < n; ++i) {
-            if (idx_front < front.size()) {
-                new_front.emplace_back(front[idx_front++]);
-            } else if (idx_back < back.size()) {
-                new_back.emplace_back(back[idx_back++]);
+            if (idx_front < front_vec.size()) {
+                new_front.emplace_back(front_vec[idx_front++]);
+            } else if (idx_back < back_vec.size()) {
+                new_back.emplace_back(back_vec[idx_back++]);
             }
         }
         reverse(new_front.begin(), new_front.end());
         for (int i = 0; i < n; ++i) {
-            if (idx_front < front.size()) {
-                new_front.emplace_back(front[idx_front++]);
-            } else if (idx_back < back.size()) {
-                new_back.emplace_back(back[idx_back++]);
+            if (idx_front < front_vec.size()) {
+                new_front.emplace_back(front_vec[idx_front++]);
+            } else if (idx_back < back_vec.size()) {
+                new_back.emplace_back(back_vec[idx_back++]);
             }
         }
-        this->front = new_front;
-        this->back = new_back;
+        this->front_vec = new_front;
+        this->back_vec = new_back;
     }
 
     void push_back(const T v) {
-        back.push_back(v);
+        back_vec.push_back(v);
     }
 
     void push_front(const T v) {
-        front.push_back(v);
+        front_vec.push_back(v);
     }
 
     T pop_back() {
-        if (back.empty()) _rebuild();
+        if (back_vec.empty()) _rebuild();
         T res;
-        if (back.empty()) {
-            res = front.back();
-            front.pop_back();
+        if (back_vec.empty()) {
+            res = front_vec.back();
+            front_vec.pop_back();
         } else {
-            res = back.back();
-            back.pop_back();
+            res = back_vec.back();
+            back_vec.pop_back();
         }
         return res;
     }
 
     T pop_front() {
-        if (front.empty()) _rebuild();
+        if (front_vec.empty()) _rebuild();
         T res;
-        if (front.empty()) {
-            res = back.back();
-            back.pop_back();
+        if (front_vec.empty()) {
+            res = back_vec.back();
+            back_vec.pop_back();
         } else {
-            res = front.back();
-            front.pop_back();
+            res = front_vec.back();
+            front_vec.pop_back();
         }
         return res;
     }
 
+    T front() const {
+        return (*this)[0];
+    }
+
+    T back() const {
+        return (*this)[size()-1];
+    }
+
     vector<T> tovector() const {
-        vector<int> a;
-        a.reserve(front.size() + back.size());
-        for (int i = front.size() - 1; i >= 0; i--) {
-            a.emplace_back(front[i]);
+        vector<T> a;
+        a.reserve(front_vec.size() + back_vec.size());
+        for (int i = front_vec.size() - 1; i >= 0; i--) {
+            a.emplace_back(front_vec[i]);
         }
-        for (int i = 0; i < back.size(); i++) {
-            a.emplace_back(back[i]);
+        for (int i = 0; i < back_vec.size(); i++) {
+            a.emplace_back(back_vec[i]);
         }
         return a;
     }
 
     T& operator[](int k) {
-        if (k < 0) k += len();
-        return k < front.size() ? front[front.size() - k - 1] : back[k - front.size()];
+        if (k < 0) k += size();
+        return k < front_vec.size() ? front_vec[front_vec.size() - k - 1] : back_vec[k - front_vec.size()];
     }
 
-    const T& operator()(int k) const {
-        if (k < 0) k += len();
-        return k < front.size() ? front[front.size() - k - 1] : back[k - front.size()];
+    const T& operator[](int k) const {
+        if (k < 0) k += size();
+        return k < front_vec.size() ? front_vec[front_vec.size() - k - 1] : back_vec[k - front_vec.size()];
     }
 
-    int len() const {
-        return (int)(front.size() + back.size());
+    int size() const {
+        return (int)(front_vec.size() + back_vec.size());
     }
 
     bool empty() const {
-        return (bool)(front.size() + back.size());
+        return (front_vec.size() + back_vec.size()) == 0;
     }
 
     bool contains(const T v) const {
-        for (const T &a : front) {
+        for (const T &a : front_vec) {
             if (a == v) return true;
         }
-        for (const T &a : back) {
+        for (const T &a : back_vec) {
             if (a == v) return true;
         }
         return false;
     }
-    
+
     void print() const {
         vector<T> a = tovector();
         cout << "Deque([";
-        for (int i = 0; i < len()-1; ++i) {
+        for (int i = 0; i < size()-1; ++i) {
             cout << a[i] << ", ";
         }
-        if (len() > 0) {
+        if (size() > 0) {
             cout << a.back();
         }
         cout << "])\n";
