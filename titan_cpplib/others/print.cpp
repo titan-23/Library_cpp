@@ -16,8 +16,8 @@ template<typename T1, typename T2, typename T3, typename T4> ostream &operator<<
 template<typename T> ostream& operator<<(ostream& os, const vector<T>& a);
 // vector<vector<T>>
 template<typename T> ostream& operator<<(ostream& os, const vector<vector<T>>& a);
-// array<T, 2>
-template<typename T> ostream& operator<<(ostream& os, const array<T, 2>& a);
+// array<T, N>
+template <typename T, size_t N> ostream& operator<<(ostream &os, const array<T, N> &a);
 // stack<T>
 template<typename T> ostream& operator<<(ostream& os, const stack<T>& s);
 // queue<T>
@@ -147,11 +147,11 @@ ostream &operator<<(ostream &os, const tuple<T1, T2, T3, T4> &t) {
     return os;
 }
 
-// array<T, 2>
-template<typename T>
-ostream& operator<<(ostream& os, const array<T, 2>& a) {
+// array
+template <typename T, size_t N>
+ostream& operator<<(ostream &os, const array<T, N> &a) {
     os << "[";
-    for (int i = 0; i < (int)a.size(); ++i) {
+    for (int i = 0; i < (int)N; ++i) {
         if (i > 0) os << ", ";
         os << a[i];
     }
