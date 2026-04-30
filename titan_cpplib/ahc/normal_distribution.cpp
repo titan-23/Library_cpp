@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <cmath>
 #include <cassert>
@@ -58,7 +60,12 @@ public:
         return coeff * std::exp(exponent);
     }
 
-    /// 正規分布 N(mu, sigma) に対して、観測した値が区間 [a, b] に含まれる確率を返す
+    /// 正規分布 N(mu, sigma) における x の対数確率密度を返す
+    static double log_pdf(double x, double mu, double sigma) {
+        return -0.5 * std::log(2.0 * PI) - std::log(sigma) - 0.5 * std::pow((x - mu) / sigma, 2);
+    }
+
+    /// 正規分布 N(mu, sigma) に対して、観測した値が区間 [l, r] に含まれる確率を返す
     static double probability_in_range(double l, double r, double mu, double sigma) {
         assert(l <= r);
         double res = cdf(r, mu, sigma) - cdf(l, mu, sigma);
@@ -70,6 +77,28 @@ public:
     static double inverse_cdf(double p, double mu, double sigma) {
         assert(0 <= p && p <= 1.0);
         return mu + sigma * sqrt2 * erfinv_approx(2.0 * p - 1.0);
+    }
+
+    /// ベイズ更新：事前分布 N(mu_prior, sigma_prior) と観測データ (obs_val) および観測ノイズ N(0, sigma_obs) から事後分布の平均と標準偏差を返す
+    static std::pair<double, double> update_posterior(double mu_prior, double sigma_prior, double obs_val, double sigma_obs) {
+        if (sigma_prior < EPSILON) return {mu_prior, sigma_prior};
+        if (sigma_obs < EPSILON) return {obs_val, 0.0};
+
+        double var_prior = sigma_prior * sigma_prior;
+        double var_obs = sigma_obs * sigma_obs;
+
+        double var_post = 1.0 / (1.0 / var_prior + 1.0 / var_obs);
+        double mu_post = var_post * (mu_prior / var_prior + obs_val / var_obs);
+
+        return {mu_post, std::sqrt(var_post)};
+    }
+
+    /// 2つの正規分布 P=N(mu1, sigma1) と Q=N(mu2, sigma2) 間のKLダイバージェンス D_KL(P || Q) を返す
+    static double KL(double mu1, double sigma1, double mu2, double sigma2) {
+        assert(sigma1 > 0.0 && sigma2 > 0.0);
+        double var1 = sigma1 * sigma1;
+        double var2 = sigma2 * sigma2;
+        return std::log(sigma2 / sigma1) + (var1 + std::pow(mu1 - mu2, 2)) / (2.0 * var2) - 0.5;
     }
 };
 } // namespace titan23

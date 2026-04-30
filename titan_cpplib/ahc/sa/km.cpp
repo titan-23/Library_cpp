@@ -49,7 +49,7 @@ void solve() {
     int max_iter = 10;
     titan23::Kmeans<double, pair<double, double>, calc_dist, calc_mean> kmeans(k, max_iter);
     auto result = kmeans.fit_flow(points, A, 1e6);
-    vector<int> labels = result.first;
+    const vector<int>& labels = result.first;
     rep(i, n) {
         cout << labels[i] << (i == n-1 ? "" : " ");
     }

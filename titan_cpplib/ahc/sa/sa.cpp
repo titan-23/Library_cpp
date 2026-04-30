@@ -29,8 +29,8 @@ typename State::Result sa_run(const double TIME_LIMIT, const bool verbose = fals
     State state;
     state.init();
 
-    const double START_TEMP = state.param.start_temp;
-    const double END_TEMP   = max(state.param.end_temp, 1e-9);
+    const double START_TEMP = State::param.start_temp;
+    const double END_TEMP   = max(State::param.end_temp, 1e-9);
     const double TEMP_VAL = (START_TEMP - END_TEMP) / TIME_LIMIT;
 
     const int TEMP_TABLE_SIZE = 4096;
@@ -80,7 +80,11 @@ typename State::Result sa_run(const double TIME_LIMIT, const bool verbose = fals
                 bst_cnt++;
                 best_result = state.get_result();
                 if (verbose) {
-                    cerr << "Info: score=" << best_result.true_score << endl;
+                    cerr << "Info: score=" << best_result.true_score
+                        << " | time=" << now_time
+                        << " | prog=" << (progress * 100.0) << "%"
+                        << " | temp=" << current_temp << endl;
+                    }
                 }
             }
         } else {
@@ -91,7 +95,9 @@ typename State::Result sa_run(const double TIME_LIMIT, const bool verbose = fals
     if (verbose) {
         cerr << "=============" << endl;
         for (int i = 0; i < modify.size(); ++i) {
-            cerr << "Info: Type=" << i << " | " << accept[i] << " / " << modify[i] << endl;
+            double accept_rate = (modify[i] > 0) ? ((double)accept[i] / modify[i] * 100.0) : 0.0;
+            cerr << "Info: Type=" << i << " | " << accept[i] << " / " << modify[i]
+                 << " (" << accept_rate << "%)" << endl;
         }
         cerr << "Info: bst=" << bst_cnt << endl;
         cerr << "Info: ac=" << upd_cnt << endl;
@@ -116,14 +122,14 @@ typename State::Result replica_run(
     titan23::Timer sa_timer;
     thread_local titan23::Random sa_rnd;
 
-    State dummy_state;
     vector<double> temps(NUM_REPLICAS);
     for (int i = 0; i < NUM_REPLICAS; ++i) {
-        temps[i] = dummy_state.param.start_temp * pow(dummy_state.param.end_temp / dummy_state.param.start_temp, (double)i / max(1, NUM_REPLICAS - 1));
+        temps[i] = State::param.start_temp * pow(State::param.end_temp / dummy_state.param.start_temp, (double)i / max(1, NUM_REPLICAS - 1));
     }
     vector<State> states(NUM_REPLICAS);
     vector<int> rep_idx(NUM_REPLICAS);
 
+    State dummy_state;
     int max_threads = omp_get_max_threads();
     int type_cnt = max(1, dummy_state.changed.TYPE_CNT);
     vector<vector<long long>> accept(max_threads, vector<long long>(type_cnt, 0));

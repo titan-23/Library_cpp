@@ -1,3 +1,4 @@
+#pragma once
 #include <bits/stdc++.h>
 #include "titan_cpplib/ahc/timer.cpp"
 using namespace std;

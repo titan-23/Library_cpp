@@ -12,6 +12,21 @@ def generate_input(filename="input.txt", N=1000, K=10):
     sizes = [base_size] * K
     for i in range(remainder):
         sizes[np.random.randint(0, K)] += 1
+    min_size = max(1, N // (5 * K))
+    remaining_N = N - min_size * K
+
+    # K個のランダムな重みを生成し、残りのNを重みの比率で分配する
+    weights = np.random.rand(K)
+    weights /= weights.sum()
+
+    sizes = min_size + np.floor(weights * remaining_N).astype(int)
+
+    # 切り捨てによってNに足りなくなった端数分をランダムなクラスタに配る
+    remainder = N - np.sum(sizes)
+    for _ in range(remainder):
+        sizes[np.random.randint(0, K)] += 1
+
+    sizes = sizes.tolist()
 
     # 2. 点の生成 (意図的にいくつかのまとまり=Blobを作る)
     points = []
