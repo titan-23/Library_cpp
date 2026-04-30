@@ -1,416 +1,440 @@
-#include <iostream>
-#include <vector>
-#include <cassert>
-#include <algorithm>
-
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/hash_policy.hpp>
+#pragma GCC target("avx2")
+#pragma GCC optimize("O3")
+#pragma GCC optimize("unroll-loops")
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+#define rep(i, n) for (int i = 0; i < (int)(n); ++i)
+template <class T, class U> T min(const T &t, const U &u) { return t < u ? t : u; }
+template <class T, class U> T max(const T &t, const U &u) { return t < u ? u : t; }
 
 #include "titan_cpplib/ahc/timer.cpp"
-#include "titan_cpplib/ahc/beam_search/action.cpp"
-#include "titan_cpplib/ahc/state_pool.cpp"
-using namespace std;
+#include "titan_cpplib/algorithm/random.cpp"
+#include "titan_cpplib/others/print.cpp"
+// #include "titan_cpplib/ahc/beam_search/beam_search_turn.cpp"
+#include "titan_cpplib/ahc/beam_search/gemini.cpp"
 
-// beam_search
-namespace titan23 {
+constexpr const int N = 10;
+constexpr const int MAX_S = 15;
+constexpr const int MAX_T = 20;
+int R;
+vector<vector<int>> Y;
+
+void input() {
+    cin >> R;
+    Y.resize(R, vector<int>(N));
+    rep(i, R) rep(j, N) cin >> Y[i][j];
+}
 
 namespace beam_search {
-  class State;
-  struct SubState;
-  using StatePtr = State*;
-  StatePool<State> pool;
-  StatePool<SubState> sub_pool;
 
-  // TODO:
-  using ScoreType = double;  // スコアは小さいほどよい
-  using HashType = unsigned long long;
+using ScoreType = long long;
+using HashType = unsigned long long;
+const ScoreType INF = 1e18;
+titan23::Random brnd;
 
-  class State {
-   public:
-    HashType hash;
-    Action first_action, last_action;
+// zhs_s[v][i][j]:=値vが位置(i,j)にあるハッシュ
+HashType zhs_s[N*N][N][MAX_S];
+HashType zhs_t[N*N][N][MAX_T];
+HashType hash_AC;
+
+void beam_init() {
+    rep(i, N*N) rep(j, N) rep(k, MAX_S) zhs_s[i][j][k] = brnd.rand_u64();
+    rep(i, N*N) rep(j, N) rep(k, MAX_T) zhs_t[i][j][k] = brnd.rand_u64();
+    hash_AC = 0;
+    rep(i, N*N) {
+        hash_AC ^= zhs_s[i][i/10][i%10];
+    }
+}
+
+struct Action {
+    ScoreType pre_score, nxt_score;
+    HashType pre_hash, nxt_hash;
+    int target_turn;
+    int pre_turn, pre_s, pre_t;
+    int nxt_turn, nxt_s, nxt_t;
+    int si, ti;
+    int scnt, tcnt;
+
+    Action() : pre_score(INF), nxt_score(INF), pre_hash(0), nxt_hash(0), pre_turn(0), target_turn(-1) {}
+    Action(int si, int ti, int scnt, int tcnt) : si(si), ti(ti), scnt(scnt), tcnt(tcnt) {}
+    friend ostream& operator<<(ostream& os, const Action &action) {
+        return os;
+    }
+
+    string to_string() const {
+        return "";
+    }
+};
+
+struct SArray {
+    int sz;
+    int data[MAX_S];
+
+    SArray() : sz(0) {}
+
+    SArray(const SArray& other) : sz(other.sz) {
+        for (int i = 0; i < sz; ++i) data[i] = other.data[i];
+    }
+    SArray& operator=(const SArray& other) {
+        if (this != &other) {
+            sz = other.sz;
+            for (int i = 0; i < sz; ++i) data[i] = other.data[i];
+        }
+        return *this;
+    }
+
+    void clear() { sz = 0; }
+    void push_back(int v) { data[sz++] = v; }
+    void pop_back() { --sz; }
+    int back() const { return data[sz - 1]; }
+    int size() const { return sz; }
+    bool empty() const { return sz == 0; }
+    int operator[](int i) const { return data[i]; }
+};
+
+struct TArray {
+    int head;
+    int data[MAX_T];
+
+    TArray() : head(MAX_T) {}
+
+    TArray(const TArray& other) : head(other.head) {
+        for (int i = head; i < MAX_T; ++i) data[i] = other.data[i];
+    }
+    TArray& operator=(const TArray& other) {
+        if (this != &other) {
+            head = other.head;
+            for (int i = head; i < MAX_T; ++i) data[i] = other.data[i];
+        }
+        return *this;
+    }
+
+    void clear() { head = MAX_T; }
+    void push_front(int v) { data[--head] = v; }
+    void pop_front() { ++head; }
+    int front() const { return data[head]; }
+    int size() const { return MAX_T - head; }
+    bool empty() const { return head == MAX_T; }
+    int operator[](int i) const { return data[head + i]; }
+};
+
+class State {
+private:
     ScoreType score;
-    long long substate_id;
+    HashType hash;
+    int turn;
+    int s, t;
+    array<SArray, N> S;
+    array<TArray, N> T;
 
-   private:
-    void inner_copy(StatePtr &new_state) const {
-    }
-
-    // TODO:
-    void inner_apply_op(const Action &action) {
-    }
-
-   public:
-    State() {}
-
-    // TODO:
-    bool is_done() const {
-    }
-
-    // TODO:
-    ScoreType get_score() const {
-    }
-
-    // TODO:
-    pair<ScoreType, HashType> try_op(const Action &action) const {
-    }
-
-    // TODO:
-    void print() const {
-    }
-
-    // TODO:
-    vector<Action> get_actions(const int turn) const {
-      if (turn == 0) {
-      } else {
-      }
-    }
-
-    // TODO:
+public:
     void init() {
-      // TODO: field初期設定、スコア初期設定など
+        turn = 0;
+        s = 0;
+        t = 0;
+        rep(i, N) {
+            S[i].clear();
+            T[i].clear();
+        }
+        rep(i, N) rep(j, MAX_S) {
+            if (j < N) S[i].push_back(Y[i][j]);
+        }
+        score = 0;
+        rep(i, N) score += calc_score_S(i, S[i]);
+        hash = 0;
+        rep(i, N) hash ^= calc_hash_S(i, S[i]);
+        rep(i, N) hash ^= calc_hash_T(i, T[i]);
+    }
+
+    bool is_consecutive(int x, int y) const {
+        if (x % 10 == 9) return false;
+        if (y != x+1) return false;
+        return true;
+    }
+
+    HashType calc_hash_S(int c, const SArray &q) const {
+        HashType h = 0;
+        rep(k, q.size()) h ^= zhs_s[q[k]][c][k];
+        return h;
+    }
+
+    HashType calc_hash_T(int c, const TArray &q) const {
+        HashType h = 0;
+        rep(k, q.size()) h ^= zhs_t[q[k]][c][k];
+        return h;
+    }
+
+    ScoreType calc_score_S(int c, const SArray &q) const {
+        ScoreType s = 0;
+        rep(i, q.size()) {
+            if (i == 0) {
+                if (q[i] == c*10) s -= 100;
+            } else {
+                if (is_consecutive(q[i-1], q[i])) s -= 100;
+            }
+            s += abs(c - q[i]/10);
+        }
+        return s;
+    }
+
+    ScoreType calc_score_T(int c, const TArray &q) const {
+        ScoreType s = 0;
+        rep(i, q.size()) {
+            if (i) {
+                if (is_consecutive(q[i-1], q[i])) s -= 100;
+            }
+            s += abs(c - q[i]/10);
+        }
+        return s;
+    }
+
+    ScoreType pair_score(int i, const SArray &sq, int j, const TArray &tq) const {
+        if (sq.empty() || tq.empty()) return 0;
+        if (is_consecutive(sq.back(), tq.front())) return -50 + abs(i-j)*abs(i-j);
+        return 0;
+    }
+
+    tuple<ScoreType, HashType, bool> try_op(Action &action, const vector<ScoreType>& thresholds) const {
+        action.pre_score = score;
+        action.pre_hash = hash;
+        action.pre_turn = turn;
+        ScoreType nxt_score = score;
+        HashType nxt_hash = hash;
+
+        action.pre_turn = turn;
+        action.pre_s = s;
+        action.pre_t = t;
+        int i = action.si;
+        int j = action.ti;
+        if (i == -1 || j == -1) {
+            action.nxt_turn = turn + 1;
+            action.nxt_s = 0;
+            action.nxt_t = 0;
+            action.target_turn = (turn+1)*N*N;
+            action.nxt_score = nxt_score;
+            action.nxt_hash = nxt_hash;
+            return {nxt_score, nxt_hash, hash == hash_AC};
+        }
+
+        action.nxt_turn = turn;
+        action.nxt_s = i + 1;
+        action.nxt_t = j + 1;
+        if (action.nxt_s == N || action.nxt_t == N) {
+            action.nxt_turn = turn + 1;
+            action.nxt_s = 0;
+            action.nxt_t = 0;
+        }
+        action.target_turn = (action.nxt_turn)*N*N + (action.nxt_s)*N + (action.nxt_t);
+
+        SArray ns = S[i];
+        TArray nt = T[j];
+        if (action.scnt != -1) {
+            rep(_, action.scnt) {
+                int v = ns.back();
+                ns.pop_back();
+                nt.push_front(v);
+            }
+        }
+        if (action.tcnt != -1) {
+            rep(_, action.tcnt) {
+                int v = nt.front();
+                nt.pop_front();
+                ns.push_back(v);
+            }
+        }
+
+        nxt_score -= calc_score_S(i, S[i]) + calc_score_T(j, T[j]);
+        nxt_score += calc_score_S(i, ns) + calc_score_T(j, nt);
+        rep(tc, N) {
+            if (tc == j) continue;
+            nxt_score -= pair_score(i, S[i], tc, T[tc]);
+            nxt_score += pair_score(i, ns, tc, T[tc]);
+        }
+        rep(sc, N) {
+            if (sc == i) continue;
+            nxt_score -= pair_score(sc, S[sc], j, T[j]);
+            nxt_score += pair_score(sc, S[sc], j, nt);
+        }
+        nxt_score -= pair_score(i, S[i], j, T[j]);
+        nxt_score += pair_score(i, ns, j, nt);
+        if (nxt_score >= thresholds[action.target_turn]) return {INF, 0, 0};
+
+        nxt_hash ^= calc_hash_S(i, S[i]) ^ calc_hash_T(j, T[j]);
+        nxt_hash ^= calc_hash_S(i, ns) ^ calc_hash_T(j, nt);
+
+        action.nxt_score = nxt_score;
+        action.nxt_hash = nxt_hash;
+        return {nxt_score, nxt_hash, nxt_hash == hash_AC};
     }
 
     void apply_op(const Action &action) {
-      last_action = action;
-      inner_apply_op(action);
-    }
-
-    void copy(StatePtr &new_state) const {
-      new_state->first_action = first_action;
-      new_state->last_action = last_action;
-      new_state->hash = hash;
-      new_state->score = score;
-      inner_copy(new_state);
-    }
-
-    bool operator>(const State &right) const { return score > right.score; }
-    bool operator<(const State &right) const { return score < right.score; }
-  };
-
-  struct Result {
-    vector<Action> history;
-    ScoreType score;
-
-    Result() {}
-
-    ScoreType get_score() const {
-      return score;
-    }
-
-    void print() const {
-      for (Action action: history) {
-        cout << action;
-      }
-      cout << endl;
-    }
-  };
-
-  struct SubState {
-    ScoreType score;
-    long long state, par;
-    Action action;
-    SubState() {}
-  };
-
-  class Param {
-   private:
-    Timer timer;
-    double time_limit;
-    int beam_depth_base, beam_width_base;
-    int decide_turn, max_turn;
-    vector<int> pred, pred_acc;
-    int done_depth_total;
-    bool adjace;
-
-   public:
-    Param() {}
-
-    /**
-     *
-     @brief Construct a new Param object
-     *
-     * @param time_limit
-     * @param max_turn
-     * @param beam_depth_base
-     * @param beam_width_base
-     */
-    Param(const double time_limit,
-          const int max_turn,
-          const int decide_turn,
-          const int beam_depth_base,
-          const int beam_width_base,
-          const bool adjace=false) :
-        time_limit(time_limit),
-        beam_depth_base(beam_depth_base), beam_width_base(beam_width_base),
-        decide_turn(decide_turn),
-        max_turn(max_turn),
-        pred(max_turn+1, 0), pred_acc(max_turn+2, 0),
-        done_depth_total(0),
-        adjace(adjace) {
-      vector<int> t(max_turn+1);
-      for (int turn = 0; turn < max_turn+1; ++turn) {
-        pred[turn] = max(1, min(beam_depth_base, max_turn-turn));
-        pred_acc[turn+1] = pred_acc[turn] + pred[turn];
-      }
-    }
-
-    void init() { timer.reset(); }
-    int get_max_turn() const { return max_turn; }
-    int get_beam_depth() const { return beam_depth_base; }
-    int get_beam_width() const { return beam_width_base; }
-
-    int get_beam_depth(const int turn) const {
-      return min(beam_depth_base, max_turn-turn);
-    }
-
-    void timestamp(const int turn, const int done_depth) {
-      done_depth_total += done_depth;
-    }
-
-    int get_decide_turn() const {
-      return decide_turn;
-    }
-
-    int get_beam_width(const int turn) {
-      if ((!adjace) || turn == 0) return get_beam_width();
-      double now_time = timer.elapsed();
-      double rem_time = time_limit - now_time;
-      int t = pred_acc.back() - pred_acc[turn];
-      double pred_total_cnt = rem_time * (double)done_depth_total / now_time;
-      int d = max(1, (int)(pred[turn] * pred_total_cnt / (double)t));
-      return d;
-    }
-  };
-
-  class BeamSearch {
-   private:
-    static inline void calc_next_beam(const vector<long long> &keep,
-                                      const int turn,
-                                      __gnu_pbds::gp_hash_table<HashType, uint8_t> &seen,
-                                      vector<long long> &score_keep) {
-      for (const long long now_state: keep) {
-        const vector<Action> &actions = pool.get(now_state)->get_actions(turn);
-        for (const Action &op : actions) {
-          auto [new_score, new_hash] = pool.get(now_state)->try_op(op);
-          if (seen.find(new_hash) != seen.end()) continue;
-          seen[new_hash] = 0;
-          const long long substate = sub_pool.gen();
-          sub_pool.get(substate)->score = new_score;
-          sub_pool.get(substate)->state = now_state;
-          sub_pool.get(substate)->action = op;
-          score_keep.emplace_back(substate);
-        }
-      }
-    }
-
-   public:
-    static inline Result run_each_turn(Param &param, const bool verbose=false) {
-      Result result;
-
-      const long long best_state = pool.gen();
-      pool.get(best_state)->init();
-      param.init();
-
-      for (int turn = 0; turn < param.get_max_turn(); ++turn) {
-        if (verbose) cout << "# turn : " << turn << endl;
-        const int beam_depth = param.get_beam_depth(turn);
-        const int beam_width = param.get_beam_width(turn);
-        int done_depth = 0;
-        vector<long long> keep = { pool.copy(best_state) };
-        __gnu_pbds::gp_hash_table<HashType, uint8_t> seen;
-        for (int beam_turn = 0; beam_turn < beam_depth; ++beam_turn, ++done_depth) {
-          vector<long long> score_keep;
-          score_keep.reserve(keep.size());
-          calc_next_beam(keep, turn, seen, score_keep);
-          nth_element(score_keep.begin(), score_keep.begin() + min((long long)score_keep.size(), (long long)param.get_beam_width()), score_keep.end(), [&] (const long long &l, const long long &r) {
-            return sub_pool.get(l)->score < sub_pool.get(r)->score;
-          });
-          const Action &op = sub_pool.get(score_keep.front())->action;
-          bool is_all_same = true;
-          vector<long long> new_keep(min((long long)beam_width, (long long)score_keep.size()));
-          for (int i = 0; i < beam_width && i < score_keep.size(); ++i) {
-            const long long state = pool.copy(sub_pool.get(score_keep[i])->state);
-            if (beam_turn == 0) {
-              pool.get(state)->first_action = sub_pool.get(score_keep[i])->action;
+        int i = action.si;
+        int j = action.ti;
+        if (action.si != -1 && action.ti != -1) {
+            if (action.scnt != -1) {
+                rep(_, action.scnt) {
+                    int v = S[i].back();
+                    S[i].pop_back();
+                    T[j].push_front(v);
+                }
             }
-            pool.get(state)->apply_op(sub_pool.get(score_keep[i])->action);
-            if (is_all_same && pool.get(state)->first_action != op) is_all_same = false;
-            new_keep[i] = state;
-          }
-          for (const long long state: score_keep) sub_pool.del(state);
-          for (const long long state: keep) pool.del(state);
-          swap(keep, new_keep);
-          const long long d_best_state = *min_element(keep.begin(), keep.end(), [&] (const long long &l, const long long &r) {
-            return (*pool.get(l)) < (*pool.get(r));
-          });
-          if (pool.get(d_best_state)->is_done() || is_all_same) break;
+            if (action.tcnt != -1) {
+                rep(_, action.tcnt) {
+                    int v = T[j].front();
+                    T[j].pop_front();
+                    S[i].push_back(v);
+                }
+            }
         }
-        param.timestamp(turn, done_depth);
-        const long long d_best_state = *min_element(keep.begin(), keep.end(), [&] (const long long &l, const long long &r) {
-          return (*pool.get(l)) < (*pool.get(r));
-        });
-        const Action &op = pool.get(d_best_state)->first_action;
-        pool.get(best_state)->apply_op(op);
-        result.history.push_back(op);
-        if (verbose) {
-          pool.get(best_state)->print();
-          cout << "Score = " << pool.get(best_state)->get_score() << endl << endl;
-        }
-        for (const long long node_id: keep) pool.del(node_id);
-        if (pool.get(best_state)->is_done()) break;
-      }
-      result.score = pool.get(best_state)->get_score();
-      pool.del(best_state);
-      return result;
+
+        score = action.nxt_score;
+        hash = action.nxt_hash;
+        turn = action.nxt_turn;
+        s = action.nxt_s;
+        t = action.nxt_t;
     }
 
-    static inline Result run_normal(Param &param, const bool verbose=false) {
-      param.init();
-      Result result;
-
-      __gnu_pbds::gp_hash_table<HashType, uint8_t> seen;
-      vector<long long> keep;
-
-      { // init state
-        const long long state = pool.gen();
-        pool.get(state)->init();
-        seen[state] = 0;
-        keep = { state };
-        pool.get(state)->substate_id = -1;
-      }
-
-      for (int turn = 0; turn < param.get_max_turn(); ++turn) {
-        if (verbose) cout << "# turn : " << turn << endl;
-        const int beam_width = param.get_beam_width(turn);
-        vector<long long> score_keep;
-        calc_next_beam(keep, turn, seen, score_keep);
-        nth_element(score_keep.begin(), score_keep.begin() + min((long long)score_keep.size(), (long long)param.get_beam_width()), score_keep.end(), [&] (const long long &l, const long long &r) {
-          return sub_pool.get(l)->score < sub_pool.get(r)->score;
-        });
-        vector<long long> new_keep(min((long long)beam_width, (long long)score_keep.size()));
-        for (int i = 0; i < beam_width && i < score_keep.size(); ++i) {
-          long long substate = score_keep[i];
-          long long new_state = pool.copy(sub_pool.get(substate)->state);
-          pool.get(new_state)->apply_op(sub_pool.get(substate)->action);
-          pool.get(new_state)->substate_id = substate;
-          sub_pool.get(substate)->par = pool.get(sub_pool.get(substate)->state)->substate_id;
-          new_keep[i] = new_state;
+    void rollback(const Action &action) {
+        int i = action.si;
+        int j = action.ti;
+        if (action.si != -1 && action.ti != -1) {
+            if (action.scnt != -1) {
+                rep(_, action.scnt) {
+                    int v = T[j].front();
+                    T[j].pop_front();
+                    S[i].push_back(v);
+                }
+            }
+            if (action.tcnt != -1) {
+                rep(_, action.tcnt) {
+                    int v = S[i].back();
+                    S[i].pop_back();
+                    T[j].push_front(v);
+                }
+            }
         }
-
-        for (const long long state: keep) pool.del(state);
-        for (int i = new_keep.size(); i < score_keep.size(); ++i) {
-          sub_pool.del(score_keep[i]);
-        }
-
-        swap(keep, new_keep);
-        const long long best_state = *min_element(keep.begin(), keep.end(), [&] (const long long &l, const long long &r) {
-          return (*pool.get(l)) < (*pool.get(r));
-        });
-        if (verbose) {
-          // pool.get(best_state)->print();
-          cout << "Score = " << pool.get(best_state)->get_score() << endl << endl;
-        }
-        if (pool.get(best_state)->is_done()) break;
-      }
-
-      const long long best_state = *min_element(keep.begin(), keep.end(), [&] (const long long &l, const long long &r) {
-        return (*pool.get(l)) < (*pool.get(r));
-      });
-      result.score = pool.get(best_state)->get_score();
-      long long substate = pool.get(best_state)->substate_id;
-      while (substate != -1) {
-        result.history.emplace_back(sub_pool.get(substate)->action);
-        substate = sub_pool.get(substate)->par;
-      }
-      reverse(result.history.begin(), result.history.end());
-      return result;
+        score = action.pre_score;
+        hash = action.pre_hash;
+        turn = action.pre_turn;
+        s = action.pre_s;
+        t = action.pre_t;
     }
 
-    static inline Result run_complex(Param &param, const bool verbose=false) {
-      /*
-      - 一度のビームサーチで、何ターン先を決めるか
-        - 幅、深さ
-        - 何ターン先まで読むか
-      */
+    void get_actions(vector<Action> &actions, const Action &last_action, const vector<ScoreType> &thresholds) const {
+        for (int i = s; i < N; ++i) {
+            bool done = true;
+            if (S[i].size() != N) done = false;
+            int done_cnt = 0;
+            if (done) {
+                rep(j, N) {
+                    if (S[i][j] != i*N+j) {
+                        done = false;
+                        break;
+                    }
+                    done_cnt++;
+                }
+            }
+            if (done) continue;
 
-      Result result;
-      param.init();
+            for (int j = t; j < N; ++j) {
+                const int n = S[i].size();
+                const int m = T[j].size();
+                for (int p = 1; p <= n; ++p) {
+                    if (m+p > MAX_T) break;
+                    if (p < n && is_consecutive(S[i][n-p-1], S[i][n-p])) continue;
+                    if (n-p < done_cnt) break;
+                    if (n > 0 && m > 0 && is_consecutive(S[i].back(), T[j].front())) {
+                        actions.push_back({i, j, p, -1});
+                        continue;
+                    }
+                    if (actions.size() > 10 && brnd.randint(100) < 90) continue;
+                    actions.push_back({i, j, p, -1});
+                }
 
-      const long long best_state = pool.gen();
-      pool.get(best_state)->init();
-      pool.get(best_state)->substate_id = -1;
-
-      for (int turn = 0; turn < param.get_max_turn(); turn += param.get_decide_turn()) {
-        if (verbose) cout << "# turn : " << turn << endl;
-
-        vector<long long> keep;
-        const int beam_depth = param.get_beam_depth(turn);
-        const int beam_width = param.get_beam_width(turn);
-        __gnu_pbds::gp_hash_table<HashType, uint8_t> seen;
-
-        { // init
-          const long long init_state = pool.copy(best_state);
-          seen[init_state] = 0;
-          pool.get(init_state)->substate_id = -1;
-          keep = {init_state};
+                for (int q = 1; q <= m; ++q) {
+                    if (n+q > MAX_S) break;
+                    if (q < m && is_consecutive(T[j][q-1], T[j][q])) continue;
+                    if (n > 0 && m > 0 && is_consecutive(S[i].back(), T[j].front())) {
+                        actions.push_back({i, j, -1, q});
+                        continue;
+                    }
+                    if (actions.size() > 10 && brnd.randint(100) < 80) continue;
+                    actions.push_back({i, j, -1, q});
+                }
+            }
         }
-
-        for (int beam_turn = 0; beam_turn < beam_depth; ++beam_turn) {
-          vector<long long> score_keep;
-          calc_next_beam(keep, turn, seen, score_keep);
-          const int w = min((int)score_keep.size(), beam_width);
-          nth_element(score_keep.begin(), score_keep.begin() + w, score_keep.end(), [&] (const long long &l, const long long &r) {
-            return sub_pool.get(l)->score < sub_pool.get(r)->score;
-          });
-          vector<long long> new_keep;
-
-          for (int i = 0; i < w; ++i) {
-            long long substate = score_keep[i];
-            long long nowstate = sub_pool.get(substate)->state;
-            long long new_state = pool.copy(nowstate);
-            pool.get(new_state)->apply_op(sub_pool.get(substate)->action);
-            pool.get(new_state)->substate_id = substate;
-            sub_pool.get(substate)->par = pool.get(nowstate)->substate_id;
-            new_keep.emplace_back(new_state);
-          }
-
-          for (const long long state: keep) pool.del(state);
-          for (int i = w; i < score_keep.size(); ++i) {
-            sub_pool.del(score_keep[i]);
-          }
-
-          swap(keep, new_keep);
-          const long long this_best_state = *min_element(keep.begin(), keep.end(), [&] (const long long &l, const long long &r) {
-            return (*pool.get(l)) < (*pool.get(r));
-          });
-          if (pool.get(this_best_state)->is_done()) break;
-        }
-
-        const long long this_best_state = *min_element(keep.begin(), keep.end(), [&] (const long long &l, const long long &r) {
-          return (*pool.get(l)) < (*pool.get(r));
-        });
-        long long substate = pool.get(this_best_state)->substate_id;
-        vector<Action> history;
-        while (substate != -1) {
-          history.emplace_back(sub_pool.get(substate)->action);
-          substate = sub_pool.get(substate)->par;
-        }
-        sub_pool.clear();
-        reverse(history.begin(), history.end());
-        for (int i = 0; i < min(param.get_decide_turn(), (int)(history.size())); ++i) {
-          result.history.emplace_back(history[i]);
-          pool.get(best_state)->apply_op(history[i]);
-          if (verbose) {
-            pool.get(best_state)->print();
-            cout << "Score = " << pool.get(best_state)->get_score() << endl << endl;
-          }
-        }
-        if (pool.get(best_state)->is_done()) break;
-      }
-      result.score = pool.get(best_state)->get_score();
-      return result;
+        actions.push_back({-1, -1, -1, -1});
     }
-  };
+
+    void print() const {}
+
+    string get_state_info() const {
+        return "{}";
+    }
+};
+
+flying_squirrel::BeamParam gen_param(int max_turn, int beam_width) {
+    return {max_turn, beam_width, -1};
 }
-}  // namespace titan23
+
+flying_squirrel::BeamParam gen_param(int max_turn, int beam_width, double time_limit, bool is_adjusting) {
+    return {max_turn, beam_width, time_limit, is_adjusting};
+}
+
+vector<Action> search(flying_squirrel::BeamParam &param, const bool verbose=false) {
+    flying_squirrel::BeamSearchWithTree<ScoreType, HashType, Action, State, INF> bs;
+    return bs.search(param, verbose);
+}
+} // namespace beam_search
+
+struct S {
+    int type, i, j, k;
+};
+
+void solve() {
+    beam_search::beam_init();
+    auto param = beam_search::gen_param(1e4, 90);
+    auto result = beam_search::search(param, false);
+    cerr << "resulit.size()=" << result.size() << endl;
+    vector<vector<S>> ans;
+    int pre_turn = -1;
+    for (auto &res : result) {
+        if (res.pre_turn != pre_turn) {
+            ans.push_back({});
+        }
+        pre_turn = res.pre_turn;
+        if (res.si != -1 && res.ti != -1) {
+            int type = res.scnt == -1 ? 1 : 0;
+            int k = res.scnt == -1 ? res.tcnt : res.scnt;
+            ans.back().push_back({type, res.si, res.ti, k});
+        }
+    }
+    vector<vector<S>> final_ans;
+    for (auto &turn_actions : ans) {
+        if (!turn_actions.empty()) {
+            final_ans.push_back(turn_actions);
+        }
+    }
+    cout << final_ans.size() << "\n";
+    for (auto &res : final_ans) {
+        cout << res.size() << "\n";
+        for (auto &s : res) {
+            cout << s.type << " " << s.i << " " << s.j << " " << s.k << "\n";
+        }
+    }
+
+    cerr << "Score = " << final_ans.size() << endl;
+}
+
+int main(int argc, char* argv[]) {
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    cout << fixed << setprecision(3);
+    cerr << fixed << setprecision(3);
+
+    input();
+    solve();
+
+    return 0;
+}
