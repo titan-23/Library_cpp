@@ -21,6 +21,7 @@ void beam_init() {
 
 // TODO Action
 // メモリ量は少ない方がよく、score,hash のメモは無くしたい
+// ライブラリ側でtarget_turnメンバを参照する
 struct Action {
     ScoreType pre_score, nxt_score;
     HashType pre_hash, nxt_hash;
@@ -54,7 +55,7 @@ public:
     //! ロールバックに必要な情報はすべてactionにメモしておく
     //! threshold以上であれば計算しなくてよい
     //! INFを返すと無条件で採用しない
-    tuple<ScoreType, HashType, bool> try_op(Action &action, const vector<ScoreType>& thresholds) const {
+    tuple<ScoreType, HashType, bool> try_op(Action &action, const vector<ScoreType> &thresholds) const {
         action.pre_score = score;
         action.pre_hash = hash;
         action.pre_turn = turn;
@@ -64,7 +65,6 @@ public:
 
         // TODO
         // action.target_turn = turn + 1; などの設定をここで行う
-        // if (nxt_score >= thresholds[action.target_turn]) return {INF, 0, false};
 
         action.nxt_score = nxt_score;
         action.nxt_hash = nxt_hash;
@@ -91,7 +91,7 @@ public:
 
     // TODO
     //! 現状態から遷移可能な `Action` の `vector` を `actions` に入れる
-    void get_actions(vector<Action> &actions, const Action &last_action, const vector<ScoreType>& thresholds) const {
+    void get_actions(vector<Action> &actions, const Action &last_action, const vector<ScoreType> &thresholds) const {
     }
 
     // TODO
