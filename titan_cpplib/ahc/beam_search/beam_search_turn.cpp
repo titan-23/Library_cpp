@@ -24,8 +24,7 @@ private:
 
     bool found_finished;
     ScoreType best_finished_score;
-    int best_finished_par;
-    int best_finished_action_id;
+    int best_finished_par_action_id;
     Action best_finished_action;
 
     struct TreeNode {
@@ -245,16 +244,15 @@ private:
                     if (!found_finished || score < best_finished_score) {
                         found_finished = true;
                         best_finished_score = score;
-                        best_finished_par = PRE_ORDER;
+                        best_finished_par_action_id = -1;
                         best_finished_action = action;
-                        best_finished_action_id = current_node_id;
                     }
                 } else {
                     int req_w = param_ptr->get_beam_width(max_turn_global - target_turn, 0, param_ptr->time_limit);
                     Candidates& cands = get_cands(target_turn, req_w);
-                    if (cands.push(score, hash, PRE_ORDER, action, current_node_id, is_survived_node, target_turn)) {
+                    if (cands.push(score, hash, 0, action, current_node_id, is_survived_node, target_turn)) {
                         thresholds[target_turn] = cands.threshold();
-                        current_new_candidates.push_back({PRE_ORDER, score, hash, action, current_node_id, target_turn});
+                        current_new_candidates.push_back({0, score, hash, action, current_node_id, target_turn});
                     } else {
                         status = 1;
                     }
@@ -291,10 +289,8 @@ private:
                             if (!found_finished || score < best_finished_score) {
                                 found_finished = true;
                                 best_finished_score = score;
-                                best_finished_par = leaf_id;
+                                best_finished_par_action_id = parent_id;
                                 best_finished_action = child_action;
-                                // 終了したアクションの「親ノード」のIDを保存
-                                best_finished_action_id = parent_id;
                             }
                         } else {
                             int req_w = param_ptr->get_beam_width(max_turn_global - t_turn, 0, param_ptr->time_limit);
@@ -329,7 +325,7 @@ private:
         nxt_tree.clear();
         if (turn == 0) {
             for (int i = 0; i < (int)current_new_candidates.size(); ++i) {
-                const auto &[par, _, __, new_action, action_id, t_turn] = current_new_candidates[i];
+                const auto &[par, score, hash, new_action, action_id, t_turn] = current_new_candidates[i];
                 if (is_survived_node[action_id]) {
                     nxt_tree.emplace_back(0, new_action, action_id, t_turn);
                 }
@@ -339,7 +335,6 @@ private:
         }
 
         int i = 0;
-        // 先頭(PRE)と末尾(POST)の action_id が一致する場合、根を確定させる
         while (i < tree.size()) {
             const auto &[dir_or_leaf_id, action, action_id, target_turn_node] = tree[i];
             if (dir_or_leaf_id == PRE_ORDER && i + 1 < tree.size() && action_id == tree.back().action_id) {
@@ -394,6 +389,7 @@ private:
                 }
             }
         }
+
         swap(tree, nxt_tree);
     }
 
@@ -403,8 +399,7 @@ private:
         Action best_action;
 
         if (found_finished) {
-            target_action_id = best_finished_action_id;
-            is_pre_order = (best_finished_par == PRE_ORDER);
+            target_action_id = best_finished_par_action_id;
             best_action = best_finished_action;
         } else {
             ScoreType best_score = INF;
@@ -417,7 +412,6 @@ private:
                         if (target_action_id == -1 || score < best_score) {
                             best_score = score;
                             target_action_id = action_id;
-                            is_pre_order = (par == PRE_ORDER);
                             best_action = action;
                         }
                     }
@@ -426,24 +420,25 @@ private:
             }
         }
 
-        if (target_action_id == -1 || is_pre_order) {
-            if (target_action_id != -1) result.emplace_back(best_action);
-            return;
+        if (target_action_id == -1) {
+             if (found_finished) {
+                 result.emplace_back(best_action);
+             }
+             return;
         }
 
         for (const auto &[dir_or_leaf_id, action, action_id, __] : tree) {
             if (dir_or_leaf_id >= 0) {
                 if (action_id == target_action_id) {
-                    // ★ 修正箇所: ゴール到達時の親ノードのアクション抜け落ちを防止
+                    result.emplace_back(action);
                     if (found_finished) {
-                        result.emplace_back(action); // 親自身のアクション
+                        result.emplace_back(best_action);
                     }
-                    result.emplace_back(best_action); // 子(終了手)のアクション
                     return;
                 }
             } else if (dir_or_leaf_id == PRE_ORDER) {
                 result.emplace_back(action);
-            } else {
+            } else if (dir_or_leaf_id == POST_ORDER) {
                 result.pop_back();
             }
         }
@@ -458,7 +453,7 @@ private:
         result.clear();
         found_finished = false;
         best_finished_score = INF;
-        best_finished_action_id = -1;
+        best_finished_par_action_id = -1;
         max_turn_global = param.max_turn;
         param_ptr = &param;
         DUMMY_ACTION.target_turn = -1;
@@ -513,6 +508,7 @@ public:
                 snapshots.push_back({turn + 1, active_ids});
             }
 
+            // 探索木の更新
             if (turn != 0) {
                 sort(current_new_candidates.begin(), current_new_candidates.end(),
                     [] (const auto& a, const auto& b) {
@@ -538,8 +534,9 @@ public:
             param.timestamp(tree.size(), current_new_candidates.size(), beam_timer.elapsed()-now_time);
         }
 
+        // 答えを復元する
         if (verbose) {
-            cerr << "[BeamSearch] Info: max_turn finished." << endl;
+            cerr << to_green("[BeamSearch] Info: max_turn finished.") << endl;
             param.report();
         }
         get_result();
