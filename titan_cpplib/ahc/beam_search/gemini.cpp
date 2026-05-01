@@ -26,6 +26,7 @@ private:
     bool found_finished;
     ScoreType best_finished_score;
     int best_finished_par_action_id;
+    int best_finished_node_id;
     Action best_finished_action;
 
     struct TreeNode {
@@ -76,7 +77,18 @@ private:
 
     vector<uint8_t> is_survived_node;
 
-    void dump_history_json(const string& filename) const {
+    void dump_history_json(const string& filename) {
+        if constexpr (record_history) {
+            for (auto& node : history) {
+                if (node.status == 0) {
+                    if (node.node_id == best_finished_node_id) continue;
+                    if (node.node_id < is_survived_node.size() && !is_survived_node[node.node_id]) {
+                        node.status = 1;
+                    }
+                }
+            }
+        }
+
         ofstream ofs(filename);
         if(!ofs) return;
         ofs << "{\n  \"INF\": " << INF << ",\n  \"nodes\": [\n";
@@ -245,8 +257,7 @@ private:
             int parent_id = -1;
             for (Action &action : actions) {
                 auto [score, hash, finished] = state.try_op(action, thresholds);
-                if (score >= INF) continue;
-
+                
                 int target_turn = action.target_turn;
                 if (target_turn > max_turn_global) continue;
 
@@ -254,12 +265,15 @@ private:
                 check_survived_capacity(current_node_id);
 
                 int status = 0;
-                if (finished) {
+                if (score >= INF) {
+                    status = 2;
+                } else if (finished) {
                     if (!found_finished || score < best_finished_score) {
                         found_finished = true;
                         best_finished_score = score;
                         best_finished_par_action_id = -1;
                         best_finished_action = action;
+                        best_finished_node_id = current_node_id;
                     }
                 } else {
                     int req_w = param_ptr->get_beam_width(max_turn_global - target_turn, 0, param_ptr->time_limit);
@@ -309,8 +323,7 @@ private:
 
                     for (Action &child_action : actions) {
                         auto [score, hash, finished] = state.try_op(child_action, thresholds);
-                        if (score >= INF) continue;
-
+                        
                         int t_turn = child_action.target_turn;
                         if (t_turn > max_turn_global) continue;
 
@@ -318,12 +331,15 @@ private:
                         check_survived_capacity(current_node_id);
 
                         int status = 0;
-                        if (finished) {
+                        if (score >= INF) {
+                            status = 2;
+                        } else if (finished) {
                             if (!found_finished || score < best_finished_score) {
                                 found_finished = true;
                                 best_finished_score = score;
                                 best_finished_par_action_id = parent_id;
                                 best_finished_action = child_action;
+                                best_finished_node_id = current_node_id;
                             }
                         } else {
                             int req_w = param_ptr->get_beam_width(max_turn_global - t_turn, 0, param_ptr->time_limit);
@@ -517,6 +533,7 @@ private:
         found_finished = false;
         best_finished_score = INF;
         best_finished_par_action_id = -1;
+        best_finished_node_id = -1;
         max_turn_global = param.max_turn;
         param_ptr = &param;
         DUMMY_ACTION.target_turn = -1;
