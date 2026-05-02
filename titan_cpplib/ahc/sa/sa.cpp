@@ -56,8 +56,8 @@ typename State::Result sa_run(const double TIME_LIMIT, const bool verbose=true) 
     }
 
     while (true) {
-        if ((iter & 31) == 0) now_time = sa_timer.elapsed();
-        // now_time = sa_timer.elapsed();
+        // if ((iter & 31) == 0) now_time = sa_timer.elapsed();
+        now_time = sa_timer.elapsed();
         if (now_time > TIME_LIMIT) break;
         ++iter;
         double progress = now_time / TIME_LIMIT;
