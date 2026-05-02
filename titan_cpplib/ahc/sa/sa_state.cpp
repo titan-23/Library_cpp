@@ -22,8 +22,8 @@ public:
 
     // TODO
     struct Param {
-        double start_temp = 1e3;
-        double end_temp = 1e0;
+        double start_temp, end_temp;
+        Param() : start_temp(1e3), end_temp(1e0) {}
     };
 
     // TODO
