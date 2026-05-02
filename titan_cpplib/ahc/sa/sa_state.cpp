@@ -25,13 +25,14 @@ public:
         double start_temp, end_temp;
         Param() : start_temp(1e3), end_temp(1e0) {}
     };
+    inline static Param param;
 
     // TODO
     struct Changed {
         int TYPE_CNT = 0; // TODO
         int type;
         Changed() {}
-    };
+    } changed;
 
     // TODO
     struct Result {
@@ -42,8 +43,6 @@ public:
         void print(ostream &os = cout) const {}
     };
 
-    inline static Param param;
-    Changed changed;
     bool is_valid;
     ScoreType score;
     State() {}
