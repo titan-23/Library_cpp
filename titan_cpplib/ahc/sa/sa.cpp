@@ -1,19 +1,17 @@
 #pragma once
 
-// OMP_NUM_THREADS=8 time ./a.out < in/0000.txt > out.txt
-
+// OMP_NUM_THREADS=32 time ./a.out < in/0000.txt > out.txt
 #include <bits/stdc++.h>
 #include <omp.h>
 #include "titan_cpplib/ahc/timer.cpp"
 #include "titan_cpplib/algorithm/random.cpp"
-#include "titan_cpplib/others/print.cpp"
 using namespace std;
 
-// minimize SA
+// simulated annealing (minimize)
 namespace sa {
 
 const int LOG_TABLE_SIZE = 4096;
-double LOG_TABLE[LOG_TABLE_SIZE]; // 線形補間
+double LOG_TABLE[LOG_TABLE_SIZE];
 static bool is_log_initialized = [] {
     for (int i = 0; i < LOG_TABLE_SIZE; ++i) {
         LOG_TABLE[i] = log((double)(i + 0.5) / LOG_TABLE_SIZE);
@@ -21,70 +19,75 @@ static bool is_log_initialized = [] {
     return true;
 }();
 
+/// @brief 焼きなましを実行する
+/// @tparam State
+/// @param TIME_LIMIT 実行時間[ms]
+/// @param verbose ログ出力をするかどうか
+/// @return State::Result 最良解
 template<class State>
-typename State::Result sa_run(const double TIME_LIMIT, const bool verbose = false) {
+typename State::Result sa_run(const double TIME_LIMIT, const bool verbose=true) {
+    // 準備
     titan23::Timer sa_timer;
     titan23::Random sa_rnd;
-
-    State state;
-    state.init();
 
     const double START_TEMP = State::param.start_temp;
     const double END_TEMP   = max(State::param.end_temp, 1e-9);
     const double TEMP_VAL = (START_TEMP - END_TEMP) / TIME_LIMIT;
-
     const int TEMP_TABLE_SIZE = 4096;
     vector<double> TEMP_TABLE(TEMP_TABLE_SIZE);
     for (int i = 0; i < TEMP_TABLE_SIZE; ++i) {
         TEMP_TABLE[i] = START_TEMP * pow(END_TEMP / START_TEMP, (double)i / (TEMP_TABLE_SIZE - 1));
     }
 
+    State state;
+    int64_t iter = 0, bst_cnt = 0, upd_cnt = 0;
+    int64_t valid_cnt = 0;
+    vector<int64_t> accept(state.changed.TYPE_CNT), accept_worse(state.changed.TYPE_CNT), modify(state.changed.TYPE_CNT);
+    double now_time = 0;
+
+    // 初期化
+    state.init();
+    typename State::Result best_result = state.get_result();
+    typename State::ScoreType score = best_result.score;
     if (verbose) {
         cerr << "init-fin" << endl;
         cerr << sa_timer.elapsed() << endl;
-        cerr << state.get_true_score() << endl;
+        cerr << best_result.true_score << endl;
     }
 
-    typename State::Result best_result = state.get_result();
-    typename State::ScoreType score = best_result.score;
-    double now_time;
-
-    long long cnt = 0, bst_cnt = 0, upd_cnt = 0;
-    long long valid_cnt = 0;
-    vector<long long> accept(state.changed.TYPE_CNT), modify(state.changed.TYPE_CNT);
     while (true) {
-        // if ((cnt & 31) == 0) now_time = sa_timer.elapsed();
-        now_time = sa_timer.elapsed();
+        if ((iter & 31) == 0) now_time = sa_timer.elapsed();
+        // now_time = sa_timer.elapsed();
         if (now_time > TIME_LIMIT) break;
-        ++cnt;
+        ++iter;
         double progress = now_time / TIME_LIMIT;
 
+        // 線形冷却
         // typename State::ScoreType threshold = score - (START_TEMP-TEMP_VAL*now_time) * LOG_TABLE[sa_rnd.randrange(LOG_TABLE_SIZE)];
+
+        // 指数冷却
         int temp_idx = (int)(progress * (TEMP_TABLE_SIZE - 1));
         if (temp_idx >= TEMP_TABLE_SIZE) temp_idx = TEMP_TABLE_SIZE - 1;
         else if (temp_idx < 0) temp_idx = 0;
-        double current_temp = TEMP_TABLE[temp_idx];
-        typename State::ScoreType threshold = score - current_temp * LOG_TABLE[sa_rnd.randrange(LOG_TABLE_SIZE)];
+        double now_temp = TEMP_TABLE[temp_idx];
+        typename State::ScoreType threshold = score - now_temp * LOG_TABLE[sa_rnd.randrange(LOG_TABLE_SIZE)];
 
         state.reset_is_valid();
-        state.modify(threshold, progress);
+        state.modify(iter, threshold, progress);
         modify[state.changed.type]++;
         typename State::ScoreType new_score = state.get_score();
         if (state.is_valid) valid_cnt++;
         if (state.is_valid && new_score <= threshold) {
             ++upd_cnt;
             accept[state.changed.type]++;
+            if (new_score > score) accept_worse[state.changed.type]++;
             state.advance();
             score = new_score;
             if (score < best_result.score) {
                 bst_cnt++;
                 best_result = state.get_result();
                 if (verbose) {
-                    cerr << "Info: score=" << best_result.true_score
-                        << " | time=" << now_time
-                        << " | prog=" << (progress * 100.0) << "%"
-                        << " | temp=" << current_temp << endl;
-                    }
+                    cerr << "Info: score=" << best_result.true_score << " | time=" << now_time << " | prog=" << (progress * 100.0) << "%" << " | temp=" << now_temp << endl;
                 }
             }
         } else {
@@ -94,29 +97,37 @@ typename State::Result sa_run(const double TIME_LIMIT, const bool verbose = fals
     }
     if (verbose) {
         cerr << "=============" << endl;
-        for (int i = 0; i < modify.size(); ++i) {
+        for (int i = 0; i < (int)modify.size(); ++i) {
             double accept_rate = (modify[i] > 0) ? ((double)accept[i] / modify[i] * 100.0) : 0.0;
             cerr << "Info: Type=" << i << " | " << accept[i] << " / " << modify[i]
                  << " (" << accept_rate << "%)" << endl;
         }
         cerr << "Info: bst=" << bst_cnt << endl;
         cerr << "Info: ac=" << upd_cnt << endl;
-        cerr << "Info: loop=" << cnt << endl;
-        cerr << "Info: vaid_cnt=" << valid_cnt << ", " << (cnt > 0 ? (int)((double)valid_cnt/cnt*100) : 0) << "%" << endl;;
-        cerr << "Info: accept rate=" << (cnt > 0 ? (int)((double)upd_cnt/cnt*100) : 0) << "%" << endl;
-        cerr << "Info: update best rate=" << (cnt > 0 ? (int)((double)bst_cnt/cnt*100) : 0) << "%" << endl;
+        cerr << "Info: loop=" << iter << endl;
+        cerr << "Info: vaid_cnt=" << valid_cnt << ", " << (iter > 0 ? (int)((double)valid_cnt/iter*100) : 0) << "%" << endl;;
+        cerr << "Info: accept rate=" << (iter > 0 ? (int)((double)upd_cnt/iter*100) : 0) << "%" << endl;
+        cerr << "Info: update best rate=" << (iter > 0 ? (int)((double)bst_cnt/iter*100) : 0) << "%" << endl;
         cerr << "Info: best_score = " << best_result.score << endl;
-        cerr << "Info: cnt=" << cnt << endl;
+        cerr << "Info: cnt=" << iter << endl;
     }
     return best_result;
 }
 
+/// @brief
+/// @tparam State
+/// @param TIME_LIMIT 実行時間[ms]
+/// @param NUM_REPLICAS レプリカの個数
+/// @param SWAP_ITER_INTERVAL 熱浴交換のイテレーション回数
+/// @param verbose ログ出力するかどうか
+/// @param record 可視化用に記録するかどうか
+/// @return State::Result 最良解
 template<class State>
 typename State::Result replica_run(
     const double TIME_LIMIT,
-    const int NUM_REPLICAS=8,
+    const int NUM_REPLICAS=32,
     const int SWAP_ITER_INTERVAL=100,
-    const bool verbose=false,
+    const bool verbose=true,
     const bool record=false
 ) {
     titan23::Timer sa_timer;
@@ -124,7 +135,7 @@ typename State::Result replica_run(
 
     vector<double> temps(NUM_REPLICAS);
     for (int i = 0; i < NUM_REPLICAS; ++i) {
-        temps[i] = State::param.start_temp * pow(State::param.end_temp / dummy_state.param.start_temp, (double)i / max(1, NUM_REPLICAS - 1));
+        temps[i] = State::param.start_temp * pow(State::param.end_temp / State::param.start_temp, (double)i / max(1, NUM_REPLICAS-1));
     }
     vector<State> states(NUM_REPLICAS);
     vector<int> rep_idx(NUM_REPLICAS);
@@ -132,14 +143,16 @@ typename State::Result replica_run(
     State dummy_state;
     int max_threads = omp_get_max_threads();
     int type_cnt = max(1, dummy_state.changed.TYPE_CNT);
-    vector<vector<long long>> accept(max_threads, vector<long long>(type_cnt, 0));
-    vector<vector<long long>> modify(max_threads, vector<long long>(type_cnt, 0));
+    vector<vector<int64_t>> accept(max_threads, vector<int64_t>(type_cnt, 0));
+    vector<vector<int64_t>> accept_worse(max_threads, vector<int64_t>(type_cnt, 0));
+    vector<vector<int64_t>> modify(max_threads, vector<int64_t>(type_cnt, 0));
+    vector<int64_t> iter(max_threads, 0);
 
     #pragma omp parallel
     {
-        sa_rnd.set_seed(1000 + omp_get_thread_num());
         #pragma omp for schedule(static)
         for (int i = 0; i < NUM_REPLICAS; ++i) {
+            states[i].sarnd.set_seed(1000 + i);
             states[i].init();
             rep_idx[i] = i;
         }
@@ -152,10 +165,10 @@ typename State::Result replica_run(
         }
     }
 
-    long long swap_cnt = 0;
-    long long swap_attempt_total = 0;
-    long long swap_accept_total = 0;
-    long long total_iter = 0;
+    int64_t swap_cnt = 0;
+    int64_t swap_attempt_total = 0;
+    int64_t swap_accept_total = 0;
+    int64_t total_iter = 0;
     double now_time = sa_timer.elapsed();
     vector<typename State::Result> thread_best_results(max_threads, best_result);
 
@@ -191,7 +204,8 @@ typename State::Result replica_run(
                 for (int step = 0; step < SWAP_ITER_INTERVAL; ++step) {
                     typename State::ScoreType threshold = states[r].get_score() - now_temp * LOG_TABLE[sa_rnd.randrange(LOG_TABLE_SIZE)];
                     states[r].reset_is_valid();
-                    states[r].modify(threshold, progress);
+                    states[r].modify(iter[r], threshold, progress);
+                    ++iter[r];
                     modify[tid][states[r].changed.type]++;
                     typename State::ScoreType new_score = states[r].get_score();
 
@@ -207,7 +221,7 @@ typename State::Result replica_run(
                 }
             }
         }
-        total_iter += (long long)NUM_REPLICAS * SWAP_ITER_INTERVAL;
+        total_iter += (int64_t)NUM_REPLICAS * SWAP_ITER_INTERVAL;
 
         now_time = sa_timer.elapsed();
         double block_time = now_time - block_start_time;
@@ -277,7 +291,7 @@ typename State::Result replica_run(
         cerr << "Total iterations : " << total_iter << endl;
         cerr << "--- Accept Rates by Type ---" << endl;
         for (int t = 0; t < type_cnt; ++t) {
-            long long total_acc = 0, total_mod = 0;
+            int64_t total_acc = 0, total_mod = 0;
             for (int tid = 0; tid < max_threads; ++tid) {
                 total_acc += accept[tid][t];
                 total_mod += modify[tid][t];

@@ -55,7 +55,11 @@ private:
     };
 
     vector<TreeNode> tree, nxt_tree;
+    vector<uint8_t> is_survived_node;
+    int node_id_counter;
+    int max_turn_global;
 
+    // for dump =================
     struct HistoryNode {
         int node_id;
         int parent_id;
@@ -72,23 +76,16 @@ private:
     };
     vector<TurnSnapshot> snapshots;
     vector<HistoryNode> history;
-    int node_id_counter;
-    int max_turn_global;
-
-    vector<uint8_t> is_survived_node;
-
     void dump_history_json(const string& filename) {
-        if constexpr (record_history) {
-            for (auto& node : history) {
-                if (node.status == 0) {
-                    if (node.node_id == best_finished_node_id) continue;
-                    if (node.node_id < is_survived_node.size() && !is_survived_node[node.node_id]) {
-                        node.status = 1;
-                    }
+        if constexpr (!record_history) return;
+        for (auto& node : history) {
+            if (node.status == 0) {
+                if (node.node_id == best_finished_node_id) continue;
+                if (node.node_id < is_survived_node.size() && !is_survived_node[node.node_id]) {
+                    node.status = 1;
                 }
             }
         }
-
         ofstream ofs(filename);
         if(!ofs) return;
         ofs << "{\n  \"INF\": " << INF << ",\n  \"nodes\": [\n";
@@ -238,7 +235,7 @@ private:
         return cands_pool[idx];
     }
 
-    vector<BeamCandidate> current_new_candidates;
+    vector<BeamCandidate> nxt_candidates;
     vector<Action> actions;
 
     void check_survived_capacity(int current_node_id) {
@@ -248,8 +245,7 @@ private:
     }
 
     void get_next_beam(State& state, const int turn) {
-        current_new_candidates.clear();
-        current_new_candidates.reserve(param_ptr->beam_width * 2);
+        nxt_candidates.clear();
 
         if (turn == 0) {
             actions.clear();
@@ -257,7 +253,7 @@ private:
             int parent_id = -1;
             for (Action &action : actions) {
                 auto [score, hash, finished] = state.try_op(action, thresholds);
-                
+
                 int target_turn = action.target_turn;
                 if (target_turn > max_turn_global) continue;
 
@@ -280,7 +276,7 @@ private:
                     Candidates& cands = get_cands(target_turn, req_w);
                     if (cands.push(score, hash, 0, action, current_node_id, is_survived_node, target_turn)) {
                         thresholds[target_turn] = cands.threshold();
-                        current_new_candidates.push_back({0, score, hash, action, current_node_id, target_turn});
+                        nxt_candidates.push_back({0, score, hash, action, current_node_id, target_turn});
                     } else {
                         status = 1;
                     }
@@ -295,7 +291,6 @@ private:
         int leaf_id = 0;
         for (int i = 0; i < (int)tree.size(); ++i) {
             auto &[dir_or_leaf_id, action, action_id, target_turn_node, skip_idx, min_leaf_turn] = tree[i];
-            
             if (dir_or_leaf_id == PRE_ORDER) {
                 if (min_leaf_turn > turn) {
                     int skip_end = skip_idx;
@@ -314,7 +309,6 @@ private:
                     ++leaf_id;
                     continue;
                 }
-                
                 if (target_turn_node == turn) {
                     state.apply_op(action);
                     actions.clear();
@@ -323,13 +317,10 @@ private:
 
                     for (Action &child_action : actions) {
                         auto [score, hash, finished] = state.try_op(child_action, thresholds);
-                        
                         int t_turn = child_action.target_turn;
                         if (t_turn > max_turn_global) continue;
-
                         int current_node_id = node_id_counter++;
                         check_survived_capacity(current_node_id);
-
                         int status = 0;
                         if (score >= INF) {
                             status = 2;
@@ -346,7 +337,7 @@ private:
                             Candidates& cands = get_cands(t_turn, req_w);
                             if (cands.push(score, hash, leaf_id, child_action, current_node_id, is_survived_node, t_turn)) {
                                 thresholds[t_turn] = cands.threshold();
-                                current_new_candidates.push_back({leaf_id, score, hash, child_action, current_node_id, t_turn});
+                                nxt_candidates.push_back({leaf_id, score, hash, child_action, current_node_id, t_turn});
                             } else {
                                 status = 1;
                             }
@@ -370,11 +361,10 @@ private:
 
     void update_tree(State& state, const int turn) {
         nxt_tree.clear();
-        nxt_tree.reserve(tree.size() + current_new_candidates.size());
-
+        nxt_tree.reserve(tree.size() + nxt_candidates.size());
         if (turn == 0) {
-            for (int i = 0; i < (int)current_new_candidates.size(); ++i) {
-                const auto &[par, score, hash, new_action, action_id, t_turn] = current_new_candidates[i];
+            for (int i = 0; i < (int)nxt_candidates.size(); ++i) {
+                const auto &[par, score, hash, new_action, action_id, t_turn] = nxt_candidates[i];
                 if (is_survived_node[action_id]) {
                     nxt_tree.emplace_back(0, new_action, action_id, t_turn);
                     nxt_tree.back().min_leaf_turn = t_turn;
@@ -383,7 +373,6 @@ private:
             swap(tree, nxt_tree);
             return;
         }
-
         int i = 0;
         while (i < tree.size()) {
             const auto &[dir_or_leaf_id, action, action_id, target_turn_node, skip_idx, min_leaf_turn] = tree[i];
@@ -398,9 +387,8 @@ private:
         }
 
         int next_beam_idx = 0;
-        const int num_candidates = current_new_candidates.size();
+        const int num_candidates = nxt_candidates.size();
         vector<int> pre_order_stack;
-
         for (; i < tree.size(); ++i) {
             auto &[dir_or_leaf_id, action, action_id, target_turn_node, skip_idx, min_leaf_turn] = tree[i];
             if (dir_or_leaf_id >= 0) {
@@ -408,24 +396,22 @@ private:
                     bool has_child = false;
                     int start_idx = next_beam_idx;
                     while(next_beam_idx < num_candidates) {
-                        if (current_new_candidates[next_beam_idx].par != dir_or_leaf_id) break;
-                        if (is_survived_node[current_new_candidates[next_beam_idx].action_id]) has_child = true;
+                        if (nxt_candidates[next_beam_idx].par != dir_or_leaf_id) break;
+                        if (is_survived_node[nxt_candidates[next_beam_idx].action_id]) has_child = true;
                         next_beam_idx++;
                     }
                     if (has_child) {
                         pre_order_stack.push_back(nxt_tree.size());
                         nxt_tree.emplace_back(PRE_ORDER, action, action_id, target_turn_node);
                         nxt_tree.back().min_leaf_turn = TURN_INF;
-                        
                         for (int k = start_idx; k < next_beam_idx; ++k) {
-                            auto &[_, __, ___, new_action, new_action_id, t_turn] = current_new_candidates[k];
+                            auto &[_, __, ___, new_action, new_action_id, t_turn] = nxt_candidates[k];
                             if (is_survived_node[new_action_id]) {
                                 nxt_tree.emplace_back(dir_or_leaf_id, new_action, new_action_id, t_turn);
                                 nxt_tree.back().min_leaf_turn = t_turn;
                                 nxt_tree[pre_order_stack.back()].min_leaf_turn = min(nxt_tree[pre_order_stack.back()].min_leaf_turn, t_turn);
                             }
                         }
-                        
                         int pre_idx = pre_order_stack.back();
                         pre_order_stack.pop_back();
                         nxt_tree[pre_idx].skip_idx = nxt_tree.size() + 1;
@@ -466,7 +452,6 @@ private:
                 }
             }
         }
-
         swap(tree, nxt_tree);
     }
 
@@ -553,7 +538,7 @@ private:
     }
 
 public:
-    vector<Action> search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
+    vector<Action> search(BeamParam &param, const bool verbose=false, const string history_file="") {
         init_bs(param);
         if (verbose) cerr << "[BeamSearch] Info: start search()" << endl;
         State state;
@@ -568,7 +553,7 @@ public:
             get_next_beam(state, turn);
 
             if (found_finished) {
-                if (verbose) cerr << "[BeamSearch] Info: find valid solution." << endl;
+                if (verbose) cerr << PRINT_GREEN "[BeamSearch] Info: find valid solution." << PRINT_NONE << endl;
                 get_result();
                 if (verbose) param.report();
                 if constexpr (record_history) dump_history_json(history_file);
@@ -596,11 +581,11 @@ public:
                 thresholds[turn] = INF;
             }
 
-            param.timestamp(tree.size(), current_new_candidates.size(), beam_timer.elapsed()-now_time);
+            param.timestamp(tree.size(), nxt_candidates.size(), beam_timer.elapsed()-now_time);
         }
 
         if (verbose) {
-            cerr << to_green("[BeamSearch] Info: max_turn finished.") << endl;
+            cerr << PRINT_GREEN << "[BeamSearch] Info: max_turn finished." << PRINT_NONE << endl;
             param.report();
         }
         get_result();
