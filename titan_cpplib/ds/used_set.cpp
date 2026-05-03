@@ -26,17 +26,21 @@ public:
     }
 
     void all_use() {
-        while (!unused.empty()) {
-            int v = unused.get(0);
-            use(v);
+        if (unused.empty()) return;
+        for (int v : unused.que) {
+            used.add(v);
+            unused.pos[v] = -1;
         }
+        unused.que.clear();
     }
 
     void all_unuse() {
-        while (!used.empty()) {
-            int v = used.get(0);
-            unuse(v);
+        if (used.empty()) return;
+        for (int v : used.que) {
+            unused.add(v);
+            used.pos[v] = -1;
         }
+        used.que.clear();
     }
 
     int get_use(int i) { return used.get(i); }

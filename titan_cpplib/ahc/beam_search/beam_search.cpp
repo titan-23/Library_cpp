@@ -11,7 +11,7 @@ using namespace std;
 //! 木上のビームサーチライブラリ
 namespace flying_squirrel {
 
-template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=true>
+template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
 class BeamSearchWithTree {
     // ref: https://eijirou-kyopro.hatenablog.com/entry/2024/02/01/115639
 

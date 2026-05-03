@@ -48,7 +48,9 @@ class IndexSet {
     }
 
     void clear() {
-        fill(pos.begin(), pos.end(), -1);
+        for (int v : que) {
+            pos[v] = -1;
+        }
         que.clear();
     }
 
@@ -61,7 +63,7 @@ class IndexSet {
     }
 
     int get(int v) const {
-        // assert(0 <= v && v < len());
+        assert(0 <= v && v < len());
         return que[v];
     }
 

@@ -87,6 +87,7 @@ typename State::Result sa_run(const double TIME_LIMIT, const bool verbose=true) 
                 bst_cnt++;
                 best_result = state.get_result();
                 if (verbose) {
+                    // best_result.print();
                     cerr << "Info: score=" << best_result.true_score << " | time=" << now_time << " | prog=" << (progress * 100.0) << "%" << " | temp=" << now_temp << endl;
                 }
             }
