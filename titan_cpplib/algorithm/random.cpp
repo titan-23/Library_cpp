@@ -41,30 +41,30 @@ public:
     //! `[0, end]` の乱数を返す(整数)
     constexpr int randint(const int end) {
         assert(0 <= end);
-        return (((unsigned long long)_xor128() * (end+1)) >> 32);
+        return (((uint64_t)_xor128() * (end+1)) >> 32);
     }
 
     //! `[begin, end]` の乱数を返す(整数)
     constexpr int randint(const int begin, const int end) {
         assert(begin <= end);
-        return begin + (((unsigned long long)_xor128() * (end-begin+1)) >> 32);
+        return begin + (((uint64_t)_xor128() * (end-begin+1)) >> 32);
     }
 
     //! `[0, end)` の乱数を返す(整数)
     constexpr int randrange(const int end) {
         assert(0 < end);
-        return (((unsigned long long)_xor128() * end) >> 32);
+        return (((uint64_t)_xor128() * end) >> 32);
     }
 
     //! `[begin, end)` の乱数を返す(整数)
     constexpr int randrange(const int begin, const int end) {
         assert(begin < end);
-        return begin + (((unsigned long long)_xor128() * (end-begin)) >> 32);
+        return begin + (((uint64_t)_xor128() * (end-begin)) >> 32);
     }
 
     //! `[0, u64_MAX)` の乱数を返す / zobrist hash等の使用を想定
-    constexpr unsigned long long rand_u64() {
-        return ((unsigned long long)_xor128() << 32) | _xor128();
+    constexpr uint64_t rand_u64() {
+        return ((uint64_t)_xor128() << 32) | _xor128();
     }
 
     //! `[0, end)` の異なる乱数を2つ返す

@@ -427,6 +427,7 @@ public:
 
             // 次のビーム候補を求める
             int w = param.get_beam_width(param.max_turn-turn, tree.size(), param.time_limit-beam_timer.elapsed());
+            if (verbose) cerr << "\n[BeamSearch] Info: \twidth = " << w << endl;
             candidates.reset(turn, w);
             get_next_beam(state, turn, turn-now_turn);
 

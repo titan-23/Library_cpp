@@ -14,7 +14,7 @@ using namespace std;
 namespace beam_search {
 
 using ScoreType = long long;
-using HashType = unsigned long long;
+using HashType = uint64_t;
 const ScoreType INF = 1e18; // TODO -INFもできるように
 titan23::Random brnd;
 
