@@ -13,10 +13,10 @@ namespace titan23 {
  */
 class Random {
 private:
-    unsigned int _x, _y, _z, _w;
+    uint32_t _x, _y, _z, _w;
 
-    constexpr unsigned int _xor128() {
-        const unsigned int t = _x ^ (_x << 11);
+    constexpr uint32_t _xor128() {
+        const uint32_t t = _x ^ (_x << 11);
         _x = _y;
         _y = _z;
         _z = _w;
@@ -26,9 +26,9 @@ private:
 
 public:
     Random() : _x(123456789), _y(362436069), _z(521288629), _w(88675123) {}
-    Random(unsigned int seed) { set_seed(seed); }
+    Random(uint32_t seed) { set_seed(seed); }
 
-    void set_seed(unsigned int seed) {
+    void set_seed(uint32_t seed) {
         _x = seed;
         _y = _x * 1812433253U + 1;
         _z = _y * 1812433253U + 1;

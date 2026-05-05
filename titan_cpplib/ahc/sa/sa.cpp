@@ -22,10 +22,11 @@ static bool is_log_initialized = [] {
 /// @brief 焼きなましを実行する
 /// @tparam State
 /// @param TIME_LIMIT 実行時間[ms]
+/// @param seed 乱数のシード値
 /// @param verbose ログ出力をするかどうか
 /// @return State::Result 最良解
 template<class State>
-typename State::Result sa_run(const double TIME_LIMIT, const bool verbose=true) {
+typename State::Result sa_run(const double TIME_LIMIT, const uint32_t seed=23, const bool verbose=true) {
     // 準備
     titan23::Timer sa_timer;
     titan23::Random sa_rnd;
@@ -46,13 +47,14 @@ typename State::Result sa_run(const double TIME_LIMIT, const bool verbose=true) 
     double now_time = 0;
 
     // 初期化
-    state.init();
+    state.init(seed);
     typename State::Result best_result = state.get_result();
     typename State::ScoreType score = best_result.score;
     if (verbose) {
         cerr << "init-fin" << endl;
-        cerr << sa_timer.elapsed() << endl;
-        cerr << best_result.true_score << endl;
+        cerr << "init-time  = " << sa_timer.elapsed() << endl;
+        cerr << "init-score = " << best_result.true_score << endl;
+        cerr << "--------" << endl;
     }
 
     while (true) {
@@ -107,6 +109,167 @@ typename State::Result sa_run(const double TIME_LIMIT, const bool verbose=true) 
         cerr << "Info: ac=" << upd_cnt << endl;
         cerr << "Info: loop=" << iter << endl;
         cerr << "Info: vaid_cnt=" << valid_cnt << ", " << (iter > 0 ? (int)((double)valid_cnt/iter*100) : 0) << "%" << endl;;
+        cerr << "Info: accept rate=" << (iter > 0 ? (int)((double)upd_cnt/iter*100) : 0) << "%" << endl;
+        cerr << "Info: update best rate=" << (iter > 0 ? (int)((double)bst_cnt/iter*100) : 0) << "%" << endl;
+        cerr << "Info: best_score = " << best_result.score << endl;
+        cerr << "Info: cnt=" << iter << endl;
+    }
+    return best_result;
+}
+
+/// @brief 2段階の多始点焼きなましを実行する
+/// @tparam State
+/// @param TIME_LIMIT 実行時間[ms]
+/// @param FIRST_PHASE_RATIO 第1フェーズに割り当てる時間の割合 (例: 0.2 なら 20% を第1フェーズに使用)
+/// @param NUM_STARTS 第1フェーズで実行する初期状態の数
+/// @param seed 乱数のベースシード値
+/// @param verbose ログ出力をするかどうか
+/// @return State::Result 最良解
+template<class State>
+typename State::Result sa_multi_run(
+    const double TIME_LIMIT,
+    const double FIRST_PHASE_RATIO,
+    const int NUM_STARTS,
+    const uint32_t seed = 23,
+    const bool verbose = true)
+{
+    titan23::Timer sa_timer;
+    titan23::Random sa_rnd;
+
+    const double phase1_time_limit = TIME_LIMIT * FIRST_PHASE_RATIO;
+    const double time_per_start = phase1_time_limit / NUM_STARTS;
+    const double START_TEMP = State::param.start_temp;
+    const double END_TEMP = max(State::param.end_temp, 1e-9);
+
+    const int TEMP_TABLE_SIZE = 4096;
+    vector<double> TEMP_TABLE(TEMP_TABLE_SIZE);
+    for (int i = 0; i < TEMP_TABLE_SIZE; ++i) {
+        TEMP_TABLE[i] = START_TEMP * pow(END_TEMP / START_TEMP, (double)i / (TEMP_TABLE_SIZE - 1));
+    }
+
+    State best_overall_state;
+    typename State::Result best_overall_result;
+    bool is_first = true;
+
+    for (int i = 0; i < NUM_STARTS; ++i) {
+        State state;
+        state.init(seed + i);
+
+        State best_local_state = state;
+        typename State::Result best_local_result = state.get_result();
+        typename State::ScoreType score = best_local_result.score;
+
+        int64_t iter = 0;
+        double start_time = sa_timer.elapsed();
+        double now_time = start_time;
+
+        while (true) {
+            now_time = sa_timer.elapsed();
+            if (now_time - start_time > time_per_start) break;
+            ++iter;
+            double progress = (now_time - start_time) / time_per_start;
+            if (progress > 1.0) progress = 1.0;
+
+            int temp_idx = (int)(progress * (TEMP_TABLE_SIZE - 1));
+            double now_temp = TEMP_TABLE[temp_idx];
+            typename State::ScoreType threshold = score - now_temp * LOG_TABLE[sa_rnd.randrange(LOG_TABLE_SIZE)];
+
+            state.reset_is_valid();
+            state.modify(iter, threshold, progress);
+            typename State::ScoreType new_score = state.get_score();
+
+            if (state.is_valid && new_score <= threshold) {
+                state.advance();
+                score = new_score;
+                if (score < best_local_result.score) {
+                    best_local_result = state.get_result();
+                    best_local_state = state;
+                }
+            } else {
+                state.rollback();
+                state.score = score;
+            }
+        }
+
+        if (is_first || best_local_result.score < best_overall_result.score) {
+            best_overall_state = best_local_state;
+            best_overall_result = best_local_result;
+            is_first = false;
+        }
+    }
+
+    if (verbose) {
+        cerr << "--- Phase 1 finish ---" << endl;
+        cerr << "Best score in Phase 1: " << best_overall_result.true_score << endl;
+        cerr << "Elapsed time: " << sa_timer.elapsed() << " ms" << endl;
+    }
+
+    State state = best_overall_state;
+    typename State::Result best_result = best_overall_result;
+    typename State::ScoreType score = state.get_score();
+
+    int64_t iter = 0, bst_cnt = 0, upd_cnt = 0, valid_cnt = 0;
+    vector<int64_t> accept(state.changed.TYPE_CNT), accept_worse(state.changed.TYPE_CNT), modify(state.changed.TYPE_CNT);
+
+    double start_time = sa_timer.elapsed();
+    double now_time = start_time;
+    double phase2_time_limit = TIME_LIMIT - start_time;
+    if (phase2_time_limit <= 0) return best_result;
+
+    const double phase2_start_temp = START_TEMP * pow(END_TEMP / START_TEMP, FIRST_PHASE_RATIO);
+    vector<double> PHASE2_TEMP_TABLE(TEMP_TABLE_SIZE);
+    for (int i = 0; i < TEMP_TABLE_SIZE; ++i) {
+        PHASE2_TEMP_TABLE[i] = phase2_start_temp * pow(END_TEMP / phase2_start_temp, (double)i / (TEMP_TABLE_SIZE - 1));
+    }
+
+    while (true) {
+        now_time = sa_timer.elapsed();
+        if (now_time > TIME_LIMIT) break;
+        ++iter;
+        double progress = (now_time - start_time) / phase2_time_limit;
+        if (progress > 1.0) progress = 1.0;
+
+        int temp_idx = (int)(progress * (TEMP_TABLE_SIZE - 1));
+        double now_temp = PHASE2_TEMP_TABLE[temp_idx];
+        typename State::ScoreType threshold = score - now_temp * LOG_TABLE[sa_rnd.randrange(LOG_TABLE_SIZE)];
+
+        state.reset_is_valid();
+        state.modify(iter, threshold, progress);
+        modify[state.changed.type]++;
+        typename State::ScoreType new_score = state.get_score();
+
+        if (state.is_valid) valid_cnt++;
+        if (state.is_valid && new_score <= threshold) {
+            ++upd_cnt;
+            accept[state.changed.type]++;
+            if (new_score > score) accept_worse[state.changed.type]++;
+            state.advance();
+            score = new_score;
+            if (score < best_result.score) {
+                bst_cnt++;
+                best_result = state.get_result();
+                if (verbose) {
+                    cerr << "Info: score=" << best_result.true_score << " | time=" << now_time << " | prog=" << (progress * 100.0) << "%" << " | temp=" << now_temp << endl;
+                }
+            }
+        } else {
+            state.rollback();
+            state.score = score;
+        }
+    }
+
+    if (verbose) {
+        cerr << "=============" << endl;
+        cerr << "--- Phase 2 finish ---" << endl;
+        for (int i = 0; i < (int)modify.size(); ++i) {
+            double accept_rate = (modify[i] > 0) ? ((double)accept[i] / modify[i] * 100.0) : 0.0;
+            cerr << "Info: Type=" << i << " | " << accept[i] << " / " << modify[i]
+                 << " (" << accept_rate << "%)" << endl;
+        }
+        cerr << "Info: bst=" << bst_cnt << endl;
+        cerr << "Info: ac=" << upd_cnt << endl;
+        cerr << "Info: loop=" << iter << endl;
+        cerr << "Info: vaid_cnt=" << valid_cnt << ", " << (iter > 0 ? (int)((double)valid_cnt/iter*100) : 0) << "%" << endl;
         cerr << "Info: accept rate=" << (iter > 0 ? (int)((double)upd_cnt/iter*100) : 0) << "%" << endl;
         cerr << "Info: update best rate=" << (iter > 0 ? (int)((double)bst_cnt/iter*100) : 0) << "%" << endl;
         cerr << "Info: best_score = " << best_result.score << endl;

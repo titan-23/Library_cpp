@@ -80,4 +80,12 @@ struct BeamParam {
         cerr << "--------------------------------" << endl;
     }
 };
+
+BeamParam gen_param(int max_turn, int beam_width) {
+    return {max_turn, beam_width, -1};
+}
+
+BeamParam gen_param(int max_turn, int beam_width, double time_limit, bool is_adjusting) {
+    return {max_turn, beam_width, time_limit, is_adjusting};
+}
 } // namespace flying_squirrel

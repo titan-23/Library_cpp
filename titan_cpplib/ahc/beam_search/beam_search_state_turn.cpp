@@ -103,15 +103,7 @@ public:
     }
 };
 
-flying_squirrel::BeamParam gen_param(int max_turn, int beam_width) {
-    return {max_turn, beam_width, -1};
-}
-
-flying_squirrel::BeamParam gen_param(int max_turn, int beam_width, double time_limit, bool is_adjusting) {
-    return {max_turn, beam_width, time_limit, is_adjusting};
-}
-
-vector<Action> search(flying_squirrel::BeamParam &param, const bool verbose=false, const string& history_file = "") {
+vector<Action> search_turn(flying_squirrel::BeamParam &param, const bool verbose=false, const string& history_file = "") {
     flying_squirrel::BeamSearchWithTree<ScoreType, HashType, Action, State, INF> bs;
     return bs.search(param, verbose, history_file);
 }

@@ -1,7 +1,6 @@
 #pragma once
 
 // OMP_NUM_THREADS=32 time ./a.out < in/0000.txt > out.txt
-
 #include <bits/stdc++.h>
 #include "titan_cpplib/ahc/timer.cpp"
 #include "titan_cpplib/algorithm/random.cpp"
@@ -51,7 +50,8 @@ public:
     // TODO
 
     // TODO
-    void init() {
+    void init(uint32_t seed=23) {
+        sarnd.set_seed(seed);
         score = 0;
     }
 
