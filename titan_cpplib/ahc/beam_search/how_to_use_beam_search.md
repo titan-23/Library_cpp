@@ -43,7 +43,7 @@
 - 要件: `action`に保存された情報を用いて、`apply_op`実行前の状態に完全に復元してください。ここでも差分のみを巻き戻してください。
 
 #### State::get_actions関数
-- シグネチャ: `void get_actions(vector<Action> &actions, const int turn, const Action &last_action) const`
+- シグネチャ: `void get_actions(vector<Action> &actions, const int turn, const Action &last_action, const ScoreType threshold) const`
 - 目的: 現在の状態で実行可能な合法手を列挙します。
 - 要件: 可能な操作を生成し、actionsに追加してください。actionsのメモリ再確保を防ぐため、事前に最大生成数がわかる場合はreserveを利用してください。※ターン0の呼び出し時など、last_actionにダミー値が含まれる場合があるため、無条件でlast_actionのメンバを参照して不正アクセスを起こさないよう注意してください。
 
