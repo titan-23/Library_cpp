@@ -67,8 +67,8 @@ public:
         return {nxt_score, nxt_hash, finished};
     }
 
-    // TODO 現在の状態に `action` を適用する
-    //! `action` をする
+    // TODO
+    // 現在の状態に `action` を適用する
     void apply_op(const Action &action) {
         // TODO
         score = action.nxt_score;
@@ -76,7 +76,7 @@ public:
     }
 
     // TODO
-    //! `action` を戻す
+    // `action` を戻す
     void rollback(const Action &action) {
         // TODO
         score = action.pre_score;

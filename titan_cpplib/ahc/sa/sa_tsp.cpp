@@ -20,8 +20,6 @@ vector<int> START_NODES;
 // minimize SA
 namespace sa {
 
-thread_local titan23::Random sarnd;
-
 void sa_init() {
     DIST.assign(N, vector<ll>(N, 0.0));
     for (int i = 0; i < N; ++i) {
@@ -67,15 +65,17 @@ ElmType kmeans_mean(const vector<ElmType> &pts) {
 
 class State {
 public:
+    titan23::Random sarnd;
     using ScoreType = ll;
 
     struct Param {
-        double start_temp = 1e6;
-        double end_temp = 1e0;
+        double start_temp, end_temp;
+        Param() : start_temp(1e7), end_temp(1e5) {}
     };
+    inline static Param param;
 
     struct Changed {
-        int TYPE_CNT = 6;
+        int TYPE_CNT = 7;
         int type;
         // 遷移の対象となるルートとインデックス
         int r1, r2;
@@ -86,7 +86,7 @@ public:
         ll diff_d1, diff_d2;
         ScoreType diff;
         Changed() {}
-    };
+    } changed;
 
     struct Result {
         ScoreType score, true_score;
@@ -103,9 +103,6 @@ public:
         }
     };
 
-    Param param;
-    Changed changed;
-
     bool is_valid;
     ScoreType score;
     vector<vector<int>> tours;
@@ -113,13 +110,19 @@ public:
     vector<int> pos_route;
     vector<int> pos_idx;
 
+    vector<int> local_id;
+    vector<vector<double>> P;
+
     State() {}
 
-    void init() {
+    void init(uint32_t seed=23) {
         tours.assign(K, vector<int>());
         dists.assign(K, 0);
         pos_route.assign(N, -1);
         pos_idx.assign(N, -1);
+
+        local_id.resize(N);
+        P.resize(N, vector<double>(N));
 
         // 1. K-means にかける都市（デポ以外）の座標リストを作成
         vector<ElmType> city_coords;
@@ -209,7 +212,7 @@ public:
     // thresholdを超えたら必ずreject(同じなら遷移する)
     // is_validをfalseにすると必ずrejectする
     // progress:焼きなまし進行度 0.0~1.0 まで
-    void modify(const ScoreType threshold, const double progress) {
+    void modify(const int64_t iter, const ScoreType threshold, const double progress) {
         if (N <= 3) {
             is_valid = false;
             return;
@@ -240,6 +243,9 @@ public:
             int inter_rand = sarnd.randrange(100);
             if (inter_rand < 50) changed.type = 4;       // Inter Block Shift
             else changed.type = 5;                       // Inter Block Swap
+        }
+        if (iter%(int)(1e6) == 0) {
+            changed.type = 6;
         }
 
         if (changed.type >= 0 && changed.type <= 3) {
@@ -312,7 +318,7 @@ public:
             } else if (changed.type == 3) { // Double Bridge
                 if (sz <= 4) { is_valid = false; return; }
                 int p[4];
-                p[0] = sarnd.randrange(sz - 1) + 1; // 始点0を保護
+                p[0] = sarnd.randrange(sz - 1) + 1;
                 p[1] = sarnd.randrange(sz - 1) + 1;
                 p[2] = sarnd.randrange(sz - 1) + 1;
                 p[3] = sarnd.randrange(sz - 1) + 1;
@@ -344,7 +350,7 @@ public:
             int sz1 = tours[r1].size(), sz2 = tours[r2].size();
 
             int L = sarnd.randrange(min(3, sz1 - 1)) + 1;
-            int u_idx = sarnd.randrange(sz1 - L) + 1; // 始点0を保護
+            int u_idx = sarnd.randrange(sz1 - L) + 1;
             int w_idx = sarnd.randrange(sz2);
 
             changed.r1 = r1; changed.r2 = r2;
@@ -372,16 +378,15 @@ public:
             score += changed.diff;
 
         } else if (changed.type == 5) {
-            // ====== Inter 近傍: Block Swap ======
             int r1 = sarnd.randrange(K), r2 = sarnd.randrange(K);
             if (r1 == r2 || tours[r1].size() <= 1 || tours[r2].size() <= 1) { is_valid = false; return; }
             int sz1 = tours[r1].size(), sz2 = tours[r2].size();
 
             int L1 = sarnd.randrange(min(3, sz1 - 1)) + 1;
-            int u1_idx = sarnd.randrange(sz1 - L1) + 1; // 始点0を保護
+            int u1_idx = sarnd.randrange(sz1 - L1) + 1;
 
             int L2 = sarnd.randrange(min(3, sz2 - 1)) + 1;
-            int u2_idx = sarnd.randrange(sz2 - L2) + 1; // 始点0を保護
+            int u2_idx = sarnd.randrange(sz2 - L2) + 1;
 
             changed.r1 = r1; changed.r2 = r2;
             changed.u_idx = u1_idx; changed.L1 = L1;
@@ -414,15 +419,85 @@ public:
             changed.diff = ((old_d1 + changed.diff_d1) * (old_d1 + changed.diff_d1) - old_d1 * old_d1) +
                            ((old_d2 + changed.diff_d2) * (old_d2 + changed.diff_d2) - old_d2 * old_d2);
             score += changed.diff;
+        } else if (changed.type == 6) {
+            int r1 = sarnd.randrange(K);
+            auto &tr = tours[r1];
+            int n = tr.size();
+            if (n <= 3) { is_valid = false; return; }
+            for (int i = 0; i < n; ++i) local_id[tr[i]] = i;
+            ScoreType current_linear_dist = dists[r1];
+            double coef = 0.3 * current_linear_dist / n;
+            rep(i, n) rep(j, n) P[i][j] = 1;
+            vector<int> route = tr;
+            vector<int> best_route = route;
+            ScoreType best_linear_dist = current_linear_dist;
+            vector<int> route_pos(N, -1);
+            for(int i = 0; i < n; ++i) route_pos[route[i]] = i;
+            for(int step = 0; step < 100; ++step) {
+                int idx1 = -1;
+                double best_val = -1e18;
+                for (int i = 0; i < n; ++i) {
+                    int c1 = route[i], c2 = route[(i + 1) % n];
+                    int l1 = local_id[c1], l2 = local_id[c2];
+                    double v = (double)DIST[c1][c2] / P[l1][l2];
+                    if (v > best_val) {
+                        best_val = v;
+                        idx1 = i;
+                    }
+                }
+                int idx2 = (idx1 + 1) % n;
+                int city1 = route[idx1], city2 = route[idx2];
+                int l1 = local_id[city1], l2 = local_id[city2];
+                P[l1][l2]++;
+                P[l2][l1]++;
+                bool improved = false;
+                for (int city3 : nearest_neighbors[city1]) {
+                    if (pos_route[city3] != r1) continue;
+                    int idx3 = route_pos[city3];
+                    int idx4 = (idx3 + 1) % n;
+                    if (idx2 == idx3 || idx1 == idx4) continue;
+                    int city4 = route[idx4];
+                    int diff_d = (DIST[city1][city3] + DIST[city2][city4]) - (DIST[city1][city2] + DIST[city3][city4]);
+                    int l3 = local_id[city3], l4 = local_id[city4];
+                    double delta_p = coef * ((P[l1][l3] + P[l2][l4]) - (P[l1][l2] + P[l3][l4]));
+                    if (diff_d + delta_p < 0) {
+                        current_linear_dist += diff_d;
+                        if (idx2 <= idx3) {
+                            reverse(route.begin() + idx2, route.begin() + idx3 + 1);
+                        } else {
+                            reverse(route.begin() + idx4, route.begin() + idx1 + 1);
+                        }
+                        for(int i = 0; i < n; ++i) route_pos[route[i]] = i;
+                        if (current_linear_dist < best_linear_dist) {
+                            best_linear_dist = current_linear_dist;
+                            best_route = route;
+                            coef = 0.3 * best_linear_dist / n;
+                        }
+                        improved = true;
+                        break;
+                    }
+                }
+            }
+            ScoreType old_d = dists[r1];
+            if (best_linear_dist < old_d) {
+                score += (best_linear_dist * best_linear_dist) - (old_d * old_d);
+                dists[r1] = best_linear_dist;
+                tr = best_route;
+                for(int i = 0; i < n; ++i) {
+                    pos_idx[tr[i]] = i;
+                }
+            }
         }
     }
 
     void rollback() {
         if (!is_valid) return;
+        if (changed.type == 6) return;
         score -= changed.diff;
     }
 
     void advance() {
+        if (changed.type == 6) return;
         if (changed.type == 0) {
             int r = changed.r1;
             reverse(tours[r].begin() + changed.u_idx, tours[r].begin() + changed.v_idx + 1);
@@ -534,7 +609,7 @@ void input() {
         YX[id] = {x, y};
     }
 
-    K = 10;
+    K = 1;
     START_NODES.resize(K);
     rep(k, K) {
         START_NODES[k] = N+k;
@@ -548,7 +623,7 @@ void input() {
 
 void solve() {
     sa::sa_init();
-    sa::State::Result result = sa::sa_run<sa::State>(10000, true);
+    sa::State::Result result = sa::sa_run<sa::State>(100000, true);
     // OMP_NUM_THREADS=32 time ./a.out < fnl4461.tsp > out.txt
     // sa::State::Result result = sa::replica_run<sa::State>(10000, 32, 100, true);
     result.print();
