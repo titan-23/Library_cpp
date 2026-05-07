@@ -178,7 +178,7 @@ private:
             if (seg.size() < 2*s) {
                 seg.resize(2*s);
             }
-            fill(seg.begin(), seg.begin()+(2*w), make_pair(-INF, -1));
+            fill(seg.begin(), seg.begin()+(2*s), make_pair(-INF, -1));
             if (hashidx.size() < w) {
                 hashidx.resize(w);
                 next_beam.resize(w);
