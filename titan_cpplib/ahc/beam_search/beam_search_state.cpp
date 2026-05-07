@@ -5,6 +5,7 @@
 
 #include "titan_cpplib/algorithm/random.cpp"
 #include "titan_cpplib/others/print.cpp"
+#include "titan_cpplib/ahc/beam_search/naive_beam_search.cpp"
 #include "titan_cpplib/ahc/beam_search/beam_search.cpp"
 // #include "titan_cpplib/ahc/beam_search/beam_fast.cpp"
 
@@ -99,6 +100,11 @@ public:
 
 vector<Action> search(flying_squirrel::BeamParam &param, const bool verbose=false, const string& history_file = "") {
     flying_squirrel::BeamSearchWithTree<ScoreType, HashType, Action, State, INF> bs;
+    return bs.search(param, verbose, history_file);
+}
+
+vector<Action> naive_search(flying_squirrel::BeamParam &param, const bool verbose=false, const string& history_file = "") {
+    flying_squirrel::NaiveBeamSearch<ScoreType, HashType, Action, State, INF> bs;
     return bs.search(param, verbose, history_file);
 }
 } // namespace beam_search

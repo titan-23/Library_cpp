@@ -7,6 +7,8 @@
 #include "titan_cpplib/ahc/beam_search/beam_param.cpp"
 using namespace std;
 
+namespace flying_squirrel {
+
 /// @brief 愚直ビームサーチ
 /// @note 要件: init, try_op, apply_op, get_actions
 /// @tparam ScoreType スコアの型
@@ -16,7 +18,7 @@ using namespace std;
 /// @tparam INF INF(NOTE -INFが成り立つ)
 /// @tparam record_history 途中状態を可視化する用のログ出力を出すかどうか
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
-class BeamSearch {
+class NaiveBeamSearch {
 private:
     struct BeamCandidate {
         int par_idx;
@@ -231,3 +233,4 @@ public:
         return build_history(beam[best_idx].history_id);
     }
 };
+} // namespace flying_squirrel

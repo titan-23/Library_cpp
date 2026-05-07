@@ -65,5 +65,10 @@
       flying_squirrel::BeamSearchWithTree<ScoreType, HashType, Action, State, INF> bs;
       return bs.search(param, verbose, history_file);
   }
+
+  vector<Action> naive_search(flying_squirrel::BeamParam &param, const bool verbose=false, const string& history_file = "") {
+      flying_squirrel::NaiveBeamSearch<ScoreType, HashType, Action, State, INF> bs;
+      return bs.search(param, verbose, history_file);
+  }
   ```
   上のコードをそのまま書いてください。
