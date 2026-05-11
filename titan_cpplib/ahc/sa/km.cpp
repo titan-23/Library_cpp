@@ -22,6 +22,7 @@ template <class T, class U> bool chmax(T &t, const U &u) { if (t < u) { t = u; r
 
 // #include "titan_cpplib/others/print.cpp"
 #include "titan_cpplib/ahc/kmeans.cpp"
+#include "titan_cpplib/ahc/kmeans_new.cpp"
 
 double calc_dist(const pair<double, double>& a, const pair<double, double>& b) {
     double dx = a.first - b.first;
@@ -46,9 +47,14 @@ void solve() {
     vector<pair<double, double>> points(n);
     rep(i, n) cin >> points[i].first >> points[i].second;
 
-    int max_iter = 10;
-    titan23::Kmeans<double, pair<double, double>, calc_dist, calc_mean> kmeans(k, max_iter);
-    auto result = kmeans.fit_flow(points, A, 1e6);
+    int max_iter = 1e5;
+
+    auto kmeans = titan23::make_kmeans<pair<double, double>>(
+        k, max_iter, calc_dist, calc_mean, /*seed=*/0, /*verbose=*/false
+    );
+    // titan23::Kmeans<double, pair<double, double>, calc_dist, calc_mean> kmeans(k, max_iter);
+
+    auto result = kmeans.fit(points);
     const vector<int>& labels = result.first;
     rep(i, n) {
         cout << labels[i] << (i == n-1 ? "" : " ");

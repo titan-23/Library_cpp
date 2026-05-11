@@ -133,7 +133,7 @@ if __name__ == "__main__":
     mode = sys.argv[1] if len(sys.argv) > 1 else "gen"
 
     if mode == "gen":
-        generate_input("input.txt", N=1000, K=10)
+        generate_input("input.txt", N=10**5, K=10)
     elif mode == "vis":
         visualize_result("input.txt", "out.txt")
     else:

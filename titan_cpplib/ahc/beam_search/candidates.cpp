@@ -51,6 +51,10 @@ public:
         }
         auto dat = func.get_pos(hash);
         int idx = func.inner_get(dat, -1);
+        if (idx == -2) {
+            // 過去ターンで採用済みのハッシュ → 即 drop
+            return false;
+        }
         if (idx != -1) {
             if (score < seg[idx+s].first) {
                 next_beam[idx] = {parent_leaf, score, move(action)};
@@ -76,7 +80,7 @@ public:
         return true;
     }
 
-    void reset(int turn, int w) {
+    void reset(int turn, int w, bool clear_hash) {
         beam_width = w;
         while (s < w) {
             s <<= 1;
@@ -84,12 +88,19 @@ public:
         if (seg.size() < 2*s) {
             seg.resize(2*s);
         }
-        fill(seg.begin(), seg.begin()+(2*w), make_pair(-INF, -1));
+        fill(seg.begin(), seg.begin()+(2*s), make_pair(-INF, -1));
         if (hashidx.size() < w) {
             hashidx.resize(w);
             next_beam.resize(w);
         }
-        func.clear(); // TODO
+        if (clear_hash) {
+            func.clear();
+        } else {
+            // 現ビームに居る hash を archived(-2) にマークしてターン跨ぎで dedup する
+            for (int i = 0; i < entry; ++i) {
+                func.set(hashidx[i], -2);
+            }
+        }
         if (func.inner_len() == 1) {
             func = titan23::HashDict<int>(beam_width*8);
         }
@@ -97,7 +108,7 @@ public:
     }
 
     BeamCandidate<ScoreType, Action> get_best() {
-        return *min_element(next_beam.begin(), next_beam.begin() + entry, [&] (const BeamCandidate<ScoreType, Action> &left, const BeamCandidate<ScoreType, Action> &right) {
+        return *min_element(next_beam.begin(), next_beam.begin() + entry, [] (const BeamCandidate<ScoreType, Action> &left, const BeamCandidate<ScoreType, Action> &right) {
             return left.score < right.score;
         });
     }

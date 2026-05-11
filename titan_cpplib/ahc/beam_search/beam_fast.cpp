@@ -13,6 +13,7 @@ namespace flying_squirrel {
 
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
 class BeamSearchWithTree {
+    static_assert(!record_history, "record_history is not implemented in beam_fast.cpp; use beam_search.cpp instead.");
 private:
     titan23::Random rnd;
     titan23::Timer beam_timer;
@@ -47,6 +48,24 @@ private:
         actions.clear();
     }
 
+    //! tour[leaf[k]..leaf[k+1]) を末尾 dst_end の手前にランク順に貼り込む共通ロジック。
+    //! dst_end は「親パス末尾の一つ後ろ」（葉のアクションを書く位置 = ancestor path one-past-end）。
+    //! 「経路復元: 親 leaf へ向かう祖先ぶんの action を tour から復元する」処理。
+    template<class It>
+    inline void copy_tour_path(int parent_leaf, int leaf_end, It dst_end) {
+        int prog = 0;
+        for (int k = parent_leaf; k < leaf_end; ++k) {
+            int w0 = leaf[k];
+            int w1 = leaf[k + 1];
+            int rank = w1 - w0;
+            if (prog < rank) {
+                int copy_len = rank - prog;
+                copy(tour.begin() + w0, tour.begin() + w0 + copy_len, dst_end - rank);
+                prog = rank;
+            }
+        }
+    }
+
 public:
     /**
      * @brief ビームサーチをする
@@ -58,16 +77,17 @@ public:
     vector<Action> search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
         init_bs();
         if (verbose) cerr << "[BeamSearch] Info: start search()" << endl;
-        State* state = new State;
-        state->init();
+        State state;
+        state.init();
+        trace.resize(param.max_turn + 1);
 
         int w = param.get_beam_width(param.max_turn, 0, param.time_limit);
-        candidates.reset(0, w);
+        candidates.reset(0, w, param.clear_hash_every_turn);
 
         actions.clear();
-        state->get_actions(actions, 0, DAMMY_ACTION, candidates.threshold());
+        state.get_actions(actions, 0, DAMMY_ACTION, candidates.threshold());
         for (Action &action : actions) {
-            auto [score, hash, finished] = state->try_op(action, candidates.threshold());
+            auto [score, hash, finished] = state.try_op(action, candidates.threshold());
             if (score >= INF) continue;
             if (finished) {
                 if (!found_finished || score < best_finished_score) {
@@ -97,11 +117,10 @@ public:
             next_tour.clear();
             next_leaf.clear();
             w = param.get_beam_width(param.max_turn - turn, cand.size(), param.time_limit - beam_timer.elapsed());
-            candidates.reset(turn, w);
+            candidates.reset(turn, w, param.clear_hash_every_turn);
 
             int li = leaf.size() - 1;
             int f = 0;
-            trace.resize(turn + 1);
 
             if (!cand.empty()) {
                 trace[turn] = cand.back().action;
@@ -120,35 +139,25 @@ public:
                 }
 
                 for (int k = 0; k < lca_dist + f; ++k) {
-                    state->rollback(trace[turn - 1 + f - k]);
+                    state.rollback(trace[turn - 1 + f - k]);
                 }
 
                 next_tour.insert(next_tour.end(), trace.begin() + (turn - lca_dist), trace.begin() + (turn + 1));
                 f = 1;
 
                 trace[turn] = c.action;
-                int prog = 0;
-                for (int k = c.parent_leaf; k < li; ++k) {
-                    int w0 = leaf[k];
-                    int w1 = leaf[k + 1];
-                    int rank = w1 - w0;
-                    if (prog < rank) {
-                        int copy_len = rank - prog;
-                        copy(tour.begin() + w0, tour.begin() + w0 + copy_len, trace.begin() + (turn - rank));
-                        prog = rank;
-                    }
-                }
+                copy_tour_path(c.parent_leaf, li, trace.begin() + turn);
 
                 for (int k = turn - lca_dist; k <= turn; ++k) {
-                    state->apply_op(trace[k]);
+                    state.apply_op(trace[k]);
                 }
 
                 actions.clear();
-                state->get_actions(actions, turn, c.action, candidates.threshold());
+                state.get_actions(actions, turn, c.action, candidates.threshold());
                 int now_leaf_idx = next_leaf.size();
 
                 for (Action &action : actions) {
-                    auto [score, hash, finished] = state->try_op(action, candidates.threshold());
+                    auto [score, hash, finished] = state.try_op(action, candidates.threshold());
                     if (score >= INF) continue;
                     if (finished) {
                         if (!found_finished || score < best_finished_score) {
@@ -211,17 +220,7 @@ public:
 
         vector<Action> ret(trace.begin() + 1, trace.end());
         int len = ret.size();
-        int prog = 0;
-        for (int k = cand[best_idx].parent_leaf; k < (int)leaf.size() - 1; ++k) {
-            int w0 = leaf[k];
-            int w1 = leaf[k + 1];
-            int rank = w1 - w0;
-            if (prog < rank) {
-                int copy_len = rank - prog;
-                copy(tour.begin() + w0, tour.begin() + w0 + copy_len, ret.begin() + (len - rank));
-                prog = rank;
-            }
-        }
+        copy_tour_path(cand[best_idx].parent_leaf, (int)leaf.size() - 1, ret.begin() + len);
         ret.push_back(cand[best_idx].action);
 
         return ret;

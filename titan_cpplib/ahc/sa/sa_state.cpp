@@ -50,7 +50,7 @@ public:
     // TODO
 
     // TODO
-    void init(uint32_t seed=23) {
+    void init(uint32_t seed) {
         sarnd.set_seed(seed);
         score = 0;
     }
@@ -66,11 +66,11 @@ public:
     void modify(const int64_t iter, const ScoreType threshold, const double progress) {}
 
     // TODO
-    // scoreはライブラリ側で戻す
+    // ライブラリ側でスコアを元の値に上書きするため、score の復元は不要
     void rollback() {}
 
     // TODO
-    // scoreはライブラリ側で戻す
+    // 遅延評価を採用した場合はここで盤面への書き込みを確定させる
     void advance() {}
 
     // TODO

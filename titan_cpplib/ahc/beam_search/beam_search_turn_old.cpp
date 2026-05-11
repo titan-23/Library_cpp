@@ -28,19 +28,19 @@ private:
     Action best_finished_action;
 
     struct TreeNode {
-        // フィールド順は sizeof(TreeNode) を最小化するために決めている:
-        // dir_or_leaf_id + subtree_end の 8 byte が、もともと Action(8-byte align)前の padding
-        // だった枠にちょうど収まり、subtree_end 追加のサイズ増を 0 にできる。
         int dir_or_leaf_id;
-        // PRE_ORDER 専用: 対応する POST_ORDER の次の index (排他)。skip 時のジャンプ先。
-        int subtree_end;
         Action action;
         ActionIDType action_id;
-        // leaf: action の target_turn / PRE_ORDER: 部分木 leaf の target_turn の最小値 / POST_ORDER: 未使用
         int target_turn;
+        // PRE_ORDER 専用: 部分木中の leaf の target_turn の最小値。
+        // get_next_beam で「現ターンに該当する leaf が無い部分木」を一気にスキップするのに使う。
+        int subtree_min_turn;
+        // PRE_ORDER 専用: 対応する POST_ORDER の次の index (排他)。スキップ時のジャンプ先。
+        int subtree_end;
 
         TreeNode(int d, Action a, ActionIDType id, int target)
-            : dir_or_leaf_id(d), subtree_end(0), action(move(a)), action_id(id), target_turn(target) {}
+            : dir_or_leaf_id(d), action(move(a)), action_id(id), target_turn(target),
+              subtree_min_turn(INT_MAX), subtree_end(0) {}
     };
 
     struct BeamCandidate {
@@ -212,8 +212,6 @@ private:
     vector<int> turn_to_pool_idx;
     vector<int> free_pool_indices;
     vector<ScoreType> thresholds;
-    // update_tree 用の (PRE_ORDER index, dirty) スタック。dirty-bit lazy update に使う。
-    vector<pair<int, bool>> pre_stack;
 
     Candidates& get_cands(int target_turn, int req_w) {
         int idx = turn_to_pool_idx[target_turn];
@@ -285,17 +283,15 @@ private:
         }
 
         int leaf_id = 0;
-        const int tree_size = (int)tree.size();
-        for (int i = 0; i < tree_size; ) {
-            TreeNode& node = tree[i];
-            const int dir_or_leaf_id = node.dir_or_leaf_id;
+        for (int i = 0; i < (int)tree.size(); ) {
+            int dir_or_leaf_id = tree[i].dir_or_leaf_id;
             if (dir_or_leaf_id >= 0) {
-                if (node.target_turn == turn) {
-                    const Action& action = node.action;
-                    state.apply_op(action);
+                if (tree[i].target_turn == turn) {
+                    Action action_copy = tree[i].action;
+                    state.apply_op(action_copy);
                     actions.clear();
-                    int parent_id = node.action_id;
-                    state.get_actions(actions, action, thresholds);
+                    int parent_id = tree[i].action_id;
+                    state.get_actions(actions, action_copy, thresholds);
 
                     for (Action &child_action : actions) {
                         auto [score, hash, finished] = state.try_op(child_action, thresholds);
@@ -329,25 +325,24 @@ private:
                             history.push_back({current_node_id, parent_id, t_turn, score, hash, child_action.to_string(), state.get_state_info(), status});
                         }
                     }
-                    node.dir_or_leaf_id = leaf_id;
+                    tree[i].dir_or_leaf_id = leaf_id;
                     ++leaf_id;
-                    state.rollback(action);
+                    state.rollback(action_copy);
                 } else {
-                    node.dir_or_leaf_id = leaf_id;
+                    tree[i].dir_or_leaf_id = leaf_id;
                     ++leaf_id;
                 }
                 ++i;
             } else if (dir_or_leaf_id == PRE_ORDER) {
-                // 部分木中の leaf がすべて future-turn なら state を進めずに POST_ORDER の次までジャンプ。
-                // PRE_ORDER では target_turn を「部分木 leaf の target_turn 最小値」として再利用している。
-                if (node.target_turn > turn) {
-                    i = node.subtree_end;
+                // 部分木中の leaf がすべて future-turn なら、state を進めずに POST_ORDER の次までジャンプする
+                if (tree[i].subtree_min_turn > turn) {
+                    i = tree[i].subtree_end;
                     continue;
                 }
-                state.apply_op(node.action);
+                state.apply_op(tree[i].action);
                 ++i;
             } else {
-                state.rollback(node.action);
+                state.rollback(tree[i].action);
                 ++i;
             }
         }
@@ -379,101 +374,76 @@ private:
             }
         }
 
-        // dirty-bit lazy update:
-        //   PRE_ORDER を src から copy emit する時、target_turn には src の旧 subtree_min を
-        //   そのまま入れる ( stable ならこれで正しい)。dirty=false で push。
-        //   leaf evict / has_child 展開 / 子 dirty 伝播 のいずれかが起きた時のみ dirty=true。
-        //   POST_ORDER close 時、dirty=true の subtree だけ直接の子を線形 scan して subtree_min
-        //   を再計算する。stable subtree では per-emit の propagation が完全に消える。
-        pre_stack.clear();
+        // pre_stack: nxt_tree に積んだ未クローズ PRE_ORDER の index 列。
+        // POST_ORDER をクローズする時に対応 PRE_ORDER の subtree_end / subtree_min_turn を埋め、
+        // さらに親 PRE_ORDER に min を伝播する。
+        vector<int> pre_stack;
+        auto note_leaf_target = [&](int t_turn) {
+            if (!pre_stack.empty() && t_turn < nxt_tree[pre_stack.back()].subtree_min_turn) {
+                nxt_tree[pre_stack.back()].subtree_min_turn = t_turn;
+            }
+        };
+        auto close_subtree = [&]() {
+            int pre_idx = pre_stack.back();
+            nxt_tree[pre_idx].subtree_end = (int)nxt_tree.size();
+            pre_stack.pop_back();
+            if (!pre_stack.empty()) {
+                int child_m = nxt_tree[pre_idx].subtree_min_turn;
+                if (child_m < nxt_tree[pre_stack.back()].subtree_min_turn) {
+                    nxt_tree[pre_stack.back()].subtree_min_turn = child_m;
+                }
+            }
+        };
 
         int next_beam_idx = 0;
-        const int num_candidates = (int)current_new_candidates.size();
-        const int tree_size = (int)tree.size();
-        for (; i < tree_size; ++i) {
-            TreeNode& src = tree[i];
-            const int dir_or_leaf_id = src.dir_or_leaf_id;
+        const int num_candidates = current_new_candidates.size();
+        for (; i < (int)tree.size(); ++i) {
+            int dir_or_leaf_id = tree[i].dir_or_leaf_id;
             if (dir_or_leaf_id >= 0) {
-                if (src.target_turn == turn) {
+                if (tree[i].target_turn == turn) {
                     bool has_child = false;
                     int start_idx = next_beam_idx;
-                    while (next_beam_idx < num_candidates) {
+                    while(next_beam_idx < num_candidates) {
                         if (current_new_candidates[next_beam_idx].par != dir_or_leaf_id) break;
                         if (is_survived_node[current_new_candidates[next_beam_idx].action_id]) has_child = true;
-                        ++next_beam_idx;
+                        next_beam_idx++;
                     }
                     if (has_child) {
-                        // 新規構成なので常に dirty 扱い。ローカル subtree_min で集計し、
-                        // この PRE_ORDER 自体は閉じ切るので pre_stack には積まない。
                         int pre_idx = (int)nxt_tree.size();
-                        nxt_tree.emplace_back(PRE_ORDER, src.action, src.action_id, INT_MAX);
-                        int subtree_min = INT_MAX;
+                        nxt_tree.emplace_back(PRE_ORDER, tree[i].action, tree[i].action_id, tree[i].target_turn);
+                        pre_stack.push_back(pre_idx);
                         for (int k = start_idx; k < next_beam_idx; ++k) {
                             const auto& nc = current_new_candidates[k];
                             if (is_survived_node[nc.action_id]) {
                                 nxt_tree.emplace_back(dir_or_leaf_id, nc.action, nc.action_id, nc.target_turn);
-                                if (nc.target_turn < subtree_min) subtree_min = nc.target_turn;
+                                note_leaf_target(nc.target_turn);
                             }
                         }
-                        nxt_tree.emplace_back(POST_ORDER, src.action, src.action_id, 0);
-                        nxt_tree[pre_idx].target_turn = subtree_min;
-                        nxt_tree[pre_idx].subtree_end = (int)nxt_tree.size();
-                        // 外側 subtree は構成が変わったので dirty 化
-                        if (!pre_stack.empty()) pre_stack.back().second = true;
-                    } else {
-                        // leaf が消えた → 外側の旧 min が無効になり得るので dirty 化
-                        if (!pre_stack.empty()) pre_stack.back().second = true;
+                        nxt_tree.emplace_back(POST_ORDER, tree[i].action, tree[i].action_id, tree[i].target_turn);
+                        close_subtree();
                     }
                 } else {
-                    if (is_survived_node[src.action_id]) {
-                        // 通常 emit: propagation 一切なし。stable なら親の旧 min がそのまま正しい。
-                        nxt_tree.emplace_back(dir_or_leaf_id, src.action, src.action_id, src.target_turn);
-                    } else {
-                        // evict → 外側 dirty
-                        if (!pre_stack.empty()) pre_stack.back().second = true;
+                    if (is_survived_node[tree[i].action_id]) {
+                        nxt_tree.emplace_back(dir_or_leaf_id, tree[i].action, tree[i].action_id, tree[i].target_turn);
+                        note_leaf_target(tree[i].target_turn);
                     }
                 }
             } else if (dir_or_leaf_id == PRE_ORDER) {
-                // src.target_turn は前ターンの subtree_min。stable ならこの値がそのまま使える。
                 int pre_idx = (int)nxt_tree.size();
-                nxt_tree.emplace_back(PRE_ORDER, src.action, src.action_id, src.target_turn);
-                pre_stack.push_back({pre_idx, false});
+                nxt_tree.emplace_back(PRE_ORDER, tree[i].action, tree[i].action_id, tree[i].target_turn);
+                pre_stack.push_back(pre_idx);
             } else {
-                if (!nxt_tree.empty()
-                    && nxt_tree.back().dir_or_leaf_id == PRE_ORDER
-                    && nxt_tree.back().action_id == src.action_id) {
-                    // 空サブツリー: PRE_ORDER を取り消し、POST_ORDER も emit しない。
-                    // 親から見ると subtree が丸ごと消えるので、親の旧 min が無効化され得る。
+                int pre_dir = -1;
+                if (!nxt_tree.empty()) {
+                    pre_dir = nxt_tree.back().dir_or_leaf_id;
+                }
+                if (pre_dir == PRE_ORDER && nxt_tree.back().action_id == tree[i].action_id) {
+                    // 空のサブツリー: PRE_ORDER を取り消し、POST_ORDER も emit しない
                     nxt_tree.pop_back();
                     pre_stack.pop_back();
-                    if (!pre_stack.empty()) pre_stack.back().second = true;
                 } else {
-                    nxt_tree.emplace_back(POST_ORDER, src.action, src.action_id, 0);
-                    int pre_idx = pre_stack.back().first;
-                    bool dirty = pre_stack.back().second;
-                    nxt_tree[pre_idx].subtree_end = (int)nxt_tree.size();
-                    pre_stack.pop_back();
-                    if (dirty) {
-                        // 直接の子だけ線形 scan して subtree_min を再計算。
-                        // PRE_ORDER の子は subtree_end で nest 中身を skip できるので O(direct children)。
-                        int min_t = INT_MAX;
-                        int k = pre_idx + 1;
-                        const int end_excl = (int)nxt_tree.size() - 1; // POST_ORDER の直前まで
-                        while (k < end_excl) {
-                            const TreeNode& child = nxt_tree[k];
-                            int t = child.target_turn;
-                            if (t < min_t) min_t = t;
-                            if (child.dir_or_leaf_id == PRE_ORDER) {
-                                k = child.subtree_end;
-                            } else {
-                                ++k;
-                            }
-                        }
-                        nxt_tree[pre_idx].target_turn = min_t;
-                        // dirty を親へ伝播
-                        if (!pre_stack.empty()) pre_stack.back().second = true;
-                    }
-                    // else: emit 時の src.target_turn (= 旧 subtree_min) がそのまま正しい
+                    nxt_tree.emplace_back(POST_ORDER, tree[i].action, tree[i].action_id, tree[i].target_turn);
+                    close_subtree();
                 }
             }
         }

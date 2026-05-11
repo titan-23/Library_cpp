@@ -56,12 +56,16 @@ private:
         ScoreType threshold() const { return entry < beam_width ? INF : seg[1].first; }
 
         /// 追加できたらtrueを返す
-        bool push(ScoreType score, HashType hash, int par, const Action &action) {
+        bool push(ScoreType score, HashType hash, int par, Action action) {
             if (entry == beam_width && score >= seg[1].first) {
                 return false;
             }
             auto dat = func.get_pos(hash);
             int idx = func.inner_get(dat, -1);
+            if (idx == -2) {
+                // 過去ターンで採用済みのハッシュ → 即 drop
+                return false;
+            }
             if (idx != -1) {
                 if (score < seg[idx+s].first) {
                     next_beam[idx] = {par, score, move(action)};
@@ -87,7 +91,7 @@ private:
             return true;
         }
 
-        void reset(int turn, int w) {
+        void reset(int turn, int w, bool clear_hash) {
             beam_width = w;
             while (s < w) {
                 s <<= 1;
@@ -100,22 +104,22 @@ private:
                 hashidx.resize(w);
                 next_beam.resize(w);
             }
-            func.clear();
+            if (clear_hash) {
+                func.clear();
+            } else {
+                // 現ビームに居る hash を archived(-2) にマークしてターン跨ぎで dedup する
+                for (int i = 0; i < entry; ++i) {
+                    func.set(hashidx[i], -2);
+                }
+            }
             if (func.inner_len() == 1) {
                 func = titan23::HashDict<int>(beam_width*8);
             }
             entry = 0;
         }
 
-        void shuffle(titan23::Random &rnd) {
-            for (int i = 0; i < entry-1; ++i) {
-                int j = rnd.randrange(i, entry);
-                swap(next_beam[i], next_beam[j]);
-            }
-        }
-
         BeamCandidate get_best() {
-            return *min_element(next_beam.begin(), next_beam.begin() + entry, [&] (const BeamCandidate &left, const BeamCandidate &right) {
+            return *min_element(next_beam.begin(), next_beam.begin() + entry, [] (const BeamCandidate &left, const BeamCandidate &right) {
                 return left.score < right.score;
             });
         }
@@ -130,21 +134,20 @@ private:
         State state;
         ScoreType score;
         int history_id;
+        Action last_action;
     };
 
-    titan23::Random rnd;
-    int node_id_counter;
     bool found_finished;
+    Action DUMMY_ACTION;
     ScoreType best_finished_score;
     vector<HistoryNode> history_nodes;
     titan23::Timer beam_timer;
 
     void init_bs(const BeamParam &param) {
         beam_timer.reset();
-        rnd = titan23::Random();
-        node_id_counter = 0;
         found_finished = false;
         best_finished_score = INF;
+        history_nodes.clear();
     }
 
     vector<Action> build_history(int last_id) const {
@@ -164,21 +167,22 @@ public:
         vector<Node> beam, next_beam;
         State initial_state;
         initial_state.init();
-        beam.push_back({initial_state, 0, -1});
+        beam.push_back({initial_state, 0, -1, DUMMY_ACTION});
         int best_finished_history_id = -1;
         vector<Action> actions;
         for (int turn = 0; turn < param.max_turn; ++turn) {
             double now_time = beam_timer.elapsed();
             if (verbose) cerr << "\n[BeamSearch] Info: # turn : " << turn+1 << " | " << now_time << " [ms]" << endl;
-            const int width = param.get_beam_width();
-            if (verbose) cerr << "\n[BeamSearch] Info: \twidth = " << w << endl;
-            candidates.reset(turn, width);
+            const int width = param.get_beam_width(param.max_turn - turn, (int)beam.size(), param.time_limit - beam_timer.elapsed());
+            if (verbose) cerr << "\n[BeamSearch] Info: \twidth = " << width << endl;
+            candidates.reset(turn, width, param.clear_hash_every_turn);
             for (int i = 0; i < (int)beam.size(); ++i) {
                 State &state = beam[i].state;
-                state.get_actions(actions, turn);
-                for (const Action &action : actions) {
+                actions.clear();
+                state.get_actions(actions, turn, beam[i].last_action, candidates.threshold());
+                for (Action &action : actions) {
                     auto [score, hash, finished] = state.try_op(action, candidates.threshold());
-                    if (score == INF) continue;
+                    if (score >= INF) continue;
                     if (finished) {
                         if (!found_finished || score < best_finished_score) {
                             found_finished = true;
@@ -192,11 +196,11 @@ public:
                     }
                 }
             }
-            if (found_finished) {
-                if (verbose) cerr << to_green("[BeamSearch] Info: find valid solution.") << endl;
-                break;
-            }
             if (candidates.size() == 0) {
+                if (found_finished) {
+                    if (verbose) cerr << to_green("[BeamSearch] Info: no more candidates, returning best finished.") << endl;
+                    break;
+                }
                 cerr << to_red("[BeamSearch] Error: \t次の候補が見つかりませんでした") << endl;
                 assert(candidates.size() > 0);
             }
@@ -211,7 +215,7 @@ public:
                 next_state.apply_op(cand.action);
                 int new_history_id = history_nodes.size();
                 history_nodes.emplace_back(beam[cand.par_idx].history_id, cand.action);
-                next_beam.emplace_back(next_state, cand.score, new_history_id);
+                next_beam.emplace_back(move(next_state), cand.score, new_history_id, cand.action);
             }
             swap(beam, next_beam);
             param.timestamp(beam.size(), candidates.size(), beam_timer.elapsed()-now_time);

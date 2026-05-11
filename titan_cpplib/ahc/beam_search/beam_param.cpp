@@ -8,6 +8,11 @@ struct BeamParam {
     int max_turn, beam_width;
     double time_limit;
     bool is_adjusting;
+    //! 毎ターン Candidates 内の hash dict を clear するか。
+    //! true : 各ターンの beam 内重複排除のみ行う安全な既定動作。
+    //! false: clear のオーバーヘッドを省くが、State 側の hash がターン情報を含まないと
+    //!        ターン跨ぎの stale entry により候補が黙って drop される。設計を理解した上で使うこと。
+    bool clear_hash_every_turn;
 
     // 内部で使用する変数
     int pool_size_sum, beam_width_sum, turn_sum;
@@ -20,13 +25,15 @@ struct BeamParam {
         int max_turn,
         int beam_width,
         double time_limit,
-        bool is_adjusting=false
+        bool is_adjusting=false,
+        bool clear_hash_every_turn=true
     ) {
         init();
         this->max_turn = max_turn;
         this->beam_width = beam_width;
         this->time_limit = time_limit;
         this->is_adjusting = is_adjusting;
+        this->clear_hash_every_turn = clear_hash_every_turn;
         if (is_adjusting) {
             cerr << to_bold("Warning: 動的ビーム幅は試験的です") << endl;
         }
@@ -37,6 +44,7 @@ struct BeamParam {
         beam_width = 0;
         time_limit = 0;
         is_adjusting = false;
+        clear_hash_every_turn = true;
         pool_size_sum = 0;
         beam_width_sum = 0;
         turn_sum = 0;
@@ -85,7 +93,7 @@ BeamParam gen_param(int max_turn, int beam_width) {
     return {max_turn, beam_width, -1};
 }
 
-BeamParam gen_param(int max_turn, int beam_width, double time_limit, bool is_adjusting) {
-    return {max_turn, beam_width, time_limit, is_adjusting};
+BeamParam gen_param(int max_turn, int beam_width, double time_limit, bool is_adjusting, bool clear_hash_every_turn=true) {
+    return {max_turn, beam_width, time_limit, is_adjusting, clear_hash_every_turn};
 }
 } // namespace flying_squirrel

@@ -53,7 +53,7 @@ typename State::Result sa_run(const double TIME_LIMIT, const uint32_t seed=23, c
     if (verbose) {
         cerr << "init-fin" << endl;
         cerr << "init-time  = " << sa_timer.elapsed() << endl;
-        cerr << "init-score = " << best_result.true_score << endl;
+        cerr << "init-score = " << best_result.true_score << " (" << best_result.score << ")" << endl;
         cerr << "--------" << endl;
     }
 
@@ -69,8 +69,6 @@ typename State::Result sa_run(const double TIME_LIMIT, const uint32_t seed=23, c
 
         // 指数冷却
         int temp_idx = (int)(progress * (TEMP_TABLE_SIZE - 1));
-        if (temp_idx >= TEMP_TABLE_SIZE) temp_idx = TEMP_TABLE_SIZE - 1;
-        else if (temp_idx < 0) temp_idx = 0;
         double now_temp = TEMP_TABLE[temp_idx];
         typename State::ScoreType threshold = score - now_temp * LOG_TABLE[sa_rnd.randrange(LOG_TABLE_SIZE)];
 
@@ -89,8 +87,9 @@ typename State::Result sa_run(const double TIME_LIMIT, const uint32_t seed=23, c
                 bst_cnt++;
                 best_result = state.get_result();
                 if (verbose) {
-                    // best_result.print();
-                    cerr << "Info: score=" << best_result.true_score << " | time=" << now_time << " | prog=" << (progress * 100.0) << "%" << " | temp=" << now_temp << endl;
+                    cerr << "Info: score=" << best_result.true_score << " (" << best_result.score << ")"
+                         << " | time=" << now_time << " | prog=" << (progress * 100.0) << "%"
+                         << " | temp=" << now_temp << endl;
                 }
             }
         } else {
@@ -99,20 +98,25 @@ typename State::Result sa_run(const double TIME_LIMIT, const uint32_t seed=23, c
         }
     }
     if (verbose) {
+        double total_time = sa_timer.elapsed();
         cerr << "=============" << endl;
         for (int i = 0; i < (int)modify.size(); ++i) {
             double accept_rate = (modify[i] > 0) ? ((double)accept[i] / modify[i] * 100.0) : 0.0;
+            double worse_rate = (accept[i] > 0) ? ((double)accept_worse[i] / accept[i] * 100.0) : 0.0;
             cerr << "Info: Type=" << i << " | " << accept[i] << " / " << modify[i]
-                 << " (" << accept_rate << "%)" << endl;
+                 << " (" << accept_rate << "%)"
+                 << " | worse=" << accept_worse[i] << " / " << accept[i]
+                 << " (" << worse_rate << "%)" << endl;
         }
         cerr << "Info: bst=" << bst_cnt << endl;
         cerr << "Info: ac=" << upd_cnt << endl;
         cerr << "Info: loop=" << iter << endl;
-        cerr << "Info: vaid_cnt=" << valid_cnt << ", " << (iter > 0 ? (int)((double)valid_cnt/iter*100) : 0) << "%" << endl;;
+        cerr << "Info: valid_cnt=" << valid_cnt << ", " << (iter > 0 ? (int)((double)valid_cnt/iter*100) : 0) << "%" << endl;
         cerr << "Info: accept rate=" << (iter > 0 ? (int)((double)upd_cnt/iter*100) : 0) << "%" << endl;
         cerr << "Info: update best rate=" << (iter > 0 ? (int)((double)bst_cnt/iter*100) : 0) << "%" << endl;
-        cerr << "Info: best_score = " << best_result.score << endl;
-        cerr << "Info: cnt=" << iter << endl;
+        cerr << "Info: best_score = " << best_result.true_score << " (" << best_result.score << ")" << endl;
+        cerr << "Info: total_time = " << total_time << " ms" << endl;
+        cerr << "Info: ips = " << (total_time > 0 ? iter * 1000.0 / total_time : 0.0) << endl;
     }
     return best_result;
 }
@@ -200,7 +204,7 @@ typename State::Result sa_multi_run(
 
     if (verbose) {
         cerr << "--- Phase 1 finish ---" << endl;
-        cerr << "Best score in Phase 1: " << best_overall_result.true_score << endl;
+        cerr << "Best score in Phase 1: " << best_overall_result.true_score << " (" << best_overall_result.score << ")" << endl;
         cerr << "Elapsed time: " << sa_timer.elapsed() << " ms" << endl;
     }
 
@@ -249,7 +253,9 @@ typename State::Result sa_multi_run(
                 bst_cnt++;
                 best_result = state.get_result();
                 if (verbose) {
-                    cerr << "Info: score=" << best_result.true_score << " | time=" << now_time << " | prog=" << (progress * 100.0) << "%" << " | temp=" << now_temp << endl;
+                    cerr << "Info: score=" << best_result.true_score << " (" << best_result.score << ")"
+                         << " | time=" << now_time << " | prog=" << (progress * 100.0) << "%"
+                         << " | temp=" << now_temp << endl;
                 }
             }
         } else {
@@ -259,21 +265,26 @@ typename State::Result sa_multi_run(
     }
 
     if (verbose) {
+        double total_time = sa_timer.elapsed();
         cerr << "=============" << endl;
         cerr << "--- Phase 2 finish ---" << endl;
         for (int i = 0; i < (int)modify.size(); ++i) {
             double accept_rate = (modify[i] > 0) ? ((double)accept[i] / modify[i] * 100.0) : 0.0;
+            double worse_rate = (accept[i] > 0) ? ((double)accept_worse[i] / accept[i] * 100.0) : 0.0;
             cerr << "Info: Type=" << i << " | " << accept[i] << " / " << modify[i]
-                 << " (" << accept_rate << "%)" << endl;
+                 << " (" << accept_rate << "%)"
+                 << " | worse=" << accept_worse[i] << " / " << accept[i]
+                 << " (" << worse_rate << "%)" << endl;
         }
         cerr << "Info: bst=" << bst_cnt << endl;
         cerr << "Info: ac=" << upd_cnt << endl;
         cerr << "Info: loop=" << iter << endl;
-        cerr << "Info: vaid_cnt=" << valid_cnt << ", " << (iter > 0 ? (int)((double)valid_cnt/iter*100) : 0) << "%" << endl;
+        cerr << "Info: valid_cnt=" << valid_cnt << ", " << (iter > 0 ? (int)((double)valid_cnt/iter*100) : 0) << "%" << endl;
         cerr << "Info: accept rate=" << (iter > 0 ? (int)((double)upd_cnt/iter*100) : 0) << "%" << endl;
         cerr << "Info: update best rate=" << (iter > 0 ? (int)((double)bst_cnt/iter*100) : 0) << "%" << endl;
-        cerr << "Info: best_score = " << best_result.score << endl;
-        cerr << "Info: cnt=" << iter << endl;
+        cerr << "Info: best_score = " << best_result.true_score << " (" << best_result.score << ")" << endl;
+        cerr << "Info: total_time = " << total_time << " ms" << endl;
+        cerr << "Info: ips = " << (total_time > 0 ? iter * 1000.0 / total_time : 0.0) << endl;
     }
     return best_result;
 }
@@ -304,29 +315,34 @@ typename State::Result replica_run(
     vector<State> states(NUM_REPLICAS);
     vector<int> rep_idx(NUM_REPLICAS);
 
-    State dummy_state;
-    int max_threads = omp_get_max_threads();
-    int type_cnt = max(1, dummy_state.changed.TYPE_CNT);
-    vector<vector<int64_t>> accept(max_threads, vector<int64_t>(type_cnt, 0));
-    vector<vector<int64_t>> accept_worse(max_threads, vector<int64_t>(type_cnt, 0));
-    vector<vector<int64_t>> modify(max_threads, vector<int64_t>(type_cnt, 0));
-    vector<int64_t> iter(max_threads, 0);
-
     #pragma omp parallel
     {
         #pragma omp for schedule(static)
         for (int i = 0; i < NUM_REPLICAS; ++i) {
-            states[i].sarnd.set_seed(1000 + i);
-            states[i].init();
+            states[i].init(1000 + i);
             rep_idx[i] = i;
         }
     }
+
+    int max_threads = omp_get_max_threads();
+    int type_cnt = max(1, states[0].changed.TYPE_CNT);
+    vector<vector<int64_t>> accept(max_threads, vector<int64_t>(type_cnt, 0));
+    vector<vector<int64_t>> accept_worse(max_threads, vector<int64_t>(type_cnt, 0));
+    vector<vector<int64_t>> modify(max_threads, vector<int64_t>(type_cnt, 0));
+    vector<int64_t> iter(max_threads, 0);
 
     typename State::Result best_result = states[0].get_result();
     for (int i = 1; i < NUM_REPLICAS; ++i) {
         if (states[i].get_score() < best_result.score) {
             best_result = states[i].get_result();
         }
+    }
+
+    if (verbose) {
+        cerr << "init-fin" << endl;
+        cerr << "init-time  = " << sa_timer.elapsed() << endl;
+        cerr << "init-score = " << best_result.true_score << " (" << best_result.score << ")" << endl;
+        cerr << "--------" << endl;
     }
 
     int64_t swap_cnt = 0;
@@ -366,7 +382,8 @@ typename State::Result replica_run(
                 double progress = now_time / TIME_LIMIT;
 
                 for (int step = 0; step < SWAP_ITER_INTERVAL; ++step) {
-                    typename State::ScoreType threshold = states[r].get_score() - now_temp * LOG_TABLE[sa_rnd.randrange(LOG_TABLE_SIZE)];
+                    typename State::ScoreType cur_score = states[r].get_score();
+                    typename State::ScoreType threshold = cur_score - now_temp * LOG_TABLE[sa_rnd.randrange(LOG_TABLE_SIZE)];
                     states[r].reset_is_valid();
                     states[r].modify(iter[r], threshold, progress);
                     ++iter[r];
@@ -376,11 +393,13 @@ typename State::Result replica_run(
                     if (states[r].is_valid && new_score <= threshold) {
                         states[r].advance();
                         accept[tid][states[r].changed.type]++;
+                        if (new_score > cur_score) accept_worse[tid][states[r].changed.type]++;
                         if (new_score < thread_best_results[tid].score) {
                             thread_best_results[tid] = states[r].get_result();
                         }
                     } else {
                         states[r].rollback();
+                        states[r].score = cur_score;
                     }
                 }
             }
@@ -390,15 +409,13 @@ typename State::Result replica_run(
         now_time = sa_timer.elapsed();
         double block_time = now_time - block_start_time;
 
-        if (now_time > TIME_LIMIT) break;
-
-        bool updated = false;
         for (int tid = 0; tid < max_threads; ++tid) {
             if (thread_best_results[tid].score < best_result.score) {
                 best_result = thread_best_results[tid];
-                updated = true;
             }
         }
+
+        if (now_time > TIME_LIMIT) break;
 
         if (record) {
             if (score_log.is_open()) {
@@ -424,7 +441,7 @@ typename State::Result replica_run(
             if (swap_cnt % 100 == 0) {
                 cerr << "Info: swap=" << swap_cnt << " | time=" << (int)now_time << "ms"
                      << " | block_time=" << block_time << "ms"
-                     << " | best_score=" << best_result.true_score << endl;
+                     << " | best_score=" << best_result.true_score << " (" << best_result.score << ")" << endl;
             }
         }
 
@@ -451,25 +468,32 @@ typename State::Result replica_run(
         score_log.close();
     }
     if (verbose) {
+        double total_time = sa_timer.elapsed();
         cerr << "=== Replica Exchange Log ===" << endl;
         cerr << "Total iterations : " << total_iter << endl;
+        cerr << "Total time       : " << total_time << " ms" << endl;
+        cerr << "ips              : " << (total_time > 0 ? total_iter * 1000.0 / total_time : 0.0) << endl;
         cerr << "--- Accept Rates by Type ---" << endl;
         for (int t = 0; t < type_cnt; ++t) {
-            int64_t total_acc = 0, total_mod = 0;
+            int64_t total_acc = 0, total_mod = 0, total_worse = 0;
             for (int tid = 0; tid < max_threads; ++tid) {
                 total_acc += accept[tid][t];
                 total_mod += modify[tid][t];
+                total_worse += accept_worse[tid][t];
             }
             if (total_mod > 0) {
+                double worse_rate = (total_acc > 0) ? ((double)total_worse / total_acc * 100.0) : 0.0;
                 cerr << "  Type[" << t << "] : " << total_acc << " / " << total_mod
-                     << " (" << (double)total_acc / total_mod * 100.0 << "%)" << endl;
+                     << " (" << (double)total_acc / total_mod * 100.0 << "%)"
+                     << " | worse=" << total_worse << " / " << total_acc
+                     << " (" << worse_rate << "%)" << endl;
             }
         }
         cerr << "Swap attempts    : " << swap_attempt_total << endl;
         cerr << "Swap accepts     : " << swap_accept_total << " ("
              << (swap_attempt_total > 0 ? (double)swap_accept_total / swap_attempt_total * 100.0 : 0.0) << "%)" << endl;
         cerr << "Avg time/swap    : " << (swap_cnt > 0 ? now_time / swap_cnt : 0.0) << " ms" << endl;
-        cerr << "Best Score       : " << best_result.score << endl;
+        cerr << "Best Score       : " << best_result.true_score << " (" << best_result.score << ")" << endl;
         cerr << "--- Final Scores by Temp ---" << endl;
         for (int i = 0; i < NUM_REPLICAS; ++i) {
             cerr << "  Temp[" << i << "] (" << temps[i] << ") : " << states[rep_idx[i]].get_true_score() << endl;

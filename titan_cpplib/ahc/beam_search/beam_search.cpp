@@ -23,7 +23,7 @@ private:
     using ActionIDType = int;
     ActionIDType ActionID;
     vector<Action> result;
-    Action DAMMY_ACTION;
+    Action DUMMY_ACTION;
 
     bool found_finished;
     ScoreType best_finished_score;
@@ -138,13 +138,14 @@ private:
         /// 追加できたらtrueを返す
         bool push(
             ScoreType score, HashType hash,
-            int par, const Action &action, ActionIDType action_id
+            int par, Action action, ActionIDType action_id
         ) {
             if (entry == beam_width && score >= seg[1].first) {
                 return false;
             }
             auto dat = func.get_pos(hash);
             int idx = func.inner_get(dat, -1);
+            if (idx == -2) return false;
             if (idx != -1) {
                 if (score < seg[idx+s].first) {
                     next_beam[idx] = {par, score, move(action), action_id};
@@ -170,7 +171,7 @@ private:
             return true;
         }
 
-        void reset(int turn, int w) {
+        void reset(int turn, int w, bool clear_hash) {
             beam_width = w;
             while (s < w) {
                 s <<= 1;
@@ -183,22 +184,21 @@ private:
                 hashidx.resize(w);
                 next_beam.resize(w);
             }
-            func.clear();
+            if (clear_hash) {
+                func.clear();
+            } else {
+                for (int i = 0; i < entry; ++i) {
+                    func.set(hashidx[i], -2);
+                }
+            }
             if (func.inner_len() == 1) {
                 func = titan23::HashDict<int>(beam_width*8);
             }
             entry = 0;
         }
 
-        void shuffle(titan23::Random &rnd) {
-            for (int i = 0; i < entry-1; ++i) {
-                int j = rnd.randrange(i, entry);
-                swap(next_beam[i], next_beam[j]);
-            }
-        }
-
         BeamCandidate get_best() {
-            return *min_element(next_beam.begin(), next_beam.begin() + entry, [&] (const BeamCandidate &left, const BeamCandidate &right) {
+            return *min_element(next_beam.begin(), next_beam.begin() + entry, [] (const BeamCandidate &left, const BeamCandidate &right) {
                 return left.score < right.score;
             });
         }
@@ -209,17 +209,18 @@ private:
     /**
      * @brief 次のビームを求める
      *
-     * @param state スタートのState
-     * @param t_turn 次のビームのターン数
-     * @param turn 謎
+     * @param state 探索を進める State
+     * @param turn  search ループのグローバルターン番号（履歴記録に使う）
+     * @param depth 探索木の局所深さ。一本道圧縮後は 0 になり、turn != depth となり得る。
+     *              depth == 0 のときは tree を辿らず state から直接展開する。
      */
-    void get_next_beam(State* state, const int t_turn, const int turn) {
-        if (turn == 0) {
+    void get_next_beam(State &state, const int turn, const int depth) {
+        if (depth == 0) {
             actions.clear();
-            state->get_actions(actions, t_turn, (result.empty() ? DAMMY_ACTION : result.back()), candidates.threshold());
-            int parent_id = (t_turn == 0) ? -1 : last_fixed_node_id;
+            state.get_actions(actions, turn, (result.empty() ? DUMMY_ACTION : result.back()), candidates.threshold());
+            int parent_id = (turn == 0) ? -1 : last_fixed_node_id;
             for (Action &action : actions) {
-                auto [score, hash, finished] = state->try_op(action, candidates.threshold());
+                auto [score, hash, finished] = state.try_op(action, candidates.threshold());
                 int current_node_id = node_id_counter++;
                 int status = 0;
                 if (score >= INF) {
@@ -236,9 +237,9 @@ private:
                         status = 1;
                     }
                 }
-                if (record_history) {
+                if constexpr (record_history) {
                     string action_str = action.to_string();
-                    history.push_back({current_node_id, parent_id, t_turn + 1, score, hash, move(action_str), state->get_state_info(), status});
+                    history.push_back({current_node_id, parent_id, turn + 1, score, hash, move(action_str), state.get_state_info(), status});
                 }
             }
             return;
@@ -248,13 +249,13 @@ private:
         for (int i = 0; i < (int)tree.size(); ++i) {
             auto &[dir_or_leaf_id, action, action_id] = tree[i];
             if (dir_or_leaf_id >= 0) {
-                state->apply_op(action);
+                state.apply_op(action);
                 actions.clear();
                 int parent_id = action_id;
-                state->get_actions(actions, t_turn, action, candidates.threshold());
+                state.get_actions(actions, turn, action, candidates.threshold());
                 tree[i].dir_or_leaf_id = leaf_id;
                 for (Action &action : actions) {
-                    auto [score, hash, finished] = state->try_op(action, candidates.threshold());
+                    auto [score, hash, finished] = state.try_op(action, candidates.threshold());
                     int current_node_id = node_id_counter++;
                     int status = 0;
                     if (score >= INF) {
@@ -271,23 +272,23 @@ private:
                             status = 1;
                         }
                     }
-                    if (record_history) {
+                    if constexpr (record_history) {
                         string action_str = action.to_string();
-                        history.push_back({current_node_id, parent_id, t_turn + 1, score, hash, move(action_str), state->get_state_info(), status});
+                        history.push_back({current_node_id, parent_id, turn + 1, score, hash, move(action_str), state.get_state_info(), status});
                     }
                 }
                 ++leaf_id;
-                state->rollback(action);
+                state.rollback(action);
             } else if (dir_or_leaf_id == PRE_ORDER) {
-                state->apply_op(move(action));
+                state.apply_op(action);
             } else {
-                state->rollback(move(action));
+                state.rollback(action);
             }
         }
     }
 
     //! 不要なNodeを削除し、木を更新する
-    int update_tree(State* state, const int turn) {
+    int update_tree(State& state, const int turn) {
         nxt_tree.clear();
         if (turn == 0) {
             for (int i = 0; i < (int)candidates.size(); ++i) {
@@ -307,7 +308,7 @@ private:
             if (dir_or_leaf_id == PRE_ORDER && action_id == tree.back().action_id) {
                 ++i;
                 result.emplace_back(action);
-                state->apply_op(action);
+                state.apply_op(action);
                 last_fixed_node_id = action_id;
                 tree.pop_back();
                 apply_only_turn++;
@@ -401,6 +402,8 @@ private:
         history.clear();
         snapshots.clear();
         result.clear();
+        tree.clear();
+        nxt_tree.clear();
         found_finished = false;
         last_fixed_node_id = -1;
         best_finished_score = INF;
@@ -417,8 +420,8 @@ public:
     vector<Action> search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
         init_bs(param);
         if (verbose) cerr << PRINT_GREEN << "[BeamSearch] Info: start search()" << PRINT_NONE << endl;
-        State* state = new State;
-        state->init();
+        State state;
+        state.init();
 
         int now_turn = 0;
         for (int turn = 0; turn < param.max_turn; ++turn) {
@@ -428,7 +431,7 @@ public:
             // 次のビーム候補を求める
             int w = param.get_beam_width(param.max_turn-turn, tree.size(), param.time_limit-beam_timer.elapsed());
             if (verbose) cerr << "\n[BeamSearch] Info: \twidth = " << w << endl;
-            candidates.reset(turn, w);
+            candidates.reset(turn, w, param.clear_hash_every_turn);
             get_next_beam(state, turn, turn-now_turn);
 
             if (found_finished) {
@@ -436,9 +439,12 @@ public:
                 candidates.next_beam.clear();
                 candidates.next_beam.emplace_back(best_finished_par, best_finished_score, best_finished_action, 0);
                 get_result();
-                result.emplace_back(candidates.next_beam[0].action);
+                // best_finished_par == PRE_ORDER のときは get_result 内で finish action を既に push 済みなのでスキップ
+                if (best_finished_par != PRE_ORDER) {
+                    result.emplace_back(candidates.next_beam[0].action);
+                }
                 if (verbose) param.report();
-                if (record_history) dump_history_json(history_file);
+                if constexpr (record_history) dump_history_json(history_file);
                 return result;
             }
 
@@ -452,7 +458,7 @@ public:
                 cerr << "[BeamSearch] Info: \tbest_score = " << bests.score << endl;
             }
 
-            if (record_history) {
+            if constexpr (record_history) {
                 unordered_set<int> survived_nodes;
                 for (int i = 0; i < candidates.size(); ++i) {
                     survived_nodes.insert(candidates.next_beam[i].action_id);
@@ -468,20 +474,13 @@ public:
             }
 
             // 探索木の更新
-            if (turn != 0) {
-                sort(candidates.next_beam.begin(), candidates.next_beam.begin() + candidates.size(),
-                    [] (const auto& a, const auto& b) {
-                        if (a.par != b.par) return a.par < b.par;
-                        return a.score < b.score;
-                    }
-                );
-            } else {
-                sort(candidates.next_beam.begin(), candidates.next_beam.begin() + candidates.size(),
-                    [] (const auto& a, const auto& b) {
-                        return a.score < b.score;
-                    }
-                );
-            }
+            // turn==0 のとき par は全て PRE_ORDER(-1) で同値なので (par, score) ソートが score ソートに帰着する
+            sort(candidates.next_beam.begin(), candidates.next_beam.begin() + candidates.size(),
+                [] (const auto& a, const auto& b) {
+                    if (a.par != b.par) return a.par < b.par;
+                    return a.score < b.score;
+                }
+            );
             int apply_only_turn = update_tree(state, turn);
             now_turn += apply_only_turn;
 
@@ -494,7 +493,7 @@ public:
             param.report();
         }
         get_result();
-        if (record_history) dump_history_json(history_file);
+        if constexpr (record_history) dump_history_json(history_file);
         return result;
     }
 };
