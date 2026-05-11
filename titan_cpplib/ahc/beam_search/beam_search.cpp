@@ -5,6 +5,7 @@
 #include "titan_cpplib/ahc/timer.cpp"
 #include "titan_cpplib/ds/hash_dict.cpp"
 #include "titan_cpplib/ahc/beam_search/beam_param.cpp"
+#include "titan_cpplib/ahc/beam_search/beam_log.cpp"
 
 using namespace std;
 
@@ -391,7 +392,7 @@ private:
                 result.pop_back();
             }
         }
-        cerr << "[BeamSearch] " << to_red("Error: 解が見つかりませんでした") << endl;
+        beam_log::error(cerr, "get_result: 解が見つかりませんでした");
         assert(false);
     }
 
@@ -419,43 +420,49 @@ public:
      */
     vector<Action> search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
         init_bs(param);
-        if (verbose) cerr << PRINT_GREEN << "[BeamSearch] Info: start search()" << PRINT_NONE << endl;
+        if (verbose) {
+            beam_log::start_banner(cerr, "BeamSearchWithTree (PRE/POST)", param);
+            if (param.is_adjusting) beam_log::warn(cerr, "dynamic beam width is experimental");
+        }
         State state;
         state.init();
 
         int now_turn = 0;
+        int turns_done = 0;
         for (int turn = 0; turn < param.max_turn; ++turn) {
             double now_time = beam_timer.elapsed();
-            if (verbose) cerr << "\n[BeamSearch] Info: # turn : " << turn+1 << " | " << now_time << " [ms]" << endl;
 
-            // 次のビーム候補を求める
             int w = param.get_beam_width(param.max_turn-turn, tree.size(), param.time_limit-beam_timer.elapsed());
-            if (verbose) cerr << "\n[BeamSearch] Info: \twidth = " << w << endl;
             candidates.reset(turn, w, param.clear_hash_every_turn);
             get_next_beam(state, turn, turn-now_turn);
 
             if (found_finished) {
-                if (verbose) cerr << "[BeamSearch] Info: find valid solution." << endl;
+                turns_done = turn + 1;
                 candidates.next_beam.clear();
                 candidates.next_beam.emplace_back(best_finished_par, best_finished_score, best_finished_action, 0);
                 get_result();
-                // best_finished_par == PRE_ORDER のときは get_result 内で finish action を既に push 済みなのでスキップ
                 if (best_finished_par != PRE_ORDER) {
                     result.emplace_back(candidates.next_beam[0].action);
                 }
-                if (verbose) param.report();
                 if constexpr (record_history) dump_history_json(history_file);
+                if (verbose) {
+                    beam_log::on_solution_found(cerr, turns_done, best_finished_score);
+                    beam_log::end_banner(cerr, "solution found", turns_done, param.max_turn,
+                                         beam_timer.elapsed(), param.ave_width(),
+                                         best_finished_score, true, (int)result.size());
+                }
                 return result;
             }
 
             if (candidates.size() == 0) {
-                cerr << to_red("[BeamSearch] Error: \t次の候補が見つかりませんでした") << endl;
+                beam_log::on_no_candidates(cerr, turn);
                 assert(candidates.size() > 0);
             }
 
             if (verbose) {
                 BeamCandidate bests = candidates.get_best();
-                cerr << "[BeamSearch] Info: \tbest_score = " << bests.score << endl;
+                beam_log::turn_line(cerr, turn + 1, param.max_turn, now_time,
+                                    w, (int)tree.size(), (int)candidates.size(), bests.score);
             }
 
             if constexpr (record_history) {
@@ -473,8 +480,6 @@ public:
                 snapshots.push_back({turn + 1, active_ids});
             }
 
-            // 探索木の更新
-            // turn==0 のとき par は全て PRE_ORDER(-1) で同値なので (par, score) ソートが score ソートに帰着する
             sort(candidates.next_beam.begin(), candidates.next_beam.begin() + candidates.size(),
                 [] (const auto& a, const auto& b) {
                     if (a.par != b.par) return a.par < b.par;
@@ -485,15 +490,17 @@ public:
             now_turn += apply_only_turn;
 
             param.timestamp(tree.size(), candidates.size(), beam_timer.elapsed()-now_time);
+            turns_done = turn + 1;
         }
 
-        // 答えを復元する
-        if (verbose) {
-            cerr << to_green("[BeamSearch] Info: max_turn finished.") << endl;
-            param.report();
-        }
         get_result();
         if constexpr (record_history) dump_history_json(history_file);
+        if (verbose) {
+            beam_log::on_max_turn(cerr);
+            beam_log::end_banner(cerr, "max_turn reached", turns_done, param.max_turn,
+                                 beam_timer.elapsed(), param.ave_width(),
+                                 (ScoreType)0, false, (int)result.size());
+        }
         return result;
     }
 };

@@ -5,6 +5,7 @@
 #include "titan_cpplib/ahc/timer.cpp"
 #include "titan_cpplib/ds/hash_dict.cpp"
 #include "titan_cpplib/ahc/beam_search/beam_param.cpp"
+#include "titan_cpplib/ahc/beam_search/beam_log.cpp"
 #include "titan_cpplib/ahc/beam_search/candidates.cpp"
 
 using namespace std;
@@ -76,10 +77,14 @@ public:
      */
     vector<Action> search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
         init_bs();
-        if (verbose) cerr << "[BeamSearch] Info: start search()" << endl;
+        if (verbose) {
+            beam_log::start_banner(cerr, "BeamSearchWithTree (tour)", param);
+            if (param.is_adjusting) beam_log::warn(cerr, "dynamic beam width is experimental");
+        }
         State state;
         state.init();
         trace.resize(param.max_turn + 1);
+        int turns_done = 0;
 
         int w = param.get_beam_width(param.max_turn, 0, param.time_limit);
         candidates.reset(0, w, param.clear_hash_every_turn);
@@ -101,6 +106,12 @@ public:
         }
 
         if (found_finished) {
+            if (verbose) {
+                beam_log::on_solution_found(cerr, 1, best_finished_score);
+                beam_log::end_banner(cerr, "solution found", 1, param.max_turn,
+                                     beam_timer.elapsed(), param.ave_width(),
+                                     best_finished_score, true, (int)best_finished_path.size());
+            }
             return best_finished_path;
         }
 
@@ -109,10 +120,10 @@ public:
             cand.push_back(move(candidates.next_beam[i]));
         }
         leaf = {0};
+        turns_done = 1;
 
         for (int turn = 1; turn < param.max_turn; ++turn) {
             double now_time = beam_timer.elapsed();
-            if (verbose) cerr << "\n[BeamSearch] Info: # turn : " << turn << " | " << now_time << " [ms]" << endl;
 
             next_tour.clear();
             next_leaf.clear();
@@ -175,18 +186,24 @@ public:
             }
 
             if (found_finished) {
-                if (verbose) cerr << "[BeamSearch] Info: find valid solution." << endl;
+                if (verbose) {
+                    beam_log::on_solution_found(cerr, turn + 1, best_finished_score);
+                    beam_log::end_banner(cerr, "solution found", turn + 1, param.max_turn,
+                                         beam_timer.elapsed(), param.ave_width(),
+                                         best_finished_score, true, (int)best_finished_path.size());
+                }
                 return best_finished_path;
             }
 
             if (candidates.size() == 0) {
-                cerr << "[BeamSearch] " << to_red("Error: \t次の候補が見つかりませんでした") << endl;
+                beam_log::on_no_candidates(cerr, turn);
                 assert(candidates.size() > 0);
             }
 
             if (verbose) {
                 BeamCandidate<ScoreType, Action> bests = candidates.get_best();
-                cerr << "[BeamSearch] " << PRINT_GREEN << "Info: \tbest_score = " << bests.score << PRINT_NONE << endl;
+                beam_log::turn_line(cerr, turn + 1, param.max_turn, now_time,
+                                    w, (int)tour.size(), (int)candidates.size(), bests.score);
             }
 
             swap(tour, next_tour);
@@ -202,11 +219,7 @@ public:
             });
 
             param.timestamp(tour.size(), candidates.size(), beam_timer.elapsed() - now_time);
-        }
-
-        if (verbose) {
-            cerr << "[BeamSearch] Info: max_turn finished." << endl;
-            param.report();
+            turns_done = turn + 1;
         }
 
         int best_idx = -1;
@@ -223,6 +236,12 @@ public:
         copy_tour_path(cand[best_idx].parent_leaf, (int)leaf.size() - 1, ret.begin() + len);
         ret.push_back(cand[best_idx].action);
 
+        if (verbose) {
+            beam_log::on_max_turn(cerr);
+            beam_log::end_banner(cerr, "max_turn reached", turns_done, param.max_turn,
+                                 beam_timer.elapsed(), param.ave_width(),
+                                 best_score, true, (int)ret.size());
+        }
         return ret;
     }
 };

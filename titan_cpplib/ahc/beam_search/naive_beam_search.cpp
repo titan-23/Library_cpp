@@ -5,6 +5,7 @@
 #include "titan_cpplib/ahc/timer.cpp"
 #include "titan_cpplib/ds/hash_dict.cpp"
 #include "titan_cpplib/ahc/beam_search/beam_param.cpp"
+#include "titan_cpplib/ahc/beam_search/beam_log.cpp"
 using namespace std;
 
 namespace flying_squirrel {
@@ -107,7 +108,6 @@ private:
             if (clear_hash) {
                 func.clear();
             } else {
-                // 現ビームに居る hash を archived(-2) にマークしてターン跨ぎで dedup する
                 for (int i = 0; i < entry; ++i) {
                     func.set(hashidx[i], -2);
                 }
@@ -164,17 +164,20 @@ private:
 public:
     vector<Action> search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
         init_bs(param);
+        if (verbose) {
+            beam_log::start_banner(cerr, "NaiveBeamSearch", param);
+            if (param.is_adjusting) beam_log::warn(cerr, "dynamic beam width is experimental");
+        }
         vector<Node> beam, next_beam;
         State initial_state;
         initial_state.init();
         beam.push_back({initial_state, 0, -1, DUMMY_ACTION});
         int best_finished_history_id = -1;
+        int turns_done = 0;
         vector<Action> actions;
         for (int turn = 0; turn < param.max_turn; ++turn) {
             double now_time = beam_timer.elapsed();
-            if (verbose) cerr << "\n[BeamSearch] Info: # turn : " << turn+1 << " | " << now_time << " [ms]" << endl;
             const int width = param.get_beam_width(param.max_turn - turn, (int)beam.size(), param.time_limit - beam_timer.elapsed());
-            if (verbose) cerr << "\n[BeamSearch] Info: \twidth = " << width << endl;
             candidates.reset(turn, width, param.clear_hash_every_turn);
             for (int i = 0; i < (int)beam.size(); ++i) {
                 State &state = beam[i].state;
@@ -198,15 +201,17 @@ public:
             }
             if (candidates.size() == 0) {
                 if (found_finished) {
-                    if (verbose) cerr << to_green("[BeamSearch] Info: no more candidates, returning best finished.") << endl;
+                    turns_done = turn + 1;
+                    if (verbose) beam_log::info(cerr, "no more candidates, returning best finished");
                     break;
                 }
-                cerr << to_red("[BeamSearch] Error: \t次の候補が見つかりませんでした") << endl;
+                beam_log::on_no_candidates(cerr, turn);
                 assert(candidates.size() > 0);
             }
             if (verbose) {
                 BeamCandidate bests = candidates.get_best();
-                cerr << "[BeamSearch] Info: \tbest_score = " << bests.score << endl;
+                beam_log::turn_line(cerr, turn + 1, param.max_turn, now_time,
+                                    width, (int)beam.size(), (int)candidates.size(), bests.score);
             }
             next_beam.clear();
             for (int i = 0; i < (int)candidates.size(); ++i) {
@@ -219,14 +224,18 @@ public:
             }
             swap(beam, next_beam);
             param.timestamp(beam.size(), candidates.size(), beam_timer.elapsed()-now_time);
+            turns_done = turn + 1;
         }
         if (found_finished) {
-            param.report();
+            if (verbose) {
+                beam_log::on_solution_found(cerr, turns_done, best_finished_score);
+                vector<Action> sol = build_history(best_finished_history_id);
+                beam_log::end_banner(cerr, "solution found", turns_done, param.max_turn,
+                                     beam_timer.elapsed(), param.ave_width(),
+                                     best_finished_score, true, (int)sol.size());
+                return sol;
+            }
             return build_history(best_finished_history_id);
-        }
-        if (verbose) {
-            cerr << to_green("[BeamSearch] Info: max_turn finished.") << endl;
-            param.report();
         }
         int best_idx = 0;
         for (int i = 1; i < (int)beam.size(); ++i) {
@@ -234,7 +243,14 @@ public:
                 best_idx = i;
             }
         }
-        return build_history(beam[best_idx].history_id);
+        vector<Action> sol = build_history(beam[best_idx].history_id);
+        if (verbose) {
+            beam_log::on_max_turn(cerr);
+            beam_log::end_banner(cerr, "max_turn reached", turns_done, param.max_turn,
+                                 beam_timer.elapsed(), param.ave_width(),
+                                 beam[best_idx].score, true, (int)sol.size());
+        }
+        return sol;
     }
 };
 } // namespace flying_squirrel

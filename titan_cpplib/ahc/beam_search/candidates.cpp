@@ -52,7 +52,6 @@ public:
         auto dat = func.get_pos(hash);
         int idx = func.inner_get(dat, -1);
         if (idx == -2) {
-            // 過去ターンで採用済みのハッシュ → 即 drop
             return false;
         }
         if (idx != -1) {
@@ -96,7 +95,6 @@ public:
         if (clear_hash) {
             func.clear();
         } else {
-            // 現ビームに居る hash を archived(-2) にマークしてターン跨ぎで dedup する
             for (int i = 0; i < entry; ++i) {
                 func.set(hashidx[i], -2);
             }

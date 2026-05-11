@@ -2,16 +2,16 @@
 
 #include "titan_cpplib/others/print.cpp"
 
-namespace flying_squirrel { // flying squirrel over trees
+namespace flying_squirrel { // flying squirrel
 
 struct BeamParam {
     int max_turn, beam_width;
     double time_limit;
     bool is_adjusting;
-    //! 毎ターン Candidates 内の hash dict を clear するか。
-    //! true : 各ターンの beam 内重複排除のみ行う安全な既定動作。
-    //! false: clear のオーバーヘッドを省くが、State 側の hash がターン情報を含まないと
-    //!        ターン跨ぎの stale entry により候補が黙って drop される。設計を理解した上で使うこと。
+    // 毎ターン Candidates 内の hash dict を clear するか。
+    // true : 各ターンの beam 内重複排除のみ行う安全な既定動作。
+    // false: clear のオーバーヘッドを省くが、State 側の hash がターン情報を含まないと
+    //        ターン跨ぎの stale entry により候補が黙って drop される。設計を理解した上で使うこと。
     bool clear_hash_every_turn;
 
     // 内部で使用する変数
@@ -34,9 +34,7 @@ struct BeamParam {
         this->time_limit = time_limit;
         this->is_adjusting = is_adjusting;
         this->clear_hash_every_turn = clear_hash_every_turn;
-        if (is_adjusting) {
-            cerr << to_bold("Warning: 動的ビーム幅は試験的です") << endl;
-        }
+        // is_adjusting の警告は search() 側で beam_log::warn を使って出す
     }
 
     void init() {
@@ -78,6 +76,8 @@ struct BeamParam {
         return beam_width;
     }
 
+    // @deprecated `beam_log::end_banner` で同等の情報が出力される。
+    // 個別に呼ぶことも引き続き可能。
     void report() const {
         cerr << to_bold("BeamParam-report----------------") << endl;
         if (turn_sum == 0) {
@@ -86,6 +86,11 @@ struct BeamParam {
             cerr << "ave_beam_width=" << (double)beam_width_sum / turn_sum << endl;
         }
         cerr << "--------------------------------" << endl;
+    }
+
+    // 平均ビーム幅 (turn_sum == 0 の時は 0)
+    double ave_width() const {
+        return turn_sum > 0 ? (double)beam_width_sum / turn_sum : 0.0;
     }
 };
 

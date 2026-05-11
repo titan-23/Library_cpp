@@ -5,7 +5,8 @@
 
 #include "titan_cpplib/algorithm/random.cpp"
 #include "titan_cpplib/others/print.cpp"
-#include "titan_cpplib/ahc/beam_search/beam_search_turn.cpp"
+// #include "titan_cpplib/ahc/beam_search/beam_search_turn.cpp"
+#include "titan_cpplib/ahc/beam_search/beam_search_turn_old.cpp"
 using namespace std;
 
 //! 木上のビームサーチライブラリ

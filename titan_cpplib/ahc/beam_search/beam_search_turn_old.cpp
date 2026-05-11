@@ -5,6 +5,7 @@
 #include "titan_cpplib/ahc/timer.cpp"
 #include "titan_cpplib/ds/hash_dict.cpp"
 #include "titan_cpplib/ahc/beam_search/beam_param.cpp"
+#include "titan_cpplib/ahc/beam_search/beam_log.cpp"
 
 using namespace std;
 
@@ -539,24 +540,51 @@ private:
 public:
     vector<Action> search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
         init_bs(param);
-        if (verbose) cerr << "[BeamSearch] Info: start search()" << endl;
+        if (verbose) {
+            beam_log::start_banner(cerr, "BeamSearchWithTree (multi-turn old)", param);
+            if (param.is_adjusting) beam_log::warn(cerr, "dynamic beam width is experimental");
+        }
         State state;
         state.init();
 
+        int turns_done = 0;
         for (int turn = 0; turn < param.max_turn; ++turn) {
             double now_time = beam_timer.elapsed();
-            if (verbose) {
-                cerr << "\n[BeamSearch] Info: # turn : " << turn << " | " << now_time << " [ms]" << endl;
-            }
 
             get_next_beam(state, turn);
 
             if (found_finished) {
-                if (verbose) cerr << "[BeamSearch] Info: find valid solution." << endl;
+                turns_done = turn + 1;
                 get_result();
-                if (verbose) param.report();
                 if constexpr (record_history) dump_history_json(history_file);
+                if (verbose) {
+                    beam_log::on_solution_found(cerr, turns_done, best_finished_score);
+                    beam_log::end_banner(cerr, "solution found", turns_done, param.max_turn,
+                                         beam_timer.elapsed(), param.ave_width(),
+                                         best_finished_score, true, (int)result.size());
+                }
                 return result;
+            }
+
+            if (verbose) {
+                ScoreType best_for_log = 0;
+                bool has_best = false;
+                for (int t = turn + 1; t <= max_turn_global; ++t) {
+                    if (turn_to_pool_idx[t] == -1) continue;
+                    Candidates& cands = cands_pool[turn_to_pool_idx[t]];
+                    for (int i = 0; i < cands.size(); ++i) {
+                        ScoreType s = cands.next_beam[i].score;
+                        if (!has_best || s < best_for_log) { best_for_log = s; has_best = true; }
+                    }
+                    if (has_best) break;
+                }
+                int w = param.beam_width;
+                beam_log::turn_line(cerr, turn + 1, param.max_turn, now_time,
+                                    w, (int)tree.size(), (int)current_new_candidates.size(),
+                                    best_for_log);
+                if (!has_best) {
+                    beam_log::turn_line_extra(cerr, "(no candidates at this turn yet)");
+                }
             }
 
             if constexpr (record_history) {
@@ -596,15 +624,17 @@ public:
             }
 
             param.timestamp(tree.size(), current_new_candidates.size(), beam_timer.elapsed()-now_time);
+            turns_done = turn + 1;
         }
 
-        // 答えを復元する
-        if (verbose) {
-            cerr << to_green("[BeamSearch] Info: max_turn finished.") << endl;
-            param.report();
-        }
         get_result();
         if constexpr (record_history) dump_history_json(history_file);
+        if (verbose) {
+            beam_log::on_max_turn(cerr);
+            beam_log::end_banner(cerr, "max_turn reached", turns_done, param.max_turn,
+                                 beam_timer.elapsed(), param.ave_width(),
+                                 (ScoreType)0, false, (int)result.size());
+        }
         return result;
     }
 };
