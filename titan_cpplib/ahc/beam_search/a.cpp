@@ -11,8 +11,8 @@
 #include "titan_cpplib/algorithm/random.cpp"
 #include "titan_cpplib/others/print.cpp"
 
-#include "titan_cpplib/ahc/beam_search/beam_search.cpp"
-// #include "titan_cpplib/ahc/beam_search/beam_fast.cpp"
+// #include "titan_cpplib/ahc/beam_search/beam_search.cpp"
+#include "titan_cpplib/ahc/beam_search/beam_fast.cpp"
 
 using namespace std;
 
@@ -285,12 +285,22 @@ public:
     }
 };
 
-
+/// @brief BeamParamを返す
+/// @param max_turn 最大探索ターン
+/// @param beam_width ビーム幅
+/// @return BeamParam
 flying_squirrel::BeamParam gen_param(int max_turn, int beam_width) {
     return {max_turn, beam_width, -1};
 }
 
-flying_squirrel::BeamParam gen_param(int max_turn, int beam_width, double time_limit, bool is_adjusting, bool clear_hash_every_turn) {
+/// @brief BeamParamを返す
+/// @param max_turn 最大探索ターン
+/// @param beam_width ビーム幅
+/// @param time_limit 制限時間
+/// @param is_adjusting 制限時間に合わせるかどうか
+/// @param clear_hash_every_turn ハッシュ辞書を毎ターンclearするかどうか
+/// @return 
+flying_squirrel::BeamParam gen_param(int max_turn, int beam_width, double time_limit, bool is_adjusting=false, bool clear_hash_every_turn=true) {
     return {max_turn, beam_width, time_limit, is_adjusting, clear_hash_every_turn};
 }
 
@@ -303,8 +313,7 @@ vector<Action> search(flying_squirrel::BeamParam &param, const bool verbose=fals
 
 void solve() {
     beam_search::beam_init();
-    // auto param = beam_search::gen_param(1100, 1e4, -1, false, true);
-    auto param = beam_search::gen_param(1100, 1e4, -1, false, false);
+    auto param = beam_search::gen_param(1500, 1e4, 2000, true, true);
     auto ans = beam_search::search(param, true, "");
     cerr << ans.size() << endl;
     for (auto action : ans) {

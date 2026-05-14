@@ -438,12 +438,22 @@ public:
 
             if (found_finished) {
                 turns_done = turn + 1;
-                candidates.next_beam.clear();
-                candidates.next_beam.emplace_back(best_finished_par, best_finished_score, best_finished_action, 0);
-                get_result();
                 if (best_finished_par != PRE_ORDER) {
-                    result.emplace_back(candidates.next_beam[0].action);
+                    // best_finished_par の葉まで木を DFS で辿り、PRE_ORDER のアクションを順に積む
+                    for (const auto &[dir_or_leaf_id, action, _] : tree) {
+                        if (dir_or_leaf_id >= 0) {
+                            if (best_finished_par == dir_or_leaf_id) {
+                                result.emplace_back(action);
+                                break;
+                            }
+                        } else if (dir_or_leaf_id == PRE_ORDER) {
+                            result.emplace_back(action);
+                        } else {
+                            result.pop_back();
+                        }
+                    }
                 }
+                result.emplace_back(best_finished_action);
                 if constexpr (record_history) dump_history_json(history_file);
                 if (verbose) {
                     beam_log::on_solution_found(cerr, turns_done, best_finished_score);

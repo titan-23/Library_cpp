@@ -34,7 +34,6 @@ struct BeamParam {
         this->time_limit = time_limit;
         this->is_adjusting = is_adjusting;
         this->clear_hash_every_turn = clear_hash_every_turn;
-        // is_adjusting の警告は search() 側で beam_log::warn を使って出す
     }
 
     void init() {
@@ -47,7 +46,7 @@ struct BeamParam {
         beam_width_sum = 0;
         turn_sum = 0;
         time_sum = 0;
-        prev_beam_width = -1; // init
+        prev_beam_width = -1;
     }
 
     void timestamp(int pool_size, int beam_width, double time) {
