@@ -303,7 +303,8 @@ vector<Action> search(flying_squirrel::BeamParam &param, const bool verbose=fals
 
 void solve() {
     beam_search::beam_init();
-    auto param = beam_search::gen_param(1100, 1e4, -1, false, true);
+    // auto param = beam_search::gen_param(1100, 1e4, -1, false, true);
+    auto param = beam_search::gen_param(1100, 1e4, -1, false, false);
     auto ans = beam_search::search(param, true, "");
     cerr << ans.size() << endl;
     for (auto action : ans) {

@@ -32,7 +32,6 @@ inline const string& tag_debug() {
                                + PRINT_DIM + "[DEBUG]" + PRINT_NONE + " ";
     return s;
 }
-//! 段組み線等で使う (LEVEL 無し)
 inline const string& tag_plain() {
     static const string s = PRINT_BOLD + string("[BeamSearch]") + PRINT_NONE + "        ";
     return s;
@@ -63,8 +62,8 @@ inline void turn_line(ostream& os,
                       ScoreType best_score, bool has_best = true) {
     ostringstream ss;
     ss << "turn "
-       << setw(4) << setfill('0') << turn << "/"
-       << setw(4) << setfill('0') << max_turn << setfill(' ')
+       << setw(4) << setfill(' ') << turn << "/"
+       << setw(4) << setfill(' ') << max_turn << setfill(' ')
        << " | t=" << fixed << setprecision(1) << setw(8) << elapsed_ms << "ms"
        << " | w=" << setw(6) << width
        << " pool=" << setw(6) << pool

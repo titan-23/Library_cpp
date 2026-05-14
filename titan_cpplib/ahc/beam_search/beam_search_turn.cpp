@@ -383,10 +383,13 @@ private:
         // dirty-bit lazy update:
         //   PRE_ORDER を src から copy emit する時、target_turn には src の旧 subtree_min を
         //   そのまま入れる ( stable ならこれで正しい)。dirty=false で push。
-        //   leaf evict / has_child 展開 / 子 dirty 伝播 のいずれかが起きた時のみ dirty=true。
+        //   dirty 化は「inherited subtree_min への寄与を変えうる変更」に限定する:
+        //     - target_turn == 親 inherited の leaf が evict / 展開 / 空 subtree pop
+        //     - もしくは新 subtree_min が親 inherited を下回る (decrease)
         //   POST_ORDER close 時、dirty=true の subtree だけ直接の子を線形 scan して subtree_min
-        //   を再計算する。stable subtree では per-emit の propagation が完全に消える。
+        //   を再計算する。recompute 結果が inherited と同値なら親への伝播もスキップ。
         pre_stack.clear();
+        nxt_tree.reserve((size_t)tree.size() + (size_t)current_new_candidates.size());
 
         int next_beam_idx = 0;
         const int num_candidates = (int)current_new_candidates.size();
@@ -396,42 +399,50 @@ private:
             const int dir_or_leaf_id = src.dir_or_leaf_id;
             if (dir_or_leaf_id >= 0) {
                 if (src.target_turn == turn) {
-                    bool has_child = false;
-                    int start_idx = next_beam_idx;
-                    while (next_beam_idx < num_candidates) {
-                        if (current_new_candidates[next_beam_idx].par != dir_or_leaf_id) break;
-                        if (is_survived_node[current_new_candidates[next_beam_idx].action_id]) has_child = true;
+                    // 1 パス展開: 仮に PRE_ORDER を先に emit し、生存子を直接 emit する。
+                    // 生存子 0 件なら巻き戻す。is_survived_node の二度読みを回避する。
+                    int pre_idx = (int)nxt_tree.size();
+                    nxt_tree.emplace_back(PRE_ORDER, src.action, src.action_id, INT_MAX);
+                    int subtree_min = INT_MAX;
+                    int emit_cnt = 0;
+                    while (next_beam_idx < num_candidates
+                           && current_new_candidates[next_beam_idx].par == dir_or_leaf_id) {
+                        const auto& nc = current_new_candidates[next_beam_idx];
+                        if (is_survived_node[nc.action_id]) {
+                            nxt_tree.emplace_back(dir_or_leaf_id, nc.action, nc.action_id, nc.target_turn);
+                            if (nc.target_turn < subtree_min) subtree_min = nc.target_turn;
+                            ++emit_cnt;
+                        }
                         ++next_beam_idx;
                     }
-                    if (has_child) {
-                        // 新規構成なので常に dirty 扱い。ローカル subtree_min で集計し、
-                        // この PRE_ORDER 自体は閉じ切るので pre_stack には積まない。
-                        int pre_idx = (int)nxt_tree.size();
-                        nxt_tree.emplace_back(PRE_ORDER, src.action, src.action_id, INT_MAX);
-                        int subtree_min = INT_MAX;
-                        for (int k = start_idx; k < next_beam_idx; ++k) {
-                            const auto& nc = current_new_candidates[k];
-                            if (is_survived_node[nc.action_id]) {
-                                nxt_tree.emplace_back(dir_or_leaf_id, nc.action, nc.action_id, nc.target_turn);
-                                if (nc.target_turn < subtree_min) subtree_min = nc.target_turn;
-                            }
-                        }
+                    if (emit_cnt > 0) {
                         nxt_tree.emplace_back(POST_ORDER, src.action, src.action_id, 0);
                         nxt_tree[pre_idx].target_turn = subtree_min;
                         nxt_tree[pre_idx].subtree_end = (int)nxt_tree.size();
-                        // 外側 subtree は構成が変わったので dirty 化
-                        if (!pre_stack.empty()) pre_stack.back().second = true;
                     } else {
-                        // leaf が消えた → 外側の旧 min が無効になり得るので dirty 化
-                        if (!pre_stack.empty()) pre_stack.back().second = true;
+                        nxt_tree.pop_back();
+                    }
+                    // 旧 leaf が親 inherited に寄与していた / 新 subtree_min が親 inherited を下回る
+                    // 場合のみ親を dirty 化する。
+                    if (!pre_stack.empty()) {
+                        auto& top = pre_stack.back();
+                        int gp_min = nxt_tree[top.first].target_turn;
+                        if (src.target_turn == gp_min || (emit_cnt > 0 && subtree_min < gp_min)) {
+                            top.second = true;
+                        }
                     }
                 } else {
                     if (is_survived_node[src.action_id]) {
-                        // 通常 emit: propagation 一切なし。stable なら親の旧 min がそのまま正しい。
+                        // 通常 emit: propagation なし。
                         nxt_tree.emplace_back(dir_or_leaf_id, src.action, src.action_id, src.target_turn);
                     } else {
-                        // evict → 外側 dirty
-                        if (!pre_stack.empty()) pre_stack.back().second = true;
+                        // evict → inherited min に寄与していたときだけ親を dirty 化。
+                        if (!pre_stack.empty()) {
+                            auto& top = pre_stack.back();
+                            if (src.target_turn == nxt_tree[top.first].target_turn) {
+                                top.second = true;
+                            }
+                        }
                     }
                 }
             } else if (dir_or_leaf_id == PRE_ORDER) {
@@ -444,14 +455,21 @@ private:
                     && nxt_tree.back().dir_or_leaf_id == PRE_ORDER
                     && nxt_tree.back().action_id == src.action_id) {
                     // 空サブツリー: PRE_ORDER を取り消し、POST_ORDER も emit しない。
-                    // 親から見ると subtree が丸ごと消えるので、親の旧 min が無効化され得る。
+                    int popped_min = nxt_tree.back().target_turn;
                     nxt_tree.pop_back();
                     pre_stack.pop_back();
-                    if (!pre_stack.empty()) pre_stack.back().second = true;
+                    // 消えた subtree が親 inherited に寄与していたときだけ親を dirty 化。
+                    if (!pre_stack.empty()) {
+                        auto& top = pre_stack.back();
+                        if (popped_min == nxt_tree[top.first].target_turn) {
+                            top.second = true;
+                        }
+                    }
                 } else {
-                    nxt_tree.emplace_back(POST_ORDER, src.action, src.action_id, 0);
                     int pre_idx = pre_stack.back().first;
                     bool dirty = pre_stack.back().second;
+                    int old_min = nxt_tree[pre_idx].target_turn;
+                    nxt_tree.emplace_back(POST_ORDER, src.action, src.action_id, 0);
                     nxt_tree[pre_idx].subtree_end = (int)nxt_tree.size();
                     pre_stack.pop_back();
                     if (dirty) {
@@ -471,8 +489,14 @@ private:
                             }
                         }
                         nxt_tree[pre_idx].target_turn = min_t;
-                        // dirty を親へ伝播
-                        if (!pre_stack.empty()) pre_stack.back().second = true;
+                        // recompute 結果が inherited と異なり、かつ親 inherited に影響しうるときだけ伝播。
+                        if (min_t != old_min && !pre_stack.empty()) {
+                            auto& top = pre_stack.back();
+                            int gp_min = nxt_tree[top.first].target_turn;
+                            if (old_min == gp_min || min_t < gp_min) {
+                                top.second = true;
+                            }
+                        }
                     }
                     // else: emit 時の src.target_turn (= 旧 subtree_min) がそのまま正しい
                 }

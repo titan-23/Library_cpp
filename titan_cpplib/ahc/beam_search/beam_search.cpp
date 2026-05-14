@@ -112,7 +112,7 @@ private:
         using T = pair<ScoreType, int>;
         vector<HashType> hashidx;
         titan23::HashDict<int> func;
-        int beam_width, entry;
+        int beam_width = 0, entry = 0;
         int s = 1;
         vector<T> seg;
 
