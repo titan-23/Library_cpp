@@ -20,23 +20,97 @@ for each turn:
 
 `apply_op` と `rollback` は完全に対称でなければなりません。すなわち、同一の `action` に対して `apply_op → rollback` を呼ぶと状態が完全に元へ復元される必要があります。
 
-情報の流れは `Action` を介して以下のように繋がります。
-
-```
-get_actions : 操作パラメータを action に書き込む
-    ↓
-try_op      : const でスコア・ハッシュを計算し、ロールバック情報を action に書き込む
-    ↓
-apply_op    : action を参照して State を差分更新する
-    ↓
-rollback    : action に保存された pre_* 値を使って State を差分巻き戻す
-```
+情報は `Action` を介して流れます: `get_actions`(操作を書込) → `try_op`(const でスコア/ハッシュ計算・pre_* 等を書込) → `apply_op`(参照して差分更新) → `rollback`(pre_* で差分巻戻し)。各関数の詳細は Section 2。
 
 重要な前提
 
 - `State` オブジェクトは `search()` 経由では 1 つだけ生成され、ディープコピーは発生しません。`naive_search()` を使うときに限り State コピーが発生します。
 - スコアは最小化で扱われます。最大化問題の場合はスコアを負にしてください。`get_score` 内で二重否定にならないよう注意してください。
 - 関数のシグネチャは絶対に変更しないでください。
+
+---
+
+### 0.5 セットアップ(最小テンプレート / ここだけで初回統合が完結する)
+
+#### 使うファイル(include 索引)
+
+| include するファイル | 役割 |
+|---|---|
+| `titan_cpplib/ahc/beam_search/beam_fast.cpp` | **通常これ**。木・差分・インプレース更新版(`State` は 1 個、コピー無し)。`search()` を提供 |
+| `titan_cpplib/ahc/beam_search/beam_search.cpp` | 同系の別実装。必要時のみ |
+| `beam_param.cpp` | `BeamParam`。上記から自動 include されるので個別 include 不要 |
+
+`search()` が木・高速版、`naive_search()` が `State` ディープコピー版(挙動検証・デバッグ用)。本番は `search()`。
+
+#### 自分で定義すべき記号(これらが無いとコンパイル不可)
+
+ライブラリは供給しません。`State` を置く名前空間内で必ず宣言:
+
+| 記号 | 例 | 意味 |
+|---|---|---|
+| `ScoreType` | `using ScoreType = int;`(または `long long`) | スコア型。**最小化**。最大化問題は符号反転 |
+| `HashType` | `using HashType = unsigned long long;` | Zobrist ハッシュ型 |
+| `INF` | `const ScoreType INF = 1e9;` | `try_op` 打ち切り時の返り値。`ScoreType` に収まる十分大きな値 |
+| `brnd` | `titan23::Random brnd;` | 乱数器。`brnd.rand_u64()` で Zobrist 乱数。`random.cpp` を include |
+
+#### 最小テンプレート(これをコピーして State 中身だけ書く)
+
+```cpp
+#include <bits/stdc++.h>
+#include "titan_cpplib/others/print.cpp"
+#include "titan_cpplib/ahc/state_pool.cpp"
+#include "titan_cpplib/ahc/timer.cpp"
+#include "titan_cpplib/algorithm/random.cpp"
+#include "titan_cpplib/ahc/beam_search/beam_fast.cpp"   // search() 本体
+using namespace std;
+
+namespace beam_search {
+    using ScoreType = int;                 // 最小化
+    using HashType  = unsigned long long;
+    const ScoreType INF = 1e9;
+    titan23::Random brnd;                  // brnd.rand_u64()
+
+    struct Action { /* 操作パラメータ + pre_*/nxt_* (Section 2) */
+        friend ostream& operator<<(ostream& os, const Action&){ return os; }
+        string to_string() const { return ""; }
+    };
+    class State { /* init/try_op/apply_op/rollback/get_actions/print/get_state_info */ };
+
+    vector<Action> search(flying_squirrel::BeamParam &param, const bool verbose=false, const string& history_file = "") {
+        flying_squirrel::BeamSearchWithTree<ScoreType, HashType, Action, State, INF> bs;
+        return bs.search(param, verbose, history_file);
+    }
+    vector<Action> naive_search(flying_squirrel::BeamParam &param, const bool verbose=false, const string& history_file = "") {
+        flying_squirrel::NaiveBeamSearch<ScoreType, HashType, Action, State, INF> bs;
+        return bs.search(param, verbose, history_file);
+    }
+}
+
+int main() {
+    flying_squirrel::BeamParam param(/*max_turn=*/2000, /*beam_width=*/100,
+                                     /*time_limit_ms=*/-1, /*is_adjusting=*/false);
+    auto res = beam_search::search(param);
+    for (auto &a : res) { /* a を根→葉の順に適用して解を再生・出力 */ }
+}
+```
+
+#### `BeamParam` 仕様
+
+コンストラクタ:
+`flying_squirrel::BeamParam param(int max_turn, int beam_width, double time_limit_ms, bool is_adjusting=false, bool clear_hash_every_turn=true);`
+
+| 引数 | 型/単位 | 既定 | 意味 |
+|---|---|---|---|
+| `max_turn` | int(ターン=木の深さ) | — | 探索木の最大深さ。これを超えると打ち切り。1手=1ターンなら最大手数 |
+| `beam_width` | int | — | ビーム幅。`is_adjusting=true` のときは**上限**として機能 |
+| `time_limit_ms` | double, ms | — | 制限時間(`Timer::elapsed()` と同単位、1秒=1000) |
+| `is_adjusting` | bool | `false` | `true` で残り時間から実効幅を動的調整(`beam_width` を上限に増減)。通常 `false` 推奨 |
+| `clear_hash_every_turn` | bool | `true` | 毎ターン重複排除 hash を clear(安全既定)。`false` はターン跨ぎ最適化用で、`State` の hash がターン情報を含まないと候補が黙って drop。理解した上でのみ |
+
+#### 戻り値の意味
+
+`search()` は **根 → 最良葉(`finished` 優先・最小スコア)までの `Action` 列**を `apply_op` すべき順序で返す。
+解の再生は `for (auto &a : res) apply 相当の処理` で先頭から順に適用するだけ。途中状態の再構築は不要。
 
 ---
 
@@ -90,8 +164,6 @@ Zobrist Hash の設計
 - `try_op` で上書きされる前の値 `pre_*` と、`apply_op` 後の値 `nxt_*` を持つのが基本パターンです。詳細は Section 1「持たせるか判断」を参照。
 - `string to_string() const` は `record_history=true` 時のデバッグ出力用です。中身は空で構いませんが、削除はしないでください。
 
----
-
 #### `State::init`
 
 - シグネチャ: `void init()`
@@ -101,22 +173,15 @@ Zobrist Hash の設計
   - 標準入力からの問題データ読み込みはここで行ってください。
   - **Zobrist Hash 用の乱数テーブルは `static` 変数として保持し**、`init` 冒頭で初期化フラグを使って一度だけ初期化してください。`naive_search` 利用時に State コピーが発生してもテーブルがコピー対象にならないようにするためです。
 
----
-
 #### `State::try_op`
 
 - シグネチャ: `tuple<ScoreType, HashType, bool> try_op(Action &action, const ScoreType threshold) const`
 - 目的: 現在の状態に操作を適用した場合の次状態スコア・ハッシュ値・終了フラグを計算します。
 - 要件:
-  - `const` 関数であるため `State` のメンバは変更しないでください。
-  - スコアとハッシュ値は差分計算で求めてください。
-  - 差分計算の途中で `nxt_score >= threshold` が確定したら即座に `{INF, 0, false}` を返してください。`Action` へのロールバック情報の書き込みもスキップしてかまいません。
-  - 計算が最後まで完了した場合のみ、ロールバックに必要な情報を `action` に記録してください。
-  - 3 つ目の戻り値 `finished` には、この操作によって探索が終了状態（最終手）に達したかどうかを返してください。終了条件のない問題では常に `false` を返して構いません。
-  - `finished == true` の `Action` はそれ以上展開されません。複数の終了候補があった場合、最良スコアのものが最終解として採用されます。
+  - `const` 関数であるため `State` のメンバは変更しないでください。スコア・ハッシュは差分計算。
+  - 早期打ち切り(`nxt_score >= threshold` で `{INF,0,false}` 返し・ロールバック情報スキップ、完了時のみ `action` に記録)は Section 1「スコア計算の早期打ち切り」に従う。
+  - 戻り値 `finished`: この操作で終了状態（最終手）に達したか。終了条件が無ければ常に `false`。`finished == true` は非展開、複数あれば最良スコアを最終解に採用。
 - ⚠️ ホットパスです。詳細は Section 1 を参照。
-
----
 
 #### `State::apply_op`
 
@@ -126,8 +191,6 @@ Zobrist Hash の設計
   - `try_op` を通過した合法な `Action` に対してのみ呼ばれるため、再バリデーションは不要です。
   - `action` に `nxt_*` を保存しているならそれを使い、保存していないなら操作パラメータから差分計算してください。いずれにせよ変更箇所のみ更新してください。
 
----
-
 #### `State::rollback`
 
 - シグネチャ: `void rollback(const Action &action)`
@@ -136,8 +199,6 @@ Zobrist Hash の設計
   - `action` に保存された `pre_*` 情報を用いて `apply_op` 前の状態に完全に戻してください。
   - `apply_op` と完全に逆の操作を行うこと。対称性を保ってください。
   - ここでも盤面全体ではなく差分のみを巻き戻してください。
-
----
 
 #### `State::get_actions`
 
@@ -150,33 +211,15 @@ Zobrist Hash の設計
   - `threshold` を使った枝刈りをここで行うと、`try_op` の呼び出し回数そのものを削減できます。
 - ⚠️ ホットパスです。詳細は Section 1 を参照。
 
----
-
 #### `State::print`
 
 - シグネチャ: `void print() const`
 - 目的: デバッグ用に現在の状態を標準エラー出力に表示します。計算量は多少大きくても構わず、人間可読を優先してください。`print` のためだけのメンバを `State` に追加しないこと。
 
----
-
 #### `State::get_state_info`
 
 - `string get_state_info() const` は `record_history=true` 時の JSON ログ出力用の互換関数です。`return "{}";` のままにしてください。
 
----
-
 #### `search` / `naive_search` 関数
 
-以下のコードをそのまま書いてください。変更不要です。
-
-```cpp
-vector<Action> search(flying_squirrel::BeamParam &param, const bool verbose=false, const string& history_file = "") {
-    flying_squirrel::BeamSearchWithTree<ScoreType, HashType, Action, State, INF> bs;
-    return bs.search(param, verbose, history_file);
-}
-
-vector<Action> naive_search(flying_squirrel::BeamParam &param, const bool verbose=false, const string& history_file = "") {
-    flying_squirrel::NaiveBeamSearch<ScoreType, HashType, Action, State, INF> bs;
-    return bs.search(param, verbose, history_file);
-}
-```
+0.5 の最小テンプレート内のラッパをそのまま使う(変更不要)。`search()`=本番、`naive_search()`=State コピー版(検証用)。
