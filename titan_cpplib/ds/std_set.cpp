@@ -17,7 +17,7 @@ private:
 public:
     StdSet() : missing(-1) {}
     StdSet(T missing) : missing(missing) {}
-    StdSet(const vector<T>& a, T missing = T()) : s(a.begin(), a.end()) missing(missing) {}
+    StdSet(const vector<T>& a, T missing = T()) : s(a.begin(), a.end()), missing(missing) {}
 
     bool insert(const T& key) {
         return s.insert(key).second;
