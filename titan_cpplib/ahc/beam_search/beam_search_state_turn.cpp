@@ -5,8 +5,8 @@
 
 #include "titan_cpplib/algorithm/random.cpp"
 #include "titan_cpplib/others/print.cpp"
-// #include "titan_cpplib/ahc/beam_search/beam_search_turn.cpp"
-#include "titan_cpplib/ahc/beam_search/beam_search_turn_old.cpp"
+#include "titan_cpplib/ahc/beam_search/beam_search_turn.cpp"
+// #include "titan_cpplib/ahc/beam_search/beam_search_turn_old.cpp"
 using namespace std;
 
 //! 木上のビームサーチライブラリ
@@ -104,8 +104,27 @@ public:
     }
 };
 
-vector<Action> search_turn(flying_squirrel::BeamParam &param, const bool verbose=false, const string& history_file = "") {
-    flying_squirrel::BeamSearchWithTree<ScoreType, HashType, Action, State, INF> bs;
-    return bs.search(param, verbose, history_file);
+/// @brief BeamParamを返す
+/// @param max_turn 最大探索ターン
+/// @param beam_width ビーム幅
+/// @return BeamParam
+flying_squirrel::BeamParam gen_param(int max_turn, int beam_width) {
+    return {max_turn, beam_width, -1};
+}
+
+/// @brief BeamParamを返す
+/// @param max_turn 最大探索ターン
+/// @param beam_width ビーム幅
+/// @param time_limit 制限時間
+/// @param is_adjusting 制限時間に合わせるかどうか
+/// @param clear_hash_every_turn ハッシュ辞書を毎ターンclearするかどうか
+/// @return
+flying_squirrel::BeamParam gen_param(int max_turn, int beam_width, double time_limit, bool is_adjusting=false, bool clear_hash_every_turn=true) {
+    return {max_turn, beam_width, time_limit, is_adjusting, clear_hash_every_turn};
+}
+
+vector<Action> search(flying_squirrel::BeamParam &param, const bool verbose=false) {
+    flying_squirrel::BeamSearchWithTree<ScoreType, HashType, Action, State, INF, false> bs;
+    return bs.search(param, verbose, "history.json");
 }
 } // namespace beam_search

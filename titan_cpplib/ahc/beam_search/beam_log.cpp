@@ -117,5 +117,62 @@ inline void end_banner_extra(ostream& os, const string& key, long long value) {
     os << tag_info() << "  " << left << setw(14) << key << "= " << value << "\n";
 }
 
+// 動的ビーム幅の推移を 1 行 sparkline + 統計で出す。
+// hist は timestamp / timestamp_meta が貯めた毎ターンの実効幅。
+// 点数が cols を超える場合はバケット平均でダウンサンプルする
+// (推移の形は保たれる)。is_adjusting=false でも幅一定の確認に使える。
+inline void width_trace(ostream& os, const vector<int>& hist, int cols = 60) {
+    if (hist.empty()) {
+        os << tag_info() << "  width trace  = (no samples)\n";
+        return;
+    }
+    static const char* blocks[8] = {
+        "▁","▂","▃","▄","▅","▆","▇","█"
+    };
+    const int n = (int)hist.size();
+
+    // ダウンサンプル: cols 個のバケットに平均化
+    vector<double> bucket;
+    if (n <= cols) {
+        bucket.assign(hist.begin(), hist.end());
+    } else {
+        bucket.resize(cols, 0.0);
+        for (int b = 0; b < cols; ++b) {
+            int lo = (int)((long long)b * n / cols);
+            int hi = (int)((long long)(b + 1) * n / cols);
+            if (hi <= lo) hi = lo + 1;
+            double s = 0.0;
+            for (int i = lo; i < hi && i < n; ++i) s += hist[i];
+            bucket[b] = s / (hi - lo);
+        }
+    }
+
+    int vmin = hist[0], vmax = hist[0];
+    long long sum = 0;
+    for (int v : hist) { vmin = min(vmin, v); vmax = max(vmax, v); sum += v; }
+    double mean = (double)sum / n;
+
+    vector<int> sorted = hist;
+    sort(sorted.begin(), sorted.end());
+    int p50 = sorted[n / 2];
+
+    string spark;
+    double span = (vmax > vmin) ? (double)(vmax - vmin) : 1.0;
+    for (double v : bucket) {
+        int lv = (int)((v - vmin) / span * 7.0 + 0.5);
+        if (lv < 0) lv = 0;
+        if (lv > 7) lv = 7;
+        spark += blocks[lv];
+    }
+
+    os << tag_info() << "  width trace  = " << spark
+       << " (n=" << n << ")\n";
+    os << tag_info() << "  width stats  = min=" << vmin
+       << " p50=" << p50
+       << " mean=" << fixed << setprecision(1) << mean
+       << " max=" << vmax
+       << " last=" << hist.back() << "\n";
+}
+
 } // namespace beam_log
 } // namespace flying_squirrel

@@ -299,7 +299,7 @@ flying_squirrel::BeamParam gen_param(int max_turn, int beam_width) {
 /// @param time_limit 制限時間
 /// @param is_adjusting 制限時間に合わせるかどうか
 /// @param clear_hash_every_turn ハッシュ辞書を毎ターンclearするかどうか
-/// @return 
+/// @return
 flying_squirrel::BeamParam gen_param(int max_turn, int beam_width, double time_limit, bool is_adjusting=false, bool clear_hash_every_turn=true) {
     return {max_turn, beam_width, time_limit, is_adjusting, clear_hash_every_turn};
 }
@@ -313,7 +313,7 @@ vector<Action> search(flying_squirrel::BeamParam &param, const bool verbose=fals
 
 void solve() {
     beam_search::beam_init();
-    auto param = beam_search::gen_param(1500, 1e4, 2000, true, true);
+    auto param = beam_search::gen_param(110, 1e4, 1900, true, true);
     auto ans = beam_search::search(param, true, "");
     cerr << ans.size() << endl;
     for (auto action : ans) {

@@ -457,6 +457,7 @@ public:
                 if constexpr (record_history) dump_history_json(history_file);
                 if (verbose) {
                     beam_log::on_solution_found(cerr, turns_done, best_finished_score);
+                    beam_log::width_trace(cerr, param.width_hist);
                     beam_log::end_banner(cerr, "solution found", turns_done, param.max_turn,
                                          beam_timer.elapsed(), param.ave_width(),
                                          best_finished_score, true, (int)result.size());
@@ -507,6 +508,7 @@ public:
         if constexpr (record_history) dump_history_json(history_file);
         if (verbose) {
             beam_log::on_max_turn(cerr);
+            beam_log::width_trace(cerr, param.width_hist);
             beam_log::end_banner(cerr, "max_turn reached", turns_done, param.max_turn,
                                  beam_timer.elapsed(), param.ave_width(),
                                  (ScoreType)0, false, (int)result.size());

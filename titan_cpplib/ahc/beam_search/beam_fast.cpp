@@ -108,6 +108,7 @@ public:
         if (found_finished) {
             if (verbose) {
                 beam_log::on_solution_found(cerr, 1, best_finished_score);
+                beam_log::width_trace(cerr, param.width_hist);
                 beam_log::end_banner(cerr, "solution found", 1, param.max_turn,
                                      beam_timer.elapsed(), param.ave_width(),
                                      best_finished_score, true, (int)best_finished_path.size());
@@ -188,6 +189,7 @@ public:
             if (found_finished) {
                 if (verbose) {
                     beam_log::on_solution_found(cerr, turn + 1, best_finished_score);
+                    beam_log::width_trace(cerr, param.width_hist);
                     beam_log::end_banner(cerr, "solution found", turn + 1, param.max_turn,
                                          beam_timer.elapsed(), param.ave_width(),
                                          best_finished_score, true, (int)best_finished_path.size());
@@ -238,6 +240,7 @@ public:
 
         if (verbose) {
             beam_log::on_max_turn(cerr);
+            beam_log::width_trace(cerr, param.width_hist);
             beam_log::end_banner(cerr, "max_turn reached", turns_done, param.max_turn,
                                  beam_timer.elapsed(), param.ave_width(),
                                  best_score, true, (int)ret.size());
