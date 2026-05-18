@@ -12,6 +12,7 @@ struct BeamCandidate {
     int parent_leaf;
     ScoreType score;
     Action action;
+    int node_id = -1; // record_history 用。比較に使わないので探索挙動には影響しない
 };
 
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
@@ -42,9 +43,10 @@ public:
 
     ScoreType threshold() const { return entry < beam_width ? INF : seg[1].first; }
 
+    //! @param node_id record_history 用。比較・選択に使わないので探索挙動には影響しない
     bool push(
         ScoreType score, HashType hash,
-        int parent_leaf, Action action
+        int parent_leaf, Action action, int node_id = -1
     ) {
         if (entry == beam_width && score >= seg[1].first) {
             return false;
@@ -56,7 +58,7 @@ public:
         }
         if (idx != -1) {
             if (score < seg[idx+s].first) {
-                next_beam[idx] = {parent_leaf, score, move(action)};
+                next_beam[idx] = {parent_leaf, score, move(action), node_id};
                 set(idx, {score, idx});
                 return true;
             }
@@ -64,14 +66,14 @@ public:
         }
         if (entry < beam_width) {
             func.inner_set(dat, hash, entry);
-            next_beam[entry] = {parent_leaf, score, move(action)};
+            next_beam[entry] = {parent_leaf, score, move(action), node_id};
             hashidx[entry] = hash;
             set(entry, {score, entry});
             entry++;
             return true;
         }
         auto [_, i] = seg[1];
-        next_beam[i] = {parent_leaf, score, move(action)};
+        next_beam[i] = {parent_leaf, score, move(action), node_id};
         func.set(hashidx[i], -1);
         func.inner_set(dat, hash, i);
         hashidx[i] = hash;

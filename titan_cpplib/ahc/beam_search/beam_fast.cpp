@@ -6,6 +6,7 @@
 #include "titan_cpplib/ds/hash_dict.cpp"
 #include "titan_cpplib/ahc/beam_search/beam_param.cpp"
 #include "titan_cpplib/ahc/beam_search/beam_log.cpp"
+#include "titan_cpplib/ahc/beam_search/beam_history.cpp"
 #include "titan_cpplib/ahc/beam_search/candidates.cpp"
 
 using namespace std;
@@ -14,7 +15,6 @@ namespace flying_squirrel {
 
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
 class BeamSearchWithTree {
-    static_assert(!record_history, "record_history is not implemented in beam_fast.cpp; use beam_search.cpp instead.");
 private:
     titan23::Random rnd;
     titan23::Timer beam_timer;
@@ -23,6 +23,11 @@ private:
     bool found_finished;
     ScoreType best_finished_score;
     vector<Action> best_finished_path;
+
+    // record_history 用。false なら if constexpr で全て消えるためゼロコスト
+    int node_id_counter;
+    vector<HistoryNode<ScoreType, HashType>> history;
+    vector<TurnSnapshot> snapshots;
 
     Candidates<ScoreType, HashType, Action, State, INF, record_history> candidates;
     vector<Action> trace;
@@ -47,6 +52,27 @@ private:
         next_tour.clear();
         next_leaf.clear();
         actions.clear();
+        if constexpr (record_history) {
+            node_id_counter = 0;
+            history.clear();
+            snapshots.clear();
+        }
+    }
+
+    //! 当該ターンの生存 node_id を集め、生き残らなかった status==0 を 1 に直し snapshot を積む。
+    //! candidates.next_beam を読むだけで探索状態は変更しない。beam_search.cpp と同ロジック。
+    void record_turn_survivors(int turn_label) {
+        unordered_set<int> survived;
+        for (int i = 0; i < (int)candidates.size(); ++i) {
+            survived.insert(candidates.next_beam[i].node_id);
+        }
+        for (int i = (int)history.size() - 1; i >= 0; --i) {
+            if (history[i].turn != turn_label) break;
+            if (history[i].status == 0 && survived.find(history[i].node_id) == survived.end()) {
+                history[i].status = 1;
+            }
+        }
+        snapshots.push_back({turn_label, vector<int>(survived.begin(), survived.end())});
     }
 
     //! tour[leaf[k]..leaf[k+1]) を末尾 dst_end の手前にランク順に貼り込む共通ロジック。
@@ -93,19 +119,41 @@ public:
         state.get_actions(actions, 0, DAMMY_ACTION, candidates.threshold());
         for (Action &action : actions) {
             auto [score, hash, finished] = state.try_op(action, candidates.threshold());
-            if (score >= INF) continue;
+            if (score >= INF) {
+                if constexpr (record_history) {
+                    history.push_back({node_id_counter++, -1, 1, score, hash,
+                                       action.to_string(), state.get_state_info(), 2});
+                }
+                continue;
+            }
             if (finished) {
                 if (!found_finished || score < best_finished_score) {
                     found_finished = true;
                     best_finished_score = score;
+                    if constexpr (record_history) {
+                        history.push_back({node_id_counter++, -1, 1, score, hash,
+                                           action.to_string(), state.get_state_info(), 0});
+                    }
                     best_finished_path = {move(action)};
+                } else if constexpr (record_history) {
+                    history.push_back({node_id_counter++, -1, 1, score, hash,
+                                       action.to_string(), state.get_state_info(), 0});
                 }
             } else {
-                candidates.push(score, hash, 0, move(action));
+                if constexpr (record_history) {
+                    int nidv = node_id_counter++;
+                    string as = action.to_string();
+                    bool ok = candidates.push(score, hash, 0, move(action), nidv);
+                    history.push_back({nidv, -1, 1, score, hash,
+                                       move(as), state.get_state_info(), ok ? 0 : 1});
+                } else {
+                    candidates.push(score, hash, 0, move(action));
+                }
             }
         }
 
         if (found_finished) {
+            if constexpr (record_history) dump_history_json(history_file, INF, history, snapshots);
             if (verbose) {
                 beam_log::on_solution_found(cerr, 1, best_finished_score);
                 beam_log::width_trace(cerr, param.width_hist);
@@ -120,6 +168,7 @@ public:
         for (int i = 0; i < (int)candidates.size(); ++i) {
             cand.push_back(move(candidates.next_beam[i]));
         }
+        if constexpr (record_history) record_turn_survivors(1);
         leaf = {0};
         turns_done = 1;
 
@@ -170,7 +219,13 @@ public:
 
                 for (Action &action : actions) {
                     auto [score, hash, finished] = state.try_op(action, candidates.threshold());
-                    if (score >= INF) continue;
+                    if (score >= INF) {
+                        if constexpr (record_history) {
+                            history.push_back({node_id_counter++, c.node_id, turn + 1, score, hash,
+                                               action.to_string(), state.get_state_info(), 2});
+                        }
+                        continue;
+                    }
                     if (finished) {
                         if (!found_finished || score < best_finished_score) {
                             found_finished = true;
@@ -178,8 +233,20 @@ public:
                             best_finished_path.assign(trace.begin() + 1, trace.begin() + turn + 1);
                             best_finished_path.push_back(action);
                         }
+                        if constexpr (record_history) {
+                            history.push_back({node_id_counter++, c.node_id, turn + 1, score, hash,
+                                               action.to_string(), state.get_state_info(), 0});
+                        }
                     } else {
-                        candidates.push(score, hash, now_leaf_idx, action);
+                        if constexpr (record_history) {
+                            int nidv = node_id_counter++;
+                            string as = action.to_string();
+                            bool ok = candidates.push(score, hash, now_leaf_idx, action, nidv);
+                            history.push_back({nidv, c.node_id, turn + 1, score, hash,
+                                               move(as), state.get_state_info(), ok ? 0 : 1});
+                        } else {
+                            candidates.push(score, hash, now_leaf_idx, action);
+                        }
                     }
                 }
                 next_leaf.push_back(next_tour.size());
@@ -187,6 +254,7 @@ public:
             }
 
             if (found_finished) {
+                if constexpr (record_history) dump_history_json(history_file, INF, history, snapshots);
                 if (verbose) {
                     beam_log::on_solution_found(cerr, turn + 1, best_finished_score);
                     beam_log::width_trace(cerr, param.width_hist);
@@ -207,6 +275,8 @@ public:
                 beam_log::turn_line(cerr, turn + 1, param.max_turn, now_time,
                                     w, (int)tour.size(), (int)candidates.size(), bests.score);
             }
+
+            if constexpr (record_history) record_turn_survivors(turn + 1);
 
             swap(tour, next_tour);
             swap(leaf, next_leaf);
@@ -238,6 +308,7 @@ public:
         copy_tour_path(cand[best_idx].parent_leaf, (int)leaf.size() - 1, ret.begin() + len);
         ret.push_back(cand[best_idx].action);
 
+        if constexpr (record_history) dump_history_json(history_file, INF, history, snapshots);
         if (verbose) {
             beam_log::on_max_turn(cerr);
             beam_log::width_trace(cerr, param.width_hist);
