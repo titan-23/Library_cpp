@@ -303,7 +303,7 @@ public:
             }
         }
 
-        vector<Action> ret(trace.begin() + 1, trace.end());
+        vector<Action> ret(trace.begin() + 1, trace.begin() + param.max_turn);
         int len = ret.size();
         copy_tour_path(cand[best_idx].parent_leaf, (int)leaf.size() - 1, ret.begin() + len);
         ret.push_back(cand[best_idx].action);

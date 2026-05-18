@@ -253,7 +253,37 @@ public:
         hash = action.pre_hash;
     }
 
-    //! 現状態から遷移可能な `Action` の `vector` を `actions` に入れる
+    //! 新方式: get_actions / try_op 一体化 sink。
+    //! 生成した action を emit に渡すと try_op + 判定 + push まで行う。中間 vector を作らない。
+    //! emit.threshold() でライブ worst を取得でき早期枝刈りに使えるが、ここでは try_op 側に任せる。
+    template<class Emit>
+    void get_actions(const int turn, const Action &last_action, Emit &&emit) const {
+        auto rev = [&] () -> char {
+            if (turn == 0) return 'Z';
+            if (last_action.d == 'U') return 'D';
+            if (last_action.d == 'D') return 'U';
+            if (last_action.d == 'L') return 'R';
+            if (last_action.d == 'R') return 'L';
+            assert(false);
+        };
+        Action a;
+        const string s = "UDLR";
+        for (char c : s) {
+            if (c == rev()) continue;
+            int ny = y, nx = x;
+            if (c == 'D') ++ny;
+            if (c == 'U') --ny;
+            if (c == 'R') ++nx;
+            if (c == 'L') --nx;
+            if (0 <= ny && ny < N && 0 <= nx && nx < N) {
+                a.d = c;
+                emit(a);
+            }
+        }
+    }
+
+#if 0
+    //! 旧方式: 遷移可能な Action の vector を actions に入れる
     void get_actions(vector<Action> &actions, const int turn, const Action &last_action, const ScoreType threshold) const {
         auto rev = [&] () -> char {
             if (turn == 0) return 'Z';
@@ -276,6 +306,7 @@ public:
             }
         }
     }
+#endif
 
     void print() const {
     }
