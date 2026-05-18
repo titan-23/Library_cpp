@@ -1,6 +1,7 @@
-#include <vector>
-#include <cassert>
+#include <bits/stdc++.h>
 using namespace std;
+
+using i128 = __int128_t;
 
 i128 isqrt(i128 v) {
     if (v < 0) return 0;

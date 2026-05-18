@@ -20,7 +20,7 @@ private:
     }
 
     ll pollard_rho(ll n) {
-        if (n & 1 == 0) return 2;
+        if ((n & 1) == 0) return 2;
         if (n % 3 == 0) return 3;
         int s = bit_length((n - 1) & (1 - n)) - 1;
         ll d = n >> s;
@@ -43,10 +43,10 @@ private:
                     ll y = (i * i + 1) % n;
                     ll f = gcd(abs(x - y), n);
                     while (f == 1) {
-                        ll x = (x * x + 1) % n;
-                        ll y = (y * y + 1) % n;
+                        x = (x * x + 1) % n;
                         y = (y * y + 1) % n;
-                        ll f = gcd(abs(x - y), n);
+                        y = (y * y + 1) % n;
+                        f = gcd(abs(x - y), n);
                     }
                     if (f != n) return f;
                 }

@@ -15,9 +15,9 @@ public:
     ModComb(int n) {
         const int mod = mint::mod();
         n = max(n, 1) + 1;
-        _fact.resize(n);
-        _factinv.resize(n);
-        _inv.resize(n);
+        _fact.resize(n+1);
+        _factinv.resize(n+1);
+        _inv.resize(n+1);
 
         _fact[0] = mint(1);
         _fact[1] = mint(1);

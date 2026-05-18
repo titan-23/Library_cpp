@@ -86,6 +86,7 @@ vector<int> primefactor_num(int n) {
 
 // エラトステネスの篩(N以下の素数を返す) / O(NloglogN)
 vector<int> get_primelist(int n) {
+    if (n <= 1) return {};
     vector<int> p(n+1, 1);
     p[0] = 0;
     p[1] = 0;

@@ -64,7 +64,7 @@ public:
         os << f.p << "/" << f.q;
         return os;
     }
-    string to_string() const { return to_string(p) + "/" + to_string(q); }
+    string to_string() const { return std::to_string(p) + "/" + std::to_string(q); }
     Fraction inv() const { return Fraction(q, p); }
     Fraction pow(long long k) const {
         if (k < 0) return inv().pow(-k);
@@ -101,9 +101,11 @@ public:
 };
 } // namespace titan23
 
+namespace std {
 template<typename T>
 struct hash<titan23::Fraction<T>> {
     size_t operator()(const titan23::Fraction<T>& f) const {
         return f.hash();
     }
 };
+}
