@@ -31,7 +31,7 @@ private:
         while (k > 1) {
             k >>= 1;
             T nv = seg[k<<1].first > seg[k<<1|1].first ? seg[k<<1] : seg[k<<1|1];
-            if (nv == seg[k]) break; // 親が不変なら以降の祖先も不変
+            if (nv == seg[k]) break;
             seg[k] = nv;
         }
     }

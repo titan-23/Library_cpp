@@ -36,7 +36,7 @@ while (時間内):
 
 | ファイル | 役割 |
 |---|---|
-| `titan_cpplib/ahc/sa/sa.cpp` | エンジン本体。`sa_run`/`sa_multi_run`/`replica_run` を提供。`<omp.h>`・`timer.cpp`・`random.cpp` を自動 include |
+| `titan_cpplib/ahc/sa/sa.cpp` | エンジン本体。`sa_run`/`replica_run` を提供。`<omp.h>`・`timer.cpp`・`random.cpp` を自動 include |
 | `titan_cpplib/ahc/sa/sa_state.cpp` | **これをコピーして使う雛形**(`namespace sa { class State {...} }`)。冒頭で `sa.cpp` を include 済み |
 
 ユーザは `sa_state.cpp` 相当を自分のファイルにし、`State` の `TODO` を埋めるだけ。エンジンの個別 include は不要。
@@ -193,6 +193,7 @@ replica_run(double TIME_LIMIT, int NUM_REPLICAS=32, int SWAP_ITER_INTERVAL=100,
   - 次状態のスコアを差分計算し `score` に代入してください。直後にライブラリが `get_score()` を呼びます。
   - ルール違反・早期打ち切りは Section 1「スコア計算の早期打ち切り」に従い `is_valid=false` で即リターン。`is_valid=false` でも `rollback()` は必ず呼ばれるため、`modify` 内で盤面を部分変更した場合はそれも `rollback` で戻すこと。
   - `progress` は焼きなましの進行度で、0.0 〜 1.0 の値を取ります。近傍の切り替えに使えます。
+    - 利用しなくても良いです。
 
 #### `State::rollback`
 

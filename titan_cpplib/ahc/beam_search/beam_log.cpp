@@ -8,40 +8,31 @@ using namespace std;
 namespace flying_squirrel {
 namespace beam_log {
 
-inline const string& tag_info() {
-    static const string s = PRINT_BOLD + string("[BeamSearch]") + PRINT_NONE + "[INFO ] ";
+// プレフィックスは全行 [BS] に統一（太字・既定色、可視幅5桁で列が揃う）。
+// 重大度は本文の文字色で区別：INFO=既定 / OK=緑字 / WARN=黄字 / ERROR=赤字 / DEBUG=淡色。
+inline const string& tag_bs() {
+    static const string s = PRINT_BOLD + string("[BS]") + PRINT_NONE + " ";
     return s;
 }
-inline const string& tag_ok() {
-    static const string s = PRINT_BOLD + string("[BeamSearch]") + PRINT_NONE
-                               + PRINT_GREEN + "[OK   ]" + PRINT_NONE + " ";
-    return s;
-}
-inline const string& tag_warn() {
-    static const string s = PRINT_BOLD + string("[BeamSearch]") + PRINT_NONE
-                               + PRINT_YELLOW + "[WARN ]" + PRINT_NONE + " ";
-    return s;
-}
-inline const string& tag_error() {
-    static const string s = PRINT_BOLD + string("[BeamSearch]") + PRINT_NONE
-                               + PRINT_RED + "[ERROR]" + PRINT_NONE + " ";
-    return s;
-}
-inline const string& tag_debug() {
-    static const string s = PRINT_BOLD + string("[BeamSearch]") + PRINT_NONE
-                               + PRINT_DIM + "[DEBUG]" + PRINT_NONE + " ";
-    return s;
-}
-inline const string& tag_plain() {
-    static const string s = PRINT_BOLD + string("[BeamSearch]") + PRINT_NONE + "        ";
-    return s;
-}
+inline const string& tag_info()  { return tag_bs(); }
+inline const string& tag_ok()    { return tag_bs(); }
+inline const string& tag_warn()  { return tag_bs(); }
+inline const string& tag_error() { return tag_bs(); }
+inline const string& tag_debug() { return tag_bs(); }
+inline const string& tag_plain() { return tag_bs(); }
+inline const string& tag_turn()  { return tag_bs(); }
 
-inline void info (ostream& os, const string& msg) { os << tag_info()  << msg << "\n"; }
-inline void ok   (ostream& os, const string& msg) { os << tag_ok()    << msg << "\n"; }
-inline void warn (ostream& os, const string& msg) { os << tag_warn()  << msg << "\n"; }
-inline void error(ostream& os, const string& msg) { os << tag_error() << msg << "\n"; }
-inline void debug(ostream& os, const string& msg) { os << tag_debug() << msg << "\n"; }
+// 本文を重大度色で包む。リセットを必ず付けるので後続行へ色が漏れない。
+inline string col_ok   (const string& m) { return PRINT_GREEN  + m + PRINT_NONE; }
+inline string col_warn (const string& m) { return PRINT_YELLOW + m + PRINT_NONE; }
+inline string col_error(const string& m) { return PRINT_RED    + m + PRINT_NONE; }
+inline string col_debug(const string& m) { return PRINT_DIM    + m + PRINT_NONE; }
+
+inline void info (ostream& os, const string& msg) { os << tag_bs() << msg << "\n"; }
+inline void ok   (ostream& os, const string& msg) { os << tag_bs() << col_ok(msg)    << "\n"; }
+inline void warn (ostream& os, const string& msg) { os << tag_bs() << col_warn(msg)  << "\n"; }
+inline void error(ostream& os, const string& msg) { os << tag_bs() << col_error(msg) << "\n"; }
+inline void debug(ostream& os, const string& msg) { os << tag_bs() << col_debug(msg) << "\n"; }
 
 inline void start_banner(ostream& os, const char* impl_name, const BeamParam& param) {
     os << tag_plain() << "================================================\n";
@@ -60,18 +51,16 @@ inline void turn_line(ostream& os,
                       double elapsed_ms,
                       int width, int pool, int cand,
                       ScoreType best_score, bool has_best = true) {
+    (void)pool; // 木サイズ。コンパクト表示のため非表示（必要なら一行戻す）
     ostringstream ss;
-    ss << "turn "
-       << setw(4) << setfill(' ') << turn << "/"
+    ss << setw(4) << setfill(' ') << turn << "/"
        << setw(4) << setfill(' ') << max_turn << setfill(' ')
        << " | t=" << fixed << setprecision(1) << setw(8) << elapsed_ms << "ms"
-       << " | w=" << setw(6) << width
-       << " pool=" << setw(6) << pool
-       << " cand=" << setw(6) << cand;
+       << " | cand/w=" << setw(4) << cand << "/" << setw(4) << width;
     if (has_best) {
-        ss << " best=" << best_score;
+        ss << " | best=" << best_score;
     }
-    os << tag_info() << ss.str() << "\n";
+    os << tag_turn() << ss.str() << "\n";
 }
 
 inline void turn_line_extra(ostream& os, const string& extra) {
@@ -102,7 +91,7 @@ inline void end_banner(ostream& os,
                        ScoreType best_score, bool has_best,
                        int actions_count) {
     os << tag_plain() << "------------------------------------------------\n";
-    os << tag_ok()    << "finished: " << reason << "\n";
+    os << tag_bs()    << col_ok(string("finished: ") + reason) << "\n";
     os << tag_info()  << "  turns done    = " << turns_done << " / " << max_turn << "\n";
     os << tag_info()  << "  total time    = " << fixed << setprecision(1) << total_ms << " [ms]\n";
     os << tag_info()  << "  ave width     = " << fixed << setprecision(2) << ave_width << "\n";
@@ -121,9 +110,9 @@ inline void end_banner_extra(ostream& os, const string& key, long long value) {
 // hist は timestamp / timestamp_meta が貯めた毎ターンの実効幅。
 // 点数が cols を超える場合はバケット平均でダウンサンプルする
 // (推移の形は保たれる)。is_adjusting=false でも幅一定の確認に使える。
-inline void width_trace(ostream& os, const vector<int>& hist, int cols = 60) {
+inline void width_trace(ostream& os, const vector<int>& hist, int cols = 40) {
     if (hist.empty()) {
-        os << tag_info() << "  width trace  = (no samples)\n";
+        os << tag_info() << "  wtrace = (no samples)\n";
         return;
     }
     static const char* blocks[8] = {
@@ -165,9 +154,8 @@ inline void width_trace(ostream& os, const vector<int>& hist, int cols = 60) {
         spark += blocks[lv];
     }
 
-    os << tag_info() << "  width trace  = " << spark
-       << " (n=" << n << ")\n";
-    os << tag_info() << "  width stats  = min=" << vmin
+    os << tag_info() << "  wtrace = " << spark << " (n=" << n << ")\n";
+    os << tag_info() << "  wstats = min=" << vmin
        << " p50=" << p50
        << " mean=" << fixed << setprecision(1) << mean
        << " max=" << vmax

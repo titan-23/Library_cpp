@@ -8,12 +8,7 @@
 #include "titan_cpplib/ahc/timer.cpp"
 #include "titan_cpplib/algorithm/random.cpp"
 #include "titan_cpplib/others/print.cpp"
-
-// #include "titan_cpplib/ahc/beam_search/beam_search.cpp"
-
-// #include "titan_cpplib/ahc/beam_search/beam_fast_old.cpp"
-#include "titan_cpplib/ahc/beam_search/beam_fast.cpp"
-
+#include "titan_cpplib/ahc/beam_search/beam_search.cpp"
 using namespace std;
 
 #define rep(i, n) for (int i = 0; i < (n); ++i)
@@ -217,7 +212,8 @@ public:
 
     // TODO
     //! 現状態から遷移可能な `Action` の `vector` を返す
-    void get_actions(vector<Action> &actions, const int turn, const Action &last_action, const ScoreType threshold) const {
+    template<class Emit>
+    void get_actions(const int turn, const Action &last_action, Emit &&emit) const {
         int state = 0b1111;
         rep(k, K) {
             auto [y, x] = pos[k];
@@ -226,7 +222,9 @@ public:
             state &= ((R[ID[k]][y][x-1] != 'x') << 2) | 0b1011;
             state &= ((R[ID[k]][y][x+1] != 'x') << 3) | 0b0111;
         }
-        actions = actions_from_state[state];
+        for (Action a : actions_from_state[state]) {
+            emit(a);
+        }
     }
 
     void print() const {}
@@ -235,8 +233,8 @@ public:
 
 flying_squirrel::BeamSearchWithTree<ScoreType, HashType, Action, State, INF, false> bs;
 
-flying_squirrel::BeamParam gen_param(int max_turn, int beam_width, double time_limit, bool is_adjusting=false) {
-    return {max_turn, beam_width, time_limit, is_adjusting};
+flying_squirrel::BeamParam gen_param(int max_turn, int beam_width, double time_limit, bool is_adjusting=false, bool a=true) {
+    return {max_turn, beam_width, time_limit, is_adjusting, a};
 }
 
 vector<Action> search(flying_squirrel::BeamParam &param, const bool verbose=false) {
@@ -275,7 +273,7 @@ void print_ans(const vector<beam_search::Action> &ans) {
         return {ny, nx};
     };
 
-    if (ans.size() != 60) {
+    if (ans.size() != 2500) {
         cerr << ans.size() << endl;
         assert(false);
     }
@@ -308,23 +306,26 @@ void solve() {
         }
         assert(sy != -1);
         todo.push({sy, sx});
+        int s = 0;
         seen[sy][sx] = true;
         while (!todo.empty()) {
+            s++;
             auto [y, x] = todo.front(); todo.pop();
             rep(d, 4) {
                 int ny = y+dy[d];
                 int nx = x+dx[d];
                 if (0 <= ny && ny < H && 0 <= nx && nx < W) {
                     if (seen[ny][nx]) continue;
-                    if (R[k][ny][nx] == 'x') continue;
+                    if (R[k][ny][nx] == 'x') {
+                        s--;
+                        continue;
+                    }
                     if (R[k][ny][nx] == '#') continue;
                     seen[ny][nx] = true;
                     todo.push({ny, nx});
                 }
             }
         }
-        int s = 0;
-        rep(i, H) rep(j, W) s += seen[i][j];
         search[k] = {s, k};
     }
     sort(search.begin(), search.end());
@@ -333,7 +334,7 @@ void solve() {
         ID[k] = id;
     }
 
-    auto param = beam_search::gen_param(2500, 2000, 3990, true);
+    auto param = beam_search::gen_param(2500, 2000, 3990, true, true);
     vector<beam_search::Action> ans = beam_search::search(param, true);
 
     print_ans(ans);

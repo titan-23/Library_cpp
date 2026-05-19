@@ -7,11 +7,10 @@
 #include "titan_cpplib/others/print.cpp"
 #include "titan_cpplib/ahc/beam_search/naive_beam_search.cpp"
 #include "titan_cpplib/ahc/beam_search/beam_search.cpp"
-// #include "titan_cpplib/ahc/beam_search/beam_fast.cpp"
 
 using namespace std;
 
-//! 木上のビームサーチライブラリ
+// 木上のビームサーチライブラリ
 namespace beam_search {
 
 using ScoreType = long long;
@@ -46,14 +45,15 @@ private:
 public:
     // TODO Stateを初期化する
     void init() {
-        this->score = 0;
-        this->hash = 0;
+        score = 0;
+        hash = 0;
     }
 
-    // TODO 現在の状態に `action` を適用したときのスコアとハッシュ値を返す
-    //! ロールバックに必要な情報はすべてactionにメモしておく
-    //! threshold以上であれば計算しなくてよい
-    //! INFを返すと無条件で採用しない
+    // TODO
+    // 現在の状態に action を適用したときのスコアとハッシュ値を返す
+    // ロールバックに必要な情報はすべてactionにメモしておく
+    // threshold以上であれば計算しなくてよい
+    // INFを返すと無条件で採用しない
     tuple<ScoreType, HashType, bool> try_op(Action &action, const ScoreType threshold) const {
         action.pre_score = score;
         action.pre_hash = hash;
@@ -69,7 +69,7 @@ public:
     }
 
     // TODO
-    // 現在の状態に `action` を適用する
+    // action を適用する
     void apply_op(const Action &action) {
         // TODO
         score = action.nxt_score;
@@ -77,7 +77,7 @@ public:
     }
 
     // TODO
-    // `action` を戻す
+    // action を戻す
     void rollback(const Action &action) {
         // TODO
         score = action.pre_score;
@@ -85,8 +85,9 @@ public:
     }
 
     // TODO
-    //! 現状態から遷移可能な `Action` の `vector` を `actions` に入れる
-    void get_actions(vector<Action> &actions, const int turn, const Action &last_action, const ScoreType threshold) const {
+    // 現状態から遷移可能な Action を生成し、emit に渡す
+    template<class Emit>
+    void get_actions(const int turn, const Action &last_action, Emit &&emit) const {
     }
 
     // TODO
@@ -98,13 +99,28 @@ public:
     }
 };
 
-vector<Action> search(flying_squirrel::BeamParam &param, const bool verbose=false, const string& history_file = "") {
-    flying_squirrel::BeamSearchWithTree<ScoreType, HashType, Action, State, INF> bs;
-    return bs.search(param, verbose, history_file);
+
+/// @brief BeamParamを返す
+/// @param max_turn 最大探索ターン
+/// @param beam_width ビーム幅
+/// @return BeamParam
+flying_squirrel::BeamParam gen_param(int max_turn, int beam_width) {
+    return {max_turn, beam_width, -1};
 }
 
-vector<Action> naive_search(flying_squirrel::BeamParam &param, const bool verbose=false, const string& history_file = "") {
-    flying_squirrel::NaiveBeamSearch<ScoreType, HashType, Action, State, INF> bs;
+/// @brief BeamParamを返す
+/// @param max_turn 最大探索ターン
+/// @param beam_width ビーム幅
+/// @param time_limit 制限時間
+/// @param is_adjusting 制限時間に合わせるかどうか
+/// @param clear_hash_every_turn ハッシュ辞書を毎ターンclearするかどうか
+/// @return
+flying_squirrel::BeamParam gen_param(int max_turn, int beam_width, double time_limit, bool is_adjusting=false, bool clear_hash_every_turn=true) {
+    return {max_turn, beam_width, time_limit, is_adjusting, clear_hash_every_turn};
+}
+
+vector<Action> search(flying_squirrel::BeamParam &param, const bool verbose=false, const string& history_file = "") {
+    flying_squirrel::BeamSearchWithTree<ScoreType, HashType, Action, State, INF> bs;
     return bs.search(param, verbose, history_file);
 }
 } // namespace beam_search

@@ -4,7 +4,6 @@
 using namespace std;
 
 //! ビームサーチの可視化用探索履歴
-//! beam_search.cpp / beam_fast.cpp で共有
 namespace flying_squirrel {
 
 template<typename ScoreType, typename HashType>
