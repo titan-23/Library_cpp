@@ -124,11 +124,26 @@ private:
         int s = 1;
         vector<T> seg;
 
+        // fill phase 中は segtree を触らず、entry == beam_width 到達で build_segtree()。
+        // is_built==false の間 seg[1] / seg[idx+s] は参照禁止。
+        bool is_built = false;
+
         void set(int k, T v) {
             k += s;
             seg[k] = v;
             while (k > 1) {
                 k >>= 1;
+                seg[k] = seg[k<<1].first > seg[k<<1|1].first ? seg[k<<1] : seg[k<<1|1];
+            }
+        }
+
+        // entry 個の next_beam[] から segtree を O(W) で一括構築。
+        // [entry, s) のリーフは reset で {-INF, -1} 済みなので触らない。
+        void build_segtree() {
+            for (int i = 0; i < entry; ++i) {
+                seg[i + s] = {next_beam[i].score, i};
+            }
+            for (int k = s - 1; k > 0; --k) {
                 seg[k] = seg[k<<1].first > seg[k<<1|1].first ? seg[k<<1] : seg[k<<1|1];
             }
         }
@@ -144,28 +159,38 @@ private:
         ScoreType threshold() const { return entry < beam_width ? INF : seg[1].first; }
 
         bool push(ScoreType score, HashType hash, int par, const Action &action, ActionIDType action_id, vector<uint8_t>& is_survived, int target_turn) {
-            if (entry == beam_width && score >= seg[1].first) return false;
+            // 早期 reject は segtree 構築済みのときのみ。
+            if (is_built && score >= seg[1].first) return false;
             auto dat = func.get_pos(hash);
             int idx = func.inner_get(dat, -1);
             if (idx != -1) {
-                if (score < seg[idx+s].first) {
+                // 既存 slot のスコアは next_beam[idx].score から読む。fill phase で seg 無効でも一貫。
+                if (score < next_beam[idx].score) {
                     is_survived[next_beam[idx].action_id] = 0;
                     next_beam[idx] = {par, score, hash, action, action_id, target_turn};
                     is_survived[action_id] = 1;
-                    set(idx, {score, idx});
+                    if (is_built) {
+                        set(idx, {score, idx});
+                    }
                     return true;
                 }
                 return false;
             }
             if (entry < beam_width) {
+                // fill phase: segtree は触らず append のみ。
                 func.inner_set(dat, hash, entry);
                 next_beam[entry] = {par, score, hash, action, action_id, target_turn};
                 is_survived[action_id] = 1;
                 hashidx[entry] = hash;
-                set(entry, {score, entry});
                 entry++;
+                if (entry == beam_width) {
+                    // 満杯到達で一括構築。
+                    build_segtree();
+                    is_built = true;
+                }
                 return true;
             }
+            // entry == beam_width (is_built == true): worst を置換。
             auto [_, i] = seg[1];
             is_survived[next_beam[i].action_id] = 0;
             next_beam[i] = {par, score, hash, action, action_id, target_turn};
@@ -197,6 +222,7 @@ private:
                 func = titan23::HashDict<int>(beam_width*8);
             }
             entry = 0;
+            is_built = false;
         }
     };
 

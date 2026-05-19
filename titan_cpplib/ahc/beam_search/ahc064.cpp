@@ -404,7 +404,7 @@ struct S {
 
 void solve() {
     beam_search::beam_init();
-    auto param = beam_search::gen_param(30*100, 100, 1900, true, true);
+    auto param = beam_search::gen_param(30*100, 100, 1900, false, true);
     auto result = beam_search::search(param, true);
     cerr << "resulit.size()=" << result.size() << endl;
     vector<vector<S>> ans;
