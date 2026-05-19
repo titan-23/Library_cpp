@@ -49,16 +49,21 @@ template<class ScoreType>
 inline void turn_line(ostream& os,
                       int turn, int max_turn,
                       double elapsed_ms,
-                      int width, int pool, int cand,
+                      int width, int pool, int cand, int explored,
                       ScoreType best_score, bool has_best = true) {
     (void)pool; // 木サイズ。コンパクト表示のため非表示（必要なら一行戻す）
+    // expl = そのターン実際に探索した頂点数 (= try_op の呼び出し回数)
+    // cand = expl のうちビームに残った件数 / w = ビーム幅
     ostringstream ss;
     ss << setw(4) << setfill(' ') << turn << "/"
        << setw(4) << setfill(' ') << max_turn << setfill(' ')
-       << " | t=" << fixed << setprecision(1) << setw(8) << elapsed_ms << "ms"
-       << " | cand/w=" << setw(4) << cand << "/" << setw(4) << width;
+       << " | t=" << fixed << setprecision(1) << setw(8) << elapsed_ms << "ms";
+    if (explored >= 0) {
+        ss << " | expl= " << setw(7) << explored;
+    }
+    ss << " | cand/w= " << setw(4) << cand << "/" << setw(4) << width;
     if (has_best) {
-        ss << " | best=" << best_score;
+        ss << " | best= " << best_score;
     }
     os << tag_turn() << ss.str() << "\n";
 }

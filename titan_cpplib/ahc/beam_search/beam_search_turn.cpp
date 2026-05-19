@@ -777,7 +777,7 @@ public:
                 }
                 beam_log::turn_line(cerr, turn + 1, param.max_turn, now_time,
                                     w, (int)tree.size(), (int)current_new_candidates.size(),
-                                    best_for_log);
+                                    -1, best_for_log);
                 if (!has_best) {
                     // best が無いケースだけ補助行で示す
                     beam_log::turn_line_extra(cerr, "(no candidates at this turn yet)");

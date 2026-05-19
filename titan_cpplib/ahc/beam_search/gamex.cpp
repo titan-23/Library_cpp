@@ -334,7 +334,7 @@ void solve() {
         ID[k] = id;
     }
 
-    auto param = beam_search::gen_param(2500, 2000, 3990, true, true);
+    auto param = beam_search::gen_param(2500, 1000, 1, false, true);
     vector<beam_search::Action> ans = beam_search::search(param, true);
 
     print_ans(ans);

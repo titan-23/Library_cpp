@@ -211,7 +211,7 @@ public:
             if (verbose) {
                 BeamCandidate bests = candidates.get_best();
                 beam_log::turn_line(cerr, turn + 1, param.max_turn, now_time,
-                                    width, (int)beam.size(), (int)candidates.size(), bests.score);
+                                    width, (int)beam.size(), (int)candidates.size(), -1, bests.score);
             }
             next_beam.clear();
             for (int i = 0; i < (int)candidates.size(); ++i) {

@@ -28,6 +28,10 @@ private:
     vector<HistoryNode<ScoreType, HashType>> history;
     vector<TurnSnapshot> snapshots;
 
+    // そのターンで実際に探索した頂点数 (= try_op 呼び出し回数)。
+    // INF で弾かれたものも、finished で終端扱いされたものも含む。
+    int explored_per_turn;
+
     // ---- Action プール（世代ブロック arena ＋ 確定接頭辞バルク解放） ------------
     // tour/trace/next_tour/cand は Action 実体でなく ActionId（8B ハンドル）を運ぶ。
     // Action 実体は生成世代＝深さごとのブロックに1回だけ置き、以後コピー・移動しない。
@@ -133,6 +137,7 @@ private:
         inline ScoreType threshold() const { return bs.candidates.threshold(); }
 
         inline void operator()(Action &a) {
+            ++bs.explored_per_turn;
             ScoreType th = bs.candidates.threshold();
             auto [score, hash, finished] = st.try_op(a, th);
             if (score >= INF) {
@@ -184,6 +189,7 @@ private:
         slab_pool.clear();
         freed_to = 0;
         result_prefix.clear();
+        explored_per_turn = 0;
         if constexpr (record_history) {
             node_id_counter = 0;
             history.clear();
@@ -254,6 +260,7 @@ public:
         } else {
             actions.clear();
             state.get_actions(actions, 0, DAMMY_ACTION, candidates.threshold());
+            explored_per_turn += (int)actions.size();
             for (Action &action : actions) {
                 auto [score, hash, finished] = state.try_op(action, candidates.threshold());
                 if (score >= INF) {
@@ -315,6 +322,7 @@ public:
             next_leaf.clear();
             w = param.get_beam_width(param.max_turn - turn, cand.size(), param.time_limit - beam_timer.elapsed());
             candidates.reset(turn, w, param.clear_hash_every_turn);
+            explored_per_turn = 0;
 
             int li = leaf.size() - 1;
             int f = 0;
@@ -358,6 +366,7 @@ public:
                 } else {
                     actions.clear();
                     state.get_actions(actions, turn, act(c.action_id), candidates.threshold());
+                    explored_per_turn += (int)actions.size();
                     for (Action &action : actions) {
                         auto [score, hash, finished] = state.try_op(action, candidates.threshold());
                         if (score >= INF) {
@@ -415,7 +424,8 @@ public:
             if (verbose) {
                 BeamCandidate<ScoreType, Action> bests = candidates.get_best();
                 beam_log::turn_line(cerr, turn + 1, param.max_turn, now_time,
-                                    w, (int)tour.size(), (int)candidates.size(), bests.score);
+                                    w, (int)tour.size(), (int)candidates.size(),
+                                    explored_per_turn, bests.score);
             }
 
             if constexpr (record_history) record_turn_survivors(turn + 1);

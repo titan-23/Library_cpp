@@ -12,7 +12,7 @@ struct BeamCandidate {
     int parent_leaf;
     ScoreType score;
     Action action;
-    int node_id = -1; // record_history 用。比較に使わないので探索挙動には影響しない
+    int node_id = -1; // record_history 用
 };
 
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
@@ -24,6 +24,7 @@ private:
     int beam_width, entry;
     int s = 1;
     vector<T> seg;
+    bool is_built = false;
 
     void set(int k, T v) {
         k += s;
@@ -33,6 +34,15 @@ private:
             T nv = seg[k<<1].first > seg[k<<1|1].first ? seg[k<<1] : seg[k<<1|1];
             if (nv == seg[k]) break;
             seg[k] = nv;
+        }
+    }
+
+    void build_segtree() {
+        for (int i = 0; i < entry; ++i) {
+            seg[i + s] = {next_beam[i].score, i};
+        }
+        for (int k = s - 1; k > 0; --k) {
+            seg[k] = seg[k<<1].first > seg[k<<1|1].first ? seg[k<<1] : seg[k<<1|1];
         }
     }
 
@@ -50,7 +60,7 @@ public:
         ScoreType score, HashType hash,
         int parent_leaf, Action action, int node_id = -1
     ) {
-        if (entry == beam_width && score >= seg[1].first) {
+        if (is_built && score >= seg[1].first) {
             return false;
         }
         auto dat = func.get_pos(hash);
@@ -59,9 +69,11 @@ public:
             return false;
         }
         if (idx != -1) {
-            if (score < seg[idx+s].first) {
+            if (score < next_beam[idx].score) {
                 next_beam[idx] = {parent_leaf, score, move(action), node_id};
-                set(idx, {score, idx});
+                if (is_built) {
+                    set(idx, {score, idx});
+                }
                 return true;
             }
             return false;
@@ -70,8 +82,11 @@ public:
             func.inner_set(dat, hash, entry);
             next_beam[entry] = {parent_leaf, score, move(action), node_id};
             hashidx[entry] = hash;
-            set(entry, {score, entry});
             entry++;
+            if (entry == beam_width) {
+                build_segtree();
+                is_built = true;
+            }
             return true;
         }
         auto [_, i] = seg[1];
@@ -107,6 +122,7 @@ public:
             func = titan23::HashDict<int>(beam_width*8);
         }
         entry = 0;
+        is_built = false;
     }
 
     BeamCandidate<ScoreType, Action> get_best() {
