@@ -252,7 +252,7 @@ public:
         int turns_done = 0;
 
         int w = param.get_beam_width(param.max_turn, 0, param.time_limit);
-        candidates.reset(0, w, param.clear_hash_every_turn);
+        candidates.reset(0, w, param.clear_hash_every_turn, param.hash_window_turns);
 
         if constexpr (requires(Emitter &e) { state.get_actions(0, DAMMY_ACTION, e); }) {
             Emitter emit{*this, state, 0, -1, 0};
@@ -321,7 +321,7 @@ public:
             next_tour.clear();
             next_leaf.clear();
             w = param.get_beam_width(param.max_turn - turn, cand.size(), param.time_limit - beam_timer.elapsed());
-            candidates.reset(turn, w, param.clear_hash_every_turn);
+            candidates.reset(turn, w, param.clear_hash_every_turn, param.hash_window_turns);
             explored_per_turn = 0;
 
             int li = leaf.size() - 1;

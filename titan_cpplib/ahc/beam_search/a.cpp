@@ -10,10 +10,7 @@
 #include "titan_cpplib/ahc/timer.cpp"
 #include "titan_cpplib/algorithm/random.cpp"
 #include "titan_cpplib/others/print.cpp"
-
-// #include "titan_cpplib/ahc/beam_search/beam_search.cpp"
-#include "titan_cpplib/ahc/beam_search/beam_fast.cpp"
-
+#include "titan_cpplib/ahc/beam_search/beam_search.cpp"
 using namespace std;
 
 #define rep(i, n) for (int i = 0; i < (n); ++i)
@@ -344,7 +341,7 @@ vector<Action> search(flying_squirrel::BeamParam &param, const bool verbose=fals
 
 void solve() {
     beam_search::beam_init();
-    auto param = beam_search::gen_param(1100, 1e4, 1900, false, false);
+    auto param = flying_squirrel::BeamParam(1200, 1e4, 1900, false, true);
     auto ans = beam_search::search(param, true, "");
     cerr << ans.size() << endl;
     for (auto action : ans) {

@@ -98,7 +98,9 @@ public:
         return true;
     }
 
-    void reset(int turn, int w, bool clear_hash) {
+    //! @param hash_window_turns clear_hash=false のとき、K ターンに 1 回 hash dict を全 clear。
+    //!                          0 なら従来通り無制限蓄積。
+    void reset(int turn, int w, bool clear_hash, int hash_window_turns = 0) {
         beam_width = w;
         while (s < w) {
             s <<= 1;
@@ -114,6 +116,12 @@ public:
         if (clear_hash) {
             func.clear();
         } else {
+            // 周期 clear: K ターンに 1 回「古い -2 マーカーを全部捨てる」だけ。
+            // 直後に今ターンの survivor だけ -2 を付け直すので、窓は常に
+            // 「直近 1〜K ターン分の survivor のみ」になる。
+            bool periodic_clear = hash_window_turns > 0
+                                  && (turn % hash_window_turns == 0);
+            if (periodic_clear) func.clear();
             for (int i = 0; i < entry; ++i) {
                 func.set(hashidx[i], -2);
             }

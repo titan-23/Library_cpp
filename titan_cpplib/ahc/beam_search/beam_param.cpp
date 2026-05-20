@@ -15,6 +15,13 @@ struct BeamParam {
     //        ターン跨ぎの stale entry により候補が黙って drop される。設計を理解した上で使うこと。
     bool clear_hash_every_turn;
 
+    // clear_hash_every_turn=false のときのみ意味を持つ。
+    // > 0 のとき、K = hash_window_turns ターンに 1 回 hash dict を全 clear して
+    // 古い entry を捨てる。これにより dict size を高々 O(K * W) に抑える。
+    // = 0 (デフォルト) では従来通り無制限蓄積。
+    // 厳密に「過去 K ターン」ではなく「最後の clear から 1〜K ターン分」の窓になる点に注意。
+    int hash_window_turns;
+
     // 内部で使用する変数
     int pool_size_sum, beam_width_sum, turn_sum;
     double time_sum;
@@ -77,7 +84,8 @@ struct BeamParam {
         int beam_width,
         double time_limit,
         bool is_adjusting=false,
-        bool clear_hash_every_turn=true
+        bool clear_hash_every_turn=true,
+        int hash_window_turns=0
     ) {
         init();
         this->max_turn = max_turn;
@@ -85,6 +93,7 @@ struct BeamParam {
         this->time_limit = time_limit;
         this->is_adjusting = is_adjusting;
         this->clear_hash_every_turn = clear_hash_every_turn;
+        this->hash_window_turns = hash_window_turns;
     }
 
     void init() {
@@ -93,6 +102,7 @@ struct BeamParam {
         time_limit = 0;
         is_adjusting = false;
         clear_hash_every_turn = true;
+        hash_window_turns = 0;
         pool_size_sum = 0;
         beam_width_sum = 0;
         turn_sum = 0;

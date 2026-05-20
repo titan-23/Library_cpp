@@ -92,7 +92,7 @@ private:
             return true;
         }
 
-        void reset(int turn, int w, bool clear_hash) {
+        void reset(int turn, int w, bool clear_hash, int hash_window_turns = 0) {
             beam_width = w;
             while (s < w) {
                 s <<= 1;
@@ -108,6 +108,9 @@ private:
             if (clear_hash) {
                 func.clear();
             } else {
+                bool periodic_clear = hash_window_turns > 0
+                                      && (turn % hash_window_turns == 0);
+                if (periodic_clear) func.clear();
                 for (int i = 0; i < entry; ++i) {
                     func.set(hashidx[i], -2);
                 }
@@ -178,7 +181,7 @@ public:
         for (int turn = 0; turn < param.max_turn; ++turn) {
             double now_time = beam_timer.elapsed();
             const int width = param.get_beam_width(param.max_turn - turn, (int)beam.size(), param.time_limit - beam_timer.elapsed());
-            candidates.reset(turn, width, param.clear_hash_every_turn);
+            candidates.reset(turn, width, param.clear_hash_every_turn, param.hash_window_turns);
             for (int i = 0; i < (int)beam.size(); ++i) {
                 State &state = beam[i].state;
                 actions.clear();
