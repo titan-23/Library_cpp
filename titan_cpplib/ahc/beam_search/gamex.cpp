@@ -41,16 +41,31 @@ const ScoreType INF = 1e9;
 
 // TODO Action
 // メモリ量は少ない方がよく、score,hash のメモは無くしたい
+//
+// compose 対応: 1 個の Action は「(dir, is_moved) を先頭 1 ステップ＋ chain で追加ステップ列」
+// のシーケンスを表す。chain が空のとき = primitive (1 ステップ)。
+// compose 後は chain が伸び、apply_op / rollback は全ステップを順に処理する。
 struct Action {
     char dir = 'z';
     short is_moved = 0;
+    // vector<pair<char, short>> chain; // 追加ステップ列。空なら primitive。
+
     Action() {}
     Action(char dir) : dir(dir) {}
     Action(char dir, short is_moved) : dir(dir), is_moved(is_moved) {}
 
     friend ostream& operator<<(ostream& os, const Action &action) {
         os << action.dir;
+        // for (auto &s : action.chain) os << s.first;
         return os;
+    }
+
+    bool compose(Action &nxt) {
+        return false;
+        // chain.reserve(chain.size() + 1 + nxt.chain.size());
+        // chain.push_back({nxt.dir, nxt.is_moved});
+        // for (auto &s : nxt.chain) chain.push_back(s);
+        // return true;
     }
 
     string to_string() const { return ""; }
@@ -147,20 +162,18 @@ public:
                 default:
                     action.is_moved |= 1 << k;
             }
-            s += seen[gindx(k, ny, nx)] + 1;
+            s += seen[gindx(k, ny, nx)];
             hs ^= zhs[k][ny][nx];
         }
         return {score + s, hash ^ hs, false};
     }
 
-    // TODO
-    //! `action` をする
-    void apply_op(const Action &action) {
-        // TODO
+    //! 1 ステップ分の apply（dir のみ参照）
+    void apply_one(char dir) {
         rep(k, K) {
             auto [y, x] = pos[k];
             hash ^= zhs[k][y][x];
-            auto [ny, nx] = trans(action.dir, y, x);
+            auto [ny, nx] = trans(dir, y, x);
             switch (R[ID[k]][ny][nx]) {
                 case ('#'):
                     ny = y; nx = x;
@@ -174,19 +187,17 @@ public:
                 break;
             }
             seen[gindx(k, ny, nx)]++;
-            score += seen[gindx(k, ny, nx)];
+            // score += seen[gindx(k, ny, nx)];
             hash ^= zhs[k][ny][nx];
             pos[k] = {ny, nx};
         }
     }
 
-    // TODO
-    //! `action` を戻す
-    void rollback(const Action &action) {
-        // TODO
+    //! 1 ステップ分の rollback（dir, is_moved を参照）
+    void rollback_one(char dir, short is_moved) {
         rep(k, K) {
             auto [y, x] = pos[k];
-            score -= seen[gindx(k, y, x)];
+            // score -= seen[gindx(k, y, x)];
             hash ^= zhs[k][y][x];
             seen[gindx(k, y, x)]--;
             if (R[ID[k]][y][x] == 'o') {
@@ -194,9 +205,9 @@ public:
                     score += 10;
                 }
             }
-            if (action.is_moved >> k & 1) {
+            if (is_moved >> k & 1) {
                 int ny = y, nx = x;
-                switch (action.dir) {
+                switch (dir) {
                     case ('U'): ++ny; break;
                     case ('D'): --ny; break;
                     case ('L'): ++nx; break;
@@ -208,6 +219,20 @@ public:
             tie(y, x) = pos[k];
             hash ^= zhs[k][y][x];
         }
+    }
+
+    //! `action` をする (composed なら順次適用)
+    void apply_op(const Action &action) {
+        apply_one(action.dir);
+        // for (auto &s : action.chain) apply_one(s.first);
+    }
+
+    //! `action` を戻す (composed なら逆順)
+    void rollback(const Action &action) {
+        // for (auto it = action.chain.rbegin(); it != action.chain.rend(); ++it) {
+        //     rollback_one(it->first, it->second);
+        // }
+        rollback_one(action.dir, action.is_moved);
     }
 
     // TODO
@@ -273,14 +298,21 @@ void print_ans(const vector<beam_search::Action> &ans) {
         return {ny, nx};
     };
 
-    if (ans.size() != 2500) {
-        cerr << ans.size() << endl;
+    // composed Action を primitive な dir 列に展開する。
+    vector<char> dirs;
+    dirs.reserve(2500);
+    for (const auto &a : ans) {
+        dirs.push_back(a.dir);
+        // for (const auto &s : a.chain) dirs.push_back(s.first);
+    }
+    if (dirs.size() != 2500) {
+        cerr << "expanded=" << dirs.size() << " ans.size=" << ans.size() << endl;
         assert(false);
     }
-    for (int i = 0; i < ans.size(); ++i) {
-        cout << ans[i];
+    for (char dir : dirs) {
+        cout << dir;
         rep(k, K) {
-            auto [ny, nx] = nxt(ans[i], k, pos[k].first, pos[k].second);
+            auto [ny, nx] = nxt(beam_search::Action(dir), k, pos[k].first, pos[k].second);
             if (R[ID[k]][ny][nx] == 'o' && seen[k][ny][nx] == false) {
                 score += 1;
                 seen[k][ny][nx] = true;
@@ -317,7 +349,6 @@ void solve() {
                 if (0 <= ny && ny < H && 0 <= nx && nx < W) {
                     if (seen[ny][nx]) continue;
                     if (R[k][ny][nx] == 'x') {
-                        s--;
                         continue;
                     }
                     if (R[k][ny][nx] == '#') continue;
@@ -334,7 +365,7 @@ void solve() {
         ID[k] = id;
     }
 
-    auto param = beam_search::gen_param(2500, 1000, 1, false, true);
+    auto param = beam_search::gen_param(2500, 2000, 1, false, true);
     vector<beam_search::Action> ans = beam_search::search(param, true);
 
     print_ans(ans);

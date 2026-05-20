@@ -55,6 +55,82 @@ private:
         return gblock[(size_t)(id >> SLOT_BITS)][(size_t)(id & SLOT_MASK)];
     }
 
+    // ---- Compose 関連 ----------------------------------------------------
+    // gblock_ghost[gen][slot] が 1 なら、その slot の Action は forced-chain の
+    // 中間ノードとして合成済み（実体は consumed・未定義）で apply/rollback は no-op。
+    // prev_leaf_action_ids は直前の finalize 済み世代の leaf -> ActionId 表。
+    // compose_pass は cand を parent_leaf 群に分け、count==1 の親を
+    // 「親 then 子」で合成して親 slot を ghost 化する。
+    vector<vector<uint8_t>> gblock_ghost;
+    vector<vector<uint8_t>> ghost_slab_pool;
+    vector<ActionId> prev_leaf_action_ids;
+
+    inline bool is_ghost(ActionId id) const {
+        return gblock_ghost[(size_t)(id >> SLOT_BITS)][(size_t)(id & SLOT_MASK)];
+    }
+    inline void set_ghost(ActionId id) {
+        gblock_ghost[(size_t)(id >> SLOT_BITS)][(size_t)(id & SLOT_MASK)] = 1;
+    }
+
+    // finalize_generation 直後（cand が sort 済み）に呼ぶ。
+    // parent_leaf が同じ cand が 1 個しかない親について parent.compose(child) を試み、
+    // 成功したら composed を child slot へ swap、親 slot を ghost マーク。
+    // compose が false を返した親はそのまま（合成不可、または合成を望まない）。
+    //
+    // 重要 (state alignment): 直前の inner loop の最後の iter (i=0) は
+    // trace[turn] = cand[0]_{turn}.action_id を apply した直後に終わる。state には
+    // この action の効果が乗っている。compose_pass がこの action を ghost 化すると
+    // 次 turn 冒頭で trace[turn] が ghost (no-op) として skip され、代わりに
+    // 合成済み child action (= parent + child の効果) が apply されるため、
+    // parent の効果が二重に乗る。これを防ぐため、compose が parent_a を破壊する
+    // 前に rollback で state から parent の効果を抜く。compose が false で
+    // 終わった場合は元に戻すため re-apply する。
+    void compose_pass(int turn, State& s) {
+        int n = (int)cand.size();
+        int i = 0;
+        ActionId last_applied = trace[turn];
+        while (i < n) {
+            int p = cand[i].parent_leaf;
+            int j = i + 1;
+            while (j < n && cand[j].parent_leaf == p) ++j;
+            if (j - i == 1) {
+                ActionId parent_aid = prev_leaf_action_ids[p];
+                if (!is_ghost(parent_aid)) {
+                    ActionId child_aid = cand[i].action_id;
+                    Action& parent_a = act(parent_aid);
+                    Action& child_a = act(child_aid);
+                    bool is_last = (parent_aid == last_applied);
+                    if (is_last) {
+                        s.rollback(parent_a);
+                    }
+                    if (parent_a.compose(child_a)) {
+                        using std::swap;
+                        swap(parent_a, child_a);
+                        set_ghost(parent_aid);
+                    } else if (is_last) {
+                        s.apply_op(parent_a);
+                    }
+                }
+            }
+            i = j;
+        }
+    }
+
+    // 現 cand の action_id 列を prev_leaf_action_ids に snapshot。
+    // 次ターンの compose_pass がこれを「親世代の leaf 情報」として参照する。
+    //
+    // 重要: 子 cand の parent_leaf は親 DFS の reverse iter 順 (= now_leaf_idx) で
+    // 振られる。cand_T[i] (sorted index) は size-1-i 番目の reverse iter で処理され、
+    // emit した子の parent_leaf = size-1-i。よって parent_leaf=p で参照する親は
+    // cand_T_sorted[size-1-p]。snapshot は reverse 順に詰める。
+    void snapshot_leaf_actions() {
+        int n = (int)cand.size();
+        prev_leaf_action_ids.resize(n);
+        for (int i = 0; i < n; ++i) {
+            prev_leaf_action_ids[n - 1 - i] = cand[i].action_id;
+        }
+    }
+
     struct CandIdx {
         int parent_leaf;
         ScoreType score;
@@ -83,9 +159,14 @@ private:
     void confirm_and_free(int L) {
         while (freed_to + 1 < L) {
             int d = freed_to + 1;
-            result_prefix.push_back(act(trace[d]));
+            // ghost は最終 Action 列に含まない（composed 本体は chain の終端 slot にある）
+            if (!is_ghost(trace[d])) {
+                result_prefix.push_back(act(trace[d]));
+            }
             gblock[d].clear();
             slab_pool.push_back(move(gblock[d]));
+            gblock_ghost[d].clear();
+            ghost_slab_pool.push_back(move(gblock_ghost[d]));
             freed_to = d;
         }
     }
@@ -96,11 +177,17 @@ private:
     void finalize_generation(int gen) {
         int sz = (int)candidates.size();
         if ((int)gblock.size() <= gen) gblock.resize(gen + 1);
+        if ((int)gblock_ghost.size() <= gen) gblock_ghost.resize(gen + 1);
         if (!slab_pool.empty()) {
             gblock[gen] = move(slab_pool.back());
             slab_pool.pop_back();
         }
+        if (!ghost_slab_pool.empty()) {
+            gblock_ghost[gen] = move(ghost_slab_pool.back());
+            ghost_slab_pool.pop_back();
+        }
         gblock[gen].resize(sz);
+        gblock_ghost[gen].assign(sz, 0);
         cand.clear();
         cand.reserve(sz);
         for (int i = 0; i < sz; ++i) {
@@ -113,16 +200,21 @@ private:
     }
 
     // ActionId 区間を実体 Action 列へ展開する。最終解の組み立て用。
+    // ghost は composed 本体ではないので skip。
     template<class It>
     void materialize(vector<Action>& dst, It first, It last) {
-        for (It it = first; it != last; ++it) dst.push_back(act(*it));
+        for (It it = first; it != last; ++it) {
+            if (!is_ghost(*it)) dst.push_back(act(*it));
+        }
     }
 
     // 確定接頭辞 ＋ trace[freed_to+1..upto] を best_finished_path に組む。
     // result_prefix は確定一本道 ＝ 旧 act(trace[1..freed_to]) と同値なので挙動不変。
     void build_best_path(int upto) {
         best_finished_path = result_prefix;
-        for (int k = freed_to + 1; k <= upto; ++k) best_finished_path.push_back(act(trace[k]));
+        for (int k = freed_to + 1; k <= upto; ++k) {
+            if (!is_ghost(trace[k])) best_finished_path.push_back(act(trace[k]));
+        }
     }
 
     // get_actions / try_op 一体化用 sink。
@@ -187,6 +279,9 @@ private:
         actions.clear();
         gblock.clear();
         slab_pool.clear();
+        gblock_ghost.clear();
+        ghost_slab_pool.clear();
+        prev_leaf_action_ids.clear();
         freed_to = 0;
         result_prefix.clear();
         explored_per_turn = 0;
@@ -311,6 +406,9 @@ public:
 
         // 世代1（深さ1ノード）を確定し cand を ActionId 参照で構築。
         finalize_generation(1);
+        // 世代1 は parent_leaf = 0 のみで分岐なし、compose_pass の対象外。
+        // 次世代の compose_pass が親として参照するので action_id を snapshot しておく。
+        snapshot_leaf_actions();
         if constexpr (record_history) record_turn_survivors(1);
         leaf = {0};
         turns_done = 1;
@@ -346,7 +444,8 @@ public:
                 if (lca_dist > max_lca_dist) max_lca_dist = lca_dist;
 
                 for (int k = 0; k < lca_dist + f; ++k) {
-                    state.rollback(act(trace[turn - 1 + f - k]));
+                    ActionId aid = trace[turn - 1 + f - k];
+                    if (!is_ghost(aid)) state.rollback(act(aid));
                 }
 
                 next_tour.insert(next_tour.end(), trace.begin() + (turn - lca_dist), trace.begin() + (turn + 1));
@@ -356,7 +455,8 @@ public:
                 copy_tour_path(c.parent_leaf, li, trace.begin() + turn);
 
                 for (int k = turn - lca_dist; k <= turn; ++k) {
-                    state.apply_op(act(trace[k]));
+                    ActionId aid = trace[k];
+                    if (!is_ghost(aid)) state.apply_op(act(aid));
                 }
 
                 int now_leaf_idx = next_leaf.size();
@@ -444,6 +544,9 @@ public:
                 if (a.parent_leaf != b.parent_leaf) return a.parent_leaf < b.parent_leaf;
                 return a.score < b.score;
             });
+            // 親世代 (turn) の単一子 leaf を検出して compose、続けて今世代の leaf を snapshot。
+            compose_pass(turn, state);
+            snapshot_leaf_actions();
 
             param.timestamp(tour.size(), candidates.size(), beam_timer.elapsed() - now_time);
             turns_done = turn + 1;

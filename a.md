@@ -1,0 +1,3 @@
+- beam_search_composeについて、持つべき構造について再度整理したい。定数倍の悪い設計にはしたくないので。
+
+- beam_search_turnも、Actionを毎回コピーするのではなくて、ActionのIDを持ってコピーさせるようにしたいです。

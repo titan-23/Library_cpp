@@ -10,7 +10,7 @@
 #include "titan_cpplib/ahc/timer.cpp"
 #include "titan_cpplib/algorithm/random.cpp"
 #include "titan_cpplib/others/print.cpp"
-#include "titan_cpplib/ahc/beam_search/beam_search.cpp"
+#include "titan_cpplib/ahc/beam_search/beam_search_compose.cpp"
 using namespace std;
 
 #define rep(i, n) for (int i = 0; i < (n); ++i)
@@ -49,22 +49,55 @@ void beam_init() {
 }
 
 // メモリ量は少ない方がよく、score,hash のメモは無くしたい
+// compose 対応: chain に「2 ステップ目以降」を格納する。各 step は rollback の
+// 中間状態復元用に pre_* をキャッシュ済み。primary (d, pre_*, nxt_*) は
+// (chain 空のとき)1 ステップ、(chain あり)先頭ステップを表す。nxt_* は
+// 常に "composed 全体を適用したあとの状態" を表す。
+struct ChainStep {
+    char d;
+    ScoreType pre_score;
+    HashType pre_hash;
+    int pre_inv_ud;
+    int pre_inv_lr;
+};
+
 struct Action {
     char d;
     ScoreType pre_score, nxt_score;
     HashType pre_hash, nxt_hash;
     int pre_inv_ud, nxt_inv_ud;
     int pre_inv_lr, nxt_inv_lr;
+    vector<ChainStep> chain;
 
     Action() {}
     Action(char d) : d(d), pre_score(INF), nxt_score(INF), pre_hash(0), nxt_hash(0) {}
     friend ostream& operator<<(ostream& os, const Action &action) {
         os << action.d;
+        for (auto &s : action.chain) os << s.d;
         return os;
     }
 
+    bool compose(Action &nxt) {
+        chain.reserve(chain.size() + 1 + nxt.chain.size());
+        ChainStep s;
+        s.d = nxt.d;
+        s.pre_score = nxt.pre_score;
+        s.pre_hash = nxt.pre_hash;
+        s.pre_inv_ud = nxt.pre_inv_ud;
+        s.pre_inv_lr = nxt.pre_inv_lr;
+        chain.push_back(s);
+        for (auto &cs : nxt.chain) chain.push_back(cs);
+        nxt_score = nxt.nxt_score;
+        nxt_hash = nxt.nxt_hash;
+        nxt_inv_ud = nxt.nxt_inv_ud;
+        nxt_inv_lr = nxt.nxt_inv_lr;
+        return true;
+    }
+
     string to_string() const {
-        return string(1, d);
+        string r(1, d);
+        for (auto &s : chain) r.push_back(s.d);
+        return r;
     }
 };
 
@@ -222,14 +255,27 @@ public:
         return {nxt_score, nxt_hash, nxt_hash == GOAL_HASH};
     }
 
-    void apply_op(const Action &action) {
+    void swap_one_forward(char d) {
         int py = y, px = x;
-        if (action.d == 'D') ++y;
-        if (action.d == 'U') --y;
-        if (action.d == 'R') ++x;
-        if (action.d == 'L') --x;
+        if (d == 'D') ++y;
+        if (d == 'U') --y;
+        if (d == 'R') ++x;
+        if (d == 'L') --x;
         swap(F[y][x], F[py][px]);
+    }
 
+    void swap_one_back(char d) {
+        int py = y, px = x;
+        if (d == 'D') --y;
+        if (d == 'U') ++y;
+        if (d == 'R') --x;
+        if (d == 'L') ++x;
+        swap(F[y][x], F[py][px]);
+    }
+
+    void apply_op(const Action &action) {
+        swap_one_forward(action.d);
+        for (auto &cs : action.chain) swap_one_forward(cs.d);
         inv_lr = action.nxt_inv_lr;
         inv_ud = action.nxt_inv_ud;
         score = action.nxt_score;
@@ -237,13 +283,10 @@ public:
     }
 
     void rollback(const Action &action) {
-        int py = y, px = x;
-        if (action.d == 'D') --y;
-        if (action.d == 'U') ++y;
-        if (action.d == 'R') --x;
-        if (action.d == 'L') ++x;
-        swap(F[y][x], F[py][px]);
-
+        for (auto it = action.chain.rbegin(); it != action.chain.rend(); ++it) {
+            swap_one_back(it->d);
+        }
+        swap_one_back(action.d);
         inv_lr = action.pre_inv_lr;
         inv_ud = action.pre_inv_ud;
         score = action.pre_score;
@@ -255,12 +298,14 @@ public:
     //! emit.threshold() でライブ worst を取得でき早期枝刈りに使えるが、ここでは try_op 側に任せる。
     template<class Emit>
     void get_actions(const int turn, const Action &last_action, Emit &&emit) const {
+        // composed last_action の場合、最後に踏んだ primitive 方向は chain.back().d
+        char last_d = last_action.chain.empty() ? last_action.d : last_action.chain.back().d;
         auto rev = [&] () -> char {
             if (turn == 0) return 'Z';
-            if (last_action.d == 'U') return 'D';
-            if (last_action.d == 'D') return 'U';
-            if (last_action.d == 'L') return 'R';
-            if (last_action.d == 'R') return 'L';
+            if (last_d == 'U') return 'D';
+            if (last_d == 'D') return 'U';
+            if (last_d == 'L') return 'R';
+            if (last_d == 'R') return 'L';
             assert(false);
         };
         Action a;

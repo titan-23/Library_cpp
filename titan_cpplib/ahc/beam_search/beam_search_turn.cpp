@@ -133,7 +133,9 @@ private:
             seg[k] = v;
             while (k > 1) {
                 k >>= 1;
-                seg[k] = seg[k<<1].first > seg[k<<1|1].first ? seg[k<<1] : seg[k<<1|1];
+                T nv = seg[k<<1].first > seg[k<<1|1].first ? seg[k<<1] : seg[k<<1|1];
+                if (nv == seg[k]) break;
+                seg[k] = nv;
             }
         }
 
