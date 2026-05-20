@@ -121,9 +121,79 @@ tour 構造を変えずに走査中に合成する "lazy" 案も考えたが、
 と、わざわざ仕組みを足す割に得るものが小さい。素直に **tree 構築時に
 forced 鎖を検出して gblock に畳む eager** で入れる。
 
-ただし composed Action が**固定サイズで表現できる前提** (置換・行列・affine
-なら OK。可変長な手列を抱えるしかないなら NG)。可変長ケースは gblock の
-slot 仕様を弄る必要があり、別途検討。
+#### 4-a. 可変長 composed Action のアリーナ分離
+
+composed Action が固定サイズで表現できる場合 (置換・行列・affine 等) は
+gblock にそのまま入れて終わり。一方、可変長 (合成手列を保持するしかない
+ケース等) も対応したい。
+
+**設計を間違えなければ、固定長ケースのコストはほぼ 0** にできる。
+逆に素朴にやると確実に遅くなる。
+
+##### 悪い設計 (固定長が遅くなる)
+
+`Action` 自体に `std::vector<MicroAction>` / `std::string` 等を持たせる:
+
+```cpp
+struct Action {
+    Primitive prim;
+    std::vector<MicroAction> chain;  // 空のときも 24B + heap state を抱える
+};
+```
+
+- Action 全体が膨らむ (vector で 24B、string で 32B 増、heap 制御込み)
+- copy/move が非自明 (ctor/dtor が走る)
+- gblock の `vector<Action>` の resize / pop_back が高コスト化
+- キャッシュ密度が悪化
+- 単一手しか使わないユーザにも全部のコストが乗る
+
+→ **Action に owning な動的型 (vector / string / unique_ptr 等) を埋め込む
+のは絶対に避ける**。Action は POD-like (trivially copyable, 固定サイズ)
+を維持する。
+
+##### 良い設計 (固定長ケースに実質ペナルティなし)
+
+プリミティブ Action は今のまま POD で固定サイズに保ち、可変長 composed は
+別アリーナに置く。ActionId の上位 1bit を discriminator に使う:
+
+```
+ActionId 64bit:
+ [ kind 1bit | depth 23bit | offset/slot 40bit ]
+   kind=0 : gblock[depth][slot]      (固定サイズ primitive、現状のまま)
+   kind=1 : vblock[depth] + offset   (可変長 composed、header + payload)
+```
+
+per-depth に 2 つアリーナを持つ:
+- `gblock[depth] = vector<Action>` (現状)
+- `vblock[depth] = vector<uint8_t>` (可変長 blob、必要時のみ確保)
+
+apply / rollback の dispatch:
+
+```cpp
+if (id.kind == 0) state.apply_op(gblock[d][slot]);
+else              state.apply_op_composed(vblock[d].data() + off);
+```
+
+##### このときの固定長コスト
+
+- ActionId サイズ不変 (8B)
+- gblock の構造・密度不変
+- apply 経路に **1 個の branch** が増える
+  - compose を使わないユーザは常に kind=0 → branch predictor が確実に当てる
+  - 実測コスト: 0〜1 cycle / call
+- vblock は問題が使わなければ確保されない → cache pollution なし
+
+**compose を実装しないユーザはこの branch すらゼロにできる**。
+`Action::compose` の有無を SFINAE で判定して、可変長経路ごと `if constexpr`
+でコンパイル時に除去すればよい (もともと §2 でそうする予定)。
+
+##### まとめ
+
+| 設計 | 固定長コスト |
+|---|---|
+| Action に vector / string を埋め込む | 大 (構造的に重くなる) |
+| 別アリーナ + ActionId discriminator | ~0 (1 well-predicted branch) |
+| 上 + SFINAE で未使用時除去 | 厳密に 0 |
 
 #### 5. 失敗例 (15-puzzle) は契約で自動除外
 
