@@ -8,7 +8,7 @@
 #include "titan_cpplib/ahc/timer.cpp"
 #include "titan_cpplib/algorithm/random.cpp"
 #include "titan_cpplib/others/print.cpp"
-#include "titan_cpplib/ahc/beam_search/beam_search.cpp"
+#include "titan_cpplib/ahc/beam_search/beam_search_compose.cpp"
 using namespace std;
 
 #define rep(i, n) for (int i = 0; i < (n); ++i)
@@ -48,7 +48,7 @@ const ScoreType INF = 1e9;
 struct Action {
     char dir = 'z';
     short is_moved = 0;
-    // vector<pair<char, short>> chain; // 追加ステップ列。空なら primitive。
+    vector<pair<char, short>> chain; // 追加ステップ列。空なら primitive。
 
     Action() {}
     Action(char dir) : dir(dir) {}
@@ -56,16 +56,18 @@ struct Action {
 
     friend ostream& operator<<(ostream& os, const Action &action) {
         os << action.dir;
-        // for (auto &s : action.chain) os << s.first;
+        for (auto &s : action.chain) os << s.first;
         return os;
     }
 
     bool compose(Action &nxt) {
+#ifdef NO_COMPOSE
         return false;
-        // chain.reserve(chain.size() + 1 + nxt.chain.size());
-        // chain.push_back({nxt.dir, nxt.is_moved});
-        // for (auto &s : nxt.chain) chain.push_back(s);
-        // return true;
+#endif
+        chain.reserve(chain.size() + 1 + nxt.chain.size());
+        chain.push_back({nxt.dir, nxt.is_moved});
+        for (auto &s : nxt.chain) chain.push_back(s);
+        return true;
     }
 
     string to_string() const { return ""; }
@@ -224,14 +226,14 @@ public:
     //! `action` をする (composed なら順次適用)
     void apply_op(const Action &action) {
         apply_one(action.dir);
-        // for (auto &s : action.chain) apply_one(s.first);
+        for (auto &s : action.chain) apply_one(s.first);
     }
 
     //! `action` を戻す (composed なら逆順)
     void rollback(const Action &action) {
-        // for (auto it = action.chain.rbegin(); it != action.chain.rend(); ++it) {
-        //     rollback_one(it->first, it->second);
-        // }
+        for (auto it = action.chain.rbegin(); it != action.chain.rend(); ++it) {
+            rollback_one(it->first, it->second);
+        }
         rollback_one(action.dir, action.is_moved);
     }
 
@@ -303,7 +305,7 @@ void print_ans(const vector<beam_search::Action> &ans) {
     dirs.reserve(2500);
     for (const auto &a : ans) {
         dirs.push_back(a.dir);
-        // for (const auto &s : a.chain) dirs.push_back(s.first);
+        for (const auto &s : a.chain) dirs.push_back(s.first);
     }
     if (dirs.size() != 2500) {
         cerr << "expanded=" << dirs.size() << " ans.size=" << ans.size() << endl;

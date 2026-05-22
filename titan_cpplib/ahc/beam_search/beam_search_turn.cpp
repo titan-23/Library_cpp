@@ -19,6 +19,16 @@ private:
     titan23::Random rnd;
     titan23::Timer beam_timer;
     using ActionIDType = int;
+    // ---- Action 世代アリーナ ------------------------------------------------
+    // Action 実体は「生成 meta-turn = 世代」ごとのブロック gen_block[gen] に1回だけ置く。
+    // TreeNode / BeamCandidate / current_new_candidates は実体でなく ActionId(8B) を運ぶ。
+    // ActionId = (gen << SLOT_BITS) | slot。木のどの経路でも gen は単調増加する
+    // (子は親 leaf 展開時に生成され、展開 meta-turn > 親生成 meta-turn) ので、
+    // tree 内 leaf/PRE の最小 gen 未満のブロックは二度と参照されず一括解放できる。
+    using ActionId = uint64_t;
+    static constexpr int SLOT_BITS = 24;
+    static constexpr ActionId SLOT_MASK = (ActionId(1) << SLOT_BITS) - 1;
+    static constexpr ActionId BAD_ID = ~ActionId(0);
     vector<Action> result;
     Action DUMMY_ACTION;
     BeamParam* param_ptr;
@@ -29,35 +39,71 @@ private:
     Action best_finished_action;
 
     struct TreeNode {
-        // フィールド順は sizeof(TreeNode) を最小化するために決めている:
-        // dir_or_leaf_id + subtree_end の 8 byte が、もともと Action(8-byte align)前の padding
-        // だった枠にちょうど収まり、subtree_end 追加のサイズ増を 0 にできる。
         int dir_or_leaf_id;
         // PRE_ORDER 専用: 対応する POST_ORDER の次の index (排他)。skip 時のジャンプ先。
         int subtree_end;
-        Action action;
+        // Action 実体は gen_block に置き、ここでは 8B ハンドルだけ持つ。
+        // PRE_ORDER / POST_ORDER は対応する leaf と同じ aid を共有する。
+        ActionId aid;
         ActionIDType action_id;
         // leaf: action の target_turn / PRE_ORDER: 部分木 leaf の target_turn の最小値 / POST_ORDER: 未使用
         int target_turn;
 
-        TreeNode(int d, Action a, ActionIDType id, int target)
-            : dir_or_leaf_id(d), subtree_end(0), action(move(a)), action_id(id), target_turn(target) {}
+        TreeNode(int d, ActionId a, ActionIDType id, int target)
+            : dir_or_leaf_id(d), subtree_end(0), aid(a), action_id(id), target_turn(target) {}
     };
 
     struct BeamCandidate {
         int par;
         ScoreType score;
         HashType hash;
-        Action action;
+        ActionId aid;
         ActionIDType action_id;
         int target_turn;
 
-        BeamCandidate() : par(0), score(0), hash(0), action(), action_id(0), target_turn(0) {}
-        BeamCandidate(int p, ScoreType s, HashType h, Action a, ActionIDType id, int target)
-            : par(p), score(s), hash(h), action(move(a)), action_id(id), target_turn(target) {}
+        BeamCandidate() : par(0), score(0), hash(0), aid(BAD_ID), action_id(0), target_turn(0) {}
+        BeamCandidate(int p, ScoreType s, HashType h, ActionId a, ActionIDType id, int target)
+            : par(p), score(s), hash(h), aid(a), action_id(id), target_turn(target) {}
     };
 
     vector<TreeNode> tree, nxt_tree;
+
+    // ---- Action 世代アリーナ実体 -------------------------------------------
+    vector<vector<Action>> gen_block;   // gen_block[gen][slot] = Action 実体
+    vector<vector<Action>> slab_pool;   // 解放済みブロックの再利用バッファ
+    int free_gen_ptr;                   // gen < free_gen_ptr は解放済み (単調増加)
+    int current_min_gen_in_tree;        // tree 内 leaf/PRE の最小 gen
+
+    static ActionId make_id(int gen, int slot) {
+        return (ActionId(gen) << SLOT_BITS) | ActionId(slot);
+    }
+    Action& act(ActionId id) {
+        return gen_block[(size_t)(id >> SLOT_BITS)][(size_t)(id & SLOT_MASK)];
+    }
+    // Action 実体を世代 gen のブロックへ1回 copy し、ハンドルを返す。
+    // 採用ノードあたり唯一の Action 実体コピー (beam_search.cpp の finalize_generation 相当)。
+    ActionId arena_put(int gen, const Action& a) {
+        vector<Action>& blk = gen_block[gen];
+        if (blk.capacity() == 0 && !slab_pool.empty()) {
+            blk = move(slab_pool.back());
+            slab_pool.pop_back();
+            blk.clear();
+        }
+        ActionId id = make_id(gen, (int)blk.size());
+        blk.push_back(a);
+        return id;
+    }
+    // gen < min_gen のブロックを一括解放し、capacity を保ったまま slab_pool へ退避。
+    void free_generations(int min_gen) {
+        while (free_gen_ptr < min_gen) {
+            vector<Action>& blk = gen_block[free_gen_ptr];
+            if (blk.capacity() > 0) {
+                blk.clear();
+                slab_pool.push_back(move(blk));
+            }
+            ++free_gen_ptr;
+        }
+    }
 
     struct HistoryNode {
         int node_id;
@@ -160,48 +206,52 @@ private:
 
         ScoreType threshold() const { return entry < beam_width ? INF : seg[1].first; }
 
-        bool push(ScoreType score, HashType hash, int par, const Action &action, ActionIDType action_id, vector<uint8_t>& is_survived, int target_turn) {
+        // 受理した場合 next_beam のインデックスを返す (呼び出し側が .aid を後から書き込む)。
+        // 棄却なら -1。Action 実体は扱わず score/hash と各種フラグだけ更新する。
+        // aid は呼び出し側が arena_put 後に next_beam[idx].aid へ書く (棄却時は put しない)。
+        int push(ScoreType score, HashType hash, int par, ActionIDType action_id, vector<uint8_t>& is_survived, int target_turn) {
             // 早期 reject は segtree 構築済みのときのみ。
-            if (is_built && score >= seg[1].first) return false;
+            if (is_built && score >= seg[1].first) return -1;
             auto dat = func.get_pos(hash);
             int idx = func.inner_get(dat, -1);
             if (idx != -1) {
                 // 既存 slot のスコアは next_beam[idx].score から読む。fill phase で seg 無効でも一貫。
                 if (score < next_beam[idx].score) {
                     is_survived[next_beam[idx].action_id] = 0;
-                    next_beam[idx] = {par, score, hash, action, action_id, target_turn};
+                    next_beam[idx] = {par, score, hash, BAD_ID, action_id, target_turn};
                     is_survived[action_id] = 1;
                     if (is_built) {
                         set(idx, {score, idx});
                     }
-                    return true;
+                    return idx;
                 }
-                return false;
+                return -1;
             }
             if (entry < beam_width) {
                 // fill phase: segtree は触らず append のみ。
-                func.inner_set(dat, hash, entry);
-                next_beam[entry] = {par, score, hash, action, action_id, target_turn};
+                int slot = entry;
+                func.inner_set(dat, hash, slot);
+                next_beam[slot] = {par, score, hash, BAD_ID, action_id, target_turn};
                 is_survived[action_id] = 1;
-                hashidx[entry] = hash;
+                hashidx[slot] = hash;
                 entry++;
                 if (entry == beam_width) {
                     // 満杯到達で一括構築。
                     build_segtree();
                     is_built = true;
                 }
-                return true;
+                return slot;
             }
             // entry == beam_width (is_built == true): worst を置換。
             auto [_, i] = seg[1];
             is_survived[next_beam[i].action_id] = 0;
-            next_beam[i] = {par, score, hash, action, action_id, target_turn};
+            next_beam[i] = {par, score, hash, BAD_ID, action_id, target_turn};
             is_survived[action_id] = 1;
             func.set(hashidx[i], -1);
             func.inner_set(dat, hash, i);
             hashidx[i] = hash;
             set(i, {score, i});
-            return true;
+            return i;
         }
 
         void reset(int w) {
@@ -363,9 +413,12 @@ private:
                     }
                 } else {
                     Candidates& cands = get_cands(target_turn);
-                    if (cands.push(score, hash, 0, action, current_node_id, is_survived_node, target_turn)) {
+                    int slot = cands.push(score, hash, 0, current_node_id, is_survived_node, target_turn);
+                    if (slot >= 0) {
+                        ActionId aid = arena_put(0, action);
+                        cands.next_beam[slot].aid = aid;
                         thresholds[target_turn] = cands.threshold();
-                        current_new_candidates.push_back({0, score, hash, action, current_node_id, target_turn});
+                        current_new_candidates.push_back({0, score, hash, aid, current_node_id, target_turn});
                         if (use_global_seen) {
                             seen_hash.inner_set(seen_pos, hash, {score, target_turn});
                         }
@@ -388,7 +441,7 @@ private:
             if (dir_or_leaf_id >= 0) {
                 if (node.target_turn == turn) {
                     ++expanded_leaf_count;
-                    const Action& action = node.action;
+                    const Action& action = act(node.aid);
                     state.apply_op(action);
                     actions.clear();
                     int parent_id = node.action_id;
@@ -431,9 +484,12 @@ private:
                             }
                         } else {
                             Candidates& cands = get_cands(t_turn);
-                            if (cands.push(score, hash, leaf_id, child_action, current_node_id, is_survived_node, t_turn)) {
+                            int slot = cands.push(score, hash, leaf_id, current_node_id, is_survived_node, t_turn);
+                            if (slot >= 0) {
+                                ActionId aid = arena_put(turn, child_action);
+                                cands.next_beam[slot].aid = aid;
                                 thresholds[t_turn] = cands.threshold();
-                                current_new_candidates.push_back({leaf_id, score, hash, child_action, current_node_id, t_turn});
+                                current_new_candidates.push_back({leaf_id, score, hash, aid, current_node_id, t_turn});
                                 if (use_global_seen) {
                                     seen_hash.inner_set(seen_pos, hash, {score, t_turn});
                                 }
@@ -460,10 +516,10 @@ private:
                     i = node.subtree_end;
                     continue;
                 }
-                state.apply_op(node.action);
+                state.apply_op(act(node.aid));
                 ++i;
             } else {
-                state.rollback(node.action);
+                state.rollback(act(node.aid));
                 ++i;
             }
         }
@@ -474,6 +530,9 @@ private:
     // root レベルのノード数に比例した軽い走査で済む。
     void update_current_min_target_in_tree() {
         int min_t = INT_MAX;
+        // gen は経路上で単調増加するので、部分木の最小 gen は root の gen に等しい。
+        // よって root レベル走査 (PRE は subtree_end で内部 skip) だけで木全体の最小 gen が出る。
+        int min_g = INT_MAX;
         const int n = (int)tree.size();
         int k = 0;
         while (k < n) {
@@ -481,15 +540,20 @@ private:
             int d = nd.dir_or_leaf_id;
             if (d >= 0) {
                 if (nd.target_turn < min_t) min_t = nd.target_turn;
+                int g = (int)(nd.aid >> SLOT_BITS);
+                if (g < min_g) min_g = g;
                 ++k;
             } else if (d == PRE_ORDER) {
                 if (nd.target_turn < min_t) min_t = nd.target_turn;
+                int g = (int)(nd.aid >> SLOT_BITS);
+                if (g < min_g) min_g = g;
                 k = nd.subtree_end;
             } else {
                 ++k;
             }
         }
         current_min_target_in_tree = (min_t == INT_MAX) ? max_turn_global : min_t;
+        current_min_gen_in_tree = (min_g == INT_MAX) ? free_gen_ptr : min_g;
     }
 
     void update_tree(State& state, const int turn) {
@@ -498,13 +562,14 @@ private:
         nxt_tree.clear();
         if (turn == 0) {
             for (int i = 0; i < (int)current_new_candidates.size(); ++i) {
-                const auto &[par, score, hash, new_action, action_id, t_turn] = current_new_candidates[i];
+                const auto &[par, score, hash, aid, action_id, t_turn] = current_new_candidates[i];
                 if (is_survived_node[action_id]) {
-                    nxt_tree.emplace_back(0, new_action, action_id, t_turn);
+                    nxt_tree.emplace_back(0, aid, action_id, t_turn);
                 }
             }
             swap(tree, nxt_tree);
             update_current_min_target_in_tree();
+            free_generations(current_min_gen_in_tree);
             int delta = current_min_target_in_tree - prev_min_target;
             if (delta > 0) param_ptr->note_target_step(delta);
             return;
@@ -514,8 +579,8 @@ private:
         while (i < tree.size()) {
             int dir_or_leaf_id = tree[i].dir_or_leaf_id;
             if (dir_or_leaf_id == PRE_ORDER && i + 1 < tree.size() && tree[i].action_id == tree.back().action_id) {
-                result.emplace_back(tree[i].action);
-                state.apply_op(tree[i].action);
+                result.emplace_back(act(tree[i].aid));
+                state.apply_op(act(tree[i].aid));
                 tree.pop_back();
                 ++i;
             } else {
@@ -545,21 +610,21 @@ private:
                     // 1 パス展開: 仮に PRE_ORDER を先に emit し、生存子を直接 emit する。
                     // 生存子 0 件なら巻き戻す。is_survived_node の二度読みを回避する。
                     int pre_idx = (int)nxt_tree.size();
-                    nxt_tree.emplace_back(PRE_ORDER, src.action, src.action_id, INT_MAX);
+                    nxt_tree.emplace_back(PRE_ORDER, src.aid, src.action_id, INT_MAX);
                     int subtree_min = INT_MAX;
                     int emit_cnt = 0;
                     while (next_beam_idx < num_candidates
                            && current_new_candidates[next_beam_idx].par == dir_or_leaf_id) {
                         const auto& nc = current_new_candidates[next_beam_idx];
                         if (is_survived_node[nc.action_id]) {
-                            nxt_tree.emplace_back(dir_or_leaf_id, nc.action, nc.action_id, nc.target_turn);
+                            nxt_tree.emplace_back(dir_or_leaf_id, nc.aid, nc.action_id, nc.target_turn);
                             if (nc.target_turn < subtree_min) subtree_min = nc.target_turn;
                             ++emit_cnt;
                         }
                         ++next_beam_idx;
                     }
                     if (emit_cnt > 0) {
-                        nxt_tree.emplace_back(POST_ORDER, src.action, src.action_id, 0);
+                        nxt_tree.emplace_back(POST_ORDER, src.aid, src.action_id, 0);
                         nxt_tree[pre_idx].target_turn = subtree_min;
                         nxt_tree[pre_idx].subtree_end = (int)nxt_tree.size();
                     } else {
@@ -577,7 +642,7 @@ private:
                 } else {
                     if (is_survived_node[src.action_id]) {
                         // 通常 emit: propagation なし。
-                        nxt_tree.emplace_back(dir_or_leaf_id, src.action, src.action_id, src.target_turn);
+                        nxt_tree.emplace_back(dir_or_leaf_id, src.aid, src.action_id, src.target_turn);
                     } else {
                         // evict → inherited min に寄与していたときだけ親を dirty 化。
                         if (!pre_stack.empty()) {
@@ -591,7 +656,7 @@ private:
             } else if (dir_or_leaf_id == PRE_ORDER) {
                 // src.target_turn は前ターンの subtree_min。stable ならこの値がそのまま使える。
                 int pre_idx = (int)nxt_tree.size();
-                nxt_tree.emplace_back(PRE_ORDER, src.action, src.action_id, src.target_turn);
+                nxt_tree.emplace_back(PRE_ORDER, src.aid, src.action_id, src.target_turn);
                 pre_stack.push_back({pre_idx, false});
             } else {
                 if (!nxt_tree.empty()
@@ -612,7 +677,7 @@ private:
                     int pre_idx = pre_stack.back().first;
                     bool dirty = pre_stack.back().second;
                     int old_min = nxt_tree[pre_idx].target_turn;
-                    nxt_tree.emplace_back(POST_ORDER, src.action, src.action_id, 0);
+                    nxt_tree.emplace_back(POST_ORDER, src.aid, src.action_id, 0);
                     nxt_tree[pre_idx].subtree_end = (int)nxt_tree.size();
                     pre_stack.pop_back();
                     if (dirty) {
@@ -648,6 +713,7 @@ private:
 
         swap(tree, nxt_tree);
         update_current_min_target_in_tree();
+        free_generations(current_min_gen_in_tree);
         int delta = current_min_target_in_tree - prev_min_target;
         if (delta > 0) param_ptr->note_target_step(delta);
     }
@@ -666,12 +732,12 @@ private:
                 if (turn_to_pool_idx[t] == -1) continue;
                 Candidates& cands = cands_pool[turn_to_pool_idx[t]];
                 for (int i = 0; i < cands.size(); ++i) {
-                    const auto &[par, score, hash, action, action_id, t_turn] = cands.next_beam[i];
+                    const auto &[par, score, hash, aid, action_id, t_turn] = cands.next_beam[i];
                     if (is_survived_node[action_id]) {
                         if (target_action_id == -1 || score < best_score) {
                             best_score = score;
                             target_action_id = action_id;
-                            best_action = action;
+                            best_action = act(aid);
                         }
                     }
                 }
@@ -688,7 +754,7 @@ private:
 
         for (const auto& node : tree) {
             int dir_or_leaf_id = node.dir_or_leaf_id;
-            const Action& action = node.action;
+            const Action& action = act(node.aid);
             int action_id = node.action_id;
             if (dir_or_leaf_id >= 0) {
                 if (action_id == target_action_id) {
@@ -722,6 +788,14 @@ private:
         max_turn_global = param.max_turn;
         param_ptr = &param;
         DUMMY_ACTION.target_turn = -1;
+
+        // Action 世代アリーナの初期化。gen は [0, max_turn) なので外側 vector は固定長
+        // (= 内部 vector が move されても data ポインタは保たれ、act() の参照が安定)。
+        gen_block.clear();
+        gen_block.resize(max_turn_global + 2);
+        slab_pool.clear();
+        free_gen_ptr = 0;
+        current_min_gen_in_tree = 0;
 
         if (turn_to_pool_idx.size() < max_turn_global + 1) {
             turn_to_pool_idx.resize(max_turn_global + 1);

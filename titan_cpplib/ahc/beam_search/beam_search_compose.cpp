@@ -32,6 +32,30 @@ private:
     // INF で弾かれたものも、finished で終端扱いされたものも含む。
     int explored_per_turn;
 
+    // ---- 計測用カウンタ (compose 効果の比較指標) -------------------------
+    // cnt_apply/cnt_rollback   : DFS が実際に state.apply_op/rollback を呼んだ回数
+    // cnt_*_ghost              : ghost のため skip した回数 (ghost 版のみ非ゼロ)
+    // cnt_compose_align        : compose_pass の state alignment 用 apply/rollback
+    // cnt_tour_total           : 各ターンの tour.size() の合計
+    // cnt_cand_total           : 各ターンの生存ノード数 Σ|cand|
+    long long cnt_apply, cnt_rollback;
+    long long cnt_apply_ghost, cnt_rollback_ghost;
+    long long cnt_compose_align;
+    long long cnt_tour_total, cnt_cand_total;
+
+    void print_counters() const {
+        cerr << "[counters]" << endl;
+        cerr << "  apply_op    real=" << cnt_apply
+             << " ghost_skip=" << cnt_apply_ghost
+             << " total_slots=" << (cnt_apply + cnt_apply_ghost) << endl;
+        cerr << "  rollback    real=" << cnt_rollback
+             << " ghost_skip=" << cnt_rollback_ghost
+             << " total_slots=" << (cnt_rollback + cnt_rollback_ghost) << endl;
+        cerr << "  compose_align apply+rollback=" << cnt_compose_align << endl;
+        cerr << "  tour_total=" << cnt_tour_total << endl;
+        cerr << "  cand_total (sum|cand|)=" << cnt_cand_total << endl;
+    }
+
     // ---- Action プール（世代ブロック arena ＋ 確定接頭辞バルク解放） ------------
     // tour/trace/next_tour/cand は Action 実体でなく ActionId（8B ハンドル）を運ぶ。
     // Action 実体は生成世代＝深さごとのブロックに1回だけ置き、以後コピー・移動しない。
@@ -102,6 +126,7 @@ private:
                     bool is_last = (parent_aid == last_applied);
                     if (is_last) {
                         s.rollback(parent_a);
+                        ++cnt_compose_align;
                     }
                     if (parent_a.compose(child_a)) {
                         using std::swap;
@@ -109,6 +134,7 @@ private:
                         set_ghost(parent_aid);
                     } else if (is_last) {
                         s.apply_op(parent_a);
+                        ++cnt_compose_align;
                     }
                 }
             }
@@ -136,16 +162,19 @@ private:
         ScoreType score;
         ActionId action_id;
         int node_id = -1;
+        int action_count = 0; // この cand の実深さ。非 composed=gen、composed 子=gen-1
     };
 
     Candidates<ScoreType, HashType, Action, State, INF, record_history> candidates;
     vector<ActionId> trace;
     vector<ActionId> tour;
     vector<int> leaf;
+    vector<int> eff_depth;        // leaf[] と並走。leaf k の実深さ(action_count)
     vector<CandIdx> cand;
 
     vector<ActionId> next_tour;
     vector<int> next_leaf;
+    vector<int> next_eff_depth;   // eff_depth[] の構築中バッファ
     vector<Action> actions;
 
     int freed_to;                 // 深さ <= freed_to は解放済み。result_prefix.size() と一致
@@ -195,7 +224,8 @@ private:
             cand.push_back({candidates.next_beam[i].parent_leaf,
                             candidates.next_beam[i].score,
                             make_id(gen, i),
-                            candidates.next_beam[i].node_id});
+                            candidates.next_beam[i].node_id,
+                            gen});
         }
     }
 
@@ -273,9 +303,11 @@ private:
         trace.clear();
         tour.clear();
         leaf.clear();
+        eff_depth.clear();
         cand.clear();
         next_tour.clear();
         next_leaf.clear();
+        next_eff_depth.clear();
         actions.clear();
         gblock.clear();
         slab_pool.clear();
@@ -285,6 +317,10 @@ private:
         freed_to = 0;
         result_prefix.clear();
         explored_per_turn = 0;
+        cnt_apply = cnt_rollback = 0;
+        cnt_apply_ghost = cnt_rollback_ghost = 0;
+        cnt_compose_align = 0;
+        cnt_tour_total = cnt_cand_total = 0;
         if constexpr (record_history) {
             node_id_counter = 0;
             history.clear();
@@ -312,17 +348,24 @@ private:
     // dst_end は「親パス末尾の一つ後ろ」（葉のアクションを書く位置 = ancestor path one-past-end）。
     // 「経路復元: 親 leaf へ向かう祖先ぶんの action を tour から復元する」処理。
     // ActionId（8B）コピーなので Action 実体は動かさない。
+    // tour 上の segment k = tour[leaf[k]..leaf[k+1]) を、その葉の実深さ eff_depth[k]
+    // を底として dst_base[depth] へ深さ明示で貼り込む。深さキーの ratchet で
+    // 各 segment は「まだ書かれていない、より浅い側」だけを書く。
+    // 結果として分岐部 trace[dL+1..dC-1] のみが更新され、共有接頭辞は不変。
     template<class It>
-    inline void copy_tour_path(int parent_leaf, int leaf_end, It dst_end) {
-        int prog = 0;
+    inline void copy_tour_path(int parent_leaf, int leaf_end, It dst_base) {
+        int written_floor = INT_MAX; // 既に書かれた最も浅い深さ
         for (int k = parent_leaf; k < leaf_end; ++k) {
             int w0 = leaf[k];
             int w1 = leaf[k + 1];
-            int rank = w1 - w0;
-            if (prog < rank) {
-                int copy_len = rank - prog;
-                copy(tour.begin() + w0, tour.begin() + w0 + copy_len, dst_end - rank);
-                prog = rank;
+            int seg_len = w1 - w0;
+            int bot = eff_depth[k];           // segment の最深
+            int top = bot - seg_len + 1;      // segment の最浅
+            if (top < written_floor) {
+                int hi = bot < written_floor - 1 ? bot : written_floor - 1;
+                int copy_len = hi - top + 1;
+                copy(tour.begin() + w0, tour.begin() + w0 + copy_len, dst_base + top);
+                written_floor = top;
             }
         }
     }
@@ -400,17 +443,20 @@ public:
                 beam_log::end_banner(cerr, "solution found", 1, param.max_turn,
                                      beam_timer.elapsed(), param.ave_width(),
                                      best_finished_score, true, (int)best_finished_path.size());
+                print_counters();
             }
             return best_finished_path;
         }
 
         // 世代1（深さ1ノード）を確定し cand を ActionId 参照で構築。
         finalize_generation(1);
+        cnt_cand_total += cand.size();
         // 世代1 は parent_leaf = 0 のみで分岐なし、compose_pass の対象外。
         // 次世代の compose_pass が親として参照するので action_id を snapshot しておく。
         snapshot_leaf_actions();
         if constexpr (record_history) record_turn_survivors(1);
         leaf = {0};
+        eff_depth = {0};
         turns_done = 1;
 
         for (int turn = 1; turn < param.max_turn; ++turn) {
@@ -418,46 +464,55 @@ public:
 
             next_tour.clear();
             next_leaf.clear();
+            next_eff_depth.clear();
             w = param.get_beam_width(param.max_turn - turn, cand.size(), param.time_limit - beam_timer.elapsed());
             candidates.reset(turn, w, param.clear_hash_every_turn, param.hash_window_turns);
             explored_per_turn = 0;
 
             int li = leaf.size() - 1;
-            int f = 0;
-            int max_lca_dist = 0;
+            int gL = INT_MAX;   // 全 cand を通じた最浅の LCA 深さ（確定解放の基準）
+            // dP_state: 現在 state がいる深さ。turn 開始時は前世代の最後の葉。
+            int dP_state = eff_depth.back();
 
             if (!cand.empty()) {
-                trace[turn] = cand.back().action_id;
+                trace[cand.back().action_count] = cand.back().action_id;
             }
 
             for (int i = (int)cand.size() - 1; i >= 0; --i) {
                 const auto &c = cand[i];
+                int dC = c.action_count;          // この cand の深さ
 
-                int lca_dist = 0;
-                int now_lca = leaf[li];
-                for (int k = li - 1; k >= c.parent_leaf; --k) {
-                    if (now_lca - leaf[k] > lca_dist) {
-                        lca_dist = now_lca - leaf[k];
+                // dL = LCA(前cand, c) の深さ。区間 [parent_leaf, li) の各 segment の
+                // 底 eff_depth[k] から長さ leaf[k+1]-leaf[k] を引いた値の最小。
+                int dL;
+                if (c.parent_leaf >= li) {
+                    dL = eff_depth[c.parent_leaf];      // 区間空 = 親自身が LCA
+                } else {
+                    dL = INT_MAX;
+                    for (int k = c.parent_leaf; k < li; ++k) {
+                        int seg_lca = eff_depth[k] - (leaf[k + 1] - leaf[k]);
+                        if (seg_lca < dL) dL = seg_lca;
                     }
-                    now_lca = leaf[k];
                 }
-                if (lca_dist > max_lca_dist) max_lca_dist = lca_dist;
+                if (dL < gL) gL = dL;
 
-                for (int k = 0; k < lca_dist + f; ++k) {
-                    ActionId aid = trace[turn - 1 + f - k];
-                    if (!is_ghost(aid)) state.rollback(act(aid));
+                for (int d = dP_state; d > dL; --d) {
+                    ActionId aid = trace[d];
+                    if (!is_ghost(aid)) { state.rollback(act(aid)); ++cnt_rollback; }
+                    else ++cnt_rollback_ghost;
                 }
 
-                next_tour.insert(next_tour.end(), trace.begin() + (turn - lca_dist), trace.begin() + (turn + 1));
-                f = 1;
+                next_tour.insert(next_tour.end(), trace.begin() + (dL + 1), trace.begin() + (dC + 1));
 
-                trace[turn] = c.action_id;
-                copy_tour_path(c.parent_leaf, li, trace.begin() + turn);
+                trace[dC] = c.action_id;
+                copy_tour_path(c.parent_leaf, li, trace.begin());
 
-                for (int k = turn - lca_dist; k <= turn; ++k) {
-                    ActionId aid = trace[k];
-                    if (!is_ghost(aid)) state.apply_op(act(aid));
+                for (int d = dL + 1; d <= dC; ++d) {
+                    ActionId aid = trace[d];
+                    if (!is_ghost(aid)) { state.apply_op(act(aid)); ++cnt_apply; }
+                    else ++cnt_apply_ghost;
                 }
+                dP_state = dC;
 
                 int now_leaf_idx = next_leaf.size();
                 if constexpr (requires(Emitter &e) { state.get_actions(turn, DAMMY_ACTION, e); }) {
@@ -504,6 +559,7 @@ public:
                     }
                 }
                 next_leaf.push_back(next_tour.size());
+                next_eff_depth.push_back(c.action_count);
                 li = c.parent_leaf;
             }
 
@@ -515,6 +571,7 @@ public:
                     beam_log::end_banner(cerr, "solution found", turn + 1, param.max_turn,
                                          beam_timer.elapsed(), param.ave_width(),
                                          best_finished_score, true, (int)best_finished_path.size());
+                    print_counters();
                 }
                 return best_finished_path;
             }
@@ -533,13 +590,16 @@ public:
 
             if constexpr (record_history) record_turn_survivors(turn + 1);
 
-            confirm_and_free(turn - max_lca_dist);
+            confirm_and_free(gL + 1);
 
             swap(tour, next_tour);
             swap(leaf, next_leaf);
+            swap(eff_depth, next_eff_depth);
+            cnt_tour_total += tour.size();
 
             // 世代 turn+1 を確定し cand を ActionId 参照で構築。
             finalize_generation(turn + 1);
+            cnt_cand_total += cand.size();
             sort(cand.begin(), cand.end(), [](const CandIdx& a, const CandIdx& b) {
                 if (a.parent_leaf != b.parent_leaf) return a.parent_leaf < b.parent_leaf;
                 return a.score < b.score;
@@ -561,11 +621,14 @@ public:
             }
         }
 
-        vector<ActionId> ridx(trace.begin() + 1, trace.begin() + param.max_turn);
-        copy_tour_path(cand[best_idx].parent_leaf, (int)leaf.size() - 1, ridx.end());
+        // best cand の祖先パスを trace に復元（共有接頭辞は不変、分岐部のみ更新）。
+        copy_tour_path(cand[best_idx].parent_leaf, (int)leaf.size() - 1, trace.begin());
+        int dBest = cand[best_idx].action_count;
         vector<Action> ret = result_prefix;
-        ret.reserve(result_prefix.size() + (ridx.size() - freed_to) + 1);
-        materialize(ret, ridx.begin() + freed_to, ridx.end());
+        ret.reserve(result_prefix.size() + (dBest - freed_to) + 1);
+        for (int d = freed_to + 1; d < dBest; ++d) {
+            if (!is_ghost(trace[d])) ret.push_back(act(trace[d]));
+        }
         ret.push_back(act(cand[best_idx].action_id));
 
         if constexpr (record_history) dump_history_json(history_file, INF, history, snapshots);
@@ -575,6 +638,7 @@ public:
             beam_log::end_banner(cerr, "max_turn reached", turns_done, param.max_turn,
                                  beam_timer.elapsed(), param.ave_width(),
                                  best_score, true, (int)ret.size());
+            print_counters();
         }
         return ret;
     }
