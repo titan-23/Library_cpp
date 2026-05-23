@@ -320,7 +320,13 @@ public:
         t = action.pre_t;
     }
 
-    void get_actions(vector<Action> &actions, const Action &last_action, const vector<ScoreType> &thresholds) const {
+    template<typename Emit>
+    void get_actions(const Action &last_action, Emit &&emit) const {
+        // legacy 版の actions.size() による確率的 thinning を、emit 数カウンタ
+        // emitted_cnt で再現する。emit(a) は try_op + 各種判定を内部で行うため
+        // 棄却の有無に関わらずカウンタは進める (legacy も push_back 後に size 増)。
+        int emitted_cnt = 0;
+        Action a;
         for (int i = s; i < N; ++i) {
             bool done = true;
             if (S[i].size() != N) done = false;
@@ -344,26 +350,26 @@ public:
                     if (p < n && is_consecutive(S[i][n-p-1], S[i][n-p])) continue;
                     if (n-p < done_cnt) break;
                     if (n > 0 && m > 0 && is_consecutive(S[i].back(), T[j].front())) {
-                        actions.push_back({i, j, p, -1});
+                        a = Action(i, j, p, -1); emit(a); ++emitted_cnt;
                         continue;
                     }
-                    if (actions.size() > 10 && brnd.randint(100) < 90) continue;
-                    actions.push_back({i, j, p, -1});
+                    if (emitted_cnt > 10 && brnd.randint(100) < 90) continue;
+                    a = Action(i, j, p, -1); emit(a); ++emitted_cnt;
                 }
 
                 for (int q = 1; q <= m; ++q) {
                     if (n+q > MAX_S) break;
                     if (q < m && is_consecutive(T[j][q-1], T[j][q])) continue;
                     if (n > 0 && m > 0 && is_consecutive(S[i].back(), T[j].front())) {
-                        actions.push_back({i, j, -1, q});
+                        a = Action(i, j, -1, q); emit(a); ++emitted_cnt;
                         continue;
                     }
-                    if (actions.size() > 10 && brnd.randint(100) < 80) continue;
-                    actions.push_back({i, j, -1, q});
+                    if (emitted_cnt > 10 && brnd.randint(100) < 80) continue;
+                    a = Action(i, j, -1, q); emit(a); ++emitted_cnt;
                 }
             }
         }
-        actions.push_back({-1, -1, -1, -1});
+        a = Action(-1, -1, -1, -1); emit(a);
     }
 
     void print() const {}

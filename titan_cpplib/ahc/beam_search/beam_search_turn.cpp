@@ -389,6 +389,87 @@ private:
     vector<BeamCandidate> current_new_candidates;
     vector<Action> actions;
 
+    // 候補 1 件を処理する共通ルーチン。always_inline で legacy ループ内・Emitter::operator()
+    // どちらの呼び出しサイトでも完全に展開させる (state.try_op が user 側で重い場合、関数境界
+    // 越しだと user の try_op がインライン化されず数% の差が出るため)。
+    //   - state.try_op で (score, hash, finished) を計算
+    //   - INF / target_turn 範囲外 / seen_hash 重複は黙って drop
+    //   - finished なら best_finished を更新
+    //   - 通常候補は arena_put_reserve → cands.push → 採否で fill / release
+    //   - record_history=true なら全 case で history に追記
+    // parent_leaf: 候補の par 値 (= 親 leaf の leaf_id、turn==0 では 0)。
+    // parent_aid : 親 leaf の aid。turn==0 では BAD_ID。
+    [[gnu::always_inline]] inline void process_candidate(State& state, Action& action, int parent_leaf, ActionId parent_aid) {
+        auto [score, hash, finished] = state.try_op(action, thresholds);
+        if (score >= INF) return;
+        int target_turn = action.target_turn;
+        if (target_turn > max_turn_global) return;
+
+        pair<int, bool> seen_pos;
+        if (use_global_seen) {
+            seen_pos = seen_hash.get_pos(hash);
+            if (seen_pos.second) {
+                auto sv = seen_hash.inner_get(seen_pos);
+                ScoreType seen_s0 = sv.first;
+                int seen_t0 = sv.second;
+                bool pass = (target_turn < seen_t0) || (target_turn == seen_t0 && score < seen_s0);
+                if (!pass) return;
+            }
+        }
+
+        int status = 0;
+        int current_node_id = -1;
+        if (finished) {
+            if (!found_finished || score < best_finished_score) {
+                found_finished = true;
+                best_finished_score = score;
+                best_finished_par_aid = parent_aid;
+                best_finished_action = action;
+            }
+            if constexpr (record_history) current_node_id = node_id_counter++;
+        } else {
+            ActionId aid = arena_put_reserve();
+            Candidates& cands = get_cands(target_turn);
+            int slot = cands.push(score, hash, parent_leaf, aid, is_survived_node, target_turn);
+            if (slot >= 0) {
+                arena_put_fill(aid, action);
+                thresholds[target_turn] = cands.threshold();
+                current_new_candidates.push_back({parent_leaf, score, hash, aid, target_turn});
+                if (use_global_seen) {
+                    seen_hash.inner_set(seen_pos, hash, {score, target_turn});
+                }
+                if constexpr (record_history) {
+                    if ((size_t)aid >= aid_to_node_id.size()) aid_to_node_id.resize((size_t)aid + 1, -1);
+                    current_node_id = node_id_counter++;
+                    aid_to_node_id[aid] = current_node_id;
+                }
+            } else {
+                arena_release(aid);
+                status = 1;
+                if constexpr (record_history) current_node_id = node_id_counter++;
+            }
+        }
+        if constexpr (record_history) {
+            int parent_node_id = (parent_aid == BAD_ID || (size_t)parent_aid >= aid_to_node_id.size())
+                                 ? -1 : aid_to_node_id[parent_aid];
+            history.push_back({current_node_id, parent_node_id, target_turn, score, hash,
+                               action.to_string(), state.get_state_info(), status});
+        }
+    }
+
+    // user の get_actions が `(const Action&, Emit&&)` シグネチャを持つ場合に
+    // 利用される sink。emit(action) で process_candidate に流す。
+    // user は emit.threshold(target_turn) で早期枝刈り閾値を取得できる。
+    struct Emitter {
+        BeamSearchWithTree& bs;
+        State& st;
+        int parent_leaf;
+        ActionId parent_aid;
+
+        inline ScoreType threshold(int target_turn) const { return bs.thresholds[target_turn]; }
+        inline void operator()(Action& a) { bs.process_candidate(st, a, parent_leaf, parent_aid); }
+    };
+
     void get_next_beam(State& state, const int turn) {
         current_new_candidates.clear();
         expanded_leaf_count = 0;
@@ -396,67 +477,16 @@ private:
         if (turn == 0) {
             // 初期状態を 1 つの leaf として展開する扱い
             expanded_leaf_count = 1;
-            actions.clear();
-            state.get_actions(actions, (result.empty() ? DUMMY_ACTION : result.back()), thresholds);
-            int parent_id = -1;
-            for (Action &action : actions) {
-                auto [score, hash, finished] = state.try_op(action, thresholds);
-                if (score >= INF) continue;
-
-                int target_turn = action.target_turn;
-                if (target_turn > max_turn_global) continue;
-
-                // global seen_hash チェック
-                pair<int, bool> seen_pos;
-                bool seen_exists = false;
-                ScoreType seen_s0 = 0;
-                int seen_t0 = 0;
-                if (use_global_seen) {
-                    seen_pos = seen_hash.get_pos(hash);
-                    if (seen_pos.second) {
-                        seen_exists = true;
-                        auto sv = seen_hash.inner_get(seen_pos);
-                        seen_s0 = sv.first;
-                        seen_t0 = sv.second;
-                        bool pass = (target_turn < seen_t0) || (target_turn == seen_t0 && score < seen_s0);
-                        if (!pass) continue;
-                    }
-                }
-
-                int status = 0;
-                int current_node_id = -1;
-                if (finished) {
-                    if (!found_finished || score < best_finished_score) {
-                        found_finished = true;
-                        best_finished_score = score;
-                        best_finished_par_aid = BAD_ID;  // 仮想 root の子: 親 aid なし
-                        best_finished_action = action;
-                    }
-                    if constexpr (record_history) current_node_id = node_id_counter++;
-                } else {
-                    ActionId aid = arena_put_reserve();
-                    Candidates& cands = get_cands(target_turn);
-                    int slot = cands.push(score, hash, 0, aid, is_survived_node, target_turn);
-                    if (slot >= 0) {
-                        arena_put_fill(aid, action);
-                        thresholds[target_turn] = cands.threshold();
-                        current_new_candidates.push_back({0, score, hash, aid, target_turn});
-                        if (use_global_seen) {
-                            seen_hash.inner_set(seen_pos, hash, {score, target_turn});
-                        }
-                        if constexpr (record_history) {
-                            if ((size_t)aid >= aid_to_node_id.size()) aid_to_node_id.resize((size_t)aid + 1, -1);
-                            current_node_id = node_id_counter++;
-                            aid_to_node_id[aid] = current_node_id;
-                        }
-                    } else {
-                        arena_release(aid);
-                        status = 1;
-                        if constexpr (record_history) current_node_id = node_id_counter++;
-                    }
-                }
-                if constexpr (record_history) {
-                    history.push_back({current_node_id, parent_id, target_turn, score, hash, action.to_string(), state.get_state_info(), status});
+            // 仮想 root の子展開。parent_leaf=0, parent_aid=BAD_ID。
+            const Action& last_action = (result.empty() ? DUMMY_ACTION : result.back());
+            if constexpr (requires(Emitter& e) { state.get_actions(last_action, e); }) {
+                Emitter emit{*this, state, 0, BAD_ID};
+                state.get_actions(last_action, emit);
+            } else {
+                actions.clear();
+                state.get_actions(actions, last_action, thresholds);
+                for (Action &action : actions) {
+                    process_candidate(state, action, 0, BAD_ID);
                 }
             }
             return;
@@ -474,69 +504,16 @@ private:
                     // しうるので、参照のまま保持できない。ローカルに 1 度 copy しておく。
                     Action action = act(node.aid);
                     state.apply_op(action);
-                    actions.clear();
                     ActionId parent_aid = node.aid;
-                    state.get_actions(actions, action, thresholds);
 
-                    for (Action &child_action : actions) {
-                        auto [score, hash, finished] = state.try_op(child_action, thresholds);
-                        if (score >= INF) continue;
-
-                        int t_turn = child_action.target_turn;
-                        if (t_turn > max_turn_global) continue;
-
-                        // global seen_hash チェック
-                        pair<int, bool> seen_pos;
-                        bool seen_exists = false;
-                        ScoreType seen_s0 = 0;
-                        int seen_t0 = 0;
-                        if (use_global_seen) {
-                            seen_pos = seen_hash.get_pos(hash);
-                            if (seen_pos.second) {
-                                seen_exists = true;
-                                auto sv = seen_hash.inner_get(seen_pos);
-                                seen_s0 = sv.first;
-                                seen_t0 = sv.second;
-                                bool pass = (t_turn < seen_t0) || (t_turn == seen_t0 && score < seen_s0);
-                                if (!pass) continue;
-                            }
-                        }
-
-                        int status = 0;
-                        int current_node_id = -1;
-                        if (finished) {
-                            if (!found_finished || score < best_finished_score) {
-                                found_finished = true;
-                                best_finished_score = score;
-                                best_finished_par_aid = parent_aid;
-                                best_finished_action = child_action;
-                            }
-                            if constexpr (record_history) current_node_id = node_id_counter++;
-                        } else {
-                            ActionId aid = arena_put_reserve();
-                            Candidates& cands = get_cands(t_turn);
-                            int slot = cands.push(score, hash, leaf_id, aid, is_survived_node, t_turn);
-                            if (slot >= 0) {
-                                arena_put_fill(aid, child_action);
-                                thresholds[t_turn] = cands.threshold();
-                                current_new_candidates.push_back({leaf_id, score, hash, aid, t_turn});
-                                if (use_global_seen) {
-                                    seen_hash.inner_set(seen_pos, hash, {score, t_turn});
-                                }
-                                if constexpr (record_history) {
-                                    if ((size_t)aid >= aid_to_node_id.size()) aid_to_node_id.resize((size_t)aid + 1, -1);
-                                    current_node_id = node_id_counter++;
-                                    aid_to_node_id[aid] = current_node_id;
-                                }
-                            } else {
-                                arena_release(aid);
-                                status = 1;
-                                if constexpr (record_history) current_node_id = node_id_counter++;
-                            }
-                        }
-                        if constexpr (record_history) {
-                            int parent_node_id = (parent_aid == BAD_ID || (size_t)parent_aid >= aid_to_node_id.size()) ? -1 : aid_to_node_id[parent_aid];
-                            history.push_back({current_node_id, parent_node_id, t_turn, score, hash, child_action.to_string(), state.get_state_info(), status});
+                    if constexpr (requires(Emitter& e) { state.get_actions(action, e); }) {
+                        Emitter emit{*this, state, leaf_id, parent_aid};
+                        state.get_actions(action, emit);
+                    } else {
+                        actions.clear();
+                        state.get_actions(actions, action, thresholds);
+                        for (Action &child_action : actions) {
+                            process_candidate(state, child_action, leaf_id, parent_aid);
                         }
                     }
                     node.dir_or_leaf_id = leaf_id;
