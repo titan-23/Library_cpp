@@ -8,7 +8,7 @@
 #include "titan_cpplib/ahc/timer.cpp"
 #include "titan_cpplib/algorithm/random.cpp"
 #include "titan_cpplib/others/print.cpp"
-#include "titan_cpplib/ahc/beam_search/beam_search_compose.cpp"
+#include "titan_cpplib/ahc/beam_search/beam_search.cpp"
 using namespace std;
 
 #define rep(i, n) for (int i = 0; i < (n); ++i)
@@ -22,6 +22,7 @@ const int H = 50;
 const int W = 50;
 const int T = 2500;
 string R[N][H];
+string MAP[K][H];
 
 int ID[K];
 
@@ -39,16 +40,9 @@ using ScoreType = int;
 using HashType = unsigned long long;
 const ScoreType INF = 1e9;
 
-// TODO Action
-// メモリ量は少ない方がよく、score,hash のメモは無くしたい
-//
-// compose 対応: 1 個の Action は「(dir, is_moved) を先頭 1 ステップ＋ chain で追加ステップ列」
-// のシーケンスを表す。chain が空のとき = primitive (1 ステップ)。
-// compose 後は chain が伸び、apply_op / rollback は全ステップを順に処理する。
 struct Action {
     char dir = 'z';
     short is_moved = 0;
-    vector<pair<char, short>> chain; // 追加ステップ列。空なら primitive。
 
     Action() {}
     Action(char dir) : dir(dir) {}
@@ -56,18 +50,11 @@ struct Action {
 
     friend ostream& operator<<(ostream& os, const Action &action) {
         os << action.dir;
-        for (auto &s : action.chain) os << s.first;
         return os;
     }
 
     bool compose(Action &nxt) {
-#ifdef NO_COMPOSE
         return false;
-#endif
-        chain.reserve(chain.size() + 1 + nxt.chain.size());
-        chain.push_back({nxt.dir, nxt.is_moved});
-        for (auto &s : nxt.chain) chain.push_back(s);
-        return true;
     }
 
     string to_string() const { return ""; }
@@ -124,7 +111,7 @@ public:
         rep(i, K*H*W) seen[i] = 0;
         rep(k, K) {
             rep(i, H) rep(j, W) {
-                if (R[ID[k]][i][j] == '@') {
+                if (MAP[k][i][j] == '@') {
                     seen[gindx(k, i, j)]++;
                     pos[k] = {i, j};
                     hash ^= zhs[k][i][j];
@@ -146,9 +133,9 @@ public:
         rep(k, K) {
             auto [y, x] = pos[k];
             hs ^= zhs[k][y][x];
-            if (R[ID[k]][y][x] == 'x') continue;
+            if (MAP[k][y][x] == 'x') continue;
             auto [ny, nx] = trans(action.dir, y, x);
-            switch (R[ID[k]][ny][nx]) {
+            switch (MAP[k][ny][nx]) {
                 case ('#'):
                     ny = y;
                     nx = x;
@@ -170,13 +157,13 @@ public:
         return {score + s, hash ^ hs, false};
     }
 
-    //! 1 ステップ分の apply（dir のみ参照）
-    void apply_one(char dir) {
+    //! `action` をする
+    void apply_op(const Action &action) {
         rep(k, K) {
             auto [y, x] = pos[k];
             hash ^= zhs[k][y][x];
-            auto [ny, nx] = trans(dir, y, x);
-            switch (R[ID[k]][ny][nx]) {
+            auto [ny, nx] = trans(action.dir, y, x);
+            switch (MAP[k][ny][nx]) {
                 case ('#'):
                     ny = y; nx = x;
                     break;
@@ -195,21 +182,21 @@ public:
         }
     }
 
-    //! 1 ステップ分の rollback（dir, is_moved を参照）
-    void rollback_one(char dir, short is_moved) {
+    //! `action` を戻す (composed なら逆順)
+    void rollback(const Action &action) {
         rep(k, K) {
             auto [y, x] = pos[k];
             // score -= seen[gindx(k, y, x)];
             hash ^= zhs[k][y][x];
             seen[gindx(k, y, x)]--;
-            if (R[ID[k]][y][x] == 'o') {
+            if (MAP[k][y][x] == 'o') {
                 if (seen[gindx(k, y, x)] == 0) {
                     score += 10;
                 }
             }
-            if (is_moved >> k & 1) {
+            if (action.is_moved >> k & 1) {
                 int ny = y, nx = x;
-                switch (dir) {
+                switch (action.dir) {
                     case ('U'): ++ny; break;
                     case ('D'): --ny; break;
                     case ('L'): ++nx; break;
@@ -223,20 +210,6 @@ public:
         }
     }
 
-    //! `action` をする (composed なら順次適用)
-    void apply_op(const Action &action) {
-        apply_one(action.dir);
-        for (auto &s : action.chain) apply_one(s.first);
-    }
-
-    //! `action` を戻す (composed なら逆順)
-    void rollback(const Action &action) {
-        for (auto it = action.chain.rbegin(); it != action.chain.rend(); ++it) {
-            rollback_one(it->first, it->second);
-        }
-        rollback_one(action.dir, action.is_moved);
-    }
-
     // TODO
     //! 現状態から遷移可能な `Action` の `vector` を返す
     template<class Emit>
@@ -244,10 +217,10 @@ public:
         int state = 0b1111;
         rep(k, K) {
             auto [y, x] = pos[k];
-            state &= ((R[ID[k]][y-1][x] != 'x') << 0) | 0b1110;
-            state &= ((R[ID[k]][y+1][x] != 'x') << 1) | 0b1101;
-            state &= ((R[ID[k]][y][x-1] != 'x') << 2) | 0b1011;
-            state &= ((R[ID[k]][y][x+1] != 'x') << 3) | 0b0111;
+            state &= ((MAP[k][y-1][x] != 'x') << 0) | 0b1110;
+            state &= ((MAP[k][y+1][x] != 'x') << 1) | 0b1101;
+            state &= ((MAP[k][y][x-1] != 'x') << 2) | 0b1011;
+            state &= ((MAP[k][y][x+1] != 'x') << 3) | 0b0111;
         }
         for (Action a : actions_from_state[state]) {
             emit(a);
@@ -281,7 +254,7 @@ void print_ans(const vector<beam_search::Action> &ans) {
     bool seen[K][H][W];
     rep(k, K) {
         rep(i, H) rep(j, W) {
-            if (R[ID[k]][i][j] == '@') {
+            if (MAP[k][i][j] == '@') {
                 pos[k] = {i, j};
             }
             seen[k][i][j] = false;
@@ -293,8 +266,8 @@ void print_ans(const vector<beam_search::Action> &ans) {
         if (action.dir == 'D') ny++;
         if (action.dir == 'L') nx--;
         if (action.dir == 'R') nx++;
-        assert(R[ID[k]][ny][nx] != 'x');
-        if (R[ID[k]][ny][nx] == '#') {
+        assert(MAP[k][ny][nx] != 'x');
+        if (MAP[k][ny][nx] == '#') {
             ny = y; nx = x;
         }
         return {ny, nx};
@@ -305,7 +278,6 @@ void print_ans(const vector<beam_search::Action> &ans) {
     dirs.reserve(2500);
     for (const auto &a : ans) {
         dirs.push_back(a.dir);
-        for (const auto &s : a.chain) dirs.push_back(s.first);
     }
     if (dirs.size() != 2500) {
         cerr << "expanded=" << dirs.size() << " ans.size=" << ans.size() << endl;
@@ -315,7 +287,7 @@ void print_ans(const vector<beam_search::Action> &ans) {
         cout << dir;
         rep(k, K) {
             auto [ny, nx] = nxt(beam_search::Action(dir), k, pos[k].first, pos[k].second);
-            if (R[ID[k]][ny][nx] == 'o' && seen[k][ny][nx] == false) {
+            if (MAP[k][ny][nx] == 'o' && seen[k][ny][nx] == false) {
                 score += 1;
                 seen[k][ny][nx] = true;
             }
@@ -365,6 +337,9 @@ void solve() {
     rep(k, K) {
         auto [_, id] = search[N-1-k];
         ID[k] = id;
+        rep(i, H) {
+            MAP[k][i] = R[id][i];
+        }
     }
 
     auto param = beam_search::gen_param(2500, 2000, 1, false, true);

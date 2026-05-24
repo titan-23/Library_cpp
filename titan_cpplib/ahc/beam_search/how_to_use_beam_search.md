@@ -27,6 +27,7 @@ for each turn:
 - スコアは**最小化**で扱われます。最大化問題はスコアを負にして返してください。
 - **最重要の不変条件**。`try_op(action)` が返す score と hash は、その同じ action を `apply_op` した直後に State が保持する score と hash に完全に一致しなければなりません。ビームは `try_op` の値で残す枝を選び、最終解はその枝を `apply_op` で再生して作ります。両者がズレると選んだ枝と出力される解が食い違い、スコアが申告値と合わなくなります。これと `apply_op`/`rollback` の対称性が差分更新の正しさの核です。
 - `try_op` が返し `apply_op`/`rollback` が保つ score と hash は、差分ではなくその状態の累積した絶対値です。内部の計算を現在値からの XOR や加算で行うのは構いませんが、返す値と保持する値は常に絶対値にしてください。
+  - `try_op`は、ビームサーチでそのターンの評価値に使われます。累積させない一時的な評価等、場合によっては、score に何らかの評価関数を加えることもあり得ます。
 - 関数のシグネチャは絶対に変更しないでください。`get_actions` は emit 方式のシグネチャで実装します（Section 2）。
 
 ---
@@ -236,3 +237,80 @@ void get_actions(const int turn, const Action &last_action, Emit &&emit) const {
 #### `search` 関数
 
 0.5 の最小テンプレート内のラッパをそのまま使います。変更不要です。
+
+---
+
+### 3. 可変深さ版 `beam_search_turn`
+
+**いつ使うか**。1 操作で進む論理ターン数が手ごとに異なる問題。各 `Action` が自分の `target_turn`(到達する論理ターン番号)を持ち、その値ごとに別プールへ振り分けられる。同じ呼び出し内で異なる `target_turn` を持つ手を混在 emit してよい。**全候補が毎ターン同じだけ進む固定深さ問題に turn 版を使う意味は無い**。base 版 (`beam_search.cpp`) を使うこと。
+
+#### base 版との差分(これ以外は完全に同一)
+
+| 項目 | base (`beam_search.cpp`) | turn 版 (`beam_search_turn.cpp`) |
+|---|---|---|
+| include | `beam_search.cpp` | `beam_search_turn.cpp` |
+| `Action` 必須メンバ | なし | `int target_turn;`(sentinel `-1`) |
+| `try_op` 第2引数 | `ScoreType threshold` | `const vector<ScoreType>& thresholds` |
+| `get_actions` 第1引数 | `const int turn` | なし(`last_action` で置換) |
+| `emit.threshold` 呼び方 | `emit.threshold()` | `emit.threshold(int target_turn)` |
+| `BeamParam::max_turn` | 木の深さ上限 | `target_turn` の最大値 |
+| ビーム重複排除粒度 | per-turn | per-`target_turn` |
+
+クラス(`BeamSearchWithTree`)、`init`/`apply_op`/`rollback`/`print`/`get_state_info`、`BeamParam` 全フィールド、戻り値の意味、Section 1 の高速化指針(早期打ち切り・コピー回避・Action 縮小・hash 設計)、Section 2 の対称性・絶対値・finished の扱いは**全て base 版と同一**で適用される。
+
+#### `Action::target_turn` の決定
+
+- どのプールに候補を入れるかのキー。**重複排除も同じプール内のみ**で行われる。
+- 通常は `try_op` 内で操作パラメータから計算して `action.target_turn` に書き込む。`get_actions` で先に決めてもよい。
+- `target_turn > max_turn` の候補は emit/try_op で score を返しても**黙って drop される**。`max_turn` は到達しうる上限以上に設定する。プールは sparse なので大きめでもメモリコストは小。
+
+#### `try_op` の差分
+
+- `thresholds[action.target_turn]` がそのプールの現最悪スコア。
+- 早期打ち切りは『`target_turn` を確定してから `thresholds[t]` と比較』の順。逆だと無駄な差分計算が走る。
+- 確定 reject 時に `{INF, 0, false}` を返す・ロールバック情報を書かない、は base と同じ。
+
+#### `get_actions` の差分
+
+- `turn` 引数なし。現在の論理ターンが要るなら `State` のメンバで自前で保持する(`apply_op`/`rollback` で更新)。
+- root 判定の慣用は `last_action.target_turn == -1`。base 版の `turn == 0` 相当(`DUMMY_ACTION` に -1 が入っている)。
+- 1 回の呼び出しで異なる `target_turn` を持つ手を混在 emit してよい。各 emit ごとに対応プールに振り分けられる。
+- `emit.threshold(t)` で `target_turn==t` のプールの最悪スコアが取れる。`target_turn` が emit 前に確定しているならこれで先に枝刈り可能。
+
+#### 最小スケルトン差分(0.5 のテンプレからの diff)
+
+```cpp
+#include "titan_cpplib/ahc/beam_search/beam_search_turn.cpp"  // ← turn 版
+
+struct Action {
+    int target_turn;                              // ★ 必須メンバ
+    /* 操作パラメータ + pre_*/nxt_* (Section 2) */
+    Action() : target_turn(-1) {}                 // -1 = root sentinel
+    friend ostream& operator<<(ostream& os, const Action&){ return os; }
+    string to_string() const { return ""; }
+};
+
+class State {
+    /* init / apply_op / rollback / print / get_state_info は base と同じ */
+
+    tuple<ScoreType, HashType, bool>
+    try_op(Action &action, const vector<ScoreType>& thresholds) const {
+        // 1. action.target_turn を計算して書き込む
+        // 2. thresholds[action.target_turn] と比較して早期 reject
+        // 3. 通った手だけロールバック情報を action に書く
+    }
+
+    template<class Emit>
+    void get_actions(const Action &last_action, Emit &&emit) const {
+        // last_action.target_turn == -1 なら root 呼び出し
+        // 必要なら emit.threshold(t) で先に枝刈りしてから emit(a)
+    }
+};
+```
+
+#### 注意点
+
+- `target_turn` の単調性は不要。同じ呼び出しで遠い/近い target が混ざってよい。
+- `clear_hash_every_turn=false` は base 同様、**全 `target_turn` 跨ぎ**で hash dedup する(同一 hash が複数 `target_turn` プールに居る場合、より小さい `target_turn` 側・低スコア側だけ残るよう調整される)。hash 自体は base と同じく「状態を表す」だけでよく `target_turn` を含める必要は無い。
+- `max_turn` を小さくしすぎると合法手が黙って drop され探索が痩せる。先に大きめで動かしログの `target_turn` 分布を見て絞る、が安全。
+- 戻り値は base と同様、根 → 最良葉(`finished` 優先・最小スコア)までの `Action` 列。長さは finished 到達時のその直前 target_turn まで、または `current_min_target_in_tree == max_turn` まで進めた時点の最良パス長になる。

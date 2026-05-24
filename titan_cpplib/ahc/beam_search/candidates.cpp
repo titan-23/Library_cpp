@@ -139,4 +139,151 @@ public:
         });
     }
 };
+
+// ---- フラット pool 版 ----------------------------------------------------
+// Action 実体を中に持たず ActionId (= 4B int) で参照する版。
+// beam_search.cpp が action_pool でフラット管理するので、ここは hash 重複排除と
+// segtree による worst 管理だけを担う。push は採否を {slot, evicted_aid} で返す。
+using ActionId = int;
+inline constexpr ActionId BAD_ID_FLAT = -1;
+
+template<typename ScoreType, typename HashType>
+struct BeamCandidateFlat {
+    int parent_leaf;
+    ScoreType score;
+    HashType hash;
+    ActionId aid;
+    int node_id = -1; // record_history 用
+};
+
+struct PushResult {
+    // 採用: 0..beam_width-1 (next_beam 内のスロット位置)
+    // 棄却: -1
+    int slot;
+    // 押し出された / 置換された旧 aid。なければ BAD_ID_FLAT。
+    ActionId evicted_aid;
+};
+
+template<typename ScoreType, typename HashType, ScoreType INF>
+class CandidatesFlat {
+private:
+    using T = pair<ScoreType, int>;
+    vector<HashType> hashidx;
+    titan23::HashDict<int> func;
+    int beam_width, entry;
+    int s = 1;
+    vector<T> seg;
+    bool is_built = false;
+
+    void set(int k, T v) {
+        k += s;
+        seg[k] = v;
+        while (k > 1) {
+            k >>= 1;
+            T nv = seg[k<<1].first > seg[k<<1|1].first ? seg[k<<1] : seg[k<<1|1];
+            if (nv == seg[k]) break;
+            seg[k] = nv;
+        }
+    }
+
+    void build_segtree() {
+        for (int i = 0; i < entry; ++i) {
+            seg[i + s] = {next_beam[i].score, i};
+        }
+        for (int k = s - 1; k > 0; --k) {
+            seg[k] = seg[k<<1].first > seg[k<<1|1].first ? seg[k<<1] : seg[k<<1|1];
+        }
+    }
+
+public:
+    vector<BeamCandidateFlat<ScoreType, HashType>> next_beam;
+
+    CandidatesFlat() {}
+
+    int size() const { return entry; }
+
+    ScoreType threshold() const { return entry < beam_width ? INF : seg[1].first; }
+
+    //! aid は呼び出し側 (beam_search) が arena_put_reserve で取って渡す。
+    //! 戻り値: PushResult{slot, evicted_aid}.
+    //!   - slot < 0 のとき棄却。呼び出し側で arena_release(aid) すること。
+    //!   - slot >= 0 のとき採用。evicted_aid != BAD_ID_FLAT なら旧 aid を arena_release すること。
+    PushResult push(ScoreType score, HashType hash, int parent_leaf, ActionId aid, int node_id = -1) {
+        if (is_built && score >= seg[1].first) {
+            return {-1, BAD_ID_FLAT};
+        }
+        auto dat = func.get_pos(hash);
+        int idx = func.inner_get(dat, -1);
+        if (idx == -2) {
+            return {-1, BAD_ID_FLAT};
+        }
+        if (idx != -1) {
+            if (score < next_beam[idx].score) {
+                ActionId old_aid = next_beam[idx].aid;
+                next_beam[idx] = {parent_leaf, score, hash, aid, node_id};
+                if (is_built) {
+                    set(idx, {score, idx});
+                }
+                return {idx, old_aid};
+            }
+            return {-1, BAD_ID_FLAT};
+        }
+        if (entry < beam_width) {
+            func.inner_set(dat, hash, entry);
+            next_beam[entry] = {parent_leaf, score, hash, aid, node_id};
+            hashidx[entry] = hash;
+            int slot = entry;
+            entry++;
+            if (entry == beam_width) {
+                build_segtree();
+                is_built = true;
+            }
+            return {slot, BAD_ID_FLAT};
+        }
+        auto [_, i] = seg[1];
+        ActionId old_aid = next_beam[i].aid;
+        next_beam[i] = {parent_leaf, score, hash, aid, node_id};
+        func.set(hashidx[i], -1);
+        func.inner_set(dat, hash, i);
+        hashidx[i] = hash;
+        set(i, {score, i});
+        return {i, old_aid};
+    }
+
+    void reset(int turn, int w, bool clear_hash, int hash_window_turns = 0) {
+        beam_width = w;
+        while (s < w) {
+            s <<= 1;
+        }
+        if ((int)seg.size() < 2*s) {
+            seg.resize(2*s);
+        }
+        fill(seg.begin(), seg.begin()+(2*s), make_pair(-INF, -1));
+        if ((int)hashidx.size() < w) {
+            hashidx.resize(w);
+            next_beam.resize(w);
+        }
+        if (clear_hash) {
+            func.clear();
+        } else {
+            bool periodic_clear = hash_window_turns > 0
+                                  && (turn % hash_window_turns == 0);
+            if (periodic_clear) func.clear();
+            for (int i = 0; i < entry; ++i) {
+                func.set(hashidx[i], -2);
+            }
+        }
+        if (func.inner_len() == 1) {
+            func = titan23::HashDict<int>(beam_width*8);
+        }
+        entry = 0;
+        is_built = false;
+    }
+
+    BeamCandidateFlat<ScoreType, HashType> get_best() {
+        return *min_element(next_beam.begin(), next_beam.begin() + entry, [] (const auto &l, const auto &r) {
+            return l.score < r.score;
+        });
+    }
+};
 } // namespace flying_squirrel
