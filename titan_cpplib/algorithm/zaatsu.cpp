@@ -1,4 +1,5 @@
 #include <vector>
+#include <algorithm>
 using namespace std;
 
 // Zaatsu
@@ -10,33 +11,34 @@ namespace titan23 {
 template<typename T>
 class Zaatsu {
 private:
-    vector<T> _to_origin;
+    vector<T> a;
     int n;
 
 public:
     Zaatsu() : n(0) {}
 
-    //! `used_items` からなる集合を管理するインスタンスを生成
-    Zaatsu(vector<T> &used_items) : _to_origin(used_items) {
-        sort(_to_origin.begin(), _to_origin.end());
-        _to_origin.erase(unique(_to_origin.begin(), _to_origin.end()), _to_origin.end());
-        n = (int)_to_origin.size();
+    /// @brief `used_items` からなる集合を管理するインスタンスを生成
+    Zaatsu(vector<T> &used_items) : a(used_items) {
+        sort(a.begin(), a.end());
+        a.erase(unique(a.begin(), a.end()), a.end());
+        n = (int)a.size();
     }
 
-    //! 要素の種類数を返す(`max(to_zaatsu)`)
-    int len() const {
-        return n;
-    }
+    /// @brief 要素の種類数を返す(=`max(to_zaatsu)`)
+    int len() const { return n; }
 
-    //! `x` を座標圧縮する
+    /// @brief 要素の種類数を返す(=`max(to_zaatsu)`)
+    int size() const { return n; }
+
+    /// @brief 要素 `x` を座標圧縮する
     int to_zaatsu(const T &x) const {
-        return lower_bound(_to_origin.begin(), _to_origin.end(), x) - _to_origin.begin();
+        return lower_bound(a.begin(), a.end(), x) - a.begin();
     }
 
-    //! 座標圧縮された `x` を戻す
+    /// @brief 座標圧縮された要素 `x` を戻す
     T to_origin(const int &x) const {
         assert(0 <= x && x < n);
-        return _to_origin[x];
+        return a[x];
     }
 };
 }  // namespace titan23

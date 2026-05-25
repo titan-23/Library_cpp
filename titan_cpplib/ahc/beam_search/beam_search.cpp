@@ -28,22 +28,9 @@ private:
     vector<HistoryNode<ScoreType, HashType>> history;
     vector<TurnSnapshot> snapshots;
 
-    // そのターンで実際に探索した頂点数 (= try_op 呼び出し回数)。
-    // INF で弾かれたものも、finished で終端扱いされたものも含む。
+    // try_op 呼び出し回数
     int explored_per_turn;
 
-    // ---- Action プール（世代ブロック arena ＋ 確定接頭辞バルク解放） ------------
-    // tour/trace/next_tour/cand は Action 実体でなく ActionId（8B ハンドル）を運ぶ。
-    // Action 実体は生成世代＝深さごとのブロックに1回だけ置き、以後コピー・移動しない。
-    // ハンドル＝(gen<<SLOT_BITS)|slot。gblock[gen] は確定時にだけ作る固定長 vector で
-    // 再確保されないため参照は安定。
-    //
-    // 解放基準: ある世代の処理後、その世代の全葉の global-LCA 深さ
-    // L = turn - max(lca_dist)。次世代以降の DFS が触れる最小深さは L で単調非減少。
-    // ゆえに深さ < L は二度と参照されない。L 未満のブロックをバルク解放し、
-    // 確定一本道の Action は解放直前に trace から result_prefix へ退避。
-    // メモリは生存窓×W に収まり、最終解 = result_prefix ＋ 未確定サフィックス再構築で
-    // 挙動完全不変。
     using ActionId = uint64_t;
     static constexpr int SLOT_BITS = 24;
     static constexpr ActionId SLOT_MASK = (ActionId(1) << SLOT_BITS) - 1;
@@ -76,7 +63,7 @@ private:
     vector<Action> result_prefix; // 確定 Action 列（深さ 1..freed_to、順序通り）
     vector<vector<Action>> slab_pool; // 確定済みブロックの再利用バッファ。free せず使い回す
 
-    // 深さ < L のブロックは次世代以降の DFS が触れない（L は単調非減少）。
+    // 深さ < L のブロックは次世代以降の DFS が触れない(L は単調非減少)。
     // 確定接頭辞 Action を trace から退避し、ブロックは free せず capacity を保ったまま
     // slab_pool へ退避して使い回す。同時生存ブロック数＝生存窓深に収束し churn が消える。
     // 深さ d (<= L-1) では全葉が同一ノードなので trace[d] が確定ノードそのもの。
@@ -125,15 +112,13 @@ private:
         for (int k = freed_to + 1; k <= upto; ++k) best_finished_path.push_back(act(trace[k]));
     }
 
-    // get_actions / try_op 一体化用 sink。
-    // get_actions が action を生成し emit(a) を呼ぶと try_op + INF/finished 判定 + push + history を行う。
-    // 中間 actions バッファを挟まない。旧 get_actions(vector&, ...) は requires で従来パスに分岐。
+    // get_actions が action を生成し emit(a) を呼ぶと
+    // try_op + INF/finished 判定 + push + history を行う。
     struct Emitter {
         BeamSearchWithTree &bs;
         State &st;
         int parent_leaf, parent_node_id, turn;
 
-        // ライブの最新 worst。push が進むたび縮むので get_actions 側の早期枝刈りに使える。
         inline ScoreType threshold() const { return bs.candidates.threshold(); }
 
         inline void operator()(Action &a) {
@@ -197,8 +182,9 @@ private:
         }
     }
 
+    // record_history only
     // 当該ターンの生存 node_id を集め、生き残らなかった status==0 を 1 に直し snapshot を積む。
-    // candidates.next_beam を読むだけで探索状態は変更しない。beam_search.cpp と同ロジック。
+    // candidates.next_beam を読むだけで探索状態は変更しない。
     void record_turn_survivors(int turn_label) {
         unordered_set<int> survived;
         for (int i = 0; i < (int)candidates.size(); ++i) {
@@ -213,10 +199,6 @@ private:
         snapshots.push_back({turn_label, vector<int>(survived.begin(), survived.end())});
     }
 
-    // tour[leaf[k]..leaf[k+1]) を末尾 dst_end の手前にランク順に貼り込む共通ロジック。
-    // dst_end は「親パス末尾の一つ後ろ」（葉のアクションを書く位置 = ancestor path one-past-end）。
-    // 「経路復元: 親 leaf へ向かう祖先ぶんの action を tour から復元する」処理。
-    // ActionId（8B）コピーなので Action 実体は動かさない。
     template<class It>
     inline void copy_tour_path(int parent_leaf, int leaf_end, It dst_end) {
         int prog = 0;
@@ -309,7 +291,6 @@ public:
             return best_finished_path;
         }
 
-        // 世代1（深さ1ノード）を確定し cand を ActionId 参照で構築。
         finalize_generation(1);
         if constexpr (record_history) record_turn_survivors(1);
         leaf = {0};
@@ -438,7 +419,6 @@ public:
             swap(tour, next_tour);
             swap(leaf, next_leaf);
 
-            // 世代 turn+1 を確定し cand を ActionId 参照で構築。
             finalize_generation(turn + 1);
             sort(cand.begin(), cand.end(), [](const CandIdx& a, const CandIdx& b) {
                 if (a.parent_leaf != b.parent_leaf) return a.parent_leaf < b.parent_leaf;

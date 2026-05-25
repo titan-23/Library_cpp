@@ -1,5 +1,6 @@
 #include <vector>
 #include <string>
+using namespace std;
 
 namespace titan23 {
 
@@ -22,8 +23,8 @@ vector<pair<T, int>> rle(const vector<T> &A) {
     return ret;
 }
 
-vector<pair<char,int>> rle(const string &S) {
-    vector<pair<char,int>> ret;
+vector<pair<char, int>> rle(const string &S) {
+    vector<pair<char, int>> ret;
     if (S.empty()) return ret;
     char now = S[0];
     int cnt = 1;

@@ -32,20 +32,20 @@ public:
         seg = titan23::SegmentTree<S, op, e>(a);
     }
 
-    /// @brief 括弧列s[l, r)が正しい括弧列かどうか判定する / O(logN)
+    /// @brief 括弧列 `s[l, r)` が正しい括弧列かどうか判定する / `O(logN)`
     bool is_valid(int l, int r) const {
         assert(0 <= l && l <= r && r <= n);
         S res = seg.prod(l, r);
         return res.sum == 0 && res.min >= 0;
     }
 
-    /// @brief s[k]を返す
+    /// @brief `s[k]` を返す / `O(1)`
     char get(int k) const {
         assert(0 <= k && k < n);
         return s[k];
     }
 
-    /// @brief s[k]をcに更新する / O(logN)
+    /// @brief `s[k]` を `c` に更新する / `O(logN)`
     void set(int k, char c) {
         assert(0 <= k && k < n);
         assert(c == '(' || c == ')');
