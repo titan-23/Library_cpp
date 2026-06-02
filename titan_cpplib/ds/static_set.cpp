@@ -42,6 +42,11 @@ public:
         return n;
     }
 
+    //! 要素数を返す / `O(1)`
+    int size() const {
+        return n;
+    }
+
     //! 空かどうか / `O(1)`
     bool empty() const {
         return n == 0;

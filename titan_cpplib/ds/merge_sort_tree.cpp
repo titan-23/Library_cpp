@@ -45,7 +45,7 @@ public:
     // &つけるのを忘れずに！
     // auto g = [&] (vector<T> &data, F &func_data) -> void;
     template <class G>
-    void prod(int l, int r, G g) {
+    void prod(int l, int r, G &&g) {
         l += size; r += size;
         while (l < r) {
             if (l & 1) {
@@ -57,6 +57,16 @@ public:
                 g(data[r].data, data[r].func_data);
             }
             l >>= 1; r >>= 1;
+        }
+    }
+
+    // auto g = [&] (F &func_data) -> void;
+    template <class G>
+    void apply_point(int k, G &&g) {
+        k += size;
+        while (k > 0) {
+            g(data[k].func_data);
+            k >>= 1;
         }
     }
 };

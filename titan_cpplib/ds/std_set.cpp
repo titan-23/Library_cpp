@@ -48,6 +48,10 @@ public:
         return s.size();
     }
 
+    int len() const {
+        return s.size();
+    }
+
     T get_min() const {
         return *s.begin();
     }

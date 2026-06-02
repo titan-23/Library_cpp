@@ -183,10 +183,10 @@ class AVLTreeMultiset {
         }
     }
 
-    public:
+public:
     AVLTreeMultiset() : root(nullptr) {}
     AVLTreeMultiset(T missing) : missing(missing), root(nullptr) {}
-    AVLTreeMultiset(vector<T> &a, T missing) : missing(missing) {
+    AVLTreeMultiset(const vector<T> &a, T missing) : missing(missing) {
         this->root = build(a);
     }
 

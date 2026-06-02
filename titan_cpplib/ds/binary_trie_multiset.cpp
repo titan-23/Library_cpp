@@ -58,9 +58,10 @@ private:
     }
 
     public:
+    BinaryTrieMultiset() {}
     BinaryTrieMultiset(const int bit) {
         end = 2;
-        bit = bit;
+        this->bit = bit;
         root = 1;
         lim = (T)1 << bit;
         xor_val = 0;
@@ -289,6 +290,11 @@ private:
         }
         if (node) k += 1;
         return k;
+    }
+
+    // [low, high)
+    int count_range(T low, T high) const {
+        return index(high) - index(low);
     }
 
     T get(int k) const {
