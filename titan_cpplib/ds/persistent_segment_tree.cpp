@@ -107,7 +107,7 @@ private:
   public:
     PersistentSegmentTree() : root(0), _len(0) {}
 
-    PersistentSegmentTree(vector<T> &a) { _build(a); }
+    PersistentSegmentTree(const vector<T> &a) { _build(a); }
 
     T prod(int l, int r) {
         assert(0 <= l && l <= r && r <= len());

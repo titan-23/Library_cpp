@@ -279,7 +279,7 @@ private:
   public:
     PersistentSegWBTree() : root(0) {}
 
-    PersistentSegWBTree(vector<T> &a) { _build(a); }
+    PersistentSegWBTree(const vector<T> &a) { _build(a); }
 
     PLTM merge(PLTM other) {
         SizeType root = _merge_node(this->root, other.root);

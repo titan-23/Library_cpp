@@ -224,7 +224,7 @@ class PersistentMultiset {
   public:
     PersistentMultiset() : root(nullptr) {}
 
-    PersistentMultiset(vector<T> &a) { _build(a); }
+    PersistentMultiset(const vector<T> &a) { _build(a); }
 
     PersistentMultiset<T> merge(PersistentMultiset<T> other) {
         NodePtr root = _merge_node(this->root, other.root);

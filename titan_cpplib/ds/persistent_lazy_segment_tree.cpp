@@ -137,7 +137,7 @@ private:
 
   public:
     PersistentLazySegmentTree() : root(0), _len(0) {}
-    PersistentLazySegmentTree(vector<T> &a) { _build(a); }
+    PersistentLazySegmentTree(const vector<T> &a) { _build(a); }
 
     PLSEG apply(int l, int r, F f) {
         assert(0 <= l && l <= r && r <= len());

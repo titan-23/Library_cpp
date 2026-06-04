@@ -187,7 +187,7 @@ public:
 public:
     MultisetSum() : root(nullptr) {}
     MultisetSum(T missing) : missing(missing), root(nullptr) {}
-    MultisetSum(vector<T> &a, T missing) : missing(missing) {
+    MultisetSum(const vector<T> &a, T missing) : missing(missing) {
         this->root = build(a);
     }
 

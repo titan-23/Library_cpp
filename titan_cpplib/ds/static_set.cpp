@@ -31,7 +31,7 @@ public:
      * @param a
      * @param missing 使用しない値
      */
-    StaticSet(vector<T> &a, T missing) : data(a), missing(missing) {
+    StaticSet(const vector<T> &a, T missing) : data(a), missing(missing) {
         sort(data.begin(), data.end());
         data.erase(unique(data.begin(), data.end()), data.end());
         n = (int)data.size();

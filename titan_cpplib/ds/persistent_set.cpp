@@ -215,7 +215,7 @@ class PersistentSet {
   public:
     PersistentSet() : root(nullptr) {}
 
-    PersistentSet(vector<T> &a) { _build(a); }
+    PersistentSet(const vector<T> &a) { _build(a); }
 
     PersistentSet<T> merge(PersistentSet<T> other) {
         NodePtr root = _merge_node(this->root, other.root);

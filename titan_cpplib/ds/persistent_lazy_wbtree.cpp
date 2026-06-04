@@ -301,7 +301,7 @@ private:
   public:
     PersistentLazyWBTree() : root(0) {}
 
-    PersistentLazyWBTree(vector<T> &a) { _build(a); }
+    PersistentLazyWBTree(const vector<T> &a) { _build(a); }
 
     PLTM merge(PLTM other) {
         SizeType root = _merge_node(this->root, other.root);

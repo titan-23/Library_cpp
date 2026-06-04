@@ -15,7 +15,7 @@ private:
 public:
     StaticMultiset() : missing(-1), n(0) {}
     StaticMultiset(T missing) : missing(missing), n(0) {}
-    StaticMultiset(vector<T> &a, T missing) : data(a), missing(missing) {
+    StaticMultiset(const vector<T> &a, T missing) : data(a), missing(missing) {
         sort(data.begin(), data.end());
         n = (int)data.size();
     }

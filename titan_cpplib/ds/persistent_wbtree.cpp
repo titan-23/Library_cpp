@@ -227,7 +227,7 @@ private:
   public:
     PersistentWBTree() : root(0) {}
 
-    PersistentWBTree(vector<T> &a) { _build(a); }
+    PersistentWBTree(const vector<T> &a) { _build(a); }
 
     PTM merge(PTM other) {
         SizeType root = _merge_node(this->root, other.root);
