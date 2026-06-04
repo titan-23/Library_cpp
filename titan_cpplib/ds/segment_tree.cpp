@@ -45,6 +45,7 @@ public:
     }
 
     T get(int const k) const {
+        assert(0 <= k && k < n);
         return data[k+_size];
     }
 
@@ -145,6 +146,8 @@ public:
         return os;
     }
 
+    // a[k] を v に遅延的に変更する
+    // 次に lazy_all_prod() を呼び出すまでは反映されない
     void lazy_set(int k, T v) {
         k += _size;
         data[k] = v;
