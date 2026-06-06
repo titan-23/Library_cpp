@@ -84,7 +84,7 @@ private:
     }
 
     //! 各要素が `[0, sigma)` の `DynamicWaveletTree` を作成する / `O(nlog(σ))`
-    DynamicWaveletTree(const T sigma, vector<T> &a)
+    DynamicWaveletTree(const T sigma, const vector<T> &a)
             : _sigma(sigma), _log(bit_length(sigma)), _size(a.size()) {
         _build(a);
     }
