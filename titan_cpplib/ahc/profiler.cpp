@@ -4,7 +4,15 @@
 using namespace std;
 
 namespace titan23 {
+
 class Profiler {
+public:
+    enum class SortBy {
+        Name,
+        TotalTime,
+        AvgTime
+    };
+
 private:
     titan23::Timer timer;
 
@@ -36,7 +44,27 @@ public:
         timer_stack.pop_back();
     }
 
-    void report() const {
+    void report(SortBy sort_by = SortBy::Name) const {
+        vector<pair<string, Record>> sorted_records(records.begin(), records.end());
+
+        sort(sorted_records.begin(), sorted_records.end(), [sort_by](const auto& a, const auto& b) {
+            if (sort_by == SortBy::TotalTime) {
+                if (a.second.total_time_ms != b.second.total_time_ms) {
+                    return a.second.total_time_ms > b.second.total_time_ms;
+                }
+                return a.first < b.first;
+            } else if (sort_by == SortBy::AvgTime) {
+                double avg_a = a.second.count > 0 ? a.second.total_time_ms / a.second.count : 0.0;
+                double avg_b = b.second.count > 0 ? b.second.total_time_ms / b.second.count : 0.0;
+                if (avg_a != avg_b) {
+                    return avg_a > avg_b;
+                }
+                return a.first < b.first;
+            } else {
+                return a.first < b.first;
+            }
+        });
+
         cerr << "---------------------------------------------------------\n";
         cerr << left << setw(25) << "Name"
                   << right << setw(10) << "Count"
@@ -44,7 +72,7 @@ public:
                   << setw(10) << "Avg(ms)\n";
         cerr << "---------------------------------------------------------\n";
 
-        for (const auto& [name, rec] : records) {
+        for (const auto& [name, rec] : sorted_records) {
             double avg = rec.count > 0 ? rec.total_time_ms / rec.count : 0.0;
             cerr << left << setw(25) << name
                       << right << setw(10) << rec.count
