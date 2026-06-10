@@ -8,8 +8,6 @@ using namespace std;
 namespace flying_squirrel {
 namespace beam_log {
 
-// プレフィックスは全行 [BS] に統一（太字・既定色、可視幅5桁で列が揃う）。
-// 重大度は本文の文字色で区別：INFO=既定 / OK=緑字 / WARN=黄字 / ERROR=赤字 / DEBUG=淡色。
 inline const string& tag_bs() {
     static const string s = PRINT_BOLD + string("[BS]") + PRINT_NONE + " ";
     return s;
@@ -22,7 +20,6 @@ inline const string& tag_debug() { return tag_bs(); }
 inline const string& tag_plain() { return tag_bs(); }
 inline const string& tag_turn()  { return tag_bs(); }
 
-// 本文を重大度色で包む。リセットを必ず付けるので後続行へ色が漏れない。
 inline string col_ok   (const string& m) { return PRINT_GREEN  + m + PRINT_NONE; }
 inline string col_warn (const string& m) { return PRINT_YELLOW + m + PRINT_NONE; }
 inline string col_error(const string& m) { return PRINT_RED    + m + PRINT_NONE; }
