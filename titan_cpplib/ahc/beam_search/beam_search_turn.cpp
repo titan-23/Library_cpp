@@ -6,6 +6,7 @@
 #include "titan_cpplib/ds/hash_dict.cpp"
 #include "titan_cpplib/ahc/beam_search/beam_param.cpp"
 #include "titan_cpplib/ahc/beam_search/beam_log.cpp"
+#include "titan_cpplib/ahc/profiler.cpp"
 using namespace std;
 
 namespace flying_squirrel {
@@ -40,12 +41,12 @@ private:
 
     struct BeamCandidate {
         ScoreType score;
-        HashType hash;
         int par; // 親 leaf の leaf_id
         ActionId aid;
         int target_turn;
-        BeamCandidate() : score(0), hash(0), par(0), aid(BAD_ID), target_turn(0) {}
-        BeamCandidate(int p, ScoreType s, HashType h, ActionId a, int target) : score(s), hash(h), par(p), aid(a), target_turn(target) {}
+        // hash は持たない (プール内の重複置き換えは Candidates::hashidx が担う)
+        BeamCandidate() : score(0), par(0), aid(BAD_ID), target_turn(0) {}
+        BeamCandidate(int p, ScoreType s, ActionId a, int target) : score(s), par(p), aid(a), target_turn(target) {}
     };
 
     vector<TreeNode> tree, nxt_tree;
@@ -83,6 +84,7 @@ private:
     //   step2: 旧 tree (= swap 後の nxt_tree) と new_candidates のうち
     //          タグが now_gen でない aid を解放する (解放時にタグも更新して二重解放を防ぐ)
     void mark_and_sweep() {
+        PROF_START("mark_and_sweep");
         ++now_gen;
         for (const auto& nd : tree) {
             alive_gen[nd.aid] = now_gen;
@@ -99,6 +101,7 @@ private:
                 alive_gen[nc.aid] = now_gen;
             }
         }
+        PROF_STOP();
     }
 
     struct HistoryNode {
@@ -119,6 +122,7 @@ private:
     vector<HistoryNode> history;
     int node_id_counter;
     int max_turn_global;
+    BeamParam* param_ptr; // search() 中は常に同一の param (init_bs で設定)
     vector<uint8_t> is_survived_node;  // aid 添字の生存フラグ (arena_put_reserve で action_pool と同時に伸ばす)
     vector<int> aid_to_node_id;  // record_history=true のときだけ使う aid → node_id (history JSON 用)
 
@@ -171,6 +175,7 @@ private:
         bool is_built = false;
 
         void set(int k, T v) {
+            PROF_START("cands_set");
             k += s;
             seg[k] = v;
             while (k > 1) {
@@ -179,17 +184,21 @@ private:
                 if (nv == seg[k]) break;
                 seg[k] = nv;
             }
+            PROF_STOP();
         }
 
         // entry 個の next_beam[] から segtree を O(W) で一括構築する
-        // seg の残り ([entry+s, 2s)) は reset で {-INF, -1} になっている
         void build_segtree() {
+            PROF_START("cands_build_segtree");
             for (int i = 0; i < entry; ++i) {
                 seg[i + s] = {next_beam[i].score, i};
             }
+            // パディング葉 [entry+s, 2s) はここで埋める (reset では seg に触らない)
+            fill(seg.begin() + (s + entry), seg.begin() + 2*s, make_pair(-INF, -1));
             for (int k = s - 1; k > 0; --k) {
                 seg[k] = seg[k<<1].first > seg[k<<1|1].first ? seg[k<<1] : seg[k<<1|1];
             }
+            PROF_STOP();
         }
 
     public:
@@ -206,28 +215,34 @@ private:
         // aid は呼び出し側が arena_put_reserve で取って渡す (棄却時は arena_release)
         // is_survived は採用した aid に 1、追い出した aid に 0 をセットする
         int push(ScoreType score, HashType hash, int par, ActionId aid, vector<uint8_t>& is_survived, int target_turn) {
+            PROF_START("cands_push");
             // segtree 構築済みなら worst 以上のスコアを早期に棄却できる
-            if (is_built && score >= seg[1].first) return -1;
+            if (is_built && score >= seg[1].first) {
+                PROF_STOP();
+                return -1;
+            }
             auto pos = hash_to_idx.get_pos(hash);
             int idx = hash_to_idx.inner_get(pos, -1);
             if (idx != -1) {
                 // 既に同じ hash がある場合、score が改善するときだけ置き換える
                 if (score < next_beam[idx].score) {
                     is_survived[next_beam[idx].aid] = 0;
-                    next_beam[idx] = {par, score, hash, aid, target_turn};
+                    next_beam[idx] = {par, score, aid, target_turn};
                     is_survived[aid] = 1;
                     if (is_built) {
                         set(idx, {score, idx});
                     }
+                    PROF_STOP();
                     return idx;
                 }
+                PROF_STOP();
                 return -1;
             }
             if (entry < beam_width) {
                 // entry < beam_width の間は segtree を更新せず、末尾に追加するだけ
                 int slot = entry;
                 hash_to_idx.inner_set(pos, hash, slot);
-                next_beam[slot] = {par, score, hash, aid, target_turn};
+                next_beam[slot] = {par, score, aid, target_turn};
                 is_survived[aid] = 1;
                 hashidx[slot] = hash;
                 entry++;
@@ -235,21 +250,24 @@ private:
                     build_segtree();
                     is_built = true;
                 }
+                PROF_STOP();
                 return slot;
             }
             // entry == beam_width なので worst と置き換える
             auto [_, i] = seg[1];
             is_survived[next_beam[i].aid] = 0;
-            next_beam[i] = {par, score, hash, aid, target_turn};
+            next_beam[i] = {par, score, aid, target_turn};
             is_survived[aid] = 1;
             hash_to_idx.set(hashidx[i], -1);
             hash_to_idx.inner_set(pos, hash, i);
             hashidx[i] = hash;
             set(i, {score, i});
+            PROF_STOP();
             return i;
         }
 
         void reset(int w) {
+            PROF_START("cands_reset");
             beam_width = w;
             while (s < w) {
                 s <<= 1;
@@ -257,19 +275,23 @@ private:
             if (seg.size() < 2*s) {
                 seg.resize(2*s);
             }
-            fill(seg.begin(), seg.begin()+(2*s), make_pair(-INF, -1));
+            // seg の初期化は build_segtree で行うので、ここでは触らない
             if (hashidx.size() < w) {
                 hashidx.resize(w);
                 next_beam.resize(w);
             }
-            // pool 内の dedup はここで毎回 clear する
+            // pool 内の dedup はここで毎回リセットする
             // 全ターンを通した dedup は BeamSearchWithTree::seen_hash が担う
-            hash_to_idx.clear();
-            if (hash_to_idx.inner_len() == 1) {
-                hash_to_idx = titan23::HashDict<int>(beam_width*8);
+            // 容量が足りないと初回使用時に rebuild (全再ハッシュ) を繰り返すので、
+            // その場合は clear せずに確保し直す
+            if (hash_to_idx.inner_len() < beam_width * 8) {
+                hash_to_idx = titan23::HashDict<int>(beam_width * 8);
+            } else {
+                hash_to_idx.clear();
             }
             entry = 0;
             is_built = false;
+            PROF_STOP();
         }
     };
 
@@ -299,7 +321,8 @@ private:
 
     // is_adjusting のときは残時間と 1 世代の所要時間の実測から
     // BeamParam::recommend_width で見積もる
-    int compute_req_w(BeamParam& param) {
+    int compute_req_w() {
+        BeamParam& param = *param_ptr;
         if (!param.is_adjusting) return param.beam_width;
         if (param.meta_sample_count < param.calibration_meta_count || !param.cost_model_ready()) {
             return param.beam_width;
@@ -325,7 +348,7 @@ private:
     }
 
     // target_turn の pool を返す (未確保なら遅延確保する)
-    Candidates& get_cands(BeamParam& param, int target_turn) {
+    Candidates& get_cands(int target_turn) {
         int idx = turn_to_pool_idx[target_turn];
         if (idx == -1) {
             if (!free_pool_indices.empty()) {
@@ -336,14 +359,13 @@ private:
                 cands_pool.emplace_back();
             }
             turn_to_pool_idx[target_turn] = idx;
-            cands_pool[idx].reset(compute_req_w(param));
+            cands_pool[idx].reset(compute_req_w());
             thresholds[target_turn] = INF;
         }
         return cands_pool[idx];
     }
 
     vector<BeamCandidate> new_candidates;
-    vector<Action> actions;
 
     // 候補 1 件を処理する
     //   - state.try_op で (score, hash, finished) を計算
@@ -354,22 +376,31 @@ private:
     // (関数境界越しだと try_op が inline されず数 % 遅くなる)
     // parent_leaf: 親 leaf の leaf_id (turn==0 では 0)
     // parent_aid : 親 leaf の aid (turn==0 では BAD_ID)
-    [[gnu::always_inline]] inline void process_candidate(BeamParam& param, State& state, Action& action, int parent_leaf, ActionId parent_aid) {
+    [[gnu::always_inline]] inline void process_candidate(State& state, Action& action, int parent_leaf, ActionId parent_aid) {
+        // 注意: action.target_turn は try_op が設定してよい契約なので、
+        // try_op の前に読んではいけない (emit 時点では未初期化の場合がある)
+        PROF_START("try_op");
         auto [score, hash, finished] = state.try_op(action, thresholds);
+        PROF_STOP();
         if (score >= INF) return;
-        int target_turn = action.target_turn;
+        const int target_turn = action.target_turn;
         if (target_turn > max_turn_global) return;
 
         pair<int, bool> seen_pos;
         if (use_global_seen) {
+            PROF_START("seen_probe");
             seen_pos = seen_hash.get_pos(hash);
             if (seen_pos.second) {
                 auto sv = seen_hash.inner_get(seen_pos);
                 ScoreType seen_s0 = sv.first;
                 int seen_t0 = sv.second;
                 bool pass = (target_turn < seen_t0) || (target_turn == seen_t0 && score < seen_s0);
-                if (!pass) return;
+                if (!pass) {
+                    PROF_STOP();
+                    return;
+                }
             }
+            PROF_STOP();
         }
 
         int status = 0;
@@ -384,14 +415,18 @@ private:
             if constexpr (record_history) node_id = node_id_counter++;
         } else {
             ActionId aid = arena_put_reserve();
-            Candidates& cands = get_cands(param, target_turn);
+            Candidates& cands = get_cands(target_turn);
             int slot = cands.push(score, hash, parent_leaf, aid, is_survived_node, target_turn);
             if (slot >= 0) {
+                PROF_START("arena_fill");
                 arena_put_fill(aid, action);
+                PROF_STOP();
                 thresholds[target_turn] = cands.threshold();
-                new_candidates.push_back({parent_leaf, score, hash, aid, target_turn});
+                new_candidates.push_back({parent_leaf, score, aid, target_turn});
                 if (use_global_seen) {
+                    PROF_START("seen_set");
                     seen_hash.inner_set(seen_pos, hash, {score, target_turn});
+                    PROF_STOP();
                 }
                 if constexpr (record_history) {
                     if (aid >= aid_to_node_id.size()) aid_to_node_id.resize(aid + 1, -1);
@@ -416,16 +451,15 @@ private:
     // emit(action) で候補を登録し、emit.threshold(target_turn) で枝刈り閾値を取得する
     struct Emitter {
         BeamSearchWithTree& bs;
-        BeamParam& param;
         State& st;
         int parent_leaf;
         ActionId parent_aid;
 
         inline ScoreType threshold(int target_turn) const { return bs.thresholds[target_turn]; }
-        inline void operator()(Action& a) { bs.process_candidate(param, st, a, parent_leaf, parent_aid); }
+        inline void operator()(Action& a) { bs.process_candidate(st, a, parent_leaf, parent_aid); }
     };
 
-    void get_next_beam(State& state, BeamParam& param, const int turn) {
+    void get_next_beam(State& state, const int turn) {
         new_candidates.clear();
         expanded_leaf_count = 0;
 
@@ -433,16 +467,10 @@ private:
             // 初期状態を 1 つの leaf として展開する (parent_leaf=0, parent_aid=BAD_ID)
             expanded_leaf_count = 1;
             const Action& last_action = (result.empty() ? DUMMY_ACTION : result.back());
-            if constexpr (requires(Emitter& e) { state.get_actions(last_action, e); }) {
-                Emitter emit{*this, param, state, 0, BAD_ID};
-                state.get_actions(last_action, emit);
-            } else {
-                actions.clear();
-                state.get_actions(actions, last_action, thresholds);
-                for (Action &action : actions) {
-                    process_candidate(param, state, action, 0, BAD_ID);
-                }
-            }
+            Emitter emit{*this, state, 0, BAD_ID};
+            PROF_START("get_actions");
+            state.get_actions(last_action, emit);
+            PROF_STOP();
             return;
         }
 
@@ -454,25 +482,22 @@ private:
             if (dir_or_leaf_id >= 0) {
                 if (node.target_turn == turn) {
                     ++expanded_leaf_count;
+                    PROF_START("expand_leaf");
                     // ループ内の arena_put_reserve が action_pool を reallocate しうるので、
                     // 参照では保持できず、ローカルに copy する
+                    PROF_START("leaf_action_copy");
                     Action action = act(node.aid);
+                    PROF_STOP();
                     state.apply_op(action);
-                    ActionId parent_aid = node.aid;
 
-                    if constexpr (requires(Emitter& e) { state.get_actions(action, e); }) {
-                        Emitter emit{*this, param, state, leaf_id, parent_aid};
-                        state.get_actions(action, emit);
-                    } else {
-                        actions.clear();
-                        state.get_actions(actions, action, thresholds);
-                        for (Action &child_action : actions) {
-                            process_candidate(param, state, child_action, leaf_id, parent_aid);
-                        }
-                    }
+                    Emitter emit{*this, state, leaf_id, node.aid};
+                    PROF_START("get_actions");
+                    state.get_actions(action, emit);
+                    PROF_STOP();
                     node.dir_or_leaf_id = leaf_id;
                     ++leaf_id;
                     state.rollback(action);
+                    PROF_STOP();
                 } else {
                     node.dir_or_leaf_id = leaf_id;
                     ++leaf_id;
@@ -484,50 +509,37 @@ private:
                     i = node.subtree_end;
                     continue;
                 }
+                PROF_START("walk_apply");
                 state.apply_op(act(node.aid));
+                PROF_STOP();
                 ++i;
             } else {
+                PROF_START("walk_rollback");
                 state.rollback(act(node.aid));
+                PROF_STOP();
                 ++i;
             }
         }
     }
 
-    // tree の root レベルを走査して leaf の target_turn の最小値を求める
-    // 部分木は PRE_ORDER の subtree_end で skip するので root レベルのノード数に比例
-    void update_min_target_in_tree() {
-        int min_t = INT_MAX;
-        const int n = tree.size();
-        int k = 0;
-        while (k < n) {
-            const TreeNode& nd = tree[k];
-            int d = nd.dir_or_leaf_id;
-            if (d >= 0) {
-                if (nd.target_turn < min_t) min_t = nd.target_turn;
-                ++k;
-            } else if (d == PRE_ORDER) {
-                if (nd.target_turn < min_t) min_t = nd.target_turn;
-                k = nd.subtree_end;
-            } else {
-                ++k;
-            }
-        }
-        min_target_in_tree = (min_t == INT_MAX) ? max_turn_global : min_t;
-    }
-
-    void update_tree(State& state, BeamParam& param, const int turn) {
+    void update_tree(State& state, const int turn) {
+        BeamParam& param = *param_ptr;
         // 世代開始時の min target_turn (終了時との差を 1 世代の進行量として記録する)
         const int prev_min_target = min_target_in_tree;
+        // tree 内 leaf の target_turn の最小値
+        // root レベル (pre_stack が空のとき) に emit したノードからループ中に求める
+        int root_min = INT_MAX;
         nxt_tree.clear();
         if (turn == 0) {
             for (int i = 0; i < new_candidates.size(); ++i) {
-                const auto &[score, hash, par, aid, t_turn] = new_candidates[i];
+                const auto &[score, par, aid, t_turn] = new_candidates[i];
                 if (is_survived_node[aid]) {
                     nxt_tree.emplace_back(0, aid, t_turn);
+                    if (t_turn < root_min) root_min = t_turn;
                 }
             }
             swap(tree, nxt_tree);
-            update_min_target_in_tree();
+            min_target_in_tree = (root_min == INT_MAX) ? max_turn_global : root_min;
             mark_and_sweep();
             int delta = min_target_in_tree - prev_min_target;
             if (delta > 0) param.note_target_step(delta);
@@ -587,6 +599,7 @@ private:
                         nxt_tree.emplace_back(POST_ORDER, src.aid, 0);
                         nxt_tree[pre_idx].target_turn = subtree_min;
                         nxt_tree[pre_idx].subtree_end = nxt_tree.size();
+                        if (pre_stack.empty() && subtree_min < root_min) root_min = subtree_min;
                     } else {
                         nxt_tree.pop_back();
                     }
@@ -602,6 +615,7 @@ private:
                 } else {
                     if (is_survived_node[src.aid]) {
                         nxt_tree.emplace_back(dir_or_leaf_id, src.aid, src.target_turn);
+                        if (pre_stack.empty() && src.target_turn < root_min) root_min = src.target_turn;
                     } else {
                         // ビームから追い出された leaf は捨て、親の subtree_min に寄与していたときだけ再計算フラグを立てる
                         if (!pre_stack.empty()) {
@@ -665,12 +679,16 @@ private:
                             }
                         }
                     }
+                    // root レベルの部分木なら、確定した subtree_min を root_min に反映する
+                    if (pre_stack.empty() && nxt_tree[pre_idx].target_turn < root_min) {
+                        root_min = nxt_tree[pre_idx].target_turn;
+                    }
                 }
             }
         }
 
         swap(tree, nxt_tree);
-        update_min_target_in_tree();
+        min_target_in_tree = (root_min == INT_MAX) ? max_turn_global : root_min;
         mark_and_sweep();
         int delta = min_target_in_tree - prev_min_target;
         if (delta > 0) param.note_target_step(delta);
@@ -690,7 +708,7 @@ private:
                 if (turn_to_pool_idx[t] == -1) continue;
                 Candidates& cands = cands_pool[turn_to_pool_idx[t]];
                 for (int i = 0; i < cands.size(); ++i) {
-                    const auto &[score, hash, par, aid, t_turn] = cands.next_beam[i];
+                    const auto &[score, par, aid, t_turn] = cands.next_beam[i];
                     if (is_survived_node[aid]) {
                         if (target_aid == BAD_ID || score < best_score) {
                             best_score = score;
@@ -731,6 +749,7 @@ private:
     }
 
     void init_bs(BeamParam &param) {
+        param_ptr = &param;
         beam_timer.reset();
         node_id_counter = 0;
         history.clear();
@@ -775,7 +794,9 @@ private:
             if (cap <= 0) {
                 cap = max(1 << 14, param.beam_width * max(1, max_turn_global) * 2);
             }
+            PROF_START("init_seen_hash");
             seen_hash = titan23::HashDict<pair<ScoreType, int>>(cap);
+            PROF_STOP();
         }
     }
 
@@ -791,16 +812,31 @@ public:
 
         int turns_done = 0;
         for (int turn = 0; turn < param.max_turn; ++turn) {
+            // この turn に展開する葉が無ければ、木も pool も何も変化しないので
+            // walk / update_tree / mark_and_sweep を丸ごとスキップする
+            // (このとき pool[turn] は必ず空: pool が非空なら対応する葉が tree にある)
+            if (turn != 0 && min_target_in_tree > turn) {
+                if (turn_to_pool_idx[turn] != -1) {
+                    free_pool_indices.push_back(turn_to_pool_idx[turn]);
+                    turn_to_pool_idx[turn] = -1;
+                    thresholds[turn] = INF;
+                }
+                turns_done = turn + 1;
+                continue;
+            }
+
             double now_time = beam_timer.elapsed();
 
-            get_next_beam(state, param, turn);
+            get_next_beam(state, turn);
             // dt_expand: get_next_beam の所要時間 (W に比例する成分)
             // verbose / record_history のオーバーヘッドを含めないようここで時刻を取る
             double dt_expand_ms = beam_timer.elapsed() - now_time;
 
             if (found_finished) {
                 turns_done = turn + 1;
+                PROF_START("get_result");
                 get_result();
+                PROF_STOP();
                 if constexpr (record_history) dump_history_json(history_file);
                 if (verbose) {
                     beam_log::on_solution_found(cerr, turns_done, best_finished_score);
@@ -824,9 +860,7 @@ public:
                     }
                     if (has_best) break;
                 }
-                beam_log::turn_line(cerr, turn + 1, param.max_turn, now_time,
-                                    w, tree.size(), new_candidates.size(),
-                                    -1, best_for_log);
+                beam_log::turn_line(cerr, turn + 1, param.max_turn, now_time, w, tree.size(), new_candidates.size(), -1, best_for_log);
                 if (!has_best) {
                     beam_log::turn_line_extra(cerr, "(no candidates at this turn yet)");
                 }
@@ -851,14 +885,18 @@ public:
             // dt_update: sort + update_tree の所要時間 (tree サイズに比例する成分)
             // verbose / record_history のオーバーヘッドを除くためここから時刻を取り直す
             double t_update_start = beam_timer.elapsed();
+            PROF_START("sort_candidates");
             if (turn != 0) {
                 // update_tree が leaf_id 順に消費するので par を第一キーにする
                 sort(new_candidates.begin(), new_candidates.end(), [] (const auto& a, const auto& b) { if (a.par != b.par) return a.par < b.par; return a.score < b.score; });
             } else {
                 sort(new_candidates.begin(), new_candidates.end(), [] (const auto& a, const auto& b) { return a.score < b.score; });
             }
+            PROF_STOP();
             int prev_min_target = min_target_in_tree;
-            update_tree(state, param, turn);
+            PROF_START("update_tree");
+            update_tree(state, turn);
+            PROF_STOP();
             int delta_target = min_target_in_tree - prev_min_target;
             if (delta_target < 0) delta_target = 0;
             double dt_update_ms = beam_timer.elapsed() - t_update_start;
@@ -874,7 +912,9 @@ public:
             turns_done = turn + 1;
         }
 
+        PROF_START("get_result");
         get_result();
+        PROF_STOP();
         if constexpr (record_history) dump_history_json(history_file);
         if (verbose) {
             beam_log::on_max_turn(cerr);
