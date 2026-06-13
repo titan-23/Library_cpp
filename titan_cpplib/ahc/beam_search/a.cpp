@@ -293,11 +293,11 @@ public:
         hash = action.pre_hash;
     }
 
-    //! 新方式: get_actions / try_op 一体化 sink。
-    //! 生成した action を emit に渡すと try_op + 判定 + push まで行う。中間 vector を作らない。
-    //! emit.threshold() でライブ worst を取得でき早期枝刈りに使えるが、ここでは try_op 側に任せる。
-    template<class Emit>
-    void get_actions(const int turn, const Action &last_action, Emit &&emit) const {
+    //! 新方式: enumerate_actions / try_op 一体化 sink。
+    //! 生成した action を submit に渡すと try_op + 判定 + push まで行う。中間 vector を作らない。
+    //! submit.threshold() でライブ worst を取得でき早期枝刈りに使えるが、ここでは try_op 側に任せる。
+    template<class Submit>
+    void enumerate_actions(const int turn, const Action &last_action, Submit &&submit) const {
         // composed last_action の場合、最後に踏んだ primitive 方向は chain.back().d
         char last_d = last_action.chain.empty() ? last_action.d : last_action.chain.back().d;
         auto rev = [&] () -> char {
@@ -319,14 +319,14 @@ public:
             if (c == 'L') --nx;
             if (0 <= ny && ny < N && 0 <= nx && nx < N) {
                 a.d = c;
-                emit(a);
+                submit(a);
             }
         }
     }
 
 #if 0
     //! 旧方式: 遷移可能な Action の vector を actions に入れる
-    void get_actions(vector<Action> &actions, const int turn, const Action &last_action, const ScoreType threshold) const {
+    void enumerate_actions(vector<Action> &actions, const int turn, const Action &last_action, const ScoreType threshold) const {
         auto rev = [&] () -> char {
             if (turn == 0) return 'Z';
             if (last_action.d == 'U') return 'D';

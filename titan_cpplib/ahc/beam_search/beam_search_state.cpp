@@ -85,9 +85,9 @@ public:
     }
 
     // TODO
-    // 現状態から遷移可能な Action を生成し、emit に渡す
-    template<class Emit>
-    void get_actions(const int turn, const Action &last_action, Emit &&emit) const {
+    // 現状態から遷移可能な Action を生成し、submit に渡す
+    template<class Submit>
+    void enumerate_actions(const int turn, const Action &last_action, Submit &&submit) const {
     }
 
     // TODO

@@ -28,7 +28,8 @@ private:
     Action best_finished_action;
 
     struct TreeNode {
-        // leaf: 0 以上 (世代ごとに振り直す leaf_id) / PRE_ORDER / POST_ORDER
+        // leaf: 0 以上 (値は使わず種別判定のみ) / PRE_ORDER / POST_ORDER
+        // 親子対応は「展開葉の通し番号」を get_next_beam / update_tree の両側で数えて取る
         int dir_or_leaf_id;
         // PRE_ORDER 専用: 対応する POST_ORDER の次の index (部分木の skip 用)
         int subtree_end;
@@ -41,7 +42,7 @@ private:
 
     struct BeamCandidate {
         ScoreType score;
-        int par; // 親 leaf の leaf_id
+        int par; // 親 leaf の展開順 (この世代で何番目に展開した葉か)
         ActionId aid;
         int target_turn;
         // hash は持たない (プール内の重複置き換えは Candidates::hashidx が担う)
@@ -51,11 +52,9 @@ private:
 
     vector<TreeNode> tree, nxt_tree;
 
-    // ---- Action pool --------------------------------------------------------
+    // Action pool: aid の解放は update_tree 内の「死ぬ場所」でインラインに行う (各箇所のコメント参照)
     vector<Action> action_pool;
     vector<int> free_slots;     // 解放済み slot の LIFO
-    vector<uint32_t> alive_gen; // mark_and_sweep 用の slot ごとの世代タグ
-    uint32_t now_gen;           // 現在の世代番号
 
     Action& act(ActionId id) {
         return action_pool[id];
@@ -68,7 +67,6 @@ private:
         } else {
             slot = action_pool.size();
             action_pool.emplace_back();
-            alive_gen.push_back(0);
             is_survived_node.push_back(0);
         }
         return slot;
@@ -78,30 +76,6 @@ private:
     }
     void arena_release(ActionId slot) {
         free_slots.push_back(slot);
-    }
-    // tree に残らなかった aid を free_slots に戻す (update_tree の swap 後に呼ぶ)
-    //   step1: 新 tree (= 現 tree) の aid のタグを now_gen にする
-    //   step2: 旧 tree (= swap 後の nxt_tree) と new_candidates のうち
-    //          タグが now_gen でない aid を解放する (解放時にタグも更新して二重解放を防ぐ)
-    void mark_and_sweep() {
-        PROF_START("mark_and_sweep");
-        ++now_gen;
-        for (const auto& nd : tree) {
-            alive_gen[nd.aid] = now_gen;
-        }
-        for (const auto& nd : nxt_tree) {
-            if (alive_gen[nd.aid] != now_gen) {
-                free_slots.push_back(nd.aid);
-                alive_gen[nd.aid] = now_gen;
-            }
-        }
-        for (const auto& nc : new_candidates) {
-            if (alive_gen[nc.aid] != now_gen) {
-                free_slots.push_back(nc.aid);
-                alive_gen[nc.aid] = now_gen;
-            }
-        }
-        PROF_STOP();
     }
 
     struct HistoryNode {
@@ -165,7 +139,8 @@ private:
     private:
         using T = pair<ScoreType, int>;
         vector<HashType> hashidx; // slot → hash の逆引き
-        titan23::HashDict<int> hash_to_idx;
+        // key は Zobrist hash (一様) なので内部撹拌を省略する
+        titan23::HashDict<int, false> hash_to_idx;
         int beam_width, entry;
         int s = 1;
         vector<T> seg;
@@ -193,7 +168,6 @@ private:
             for (int i = 0; i < entry; ++i) {
                 seg[i + s] = {next_beam[i].score, i};
             }
-            // パディング葉 [entry+s, 2s) はここで埋める (reset では seg に触らない)
             fill(seg.begin() + (s + entry), seg.begin() + 2*s, make_pair(-INF, -1));
             for (int k = s - 1; k > 0; --k) {
                 seg[k] = seg[k<<1].first > seg[k<<1|1].first ? seg[k<<1] : seg[k<<1|1];
@@ -216,7 +190,6 @@ private:
         // is_survived は採用した aid に 1、追い出した aid に 0 をセットする
         int push(ScoreType score, HashType hash, int par, ActionId aid, vector<uint8_t>& is_survived, int target_turn) {
             PROF_START("cands_push");
-            // segtree 構築済みなら worst 以上のスコアを早期に棄却できる
             if (is_built && score >= seg[1].first) {
                 PROF_STOP();
                 return -1;
@@ -275,17 +248,12 @@ private:
             if (seg.size() < 2*s) {
                 seg.resize(2*s);
             }
-            // seg の初期化は build_segtree で行うので、ここでは触らない
             if (hashidx.size() < w) {
                 hashidx.resize(w);
                 next_beam.resize(w);
             }
-            // pool 内の dedup はここで毎回リセットする
-            // 全ターンを通した dedup は BeamSearchWithTree::seen_hash が担う
-            // 容量が足りないと初回使用時に rebuild (全再ハッシュ) を繰り返すので、
-            // その場合は clear せずに確保し直す
             if (hash_to_idx.inner_len() < beam_width * 8) {
-                hash_to_idx = titan23::HashDict<int>(beam_width * 8);
+                hash_to_idx = titan23::HashDict<int, false>(beam_width * 8);
             } else {
                 hash_to_idx.clear();
             }
@@ -309,7 +277,7 @@ private:
     // - 既登録 (s0, t0) で t==t0 かつ score < s0 → 通す (同じ最小 t で score 改善)
     // - その他                            → 捨てる
     // 既に大きい target_turn の pool に入っている同 hash の entry はそのまま残す
-    titan23::HashDict<pair<ScoreType, int>> seen_hash;
+    titan23::HashDict<pair<ScoreType, int>, false> seen_hash; // key は Zobrist hash なので撹拌省略
     bool use_global_seen;
 
     // tree 内 leaf の target_turn の最小値
@@ -367,25 +335,18 @@ private:
 
     vector<BeamCandidate> new_candidates;
 
-    // 候補 1 件を処理する
-    //   - state.try_op で (score, hash, finished) を計算
-    //   - score >= INF / target_turn 超過 / seen_hash 重複は捨てる
-    //   - finished なら best_finished を更新
-    //   - 通常候補は target_turn の pool へ push し、採否で fill / release
-    // always_inline は user の try_op をインライン化させるため
-    // (関数境界越しだと try_op が inline されず数 % 遅くなる)
-    // parent_leaf: 親 leaf の leaf_id (turn==0 では 0)
-    // parent_aid : 親 leaf の aid (turn==0 では BAD_ID)
+    // 候補 1 件を処理する: try_op で評価し、枝刈り・dedup を経て target_turn の pool へ push する
+    //   (finished は best_finished を更新するだけで pool には入れない)
+    // always_inline は user の try_op をインライン化させるため (関数境界越しだと数 % 遅くなる)
+    // parent_leaf: 親 leaf の展開順 (turn==0 では 0) / parent_aid: 親 leaf の aid (turn==0 では BAD_ID)
     [[gnu::always_inline]] inline void process_candidate(State& state, Action& action, int parent_leaf, ActionId parent_aid) {
-        // 注意: action.target_turn は try_op が設定してよい契約なので、
-        // try_op の前に読んではいけない (emit 時点では未初期化の場合がある)
         PROF_START("try_op");
         auto [score, hash, finished] = state.try_op(action, thresholds);
         PROF_STOP();
         if (score >= INF) return;
         const int target_turn = action.target_turn;
         if (target_turn > max_turn_global) return;
-
+        if (!finished && score >= thresholds[target_turn]) return;
         pair<int, bool> seen_pos;
         if (use_global_seen) {
             PROF_START("seen_probe");
@@ -440,16 +401,14 @@ private:
             }
         }
         if constexpr (record_history) {
-            int parent_node_id = (parent_aid == BAD_ID || parent_aid >= aid_to_node_id.size())
-                                 ? -1 : aid_to_node_id[parent_aid];
-            history.push_back({node_id, parent_node_id, target_turn, score, hash,
-                               action.to_string(), state.get_state_info(), status});
+            int parent_node_id = (parent_aid == BAD_ID || parent_aid >= aid_to_node_id.size()) ? -1 : aid_to_node_id[parent_aid];
+            history.push_back({node_id, parent_node_id, target_turn, score, hash, action.to_string(), state.get_state_info(), status});
         }
     }
 
-    // get_actions に渡す emit オブジェクト
-    // emit(action) で候補を登録し、emit.threshold(target_turn) で枝刈り閾値を取得する
-    struct Emitter {
+    // enumerate_actions に渡す submit オブジェクト
+    // submit(action) で候補を登録し、submit.threshold(target_turn) で枝刈り閾値を取得する
+    struct Submitter {
         BeamSearchWithTree& bs;
         State& st;
         int parent_leaf;
@@ -464,47 +423,37 @@ private:
         expanded_leaf_count = 0;
 
         if (turn == 0) {
-            // 初期状態を 1 つの leaf として展開する (parent_leaf=0, parent_aid=BAD_ID)
             expanded_leaf_count = 1;
             const Action& last_action = (result.empty() ? DUMMY_ACTION : result.back());
-            Emitter emit{*this, state, 0, BAD_ID};
-            PROF_START("get_actions");
-            state.get_actions(last_action, emit);
+            Submitter submit{*this, state, 0, BAD_ID};
+            PROF_START("enumerate_actions");
+            state.enumerate_actions(last_action, submit);
             PROF_STOP();
             return;
         }
 
-        int leaf_id = 0;
         const int tree_size = tree.size();
         for (int i = 0; i < tree_size; ) {
             TreeNode& node = tree[i];
             const int dir_or_leaf_id = node.dir_or_leaf_id;
             if (dir_or_leaf_id >= 0) {
                 if (node.target_turn == turn) {
+                    const int par = expanded_leaf_count;
                     ++expanded_leaf_count;
                     PROF_START("expand_leaf");
-                    // ループ内の arena_put_reserve が action_pool を reallocate しうるので、
-                    // 参照では保持できず、ローカルに copy する
                     PROF_START("leaf_action_copy");
                     Action action = act(node.aid);
                     PROF_STOP();
                     state.apply_op(action);
-
-                    Emitter emit{*this, state, leaf_id, node.aid};
-                    PROF_START("get_actions");
-                    state.get_actions(action, emit);
+                    Submitter submit{*this, state, par, node.aid};
+                    PROF_START("enumerate_actions");
+                    state.enumerate_actions(action, submit);
                     PROF_STOP();
-                    node.dir_or_leaf_id = leaf_id;
-                    ++leaf_id;
                     state.rollback(action);
                     PROF_STOP();
-                } else {
-                    node.dir_or_leaf_id = leaf_id;
-                    ++leaf_id;
                 }
                 ++i;
             } else if (dir_or_leaf_id == PRE_ORDER) {
-                // この世代で展開する leaf が無い部分木は、apply せずに POST_ORDER の次へジャンプ
                 if (node.target_turn > turn) {
                     i = node.subtree_end;
                     continue;
@@ -524,10 +473,7 @@ private:
 
     void update_tree(State& state, const int turn) {
         BeamParam& param = *param_ptr;
-        // 世代開始時の min target_turn (終了時との差を 1 世代の進行量として記録する)
         const int prev_min_target = min_target_in_tree;
-        // tree 内 leaf の target_turn の最小値
-        // root レベル (pre_stack が空のとき) に emit したノードからループ中に求める
         int root_min = INT_MAX;
         nxt_tree.clear();
         if (turn == 0) {
@@ -536,24 +482,24 @@ private:
                 if (is_survived_node[aid]) {
                     nxt_tree.emplace_back(0, aid, t_turn);
                     if (t_turn < root_min) root_min = t_turn;
+                } else {
+                    arena_release(aid);
                 }
             }
             swap(tree, nxt_tree);
             min_target_in_tree = (root_min == INT_MAX) ? max_turn_global : root_min;
-            mark_and_sweep();
             int delta = min_target_in_tree - prev_min_target;
             if (delta > 0) param.note_target_step(delta);
             return;
         }
 
-        // root 直下が一本道の間、その action を result に確定して state に apply する
-        // (ここで apply した分は以後 rollback しない)
         int i = 0;
         while (i < tree.size()) {
             int dir_or_leaf_id = tree[i].dir_or_leaf_id;
             if (dir_or_leaf_id == PRE_ORDER && i + 1 < tree.size() && tree[i].aid == tree.back().aid) {
                 result.emplace_back(act(tree[i].aid));
                 state.apply_op(act(tree[i].aid));
+                arena_release(tree[i].aid);
                 tree.pop_back();
                 ++i;
             } else {
@@ -572,6 +518,7 @@ private:
         nxt_tree.reserve(tree.size() + new_candidates.size());
 
         int next_beam_idx = 0;
+        int expanded_ordinal = 0; // 展開葉の通し番号 (get_next_beam と同じ数え方)
         const int num_candidates = new_candidates.size();
         const int tree_size = tree.size();
         for (; i < tree_size; ++i) {
@@ -579,19 +526,23 @@ private:
             const int dir_or_leaf_id = src.dir_or_leaf_id;
             if (dir_or_leaf_id >= 0) {
                 if (src.target_turn == turn) {
-                    // 展開済み leaf: 先に PRE_ORDER を emit しておき、生存子を直接 emit する
+                    // 展開済み leaf: 先に PRE_ORDER を submit しておき、生存子を直接 submit する
                     // (生存子が 0 件なら取り消す)
+                    const int par = expanded_ordinal;
+                    ++expanded_ordinal;
                     int pre_idx = nxt_tree.size();
                     nxt_tree.emplace_back(PRE_ORDER, src.aid, INT_MAX);
                     int subtree_min = INT_MAX;
                     int emit_cnt = 0;
                     while (next_beam_idx < num_candidates
-                           && new_candidates[next_beam_idx].par == dir_or_leaf_id) {
+                           && new_candidates[next_beam_idx].par == par) {
                         const auto& nc = new_candidates[next_beam_idx];
                         if (is_survived_node[nc.aid]) {
-                            nxt_tree.emplace_back(dir_or_leaf_id, nc.aid, nc.target_turn);
+                            nxt_tree.emplace_back(0, nc.aid, nc.target_turn);
                             if (nc.target_turn < subtree_min) subtree_min = nc.target_turn;
                             ++emit_cnt;
+                        } else {
+                            arena_release(nc.aid); // 受理後にビームから追い出された候補
                         }
                         ++next_beam_idx;
                     }
@@ -602,6 +553,7 @@ private:
                         if (pre_stack.empty() && subtree_min < root_min) root_min = subtree_min;
                     } else {
                         nxt_tree.pop_back();
+                        arena_release(src.aid); // 展開したが生き残った子が 0 の葉
                     }
                     // 旧 leaf が親の subtree_min に寄与していた、
                     // または新 subtree_min が親の値を下回るときだけ親の再計算フラグを立てる
@@ -618,6 +570,7 @@ private:
                         if (pre_stack.empty() && src.target_turn < root_min) root_min = src.target_turn;
                     } else {
                         // ビームから追い出された leaf は捨て、親の subtree_min に寄与していたときだけ再計算フラグを立てる
+                        arena_release(src.aid);
                         if (!pre_stack.empty()) {
                             auto& top = pre_stack.back();
                             if (src.target_turn == nxt_tree[top.first].target_turn) {
@@ -635,7 +588,9 @@ private:
                 if (!nxt_tree.empty()
                     && nxt_tree.back().dir_or_leaf_id == PRE_ORDER
                     && nxt_tree.back().aid == src.aid) {
-                    // 空になった部分木: PRE_ORDER を取り消し、POST_ORDER も emit しない
+                    // 空になった部分木: PRE_ORDER を取り消し、POST_ORDER も submit しない
+                    // (PRE と POST は同じ aid なので、ここで 1 回だけ解放する)
+                    arena_release(src.aid);
                     int popped_min = nxt_tree.back().target_turn;
                     nxt_tree.pop_back();
                     pre_stack.pop_back();
@@ -689,7 +644,6 @@ private:
 
         swap(tree, nxt_tree);
         min_target_in_tree = (root_min == INT_MAX) ? max_turn_global : root_min;
-        mark_and_sweep();
         int delta = min_target_in_tree - prev_min_target;
         if (delta > 0) param.note_target_step(delta);
     }
@@ -766,8 +720,6 @@ private:
 
         action_pool.clear();
         free_slots.clear();
-        alive_gen.clear();
-        now_gen = 0;
         if constexpr (record_history) aid_to_node_id.clear();
 
         turn_to_pool_idx.assign(max_turn_global + 1, -1);
@@ -795,7 +747,7 @@ private:
                 cap = max(1 << 14, param.beam_width * max(1, max_turn_global) * 2);
             }
             PROF_START("init_seen_hash");
-            seen_hash = titan23::HashDict<pair<ScoreType, int>>(cap);
+            seen_hash = titan23::HashDict<pair<ScoreType, int>, false>(cap);
             PROF_STOP();
         }
     }
@@ -812,8 +764,7 @@ public:
 
         int turns_done = 0;
         for (int turn = 0; turn < param.max_turn; ++turn) {
-            // この turn に展開する葉が無ければ、木も pool も何も変化しないので
-            // walk / update_tree / mark_and_sweep を丸ごとスキップする
+            // この turn に展開する葉が無ければ木も pool も変化しないので walk / update_tree を丸ごとスキップする
             // (このとき pool[turn] は必ず空: pool が非空なら対応する葉が tree にある)
             if (turn != 0 && min_target_in_tree > turn) {
                 if (turn_to_pool_idx[turn] != -1) {
@@ -887,7 +838,7 @@ public:
             double t_update_start = beam_timer.elapsed();
             PROF_START("sort_candidates");
             if (turn != 0) {
-                // update_tree が leaf_id 順に消費するので par を第一キーにする
+                // update_tree が展開順 (par) に消費するので par を第一キーにする
                 sort(new_candidates.begin(), new_candidates.end(), [] (const auto& a, const auto& b) { if (a.par != b.par) return a.par < b.par; return a.score < b.score; });
             } else {
                 sort(new_candidates.begin(), new_candidates.end(), [] (const auto& a, const auto& b) { return a.score < b.score; });

@@ -9,7 +9,7 @@
 // #include "titan_cpplib/ahc/beam_search/beam_search_turn_old.cpp"
 using namespace std;
 
-//! 木上のビームサーチライブラリ
+// 木上のビームサーチライブラリ
 namespace beam_search {
 
 using ScoreType = long long;
@@ -52,10 +52,18 @@ public:
         this->turn = 0;
     }
 
+    // TODO
+    // 現状態から遷移可能な `Action` を 1 つずつ `submit(action)` に渡す。
+    // `submit.threshold(target_turn)` で現在の枝刈り閾値を取得できる
+    template<typename Submit>
+    void enumerate_actions(const Action &last_action, Submit &&submit) const {
+        // TODO: Action a = ...; submit(a); を必要なだけ繰り返す
+    }
+
     // TODO 現在の状態に `action` を適用したときのスコアとハッシュ値を返す
-    //! ロールバックに必要な情報はすべてactionにメモしておく
-    //! threshold以上であれば計算しなくてよい
-    //! INFを返すと無条件で採用しない
+    // ロールバックに必要な情報はすべてactionにメモしておく
+    // threshold以上であれば計算しなくてよい
+    // INFを返すと無条件で採用しない
     tuple<ScoreType, HashType, bool> try_op(Action &action, const vector<ScoreType> &thresholds) const {
         action.pre_score = score;
         action.pre_hash = hash;
@@ -73,7 +81,7 @@ public:
     }
 
     // TODO 現在の状態に `action` を適用する
-    //! `action` をする
+    // `action` をする
     void apply_op(const Action &action) {
         // TODO
         score = action.nxt_score;
@@ -82,17 +90,12 @@ public:
     }
 
     // TODO
-    //! `action` を戻す
+    // `action` を戻す
     void rollback(const Action &action) {
         // TODO
         score = action.pre_score;
         hash = action.pre_hash;
         turn = action.pre_turn;
-    }
-
-    // TODO
-    //! 現状態から遷移可能な `Action` の `vector` を `actions` に入れる
-    void get_actions(vector<Action> &actions, const Action &last_action, const vector<ScoreType> &thresholds) const {
     }
 
     // TODO

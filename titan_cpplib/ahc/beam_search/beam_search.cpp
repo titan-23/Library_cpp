@@ -112,9 +112,9 @@ private:
         for (int k = freed_to + 1; k <= upto; ++k) best_finished_path.push_back(act(trace[k]));
     }
 
-    // get_actions が action を生成し emit(a) を呼ぶと
+    // enumerate_actions が action を生成し submit(a) を呼ぶと
     // try_op + INF/finished 判定 + push + history を行う。
-    struct Emitter {
+    struct Submitter {
         BeamSearchWithTree &bs;
         State &st;
         int parent_leaf, parent_node_id, turn;
@@ -236,12 +236,12 @@ public:
         int w = param.get_beam_width(param.max_turn, 0, param.time_limit);
         candidates.reset(0, w, param.clear_hash_every_turn, param.hash_window_turns);
 
-        if constexpr (requires(Emitter &e) { state.get_actions(0, DAMMY_ACTION, e); }) {
-            Emitter emit{*this, state, 0, -1, 0};
-            state.get_actions(0, DAMMY_ACTION, emit);
+        if constexpr (requires(Submitter &e) { state.enumerate_actions(0, DAMMY_ACTION, e); }) {
+            Submitter submit{*this, state, 0, -1, 0};
+            state.enumerate_actions(0, DAMMY_ACTION, submit);
         } else {
             actions.clear();
-            state.get_actions(actions, 0, DAMMY_ACTION, candidates.threshold());
+            state.enumerate_actions(actions, 0, DAMMY_ACTION, candidates.threshold());
             explored_per_turn += (int)actions.size();
             for (Action &action : actions) {
                 auto [score, hash, finished] = state.try_op(action, candidates.threshold());
@@ -341,12 +341,12 @@ public:
                 }
 
                 int now_leaf_idx = next_leaf.size();
-                if constexpr (requires(Emitter &e) { state.get_actions(turn, DAMMY_ACTION, e); }) {
-                    Emitter emit{*this, state, now_leaf_idx, c.node_id, turn};
-                    state.get_actions(turn, act(c.action_id), emit);
+                if constexpr (requires(Submitter &e) { state.enumerate_actions(turn, DAMMY_ACTION, e); }) {
+                    Submitter submit{*this, state, now_leaf_idx, c.node_id, turn};
+                    state.enumerate_actions(turn, act(c.action_id), submit);
                 } else {
                     actions.clear();
-                    state.get_actions(actions, turn, act(c.action_id), candidates.threshold());
+                    state.enumerate_actions(actions, turn, act(c.action_id), candidates.threshold());
                     explored_per_turn += (int)actions.size();
                     for (Action &action : actions) {
                         auto [score, hash, finished] = state.try_op(action, candidates.threshold());

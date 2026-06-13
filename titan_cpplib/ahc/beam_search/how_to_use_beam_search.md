@@ -12,14 +12,14 @@ state->init()                                  // 初回1回だけ
 for each turn:
     for each node in beam tree (DFS順):
         PRE_ORDER  : apply_op(action)          // 子へ進む
-        LEAF       : get_actions(turn, last, emit)   // 合法手を生成し1手ごとに
-                     // emit(action) -> try_op + 判定 + 候補push を内部実行
+        LEAF       : enumerate_actions(turn, last, submit)   // 合法手を生成し1手ごとに
+                     // submit(action) -> try_op + 判定 + 候補push を内部実行
         POST_ORDER : rollback(action)          // 親へ戻る
 ```
 
 `apply_op` と `rollback` は完全に対称であること。同一の `action` に対して `apply_op → rollback` を呼ぶと状態が完全に元へ戻る必要がある。
 
-情報は `Action` を介して流れる。`get_actions` が手を生成して `emit(action)` を呼ぶと、ライブラリが `try_op` を呼ぶ。`try_op` は `State` を変更せずスコアとハッシュを計算して `action` に `pre_*` 等を書き込み、生き残った枝で `apply_op` がそれを参照して差分更新し、`rollback` が `pre_*` で差分を巻き戻す。`try_op` の `const` は `State` を変えない意味で、書き込み先は `action`。各関数の詳細は Section 2。
+情報は `Action` を介して流れる。`enumerate_actions` が手を生成して `submit(action)` を呼ぶと、ライブラリが `try_op` を呼ぶ。`try_op` は `State` を変更せずスコアとハッシュを計算して `action` に `pre_*` 等を書き込み、生き残った枝で `apply_op` がそれを参照して差分更新し、`rollback` が `pre_*` で差分を巻き戻す。`try_op` の `const` は `State` を変えない意味で、書き込み先は `action`。各関数の詳細は Section 2。
 
 前提
 
@@ -73,7 +73,7 @@ namespace beam_search {
         friend ostream& operator<<(ostream& os, const Action&){ return os; }
         string to_string() const { return ""; }
     };
-    class State { /* init/try_op/apply_op/rollback/get_actions(emit)/print/get_state_info */ };
+    class State { /* init/try_op/apply_op/rollback/enumerate_actions(submit)/print/get_state_info */ };
 
     vector<Action> search(flying_squirrel::BeamParam &param, const bool verbose=false, const string& history_file = "") {
         flying_squirrel::BeamSearchWithTree<ScoreType, HashType, Action, State, INF> bs;
@@ -130,11 +130,11 @@ Action 構造体のサイズ最小化
 - この場合その `Action` が `apply_op` されることはないので、ロールバック情報の書き込みも省く。
 - スコアを大きく変化させる要因から先に計算し、`threshold` 超えを早く検出する。
 
-`get_actions` 側でスコアまで計算する選択肢
-- `try_op` の差分計算が `get_actions` の合法手生成中に参照する情報をそのまま使えるなら、`get_actions` 内でスコアまで計算して `Action` に保存する方が速いことがある。`try_op` は保存値を返すだけになり、データ構造への二重アクセスを避けられる。
-- この場合でも `emit.threshold()` での枝刈りは emit 前に行う。
+`enumerate_actions` 側でスコアまで計算する選択肢
+- `try_op` の差分計算が `enumerate_actions` の合法手生成中に参照する情報をそのまま使えるなら、`enumerate_actions` 内でスコアまで計算して `Action` に保存する方が速いことがある。`try_op` は保存値を返すだけになり、データ構造への二重アクセスを避けられる。
+- この場合でも `submit.threshold()` での枝刈りは submit 前に行う。
 
-ホットパス `try_op` / `get_actions` でのコピー回避
+ホットパス `try_op` / `enumerate_actions` でのコピー回避
 - ビームサーチ中で最も多く呼ばれる箇所。
 - `State` メンバの一時コピーは禁止。`auto tmp_board = board;` のような盤面コピーが該当する。
 - スコア・ハッシュの計算はスカラーのローカル変数だけで完結させる。
@@ -149,8 +149,8 @@ Zobrist Hash の設計
 状態の差分更新
 - `State` 内の盤面配列などのディープコピーは禁止。変更箇所のみ計算・更新する。
 
-`get_actions` での枝刈り
-- 悪化手・逆操作を emit しない。良さそうな手を先に emit して `emit.threshold()` を早く下げる。詳細は Section 2 の `get_actions`。
+`enumerate_actions` での枝刈り
+- 悪化手・逆操作を submit しない。良さそうな手を先に submit して `submit.threshold()` を早く下げる。詳細は Section 2 の `enumerate_actions`。
 
 ---
 
@@ -193,28 +193,28 @@ Zobrist Hash の設計
 - `apply_op` と完全に対称な逆操作にする。
 - 盤面全体ではなく差分のみ巻き戻す。
 
-#### `State::get_actions`
+#### `State::enumerate_actions`
 
-- シグネチャ: `template<class Emit> void get_actions(const int turn, const Action &last_action, Emit &&emit) const`
-- 現在の状態で実行可能な合法手を生成し、1手ごとに `emit(action)` を呼ぶ。中間の `vector<Action>` を作らないのでバッファ確保とコピーが発生しない。
-- `emit(a)` を呼ぶだけで `try_op`、`INF`/`finished` 判定、候補への push まで内部で実行される。`try_op` を自分で呼ぶ必要はない。
-- `a` は1個を使い回してよい。push に必要な分は emit 側がコピーし、`try_op` が `a` に書くロールバック情報の扱いも emit 側が行う。
-- `emit.threshold()` は現在のビーム最悪スコアを返す。push が進むたびに縮む最新値なので、列挙ループ内の枝刈りに使える。ビームが `beam_width` 個埋まるまでは `INF` を返す。`try_op` 側の早期打ち切りに任せてもよい。
+- シグネチャ: `template<class Submit> void enumerate_actions(const int turn, const Action &last_action, Submit &&submit) const`
+- 現在の状態で実行可能な合法手を生成し、1手ごとに `submit(action)` を呼ぶ。中間の `vector<Action>` を作らないのでバッファ確保とコピーが発生しない。
+- `submit(a)` を呼ぶだけで `try_op`、`INF`/`finished` 判定、候補への push まで内部で実行される。`try_op` を自分で呼ぶ必要はない。
+- `a` は1個を使い回してよい。push に必要な分は submit 側がコピーし、`try_op` が `a` に書くロールバック情報の扱いも submit 側が行う。
+- `submit.threshold()` は現在のビーム最悪スコアを返す。push が進むたびに縮む最新値なので、列挙ループ内の枝刈りに使える。ビームが `beam_width` 個埋まるまでは `INF` を返す。`try_op` 側の早期打ち切りに任せてもよい。
 - `last_action` はターン 0 の呼び出しではダミー値。`turn == 0` のときは参照しない。
-- 明らかにスコアが悪化する手や、直前操作を単純に打ち消すだけの逆操作は emit しない。
-- 良さそうな手を先に emit すると `emit.threshold()` が早く下がり、後続の手の枝刈りや `try_op` の早期打ち切りが効きやすくなる。
-- あるターンで生き残った全ノードがスコア有限の手を1つも emit しないと、候補が空になり `assert` 停止する(turn 版の挙動は Section 3)。行き止まりノードは何も emit しなければ枝が消えるだけだが、全ノードが同時に詰む問題では `max_turn` を到達可能な深さに合わせる。`finished=true` はゴール到達の表現に使い、行き止まりには使わない。
+- 明らかにスコアが悪化する手や、直前操作を単純に打ち消すだけの逆操作は submit しない。
+- 良さそうな手を先に submit すると `submit.threshold()` が早く下がり、後続の手の枝刈りや `try_op` の早期打ち切りが効きやすくなる。
+- あるターンで生き残った全ノードがスコア有限の手を1つも submit しないと、候補が空になり `assert` 停止する(turn 版の挙動は Section 3)。行き止まりノードは何も submit しなければ枝が消えるだけだが、全ノードが同時に詰む問題では `max_turn` を到達可能な深さに合わせる。`finished=true` はゴール到達の表現に使い、行き止まりには使わない。
 - ホットパス。詳細は Section 1。
 
 ```cpp
-template<class Emit>
-void get_actions(const int turn, const Action &last_action, Emit &&emit) const {
+template<class Submit>
+void enumerate_actions(const int turn, const Action &last_action, Submit &&submit) const {
     Action a;
     for (char c : "UDLR") {
         if (turn != 0 && is_reverse(c, last_action)) continue; // 逆操作は出さない
         if (!in_bounds(c)) continue;
         a.d = c;
-        emit(a);            // try_op + 判定 + push を内部で実行
+        submit(a);            // try_op + 判定 + push を内部で実行
     }
 }
 ```
@@ -236,7 +236,7 @@ void get_actions(const int turn, const Action &last_action, Emit &&emit) const {
 
 ### 3. 可変深さ版 `beam_search_turn`
 
-操作で進む論理ターン数が手ごとに異なる問題で使う。各 `Action` が自分の `target_turn`(到達する論理ターン番号)を持ち、その値ごとに別プールへ振り分けられる。同じ呼び出し内で異なる `target_turn` の手を混在 emit してよい。固定深さ問題では `beam_search.cpp` を使う。
+操作で進む論理ターン数が手ごとに異なる問題で使う。各 `Action` が自分の `target_turn`(到達する論理ターン番号)を持ち、その値ごとに別プールへ振り分けられる。同じ呼び出し内で異なる `target_turn` の手を混在 submit してよい。固定深さ問題では `beam_search.cpp` を使う。
 
 #### base 版との差分(これ以外は完全に同一)
 
@@ -245,8 +245,8 @@ void get_actions(const int turn, const Action &last_action, Emit &&emit) const {
 | include | `beam_search.cpp` | `beam_search_turn.cpp` |
 | `Action` 必須メンバ | なし | `int target_turn;`(sentinel `-1`) |
 | `try_op` 第2引数 | `ScoreType threshold` | `const vector<ScoreType>& thresholds` |
-| `get_actions` 第1引数 | `const int turn` | なし(`last_action` で置換) |
-| `emit.threshold` 呼び方 | `emit.threshold()` | `emit.threshold(int target_turn)` |
+| `enumerate_actions` 第1引数 | `const int turn` | なし(`last_action` で置換) |
+| `submit.threshold` 呼び方 | `submit.threshold()` | `submit.threshold(int target_turn)` |
 | `BeamParam::max_turn` | 木の深さ上限 | `target_turn` の最大値 |
 | ビーム重複排除粒度 | per-turn | per-`target_turn` |
 | `is_adjusting=true` の実効幅 | `beam_width` を超えうる | `beam_width` が上限 |
@@ -258,9 +258,9 @@ void get_actions(const int turn, const Action &last_action, Emit &&emit) const {
 #### `Action::target_turn` の決定
 
 - どのプールに候補を入れるかのキー。重複排除も同じプール内で行われる。
-- 通常は `try_op` 内で操作パラメータから計算して `action.target_turn` に書き込む。`get_actions` で先に決めてもよい。
-- emit 時点の論理ターン(＝親の `target_turn`)より真に大きく、`max_turn` 以下にする。親以下の値を入れた候補は展開されないまま捨てられ、不正に短い解が返る原因になる。`-1` は root sentinel 専用。
-- `target_turn > max_turn` の候補は、emit してもエラーにならず捨てられる。`max_turn` は到達しうる上限以上に設定する。プールは実際に使う `target_turn` の分しか確保されないので、大きめにしてもメモリはほとんど増えない。
+- 通常は `try_op` 内で操作パラメータから計算して `action.target_turn` に書き込む。`enumerate_actions` で先に決めてもよい。
+- submit 時点の論理ターン(＝親の `target_turn`)より真に大きく、`max_turn` 以下にする。親以下の値を入れた候補は展開されないまま捨てられ、不正に短い解が返る原因になる。`-1` は root sentinel 専用。
+- `target_turn > max_turn` の候補は、submit してもエラーにならず捨てられる。`max_turn` は到達しうる上限以上に設定する。プールは実際に使う `target_turn` の分しか確保されないので、大きめにしてもメモリはほとんど増えない。
 
 #### `try_op` の差分
 
@@ -268,12 +268,12 @@ void get_actions(const int turn, const Action &last_action, Emit &&emit) const {
 - 早期打ち切りは『`target_turn` を確定してから `thresholds[t]` と比較』の順。逆だと無駄な差分計算が走る。
 - 確定 reject 時に `{INF, 0, false}` を返す・ロールバック情報を書かない、は base と同じ。
 
-#### `get_actions` の差分
+#### `enumerate_actions` の差分
 
 - `turn` 引数なし。現在の論理ターンが要るなら `State` のメンバで自前で保持する(`apply_op`/`rollback` で更新)。
 - root 判定の慣用は `last_action.target_turn == -1`。base 版の `turn == 0` 相当(`DUMMY_ACTION` に -1 が入っている)。
-- 1 回の呼び出しで異なる `target_turn` を持つ手を混在 emit してよい。各 emit ごとに対応プールに振り分けられる。
-- `emit.threshold(t)` で `target_turn==t` のプールの最悪スコアが取れる。`target_turn` が emit 前に確定しているならこれで先に枝刈りできる。
+- 1 回の呼び出しで異なる `target_turn` を持つ手を混在 submit してよい。各 submit ごとに対応プールに振り分けられる。
+- `submit.threshold(t)` で `target_turn==t` のプールの最悪スコアが取れる。`target_turn` が submit 前に確定しているならこれで先に枝刈りできる。
 
 #### 最小スケルトン差分(0.5 のテンプレからの diff)
 
@@ -298,10 +298,10 @@ class State {
         // 3. 通った手だけロールバック情報を action に書く
     }
 
-    template<class Emit>
-    void get_actions(const Action &last_action, Emit &&emit) const {
+    template<class Submit>
+    void enumerate_actions(const Action &last_action, Submit &&submit) const {
         // last_action.target_turn == -1 なら root 呼び出し
-        // 必要なら emit.threshold(t) で先に枝刈りしてから emit(a)
+        // 必要なら submit.threshold(t) で先に枝刈りしてから submit(a)
     }
 };
 ```

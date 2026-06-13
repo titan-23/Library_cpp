@@ -11,7 +11,7 @@ using namespace std;
 namespace flying_squirrel {
 
 /// @brief 愚直ビームサーチ
-/// @note 要件: init, try_op, apply_op, get_actions
+/// @note 要件: init, try_op, apply_op, enumerate_actions
 /// @tparam ScoreType スコアの型
 /// @tparam HashType ハッシュの型
 /// @tparam Action Action
@@ -185,7 +185,7 @@ public:
             for (int i = 0; i < (int)beam.size(); ++i) {
                 State &state = beam[i].state;
                 actions.clear();
-                state.get_actions(actions, turn, beam[i].last_action, candidates.threshold());
+                state.enumerate_actions(actions, turn, beam[i].last_action, candidates.threshold());
                 for (Action &action : actions) {
                     auto [score, hash, finished] = state.try_op(action, candidates.threshold());
                     if (score >= INF) continue;

@@ -212,8 +212,8 @@ public:
 
     // TODO
     //! 現状態から遷移可能な `Action` の `vector` を返す
-    template<class Emit>
-    void get_actions(const int turn, const Action &last_action, Emit &&emit) const {
+    template<class Submit>
+    void enumerate_actions(const int turn, const Action &last_action, Submit &&submit) const {
         int state = 0b1111;
         rep(k, K) {
             auto [y, x] = pos[k];
@@ -223,7 +223,7 @@ public:
             state &= ((MAP[k][y][x+1] != 'x') << 3) | 0b0111;
         }
         for (Action a : actions_from_state[state]) {
-            emit(a);
+            submit(a);
         }
     }
 

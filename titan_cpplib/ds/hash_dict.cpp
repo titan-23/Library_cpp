@@ -9,7 +9,7 @@ using namespace std;
 
 namespace titan23 {
 
-template<typename V>
+template<typename V, bool USE_HASH_FUNC=true>
 class HashDict {
 private:
     using u64 = uint64_t;
@@ -24,10 +24,12 @@ private:
     int size;
 
     constexpr u64 hash(u64 key) const {
-        key ^= xor_;
-        key = (key ^ (key >> 30)) * 0xbf58476d1ce4e5b9;
-        key = (key ^ (key >> 27)) * 0x94d049bb133111eb;
-        key = key ^ (key >> 31);
+        if constexpr (USE_HASH_FUNC) {
+            key ^= xor_;
+            key = (key ^ (key >> 30)) * 0xbf58476d1ce4e5b9;
+            key = (key ^ (key >> 27)) * 0x94d049bb133111eb;
+            key = key ^ (key >> 31);
+        }
         return key;
     }
 

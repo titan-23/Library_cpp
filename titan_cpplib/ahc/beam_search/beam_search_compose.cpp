@@ -147,7 +147,7 @@ private:
     //
     // 重要: 子 cand の parent_leaf は親 DFS の reverse iter 順 (= now_leaf_idx) で
     // 振られる。cand_T[i] (sorted index) は size-1-i 番目の reverse iter で処理され、
-    // emit した子の parent_leaf = size-1-i。よって parent_leaf=p で参照する親は
+    // submit した子の parent_leaf = size-1-i。よって parent_leaf=p で参照する親は
     // cand_T_sorted[size-1-p]。snapshot は reverse 順に詰める。
     void snapshot_leaf_actions() {
         int n = (int)cand.size();
@@ -247,15 +247,15 @@ private:
         }
     }
 
-    // get_actions / try_op 一体化用 sink。
-    // get_actions が action を生成し emit(a) を呼ぶと try_op + INF/finished 判定 + push + history を行う。
-    // 中間 actions バッファを挟まない。旧 get_actions(vector&, ...) は requires で従来パスに分岐。
-    struct Emitter {
+    // enumerate_actions / try_op 一体化用 sink。
+    // enumerate_actions が action を生成し submit(a) を呼ぶと try_op + INF/finished 判定 + push + history を行う。
+    // 中間 actions バッファを挟まない。旧 enumerate_actions(vector&, ...) は requires で従来パスに分岐。
+    struct Submitter {
         BeamSearchWithTree &bs;
         State &st;
         int parent_leaf, parent_node_id, turn;
 
-        // ライブの最新 worst。push が進むたび縮むので get_actions 側の早期枝刈りに使える。
+        // ライブの最新 worst。push が進むたび縮むので enumerate_actions 側の早期枝刈りに使える。
         inline ScoreType threshold() const { return bs.candidates.threshold(); }
 
         inline void operator()(Action &a) {
@@ -392,12 +392,12 @@ public:
         int w = param.get_beam_width(param.max_turn, 0, param.time_limit);
         candidates.reset(0, w, param.clear_hash_every_turn, param.hash_window_turns);
 
-        if constexpr (requires(Emitter &e) { state.get_actions(0, DAMMY_ACTION, e); }) {
-            Emitter emit{*this, state, 0, -1, 0};
-            state.get_actions(0, DAMMY_ACTION, emit);
+        if constexpr (requires(Submitter &e) { state.enumerate_actions(0, DAMMY_ACTION, e); }) {
+            Submitter submit{*this, state, 0, -1, 0};
+            state.enumerate_actions(0, DAMMY_ACTION, submit);
         } else {
             actions.clear();
-            state.get_actions(actions, 0, DAMMY_ACTION, candidates.threshold());
+            state.enumerate_actions(actions, 0, DAMMY_ACTION, candidates.threshold());
             explored_per_turn += (int)actions.size();
             for (Action &action : actions) {
                 auto [score, hash, finished] = state.try_op(action, candidates.threshold());
@@ -515,12 +515,12 @@ public:
                 dP_state = dC;
 
                 int now_leaf_idx = next_leaf.size();
-                if constexpr (requires(Emitter &e) { state.get_actions(turn, DAMMY_ACTION, e); }) {
-                    Emitter emit{*this, state, now_leaf_idx, c.node_id, turn};
-                    state.get_actions(turn, act(c.action_id), emit);
+                if constexpr (requires(Submitter &e) { state.enumerate_actions(turn, DAMMY_ACTION, e); }) {
+                    Submitter submit{*this, state, now_leaf_idx, c.node_id, turn};
+                    state.enumerate_actions(turn, act(c.action_id), submit);
                 } else {
                     actions.clear();
-                    state.get_actions(actions, turn, act(c.action_id), candidates.threshold());
+                    state.enumerate_actions(actions, turn, act(c.action_id), candidates.threshold());
                     explored_per_turn += (int)actions.size();
                     for (Action &action : actions) {
                         auto [score, hash, finished] = state.try_op(action, candidates.threshold());

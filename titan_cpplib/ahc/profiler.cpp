@@ -3,6 +3,8 @@
 #include "titan_cpplib/ahc/timer.cpp"
 using namespace std;
 
+// #define PROFILE
+
 namespace titan23 {
 
 class Profiler {
@@ -44,7 +46,7 @@ public:
         timer_stack.pop_back();
     }
 
-    void report(SortBy sort_by = SortBy::Name) const {
+    void report(SortBy sort_by=SortBy::Name) const {
         vector<pair<string, Record>> sorted_records(records.begin(), records.end());
 
         sort(sorted_records.begin(), sorted_records.end(), [sort_by](const auto& a, const auto& b) {
@@ -83,3 +85,11 @@ public:
     }
 } profiler;
 } // namespace titan23
+
+#ifdef PROFILE
+#define PROF_START(name) titan23::profiler.start(name)
+#define PROF_STOP() titan23::profiler.stop()
+#else
+#define PROF_START(name) ((void)0)
+#define PROF_STOP() ((void)0)
+#endif

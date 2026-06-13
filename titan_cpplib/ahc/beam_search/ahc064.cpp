@@ -320,11 +320,8 @@ public:
         t = action.pre_t;
     }
 
-    template<typename Emit>
-    void get_actions(const Action &last_action, Emit &&emit) const {
-        // legacy 版の actions.size() による確率的 thinning を、emit 数カウンタ
-        // emitted_cnt で再現する。emit(a) は try_op + 各種判定を内部で行うため
-        // 棄却の有無に関わらずカウンタは進める (legacy も push_back 後に size 増)。
+    template<typename Submit>
+    void enumerate_actions(const Action &last_action, Submit &&submit) const {
         int emitted_cnt = 0;
         Action a;
         for (int i = s; i < N; ++i) {
@@ -350,26 +347,26 @@ public:
                     if (p < n && is_consecutive(S[i][n-p-1], S[i][n-p])) continue;
                     if (n-p < done_cnt) break;
                     if (n > 0 && m > 0 && is_consecutive(S[i].back(), T[j].front())) {
-                        a = Action(i, j, p, -1); emit(a); ++emitted_cnt;
+                        a = Action(i, j, p, -1); submit(a); ++emitted_cnt;
                         continue;
                     }
                     if (emitted_cnt > 10 && brnd.randint(100) < 90) continue;
-                    a = Action(i, j, p, -1); emit(a); ++emitted_cnt;
+                    a = Action(i, j, p, -1); submit(a); ++emitted_cnt;
                 }
 
                 for (int q = 1; q <= m; ++q) {
                     if (n+q > MAX_S) break;
                     if (q < m && is_consecutive(T[j][q-1], T[j][q])) continue;
                     if (n > 0 && m > 0 && is_consecutive(S[i].back(), T[j].front())) {
-                        a = Action(i, j, -1, q); emit(a); ++emitted_cnt;
+                        a = Action(i, j, -1, q); submit(a); ++emitted_cnt;
                         continue;
                     }
                     if (emitted_cnt > 10 && brnd.randint(100) < 80) continue;
-                    a = Action(i, j, -1, q); emit(a); ++emitted_cnt;
+                    a = Action(i, j, -1, q); submit(a); ++emitted_cnt;
                 }
             }
         }
-        a = Action(-1, -1, -1, -1); emit(a);
+        a = Action(-1, -1, -1, -1); submit(a);
     }
 
     void print() const {}
@@ -451,6 +448,8 @@ int main(int argc, char* argv[]) {
 
     input();
     solve();
+
+    // titan23::profiler.report();
 
     return 0;
 }
