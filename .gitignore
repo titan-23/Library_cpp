@@ -13,3 +13,7 @@ atcoder/
 /.claude/*
 settings.local.json
 CLAUDE.md
+
+/**/ahclib_results/**
+/**/out/**
+/**/inahc064/**
