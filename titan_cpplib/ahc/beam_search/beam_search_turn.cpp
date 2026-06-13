@@ -11,6 +11,15 @@ using namespace std;
 
 namespace flying_squirrel {
 
+// 候補の score sort の方式。どちらも区間内を score 順にするので expand-best-first は効く。
+// true:  全体を (par, score) で sort する。現行の挙動 (基準)。O(C log C)。
+// false: par 区間ごとに score sort する。new_candidates は get_next_beam が葉を展開順 (par) に
+//        push するので生成時点で既に par 昇順にまとまっており、同じ par の連続範囲だけを score で
+//        並べればよい。O(C log b) (b = 親あたり候補数) で full sort より安く、W が大きいほど効く。
+//        結果の選抜集合は true と同一だが、同点 (score 等値) の並びが異なるため探索軌道が変わり得る。
+//        決定化・等価検証したいときは比較に aid のタイブレークを足すと両者が一致する。
+constexpr const bool SORT_CANDIDATES_BY_SCORE = false;
+
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
 class BeamSearchWithTree {
 private:
@@ -837,11 +846,22 @@ public:
             // verbose / record_history のオーバーヘッドを除くためここから時刻を取り直す
             double t_update_start = beam_timer.elapsed();
             PROF_START("sort_candidates");
-            if (turn != 0) {
-                // update_tree が展開順 (par) に消費するので par を第一キーにする
-                sort(new_candidates.begin(), new_candidates.end(), [] (const auto& a, const auto& b) { if (a.par != b.par) return a.par < b.par; return a.score < b.score; });
+            if constexpr (SORT_CANDIDATES_BY_SCORE) {
+                // 全体を (par, score) で sort する (update_tree が展開順 par に消費するので par が第一キー)
+                if (turn != 0) {
+                    sort(new_candidates.begin(), new_candidates.end(), [] (const auto& a, const auto& b) { if (a.par != b.par) return a.par < b.par; return a.score < b.score; });
+                } else {
+                    sort(new_candidates.begin(), new_candidates.end(), [] (const auto& a, const auto& b) { return a.score < b.score; });
+                }
             } else {
-                sort(new_candidates.begin(), new_candidates.end(), [] (const auto& a, const auto& b) { return a.score < b.score; });
+                // par 区間ごとに score sort する (new_candidates は既に par 昇順なので連続範囲を切り出す)
+                const int n = new_candidates.size();
+                for (int l = 0; l < n; ) {
+                    int r = l + 1;
+                    while (r < n && new_candidates[r].par == new_candidates[l].par) ++r;
+                    sort(new_candidates.begin() + l, new_candidates.begin() + r, [] (const auto& a, const auto& b) { return a.score < b.score; });
+                    l = r;
+                }
             }
             PROF_STOP();
             int prev_min_target = min_target_in_tree;

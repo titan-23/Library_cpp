@@ -11,15 +11,14 @@ python3 -m opt  # デフォルトで WilcoxonPruner を採用
 
 class AHCSettings:
 
-
     # parallel_tester -------------------- #
     direction: str = "maximize"  # minimize / maximize
     njobs: int = 100
     timeout: Optional[int] = None
     is_int: bool = True  # スコアが整数なら True 小数なら False
 
-    filename = "./ahc064_old.cpp"
-    compile_command = f"make {filename}"
+    filename = "./ahc064.cpp"
+    compile_command = f"make ahc064"
     execute_command = "./a.out"
     input_file_names = [f"./inahc064/{str(i).zfill(4)}.txt" for i in range(100)]
 
