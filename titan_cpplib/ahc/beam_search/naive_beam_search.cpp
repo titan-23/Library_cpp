@@ -213,8 +213,7 @@ public:
             }
             if (verbose) {
                 BeamCandidate bests = candidates.get_best();
-                beam_log::turn_line(cerr, turn + 1, param.max_turn, now_time,
-                                    width, (int)beam.size(), (int)candidates.size(), -1, bests.score);
+                beam_log::turn_line(cerr, turn + 1, param.max_turn, now_time, width, (int)beam.size(), (int)candidates.size(), -1, bests.score);
             }
             next_beam.clear();
             for (int i = 0; i < (int)candidates.size(); ++i) {
@@ -233,9 +232,7 @@ public:
             if (verbose) {
                 beam_log::on_solution_found(cerr, turns_done, best_finished_score);
                 vector<Action> sol = build_history(best_finished_history_id);
-                beam_log::end_banner(cerr, "solution found", turns_done, param.max_turn,
-                                     beam_timer.elapsed(), param.ave_width(),
-                                     best_finished_score, true, (int)sol.size());
+                beam_log::end_banner(cerr, "solution found", turns_done, param.max_turn, beam_timer.elapsed(), param.ave_width(), best_finished_score, true, (int)sol.size());
                 return sol;
             }
             return build_history(best_finished_history_id);
@@ -249,9 +246,7 @@ public:
         vector<Action> sol = build_history(beam[best_idx].history_id);
         if (verbose) {
             beam_log::on_max_turn(cerr);
-            beam_log::end_banner(cerr, "max_turn reached", turns_done, param.max_turn,
-                                 beam_timer.elapsed(), param.ave_width(),
-                                 beam[best_idx].score, true, (int)sol.size());
+            beam_log::end_banner(cerr, "max_turn reached", turns_done, param.max_turn, beam_timer.elapsed(), param.ave_width(), beam[best_idx].score, true, (int)sol.size());
         }
         return sol;
     }
