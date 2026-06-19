@@ -231,8 +231,8 @@ public:
                 State next_state = beam[cand.par_idx].state;
                 next_state.apply_op(cand.action);
                 int new_history_id = history_nodes.size();
-                history_nodes.emplace_back(beam[cand.par_idx].history_id, cand.action);
-                next_beam.emplace_back(move(next_state), cand.score, new_history_id, cand.action);
+                history_nodes.push_back({beam[cand.par_idx].history_id, cand.action});
+                next_beam.push_back({move(next_state), cand.score, new_history_id, cand.action});
             }
             swap(beam, next_beam);
             param.timestamp(beam.size(), candidates.size(), beam_timer.elapsed()-now_time);
