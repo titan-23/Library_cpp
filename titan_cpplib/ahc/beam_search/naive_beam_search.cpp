@@ -164,6 +164,32 @@ private:
         return res;
     }
 
+    // enumerate_actions が action を生成し submit(a) を呼ぶと try_op + 判定 + push を行う。
+    struct Submitter {
+        NaiveBeamSearch &bs;
+        State &st;
+        int par_idx;
+        int par_history_id;
+        int &best_finished_history_id;
+
+        inline ScoreType threshold() const { return bs.candidates.threshold(); }
+
+        inline void operator()(Action &action) {
+            auto [score, hash, finished] = st.try_op(action, bs.candidates.threshold());
+            if (score >= INF) return;
+            if (finished) {
+                if (!bs.found_finished || score < bs.best_finished_score) {
+                    bs.found_finished = true;
+                    bs.best_finished_score = score;
+                    best_finished_history_id = (int)bs.history_nodes.size();
+                    bs.history_nodes.push_back({par_history_id, action});
+                }
+            } else {
+                bs.candidates.push(score, hash, par_idx, action);
+            }
+        }
+    };
+
 public:
     vector<Action> search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
         init_bs(param);
@@ -177,30 +203,14 @@ public:
         beam.push_back({initial_state, 0, -1, DUMMY_ACTION});
         int best_finished_history_id = -1;
         int turns_done = 0;
-        vector<Action> actions;
         for (int turn = 0; turn < param.max_turn; ++turn) {
             double now_time = beam_timer.elapsed();
             const int width = param.get_beam_width(param.max_turn - turn, (int)beam.size(), param.time_limit - beam_timer.elapsed());
             candidates.reset(turn, width, param.clear_hash_every_turn, param.hash_window_turns);
             for (int i = 0; i < (int)beam.size(); ++i) {
                 State &state = beam[i].state;
-                actions.clear();
-                state.enumerate_actions(actions, turn, beam[i].last_action, candidates.threshold());
-                for (Action &action : actions) {
-                    auto [score, hash, finished] = state.try_op(action, candidates.threshold());
-                    if (score >= INF) continue;
-                    if (finished) {
-                        if (!found_finished || score < best_finished_score) {
-                            found_finished = true;
-                            best_finished_score = score;
-                            int new_history_id = history_nodes.size();
-                            history_nodes.emplace_back(beam[i].history_id, action);
-                            best_finished_history_id = new_history_id;
-                        }
-                    } else {
-                        candidates.push(score, hash, i, action);
-                    }
-                }
+                Submitter submit{*this, state, i, beam[i].history_id, best_finished_history_id};
+                state.enumerate_actions(turn, beam[i].last_action, submit);
             }
             if (candidates.size() == 0) {
                 if (found_finished) {
@@ -213,8 +223,7 @@ public:
             }
             if (verbose) {
                 BeamCandidate bests = candidates.get_best();
-                beam_log::turn_line(cerr, turn + 1, param.max_turn, now_time,
-                                    width, (int)beam.size(), (int)candidates.size(), -1, bests.score);
+                beam_log::turn_line(cerr, turn + 1, param.max_turn, now_time, width, (int)beam.size(), (int)candidates.size(), -1, bests.score);
             }
             next_beam.clear();
             for (int i = 0; i < (int)candidates.size(); ++i) {
@@ -222,8 +231,8 @@ public:
                 State next_state = beam[cand.par_idx].state;
                 next_state.apply_op(cand.action);
                 int new_history_id = history_nodes.size();
-                history_nodes.emplace_back(beam[cand.par_idx].history_id, cand.action);
-                next_beam.emplace_back(move(next_state), cand.score, new_history_id, cand.action);
+                history_nodes.push_back({beam[cand.par_idx].history_id, cand.action});
+                next_beam.push_back({move(next_state), cand.score, new_history_id, cand.action});
             }
             swap(beam, next_beam);
             param.timestamp(beam.size(), candidates.size(), beam_timer.elapsed()-now_time);
@@ -233,9 +242,7 @@ public:
             if (verbose) {
                 beam_log::on_solution_found(cerr, turns_done, best_finished_score);
                 vector<Action> sol = build_history(best_finished_history_id);
-                beam_log::end_banner(cerr, "solution found", turns_done, param.max_turn,
-                                     beam_timer.elapsed(), param.ave_width(),
-                                     best_finished_score, true, (int)sol.size());
+                beam_log::end_banner(cerr, "solution found", turns_done, param.max_turn, beam_timer.elapsed(), param.ave_width(), best_finished_score, true, (int)sol.size());
                 return sol;
             }
             return build_history(best_finished_history_id);
@@ -249,9 +256,7 @@ public:
         vector<Action> sol = build_history(beam[best_idx].history_id);
         if (verbose) {
             beam_log::on_max_turn(cerr);
-            beam_log::end_banner(cerr, "max_turn reached", turns_done, param.max_turn,
-                                 beam_timer.elapsed(), param.ave_width(),
-                                 beam[best_idx].score, true, (int)sol.size());
+            beam_log::end_banner(cerr, "max_turn reached", turns_done, param.max_turn, beam_timer.elapsed(), param.ave_width(), beam[best_idx].score, true, (int)sol.size());
         }
         return sol;
     }

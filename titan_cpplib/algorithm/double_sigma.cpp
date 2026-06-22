@@ -1,7 +1,6 @@
 #include <vector>
 #include <cassert>
 #include "titan_cpplib/ds/multiset_sum.cpp"
-#include "titan_cpplib/ds/cumulative_sum.cpp"
 using namespace std;
 
 // DoubleSigma
@@ -45,7 +44,7 @@ template<typename T> static T sigma_minus(const vector<T> &A) {
     T ans = 0;
     T sum = 0;
     for (int i = 0; i < n; ++i) {
-        ll a = A[i];
+        T a = A[i];
         ans += a * i - sum;
         sum += a;
     }
