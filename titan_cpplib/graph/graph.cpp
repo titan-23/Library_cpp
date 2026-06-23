@@ -1,6 +1,7 @@
 #include <vector>
 #include <queue>
 #include <stack>
+#include <tuple>
 #include <cassert>
 #include <algorithm>
 
@@ -13,7 +14,7 @@ namespace titan23 {
       private:
         int n;
         vector<vector<int>> G;
-        vector<pair<int, int>> E;
+        vector<tuple<int, int, int>> E;  // (w, u, v)
         static const int inf = 1e9;
 
       public:
@@ -21,12 +22,11 @@ namespace titan23 {
 
         Graph(int n) : n(n), G(n) {}
 
-        //! 辺(u, v)を追加する
-        void add_edge(const int u, const int v) {
+        void add_edge(const int u, const int v, const int w = 1) {
             assert(0 <= u && u < n);
             assert(0 <= v && v < n);
             G[u].emplace_back(v);
-            E.emplace_back(u, v);
+            E.emplace_back(w, u, v);
         }
 
         vector<vector<int>> get_G() const {
@@ -34,7 +34,12 @@ namespace titan23 {
         }
 
         vector<pair<int, int>> get_E() const {
-            return E;
+            vector<pair<int, int>> res;
+            res.reserve(E.size());
+            for (const auto &[w, u, v] : E) {
+                res.emplace_back(u, v);
+            }
+            return res;
         }
 
         bool is_bipartite() {
@@ -145,7 +150,9 @@ namespace titan23 {
         vector<pair<int, int>> minimum_spanning_tree() {
             titan23::UnionFind uf(n);
             vector<pair<int, int>> ans;
-            for (const auto &[u, v] : E) {
+            auto F = E;
+            sort(F.begin(), F.end());
+            for (const auto &[w, u, v] : F) {
                 if (uf.same(u, v)) continue;
                 uf.unite(u, v);
                 ans.emplace_back(u, v);

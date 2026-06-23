@@ -1,6 +1,7 @@
 #include <vector>
 #include <cassert>
 #include <algorithm>
+#include <climits>
 using namespace std;
 
 // PerfectBinaryTree
@@ -15,6 +16,11 @@ private:
 
 public:
     PerfectBinaryTree() {}
+
+    // 根を返す
+    long long root() {
+        return 1;
+    }
 
     // 親を返す
     long long par(long long u) {
@@ -58,6 +64,14 @@ public:
         return u >> k;
     }
 
+    // uがvの祖先かを返す
+    // u == v のとき true を返す
+    bool is_ancestor(long long u, long long v) {
+        assert(1 <= u && u < LONG_LONG_MAX);
+        assert(1 <= v && v < LONG_LONG_MAX);
+        return dep(u) <= dep(v) && la(v, dep(v) - dep(u)) == u;
+    }
+
     // lcaを返す
     long long lca(long long u, long long v) {
         assert(1 <= u && u < LONG_LONG_MAX);
@@ -76,21 +90,35 @@ public:
         return dep(u) + dep(v) - 2*dep(lca(u, v));
     }
 
+    // uからvへのパス上のk番目の頂点を返す
+    // k == 0 のとき u、k == dist(u, v) のとき v を返す
+    long long kth(long long u, long long v, long long k) {
+        assert(1 <= u && u < LONG_LONG_MAX);
+        assert(1 <= v && v < LONG_LONG_MAX);
+        long long l = lca(u, v);
+        long long du = dep(u) - dep(l);
+        assert(0 <= k && k <= du + dep(v) - dep(l));
+        if (k <= du) {
+            return la(u, k);
+        }
+        return la(v, du + dep(v) - dep(l) - k);
+    }
+
     // uからvへのパスをリストで返す
     vector<long long> get_path(long long u, long long v) {
         assert(1 <= u && u < LONG_LONG_MAX);
         assert(1 <= v && v < LONG_LONG_MAX);
-        long long x = lca(u, v);
+        long long l = lca(u, v);
         auto get = [&] (long long x) -> vector<long long> {
             vector<long long> a;
-            while (x != x) {
+            while (x != l) {
                 a.push_back(x);
                 x = par(x);
             }
             return a;
         };
         vector<long long> res = get(u);
-        res.push_back(u);
+        res.push_back(l);
         vector<long long> r = get(v);
         reverse(r.begin(), r.end());
         for (long long k : r) {

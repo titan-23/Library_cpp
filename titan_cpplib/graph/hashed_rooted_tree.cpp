@@ -35,7 +35,7 @@ public:
         random_device rd;
         mt19937_64 rnd(seed == -1 ? rd() : seed);
         uniform_int_distribution<u64> dist(47, (1ull<<61)-1);
-        rep(i, n+1) {
+        for (int i = 0; i < n+1; ++i) {
             R[i] = dist(rnd);
         }
 
