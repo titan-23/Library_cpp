@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <queue>
+#include <deque>
 #include <tuple>
 #include <algorithm>
 #include <cassert>
@@ -11,7 +12,7 @@ namespace titan23 {
 
 /**
  * @brief 多始点から各頂点への、相異なる始点による近い方K個の距離と始点
- *        時間 O(K(N+M)log(KN)) / 空間 O(KN)
+ *        O(K(N+M)log(KN))
  */
 template<typename T>
 class KNearestSources {
@@ -44,14 +45,29 @@ public:
     KNearestSources(const vector<vector<pair<int, T>>> &G, const vector<int> &S, int K, T INF) :
             n(G.size()), K(K), INF(INF), dist(n*K, {INF, -1}) {
         using P = tuple<T, int, int>;
-        priority_queue<P, vector<P>, greater<P>> hq;
+
+        priority_queue<P, vector<P>, greater<P>> todo;
+        // queue<P> todo;
+        // deque<P> todo;
+
+        auto qu_push = [&] (const P &p) -> void {
+            // auto [d, _, __] = p;
+            todo.push(p);
+        };
+        auto qu_top = [&] () -> P {
+            return todo.top();
+        };
+        auto qu_pop = [&] () -> void {
+            todo.pop();
+        };
+
         for (const int s : S) {
             if (update(s, 0, s)) {
-                hq.emplace(0, s, s);
+                qu_push(P(0, s, s));
             }
         }
-        while (!hq.empty()) {
-            auto [d, s, v] = hq.top(); hq.pop();
+        while (!todo.empty()) {
+            auto [d, s, v] = qu_top(); qu_pop();
             bool valid = false;
             for (int i = 0; i < K; ++i) {
                 if (dist[v*K+i].second == s && dist[v*K+i].first == d) {
@@ -63,7 +79,7 @@ public:
             for (const auto &[x, w] : G[v]) {
                 T nd = d + w;
                 if (update(x, nd, s)) {
-                    hq.emplace(nd, s, x);
+                    qu_push(P(nd, s, x));
                 }
             }
         }
