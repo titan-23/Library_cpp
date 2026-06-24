@@ -3,7 +3,7 @@
 #include "titan_cpplib/ahc/timer.cpp"
 using namespace std;
 
-// #define PROFILE
+#define PROFILE
 
 namespace titan23 {
 
