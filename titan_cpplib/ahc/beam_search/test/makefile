@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -O2 -march=native -I./../../../../Library_cpp -I. -std=c++20 -DLOCAL -fopenmp
+CXXFLAGS = -O2 -march=native -I./../../../../../Library_cpp -I. -std=c++20 -DLOCAL -fopenmp
 # -fsanitize=address
 
 OUT = a.out
