@@ -14,7 +14,7 @@ struct dijkstra_path {
     vector<T> dist;
 
     dijkstra_path() {}
-    dijkstra_path(vector<vector<pair<int, T>>> &G, int s, T INF) :
+    dijkstra_path(const vector<vector<pair<int, T>>> &G, int s, T INF) :
             n(G.size()), INF(INF), prev(n, -1), dist(n, INF) {
         dist[s] = 0;
         priority_queue<pair<T, int>, vector<pair<T, int>>, greater<pair<T, int>>> hq;

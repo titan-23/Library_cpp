@@ -79,7 +79,7 @@ public:
 
     void subtree_apply(int v, F f) {
         seg.apply(hld.nodein[v], hld.nodeout[v], f);
-        rseg.apply(hld.n-hld.nodeout[v]-1-1, hld.n-hld.nodein[v]-1+1, f);
+        rseg.apply(hld.n - hld.nodeout[v], hld.n - hld.nodein[v], f);
     }
 };
 } // namespace titan23

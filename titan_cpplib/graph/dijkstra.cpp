@@ -6,7 +6,7 @@ using namespace std;
 namespace titan23 {
 /**
  * @brief dijkstra
- * 
+ *
  * @tparam T weight type
  * @param G weighted graph
  * @param start start
@@ -14,10 +14,8 @@ namespace titan23 {
  * @return vector<T> dist from start
  */
 template<typename T>
-vector<T> dijkstra(
-        const vector<vector<pair<int, T>>> &G,
-        const int start,
-        const T INF) {
+vector<T> dijkstra(const vector<vector<pair<int, T>>> &G, const int start, const T INF) {
+    const int n = G.size();
     vector<T> dist(n, INF);
     priority_queue<pair<T, int>, vector<pair<T, int>>, greater<pair<T, int>>> hq;
     hq.emplace(0, start);

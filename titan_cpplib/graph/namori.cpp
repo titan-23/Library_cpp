@@ -72,7 +72,7 @@ public:
                     qu.push({x, a});
                 }
             }
-            forest[v] = tree;
+            F[v] = tree;
         }
         int v = -1;
         for (int i = 0; i < n; ++i) if (is_cycle[i]) {
@@ -102,7 +102,7 @@ public:
     u64 get_hash(int seed) {
         int M = 2*n+1;
         mt19937_64 rnd(seed);
-        vector<u64> hs(M, 1), R.resize(M+1);
+        vector<u64> hs(M, 1), R(M+1);
         uniform_int_distribution<u64> dist(47, (1ull<<61)-1);
         for (int i = 0; i < M+1; ++i) R[i] = dist(rnd);
         u64 base = uniform_int_distribution<>(414123123, 1000000000)(rnd);
