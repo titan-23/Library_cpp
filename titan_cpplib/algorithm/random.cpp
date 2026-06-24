@@ -3,6 +3,7 @@
 #include <cassert>
 #include <unordered_set>
 #include <vector>
+#include <numeric>
 using namespace std;
 
 // Random

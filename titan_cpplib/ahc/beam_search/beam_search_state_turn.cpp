@@ -41,14 +41,14 @@ class State {
 private:
     ScoreType score;
     HashType hash;
-    int turn;
+    int turn; // 絶対ターン
 
 public:
     // TODO Stateを初期化する
     void init() {
-        this->score = 0;
-        this->hash = 0;
-        this->turn = 0;
+        score = 0;
+        hash = 0;
+        turn = 0;
     }
 
     // TODO
