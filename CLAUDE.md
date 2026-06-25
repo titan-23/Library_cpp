@@ -11,14 +11,14 @@ This is `titan23`'s competitive programming library in C++. It is used for AtCod
 There is no project-wide build system. Each file is compiled individually with g++. Typical flags:
 
 ```sh
-g++ -std=c++17 -O2 -o a.out main.cpp
+g++ -std=c++20 -O2 -o a.out main.cpp
 # With AVX2 and aggressive optimization (common in contest code):
-g++ -std=c++17 -O3 -mavx2 -o a.out main.cpp
+g++ -std=c++20 -O3 -mavx2 -o a.out main.cpp
 # With OpenMP (used by sa.cpp):
-g++ -std=c++17 -O3 -fopenmp -o a.out main.cpp
+g++ -std=c++20 -O3 -fopenmp -o a.out main.cpp
 ```
 
-The `.vscode/c_cpp_properties.json` uses `c++17` standard with MinGW on Windows.
+The `.vscode/c_cpp_properties.json` uses `c++20` standard with MinGW on Windows.
 
 ## Code Expansion (Submission Workflow)
 
@@ -46,7 +46,7 @@ Tests live in `test/`. Each subdirectory contains a test program (`main.cpp`) an
 python3 test/dset/mk_test.py > input.txt
 
 # Compile and run:
-g++ -std=c++17 -O2 -o a.out test/dset/main.cpp
+g++ -std=c++20 -O2 -o a.out test/dset/main.cpp
 ./a.out < input.txt
 ```
 

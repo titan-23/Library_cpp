@@ -18,6 +18,7 @@ using HashType = uint64_t;
 const ScoreType INF = 1e18; // TODO -INFもできるように
 titan23::Random brnd;
 
+// TODO Zobrist hash 用の乱数テーブルなど、探索開始前に1度だけ用意する初期化
 void beam_init() {
 }
 
@@ -49,10 +50,17 @@ public:
         hash = 0;
     }
 
-    // TODO
-    // 現在の状態に action を適用したときのスコアとハッシュ値を返す
+    // TODO 現状態から遷移可能な `Action` を 1 つずつ `submit(action)` に渡す
+    // turn は現在のターン、last_action は親の Action(turn == 0 では参照しない)
+    // `submit.threshold()` で現在の枝刈り閾値を取得できる
+    template<class Submit>
+    void enumerate_actions(const int turn, const Action &last_action, Submit &&submit) const {
+        // TODO: Action a = ...; submit(a); を必要なだけ繰り返す
+    }
+
+    // TODO 現在の状態に `action` を適用したときのスコアとハッシュ値を返す
     // ロールバックに必要な情報はすべてactionにメモしておく
-    // threshold以上であれば計算しなくてよい
+    // score が threshold 以上だと確定したら計算を打ち切ってよい
     // INFを返すと無条件で採用しない
     tuple<ScoreType, HashType, bool> try_op(Action &action, const ScoreType threshold) const {
         action.pre_score = score;
@@ -68,32 +76,26 @@ public:
         return {nxt_score, nxt_hash, finished};
     }
 
-    // TODO
-    // action を適用する
+    // TODO 現在の状態に `action` を適用する
+    // `action` をする
     void apply_op(const Action &action) {
         // TODO
         score = action.nxt_score;
         hash = action.nxt_hash;
     }
 
-    // TODO
-    // action を戻す
+    // TODO `action` を戻す
     void rollback(const Action &action) {
         // TODO
         score = action.pre_score;
         hash = action.pre_hash;
     }
 
-    // TODO
-    // 現状態から遷移可能な Action を生成し、submit に渡す
-    template<class Submit>
-    void enumerate_actions(const int turn, const Action &last_action, Submit &&submit) const {
-    }
-
-    // TODO
+    // TODO デバッグ用に現在の状態を出力する(ライブラリからは呼ばれない)
     void print() const {
     }
 
+    // record_history=true 時の可視化用 JSON 文字列。不要なら "{}" のまま
     string get_state_info() const {
         return "{}";
     }
@@ -114,13 +116,13 @@ flying_squirrel::BeamParam gen_param(int max_turn, int beam_width) {
 /// @param time_limit 制限時間
 /// @param is_adjusting 制限時間に合わせるかどうか
 /// @param clear_hash_every_turn ハッシュ辞書を毎ターンclearするかどうか
-/// @return
+/// @return BeamParam
 flying_squirrel::BeamParam gen_param(int max_turn, int beam_width, double time_limit, bool is_adjusting=false, bool clear_hash_every_turn=true) {
     return {max_turn, beam_width, time_limit, is_adjusting, clear_hash_every_turn};
 }
 
 vector<Action> search(flying_squirrel::BeamParam &param, const bool verbose=false, const string& history_file = "") {
-    flying_squirrel::BeamSearchWithTree<ScoreType, HashType, Action, State, INF> bs;
+    flying_squirrel::BeamSearchWithTree<ScoreType, HashType, Action, State, INF, false> bs;
     return bs.search(param, verbose, history_file);
 }
 } // namespace beam_search
