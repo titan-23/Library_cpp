@@ -297,10 +297,13 @@ private:
     vector<BeamCandidate> new_candidates;
 
     // 候補 1 件を try_op で評価し、枝刈りを通れば target_turn の pool に入れる
-    [[gnu::always_inline]] inline void process_candidate(State& state, Action& action, int parent_leaf, ActionId parent_aid) {
+    [[gnu::always_inline]] inline void process_candidate(State& state, Action& action, int parent_leaf, ActionId parent_aid, int turn) {
         auto [score, hash, finished] = state.try_op(action, thresholds);
         if (score >= INF) return;
         const int target_turn = action.target_turn;
+#ifdef BS_DEBUG
+        beam_log::assert_check(target_turn > turn, "target_turn > turn", __FILE__, __LINE__, "target_turn=" + to_string(target_turn) + ", turn=" + to_string(turn));
+#endif
         if (target_turn > max_turn_global) return;
         if (!finished && score >= thresholds[target_turn]) return;
         pair<int, bool> seen_pos;
@@ -361,10 +364,22 @@ private:
         State& st;
         int parent_leaf;
         ActionId parent_aid;
+        int turn;
 
-        inline ScoreType threshold(int target_turn) const { return bs.thresholds[target_turn]; }
-        inline void operator()(Action& a) { bs.process_candidate(st, a, parent_leaf, parent_aid); }
+        inline ScoreType threshold(int target_turn) const {
+#ifdef BS_DEBUG
+            bs.beam_log_threshold_check(target_turn);
+#endif
+            return bs.thresholds[target_turn];
+        }
+        inline void operator()(Action& a) { bs.process_candidate(st, a, parent_leaf, parent_aid, turn); }
     };
+
+#ifdef BS_DEBUG
+    void beam_log_threshold_check(int target_turn) const {
+        beam_log::assert_check(0 <= target_turn && target_turn <= max_turn_global, "0 <= target_turn && target_turn <= max_turn_global", __FILE__, __LINE__, "target_turn=" + to_string(target_turn) + ", max_turn=" + to_string(max_turn_global));
+    }
+#endif
 
     void get_next_beam(State& state, const int turn) {
         new_candidates.clear();
@@ -373,7 +388,7 @@ private:
         if (turn == 0) {
             expanded_leaf_count = 1;
             const Action& last_action = (result.empty() ? DUMMY_ACTION : result.back());
-            Submitter submit{*this, state, 0, BAD_ID};
+            Submitter submit{*this, state, 0, BAD_ID, turn};
             state.enumerate_actions(last_action, submit);
             return;
         }
@@ -388,7 +403,7 @@ private:
                     ++expanded_leaf_count;
                     Action action = act(node.aid);
                     state.apply_op(action);
-                    Submitter submit{*this, state, par, node.aid};
+                    Submitter submit{*this, state, par, node.aid, turn};
                     state.enumerate_actions(action, submit);
                     state.rollback(action);
                 }
@@ -416,6 +431,9 @@ private:
             for (int i = 0; i < new_candidates.size(); ++i) {
                 const auto &[score, par, aid, t_turn] = new_candidates[i];
                 if (is_survived_node[aid]) {
+#ifdef BS_DEBUG
+                    beam_log::assert_check(t_turn > turn, "t_turn > turn", __FILE__, __LINE__, "target_turn=" + to_string(t_turn) + ", turn=" + to_string(turn));
+#endif
                     nxt_tree.emplace_back(0, aid, t_turn);
                     if (t_turn < root_min) root_min = t_turn;
                 } else {
@@ -465,6 +483,9 @@ private:
                            && new_candidates[next_beam_idx].par == par) {
                         const auto& nc = new_candidates[next_beam_idx];
                         if (is_survived_node[nc.aid]) {
+#ifdef BS_DEBUG
+                            beam_log::assert_check(nc.target_turn > turn, "nc.target_turn > turn", __FILE__, __LINE__, "target_turn=" + to_string(nc.target_turn) + ", turn=" + to_string(turn));
+#endif
                             nxt_tree.emplace_back(0, nc.aid, nc.target_turn);
                             if (nc.target_turn < subtree_min) subtree_min = nc.target_turn;
                             ++emit_cnt;

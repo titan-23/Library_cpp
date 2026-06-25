@@ -31,6 +31,17 @@ inline void warn (ostream& os, const string& msg) { os << tag_bs() << col_warn(m
 inline void error(ostream& os, const string& msg) { os << tag_bs() << col_error(msg) << "\n"; }
 inline void debug(ostream& os, const string& msg) { os << tag_bs() << col_debug(msg) << "\n"; }
 
+#ifdef BS_DEBUG
+inline void assert_check(bool ok, const char* expr, const char* file, int line, const string& msg = "") {
+    if (ok) return;
+    ostringstream ss;
+    ss << file << ":" << line << " assertion failed: " << expr;
+    if (!msg.empty()) ss << " | " << msg;
+    error(cerr, ss.str());
+    abort();
+}
+#endif
+
 inline void start_banner(ostream& os, const char* impl_name, const BeamParam& param) {
     os << tag_plain() << "================================================\n";
     os << tag_info()  << "start " << to_bold(impl_name) << "\n";
@@ -43,11 +54,7 @@ inline void start_banner(ostream& os, const char* impl_name, const BeamParam& pa
 }
 
 template<class ScoreType>
-inline void turn_line(ostream& os,
-                      int turn, int max_turn,
-                      double elapsed_ms,
-                      int width, int pool, int cand, int explored,
-                      ScoreType best_score, bool has_best = true) {
+inline void turn_line(ostream& os, int turn, int max_turn, double elapsed_ms, int width, int pool, int cand, int explored, ScoreType best_score, bool has_best = true) {
     (void)pool; // 木サイズ。コンパクト表示のため非表示（必要なら一行戻す）
     // expl = そのターン実際に探索した頂点数 (= try_op の呼び出し回数)
     // cand = expl のうちビームに残った件数 / w = ビーム幅
@@ -85,13 +92,7 @@ inline void on_max_turn(ostream& os) {
 }
 
 template<class ScoreType>
-inline void end_banner(ostream& os,
-                       const char* reason,
-                       int turns_done, int max_turn,
-                       double total_ms,
-                       double ave_width,
-                       ScoreType best_score, bool has_best,
-                       int actions_count) {
+inline void end_banner(ostream& os, const char* reason, int turns_done, int max_turn, double total_ms, double ave_width, ScoreType best_score, bool has_best, int actions_count) {
     os << tag_plain() << "------------------------------------------------\n";
     os << tag_bs()    << col_ok(string("finished: ") + reason) << "\n";
     os << tag_info()  << "  turns done    = " << turns_done << " / " << max_turn << "\n";
