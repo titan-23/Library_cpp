@@ -3,7 +3,7 @@
 
 using namespace std;
 
-//! ビームサーチの可視化用探索履歴
+/// ビームサーチの可視化用探索履歴
 namespace flying_squirrel {
 
 template<typename ScoreType, typename HashType>

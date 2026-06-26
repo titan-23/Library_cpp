@@ -12,7 +12,7 @@
 
 using namespace std;
 
-//! 木上のビームサーチライブラリ
+/// 木上のビームサーチライブラリ
 namespace flying_squirrel_recursion {
 
 using BeamParam = flying_squirrel::BeamParam;
@@ -23,7 +23,7 @@ private:
     using TreeNodeID = int;
     using SubStateID = int;
 
-    //! try_opした結果をメモしておく構造体
+    /// try_opした結果をメモしておく構造体
     struct SubState {
         TreeNodeID par;
         Action action;
@@ -33,7 +33,7 @@ private:
         SubState(TreeNodeID par, const Action &action, ScoreType score) : par(par), action(action), score(score) {}
     };
 
-    //! ビームサーチの過程を表す木のノード
+    /// ビームサーチの過程を表す木のノード
     struct TreeNode {
         TreeNodeID par;
         Action pre_action;
@@ -96,7 +96,7 @@ private:
         return make_tuple(cnt, node, next_beam);
     }
 
-    //! 不要なNodeを削除し、木を更新する
+    /// 不要なNodeを削除し、木を更新する
     bool update_tree(const TreeNodeID node, const int depth) {
         if (treenode_pool.get(node)->is_leaf()) return depth == 0;
         int idx = 0;
@@ -112,7 +112,7 @@ private:
         return idx > 0;
     }
 
-    //! node以上のパスを返す
+    /// node以上のパスを返す
     vector<Action> get_path(TreeNodeID node) {
         vector<Action> result;
         while (node != -1 && treenode_pool.get(node)->par != -1) {
@@ -123,11 +123,11 @@ private:
         return result;
     }
 
-    //! for debug
+    /// for debug
     void print_tree(State* state, const TreeNodeID node, int depth) {
     }
 
-    //! node以下で、葉かつ最も評価値の良いノードを見るける / 葉はターン数からは判断していないので注意
+    /// node以下で、葉かつ最も評価値の良いノードを見るける / 葉はターン数からは判断していないので注意
     void get_best_node(TreeNodeID node) {
         if (treenode_pool.get(node)->is_leaf()) {
             if (best_id == -1 || treenode_pool.get(node)->score < best_score) {

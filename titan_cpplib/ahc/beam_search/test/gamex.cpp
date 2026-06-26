@@ -33,7 +33,7 @@ void input() {
 }
 
 
-//! 木上のビームサーチライブラリ
+/// 木上のビームサーチライブラリ
 namespace beam_search { // flying squirrel over trees
 
 using ScoreType = int;
@@ -123,9 +123,9 @@ public:
     }
 
     // TODO
-    //! `action` をしたときの評価値とハッシュ値を返す
-    //! ロールバックに必要な情報はすべてactionにメモしておく
-    //! threshold以上であれば計算しなくてよい
+    /// `action` をしたときの評価値とハッシュ値を返す
+    /// ロールバックに必要な情報はすべてactionにメモしておく
+    /// threshold以上であれば計算しなくてよい
     tuple<ScoreType, HashType, bool> try_op(Action &action, const ScoreType threshold) const {
         action.is_moved = 0;
         ScoreType s = 0;
@@ -157,7 +157,7 @@ public:
         return {score + s, hash ^ hs, false};
     }
 
-    //! `action` をする
+    /// `action` をする
     void apply_op(const Action &action) {
         rep(k, K) {
             auto [y, x] = pos[k];
@@ -182,7 +182,7 @@ public:
         }
     }
 
-    //! `action` を戻す (composed なら逆順)
+    /// `action` を戻す (composed なら逆順)
     void rollback(const Action &action) {
         rep(k, K) {
             auto [y, x] = pos[k];
@@ -211,7 +211,7 @@ public:
     }
 
     // TODO
-    //! 現状態から遷移可能な `Action` の `vector` を返す
+    /// 現状態から遷移可能な `Action` の `vector` を返す
     template<class Submit>
     void enumerate_actions(const int turn, const Action &last_action, Submit &&submit) const {
         int state = 0b1111;

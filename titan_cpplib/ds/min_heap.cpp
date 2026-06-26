@@ -46,12 +46,12 @@ public:
     MinHeap() {}
     MinHeap(vector<T> a) : a(a) { _heapify(); }
 
-    //! 最小の要素を返す / `O(1)`
+    /// 最小の要素を返す / `O(1)`
     T get_min() const {
         return a[0];
     }
 
-    //! 最小の要素を削除して返す / `O(logn)`
+    /// 最小の要素を削除して返す / `O(logn)`
     T pop_min() {
         T res = a[0];
         a[0] = a.back();
@@ -60,13 +60,13 @@ public:
         return res;
     }
 
-    //! `key` を追加する / `O(logn)`
+    /// `key` を追加する / `O(logn)`
     void push(const T key) {
         a.emplace_back(key);
         _up(a.size() - 1);
     }
 
-    //! `push` して `pop` する / `O(logn)`
+    /// `push` して `pop` する / `O(logn)`
     T pushpoop_min(const T key) {
         if (a[0] >= key) return key;
         T res = a[0];
@@ -75,7 +75,7 @@ public:
         return res;
     }
 
-    //! 最小の要素を `pop` して返し、新たに `key` を挿入する。 `pop -> push` と同じ / `O(logn)`
+    /// 最小の要素を `pop` して返し、新たに `key` を挿入する。 `pop -> push` と同じ / `O(logn)`
     T replace_min(const T key) {
         T res = a[0];
         a[0] = key;
@@ -83,12 +83,12 @@ public:
         return res;
     }
 
-    //! 要素数を返す / `O(1)`
+    /// 要素数を返す / `O(1)`
     int len() const {
         return (int)a.size();
     }
 
-    //! 表示する
+    /// 表示する
     void print() const {
         vector<T> b = a;
         sort(b.begin(), b.end());

@@ -18,12 +18,12 @@ private:
 public:
     Timer() : start_timepoint(chrono::high_resolution_clock::now()) {}
 
-    //! リセットする
+    /// リセットする
     void reset() {
         start_timepoint = chrono::high_resolution_clock::now();
     }
 
-    //! 経過時間[ms](double)を返す
+    /// 経過時間[ms](double)を返す
     double elapsed() const {
         // auto end_timepoint = chrono::high_resolution_clock::now();
         // auto start = chrono::time_point_cast<chrono::microseconds>(start_timepoint).time_since_epoch().count();

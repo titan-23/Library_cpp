@@ -10,7 +10,7 @@
 
 using namespace std;
 
-//! 木上のビームサーチライブラリ
+/// 木上のビームサーチライブラリ
 namespace flying_squirrel {
 
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
@@ -242,7 +242,7 @@ private:
         }
     }
 
-    //! 不要なNodeを削除し、木を更新する
+    /// 不要なNodeを削除し、木を更新する
     int update_tree(State& state, const int turn) {
         nxt_tree.clear();
         if (turn == 0) {

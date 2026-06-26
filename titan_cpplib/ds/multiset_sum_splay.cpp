@@ -245,7 +245,7 @@ public:
         cout << "]" << endl;
     }
 
-    //! vectorにしたときの区間[l, r)の和
+    /// vectorにしたときの区間[l, r)の和
     T range_sum_at(int l, int r) {
         assert(0 <= l && l <= r && r <= len());
         int a, b, c;

@@ -34,7 +34,7 @@ private:
 public:
     Mo() : n(0) {}
 
-    //! 長さ `n` の列に対する Mo's algorithm インスタンスを生成 / `O(1)`
+    /// 長さ `n` の列に対する Mo's algorithm インスタンスを生成 / `O(1)`
     Mo(const int n) {
         this->max_n = 1 << 25;
         this->q = 0;
@@ -45,7 +45,7 @@ public:
         assert(this->n <= this->max_n);
     }
 
-    //! クエリ `[l, r)` を追加する / `O(1)`
+    /// クエリ `[l, r)` を追加する / `O(1)`
     void add_query(const int l, const int r) {
         assert(0 <= l && l <= r && r <= n);
         _l.emplace_back(l);
@@ -53,7 +53,7 @@ public:
         ++q;
     }
 
-    //! 追加されたクエリを一括処理する / `O(q√n)`
+    /// 追加されたクエリを一括処理する / `O(q√n)`
     // F1~F3: lambda関数
     template<typename F1, typename F2, typename F3>
     void run_light(F1 &&add, F2 &&del, F3 &&out) {
@@ -77,7 +77,7 @@ public:
         }
     }
 
-    //! 追加されたクエリを一括処理する / `O(q√n)`
+    /// 追加されたクエリを一括処理する / `O(q√n)`
     // F1~F5: lambda関数
     template<typename F1, typename F2, typename F3, typename F4, typename F5>
     void run(F1 &&add_left, F2 &&add_right, F3 &&del_left, F4 &&del_right, F5 &&out) {
@@ -101,7 +101,7 @@ public:
         }
     }
 
-    //! 追加されたクエリを一括処理する / `O(q√n)`
+    /// 追加されたクエリを一括処理する / `O(q√n)`
     // F1~F5: lambda関数
     template<typename F1, typename F2, typename F3, typename F4, typename F5>
     void run_range(F1 &&add_left, F2 &&add_right, F3 &&del_left, F4 &&del_right, F5 &&out) {

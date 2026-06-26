@@ -55,7 +55,7 @@ public:
 
     ScoreType threshold() const { return entry < beam_width ? INF : seg[1].first; }
 
-    //! @param node_id record_history 用。比較・選択に使わないので探索挙動には影響しない
+    /// @param node_id record_history 用。比較・選択に使わないので探索挙動には影響しない
     bool push(
         ScoreType score, HashType hash,
         int parent_leaf, Action action, int node_id = -1
@@ -98,8 +98,8 @@ public:
         return true;
     }
 
-    //! @param hash_window_turns clear_hash=false のとき、K ターンに 1 回 hash dict を全 clear。
-    //!                          0 なら従来通り無制限蓄積。
+    /// @param hash_window_turns clear_hash=false のとき、K ターンに 1 回 hash dict を全 clear。
+    ///                          0 なら従来通り無制限蓄積。
     void reset(int turn, int w, bool clear_hash, int hash_window_turns = 0) {
         beam_width = w;
         while (s < w) {
@@ -204,10 +204,10 @@ public:
 
     ScoreType threshold() const { return entry < beam_width ? INF : seg[1].first; }
 
-    //! aid は呼び出し側 (beam_search) が arena_put_reserve で取って渡す。
-    //! 戻り値: PushResult{slot, evicted_aid}.
-    //!   - slot < 0 のとき棄却。呼び出し側で arena_release(aid) すること。
-    //!   - slot >= 0 のとき採用。evicted_aid != BAD_ID_FLAT なら旧 aid を arena_release すること。
+    /// aid は呼び出し側 (beam_search) が arena_put_reserve で取って渡す。
+    /// 戻り値: PushResult{slot, evicted_aid}.
+    ///   - slot < 0 のとき棄却。呼び出し側で arena_release(aid) すること。
+    ///   - slot >= 0 のとき採用。evicted_aid != BAD_ID_FLAT なら旧 aid を arena_release すること。
     PushResult push(ScoreType score, HashType hash, int parent_leaf, ActionId aid, int node_id = -1) {
         if (is_built && score >= seg[1].first) {
             return {-1, BAD_ID_FLAT};

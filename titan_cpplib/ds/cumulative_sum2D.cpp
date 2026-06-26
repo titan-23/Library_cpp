@@ -26,7 +26,7 @@ public:
         }
     }
 
-    //! `[h1, h2) x [w1, w2)` の和を返す / `O(1)`
+    /// `[h1, h2) x [w1, w2)` の和を返す / `O(1)`
     T sum(const int h1, const int w1, const int h2, const int w2) const {
         assert(0 <= h1 && h1 <= h2 && h2 <= h);
         assert(0 <= w1 && w1 <= w2 && w2 <= w);

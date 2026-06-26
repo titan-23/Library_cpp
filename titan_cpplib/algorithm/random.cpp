@@ -36,39 +36,39 @@ public:
         _w = _z * 1812433253U + 1;
     }
 
-    //! `[0, 1]` の乱数を返す(実数)
+    /// `[0, 1]` の乱数を返す(実数)
     constexpr double random() { return (double)(_xor128()) / 0xFFFFFFFF; }
 
-    //! `[0, end]` の乱数を返す(整数)
+    /// `[0, end]` の乱数を返す(整数)
     constexpr int randint(const int end) {
         assert(0 <= end);
         return (((uint64_t)_xor128() * (end+1)) >> 32);
     }
 
-    //! `[begin, end]` の乱数を返す(整数)
+    /// `[begin, end]` の乱数を返す(整数)
     constexpr int randint(const int begin, const int end) {
         assert(begin <= end);
         return begin + (((uint64_t)_xor128() * (end-begin+1)) >> 32);
     }
 
-    //! `[0, end)` の乱数を返す(整数)
+    /// `[0, end)` の乱数を返す(整数)
     constexpr int randrange(const int end) {
         assert(0 < end);
         return (((uint64_t)_xor128() * end) >> 32);
     }
 
-    //! `[begin, end)` の乱数を返す(整数)
+    /// `[begin, end)` の乱数を返す(整数)
     constexpr int randrange(const int begin, const int end) {
         assert(begin < end);
         return begin + (((uint64_t)_xor128() * (end-begin)) >> 32);
     }
 
-    //! `[0, u64_MAX)` の乱数を返す / zobrist hash等の使用を想定
+    /// `[0, u64_MAX)` の乱数を返す / zobrist hash等の使用を想定
     constexpr uint64_t rand_u64() {
         return ((uint64_t)_xor128() << 32) | _xor128();
     }
 
-    //! `[0, end)` の異なる乱数を2つ返す
+    /// `[0, end)` の異なる乱数を2つ返す
     constexpr pair<int, int> rand_pair(const int end) {
         assert(end >= 2);
         int u = randrange(end);
@@ -78,7 +78,7 @@ public:
         return {u, v};
     }
 
-    //! `[begin, end)` の異なる乱数を2つ返す
+    /// `[begin, end)` の異なる乱数を2つ返す
     constexpr pair<int, int> rand_pair(const int begin, const int end) {
         assert(end - begin >= 2);
         int u = randrange(begin, end);
@@ -88,7 +88,7 @@ public:
         return {u, v};
     }
 
-    //! Note `a`は非const
+    /// Note `a`は非const
     vector<int> rand_vec(const int cnt, vector<int> &a) {
         int n = a.size();
         for (int i = 0; i < cnt; ++i) {
@@ -99,7 +99,7 @@ public:
         return res;
     }
 
-    //! `[begin, end)` の乱数を返す(実数)
+    /// `[begin, end)` の乱数を返す(実数)
     constexpr double randdouble(const double begin, const double end) {
         assert(begin <= end);
         return begin + random() * (end-begin);
@@ -114,7 +114,7 @@ public:
         }
     }
 
-    //! `vector` をインプレースにシャッフルする / `O(n)`
+    /// `vector` をインプレースにシャッフルする / `O(n)`
     template <typename T>
     void shuffle(vector<T> &a) {
         shuffle(a.begin(), a.end());

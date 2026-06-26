@@ -60,7 +60,7 @@ public:
         return s;
     }
 
-    //! `a[0, r)` に含まれる `x` の個数を返します。
+    /// `a[0, r)` に含まれる `x` の個数を返します。
     int rank(int r, T x) const {
         int l = 0;
         for (int bit = log-1; bit >= 0; --bit) {
