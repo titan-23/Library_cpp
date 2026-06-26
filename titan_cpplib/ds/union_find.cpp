@@ -13,7 +13,6 @@ private:
     vector<int> par;
 
 public:
-
     UnionFind() {}
     UnionFind(int n) : n(n), group_numbers(n), par(n, -1) {}
 
