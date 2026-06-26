@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 #include "titan_cpplib/graph/hld.cpp"
 #include "titan_cpplib/ds/segment_tree.cpp"
@@ -28,7 +30,23 @@ public:
         this->rseg = titan23::SegmentTree<T, op, e>(b);
     }
 
-    //! `u` から `v` へのパスの総積を返す / `O(logn)`
+    /// @brief 隣接リスト G と根から構築する / O(N)
+    HLDSegmentTree(const vector<vector<int>> &G, const int root) {
+        this->hld = titan23::HLD(G, root);
+        this->seg = titan23::SegmentTree<T, op, e>(hld.n);
+        this->rseg = titan23::SegmentTree<T, op, e>(hld.n);
+    }
+
+    /// @brief 隣接リスト G と根から構築し、頂点 k の値を a[k] とする / O(N)
+    HLDSegmentTree(const vector<vector<int>> &G, const int root, const vector<T> &a) {
+        this->hld = titan23::HLD(G, root);
+        vector<T> b = hld.build_list(a);
+        this->seg = titan23::SegmentTree<T, op, e>(b);
+        reverse(b.begin(), b.end());
+        this->rseg = titan23::SegmentTree<T, op, e>(b);
+    }
+
+    /// @brief u から v へのパスの総積を返す / O(logN)
     T path_prod(int u, int v) const {
         T lres = e(), rres = e();
         while (hld.head[u] != hld.head[v]) {
@@ -48,18 +66,18 @@ public:
         return op(lres, rres);
     }
 
-    //! 頂点 `k` の値を返す / `O(1)`
+    /// @brief 頂点 k の値を返す / O(1)
     T get(const int k) const {
         return seg.get(hld.nodein[k]);
     }
 
-    //! 頂点 `k` の値を `v` に更新する / `O(logn)`
+    /// @brief 頂点 k の値を v に更新する / O(logN)
     void set(const int k, const T v) {
         seg.set(hld.nodein[k], v);
         rseg.set(hld.n - hld.nodein[k] - 1, v);
     }
 
-    //! 頂点 `v` の部分木の総積を返す / `O(logn)`
+    /// @brief 頂点 v の部分木の総積を返す / O(logN)
     T subtree_prod(const int v) const {
         return seg.prod(hld.nodein[v], hld.nodeout[v]);
     }

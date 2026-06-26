@@ -127,17 +127,17 @@ public:
         return dist(u, a) + dist(a, v) == dist(u, v);
     }
 
-    /// @brief vはtの祖先か？ / O(1)
+    /// @brief vは t の祖先か？ / O(1)
     bool is_ancestor(int v, int t) const {
         return nodein[v] <= nodein[t] && nodeout[t] <= nodeout[v];
     }
 
-    /// @brief vはtの子孫か？ / O(1)
+    /// @brief vは t の子孫か？ / O(1)
     bool is_descendant(int v, int t) const {
         return nodein[t] <= nodein[v] && nodeout[v] <= nodeout[t];
     }
 
-    /// @brief Pの頂点をすべて通るパスが存在するか？ / O(|P|+logN)
+    /// @brief P の頂点をすべて通るパスが存在するか？ / O(|P|+logN)
     bool is_passable_path(const vector<int> &P) const {
         int k = P.size();
         vector<bool> seen(k, false);
