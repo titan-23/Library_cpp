@@ -20,16 +20,16 @@ public:
     vector<int> size, par, dep, nodein, nodeout, head, hld;
 
     RootedTree() {}
-    RootedTree(vector<vector<int>> &G, int root) : root(root) {
-        this->n = G.size();
+    RootedTree(const vector<vector<int>> &_G, const int root) : root(root) {
+        n = _G.size();
         vector<vector<pair<int, T>>> F(n);
         for (int v = 0; v < n; ++v) {
-            for (int x : G[v]) {
-                F[v].push_back({x, 1});
+            for (int x : _G[v]) {
+                F[v].emplace_back(x, 1);
             }
         }
-        this->G = F;
-        titan23::HLD H(this->G, root);
+        G = F;
+        titan23::HLD H(_G, root);
         size    = H.size;
         par     = H.par;
         dep     = H.dep;
@@ -48,7 +48,7 @@ public:
         vector<vector<int>> F(n);
         for (int v = 0; v < n; ++v) {
             for (auto &[x, _] : G[v]) {
-                F[v].push_back(x);
+                F[v].emplace_back(x);
             }
         }
         titan23::HLD H(F, root);
