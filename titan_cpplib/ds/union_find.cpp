@@ -69,7 +69,7 @@ public:
 
     void clear() {
         group_numbers = n;
-        std::fill(par.begin(), par.end(), -1);
+        fill(par.begin(), par.end(), -1);
     }
 
     friend ostream& operator<<(ostream& os, titan23::UnionFind &uf) {
