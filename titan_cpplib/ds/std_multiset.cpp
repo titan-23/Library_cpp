@@ -85,7 +85,7 @@ public:
         return it->first;
     }
 
-    vector<T> to_vector_unique() const {
+    vector<T> tovector_unique() const {
         vector<T> a;
         a.reserve(size_unique());
         for (auto [k, v] : s) {
@@ -94,7 +94,7 @@ public:
         return a;
     }
 
-    vector<T> to_vector() const {
+    vector<T> tovector() const {
         vector<T> a;
         a.reserve(size());
         for (auto [k, v] : s) {

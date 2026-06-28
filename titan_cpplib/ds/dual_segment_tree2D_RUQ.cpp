@@ -46,7 +46,7 @@ public:
             data[(i+hs)*2*ws+(j+ws)] = {0, a[i][j]};
         }
 #else
-        sd.resize(4*hs*ws, {-1, T{}});
+        sd.resize(4*hs*ws, -1);
         stamp = 0;
         for (int i = 0; i < h; ++i) for (int j = 0; j < w; ++j) {
             sd[(i+hs)*2*ws+(j+ws)] = stamp;
