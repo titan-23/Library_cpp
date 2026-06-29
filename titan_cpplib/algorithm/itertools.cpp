@@ -86,23 +86,23 @@ vector<vector<int>> combinations(int n, int r) {
     return res;
 }
 
-/// @brief n ビットで popcount k のビット集合を昇順列挙 f(int mask) / O(nCk)
+/// @brief n ビットで popcount k のビット集合を昇順列挙 f(long long mask) / O(nCk)
 template<class F>
 void combinations_bit(int n, int k, F f) {
     if (k > n) return;
-    int c = (1 << k) - 1;
-    while (c < (1 << n)) {
+    long long c = (1LL << k) - 1;
+    while (c < (1LL << n)) {
         f(c);
         if (c == 0) break;
-        int x = c & -c, y = c + x;
+        long long x = c & -c, y = c + x;
         c = (((c & ~y) / x) >> 1) | y;
     }
 }
 
-/// @brief b の部分集合を降順列挙 f(int sub) / O(2^popcount(b))
+/// @brief b の部分集合を降順列挙 f(long long sub) / O(2^popcount(b))
 template<class F>
-void submasks(int b, F f) {
-    int a = b;
+void submasks(long long b, F f) {
+    long long a = b;
     while (true) {
         f(a);
         if (a == 0) break;
