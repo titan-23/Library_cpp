@@ -67,9 +67,8 @@ string spacefill(const string s, const int f) {
     return t;
 }
 
-string spacefill(const int x, const int f) {
-    string s = to_string(x);
-    return spacefill(s, f);
+template<class T> string spacefill(const T &x, const int f) {
+    return spacefill(to_string(x), f);
 }
 
 string zfill(const string s, const int f) {
@@ -80,7 +79,7 @@ string zfill(const string s, const int f) {
     return t;
 }
 
-string bin(long long s) {
+string bin(unsigned long long s) {
     if (s == 0) return "0";
     string t;
     while (s) {
@@ -91,7 +90,7 @@ string bin(long long s) {
     return t;
 }
 
-void DEBUG_LINE() { cerr << "[Line] : " << __LINE__ << std::endl; }
+#define DEBUG_LINE() (cerr << "[LINE] : " << __LINE__ << endl)
 
 string to_string_int128(__int128_t x) {
     if (x == 0) return "0";
