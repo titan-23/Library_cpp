@@ -50,6 +50,7 @@ vector<pair<char, int>> rle(const string &S) {
 
 /// @brief 二項係数 nCr / O(min(r, n-r))
 long long nCr(long long n, long long r) {
+    assert(0 <= n && 0 <= r);
     if (r > n) return 0;
     if (r * 2 > n) {
         r = n - r;
@@ -89,6 +90,8 @@ vector<vector<int>> combinations(int n, int r) {
 /// @brief n ビットで popcount k のビット集合を昇順列挙 f(long long mask) / O(nCk)
 template<class F>
 void combinations_bit(int n, int k, F f) {
+    assert(0 <= n && n < 63);
+    assert(0 <= k);
     if (k > n) return;
     long long c = (1LL << k) - 1;
     while (c < (1LL << n)) {
@@ -102,6 +105,7 @@ void combinations_bit(int n, int k, F f) {
 /// @brief b の部分集合を降順列挙 f(long long sub) / O(2^popcount(b))
 template<class F>
 void submasks(long long b, F f) {
+    assert(0 <= b);
     long long a = b;
     while (true) {
         f(a);
@@ -113,6 +117,7 @@ void submasks(long long b, F f) {
 /// @brief 総和が S になる正整数の非減少な組合せを全列挙する / O(S * p(S))
 // p(S) は分割数 S=10:42 S=20:627 S=30:5604 S=40:37338 S=50:204226 S=60:966467 S=70:4087968
 vector<vector<int>> partitions(int S) {
+    assert(S >= 0);
     vector<vector<int>> ans;
     vector<int> now;
     auto dfs = [&] (auto &&dfs, int rem) -> void {
@@ -133,6 +138,7 @@ vector<vector<int>> partitions(int S) {
 
 /// @brief 2N 個を N 組のペアに分ける全列挙 / O(N * (2N-1)!!)
 vector<vector<pair<int, int>>> grouping_pair(int n) {
+    assert(n >= 0);
     vector<vector<pair<int, int>>> result;
     vector<pair<int, int>> tmp;
     vector<bool> is_used(2 * n, false);
@@ -168,7 +174,7 @@ vector<vector<pair<int, int>>> grouping_pair(int n) {
 /// @brief 0..m-1 を repeat 個の直積 / O(m^repeat)
 template<class F>
 void product(int m, int repeat, F f) {
-    if (repeat < 0) return;
+    assert(repeat >= 0);
     if (repeat > 0 && m <= 0) return;
     vector<int> v(repeat, 0);
     while (true) {
@@ -187,7 +193,7 @@ void product(int m, int repeat, F f) {
 template<class F>
 void product(const vector<int> &a, int repeat, F f) {
     int m = (int)a.size();
-    if (repeat < 0) return;
+    assert(repeat >= 0);
     if (repeat > 0 && m == 0) return;
     vector<int> idx(repeat, 0), v(repeat, repeat > 0 ? a[0] : 0);
     while (true) {
@@ -209,6 +215,7 @@ void product(const vector<int> &a, int repeat, F f) {
 /// @brief 0..n-1 の順列を辞書順列挙 / O(n * n!)
 template<class F>
 void permutations(int n, F f) {
+    assert(n >= 0);
     vector<int> v(n);
     iota(v.begin(), v.end(), 0);
     do {
@@ -228,7 +235,8 @@ void permutations(vector<T> P, F f) {
 /// @brief n 個から r 個を取る順列を辞書順列挙 / O(n!/(n-r)!)
 template<class F>
 void permutations(int n, int r, F f) {
-    if (r < 0 || r > n) return;
+    assert(r >= 0);
+    if (r > n) return;
     vector<int> v(r);
     vector<bool> used(n, false);
     auto dfs = [&] (auto &&dfs, int depth) -> void {
@@ -250,7 +258,7 @@ void permutations(int n, int r, F f) {
 /// @brief n 種類から重複を許して k 個を選ぶ組合せを非減少で列挙 / O(C(n+k-1, k))
 template<class F>
 void combinations_with_replacement(int n, int k, F f) {
-    if (k < 0) return;
+    assert(k >= 0);
     if (k > 0 && n <= 0) return;
     vector<int> v(k, 0);
     auto dfs = [&] (auto &&dfs, int depth, int start) -> void {
