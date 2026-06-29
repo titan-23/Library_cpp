@@ -10,9 +10,7 @@ using namespace std;
 
 namespace titan23 {
 
-// ----- RLE -----
-
-// RLE
+/// @brief ランレングス圧縮 / O(n)
 template<typename T> vector<pair<T, int>> rle(const vector<T> &A) {
     vector<pair<T, int>> ret;
     if (A.empty()) return ret;
@@ -31,7 +29,7 @@ template<typename T> vector<pair<T, int>> rle(const vector<T> &A) {
     return ret;
 }
 
-// RLE
+/// @brief ランレングス圧縮 / O(n)
 vector<pair<char, int>> rle(const string &S) {
     vector<pair<char, int>> ret;
     if (S.empty()) return ret;
@@ -50,24 +48,23 @@ vector<pair<char, int>> rle(const string &S) {
     return ret;
 }
 
-// ----- combinations -----
-
-int nCr(int n, int r) {
+/// @brief 二項係数 nCr / O(min(r, n-r))
+long long nCr(long long n, long long r) {
     if (r > n) return 0;
     if (r * 2 > n) {
         r = n - r;
     }
-    int res = 1;
-    for (int i = 1; i <= r; ++i) {
+    long long res = 1;
+    for (long long i = 1; i <= r; ++i) {
         res = res * (n - r + i) / i;
     }
     return res;
 }
 
-// n 個から r 個を選ぶ添字組合せを昇順で全列挙する
+/// @brief n 個から r 個を選ぶ添字組合せの全列挙 / O(r * nCr)
 vector<vector<int>> combinations(int n, int r) {
     if (r < 0 || r > n) return {};
-    int m = nCr(n, r);
+    long long m = nCr(n, r);
     vector<vector<int>> res;
     if (m < 1e7) res.reserve(m);
     vector<int> now(r);
@@ -89,7 +86,7 @@ vector<vector<int>> combinations(int n, int r) {
     return res;
 }
 
-// n ビットのうち popcount が k のビット集合を昇順で列挙する f(int mask)
+/// @brief n ビットで popcount k のビット集合を昇順列挙 f(int mask) / O(nCk)
 template<class F>
 void combinations_bit(int n, int k, F f) {
     if (k > n) return;
@@ -102,7 +99,7 @@ void combinations_bit(int n, int k, F f) {
     }
 }
 
-// b の部分集合を降順で列挙する b 自身と 0 を含む f(int sub)
+/// @brief b の部分集合を降順列挙 f(int sub) / O(2^popcount(b))
 template<class F>
 void submasks(int b, F f) {
     int a = b;
@@ -113,10 +110,8 @@ void submasks(int b, F f) {
     }
 }
 
-// ----- partitions -----
-
-// 総和が S になる正整数の組合せを全列挙する
-// S=10:42 S=20:627 S=30:5604 S=40:37338 S=50:204226 S=60:966467 S=70:4087968
+/// @brief 総和が S になる正整数の非減少な組合せを全列挙する / O(S * p(S))
+// p(S) は分割数 S=10:42 S=20:627 S=30:5604 S=40:37338 S=50:204226 S=60:966467 S=70:4087968
 vector<vector<int>> partitions(int S) {
     vector<vector<int>> ans;
     vector<int> now;
@@ -136,10 +131,7 @@ vector<vector<int>> partitions(int S) {
     return ans;
 }
 
-// ----- grouping_pair -----
-
-// 2N 個を N 組のペアに分ける方法を全列挙する
-// 場合の数は (2N-1) * (2N-3) * ... * 1
+/// @brief 2N 個を N 組のペアに分ける全列挙 / O(N * (2N-1)!!)
 vector<vector<pair<int, int>>> grouping_pair(int n) {
     vector<vector<pair<int, int>>> result;
     vector<pair<int, int>> tmp;
@@ -173,9 +165,7 @@ vector<vector<pair<int, int>>> grouping_pair(int n) {
     return result;
 }
 
-// ----- product -----
-
-// 値 0..m-1 を repeat 個ぶん直積する f(const vector<int> &v) v.size() == repeat
+/// @brief 0..m-1 を repeat 個の直積 / O(m^repeat)
 template<class F>
 void product(int m, int repeat, F f) {
     if (repeat < 0) return;
@@ -193,7 +183,7 @@ void product(int m, int repeat, F f) {
     }
 }
 
-// 値集合 a を repeat 個ぶん直積する f(const vector<int> &v) v の各要素は a の値
+/// @brief 値集合 a を repeat 個の直積 / O(|a|^repeat)
 template<class F>
 void product(const vector<int> &a, int repeat, F f) {
     int m = (int)a.size();
@@ -216,9 +206,7 @@ void product(const vector<int> &a, int repeat, F f) {
     }
 }
 
-// ----- permutations -----
-
-// 添字 0..n-1 の順列を辞書順で列挙する f(const vector<int> &v)
+/// @brief 0..n-1 の順列を辞書順列挙 / O(n * n!)
 template<class F>
 void permutations(int n, F f) {
     vector<int> v(n);
@@ -228,20 +216,16 @@ void permutations(int n, F f) {
     } while (next_permutation(v.begin(), v.end()));
 }
 
-// 要素列 P の順列を列挙する 位置を区別し n! 通り出す f(const vector<T> &v)
+/// @brief 要素列 P の順列を辞書順列挙 相異なるもののみ / O(n * n!)
 template<class T, class F>
-void permutations(const vector<T> &P, F f) {
-    int n = (int)P.size();
-    vector<int> idx(n);
-    iota(idx.begin(), idx.end(), 0);
-    vector<T> v(n);
+void permutations(vector<T> P, F f) {
+    sort(P.begin(), P.end());
     do {
-        for (int i = 0; i < n; ++i) v[i] = P[idx[i]];
-        f(v);
-    } while (next_permutation(idx.begin(), idx.end()));
+        f(P);
+    } while (next_permutation(P.begin(), P.end()));
 }
 
-// n 個から r 個を取る順列を辞書順で列挙する f(const vector<int> &v) v.size() == r
+/// @brief n 個から r 個を取る順列を辞書順列挙 / O(n!/(n-r)!)
 template<class F>
 void permutations(int n, int r, F f) {
     if (r < 0 || r > n) return;
@@ -263,9 +247,7 @@ void permutations(int n, int r, F f) {
     dfs(dfs, 0);
 }
 
-// ----- combinations_with_replacement -----
-
-// n 種類から重複を許して k 個を選ぶ添字を非減少で列挙する f(const vector<int> &v) v.size() == k
+/// @brief n 種類から重複を許して k 個を選ぶ組合せを非減少で列挙 / O(C(n+k-1, k))
 template<class F>
 void combinations_with_replacement(int n, int k, F f) {
     if (k < 0) return;
