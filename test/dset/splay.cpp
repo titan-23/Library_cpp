@@ -256,7 +256,7 @@ class MultisetSum {
         cout << "]" << endl;
     }
 
-    //! [l, r)の和
+    /// [l, r)の和
     T sum(int l, int r) {
         NodePtr a, b, c;
         tie(b, c) = split_node_kth(this->root, r);

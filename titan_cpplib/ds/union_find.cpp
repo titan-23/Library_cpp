@@ -13,7 +13,6 @@ private:
     vector<int> par;
 
 public:
-
     UnionFind() {}
     UnionFind(int n) : n(n), group_numbers(n), par(n, -1) {}
 
@@ -69,7 +68,7 @@ public:
 
     void clear() {
         group_numbers = n;
-        std::fill(par.begin(), par.end(), -1);
+        fill(par.begin(), par.end(), -1);
     }
 
     friend ostream& operator<<(ostream& os, titan23::UnionFind &uf) {

@@ -48,12 +48,12 @@ private:
 public:
     CpuTimer() : start_ms(now_ms()) {}
 
-    //! リセットする
+    /// リセットする
     void reset() {
         start_ms = now_ms();
     }
 
-    //! 経過 CPU 時間[ms](double)を返す
+    /// 経過 CPU 時間[ms](double)を返す
     double elapsed() const {
         return now_ms() - start_ms;
     }

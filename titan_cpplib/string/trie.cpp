@@ -6,11 +6,11 @@ using namespace std;
 
 namespace titan23 {
 
-template <char B='a', int ALPHABET_SIZE=26>
+template <char B='a', int SIGMA=26>
 class Trie {
 private:
     struct Node {
-        array<int, ALPHABET_SIZE> child;
+        array<int, SIGMA> child;
         int count = 0;
         int stop_count = 0;
 
@@ -196,7 +196,7 @@ public:
                     }
                 }
             }
-            for (int i = 0; i < ALPHABET_SIZE; ++i) {
+            for (int i = 0; i < SIGMA; ++i) {
                 if (a[v].child[i] != -1) {
                     s.push_back(static_cast<char>(B + i));
                     dfs(dfs, a[v].child[i]);
@@ -220,13 +220,13 @@ public:
     void print() const {
         auto dfs = [&] (auto &&dfs, int v, const string &indent) -> void {
             int child_count = 0;
-            for (int i = 0; i < ALPHABET_SIZE; ++i) {
+            for (int i = 0; i < SIGMA; ++i) {
                 if (a[v].child[i] != -1) child_count++;
             }
             if (child_count == 0) return;
 
             int done = 0;
-            for (int i = 0; i < ALPHABET_SIZE; ++i) {
+            for (int i = 0; i < SIGMA; ++i) {
                 if (a[v].child[i] != -1) {
                     done++;
                     char c = static_cast<char>(B + i);

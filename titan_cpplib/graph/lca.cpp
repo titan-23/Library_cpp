@@ -21,7 +21,7 @@ private:
 public:
     LCA() {}
 
-    //! 隣接リスト `G` 、根 `root` として前計算をする / `O(n)`
+    /// 隣接リスト `G` 、根 `root` として前計算をする / `O(n)`
     LCA(const vector<vector<int>> &G, const int root) :
             n((int)G.size()), path(n), nodein(n, -1) {
         vector<int> par(n, -1);
@@ -48,7 +48,7 @@ public:
         st = titan23::StaticRmQ<int>(a, INT_MAX);
     }
 
-    //! `u`, `v` の lca を求める / `O(1)`
+    /// `u`, `v` の lca を求める / `O(1)`
     int lca(const int u, const int v) const {
         if (u == v) return u;
         int l = nodein[u], r = nodein[v];
@@ -56,7 +56,7 @@ public:
         return path[st.prod(l, r)];
     }
 
-    //! 頂点集合 `a` の lca を求める / `O(|a|)`
+    /// 頂点集合 `a` の lca を求める / `O(|a|)`
     int lca_mul(const vector<int> &a) const {
         assert(!a.empty());
         int l = n*2+1;

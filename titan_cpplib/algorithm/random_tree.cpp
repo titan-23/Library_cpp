@@ -26,7 +26,7 @@ public:
     RandomTree() {}
     RandomTree(int seed) : random(seed) {}
 
-    //! ランダムな木の辺集合を返す / `O(nlogn)`
+    /// ランダムな木の辺集合を返す / `O(nlogn)`
     vector<pair<int, int>> gen_random(int n) {
         // https://speakerdeck.com/tsutaj/beerbash-lt-230711?slide=27
         assert(n >= 0);
@@ -68,7 +68,7 @@ public:
         return edges;
     }
 
-    //! ランダムな木(パスグラフ)の辺集合を返す / `O(nlogn)`
+    /// ランダムな木(パスグラフ)の辺集合を返す / `O(nlogn)`
     vector<pair<int, int>> gen_path(int n) {
         // ホントにランダム一様???
         vector<int> p(n);

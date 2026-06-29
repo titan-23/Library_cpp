@@ -20,8 +20,9 @@ public:
     vector<int> size, par, dep, nodein, nodeout, head, hld;
 
     RootedTree() {}
-    RootedTree(const vector<vector<int>> &_G, const int root) : root(root) {
-        n = _G.size();
+
+    /// @brief 重みなし隣接リストと根から構築する。全辺の重みを1とみなす / O(N)
+    RootedTree(const vector<vector<int>> &_G, const int root) : n(_G.size()), root(root) {
         vector<vector<pair<int, T>>> F(n);
         for (int v = 0; v < n; ++v) {
             for (int x : _G[v]) {
@@ -44,10 +45,11 @@ public:
         }
     }
 
-    RootedTree(vector<vector<pair<int, T>>> &G, int root) : G(G), n(G.size()), root(root) {
+    /// @brief 重み付き隣接リストと根から構築する / O(N)
+    RootedTree(const vector<vector<pair<int, T>>> &_G, int root) : G(_G), n(_G.size()), root(root) {
         vector<vector<int>> F(n);
         for (int v = 0; v < n; ++v) {
-            for (auto &[x, _] : G[v]) {
+            for (const auto &[x, _] : _G[v]) {
                 F[v].emplace_back(x);
             }
         }
@@ -75,14 +77,17 @@ public:
         }
     }
 
+    /// @brief u, v 間の辺数を返す / O(logN)
     int dist(int u, int v) const {
         return dep[u] + dep[v] - 2 * dep[lca(u, v)];
     }
 
+    /// @brief u, v 間の重み付き距離を返す / O(logN)
     T dist_weight(int u, int v) const {
         return dep_weight[u] + dep_weight[v] - 2 * dep_weight[lca(u, v)];
     }
 
+    /// @brief u, v の最近共通祖先を返す / O(logN)
     int lca(int u, int v) const {
         while (true) {
             if (nodein[u] > nodein[v]) swap(u, v);
@@ -91,6 +96,7 @@ public:
         }
     }
 
+    /// @brief v の k 個上の祖先を返す。存在しなければ -1 / O(logN)
     int la(int v, int k) const {
         if (k < 0 || dep[v] < k) return -1;
         while (1) {
@@ -121,17 +127,17 @@ public:
         return dist(u, a) + dist(a, v) == dist(u, v);
     }
 
-    /// @brief vはtの祖先か？ / O(1)
+    /// @brief vは t の祖先か？ / O(1)
     bool is_ancestor(int v, int t) const {
         return nodein[v] <= nodein[t] && nodeout[t] <= nodeout[v];
     }
 
-    /// @brief vはtの子孫か？ / O(1)
+    /// @brief vは t の子孫か？ / O(1)
     bool is_descendant(int v, int t) const {
         return nodein[t] <= nodein[v] && nodeout[v] <= nodeout[t];
     }
 
-    /// @brief Pの頂点をすべて通るパスが存在するか？ / O(|P|+logN)
+    /// @brief P の頂点をすべて通るパスが存在するか？ / O(|P|+logN)
     bool is_passable_path(const vector<int> &P) const {
         int k = P.size();
         vector<bool> seen(k, false);
@@ -206,7 +212,7 @@ public:
         return {max_d, {u, v}};
     }
 
-    /// @brief 直径を返す
+    /// @brief 直径をなすパスを端点から端点まで順に返す
     vector<int> get_diameter_path() const {
         if (G.empty()) return {};
         vector<T> dist(n, -1);
@@ -259,7 +265,7 @@ public:
     }
 
     /// @brief デバッグ用
-    void debug(int root = 0) {
+    void debug() {
         auto dfs = [&] (auto &&dfs, int v, int p, const string &pref, bool is_last) -> void {
             cerr << pref;
             if (v != root) {

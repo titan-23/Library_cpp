@@ -100,12 +100,12 @@ private:
 public:
     PersistentArray() : root(0), n(0) {}
 
-    //! 配列 `a` をもとに構築する / `O(n)`
+    /// 配列 `a` をもとに構築する / `O(n)`
     PersistentArray(vector<T> a) : n(a.size()) {
         _build(a);
     }
 
-    //! 複数の位置を一括変更した永続配列を返す
+    /// 複数の位置を一括変更した永続配列を返す
     PersistentArray<T> multiset(vector<pair<int, T>> indices) const {
         if (indices.empty()) return copy();
         sort(indices.begin(), indices.end());
@@ -135,8 +135,8 @@ public:
         return _new(new_root);
     }
 
-    //! 複数の位置を一括変更した永続配列を返す
-    //! unique前提注意!
+    /// 複数の位置を一括変更した永続配列を返す
+    /// unique前提注意!
     PersistentArray<T> multiset_uf(vector<int> indices, T v) const {
         if (indices.empty()) return copy();
         sort(indices.begin(), indices.end());
@@ -164,7 +164,7 @@ public:
         return _new(new_root);
     }
 
-    //! 位置 `k` を `v` に変更した永続配列を返す / `O(logn)` time, `O(logn)` space
+    /// 位置 `k` を `v` に変更した永続配列を返す / `O(logn)` time, `O(logn)` space
     PersistentArray<T> set(int k, T v) const{
         assert(0 <= k && k < n);
         assert(root);
@@ -188,7 +188,7 @@ public:
         return res;
     }
 
-    //! 位置 `k` の値を返す / `O(logn)` time, `O(1)` space
+    /// 位置 `k` の値を返す / `O(logn)` time, `O(1)` space
     T get(int k) const {
         assert(0 <= k && k < n);
         assert(root);
@@ -205,12 +205,12 @@ public:
         return ma.keys[node];
     }
 
-    //! 永続配列全体をコピーして返す / `O(1)` time, `O(1)` space
+    /// 永続配列全体をコピーして返す / `O(1)` time, `O(1)` space
     PersistentArray<T> copy() const {
         return _new(root ? ma.copy(root) : 0);
     }
 
-    //! `vector` にして返す / `O(n)`
+    /// `vector` にして返す / `O(n)`
     vector<T> tovector() const {
         vector<T> a(n);
         vector<int> q = {root};
@@ -223,7 +223,7 @@ public:
         return a;
     }
 
-    //! 要素数を返す / `O(1)`
+    /// 要素数を返す / `O(1)`
     int len() const {
         return n;
     }

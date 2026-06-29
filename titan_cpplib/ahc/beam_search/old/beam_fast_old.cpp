@@ -59,8 +59,8 @@ private:
         }
     }
 
-    //! 当該ターンの生存 node_id を集め、生き残らなかった status==0 を 1 に直し snapshot を積む。
-    //! candidates.next_beam を読むだけで探索状態は変更しない。beam_search.cpp と同ロジック。
+    /// 当該ターンの生存 node_id を集め、生き残らなかった status==0 を 1 に直し snapshot を積む。
+    /// candidates.next_beam を読むだけで探索状態は変更しない。beam_search.cpp と同ロジック。
     void record_turn_survivors(int turn_label) {
         unordered_set<int> survived;
         for (int i = 0; i < (int)candidates.size(); ++i) {
@@ -75,9 +75,9 @@ private:
         snapshots.push_back({turn_label, vector<int>(survived.begin(), survived.end())});
     }
 
-    //! tour[leaf[k]..leaf[k+1]) を末尾 dst_end の手前にランク順に貼り込む共通ロジック。
-    //! dst_end は「親パス末尾の一つ後ろ」（葉のアクションを書く位置 = ancestor path one-past-end）。
-    //! 「経路復元: 親 leaf へ向かう祖先ぶんの action を tour から復元する」処理。
+    /// tour[leaf[k]..leaf[k+1]) を末尾 dst_end の手前にランク順に貼り込む共通ロジック。
+    /// dst_end は「親パス末尾の一つ後ろ」（葉のアクションを書く位置 = ancestor path one-past-end）。
+    /// 「経路復元: 親 leaf へ向かう祖先ぶんの action を tour から復元する」処理。
     template<class It>
     inline void copy_tour_path(int parent_leaf, int leaf_end, It dst_end) {
         int prog = 0;

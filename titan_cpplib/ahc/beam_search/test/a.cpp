@@ -27,7 +27,7 @@ void input() {
     }
 }
 
-//! 木上のビームサーチライブラリ
+/// 木上のビームサーチライブラリ
 namespace beam_search {
 
 using ScoreType = int;
@@ -182,9 +182,9 @@ public:
         score += inv_dist;
     }
 
-    //! ロールバックに必要な情報はすべてactionにメモしておく
-    //! threshold以上であれば計算しなくてよい
-    //! INFを返すと無条件で採用しない
+    /// ロールバックに必要な情報はすべてactionにメモしておく
+    /// threshold以上であれば計算しなくてよい
+    /// INFを返すと無条件で採用しない
     tuple<ScoreType, HashType, bool> try_op(Action &action, const ScoreType threshold) const {
         action.pre_score = score;
         action.pre_hash = hash;
@@ -293,9 +293,9 @@ public:
         hash = action.pre_hash;
     }
 
-    //! 新方式: enumerate_actions / try_op 一体化 sink。
-    //! 生成した action を submit に渡すと try_op + 判定 + push まで行う。中間 vector を作らない。
-    //! submit.threshold() でライブ worst を取得でき早期枝刈りに使えるが、ここでは try_op 側に任せる。
+    /// 新方式: enumerate_actions / try_op 一体化 sink。
+    /// 生成した action を submit に渡すと try_op + 判定 + push まで行う。中間 vector を作らない。
+    /// submit.threshold() でライブ worst を取得でき早期枝刈りに使えるが、ここでは try_op 側に任せる。
     template<class Submit>
     void enumerate_actions(const int turn, const Action &last_action, Submit &&submit) const {
         // composed last_action の場合、最後に踏んだ primitive 方向は chain.back().d
@@ -325,7 +325,7 @@ public:
     }
 
 #if 0
-    //! 旧方式: 遷移可能な Action の vector を actions に入れる
+    /// 旧方式: 遷移可能な Action の vector を actions に入れる
     void enumerate_actions(vector<Action> &actions, const int turn, const Action &last_action, const ScoreType threshold) const {
         auto rev = [&] () -> char {
             if (turn == 0) return 'Z';

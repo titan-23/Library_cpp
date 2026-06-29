@@ -94,7 +94,7 @@ public:
         if (HashSet::M*size > keys.size()) rebuild();
     }
 
-    //! keyがすでにあればtrue, なければ挿入してfalse / `O(1)`
+    /// keyがすでにあればtrue, なければ挿入してfalse / `O(1)`
     bool contains_insert(const u64 key) {
         const auto [pos, is_exist] = get_pos(key);
         if (is_exist) return true;
@@ -105,7 +105,7 @@ public:
         return false;
     }
 
-    //! 全ての要素を削除する / `O(n/w)`
+    /// 全ての要素を削除する / `O(n/w)`
     void clear() {
         if (empty()) return;
         this->size = 0;

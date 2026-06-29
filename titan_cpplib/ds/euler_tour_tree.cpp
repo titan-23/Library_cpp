@@ -226,7 +226,7 @@ class EulerTourTree {
         _init_build(a);
     }
 
-    //! 隣接リストから構築する / `O(logn)`
+    /// 隣接リストから構築する / `O(logn)`
     void build(vector<vector<int>> &G) {
         vector<int> seen(n, 0);
         vector<long long> a;
@@ -274,7 +274,7 @@ class EulerTourTree {
         }
     }
 
-    //! 辺 `{u, v}` を追加する / `O(logn)`
+    /// 辺 `{u, v}` を追加する / `O(logn)`
     void link(const int u, const int v) {
         reroot(u);
         reroot(v);
@@ -290,7 +290,7 @@ class EulerTourTree {
         --group_numbers;
     }
 
-    //! 辺 `{u, v}` を削除する / `O(logn)`
+    /// 辺 `{u, v}` を削除する / `O(logn)`
     void cut(const int u, const int v) {
         reroot(v);
         reroot(u);
@@ -307,14 +307,14 @@ class EulerTourTree {
         ++group_numbers;
     }
 
-    //! 辺 `{u, v}` がなければ追加する / `O(logn)`
+    /// 辺 `{u, v}` がなければ追加する / `O(logn)`
     bool merge(const int u, const int v) {
         if (same(u, v)) return false;
         link(u, v);
         return true;
     }
 
-    //! 辺 `{u, v}` があれば削除する / `O(logn)`
+    /// 辺 `{u, v}` があれば削除する / `O(logn)`
     bool split(const int u, const int v) {
         if (ptr_edge.find((long long)u*n+v) == ptr_edge.end() || ptr_edge.find((long long)v*n+u) == ptr_edge.end()) {
             return false;
@@ -323,12 +323,12 @@ class EulerTourTree {
         return true;
     }
 
-    //! 代表元？ / `O(logn)`
+    /// 代表元？ / `O(logn)`
     NodePtr leader(const int v) {
         return _left_splay(ptr_vertex[v]);
     }
 
-    //! 根を `v` にする / `O(logn)`
+    /// 根を `v` にする / `O(logn)`
     void reroot(const int v) {
         NodePtr node = ptr_vertex[v];
         auto[x, y] = _split_right(node);
@@ -336,7 +336,7 @@ class EulerTourTree {
         _splay(node);
     }
 
-    //! 連結判定 / `O(logn)`
+    /// 連結判定 / `O(logn)`
     bool same(const int u, const int v) {
         NodePtr u_node = ptr_vertex[u];
         NodePtr v_node = ptr_vertex[v];
@@ -345,7 +345,7 @@ class EulerTourTree {
         return (u_node->par != nullptr || u_node == v_node);
     }
 
-    //! `v` を根とする部分木に `f` を作用、ただし `v` の親は `p(or -1)` / `O(logn)`
+    /// `v` を根とする部分木に `f` を作用、ただし `v` の親は `p(or -1)` / `O(logn)`
     void subtree_apply(const int v, const int p, const F f) {
         NodePtr v_node = ptr_vertex[v];
         reroot(v);
@@ -369,7 +369,7 @@ class EulerTourTree {
         _merge(b, d);
     }
 
-    //! `v` を根とする部分木の総和、ただし `v` の親は `p(or -1)` / `O(logn)`
+    /// `v` を根とする部分木の総和、ただし `v` の親は `p(or -1)` / `O(logn)`
     T subtree_sum(const int v, const int p) {
         NodePtr v_node = ptr_vertex[v];
         reroot(v);
@@ -388,19 +388,19 @@ class EulerTourTree {
         return res;
     }
 
-    //! 連結成分の個数を返す / `(1)`
+    /// 連結成分の個数を返す / `(1)`
     int group_count() const {
         return group_numbers;
     }
 
-    //! `v` の値を取得 / `O(logn)`
+    /// `v` の値を取得 / `O(logn)`
     T get_vertex(const int v) {
         NodePtr node = ptr_vertex[v];
         _splay(node);
         return node->key;
     }
 
-    //! `v` の値を `val` に変更 / `O(logn)`
+    /// `v` の値を `val` に変更 / `O(logn)`
     void set_vertex(const int v, const T val) {
         NodePtr node = ptr_vertex[v];
         _splay(node);

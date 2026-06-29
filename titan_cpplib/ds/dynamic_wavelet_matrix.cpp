@@ -250,14 +250,14 @@ class DynamicWaveletMatrix {
         return range_freq(l, r, y) - range_freq(l, r, x);
     }
 
-    //! 区間[l, r)で、x未満のうち最大の要素を返す
+    /// 区間[l, r)で、x未満のうち最大の要素を返す
     T prev_value(int l, int r, T x) const {
         int k = range_freq(l, r, x)-1;
         if (k < 0) return -1;
         return kth_smallest(l, r, k);
     }
 
-    //! 区間[l, r)で、x以上のうち最小の要素を返す
+    /// 区間[l, r)で、x以上のうち最小の要素を返す
     T next_value(int l, int r, T x) const {
         int k = range_freq(l, r, x);
         if (k >= r-l) return -1;

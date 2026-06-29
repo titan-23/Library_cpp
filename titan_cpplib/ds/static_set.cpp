@@ -37,79 +37,79 @@ public:
         n = (int)data.size();
     }
 
-    //! 要素数を返す / `O(1)`
+    /// 要素数を返す / `O(1)`
     int len() const {
         return n;
     }
 
-    //! 要素数を返す / `O(1)`
+    /// 要素数を返す / `O(1)`
     int size() const {
         return n;
     }
 
-    //! 空かどうか / `O(1)`
+    /// 空かどうか / `O(1)`
     bool empty() const {
         return n == 0;
     }
 
-    //! 昇順 `k` 番目の要素を返す / `O(1)`
+    /// 昇順 `k` 番目の要素を返す / `O(1)`
     T get(const int k) const {
         assert(0 <= k && k < len());
         return data[k];
     }
 
-    //! `key` 以上で最小 / `O(logn)`
+    /// `key` 以上で最小 / `O(logn)`
     T ge(const T &key) const {
         auto it = lower_bound(data.begin(), data.end(), key);
         if (it == data.end()) return missing;
         return *it;
     }
 
-    //! `key` より大きくて最小 / `O(logn)`
+    /// `key` より大きくて最小 / `O(logn)`
     T gt(const T &key) const {
         auto it = upper_bound(data.begin(), data.end(), key);
         if (it == data.end()) return missing;
         return *it;
     }
 
-    //! `key` 以下で最大 / `O(logn)`
+    /// `key` 以下で最大 / `O(logn)`
     T le(const T &key) const {
         auto it = upper_bound(data.begin(), data.end(), key);
         if (it == data.begin()) return missing;
         return *(--it);
     }
 
-    //! `key` 未満で最大 / `O(logn)`
+    /// `key` 未満で最大 / `O(logn)`
     T lt(const T &key) const {
         auto it = lower_bound(data.begin(), data.end(), key);
         if (it == data.begin()) return missing;
         return *(--it);
     }
 
-    //! `upper` 未満の要素数を返す / `O(logn)`
+    /// `upper` 未満の要素数を返す / `O(logn)`
     int index(const T &upper) const {
         auto it = lower_bound(data.begin(), data.end(), upper);
         return distance(data.begin(), it);
     }
 
-    //! `upper` 以下の要素数を返す / `O(logn)`
+    /// `upper` 以下の要素数を返す / `O(logn)`
     int index_right(const T &upper) const {
         auto it = upper_bound(data.begin(), data.end(), upper);
         return distance(data.begin(), it);
     }
 
-    //! `key` の要素数を返す / `O(logn)`
+    /// `key` の要素数を返す / `O(logn)`
     int count(const T &key) const {
         return contains(key) ? 1 : 0;
     }
 
-    //! `[lower, upper)` の要素数を返す / `O(logn)`
+    /// `[lower, upper)` の要素数を返す / `O(logn)`
     int count_range(const T &lower, const T &upper) const {
         assert(lower <= upper);
         return index(upper) - index(lower);
     }
 
-    //! `key` の存在判定 / `O(logn)`
+    /// `key` の存在判定 / `O(logn)`
     bool contains(const T &key) const {
         int idx = index(key);
         if (idx == (int)data.size()) {
