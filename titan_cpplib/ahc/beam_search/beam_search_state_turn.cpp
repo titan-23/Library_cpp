@@ -1,8 +1,5 @@
-#include <iostream>
-#include <vector>
-#include <cassert>
-#include <algorithm>
-
+#pragma once
+#include <bits/stdc++.h>
 #include "titan_cpplib/algorithm/random.cpp"
 #include "titan_cpplib/others/print.cpp"
 #include "titan_cpplib/ahc/beam_search/beam_search_turn.cpp"
