@@ -1,7 +1,7 @@
 #include <vector>
 #include <set>
 #include <cassert>
-#include "titan_cpplib/algorithm/random_mt.cpp"
+#include "titan_cpplib/alg/random_mt.cpp"
 using namespace std;
 
 // RandomTree

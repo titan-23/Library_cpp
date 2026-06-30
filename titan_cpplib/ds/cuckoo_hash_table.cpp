@@ -106,7 +106,7 @@ class CuckooHashTable {
     }
 };
 
-#include "titan_cpplib/algorithm/random.cpp"
+#include "titan_cpplib/alg/random.cpp"
 using u64 = unsigned long long;
 void solve() {
     titan23::Random rnd;

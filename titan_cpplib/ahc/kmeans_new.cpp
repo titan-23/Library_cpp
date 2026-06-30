@@ -9,7 +9,7 @@
 #include <cstdint>
 #include <iostream>
 #include <utility>
-#include "titan_cpplib/algorithm/random.cpp"
+#include "titan_cpplib/alg/random.cpp"
 #include <atcoder/mincostflow>
 
 // Kmeans (refactored)

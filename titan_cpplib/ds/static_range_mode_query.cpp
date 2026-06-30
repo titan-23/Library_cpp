@@ -1,7 +1,7 @@
 #include <vector>
 #include <cassert>
 #include <algorithm>
-#include "titan_cpplib/algorithm/zaatsu.cpp"
+#include "titan_cpplib/alg/zaatsu.cpp"
 using namespace std;
 
 namespace titan23 {

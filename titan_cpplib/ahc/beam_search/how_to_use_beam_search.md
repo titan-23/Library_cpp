@@ -58,7 +58,7 @@ for each turn:
 #include <bits/stdc++.h>
 #include "titan_cpplib/others/print.cpp"
 #include "titan_cpplib/ahc/timer.cpp"
-#include "titan_cpplib/algorithm/random.cpp"
+#include "titan_cpplib/alg/random.cpp"
 #include "titan_cpplib/ahc/beam_search/beam_search.cpp"            // search() 本体
 using namespace std;
 

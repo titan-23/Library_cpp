@@ -3,7 +3,7 @@
 #include <vector>
 #include <algorithm>
 #include <map>
-#include "titan_cpplib/algorithm/run_length_encoding.cpp"
+#include "titan_cpplib/alg/run_length_encoding.cpp"
 using namespace std;
 
 // Osa_k

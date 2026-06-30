@@ -3,7 +3,7 @@
 #include <vector>
 #include <set>
 #include <cassert>
-#include "titan_cpplib/algorithm/random.cpp"
+#include "titan_cpplib/alg/random.cpp"
 #include <atcoder/mincostflow>
 using namespace std;
 

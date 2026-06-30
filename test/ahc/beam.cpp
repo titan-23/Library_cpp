@@ -9,7 +9,7 @@ template <class T, class U> T min(const T &t, const U &u) { return t < u ? t : u
 template <class T, class U> T max(const T &t, const U &u) { return t < u ? u : t; }
 
 #include "titan_cpplib/ahc/timer.cpp"
-#include "titan_cpplib/algorithm/random.cpp"
+#include "titan_cpplib/alg/random.cpp"
 #include "titan_cpplib/others/print.cpp"
 // #include "titan_cpplib/ahc/beam_search/beam_search_turn.cpp"
 #include "titan_cpplib/ahc/beam_search/gemini.cpp"

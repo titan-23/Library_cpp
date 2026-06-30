@@ -1,7 +1,7 @@
 // OMP_NUM_THREADS=8 time ./a.out < in/0000.txt > out.txt
 #include <bits/stdc++.h>
 #include "titan_cpplib/ahc/timer.cpp"
-#include "titan_cpplib/algorithm/random.cpp"
+#include "titan_cpplib/alg/random.cpp"
 #include "titan_cpplib/others/print.cpp"
 #include "titan_cpplib/ahc/sa/sa.cpp"
 #include "titan_cpplib/ahc/kmeans.cpp"

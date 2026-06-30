@@ -3,7 +3,7 @@
 #include <cassert>
 #include <algorithm>
 
-#include "titan_cpplib/algorithm/random.cpp"
+#include "titan_cpplib/alg/random.cpp"
 #include "titan_cpplib/others/print.cpp"
 #include "titan_cpplib/ahc/beam_search/naive_beam_search.cpp"
 #include "titan_cpplib/ahc/beam_search/beam_search.cpp"

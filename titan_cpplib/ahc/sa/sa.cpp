@@ -4,7 +4,7 @@
 #include <bits/stdc++.h>
 #include <omp.h>
 #include "titan_cpplib/ahc/timer.cpp"
-#include "titan_cpplib/algorithm/random.cpp"
+#include "titan_cpplib/alg/random.cpp"
 using namespace std;
 
 // simulated annealing (minimize)

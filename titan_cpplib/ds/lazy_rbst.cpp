@@ -1,6 +1,6 @@
 #include <iostream>
 #include <stack>
-#include "titan_cpplib/algorithm/random.cpp"
+#include "titan_cpplib/alg/random.cpp"
 #include "titan_cpplib/ds/fast_stack.cpp"
 // #include "titan_cpplib/others/print.cpp"
 using namespace std;
