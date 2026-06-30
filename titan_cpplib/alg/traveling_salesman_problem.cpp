@@ -1,16 +1,21 @@
+#pragma once
+
 #include <vector>
+#include <algorithm>
+#include <cassert>
 using namespace std;
 
 // traveling_salesman_problem
 namespace titan23 {
 
+/// @brief 巡回セールスマン問題 最小重みハミルトン閉路 / O(2^n n^2)
 template<typename T>
 T traveling_salesman_problem(int n, T INF, const vector<vector<T>> &dist) {
     assert(n > 0);
     vector<vector<T>> dp(1<<n, vector<T>(n, INF));
-    dp[0][0] = 0;
+    dp[1<<0][0] = 0;
     for (int s = 0; s < (1<<n); ++s) {
-        for (int v = 0; v < n; ++v) if ((s==0) || (s>>v&1)) {
+        for (int v = 0; v < n; ++v) if (s>>v&1) {
             for (int u = 0; u < n; ++u) if ((s>>u&1)==0) {
                 // v -> u
                 dp[s|(1<<u)][u] = min(dp[s|(1<<u)][u], dp[s][v]+dist[v][u]);
