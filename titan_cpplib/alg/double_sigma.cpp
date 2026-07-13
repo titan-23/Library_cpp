@@ -1,10 +1,7 @@
 #pragma once
 
 #include <vector>
-#include <cassert>
-#include <cstdlib>
 #include <algorithm>
-#include <iostream>
 #include "titan_cpplib/ds/multiset_sum.cpp"
 using namespace std;
 
@@ -17,7 +14,6 @@ public:
 /// `Σ|A[r]-A[l]|`
 template<typename T> static T sigma_abs_online(const vector<T> &A) {
     T ans = 0;
-    const int n = A.size();
     titan23::MultisetSum<T> S;
     T sum = 0;
     for (const T a : A) {
@@ -105,54 +101,6 @@ template<typename T> static T sigma_min(vector<T> A) {
     int n = A.size();
     for (int i = 0; i < n; i++) ans += (T)(n - 1 - i) * A[i];
     return ans;
-}
-
-template<typename T> static void test_abs(const vector<T> &A) {
-    const int n = A.size();
-    T ans = 0;
-    for (int l = 0; l < n; ++l) for (int r = l+1; r < n; ++r) {
-        ans += abs(A[r] - A[l]);
-    }
-    T ans_sigma = sigma_abs(A);
-    cerr << ans << " " << ans_sigma << endl;
-    assert(ans == ans_sigma);
-    cerr << "ok." << endl;
-}
-
-template<typename T> static void test_minus(const vector<T> &A) {
-    const int n = A.size();
-    T ans = 0;
-    for (int l = 0; l < n; ++l) for (int r = l+1; r < n; ++r) {
-        ans += A[r] - A[l];
-    }
-    T ans_sigma = sigma_minus(A);
-    cerr << ans << " " << ans_sigma << endl;
-    assert(ans == ans_sigma);
-    cerr << "ok." << endl;
-}
-
-template<typename T> static void test_min(const vector<T> &A) {
-    const int n = A.size();
-    T ans = 0;
-    for (int l = 0; l < n; ++l) for (int r = l+1; r < n; ++r) {
-        ans += min(A[r], A[l]);
-    }
-    T ans_sigma = sigma_min(A);
-    cerr << ans << " " << ans_sigma << endl;
-    assert(ans == ans_sigma);
-    cerr << "ok." << endl;
-}
-
-template<typename T> static void test_max(const vector<T> &A) {
-    const int n = A.size();
-    T ans = 0;
-    for (int l = 0; l < n; ++l) for (int r = l+1; r < n; ++r) {
-        ans += max(A[r], A[l]);
-    }
-    T ans_sigma = sigma_max(A);
-    cerr << ans << " " << ans_sigma << endl;
-    assert(ans == ans_sigma);
-    cerr << "ok." << endl;
 }
 
 };

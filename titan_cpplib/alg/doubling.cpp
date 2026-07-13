@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <cassert>
+#include <algorithm>
 using namespace std;
 
 namespace titan23 {
@@ -10,6 +11,7 @@ namespace titan23 {
 class Doubling {
 private:
     int n, log;
+    long long lim;
     vector<vector<int>> db;
 
     int bit_length(long long LIM) {
@@ -18,14 +20,14 @@ private:
     }
 
 public:
-    /// @param LIM kthの最大値
-    /// @param A A[i]:=iからの遷移先
-    Doubling(long long LIM, const vector<int> &A) : n(A.size()), log(bit_length(LIM)) {
-        db.resize(log+1, vector<int>(n, -1));
+    /// @param LIM kth の最大値
+    /// @param A A[i]:= i からの遷移先
+    Doubling(long long LIM, const vector<int> &A) : n(A.size()), log(bit_length(LIM)), lim(LIM) {
+        db.resize(max(log, 1), vector<int>(n, -1));
         for (int k = 0; k < n; ++k) {
             db[0][k] = A[k];
         }
-        for (int k = 0; k < log; ++k) {
+        for (int k = 0; k+1 < log; ++k) {
             for (int i = 0; i < n; ++i) {
                 if (db[k][i] == -1) {
                     db[k+1][i] = -1;
@@ -36,9 +38,10 @@ public:
         }
     }
 
-    /// @brief startからk回遷移したときの位置
+    /// @brief start から k 回遷移したときの位置
     int kth(int start, long long k) const {
         assert(0 <= start && start < n);
+        assert(0 <= k && k <= lim);
         for (int i = log-1; i >= 0; --i) {
             if (k >> i & 1) {
                 start = db[i][start];
