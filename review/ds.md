@@ -12,13 +12,11 @@
 
 | ファイル | 内容 |
 |---|---|
-| array.cpp | reverse が壊れている。swap の名前衝突。swap_range の swap 誤呼び出し |
 | bit_vector.cpp | select0/select1 が 32bit ブロック前提の計算で誤答 |
 | bbst_node.cpp | _prev のロジック誤り。_next/_prev はループで null 参照 |
 | deque.cpp | _rebuild が壊れており、基本操作で誤った要素を返す・要素を失う |
 | multiset_sum.cpp / avl_tree_multiset.cpp | pop() のデフォルト k=-1 で無限降下 |
 | avl_tree_set.cpp | コンストラクタが missing 引数を無視して -1 固定 |
-| binary_trie_set.cpp / binary_trie_multiset.cpp | get が xor_val を復元しない。multiset の clear が無効 |
 | dual_commutative_segment_tree.cpp | tovector() const が非 const を呼びコンパイル不能 |
 | dual_segment_tree.cpp | コンストラクタ(n, init) が init を無視 |
 | dual_segment_tree_RUQ2.cpp | vector 版コンストラクタの時刻 off-by-one で範囲外参照 |
@@ -26,8 +24,6 @@
 | dynamic_segment_tree_init.cpp | update() が欠損子の寄与を座標 mid() で計算(長さでない) |
 | dynamic_list.cpp | access/pop/set が bool 型のままで T が 0/1 に切り捨て |
 | dynamic_wavelet_matrix.cpp | long long 版 bit_length が __builtin_clz(32bit) を使用 |
-| fenwick_tree_RAQ.cpp | `n(n)` 自己初期化。vector 版コンストラクタの意味誤り(生値で構築し get が壊れる)。tovector に return なし |
-| fenwick_tree_RAQRSQ.cpp | tovector に return なし |
 | min_heap.cpp / max_heap.cpp | _down の `i<<1\|1 < n` が優先順位誤りで範囲外アクセス |
 | offline_RUQ.cpp | nxt のサイズ不足で範囲外アクセス |
 | lazy_rbst.cpp | merge の集約順が非可換モノイドで誤り |
@@ -60,14 +56,6 @@
 - **[注意]** X, Y が `vector<int>` 固定で、テンプレート T が int を超える座標に対応していない。
 - **[軽微]** cnt を31ビットに詰めるため、区間長の総和が 2^31 以上で壊れる。
 
-### array.cpp
-- **[バグ] reverse() が壊れている**。`n = len()>>1` とした上で `swap(a[i], a[n-i-1])` としており、前半分だけを反転する。len=2 では何もしない。
-- **[バグ] メンバ swap(int,int) の名前衝突**。T=int のとき内部の `swap(a[i], a[j])` が std::swap でなく自分自身を呼び、添字として要素値を使う。reverse(l,r) 等も同様に汚染される。
-- **[バグ] swap_range**。`swap(l0, l1)` がローカル変数の交換のつもりでメンバ swap を呼び、配列要素を交換してしまう。
-- **[バグ] remove()**。std::remove の戻り値を erase しておらず、削除されない。
-- **[軽微]** `assert(0 <= i < len())` は `(0<=i) < len()` と解釈され常に通る。
-- **[軽微]** pop の範囲チェックなし。index/contain の引数が非 const 参照。
-
 ### avl_tree_bit_vector.cpp
 - 128bit パック AVL の回転時の size/total 更新、挿入分割、削除(_pop_under)の d/fd 管理を確認した。正しい。
 - **[注意]** select0/select1 に範囲チェックがなく、k が過大だと番兵ノード0で無限ループする。
@@ -92,16 +80,18 @@
 - rotate 系4関数は正しい(利用側多数で確認)。
 
 ### binary_trie_set.cpp
-- **[バグ] get(k) が `res ^ xor_val` を返していない**。pop は XOR して返すが get はソート空間の値をそのまま返す。all_xor 使用時に gt/lt/ge/le(内部で get を使用)も全て誤る。
-- **[バグ] pop の assert 位置**。`assert(0 <= k && ...)` の後に `if (k < 0) k += len()` があり、負の k は使えない(死にコード)。
-- **[注意]** le(key) は key+1 を index に渡すため key が最大値(2^bit-1)のとき誤る。add に範囲 assert がなく、lim 超の key は上位ビットが黙って落ちる。
-- **[軽微]** `MemoeyAllocator` 綴り。
-- _discard の分岐(c の意味が反転気味の書き方)は追跡の結果正しい。
+- レビューの get/pop の記述は逆だった。std::set と照合すると `get` は正しく、`pop` が `res ^ xor_val` を返して all_xor 時に誤る。`pop` を `res` を返すよう修正した。
+- `index`/`index_right` が xor_val で分岐せず物理順で数え、all_xor 時に誤っていた。xor 対応に書き換えた。`le` を `index_right` にして最大値でのあふれを解消し、`add` に範囲 assert、`pop` の assert 順も直した。
+- `tovector`(と print)が dfs で物理ビットを積み、all_xor 時に物理値を返していた。論理ビットを積むよう修正した。
+- `MemoeyAllocator` を `MemoryAllocator` に改名した。
+- std::set と all_xor・discard・tovector 込みで全メソッドを照合し一致した。
+- _discard の分岐は追跡の結果正しい。
 
 ### binary_trie_multiset.cpp
-- **[バグ] get(k) の xor_val 復元漏れ**(set 版と同じ)。gt/lt/ge/le も影響。
-- **[バグ] clear() が機能しない**。`root = 1` の代入のみで size 等を初期化しない(実質 no-op)。
-- **[軽微]** tovector が get(i) を n 回呼ぶ O(n·bit)。set 版の dfs 方式なら O(n + ノード数)。
+- get/pop は set と同じ。`get` は正しく、`pop` を `res` を返すよう修正した。`index`/`index_right` を xor 対応に書き換え、`index_right` は末尾で `size[leaf]` を足して重複も正しく数えるようにした。`le` も `index_right` に変更した。
+- clear() が `root = 1` だけで size を初期化せず無効だった。`end` と各配列を初期化するよう修正した。
+- tovector が get を n 回呼ぶ O(n·bit) だったのを、論理ビットを積む dfs に書き換え O(n + ノード数) にした。
+- std::multiset と all_xor・重複・discard・clear・tovector 込みで全メソッドを照合し一致した。
 
 ### bit_vector.cpp
 - **[バグ] select0/select1**。ブロックは 64bit(`bsize=(n+63)>>6`)なのに、二分探索が `m*32 - acc[m]`、`indx = 32*l`、幅32 の探索範囲を使う。全ビット1の n=128 で select1(70) が 38 を返すことを机上確認した。64 に統一する必要がある。rank 系は正しい。
@@ -246,20 +236,15 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 
 ### fenwick_tree.cpp
 - 正しい。bisect 系の `_s` が過大でもガードにより問題ない。
-- **[軽微]** FenwickTree(0) や vector 版の n=1 で clz(0) の UB。print() は n=0 で範囲外参照。
 
 ### fenwick_tree2D.cpp
 - add/sum は正しい。
 - **[注意] 単一引数 sum(h, w) の assert が過剰**。`h < _h` だが prefix 排他境界としては `h <= _h` が正しく、最終行/列の get(h,w) (h=_h-1) が assert で落ちる。
 
 ### fenwick_tree_RAQ.cpp
-- **[バグ] `FenwickTreeRAQ(vector<T> a) : n(n), fw(a)`**。`n(n)` は自身による初期化で未定義値。さらに fw(a) は差分配列でなく生値で構築するため get の意味が壊れる。
-- **[バグ] tovector() に return 文がない**(UB)。operator<< が使う。
-- **[軽微]** デフォルトコンストラクタが fw(0) → clz(0) UB。
 
 ### fenwick_tree_RAQRSQ.cpp
 - 本体(bit0/bit1 方式)は正しい。境界 r=n の _add も配列サイズ内。
-- **[バグ] tovector() に return 文がない**。
 
 ### foldable_deque.cpp / foldable_stack.cpp
 - 正しい(SWAG スタック、rebuild の半分割・向きを検証。deque.cpp と違いこちらは正しい)。
