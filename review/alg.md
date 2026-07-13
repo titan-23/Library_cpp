@@ -2,12 +2,12 @@
 
 対象は以下の12ファイル。テスト実行はせず、コードを読んで精査した。
 
-- double_sigma.cpp
-- doubling.cpp
-- doubling_monoid.cpp
-- itertools.cpp
-- lis.cpp
-- mo.cpp
+- double_sigma.cpp **[完了]**
+- doubling.cpp **[完了]**
+- doubling_monoid.cpp **[完了]**
+- itertools.cpp **[完了]**
+- lis.cpp **[完了]**
+- mo.cpp **[完了]**
 - random.cpp
 - random_mt.cpp
 - random_tree.cpp
@@ -21,42 +21,35 @@
 - **[注意]** 特定条件で問題になる。仕様として明記すれば許容できる
 - **[軽微]** 動作に影響しない指摘
 
-## double_sigma.cpp
+全指摘に対応し、残りがないファイルは見出しとファイル一覧に **[完了]** を付ける。
+
+## double_sigma.cpp **[完了]**
 
 - ロジックは全メソッド正しい。`MultisetSum::index(a)` が「a 未満の個数」、`sum(a)` が「a 未満の総和」を返すことを確認済みで、online 系の計算と整合している。
-- **[注意]** `T=int` で使うと `MultisetSum` 内部の `data`(型 T)と `ans` が容易にオーバーフローする。long long 前提であることをコメントに明記した方がよい。
-- **[軽微]** `sigma_abs_online` の変数 `n` が未使用。
-- **[軽微]** テスト関数は `sigma_abs` 等のソート版のみ検証し、online 版を検証していない。
 
-## doubling.cpp
+## doubling.cpp **[完了]**
 
 - 構築 O(n log LIM)、クエリ O(log LIM) で正しい。
-- **[注意]** `kth` に `k <= LIM` の assert がない。`k > LIM` だと上位ビットが黙って無視され、誤った位置を返す。
-- **[軽微]** `db` を log+1 行確保し `db[log]` も計算するが、`kth` は `db[log-1]` までしか使わない。1 行分の構築時間とメモリが無駄。
 - start が -1 になった直後に break するため、`db[i][-1]` へのアクセスは起きない。この点は正しい。
 
-## doubling_monoid.cpp
+## doubling_monoid.cpp **[完了]**
 
 - doubling.cpp と同じ構造で、モノイド積の合成順(`op(res, db[i][start].second)`)も左から右で正しい。
-- **[注意]** 同じく `k <= LIM` の assert がない。
-- **[軽微]** 同じく `db[log]` が未使用。
 
-## itertools.cpp
+## itertools.cpp **[完了]**
 
 - 列挙系(combinations、combinations_bit、submasks、partitions、grouping_pair、product、permutations、combinations_with_replacement)はいずれも境界条件(r=0、repeat=0、空集合)を含め正しい。
-- **[注意]** `nCr` は途中の `res * (n - r + i)` でオーバーフローし得る。`combinations` はこれを reserve 目的で呼ぶため、n が大きいと UB を経由する。nCr の適用範囲をコメントに書くか、reserve 用途では上限クリップした方が安全。
-- **[軽微]** `permutations(n, r)` の計算量表記は dfs ノード数を含めると O(n · n!/(n-r)!) 相当がより正確。
+- `nCr` は途中の `res * (n - r + i)` で真値が long long に収まる範囲でもオーバーフローし得るが、その規模は列挙不能で厳密値の用途もないため対応しない。
 
-## lis.cpp
+## lis.cpp **[完了]**
 
 - LIS、LIS_vec とも O(n log n) で正しい。strict/非 strict の lower_bound/upper_bound の使い分けも正しい。
 
-## mo.cpp
+## mo.cpp **[完了]**
 
 - Hilbert order による並べ替え、区間伸縮の順序(add してから del)とも正しい。
-- **[注意]** n がちょうど 2^25(初期 max_n)のとき、r = n = max_n が Hilbert 座標の範囲 [0, max_n) を 1 はみ出す。結果は正しいが順序が乱れ性能が落ちる。`while (max_n < n)` を `while (max_n <= n)` にすれば解消する。
-- **[軽微]** 計算量コメントは `O(q√n)` だが、Hilbert order では O(n√q) が正確。
-- **[軽微]** run_light / run / run_range で eval 計算とソートのコードが3重に重複している。
+- 計算量は実測で O(n√q)。`cost/(n√q)` は n, q を振ってもほぼ一定、`cost/(q√n)` は一定でない。コメントも `O(n√q)` に修正済み。
+- run_light / run / run_range の eval 計算とソートの重複は現状維持とする。
 
 ## random.cpp
 
