@@ -11,7 +11,7 @@
 - random.cpp
 - random_mt.cpp
 - random_tree.cpp
-- traveling_salesman_problem.cpp
+- traveling_salesman_problem.cpp **[完了]**
 - tree_generator.cpp
 - zaatsu.cpp
 
@@ -82,11 +82,11 @@
 - **[軽微]** `gen_random` が tree_generator.cpp 内の同名関数と重複実装。
 - gen_random 自体(Prufer 列からの復元)は正しい。
 
-## traveling_salesman_problem.cpp
+## traveling_salesman_problem.cpp **[完了]**
 
 - bitDP の遷移、O(2^n n^2) の計算量とも正しい。
-- **[注意]** `dp[s][v] == INF` のまま `dist[v][u]` を加算する。T = int、INF = INT_MAX だと符号付きオーバーフロー(UB)。`if (dp[s][v] == INF) continue;` を入れるべき。到達不能状態は結果の min には影響しないため、現状の誤りはオーバーフローのみ。
-- **[軽微]** bit 0 を含まない状態(到達不能)もループしており、約2倍の無駄がある。
+- 遷移と末尾ループに `dp == INF` のガードを入れ、`INT_MAX + dist` の符号付きオーバーフローを解消した。末尾も同じ不具合だったので合わせて直した。
+- bit 0 を含まない到達不能状態を `if ((s & 1) == 0) continue;` で飛ばし、反復を約半分にした。
 
 ## tree_generator.cpp
 
