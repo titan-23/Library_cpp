@@ -194,14 +194,16 @@ private:
                 node = par[node];
             }
         }
-        return res ^ xor_val;
+        return res;
     }
 
     T pop_min() {
+        assert(!empty());
         return pop(0);
     }
 
     T pop_max() {
+        assert(!empty());
         return pop(-1);
     }
 
@@ -210,7 +212,7 @@ private:
     }
 
     T get_min() const {
-        assert(len() > 0);
+        assert(!empty());
         T key = xor_val;
         T ans = 0;
         int node = root;
@@ -236,7 +238,7 @@ private:
     }
 
     T get_max() const {
-        assert(len() > 0);
+        assert(!empty());
         T key = xor_val;
         T ans = 0;
         int node = root;
@@ -265,13 +267,15 @@ private:
         assert(0 <= key && key < lim);
         int k = 0;
         int node = root;
-        key ^= xor_val;
         for (int i = bit-1; i >= 0; --i) {
+            int c = (xor_val >> i) & 1;
+            int lo = c ? right[node] : left[node];
+            int hi = c ? left[node] : right[node];
             if ((key >> i) & 1) {
-                k += size[left[node]];
-                node = right[node];
+                k += size[lo];
+                node = hi;
             } else {
-                node = left[node];
+                node = lo;
             }
             if (!node) break;
         }
@@ -281,23 +285,27 @@ private:
     int index_right(T key) const {
         int k = 0;
         int node = root;
-        key ^= xor_val;
         for (int i = bit-1; i >= 0; --i) {
+            int c = (xor_val >> i) & 1;
+            int lo = c ? right[node] : left[node];
+            int hi = c ? left[node] : right[node];
             if ((key >> i) & 1) {
-                k += size[left[node]];
-                node = right[node];
+                k += size[lo];
+                node = hi;
             } else {
-                node = left[node];
+                node = lo;
             }
             if (!node) break;
         }
-        if (node) k += 1;
+        if (node) k += size[node];
         return k;
     }
 
     // [low, high)
     int count_range(T low, T high) const {
-        return index(high) - index(low);
+        int hi = high >= lim ? len() : index(high);
+        int lo = low >= lim ? len() : index(low);
+        return hi - lo;
     }
 
     T get(int k) const {
@@ -341,24 +349,32 @@ private:
     }
 
     T ge(T key) const {
-        if (key == 0) return (len()? get_min() : -1);
+        if (key == 0) return (!empty()? get_min() : -1);
         int i = index_right(key - 1);
         return (i >= size[root]? -1 : get(i));
     }
 
     T le(T key) const {
-        int i = index(key + 1) - 1;
+        int i = index_right(key) - 1;
         return (i < 0? -1 : get(i));
     }
 
     vector<T> tovector() const {
         vector<T> a;
-        if (!len()) return a;
+        if (empty()) return a;
         a.reserve(len());
-        for (int i = 0; i < len(); ++i) {
-            T e = get(i);
-            a.emplace_back(e);
-        }
+        auto dfs = [&] (auto &&dfs, int d, int node, T now) -> void {
+            if (d < 0) {
+                for (int i = 0; i < size[node]; ++i) a.emplace_back(now);
+                return;
+            }
+            int c = (xor_val >> d) & 1;
+            int lo = c ? right[node] : left[node];
+            int hi = c ? left[node] : right[node];
+            if (lo) dfs(dfs, d-1, lo, now<<1);
+            if (hi) dfs(dfs, d-1, hi, now<<1|1);
+        };
+        dfs(dfs, bit-1, root, (T)0);
         return a;
     }
 
@@ -367,7 +383,12 @@ private:
     }
 
     void clear() {
+        end = 2;
         root = 1;
+        left.assign(2, 0);
+        right.assign(2, 0);
+        par.assign(2, 0);
+        size.assign(2, 0);
     }
 
     void print() const {

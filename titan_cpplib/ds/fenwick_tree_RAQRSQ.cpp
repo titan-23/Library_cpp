@@ -81,6 +81,7 @@ public:
         for (int i = 0; i < n; ++i) {
             res[i] = get(i);
         }
+        return res;
     }
 
     friend ostream& operator<<(ostream& os, const titan23::FenwickTreeRAQRSQ<T> &fw) {

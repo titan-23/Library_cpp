@@ -17,7 +17,9 @@ private:
 public:
     FenwickTreeRAQ() : n(0), fw(0) {}
     FenwickTreeRAQ(int n) : n(n), fw(n) {}
-    FenwickTreeRAQ(vector<T> a) : n(n), fw(a) {}
+    FenwickTreeRAQ(vector<T> a) : n(a.size()), fw(n) {
+        for (int i = 0; i < n; ++i) add(i, a[i]);
+    }
 
     /// all 0
     void clear() {
@@ -51,6 +53,7 @@ public:
         for (int i = 0; i < n; ++i) {
             res[i] = get(i);
         }
+        return res;
     }
 
     friend ostream& operator<<(ostream& os, const titan23::FenwickTreeRAQ<T> &fw) {

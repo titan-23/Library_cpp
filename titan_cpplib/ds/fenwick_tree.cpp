@@ -13,17 +13,23 @@ struct FenwickTree {
     int _n, _s;
     vector<T> _tree;
 
+    static int _calc_s(const int n) {
+        int s = 1;
+        while (s < n) s <<= 1;
+        return s;
+    }
+
     FenwickTree() {}
 
     FenwickTree(const int n) {
         _n = n;
-        _s = 1 << (32 - __builtin_clz(_n));
+        _s = _calc_s(_n);
         _tree.resize(n+1, 0);
     }
 
     FenwickTree(const vector<T> &a)
                 : _n(a.size()),
-                _s(1 << (32 - __builtin_clz(_n-1))),
+                _s(_calc_s(_n)),
                 _tree(_n+1, 0) {
         for (int i = 1; i <= _n; ++i) _tree[i] = a[i-1];
         for (int i = 1; i < _n; ++i) {
@@ -106,7 +112,8 @@ struct FenwickTree {
         vector<T> fw = tovector();
         cout << "[";
         for (int i = 0; i < _n-1; ++i) cout << fw[i] << ", ";
-        cout << fw[_n-1] << "]\n";
+        if (_n > 0) cout << fw[_n-1];
+        cout << "]\n";
     }
 };
 }  // namespace titan23

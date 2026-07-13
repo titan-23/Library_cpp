@@ -79,20 +79,6 @@
 - **[軽微]** #pragma once も include もない。
 - rotate 系4関数は正しい(利用側多数で確認)。
 
-### binary_trie_set.cpp
-- レビューの get/pop の記述は逆だった。std::set と照合すると `get` は正しく、`pop` が `res ^ xor_val` を返して all_xor 時に誤る。`pop` を `res` を返すよう修正した。
-- `index`/`index_right` が xor_val で分岐せず物理順で数え、all_xor 時に誤っていた。xor 対応に書き換えた。`le` を `index_right` にして最大値でのあふれを解消し、`add` に範囲 assert、`pop` の assert 順も直した。
-- `tovector`(と print)が dfs で物理ビットを積み、all_xor 時に物理値を返していた。論理ビットを積むよう修正した。
-- `MemoeyAllocator` を `MemoryAllocator` に改名した。
-- std::set と all_xor・discard・tovector 込みで全メソッドを照合し一致した。
-- _discard の分岐は追跡の結果正しい。
-
-### binary_trie_multiset.cpp
-- get/pop は set と同じ。`get` は正しく、`pop` を `res` を返すよう修正した。`index`/`index_right` を xor 対応に書き換え、`index_right` は末尾で `size[leaf]` を足して重複も正しく数えるようにした。`le` も `index_right` に変更した。
-- clear() が `root = 1` だけで size を初期化せず無効だった。`end` と各配列を初期化するよう修正した。
-- tovector が get を n 回呼ぶ O(n·bit) だったのを、論理ビットを積む dfs に書き換え O(n + ノード数) にした。
-- std::multiset と all_xor・重複・discard・clear・tovector 込みで全メソッドを照合し一致した。
-
 ### bit_vector.cpp
 - **[バグ] select0/select1**。ブロックは 64bit(`bsize=(n+63)>>6`)なのに、二分探索が `m*32 - acc[m]`、`indx = 32*l`、幅32 の探索範囲を使う。全ビット1の n=128 で select1(70) が 38 を返すことを机上確認した。64 に統一する必要がある。rank 系は正しい。
 - この select は wavelet_matrix 系の select に伝播する。
@@ -234,17 +220,9 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 ### fast_stack.cpp
 - 正しい(容量超過時は emplace_back で自動伸長)。
 
-### fenwick_tree.cpp
-- 正しい。bisect 系の `_s` が過大でもガードにより問題ない。
-
 ### fenwick_tree2D.cpp
 - add/sum は正しい。
 - **[注意] 単一引数 sum(h, w) の assert が過剰**。`h < _h` だが prefix 排他境界としては `h <= _h` が正しく、最終行/列の get(h,w) (h=_h-1) が assert で落ちる。
-
-### fenwick_tree_RAQ.cpp
-
-### fenwick_tree_RAQRSQ.cpp
-- 本体(bit0/bit1 方式)は正しい。境界 r=n の _add も配列サイズ内。
 
 ### foldable_deque.cpp / foldable_stack.cpp
 - 正しい(SWAG スタック、rebuild の半分割・向きを検証。deque.cpp と違いこちらは正しい)。

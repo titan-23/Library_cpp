@@ -14,7 +14,7 @@ private:
     int root, bit;
     T lim, xor_val;
 
-    struct MemoeyAllocator {
+    struct MemoryAllocator {
 
         struct Node {
             int ch[2];
@@ -31,7 +31,7 @@ private:
         stack<int> erased;
         size_t ptr;
 
-        MemoeyAllocator() : ptr(2) {
+        MemoryAllocator() : ptr(2) {
             tree.emplace_back(Node{});
             tree.emplace_back(Node{});
         }
@@ -83,6 +83,7 @@ public:
     }
 
     bool add(T key) {
+        assert(0 <= key && key < lim);
         key ^= xor_val;
         int node = root;
         for (int i = bit-1; i >= 0; --i) {
@@ -130,8 +131,8 @@ public:
     }
 
     T pop(int k) {
-        assert(0 <= k && k < len());
         if (k < 0) k += len();
+        assert(0 <= k && k < len());
         int node = root;
         T res = 0;
         for (int i = bit-1; i >= 0; --i) {
@@ -147,7 +148,7 @@ public:
             }
         }
         _discard(node);
-        return res ^ xor_val;
+        return res;
     }
 
     T pop_min() {
@@ -203,13 +204,13 @@ public:
     int index(T key) const {
         int k = 0;
         int node = root;
-        key ^= xor_val;
         for (int i = bit-1; i >= 0; --i) {
+            int c = (xor_val >> i) & 1;
             if (key >> i & 1) {
-                k += ma.tree[ma.tree[node].ch[0]].size;
-                node = ma.tree[node].ch[1];
+                k += ma.tree[ma.tree[node].ch[c]].size;
+                node = ma.tree[node].ch[c^1];
             } else {
-                node = ma.tree[node].ch[0];
+                node = ma.tree[node].ch[c];
             }
             if (!node) break;
         }
@@ -219,21 +220,28 @@ public:
     int index_right(T key) const {
         int k = 0;
         int node = root;
-        key ^= xor_val;
         for (int i = bit-1; i >= 0; --i) {
+            int c = (xor_val >> i) & 1;
             if (key >> i & 1) {
-                k += ma.tree[ma.tree[node].ch[0]].size;
-                node = ma.tree[node].ch[1];
+                k += ma.tree[ma.tree[node].ch[c]].size;
+                node = ma.tree[node].ch[c^1];
             } else {
-                node = ma.tree[node].ch[0];
+                node = ma.tree[node].ch[c];
             }
             if (!node) break;
         }
-        if (node) k++;
+        if (node) k += ma.tree[node].size;
         return k;
     }
 
-    T get(int k) {
+    // [low, high)
+    int count_range(T low, T high) const {
+        int hi = high >= lim ? len() : index(high);
+        int lo = low >= lim ? len() : index(low);
+        return hi - lo;
+    }
+
+    T get(int k) const {
         assert(0 <= k && k < len());
         int node = root;
         T res = 0;
@@ -263,24 +271,24 @@ public:
         return res;
     }
 
-    T gt(T key) {
+    T gt(T key) const {
         int i = index_right(key);
         return (i >= ma.tree[root].size ? (-1) : get(i));
     }
 
-    T lt(T key) {
+    T lt(T key) const {
         int i = index(key) - 1;
         return (i < 0 ? -1 : get(i));
     }
 
-    T ge(T key) {
-        if (key == 0) return (len() ? get_min() : -1);
+    T ge(T key) const {
+        if (key == 0) return (!empty() ? get_min() : -1);
         int i = index_right(key - 1);
         return (i >= ma.tree[root].size ? -1 : get(i));
     }
 
-    T le(T key) {
-        int i = index(key + 1) - 1;
+    T le(T key) const {
+        int i = index_right(key) - 1;
         return (i < 0 ? -1 : get(i));
     }
 
@@ -289,15 +297,13 @@ public:
         if (empty()) return a;
         a.reserve(len());
         auto dfs = [&] (auto &&dfs, int d, int node, T now) -> void {
-            assert(node);
             if (d < 0) {
-                assert(ma.tree[node].size);
                 a.emplace_back(now);
                 return;
             }
             int c = xor_val >> d & 1;
-            if (ma.tree[node].ch[c])   dfs(dfs, d-1, ma.tree[node].ch[c], now<<1|c);
-            if (ma.tree[node].ch[c^1]) dfs(dfs, d-1, ma.tree[node].ch[c^1], now<<1|(c^1));
+            if (ma.tree[node].ch[c])   dfs(dfs, d-1, ma.tree[node].ch[c], now<<1);
+            if (ma.tree[node].ch[c^1]) dfs(dfs, d-1, ma.tree[node].ch[c^1], now<<1|1);
         };
         dfs(dfs, bit-1, root, (T)0);
         return a;
