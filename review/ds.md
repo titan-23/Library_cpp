@@ -1,5 +1,13 @@
 # titan_cpplib/ds レビュー
 
+===
+
+memo
+
+count_range, range_countの名前や引数名を統一したい
+
+===
+
 全115ファイル精査済み。
 
 重要度は3段階。
@@ -12,7 +20,6 @@
 
 | ファイル | 内容 |
 |---|---|
-| bit_vector.cpp | select0/select1 が 32bit ブロック前提の計算で誤答 |
 | bbst_node.cpp | _prev のロジック誤り。_next/_prev はループで null 参照 |
 | deque.cpp | _rebuild が壊れており、基本操作で誤った要素を返す・要素を失う |
 | multiset_sum.cpp / avl_tree_multiset.cpp | pop() のデフォルト k=-1 で無限降下 |
@@ -78,10 +85,6 @@
 - **[バグ] _next/_prev のループ**。`now->par` が null になった後に `now->right` を読む(null 参照)。また `now->right->_min()` はノード側クラスのメソッドを呼ぶ形で、BBSTNode の static 関数は呼ばれない。現状どこからも使われていないため実害は未発生。
 - **[軽微]** #pragma once も include もない。
 - rotate 系4関数は正しい(利用側多数で確認)。
-
-### bit_vector.cpp
-- **[バグ] select0/select1**。ブロックは 64bit(`bsize=(n+63)>>6`)なのに、二分探索が `m*32 - acc[m]`、`indx = 32*l`、幅32 の探索範囲を使う。全ビット1の n=128 で select1(70) が 38 を返すことを机上確認した。64 に統一する必要がある。rank 系は正しい。
-- この select は wavelet_matrix 系の select に伝播する。
 
 ### bloom_filter.cpp
 - 正しい。splitmix64 の逐次ストリームで K 個のハッシュを生成する設計も問題ない。

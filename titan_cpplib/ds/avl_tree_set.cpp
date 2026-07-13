@@ -313,7 +313,7 @@ private:
     }
 
     // [l, r)
-    int range_count(int l, int r) const {
+    int range_count(T l, T r) const {
         return index(r) - index(l);
     }
 

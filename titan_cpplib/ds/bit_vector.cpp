@@ -15,8 +15,7 @@ private:
 
 public:
     BitVector() {}
-    BitVector(const int n) :
-        n(n), bsize((n+63)>>6), bit(bsize+1, 0), acc(bsize+1, 0) {}
+    BitVector(const int n) : n(n), bsize((n+63)>>6), bit(bsize+1, 0), acc(bsize+1, 0) {}
 
     void set(const int k) {
         bit[k>>6] |= (1ull) << (k & 63);
@@ -49,15 +48,15 @@ public:
         int l = 0, r = bsize+1;
         while (r - l > 1) {
             const int m = (l + r) >> 1;
-            if (m*32 - acc[m] > k) {
+            if (m*64 - acc[m] > k) {
                 r = m;
             } else {
                 l = m;
             }
         }
-        int indx = 32 * l;
-        k = k - (l*32 - acc[l]) + rank0(indx);
-        l = indx; r = indx+32;
+        int indx = 64 * l;
+        k = k - (l*64 - acc[l]) + rank0(indx);
+        l = indx; r = indx+64;
         while (r - l > 1) {
             const int m = (l + r) >> 1;
             if (rank0(m) > k) {
@@ -80,9 +79,9 @@ public:
                 l = m;
             }
         }
-        int indx = 32 * l;
+        int indx = 64 * l;
         k = k - acc[l] + rank1(indx);
-        l = indx; r = indx+32;
+        l = indx; r = indx+64;
         while (r - l > 1) {
             const int m = (l + r) >> 1;
             if (rank1(m) > k) {
