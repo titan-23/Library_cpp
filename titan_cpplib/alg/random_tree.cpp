@@ -1,5 +1,8 @@
+#pragma once
+
 #include <vector>
 #include <set>
+#include <utility>
 #include <cassert>
 #include "titan_cpplib/alg/random_mt.cpp"
 using namespace std;

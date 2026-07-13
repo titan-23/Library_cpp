@@ -1,4 +1,7 @@
+#pragma once
+
 #include <bits/stdc++.h>
+#include <unistd.h>
 using namespace std;
 
 namespace titan23 {

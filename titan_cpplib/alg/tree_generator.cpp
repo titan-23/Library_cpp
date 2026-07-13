@@ -1,4 +1,15 @@
-#include <bits/stdc++.h>
+#pragma once
+
+#include <vector>
+#include <string>
+#include <queue>
+#include <set>
+#include <utility>
+#include <algorithm>
+#include <cmath>
+#include <cassert>
+#include <cstdlib>
+#include <iostream>
 #include "titan_cpplib/alg/random_mt.cpp"
 using namespace std;
 

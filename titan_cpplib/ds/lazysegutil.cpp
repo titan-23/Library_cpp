@@ -1,3 +1,5 @@
+#pragma once
+
 #include <algorithm>
 #include <limits>
 #include "titan_cpplib/ds/lazy_segment_tree.cpp"

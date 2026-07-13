@@ -1,7 +1,10 @@
+#pragma once
+
 #include <iostream>
 #include <vector>
 #include <stack>
 #include <cassert>
+#include "titan_cpplib/others/print.cpp"
 using namespace std;
 
 namespace titan23 {

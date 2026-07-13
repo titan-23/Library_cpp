@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 #include <queue>
 #include "titan_cpplib/ds/bit_vector.cpp"

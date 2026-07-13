@@ -1,3 +1,6 @@
+#pragma once
+
+#include <cmath>
 #include <vector>
 #include <cassert>
 #include <algorithm>

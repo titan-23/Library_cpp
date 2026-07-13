@@ -1,8 +1,13 @@
+#pragma once
+
 #include <vector>
 #include <cassert>
+#include <cmath>
 using namespace std;
 
 namespace titan23 {
+
+using ll = long long;
 
 template<typename T>
 class LinearCumSum {

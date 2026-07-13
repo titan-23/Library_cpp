@@ -1,3 +1,7 @@
+#pragma once
+
+#include <cstring>
+#include <climits>
 #include <iostream>
 #include <vector>
 #include <memory>

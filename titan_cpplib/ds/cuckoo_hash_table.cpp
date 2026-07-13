@@ -1,3 +1,5 @@
+#pragma once
+
 raise NotImprementedError
 
 #pragma GCC target("avx2")

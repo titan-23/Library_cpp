@@ -1,6 +1,9 @@
+#pragma once
+
 #include <algorithm>
 #include <utility>
 #include <vector>
+#include <iostream>
 using namespace std;
 
 namespace titan23 {

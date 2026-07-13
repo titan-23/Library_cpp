@@ -1,12 +1,17 @@
+#pragma once
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <climits>
 #include <immintrin.h>
 
 using namespace std;
 
 // WarshallFloydSIMD
 namespace titan23 {
+
+using ll = long long;
 
 class WarshallFloydSIMD {
 private:

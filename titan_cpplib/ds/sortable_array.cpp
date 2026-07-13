@@ -1,3 +1,5 @@
+#pragma once
+
 #include <bits/stdc++.h>
 #include "titan_cpplib/ds/fenwick_tree.cpp"
 #include "titan_cpplib/ds/wordsize_tree_set.cpp"

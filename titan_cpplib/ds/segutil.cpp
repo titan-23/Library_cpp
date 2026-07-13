@@ -1,4 +1,7 @@
+#pragma once
+
 #include <algorithm>
+#include <numeric>
 #include <limits>
 #include "titan_cpplib/ds/segment_tree.cpp"
 using namespace std;

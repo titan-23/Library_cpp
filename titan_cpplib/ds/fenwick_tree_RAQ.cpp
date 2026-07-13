@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <vector>
 #include "titan_cpplib/ds/fenwick_tree.cpp"

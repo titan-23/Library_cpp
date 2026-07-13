@@ -38,14 +38,13 @@
 
 | ファイル | 内容 |
 |---|---|
-| warshall_floayd_simd.cpp | `ll` 未定義・`<climits>` 未 include で単体コンパイル不能。さらに AVX-512 命令を使っており AtCoder ジャッジ (Zen3) では SIGILL |
+| warshall_floayd_simd.cpp | AVX-512 命令を使っており AtCoder ジャッジ (Zen3) では SIGILL |
 | get_scc_graph.cpp | groups だけ番号を反転しており、F・ids・ids_inv と対応しない |
-| namori.cpp | なもりグラフ以外(木)を渡すと cycle 検出に失敗し `visit[-1]` で UB。`<random>`・`<climits>` を直接 include していない |
+| namori.cpp | なもりグラフ以外(木)を渡すと cycle 検出に失敗し `visit[-1]` で UB |
 | minimum_spanning_tree.cpp | 重みなし・ソートなしなので「E が重み順」という暗黙の前提がある。前提を満たさなければ MST にならない |
 
 ## 横断事項
 
-- **[軽微] `#pragma once` がないファイルが16個**。bfs_path、hld 系4つ、hungarian、k_nearest_sources、rooted_tree 以外すべて。expander は各ファイル1回のみ inline するので提出時は実害がないが、ローカルで複数ライブラリ経由の二重 include があると多重定義になる。
 - **[軽微] 非 inline の自由関数**が dijkstra、bfs_path、minimum_spanning_tree、get_scc_graph、rerooting_dp にある。複数翻訳単位で ODR 違反。単一ファイル提出なら実害なし。
 - **[軽微] 隣接リストの値渡し**が散見される(rerooting_dp、get_scc_graph、namori、centroid_decomposition、hld の build_list 等)。グラフ全体をコピーするので定数倍が悪い。特に rerooting_dp は `const vector<...> G` で `&` の付け忘れに見える。
 
@@ -162,7 +161,6 @@
 
 - 次数1の剥がし込みによるサイクル検出、サイクル順の走査、木部分の高さ添字ハッシュ、サイクル列のロリハを回転×反転で最小化する正規化、いずれもロジックは正しい。`4*MOD + acc[r] - acc[l]` の u64 上での帳尻(アンダーフロー時も一周して正になる)と mod() の縮約も確認した。
 - **[注意] 前提が「連結でサイクルをちょうど1つ持つ」**。木を渡すと is_cycle が全 false になり、`v = -1` のまま `visit[v]` で UB。assert かコメントがほしい。
-- **[注意] include が不健全**。mt19937_64 等の `<random>` は hash_string.cpp 経由の間接取得で、hash_string の機能自体は使っていない。ULLONG_MAX の `<climits>` はどこにもなく、処理系の間接 include で通っているだけ。`<random>` と `<climits>` を直接 include し、hash_string.cpp の include は外すべき。
 - **[軽微]** cycle / forest に getter がなく、外から使えるのは get_hash だけ。構築結果を使う想定なら公開が必要。
 - **[軽微]** get_hash 呼び出しごとに全ハッシュを再計算する。同一 seed で複数グラフを比較する用途なら問題ない。
 
@@ -189,7 +187,6 @@
 
 ## warshall_floayd_simd.cpp
 
-- **[バグ] 単体でコンパイル不能**。`ll` が未定義(format.cpp の `using ll = long long` が先に来る前提になっている)。LLONG_MAX に必要な `<climits>` もない。ライブラリファイルは自己完結という他ファイルの規約に反する。
 - **[注意] AVX-512 命令(_mm512_*)を使用**。AtCoder の現行ジャッジ(AMD EPYC 7763、Zen3)は AVX-512 非対応で、-mavx512f でコンパイルしても実行時に SIGILL になる。実戦で使うなら _mm256(AVX2)版に書き直す必要がある。
 - **[注意]** 内側ループで d[k*n+j] == INF をスキップしないため、負の辺重みがあると `d_ik + INF` が INF 未満になり INF 近傍のゴミが距離として残る。非負重みなら問題ない(min で INF が保たれる)。
 - n の8の倍数への切り上げとパディング行の扱いは正しい(パディング頂点の対角は INF のままだが参照されない)。

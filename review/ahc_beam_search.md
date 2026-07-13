@@ -90,7 +90,6 @@ old/、test/、ahclib_results、ビルド成果物は対象外。
 ## beam_search_state.cpp / beam_search_state_turn.cpp(雛形)
 
 - どちらも対応するエンジンのインターフェースと一致している。try_op が pre_*/nxt_* を書く規約、submit.threshold の形、target_turn の扱いのコメントも正確。
-- **[軽微]** beam_search_state.cpp に `#pragma once` がない(state_turn にはある)。
 - **[軽微]** `titan23::Random brnd` と gen_param が非 inline のグローバル定義で、複数 TU では重複定義になる。単一 TU 前提なら実害なし。
 - **[軽微]** HashType が state 版は `uint64_t`、state_turn 版は `unsigned long long` と表記が揺れている。
 

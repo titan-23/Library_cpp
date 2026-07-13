@@ -1,3 +1,5 @@
+#pragma once
+
 #include "titan_cpplib/ds/dynamic_lazy_segment_tree.cpp"
 
 namespace range_add_range_sum {

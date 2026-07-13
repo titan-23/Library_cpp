@@ -37,18 +37,16 @@
 | static_set.cpp | StaticSet(missing) で n が未初期化 |
 | wavelet_matrix.cpp | topk の戻り型不一致。select は bit_vector のバグの影響を受ける |
 | wavelet_matrix_bit.cpp | ライブラリファイルに main() が残存 |
+| partial_persistent_union_find.cpp | `PartialPersistentArray` に既定コンストラクタがなく、`PartialPersistentUnionFind()` がインスタンス化不能 |
 | persistent_set.cpp / persistent_multiset.cpp | 空 vector で _build が範囲外参照。split/pop が未定義の _split_node を呼ぶ |
 | persistent_multiset.cpp | find/remove がコンパイル不能(未定義変数 s, cnt)。add の既存キー経路が copy を木に繋がない |
 | persistent_lazy_wbtree.cpp / persistent_seg_wbtree.cpp | set() がコンパイル不能(stack の list 初期化と emplace_back)。copy() が自己呼び出しでコンパイル不能 |
 | multiset_sum_splay.cpp | vector 版コンストラクタと merge() がコンパイル不能(int への nullptr 代入等) |
-| linear_cum_sum.cpp | 未定義型 `ll` を使用しコンパイル不能 |
 | deletable_heap.cpp | operator<< が未定義変数 action を参照 |
 | cuckoo_hash_table.cpp | 先頭に `raise NotImprementedError`(意図的な未完成品) |
 
 ## 横断事項
 
-- **[注意] `#pragma once` の欠落が大半**。ある方が少数派(bit_vector、fenwick_tree、hash_dict、hash_set、offline_RUQ、offline_RUQ2D、segment_tree、std_set、std_multiset、weight_union_find、wordsize_tree_set、splay_node、persistent_union_find、persistent_weighted_union_find 程度)。expander は多重 include を防ぐが、単体利用や IDE で二重定義になる。
-- **[注意] include 不足が多数**。代表例: zaatsu 経由の `assert`、segment_tree2D の `<cassert>`、imos の `<cassert>`、mergesort_tree の `<algorithm>`(std::merge)、segutil の `<numeric>`(gcd)、sparse_table_min の `<cstring>`(memcpy) `<climits>`(INT_MAX)、fenwick_tree の `<algorithm>`(fill)、multiset_sum_qd の `<cassert>` `<cmath>` `<iostream>`。他ヘッダ経由で偶然通っている状態。
 - **[注意] クラス名の衝突**。(1) multiset_sum.cpp と multiset_sum_qd.cpp が同名 `MultisetSum`(API も異なる: sum が値基準/添字基準)。(2) dual_segment_tree_RUQ.cpp と RUQ2.cpp が同名 `DualSegmentTreeRUQ`。(3) wavelet_matrix.cpp と wavelet_matrix_bit.cpp が同名 `WaveletMatrix`(テンプレート引数も異なり再宣言エラー)。同時 include で壊れる。
 - **[軽微]** `<bits/stdc++.h>` をライブラリ内で使用: dynamic_bit_vector、dycone、sortable_array、sortable_segment_tree(規約違反)。
 - **[軽微]** デストラクタなし・メモリ解放なしはポインタ系全般。競プロ用途では許容。
@@ -97,7 +95,7 @@
 - **[バグ] get(k) が `res ^ xor_val` を返していない**。pop は XOR して返すが get はソート空間の値をそのまま返す。all_xor 使用時に gt/lt/ge/le(内部で get を使用)も全て誤る。
 - **[バグ] pop の assert 位置**。`assert(0 <= k && ...)` の後に `if (k < 0) k += len()` があり、負の k は使えない(死にコード)。
 - **[注意]** le(key) は key+1 を index に渡すため key が最大値(2^bit-1)のとき誤る。add に範囲 assert がなく、lim 超の key は上位ビットが黙って落ちる。
-- **[軽微]** `<cassert>` 未 include で assert 使用。`MemoeyAllocator` 綴り。
+- **[軽微]** `MemoeyAllocator` 綴り。
 - _discard の分岐(c の意味が反転気味の書き方)は追跡の結果正しい。
 
 ### binary_trie_multiset.cpp
@@ -127,7 +125,7 @@
 ### deletable_heap.cpp
 - 遅延削除ヒープのロジックは正しい(存在しないキーを erase すると壊れる仕様は一般的)。
 - **[バグ] DeletableMaxHeap::operator<<**。`os << action.d;` の `action` が未定義。使用した時点でコンパイルエラー。
-- **[軽微]** Min 版に Max 版のような空チェック assert がない。`<iostream>` 未 include で ostream 使用。
+- **[軽微]** Min 版に Max 版のような空チェック assert がない。
 
 ### deque.cpp
 - **[バグ] _rebuild が壊れている**。
@@ -279,7 +277,7 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 
 ### imos.cpp
 - add_const / add_linear / build(2回積分)の式を検証した。正しい。
-- **[軽微]** `<cassert>` 未 include。build は破壊的で2回呼べない。namespace 閉じの `};` に余分なセミコロン。
+- **[軽微]** build は破壊的で2回呼べない。namespace 閉じの `};` に余分なセミコロン。
 
 ### index_set.cpp
 - 正しい。
@@ -305,8 +303,8 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 - **[注意]** 区間更新系の ID が numeric_limits::max のため、データに max 値を使うと壊れる(慣習的だが明記なし)。
 
 ### linear_cum_sum.cpp
-- **[バグ] 未定義型 `ll`**。`T sum(int l, int d, int k, ll a, ll b)` はこのファイル内で ll が定義されておらずコンパイル不能。b は未使用、a は assert(a==1) 固定で API が未完成。
-- **[軽微]** 空間 O(nB)=O(n√n)。コメントに明記なし。`<cmath>` 未 include。
+- **[注意] API が未完成**。`T sum(int l, int d, int k, ll a, ll b)` は b が未使用で、a も assert(a==1) 固定。呼び出せる形になっていない。
+- **[軽微]** 空間 O(nB)=O(n√n)。コメントに明記なし。
 
 ### max_heap.cpp / min_heap.cpp
 - **[バグ] _down のループ条件**。`while (i<<1|1 < n)` は演算子優先順位により `(i<<1) | (1 < n)` と解釈される。n≥2 では常に真になり、葉に達したとき `a[u]`(u≥n)の範囲外読み取り、場合により範囲外 swap(書き込み)が起きる。`while ((i<<1|1) < n)` が正しい。両ファイル共通。pushpoop/replace も _down 経由で影響。
@@ -315,7 +313,7 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 
 ### merge_sort_tree.cpp
 - 正しい。
-- **[軽微]** `<algorithm>`(std::merge)未 include。func は空 vector を処理できる必要がある(葉より上の未使用スロットにも適用される)。
+- **[軽微]** func は空 vector を処理できる必要がある(葉より上の未使用スロットにも適用される)。
 
 ### multiset_sum.cpp
 - **[バグ] pop() のデフォルト k=-1**。find_kth(-1) は左端まで降りて assert 失敗(NDEBUG では null 参照)。負の添字対応をするなら事前に `k += len()` が要る。
@@ -326,7 +324,7 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 ### multiset_sum_qd.cpp
 - ロジックは正しい(get_pos、split、sum の添字区間、count_by_sum_limit)。
 - **[注意]** クラス名が multiset_sum.cpp と同じ `MultisetSum` で、sum の意味も異なる(こちらは添字区間、あちらは値未満)。名前変更を推奨。
-- **[軽微]** operator[] が範囲外で return なしに関数末尾へ到達(UB)。include 不足(cassert/cmath/iostream)。
+- **[軽微]** operator[] が範囲外で return なしに関数末尾へ到達(UB)。
 
 ### multiset_topk.cpp
 - 正しい(small=下位K個の集約を維持)。
@@ -347,8 +345,8 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 - unordered_map ネストの旧版。正しいが遅い。新版(dynamic_fenwick_tree2D.cpp)と役割が重複。
 
 ### partial_persistent_array.cpp / partial_persistent_union_find.cpp
-- 正しい(時刻の単調増加は assert で担保)。
-- **[軽微]** `<cassert>`/`<algorithm>` 未 include。
+- ロジックは正しい(時刻の単調増加は assert で担保)。
+- **[バグ] partial_persistent_union_find.cpp がコンパイル不能**。`PartialPersistentArray` に既定コンストラクタがないのに、`PartialPersistentUnionFind()` がメンバ `par` を既定構築しようとするため、インスタンス化でエラーになる。`PartialPersistentArray() {}` を追加すれば解消する。include を補って単体コンパイルできるようにした結果、表面化した。
 
 ### pbds_set.cpp / pbds_multiset.cpp
 - 正しい。
@@ -420,10 +418,9 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 ### segment_tree2D.cpp
 - set の行方向・列方向の更新、prod の分解とも正しい。
 - **[注意]** prod は行と列の合成順が混ざるため op は可換前提。ドキュメント化されていない。
-- **[軽微]** `<cassert>` 未 include。
 
 ### segutil.cpp
-- 正しい。SegGcd の alias が二重定義(同一なので合法だが重複)。`<numeric>`(gcd)未 include。
+- 正しい。SegGcd の alias が二重定義(同一なので合法だが重複)。
 
 ### sortable_array.cpp / sortable_segment_tree.cpp
 - 全体の設計(境界切断 make_kyokai、ソート済み splay 木のマージ)は正しい。
@@ -432,12 +429,12 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 
 ### sparse_segment_tree2D.cpp / sparse_segment_tree2DFAST.cpp
 - 正しい。`X[node].lch = new_node_x()` の再割り当ては C++17 の代入順序保証(右辺が先)で安全。
-- **[軽微]** `<cassert>` 未 include。FAST 版の H 上限 assert(1e8)は妥当。
+- **[軽微]** FAST 版の H 上限 assert(1e8)は妥当。
 
 ### sparse_table.cpp / sparse_table_min.cpp
 - 正しい。
 - **[注意]** SparseTable は重なり合う区間を op するため冪等演算限定だが、その旨のコメントがない(sum を渡すと誤る)。
-- **[軽微]** min 版: n=0 で clz(0) UB、memcpy/INT_MAX の include 不足。
+- **[軽微]** min 版: n=0 で clz(0) UB。
 
 ### splay_node.cpp
 - **[注意] split(node, key) の null 参照**。全要素が key より大きいとき find_splay が nullptr を返し、直後の `node->key` で落ちる。
@@ -445,7 +442,7 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 
 ### sqrt_segment_tree.cpp
 - 正しい(r=n の境界ガードも確認)。
-- **[軽微]** all_prod の `s = s = op(s, t)` の二重代入。include 不足(cassert/cmath)。set が O(√n)(可逆なら O(1) 化可能)。
+- **[軽微]** all_prod の `s = s = op(s, t)` の二重代入。set が O(√n)(可逆なら O(1) 化可能)。
 
 ### static_RmQ.cpp
 - 64要素ブロック+単調スタックマスク+sparse table の O(1) RmQ。正しい(マスクの非零性も確認)。
@@ -453,7 +450,7 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 ### static_multiset.cpp / static_set.cpp
 - ロジックは正しい。
 - **[バグ] StaticSet(T missing) が n を初期化しない**(このコンストラクタで作ると len() が未定義値)。
-- **[軽微]** デフォルトコンストラクタの missing(-1) は数値以外の T で不成立。include 不足(cassert/iostream)。
+- **[軽微]** デフォルトコンストラクタの missing(-1) は数値以外の T で不成立。
 
 ### static_range_mode_query.cpp
 - noshi91 方式。正しい(バケット外接部の頻度伸長、bucket_data の O(n) 空間も確認)。
@@ -502,7 +499,7 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 - 本体(merge_with_root/split/apply/prod/pop)は正しい。
 - **[注意] reverse は非可換 op で誤り**(lazy_rbst と同じ。rdata を保持していない)。
 - **[バグ] set()**。`stack<NodePtr> path = {node};` は std::stack の explicit コンストラクタによりコンパイル不能。呼ぶとエラー。
-- **[注意]** check() が print.cpp 未 include のまま PRINT_GREEN を使う(呼ぶとコンパイルエラー)。balance_check の `!weight_left()*DELTA >= ...` は優先順位誤りで機能していない。
+- **[軽微]** balance_check の `!weight_left()*DELTA >= ...` は優先順位誤りで機能していない(デバッグ関数)。
 - **[軽微]** prod/apply の全被覆判定 `right < r`(lazy_rbst と同じ、性能のみ)。
 
 ### wordsize_tree_set.cpp

@@ -10,11 +10,6 @@
 
 このディレクトリは ds に比べて健全で、明確なバグは hash_string.cpp の正規化 off-by-one のみ。
 
-## 横断事項
-
-- **[軽微] `#pragma once` の有無が混在**。aho_corasick、brackets、dynamic_aho_corasick にはあるが、eer_tree、hash_string、is_kaibun、suffix_automaton、trie、z_algorithm にはない。
-- **[軽微]** suffix_automaton が `fill` を使うのに `<algorithm>` を include していない(libstdc++ では `<vector>` 経由で通る)。
-
 ## aho_corasick.cpp
 
 - 構築(BFS による fail 計算、goto 補完、cnt の fail 連鎖累積)は正しい。BFS 順により fail 先が先に処理される点も確認した。

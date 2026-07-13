@@ -23,13 +23,10 @@
 
 | ファイル | 内容 |
 |---|---|
-| osak.cpp | 存在しない `titan_cpplib/alg/run_length_encoding.cpp` を include(rle は itertools.cpp にある) |
-| is_primell.cpp | pow_mod(math.cpp)に依存するが include していない |
 | divisor.cpp / get_primelist.cpp | 同名同シグネチャの get_primelist が両方にあり、同時 include で多重定義 |
 
 ## 横断事項
 
-- **[軽微] `#pragma once` は fraction.cpp のみ**。他9ファイルにはない。
 - **[軽微] 非 inline の自由関数をヘッダ相当のファイルに定義**している(divisor、get_primelist、is_primell、math)。複数訳単位で ODR 違反になる。単一ファイル提出なら実害なし。
 - **[軽微]** math.cpp と is_primell.cpp のグローバル名(pow_mod、pow、i128、isqrt 等)が `namespace titan23` の外にある(math.cpp 全体が名前空間外)。
 
@@ -53,7 +50,6 @@
 ## is_primell.cpp
 
 - Miller-Rabin のロジックは正しい。判定基底 {2,7,61}(n < 4,759,123,141)と7基底(64bit 全域)の切り替え、`n <= a` の早期 true が誤判定を生まないこと(基底2の最小強擬素数 2047 > 61)も確認した。
-- **[バグ] pow_mod を include していない**。`pow_mod<int128>` は math.cpp の関数だが、このファイルは iostream と vector しか include していない。単体では未宣言でコンパイルエラー。math.cpp を include するか、pow_mod をこのファイルに持つべき(pollard_rho.cpp は両方 include しているため動く)。
 
 ## math.cpp
 
@@ -71,7 +67,6 @@
 
 ## osak.cpp
 
-- **[バグ] include パスが存在しない**。`#include "titan_cpplib/alg/run_length_encoding.cpp"` というファイルはなく、rle は `titan_cpplib/alg/itertools.cpp` にある。現状このファイルはコンパイルできない。
 - 本体(osa_k 法の min_factor 篩、素因数分解、約数列挙)は正しい。
 - **[軽微]** get_divisors 内の sort(g) は p_factorization が昇順を返すため冗長。末尾の unique も構成上不要。
 
@@ -86,10 +81,9 @@
 
 - √n までの素数表による素因数分解・約数列挙。正しい。
 - **[注意]** primelist が `vector<int>` のため、n が約 4.6e18(int 最大値の平方)を超えると素数が int に収まらず壊れる。また n がその規模だと篩のメモリが数百 MB になる。実用範囲(n ≦ 1e18 程度)では問題ない。
-- **[軽微]** `sqrt` を使うのに `<cmath>` を include していない。
 
 ## stern_brocot_tree.cpp
 
 - Stern-Brocot 木。get_node の連分数降下、encode_path / decode_path / lca / ancestor を確認した。正しい。binary_search も標準的な「方向ごとに倍加+二分探索」の形で、境界の返し方(node.p/q が左側、node.r/s が右側)も仕様通り。
 - **[注意] get_node(0, q) はゼロ除算**。0/1 は木に存在しないため契約外だが、assert がない。p, q ≧ 1 の前提を明記すべき。
-- **[軽微]** operator<< が ostream を使うのに `<iostream>` を include していない(単体では通らない)。binary_search の計算量コメント O(log d) は、f の呼び出し回数としては O(log² d) が正確。
+- **[軽微]** binary_search の計算量コメント O(log d) は、f の呼び出し回数としては O(log² d) が正確。

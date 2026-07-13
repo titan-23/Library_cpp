@@ -1,5 +1,8 @@
+#pragma once
+
 #include <iostream>
 #include <vector>
+#include "titan_cpplib/math/math.cpp"
 using namespace std;
 
 namespace titan23 {

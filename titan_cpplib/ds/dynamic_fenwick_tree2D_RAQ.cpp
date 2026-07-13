@@ -1,3 +1,5 @@
+#pragma once
+
 #include "titan_cpplib/ds/dynamic_fenwick_tree2D.cpp"
 #include <cassert>
 using namespace std;

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 #include <algorithm>
 #include "titan_cpplib/ds/bit_vector.cpp"

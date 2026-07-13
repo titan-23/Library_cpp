@@ -1,5 +1,10 @@
+#pragma once
+
 #include <vector>
 #include <cassert>
+#include <utility>
+#include <numeric>
+#include <algorithm>
 using namespace std;
 
 // Mo

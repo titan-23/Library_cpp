@@ -1,9 +1,11 @@
+#pragma once
+
 #include <iostream>
 #include <set>
 #include <vector>
 #include <algorithm>
 #include <map>
-#include "titan_cpplib/alg/run_length_encoding.cpp"
+#include "titan_cpplib/alg/itertools.cpp"
 using namespace std;
 
 // Osa_k

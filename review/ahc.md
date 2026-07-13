@@ -26,7 +26,6 @@ old/、test/、gomi、ahclib_results、可視化用 py、メモ系 md は対象�
 
 ## ディレクトリ横断の指摘
 
-- **[注意] `#pragma once` の欠落**。mcmc.cpp、pruner/ の3ファイルすべてにない。
 - **[軽微] `<bits/stdc++.h>` の使用**。mcmc.cpp と profiler.cpp がライブラリファイルで使っており、CLAUDE.md に書いた規約と食い違う。
 - **[軽微] 慣例の不統一**。HoeffdingPruner は `is_maximize=true` が既定、WilcoxonPruner は `is_minimize=true` が既定で、向きが逆。取り違えやすい。
 
@@ -105,7 +104,6 @@ old/、test/、gomi、ahclib_results、可視化用 py、メモ系 md は対象�
 
 - ギブスサンプラーの数式を確認した。条件付き事後分布の精度(1/prior_var + Σc²/var_i)、平均分子(prior_mu/prior_var + Σc·r/var_i)、残差の差分更新、いずれも正しい。
 - prepare_buffers を毎回呼ぶ設計も、観測追加後の estimate_step で正しく効く。計算量コメント O(iterations·nnz + N + K) も正しい。
-- **[注意]** `#pragma once` がない。
 - **[軽微]** `variance = E[X²] − E[X]²` は数値誤差で僅かに負になりうる。利用側で sqrt すると NaN になるため、max(0.0, ·) で丸めると安全。
 - **[軽微]** `<bits/stdc++.h>` を使っている。
 

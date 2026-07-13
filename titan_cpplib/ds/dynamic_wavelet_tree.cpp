@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <vector>
 #include "titan_cpplib/ds/avl_tree_bit_vector.cpp"

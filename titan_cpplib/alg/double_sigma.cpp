@@ -1,5 +1,10 @@
+#pragma once
+
 #include <vector>
 #include <cassert>
+#include <cstdlib>
+#include <algorithm>
+#include <iostream>
 #include "titan_cpplib/ds/multiset_sum.cpp"
 using namespace std;
 

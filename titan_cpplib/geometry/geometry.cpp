@@ -1,3 +1,16 @@
+#pragma once
+
+#include <iostream>
+#include <vector>
+#include <set>
+#include <string>
+#include <utility>
+#include <algorithm>
+#include <cmath>
+#include <climits>
+#include <cassert>
+using namespace std;
+
 using Real = long double;
 const Real EPS = 1e-9;
 bool almostEqual(Real a, Real b) { return abs(a - b) < EPS; }

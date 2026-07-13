@@ -98,6 +98,57 @@ public:
         return true;
     }
 
+    /// push の遅延実体化版。採用が確定した場合のみ make() で Action を作る
+    /// 棄却 (threshold 落ち / hash 重複) 時の Action コピーを避ける
+    template<class Make>
+    bool push_lazy(ScoreType score, HashType hash, int parent_leaf, Make &&make, int node_id = -1) {
+        if (is_built && score >= seg[1].first) {
+            return false;
+        }
+        auto dat = func.get_pos(hash);
+        int idx = func.inner_get(dat, -1);
+        if (idx == -2) {
+            return false;
+        }
+        if (idx != -1) {
+            if (score < next_beam[idx].score) {
+                next_beam[idx].parent_leaf = parent_leaf;
+                next_beam[idx].score = score;
+                next_beam[idx].action = make();
+                next_beam[idx].node_id = node_id;
+                if (is_built) {
+                    set(idx, {score, idx});
+                }
+                return true;
+            }
+            return false;
+        }
+        if (entry < beam_width) {
+            func.inner_set(dat, hash, entry);
+            next_beam[entry].parent_leaf = parent_leaf;
+            next_beam[entry].score = score;
+            next_beam[entry].action = make();
+            next_beam[entry].node_id = node_id;
+            hashidx[entry] = hash;
+            entry++;
+            if (entry == beam_width) {
+                build_segtree();
+                is_built = true;
+            }
+            return true;
+        }
+        auto [_, i] = seg[1];
+        next_beam[i].parent_leaf = parent_leaf;
+        next_beam[i].score = score;
+        next_beam[i].action = make();
+        next_beam[i].node_id = node_id;
+        func.set(hashidx[i], -1);
+        func.inner_set(dat, hash, i);
+        hashidx[i] = hash;
+        set(i, {score, i});
+        return true;
+    }
+
     /// @param hash_window_turns clear_hash=false のとき、K ターンに 1 回 hash dict を全 clear。
     ///                          0 なら従来通り無制限蓄積。
     void reset(int turn, int w, bool clear_hash, int hash_window_turns = 0) {

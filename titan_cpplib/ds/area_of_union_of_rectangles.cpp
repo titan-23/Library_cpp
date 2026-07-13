@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 #include "titan_cpplib/alg/zaatsu.cpp"
 #include "titan_cpplib/ds/lazy_segment_tree.cpp"

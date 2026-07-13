@@ -1,3 +1,5 @@
+#pragma once
+
 // n=5e5, q=5e5 -> 1200ms
 
 #include <bits/stdc++.h>

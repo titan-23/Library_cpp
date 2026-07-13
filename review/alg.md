@@ -21,18 +21,12 @@
 - **[注意]** 特定条件で問題になる。仕様として明記すれば許容できる
 - **[軽微]** 動作に影響しない指摘
 
-## ディレクトリ横断の指摘
-
-- **[注意] `#pragma once` の欠落**。double_sigma.cpp、mo.cpp、random_tree.cpp、tree_generator.cpp、zaatsu.cpp にない。expander は多重 include を防ぐが、IDE や直接 include では二重定義になる。
-- **[注意] include 不足**。zaatsu.cpp は `assert` を使うが `<cassert>` を include していない。mo.cpp は `iota` と `sort` を使うが `<numeric>` `<algorithm>` を include していない。他ファイル経由で偶然通る状態であり、単体では通らない可能性がある。
-
 ## double_sigma.cpp
 
 - ロジックは全メソッド正しい。`MultisetSum::index(a)` が「a 未満の個数」、`sum(a)` が「a 未満の総和」を返すことを確認済みで、online 系の計算と整合している。
 - **[注意]** `T=int` で使うと `MultisetSum` 内部の `data`(型 T)と `ans` が容易にオーバーフローする。long long 前提であることをコメントに明記した方がよい。
 - **[軽微]** `sigma_abs_online` の変数 `n` が未使用。
 - **[軽微]** テスト関数は `sigma_abs` 等のソート版のみ検証し、online 版を検証していない。
-- **[軽微]** `sort`(`<algorithm>`)、`cerr`(`<iostream>`)を multiset_sum.cpp 経由の間接 include に依存している。
 
 ## doubling.cpp
 
@@ -56,7 +50,6 @@
 ## lis.cpp
 
 - LIS、LIS_vec とも O(n log n) で正しい。strict/非 strict の lower_bound/upper_bound の使い分けも正しい。
-- **[軽微]** `pair` を使うが `<utility>` を include していない。
 
 ## mo.cpp
 
@@ -105,7 +98,7 @@
 ## tree_generator.cpp
 
 - 各生成器(Prufer 一様ランダム、ウニ、スター、ムカデ、完全二分木、long-path killer、全列挙、AHU による同型除去)のロジックは正しい。境界(N=1、N=2)も確認した。
-- **[注意]** ライブラリ規約との不整合が3点。`#pragma once` がない、`<bits/stdc++.h>` を使っている、`TreeType` と `TreeGenerator` が `namespace titan23` の外にある。
+- **[注意]** `TreeType` と `TreeGenerator` が `namespace titan23` の外にある。ライブラリ規約に反する。
 - **[軽微]** `gen_lobster` はコメントの通りパラメータの根拠が不明。D > 2 になり得るため、厳密にはロブスター木(全頂点が主鎖から距離 2 以内)の定義を満たさない場合がある。
 - **[軽微]** 内部 UnionFind は tree_generator 専用の重複実装。ds/union_find.cpp を使えば減らせるが、生成器の独立性を優先するなら現状でよい。
 

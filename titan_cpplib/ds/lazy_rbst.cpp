@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <stack>
 #include "titan_cpplib/alg/random.cpp"

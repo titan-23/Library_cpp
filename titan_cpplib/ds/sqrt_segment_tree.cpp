@@ -1,3 +1,7 @@
+#pragma once
+
+#include <cmath>
+#include <cassert>
 #include <vector>
 using namespace std;
 

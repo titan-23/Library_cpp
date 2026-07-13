@@ -1,3 +1,5 @@
+#pragma once
+
 #include "titan_cpplib/ds/index_set.cpp"
 
 using namespace std;

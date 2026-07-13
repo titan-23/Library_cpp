@@ -25,7 +25,7 @@
 
 - **[注意] EPS が絶対値 1e-9 固定**。外積・内積は座標の2乗スケールで効くため、座標が 1e6 を超えると許容誤差が実質不足し、座標が小さいと過大になる。isIntersecting の d1\*d2 のような積の比較では4乗スケールになり、さらにずれる。相対誤差との併用か、想定する座標範囲の明記が要る。
 - **[注意] EPS 付き比較を sort / inplace_merge の比較器に使っている**。convexHull・getCommonTangentsLine の sort、closestPair の inplace_merge、countIntersections の事前 sort が該当する。almostEqual は推移律を満たさないため strict weak ordering にならず、std::sort の前提違反で未定義動作になりうる。比較器内は生の `<` で十分。
-- **[注意] 単体でコンパイルできない**。`#pragma once` も include も `namespace titan23` もなく、`rep` マクロと `using namespace std` を呼び出し側に依存する。リポジトリの規約(全ファイル `#pragma once`、`namespace titan23`、標準 include のみ)から外れている。
+- **[注意] 単体でコンパイルできない**。`#pragma once` と標準 include、`using namespace std` は補ったが、`rep` マクロと `namespace titan23` がまだない。`rep` を呼び出し側に依存しているため、そのままでは単体で通らない。リポジトリの規約(全ファイル `namespace titan23`、標準 include のみ)にも未対応。
 - **[軽微]** 非 inline の自由関数をヘッダ相当のファイルに定義している。複数翻訳単位で ODR 違反になる。単一ファイル提出なら実害なし。
 - **[軽微] EPS の使用が不統一**。cutPolygon の isLeft、countIntersections の座標比較、getCirclesIntersect の存在判定、Circle::operator== の r は生比較で、他の EPS 付き判定と食い違う。
 

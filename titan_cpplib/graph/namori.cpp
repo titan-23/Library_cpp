@@ -1,10 +1,15 @@
+#pragma once
+
 #include <vector>
 #include <algorithm>
 #include <queue>
-#include "titan_cpplib/string/hash_string.cpp"
+#include <random>
+#include <climits>
 using namespace std;
 
 namespace titan23 {
+
+using u64 = unsigned long long;
 
 class Namori {
 private:

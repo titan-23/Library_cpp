@@ -1,8 +1,12 @@
 #pragma once
 
 #include <cassert>
+#include <cstdint>
 #include <unordered_set>
 #include <vector>
+#include <utility>
+#include <iterator>
+#include <algorithm>
 #include <numeric>
 using namespace std;
 

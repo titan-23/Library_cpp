@@ -1,3 +1,8 @@
+#pragma once
+
+#include <algorithm>
+#include <cassert>
+#include <iostream>
 #include <vector>
 #include "titan_cpplib/ds/fast_stack.cpp"
 using namespace std;

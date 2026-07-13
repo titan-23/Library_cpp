@@ -1,3 +1,8 @@
+#pragma once
+
+#include <iostream>
+#include <cmath>
+#include <cassert>
 #include <vector>
 #include <algorithm>
 using namespace std;
