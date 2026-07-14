@@ -10,7 +10,8 @@ using namespace std;
 namespace titan23 {
 
 /// 区間ソートが可能なセグ木
-/// Tには `<` と `==` 演算子が必要
+/// T の `<` と `==` が定義され、全順序であること
+/// コピーするとバグるので、`tovector()` としてコピーすること
 template <class T, T (*op)(T, T), T (*e)()>
 class SortableSegmentTree {
 private:
@@ -253,7 +254,12 @@ public:
         for (int i = 0; i < n; ++i) {
             nodeptr[i] = new Node(e());
         }
-        vector<int> fw_init(n, 0); fw_init[0] = n;
+        vector<int> fw_init(n, 0);
+        if (n == 0) {
+            fw = titan23::FenwickTree<int>(fw_init);
+            return;
+        }
+        fw_init[0] = n;
         fw = titan23::FenwickTree<int>(fw_init);
         ws.add(0);
         nodeptr[0] = build(0, n);
@@ -273,7 +279,7 @@ public:
             { // 昇順
                 int p = i;
                 i++;
-                while (i < n && (a[i] < a[i] || a[i-1] == a[i])) ++i;
+                while (i < n && (a[i-1] < a[i] || a[i-1] == a[i])) ++i;
                 nodeptr[p] = build(p, i);
                 for (int j = p+1; j < i; ++j) {
                     fw_init[j] = 0;
