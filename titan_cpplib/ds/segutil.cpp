@@ -4,6 +4,7 @@
 #include <numeric>
 #include <limits>
 #include <utility>
+#include <tuple>
 #include "titan_cpplib/ds/segment_tree.cpp"
 using namespace std;
 
@@ -31,14 +32,10 @@ template<typename T> T e_or() { return 0; }
 template<typename T> T op_and(T s, T t) { return s & t; }
 template<typename T> T e_and() { return ~T(0); }
 
-// (値, 添字)。値が同じときは添字の小さい方をとる
 template<typename T> pair<T, int> op_min_idx(pair<T, int> s, pair<T, int> t) { return min(s, t); }
 template<typename T> pair<T, int> e_min_idx() { return {numeric_limits<T>::max(), -1}; }
 
-template<typename T> pair<T, int> op_max_idx(pair<T, int> s, pair<T, int> t) {
-    if (s.first != t.first) return s.first > t.first ? s : t;
-    return s.second <= t.second ? s : t;
-}
+template<typename T> pair<T, int> op_max_idx(pair<T, int> s, pair<T, int> t) { return tie(t.first, s.second) < tie(s.first, t.second) ? s : t; }
 template<typename T> pair<T, int> e_max_idx() { return {numeric_limits<T>::lowest(), -1}; }
 
 // (値, 個数)
