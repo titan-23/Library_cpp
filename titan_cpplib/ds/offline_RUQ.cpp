@@ -23,19 +23,19 @@ private:
 public:
     OfflineRUQ() : n(0) {}
     OfflineRUQ(int n, T init) : n(n), a(n, init), nxt(n) {}
-    OfflineRUQ(int n, vector<T> a) : n(n), a(a), nxt(n) {}
+    OfflineRUQ(int n, const vector<T> &a) : n(n), a(a), nxt(n) {}
 
     void reserve(int q) {
         Q.reserve(q);
     }
 
-    // [l, r) <- v / O(1)
+    /// [l, r) <- v / O(1)
     void apply(int l, int r, T v) {
         assert(0 <= l && l <= r && r <= n);
         Q.emplace_back(l, r, v);
     }
 
-    // クエリをまとめて実行する / O(n+qα(n))
+    /// クエリをまとめて実行する / O(n+qα(n))
     vector<T> tovector() {
         iota(nxt.begin(), nxt.end(), 0);
         for (int i = (int)Q.size()-1; i >= 0; --i) {
