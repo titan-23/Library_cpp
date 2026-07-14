@@ -14,7 +14,7 @@ namespace titan23 {
 template <class SizeType, class T, T (*op)(T, T), T (*e)()>
 class PersistentSegWBTree {
 public:
-    struct MemoeyAllocator {
+    struct MemoryAllocator {
 
         // #pragma pack(push, 1)
         struct Node {
@@ -36,7 +36,7 @@ public:
         vector<Data> data;
         size_t ptr, cap;
 
-        MemoeyAllocator() : ptr(1), cap(1) {
+        MemoryAllocator() : ptr(1), cap(1) {
             tree.emplace_back(0, 0, 0);
             data.emplace_back(T{}, T{}, 0);
         }
@@ -79,7 +79,7 @@ public:
         }
     };
 
-    static MemoeyAllocator ma;
+    static MemoryAllocator ma;
 
 private:
     using PLTM = PersistentSegWBTree<SizeType, T, op, e>;
@@ -488,6 +488,6 @@ private:
 };
 
 template <class SizeType, class T, T (*op)(T, T), T (*e)()>
-typename PersistentSegWBTree<SizeType, T, op, e>::MemoeyAllocator PersistentSegWBTree<SizeType, T, op, e>::ma;
+typename PersistentSegWBTree<SizeType, T, op, e>::MemoryAllocator PersistentSegWBTree<SizeType, T, op, e>::ma;
 
 }  // namespace titan23

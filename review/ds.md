@@ -54,7 +54,6 @@ constにできるものはそうしたい
 - **[注意] クラス名の衝突**。(1) multiset_sum.cpp と multiset_sum_qd.cpp が同名 `MultisetSum`(API も異なる: sum が値基準/添字基準)。(2) dual_segment_tree_RUQ.cpp と RUQ2.cpp が同名 `DualSegmentTreeRUQ`。(3) wavelet_matrix.cpp と wavelet_matrix_bit.cpp が同名 `WaveletMatrix`(テンプレート引数も異なり再宣言エラー)。同時 include で壊れる。
 - **[軽微]** `<bits/stdc++.h>` をライブラリ内で使用: dynamic_bit_vector、dycone(規約違反)。
 - **[軽微]** デストラクタなし・メモリ解放なしはポインタ系全般。競プロ用途では許容。
-- **[軽微]** `MemoeyAllocator` の綴り(Memory)が複数ファイルに伝播している。
 
 ## 各ファイル
 

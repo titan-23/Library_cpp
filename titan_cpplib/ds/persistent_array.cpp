@@ -18,7 +18,7 @@ class PersistentArray {
 private:
     static FastStack<int> path;
 
-    struct MemoeyAllocator {
+    struct MemoryAllocator {
 
         struct Node {
             int left, right;
@@ -30,7 +30,7 @@ private:
         vector<T> keys;
         size_t ptr;
 
-        MemoeyAllocator() : ptr(1) {
+        MemoryAllocator() : ptr(1) {
             tree.emplace_back(0, 0);
             keys.emplace_back(T{});
         }
@@ -64,7 +64,7 @@ private:
         }
     };
 
-    static MemoeyAllocator ma;
+    static MemoryAllocator ma;
 
     int root;
     int n;
@@ -246,7 +246,7 @@ public:
     }
 };
 
-template<typename T> typename PersistentArray<T>::MemoeyAllocator PersistentArray<T>::ma;
+template<typename T> typename PersistentArray<T>::MemoryAllocator PersistentArray<T>::ma;
 template<class T> FastStack<int> PersistentArray<T>::path;
 
 }  // namespace titan23
