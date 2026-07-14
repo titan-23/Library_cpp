@@ -116,29 +116,14 @@ public:
     }
 
     T get(int k) const {
-        if (k < 0) k += len();
-        assert(k >= 0 && k < len());
+        assert(0 <= k && k < len());
         return tr.find_by_order(k)->first;
     }
 
-    int len() const {
-        return tr.size();
-    }
+    int len() const { return tr.size(); }
+    int size() const { return tr.size(); }
 
-    void print() const {
-        vector<T> a = tovector();
-        int n = a.size();
-        cout << "{";
-        for (int i = 0; i < n - 1; ++i) {
-            cout << a[i] << ", ";
-        }
-        if (n > 0) cout << a.back();
-        cout << "}" << endl;
-    }
-
-    void check() const {}
-
-    friend ostream& operator<<(ostream& os, const titan23::PBDSMultiset<T>& s) {
+    friend ostream& operator<<(ostream& os, const titan23::PBDSMultiset<T> &s) {
         vector<T> a = s.tovector();
         int n = a.size();
         os << "{";

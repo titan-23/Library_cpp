@@ -108,22 +108,8 @@ public:
         return *tr.find_by_order(k);
     }
 
-    int len() const {
-        return tr.size();
-    }
-
-    void print() const {
-        vector<T> a = tovector();
-        int n = a.size();
-        cout << "{";
-        for (int i = 0; i < n - 1; ++i) {
-            cout << a[i] << ", ";
-        }
-        if (n > 0) cout << a.back();
-        cout << "}" << endl;
-    }
-
-    void check() const {}
+    int len() const { return tr.size(); }
+    int size() const { return tr.size(); }
 
     friend ostream& operator<<(ostream& os, const titan23::PBDSSet<T>& s) {
         vector<T> a = s.tovector();
