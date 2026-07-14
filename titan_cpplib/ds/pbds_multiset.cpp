@@ -1,12 +1,13 @@
 #pragma once
 
-#include <iostream>
-#include <vector>
 #include <cassert>
+#include <functional>
+#include <iostream>
 #include <limits>
+#include <utility>
+#include <vector>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
-
 using namespace std;
 using namespace __gnu_pbds;
 
@@ -30,12 +31,14 @@ public:
     }
 
     void add(const T &key, int val = 1) {
+        assert(val >= 0);
         for (int i = 0; i < val; ++i) {
             tr.insert({key, id_counter++});
         }
     }
 
     bool discard(const T &key, int val = 1) {
+        assert(val >= 0);
         bool removed = false;
         for (int i = 0; i < val; ++i) {
             auto it = tr.lower_bound({key, -1});
@@ -59,25 +62,25 @@ public:
     T le(const T &key) const {
         int idx = index_right(key);
         if (idx == 0) return missing;
-        return get(idx - 1);
+        return (*this)[idx - 1];
     }
 
     T lt(const T &key) const {
         int idx = index(key);
         if (idx == 0) return missing;
-        return get(idx - 1);
+        return (*this)[idx - 1];
     }
 
     T ge(const T &key) const {
         int idx = index(key);
         if (idx == len()) return missing;
-        return get(idx);
+        return (*this)[idx];
     }
 
     T gt(const T &key) const {
         int idx = index_right(key);
         if (idx == len()) return missing;
-        return get(idx);
+        return (*this)[idx];
     }
 
     int index(const T &key) const {
@@ -86,6 +89,10 @@ public:
 
     int index_right(const T &key) const {
         return tr.order_of_key({key, numeric_limits<int>::max()});
+    }
+
+    int count(const T &key) const {
+        return index_right(key) - index(key);
     }
 
     int count_range(const T low, const T high) const {
@@ -110,12 +117,12 @@ public:
         return res;
     }
 
-    bool contains(T key) const {
+    bool contains(const T &key) const {
         auto it = tr.lower_bound({key, -1});
         return it != tr.end() && it->first == key;
     }
 
-    T get(int k) const {
+    T operator[](int k) const {
         assert(0 <= k && k < len());
         return tr.find_by_order(k)->first;
     }

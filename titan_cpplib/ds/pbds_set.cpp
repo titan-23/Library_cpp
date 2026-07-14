@@ -1,11 +1,11 @@
 #pragma once
 
+#include <cassert>
+#include <functional>
 #include <iostream>
 #include <vector>
-#include <cassert>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
-
 using namespace std;
 using namespace __gnu_pbds;
 
@@ -21,47 +21,43 @@ private:
 public:
     PBDSSet() : missing() {}
     PBDSSet(T missing) : missing(missing) {}
-    PBDSSet(const vector<T> &a, T missing) : missing(missing) {
-        for (const auto& x : a) {
-            tr.insert(x);
-        }
+    PBDSSet(const vector<T> &a, T missing) : tr(a.begin(), a.end()), missing(missing) {}
+
+    bool add(const T &key) {
+        return tr.insert(key).second;
     }
 
-    void add(const T &key, int val = 1) {
-        tr.insert(key);
-    }
-
-    bool discard(const T &key, int val = 1) {
+    bool discard(const T &key) {
         return tr.erase(key);
     }
 
-    void remove(const T &key, int val = 1) {
-        size_t erased = tr.erase(key);
+    void remove(const T &key) {
+        int erased = tr.erase(key);
         assert(erased > 0);
     }
 
     T le(const T &key) const {
         int idx = index_right(key);
         if (idx == 0) return missing;
-        return get(idx - 1);
+        return (*this)[idx - 1];
     }
 
     T lt(const T &key) const {
         int idx = index(key);
         if (idx == 0) return missing;
-        return get(idx - 1);
+        return (*this)[idx - 1];
     }
 
     T ge(const T &key) const {
         int idx = index(key);
         if (idx == len()) return missing;
-        return get(idx);
+        return (*this)[idx];
     }
 
     T gt(const T &key) const {
         int idx = index_right(key);
         if (idx == len()) return missing;
-        return get(idx);
+        return (*this)[idx];
     }
 
     int index(const T &key) const {
@@ -74,6 +70,10 @@ public:
             return tr.order_of_key(key) + 1;
         }
         return tr.order_of_key(key);
+    }
+
+    int count(const T &key) const {
+        return tr.find(key) != tr.end();
     }
 
     int count_range(const T low, const T high) const {
@@ -98,13 +98,12 @@ public:
         return res;
     }
 
-    bool contains(T key) const {
+    bool contains(const T &key) const {
         return tr.find(key) != tr.end();
     }
 
-    T get(int k) const {
-        if (k < 0) k += len();
-        assert(k >= 0 && k < len());
+    T operator[](int k) const {
+        assert(0 <= k && k < len());
         return *tr.find_by_order(k);
     }
 
