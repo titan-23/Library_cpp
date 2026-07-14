@@ -126,7 +126,7 @@ public:
     }
 
     // `a[l, r)` の中で、要素を出現回数が多い順にその頻度とともに `k` 個返します。
-    vector<pair<int, int>> topk(int l, int r, int k) {
+    vector<pair<T, int>> topk(int l, int r, int k) const {
         // heap[-length, x, l, bit]
         priority_queue<tuple<int, T, int, int>> hq;
         hq.emplace(r-l, 0, l, log-1);
@@ -151,11 +151,11 @@ public:
         return ans;
     }
 
+    /// `a[l, r)` の総和を返す 相異なる値の種類数を D として O(D log(sigma))
     T sum(int l, int r) const {
-        assert(false);
         T s = 0;
-        for (const auto &[sum, cnt]: topk(l, r, r-l)) {
-            s += sum * cnt;
+        for (const auto &[val, cnt]: topk(l, r, r-l)) {
+            s += val * cnt;
         }
         return s;
     }

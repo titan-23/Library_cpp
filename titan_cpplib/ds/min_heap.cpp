@@ -69,7 +69,7 @@ public:
     }
 
     /// `push` して `pop` する / `O(logn)`
-    T pushpoop_min(const T key) {
+    T pushpop_min(const T key) {
         if (a[0] >= key) return key;
         T res = a[0];
         a[0] = key;

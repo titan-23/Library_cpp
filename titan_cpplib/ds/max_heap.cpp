@@ -86,7 +86,7 @@ private:
     }
 
     /// `push` して `pop` する / `O(logn)`
-    T pushpoop_max(const T key) {
+    T pushpop_max(const T key) {
         if (a[0] <= key) return key;
         T res = a[0];
         a[0] = key;

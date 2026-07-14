@@ -6,6 +6,8 @@ memo
 
 count_range, range_countの名前や引数名を統一したい
 
+constにできるものはそうしたい
+
 ===
 
 全115ファイル精査済み。
@@ -38,7 +40,6 @@ count_range, range_countの名前や引数名を統一したい
 | wordsize_tree_set.cpp | tovector が 0 を詰める。lt の実装誤り。fill の残留ビット |
 | std_multiset.cpp | erase() の `max(0, ll)` がコンパイル不能 |
 | static_set.cpp | StaticSet(missing) で n が未初期化 |
-| wavelet_matrix.cpp | topk の戻り型不一致。select は bit_vector のバグの影響を受ける |
 | wavelet_matrix_bit.cpp | ライブラリファイルに main() が残存 |
 | partial_persistent_union_find.cpp | `PartialPersistentArray` に既定コンストラクタがなく、`PartialPersistentUnionFind()` がインスタンス化不能 |
 | persistent_set.cpp / persistent_multiset.cpp | 空 vector で _build が範囲外参照。split/pop が未定義の _split_node を呼ぶ |
@@ -436,12 +437,6 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 
 ### used_set.cpp
 - 正しい(IndexSet の内部を直接触る all_use/all_unuse も整合)。
-
-### wavelet_matrix.cpp
-- rank/kth_smallest/range_freq/topk とも正しい。
-- **[バグ] select は bit_vector.cpp の select バグの影響で誤る**。
-- **[バグ] topk の戻り型**。`vector<pair<int,int>>` を宣言しつつ `vector<pair<T,int>>` を構築して返す。T≠int でコンパイルエラー。
-- **[軽微]** sum() は `assert(false)` の未完成品(const から非 const topk を呼ぶ問題もある)。
 
 ### wavelet_matrix_bit.cpp
 - **[バグ] ファイル末尾に main() が残っている**。include すると main 重複でリンクエラー。
