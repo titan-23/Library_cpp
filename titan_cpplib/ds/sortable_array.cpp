@@ -1,6 +1,10 @@
 #pragma once
 
-#include <bits/stdc++.h>
+#include <algorithm>
+#include <cassert>
+#include <iostream>
+#include <utility>
+#include <vector>
 #include "titan_cpplib/ds/fenwick_tree.cpp"
 #include "titan_cpplib/ds/wordsize_tree_set.cpp"
 #include "titan_cpplib/others/print.cpp"

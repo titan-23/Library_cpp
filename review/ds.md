@@ -52,7 +52,7 @@ constにできるものはそうしたい
 ## 横断事項
 
 - **[注意] クラス名の衝突**。(1) multiset_sum.cpp と multiset_sum_qd.cpp が同名 `MultisetSum`(API も異なる: sum が値基準/添字基準)。(2) dual_segment_tree_RUQ.cpp と RUQ2.cpp が同名 `DualSegmentTreeRUQ`。(3) wavelet_matrix.cpp と wavelet_matrix_bit.cpp が同名 `WaveletMatrix`(テンプレート引数も異なり再宣言エラー)。同時 include で壊れる。
-- **[軽微]** `<bits/stdc++.h>` をライブラリ内で使用: dynamic_bit_vector、dycone、sortable_array、sortable_segment_tree(規約違反)。
+- **[軽微]** `<bits/stdc++.h>` をライブラリ内で使用: dynamic_bit_vector、dycone(規約違反)。
 - **[軽微]** デストラクタなし・メモリ解放なしはポインタ系全般。競プロ用途では許容。
 - **[軽微]** `MemoeyAllocator` の綴り(Memory)が複数ファイルに伝播している。
 
@@ -385,14 +385,6 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 ### segment_tree2D.cpp
 - set の行方向・列方向の更新、prod の分解とも正しい。
 - **[注意]** prod は行と列の合成順が混ざるため op は可換前提。ドキュメント化されていない。
-
-### segutil.cpp
-- 正しい。SegGcd の alias が二重定義(同一なので合法だが重複)。
-
-### sortable_array.cpp / sortable_segment_tree.cpp
-- 全体の設計(境界切断 make_kyokai、ソート済み splay 木のマージ)は正しい。
-- **[注意] 昇順ラン検出の typo**。両ファイルとも `while (i < n && (a[i] < a[i] || a[i-1] == a[i]))` の `a[i] < a[i]` は常に偽。意図は `a[i-1] < a[i]`。不変条件は壊れないので結果は正しいが、昇順ランの一括構築が効かず初期構築の性能を損なう。
-- **[軽微]** sortable_array の find_splay はループ内で `pnode = node;` を更新しておらず(seg 版にはある)、splay による償却が効かない経路がある。
 
 ### sparse_segment_tree2D.cpp / sparse_segment_tree2DFAST.cpp
 - 正しい。`X[node].lch = new_node_x()` の再割り当ては C++17 の代入順序保証(右辺が先)で安全。
