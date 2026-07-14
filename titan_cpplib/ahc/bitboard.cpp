@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <vector>
 #include <string>
 #include <cstdint>
@@ -7,14 +8,16 @@
 #include <utility>
 #include <ostream>
 #include <algorithm>
+#include "titan_cpplib/ahc/bitboard_common.cpp"
 using namespace std;
 
-namespace titan23 {
+#ifdef TITAN_DEBUG
+#define TITAN_BITBOARD_ASSERT(expr) assert(expr)
+#else
+#define TITAN_BITBOARD_ASSERT(expr) ((void)sizeof(expr))
+#endif
 
-enum class Neighborhood {
-    Four,
-    Eight,
-};
+namespace titan23 {
 
 /// @brief グリッドの 1 行を 1 つの Word で持つ BitBoard W <= sizeof(Word)*8 が前提
 ///        壁/道の盤面に対し flood, BFS, 連結成分などをビット並列で行う
@@ -52,15 +55,20 @@ private:
     Set road;
 
     struct Run {
+        int row;
         int l, r;
         int parent;
         int size;
         int id;
     };
 
-    mutable Set frontier, next, seen, comp;
+    mutable Set frontier, next, seen, comp, point_work;
+    mutable int point_lo = 0, point_hi = -1;
     mutable vector<Run> runs;
     mutable vector<int> row_start;
+    mutable vector<int> component_head, component_next, component_roots, touched_rows;
+    mutable vector<int> path_dist;
+    mutable vector<int> dfs_disc, dfs_low, dfs_parent, dfs_next, dfs_children, dfs_stack;
 
     static constexpr int word_bits() { return (int)sizeof(Word) * 8; }
 
@@ -95,7 +103,7 @@ private:
     }
 
     void assert_set(const Set &s) const {
-        assert((int)s.size() == H);
+        TITAN_BITBOARD_ASSERT((int)s.size() == H);
     }
 
     Word vertical_bits(Word x) const {
@@ -120,15 +128,43 @@ private:
         return x & FULL;
     }
 
-    // 4 近傍
-    void expand_into(const Set &fr, Set &out) const {
-        for (int r = 0; r < H; ++r) {
-            Word f = fr[r];
-            Word x = ((f << 1) | (f >> 1)) & FULL;
-            if (r > 0)     x |= vertical_bits(fr[r - 1]);
-            if (r + 1 < H) x |= vertical_bits(fr[r + 1]);
-            out[r] = x & road[r];
+    Word spread3(Word x) const {
+        return ((x << 1) | x | (x >> 1)) & FULL;
+    }
+
+    // fr の非零行が [lo,hi] にあるとして、その前後 1 行へ近傍展開する
+    void expand_into(const Set &fr, Set &out, int lo, int hi) const {
+        if (lo > hi) return;
+        int out_lo = max(0, lo - 1);
+        int out_hi = min(H - 1, hi + 1);
+        if constexpr (NB == Neighborhood::Four) {
+            for (int r = out_lo; r <= out_hi; ++r) {
+                Word f = lo <= r && r <= hi ? fr[r] : Word(0);
+                Word x = ((f << 1) | (f >> 1)) & FULL;
+                if (lo <= r - 1 && r - 1 <= hi) x |= fr[r - 1];
+                if (lo <= r + 1 && r + 1 <= hi) x |= fr[r + 1];
+                out[r] = x & road[r];
+            }
+        } else {
+            auto spread_at = [&](int r) {
+                return lo <= r && r <= hi ? spread3(fr[r]) : Word(0);
+            };
+            Word prev = spread_at(out_lo - 1);
+            Word cur = spread_at(out_lo);
+            Word following = spread_at(out_lo + 1);
+            for (int r = out_lo; r <= out_hi; ++r) {
+                Word f = lo <= r && r <= hi ? fr[r] : Word(0);
+                Word x = ((f << 1) | (f >> 1)) | prev | following;
+                out[r] = x & road[r] & FULL;
+                prev = cur;
+                cur = following;
+                following = spread_at(r + 2);
+            }
         }
+    }
+
+    void expand_into(const Set &fr, Set &out) const {
+        expand_into(fr, out, 0, H - 1);
     }
 
     Word row_fill(Word s, Word mask) const {
@@ -148,37 +184,95 @@ private:
         return g | h;
     }
 
-    void flood_closure_inplace(Set &out) const {
-        bool active = false;
-        for (Word x : out) active |= x != 0;
-        if (!active) return;
+    template<bool STOP_AT_TARGET>
+    bool flood_closure_impl(
+        Set &out,
+        int target_r = -1,
+        Word target = Word(0),
+        int *result_lo = nullptr,
+        int *result_hi = nullptr
+    ) const {
+        int lo = H, hi = -1;
+        for (int r = 0; r < H; ++r) {
+            if (out[r]) {
+                lo = min(lo, r);
+                hi = r;
+            }
+        }
+        if (hi < 0) {
+            if (result_lo) *result_lo = H;
+            if (result_hi) *result_hi = -1;
+            return false;
+        }
+        if constexpr (STOP_AT_TARGET) {
+            if (out[target_r] & target) return true;
+        }
 
-        bool changed;
-        do {
+        auto sweep_down = [&](bool &changed) {
+            for (int r = lo; r < H; ++r) {
+                Word s = out[r];
+                if (r > lo) s |= vertical_bits(out[r - 1]);
+                Word x = row_fill(s, road[r]);
+                changed |= x != out[r];
+                out[r] = x;
+                if (x) hi = max(hi, r);
+                else if (r > hi) break;
+                if constexpr (STOP_AT_TARGET) {
+                    if (r == target_r && (x & target)) return true;
+                }
+            }
+            return false;
+        };
+
+        auto sweep_up = [&](bool &changed) {
+            for (int r = hi; r >= 0; --r) {
+                Word s = out[r];
+                if (r < hi) s |= vertical_bits(out[r + 1]);
+                Word x = row_fill(s, road[r]);
+                changed |= x != out[r];
+                out[r] = x;
+                if (x) lo = min(lo, r);
+                else if (r < lo) break;
+                if constexpr (STOP_AT_TARGET) {
+                    if (r == target_r && (x & target)) return true;
+                }
+            }
+            return false;
+        };
+
+        bool changed = false;
+        if (sweep_down(changed)) return true;
+        while (true) {
             changed = false;
-            for (int r = 0; r < H; ++r) {
-                Word s = out[r];
-                if (r > 0) s |= vertical_bits(out[r - 1]);
-                Word x = row_fill(s, road[r]);
-                changed |= x != out[r];
-                out[r] = x;
+            if (sweep_up(changed)) return true;
+            if (!changed) {
+                if (result_lo) *result_lo = lo;
+                if (result_hi) *result_hi = hi;
+                return false;
             }
-            for (int r = H - 1; r >= 0; --r) {
-                Word s = out[r];
-                if (r + 1 < H) s |= vertical_bits(out[r + 1]);
-                Word x = row_fill(s, road[r]);
-                changed |= x != out[r];
-                out[r] = x;
+            changed = false;
+            if (sweep_down(changed)) return true;
+            if (!changed) {
+                if (result_lo) *result_lo = lo;
+                if (result_hi) *result_hi = hi;
+                return false;
             }
-        } while (changed);
+        }
+    }
+
+    void flood_closure_inplace(Set &out) const {
+        flood_closure_impl<false>(out);
     }
 
     int flood_point_into(int r0, int c0, Set &out) const {
         clear(out);
         if (!is_road(r0, c0)) return 0;
         out[r0] = bit(c0);
-        flood_closure_inplace(out);
-        return count(out);
+        int lo, hi;
+        flood_closure_impl<false>(out, -1, Word(0), &lo, &hi);
+        int result = 0;
+        for (int r = lo; r <= hi; ++r) result += popcount(out[r]);
+        return result;
     }
 
     int distance_points(int r0, int c0, int r1, int c1) const {
@@ -197,20 +291,26 @@ private:
         seen[r0] = bit(c0);
         frontier[r0] = bit(c0);
         const Word target = bit(c1);
-        int d = 0;
+        int d = 0, lo = r0, hi = r0;
         while (true) {
-            expand_into(frontier, next);
-            bool changed = false;
+            expand_into(frontier, next, lo, hi);
+            int out_lo = max(0, lo - 1), out_hi = min(H - 1, hi + 1);
+            int next_lo = H, next_hi = -1;
             ++d;
-            for (int r = 0; r < H; ++r) {
+            for (int r = out_lo; r <= out_hi; ++r) {
                 Word add = next[r] & ~seen[r];
                 next[r] = add;
                 seen[r] |= add;
-                changed |= add != 0;
+                if (add) {
+                    next_lo = min(next_lo, r);
+                    next_hi = r;
+                }
             }
-            if (next[r1] & target) return d;
-            if (!changed) return -1;
+            if (out_lo <= r1 && r1 <= out_hi && (next[r1] & target)) return d;
+            if (next_hi < 0) return -1;
             frontier.swap(next);
+            lo = next_lo;
+            hi = next_hi;
         }
     }
 
@@ -225,22 +325,28 @@ private:
         Word target = bit(c1);
 
         constexpr int LAYER_LIMIT = 4;
+        int lo = r0, hi = r0;
         for (int layer = 0; layer < LAYER_LIMIT; ++layer) {
-            expand_into(frontier, next);
-            bool changed = false;
-            for (int r = 0; r < H; ++r) {
+            expand_into(frontier, next, lo, hi);
+            int out_lo = max(0, lo - 1), out_hi = min(H - 1, hi + 1);
+            int next_lo = H, next_hi = -1;
+            for (int r = out_lo; r <= out_hi; ++r) {
                 Word add = next[r] & ~seen[r];
                 next[r] = add;
                 seen[r] |= add;
-                changed |= add != 0;
+                if (add) {
+                    next_lo = min(next_lo, r);
+                    next_hi = r;
+                }
             }
-            if (next[r1] & target) return true;
-            if (!changed) return false;
+            if (out_lo <= r1 && r1 <= out_hi && (next[r1] & target)) return true;
+            if (next_hi < 0) return false;
             frontier.swap(next);
+            lo = next_lo;
+            hi = next_hi;
         }
 
-        flood_closure_inplace(seen);
-        return (seen[r1] & target) != 0;
+        return flood_closure_impl<true>(seen, r1, target);
     }
 
     int find_run(int u) const {
@@ -277,8 +383,8 @@ private:
                 int len = zeros ? ctz(zeros) : word_bits();
                 int rr = min(W, l + len);
                 int idx = runs.size();
-                runs.push_back({l, rr, idx, rr - l, -1});
-                x &= ~(lowmask(rr) ^ lowmask(l));
+                runs.push_back({r, l, rr, idx, rr - l, -1});
+                x &= ~lowmask(rr);
             }
         }
         row_start[H] = runs.size();
@@ -327,6 +433,17 @@ public:
         }
     }
 
+    /// @brief 最上位の立っているビットの位置 x != 0 が前提
+    int msb(Word x) const {
+        if constexpr (sizeof(Word) <= 8) {
+            return 63 - __builtin_clzll((uint64_t)x);
+        } else {
+            uint64_t hi = (uint64_t)(x >> 64);
+            if (hi) return 127 - __builtin_clzll(hi);
+            return 63 - __builtin_clzll((uint64_t)x);
+        }
+    }
+
     Bitboard() : H(0), W(0), FULL(0) {}
     Bitboard(int h, int w) { resize(h, w); }
 
@@ -340,9 +457,26 @@ public:
         next.assign(h, Word(0));
         seen.assign(h, Word(0));
         comp.assign(h, Word(0));
+        point_work.assign(h, Word(0));
+        point_lo = 0;
+        point_hi = -1;
         runs.clear();
         runs.reserve((size_t)h * ((w + 1) / 2));
         row_start.assign(h + 1, 0);
+        size_t max_runs = (size_t)h * ((w + 1) / 2);
+        component_head.reserve(max_runs);
+        component_next.reserve(max_runs);
+        component_roots.reserve(max_runs);
+        touched_rows.reserve(h);
+        path_dist.resize((size_t)h * w);
+        size_t cells = (size_t)h * w;
+        dfs_disc.resize(cells);
+        dfs_low.resize(cells);
+        dfs_parent.resize(cells);
+        dfs_next.resize(cells);
+        dfs_children.resize(cells);
+        dfs_stack.clear();
+        dfs_stack.reserve(cells);
     }
 
     int height() const { return H; }
@@ -398,17 +532,17 @@ public:
 
     /// @brief (r,c) を道にする
     void set_road(int r, int c) {
-        assert(in_bounds(r, c));
+        TITAN_BITBOARD_ASSERT(in_bounds(r, c));
         road[r] |= bit(c);
     }
     /// @brief (r,c) を壁にする
     void set_wall(int r, int c) {
-        assert(in_bounds(r, c));
+        TITAN_BITBOARD_ASSERT(in_bounds(r, c));
         road[r] &= ~bit(c);
     }
     /// @brief (r,c) が道か
     bool is_road(int r, int c) const {
-        assert(in_bounds(r, c));
+        TITAN_BITBOARD_ASSERT(in_bounds(r, c));
         return (road[r] >> c) & 1;
     }
 
@@ -448,6 +582,15 @@ public:
         }
     }
 
+    /// @brief 任意マスクを one/zero のグリッドへ変換する
+    void to_grid(const Set &s, vector<string> &grid, char one = '.', char zero = '#') const {
+        assert_set(s);
+        grid.assign(H, string(W, zero));
+        for (int r = 0; r < H; ++r) {
+            for (Word x = s[r] & FULL; x; x &= x - 1) grid[r][ctz(x)] = one;
+        }
+    }
+
     /// @brief マスクを空にする
     void clear(Set &s) const {
         assert_set(s);
@@ -456,25 +599,25 @@ public:
     /// @brief (r,c) が立っているか
     bool test(const Set &s, int r, int c) const {
         assert_set(s);
-        assert(in_bounds(r, c));
+        TITAN_BITBOARD_ASSERT(in_bounds(r, c));
         return (s[r] >> c) & 1;
     }
     /// @brief (r,c) を立てる
     void set(Set &s, int r, int c) const {
         assert_set(s);
-        assert(in_bounds(r, c));
+        TITAN_BITBOARD_ASSERT(in_bounds(r, c));
         s[r] |= bit(c);
     }
     /// @brief (r,c) を落とす
     void reset(Set &s, int r, int c) const {
         assert_set(s);
-        assert(in_bounds(r, c));
+        TITAN_BITBOARD_ASSERT(in_bounds(r, c));
         s[r] &= ~bit(c);
     }
     /// @brief (r,c) を反転する
     void flip(Set &s, int r, int c) const {
         assert_set(s);
-        assert(in_bounds(r, c));
+        TITAN_BITBOARD_ASSERT(in_bounds(r, c));
         s[r] ^= bit(c);
     }
 
@@ -483,6 +626,15 @@ public:
         assert_set(s);
         int res = 0;
         for (Word x : s) res += popcount(x);
+        return res;
+    }
+
+    /// @brief a と b の共通セル数
+    int count_and(const Set &a, const Set &b) const {
+        assert_set(a);
+        assert_set(b);
+        int res = 0;
+        for (int r = 0; r < H; ++r) res += popcount(a[r] & b[r]);
         return res;
     }
     /// @brief 立っているセルが 1 つ以上あるか
@@ -527,7 +679,7 @@ public:
         assert_set(s);
         uint64_t h = mix64(((uint64_t)(uint32_t)H << 32) | (uint32_t)W);
         for (int r = 0; r < H; ++r) {
-            h = mix64(h ^ hash_word(s[r] & FULL) ^ mix64((uint64_t)r));
+            h = mix64(h ^ hash_word(s[r] & FULL));
         }
         return h;
     }
@@ -585,7 +737,7 @@ public:
     void make_set(const vector<pair<int,int>> &cells, Set &out) const {
         clear(out);
         for (auto [r, c] : cells) {
-            assert(0 <= r && r < H && 0 <= c && c < W);
+            TITAN_BITBOARD_ASSERT(in_bounds(r, c));
             out[r] |= bit(c) & road[r];
         }
     }
@@ -635,6 +787,23 @@ public:
         return false;
     }
 
+    /// @brief s を含む最小半開矩形を返す 空集合なら false
+    bool bounding_box(const Set &s, int &r1, int &c1, int &r2, int &c2) const {
+        assert_set(s);
+        r1 = H;
+        c1 = W;
+        r2 = c2 = 0;
+        for (int r = 0; r < H; ++r) {
+            Word x = s[r] & FULL;
+            if (!x) continue;
+            r1 = min(r1, r);
+            r2 = r + 1;
+            c1 = min(c1, ctz(x));
+            c2 = max(c2, msb(x) + 1);
+        }
+        return r1 < r2;
+    }
+
     /// @brief 半開矩形 [r1,r2) x [c1,c2) のマスクを out に書く
     void rect(int r1, int c1, int r2, int c2, Set &out) const {
         assert(0 <= r1 && r1 <= r2 && r2 <= H);
@@ -650,7 +819,7 @@ public:
     void shift(const Set &s, int dr, int dc, Set &out) const {
         assert_set(s);
         assert_set(out);
-        assert(&s != &out);
+        TITAN_BITBOARD_ASSERT(&s != &out);
         if (dc <= -word_bits() || dc >= word_bits()) { clear(out); return; }
         int begin = max(0, min(H, dr));
         int end = max(0, min(H, H + dr));
@@ -668,7 +837,7 @@ public:
     void shift_left(const Set &s, Set &out) const {
         assert_set(s);
         assert_set(out);
-        assert(&s != &out);
+        TITAN_BITBOARD_ASSERT(&s != &out);
         for (int r = 0; r < H; ++r) out[r] = s[r] >> 1;
     }
 
@@ -676,7 +845,7 @@ public:
     void shift_right(const Set &s, Set &out) const {
         assert_set(s);
         assert_set(out);
-        assert(&s != &out);
+        TITAN_BITBOARD_ASSERT(&s != &out);
         for (int r = 0; r < H; ++r) out[r] = (s[r] << 1) & FULL;
     }
 
@@ -684,7 +853,7 @@ public:
     void shift_up(const Set &s, Set &out) const {
         assert_set(s);
         assert_set(out);
-        assert(&s != &out);
+        TITAN_BITBOARD_ASSERT(&s != &out);
         for (int r = 0; r + 1 < H; ++r) out[r] = s[r + 1];
         if (H) out[H - 1] = Word(0);
     }
@@ -693,7 +862,7 @@ public:
     void shift_down(const Set &s, Set &out) const {
         assert_set(s);
         assert_set(out);
-        assert(&s != &out);
+        TITAN_BITBOARD_ASSERT(&s != &out);
         if (H) out[0] = Word(0);
         for (int r = 1; r < H; ++r) out[r] = s[r - 1];
     }
@@ -701,7 +870,7 @@ public:
     void step(const Set &s, int dr, int dc, Set &out) const {
         assert_set(s);
         assert_set(out);
-        assert(&s != &out);
+        TITAN_BITBOARD_ASSERT(&s != &out);
         if (dc <= -word_bits() || dc >= word_bits()) { clear(out); return; }
         int begin = max(0, min(H, dr));
         int end = max(0, min(H, H + dr));
@@ -719,7 +888,7 @@ public:
     void expand(const Set &s, Set &out) const {
         assert_set(s);
         assert_set(out);
-        assert(&s != &out);
+        TITAN_BITBOARD_ASSERT(&s != &out);
         expand_into(s, out);
     }
 
@@ -727,7 +896,7 @@ public:
     void border(const Set &s, Set &out) const {
         assert_set(s);
         assert_set(out);
-        assert(&s != &out);
+        TITAN_BITBOARD_ASSERT(&s != &out);
         for (int r = 0; r < H; ++r) {
             Word f = s[r];
             Word x = ((f << 1) | (f >> 1)) & FULL;
@@ -741,7 +910,7 @@ public:
     void dilate(const Set &s, Set &out) const {
         assert_set(s);
         assert_set(out);
-        assert(&s != &out);
+        TITAN_BITBOARD_ASSERT(&s != &out);
         for (int r = 0; r < H; ++r) {
             Word f = s[r];
             Word x = f | (f << 1) | (f >> 1);
@@ -751,11 +920,30 @@ public:
         }
     }
 
+    /// @brief s を盤面内で k 回膨張して out に書く road は考慮しない / O(kH)
+    void dilate(const Set &s, int k, Set &out) const {
+        assert(0 <= k);
+        assert_set(s);
+        assert_set(out);
+        TITAN_BITBOARD_ASSERT(&s != &out);
+        for (int r = 0; r < H; ++r) out[r] = s[r] & FULL;
+        for (int step_i = 0; step_i < k; ++step_i) {
+            for (int r = 0; r < H; ++r) {
+                Word f = out[r];
+                Word x = f | (f << 1) | (f >> 1);
+                if (r > 0)     x |= vertical_bits(out[r - 1]);
+                if (r + 1 < H) x |= vertical_bits(out[r + 1]);
+                comp[r] = x & FULL;
+            }
+            out.swap(comp);
+        }
+    }
+
     /// @brief 周囲すべてが s に含まれるセルを out に書く 盤面外は 0 と扱う
     void erode(const Set &s, Set &out) const {
         assert_set(s);
         assert_set(out);
-        assert(&s != &out);
+        TITAN_BITBOARD_ASSERT(&s != &out);
         for (int r = 0; r < H; ++r) out[r] = eroded_row(s, r);
     }
 
@@ -763,7 +951,7 @@ public:
     void inner_border(const Set &s, Set &out) const {
         assert_set(s);
         assert_set(out);
-        assert(&s != &out);
+        TITAN_BITBOARD_ASSERT(&s != &out);
         for (int r = 0; r < H; ++r) out[r] = s[r] & ~eroded_row(s, r);
     }
 
@@ -777,16 +965,80 @@ public:
     void flood(const Set &sources, Set &out) const {
         assert_set(sources);
         assert_set(out);
-        assert(&sources != &out);
+        TITAN_BITBOARD_ASSERT(&sources != &out);
         for (int r = 0; r < H; ++r) out[r] = sources[r] & road[r];
         flood_closure_inplace(out);
     }
 
     /// @brief (r,c) からの到達集合を out に書く
     void flood(int r, int c, Set &out) const {
-        assert(in_bounds(r, c));
+        TITAN_BITBOARD_ASSERT(in_bounds(r, c));
         assert_set(out);
         flood_point_into(r, c, out);
+    }
+
+    /// @brief 盤面外周に接する道から到達できる道セルを out に書く
+    void reachable_from_border(Set &out) const {
+        assert_set(out);
+        clear(out);
+        if (H == 0 || W == 0) return;
+        Word sides = bit(0) | bit(W - 1);
+        for (int r = 0; r < H; ++r) out[r] = road[r] & sides;
+        out[0] = road[0];
+        out[H - 1] = road[H - 1];
+        flood_closure_inplace(out);
+    }
+
+    /// @brief 外周の道から到達できない道セルを out に書く
+    void enclosed_road(Set &out) const {
+        assert_set(out);
+        reachable_from_border(comp);
+        for (int r = 0; r < H; ++r) out[r] = road[r] & ~comp[r];
+    }
+
+    /// @brief 連結な道集合で (r,c) を消しても連結性を保つ十分条件を 3x3 局所判定する
+    bool locally_removable(int r, int c) const {
+        TITAN_BITBOARD_ASSERT(in_bounds(r, c));
+        if (!is_road(r, c)) return false;
+        static const array<unsigned char, 256> lut = [] {
+            array<unsigned char, 256> res{};
+            constexpr int RR[8] = {-1, -1, -1, 0, 0, 1, 1, 1};
+            constexpr int CC[8] = {-1, 0, 1, -1, 1, -1, 0, 1};
+            constexpr unsigned DIRECT4 = (1u << 1) | (1u << 3) | (1u << 4) | (1u << 6);
+            for (unsigned mask = 0; mask < 256; ++mask) {
+                unsigned direct = NB == Neighborhood::Four ? mask & DIRECT4 : mask;
+                if (!direct || !(direct & (direct - 1))) {
+                    res[mask] = 1;
+                    continue;
+                }
+                unsigned reached = direct & (0u - direct);
+                unsigned queue = reached;
+                while (queue) {
+                    int u = __builtin_ctz(queue);
+                    queue &= queue - 1;
+                    for (int v = 0; v < 8; ++v) {
+                        if (!(mask & (1u << v)) || (reached & (1u << v))) continue;
+                        int dr = RR[u] > RR[v] ? RR[u] - RR[v] : RR[v] - RR[u];
+                        int dc = CC[u] > CC[v] ? CC[u] - CC[v] : CC[v] - CC[u];
+                        bool adjacent = NB == Neighborhood::Four ? dr + dc == 1 : max(dr, dc) == 1;
+                        if (!adjacent) continue;
+                        reached |= 1u << v;
+                        queue |= 1u << v;
+                    }
+                }
+                res[mask] = (direct & ~reached) == 0;
+            }
+            return res;
+        }();
+
+        constexpr int RR[8] = {-1, -1, -1, 0, 0, 1, 1, 1};
+        constexpr int CC[8] = {-1, 0, 1, -1, 1, -1, 0, 1};
+        unsigned pattern = 0;
+        for (int k = 0; k < 8; ++k) {
+            int nr = r + RR[k], nc = c + CC[k];
+            if (in_bounds(nr, nc) && ((road[nr] >> nc) & 1)) pattern |= 1u << k;
+        }
+        return lut[pattern];
     }
 
     /// @brief max_steps 回までの拡張に限った到達集合を out に書く
@@ -800,40 +1052,54 @@ public:
         assert(0 <= max_steps);
         assert_set(sources);
         assert_set(out);
-        assert(&sources != &out);
-        for (int r = 0; r < H; ++r) out[r] = sources[r] & road[r];
-        for (int r = 0; r < H; ++r) frontier[r] = out[r];
+        TITAN_BITBOARD_ASSERT(&sources != &out);
+        int lo = H, hi = -1;
+        for (int r = 0; r < H; ++r) {
+            out[r] = sources[r] & road[r];
+            frontier[r] = out[r];
+            if (out[r]) {
+                lo = min(lo, r);
+                hi = r;
+            }
+        }
         for (int step_i = 0; step_i < max_steps; ++step_i) {
-            expand_into(frontier, next);
-            bool changed = false;
-            for (int r = 0; r < H; ++r) {
+            if (hi < 0) break;
+            expand_into(frontier, next, lo, hi);
+            int out_lo = max(0, lo - 1), out_hi = min(H - 1, hi + 1);
+            int next_lo = H, next_hi = -1;
+            for (int r = out_lo; r <= out_hi; ++r) {
                 Word add = next[r] & ~out[r];
                 next[r] = add;
                 out[r] |= add;
-                changed |= add != 0;
+                if (add) {
+                    next_lo = min(next_lo, r);
+                    next_hi = r;
+                }
             }
-            if (!changed) break;
+            if (next_hi < 0) break;
             frontier.swap(next);
+            lo = next_lo;
+            hi = next_hi;
         }
     }
 
     /// @brief a と b が連結か
     bool connected(pair<int,int> a, pair<int,int> b) const {
-        assert(in_bounds(a.first, a.second));
-        assert(in_bounds(b.first, b.second));
+        TITAN_BITBOARD_ASSERT(in_bounds(a.first, a.second));
+        TITAN_BITBOARD_ASSERT(in_bounds(b.first, b.second));
         return connected_points(a.first, a.second, b.first, b.second);
     }
 
     /// @brief a から b までの最短距離 到達不能なら -1
     int distance(pair<int,int> a, pair<int,int> b) const {
-        assert(in_bounds(a.first, a.second));
-        assert(in_bounds(b.first, b.second));
+        TITAN_BITBOARD_ASSERT(in_bounds(a.first, a.second));
+        TITAN_BITBOARD_ASSERT(in_bounds(b.first, b.second));
         return distance_points(a.first, a.second, b.first, b.second);
     }
 
     /// @brief (r,c) から targets の最寄りセルまでの距離 行優先最小のセルを hit に書く
     int nearest_in_set(int r, int c, const Set &targets, pair<int,int> &hit) const {
-        assert(in_bounds(r, c));
+        TITAN_BITBOARD_ASSERT(in_bounds(r, c));
         assert_set(targets);
         if (!is_road(r, c)) return -1;
 
@@ -846,40 +1112,54 @@ public:
             return 0;
         }
 
-        int d = 0;
+        int d = 0, lo = r, hi = r;
         while (true) {
-            expand_into(frontier, next);
-            bool changed = false;
+            expand_into(frontier, next, lo, hi);
+            int out_lo = max(0, lo - 1), out_hi = min(H - 1, hi + 1);
+            int next_lo = H, next_hi = -1;
             ++d;
-            for (int rr = 0; rr < H; ++rr) {
+            for (int rr = out_lo; rr <= out_hi; ++rr) {
                 Word add = next[rr] & ~seen[rr];
                 next[rr] = add;
                 seen[rr] |= add;
-                changed |= add != 0;
-            }
-            for (int rr = 0; rr < H; ++rr) {
-                Word found = next[rr] & targets[rr];
+                if (add) {
+                    next_lo = min(next_lo, rr);
+                    next_hi = rr;
+                }
+                Word found = add & targets[rr];
                 if (found) {
                     hit = {rr, ctz(found)};
                     return d;
                 }
             }
-            if (!changed) return -1;
+            if (next_hi < 0) return -1;
             frontier.swap(next);
+            lo = next_lo;
+            hi = next_hi;
         }
     }
 
     /// @brief (r,c) を含む連結成分を out に書く 壁なら空集合
     void component(int r, int c, Set &out) const {
-        assert(in_bounds(r, c));
+        TITAN_BITBOARD_ASSERT(in_bounds(r, c));
         assert_set(out);
         flood_point_into(r, c, out);
     }
 
     /// @brief (r,c) を含む連結成分のセル数 壁なら 0
     int component_size(int r, int c) const {
-        assert(in_bounds(r, c));
-        return flood_point_into(r, c, comp);
+        TITAN_BITBOARD_ASSERT(in_bounds(r, c));
+        for (int rr = point_lo; rr <= point_hi; ++rr) point_work[rr] = Word(0);
+        if (!is_road(r, c)) {
+            point_lo = 0;
+            point_hi = -1;
+            return 0;
+        }
+        point_work[r] = bit(c);
+        flood_closure_impl<false>(point_work, -1, Word(0), &point_lo, &point_hi);
+        int result = 0;
+        for (int rr = point_lo; rr <= point_hi; ++rr) result += popcount(point_work[rr]);
+        return result;
     }
 
     /// @brief 多始点最短距離を dist (長さ H*W, index は r*W+c) に書く 未到達は -1
@@ -892,26 +1172,37 @@ public:
     void bfs_dist(const Set &sources, vector<int> &dist) const {
         assert_set(sources);
         dist.assign(H * W, -1);
-        for (int r = 0; r < H; ++r) seen[r] = sources[r] & road[r];
+        int lo = H, hi = -1;
+        for (int r = 0; r < H; ++r) {
+            seen[r] = sources[r] & road[r];
+            if (seen[r]) {
+                lo = min(lo, r);
+                hi = r;
+            }
+        }
         for (int r = 0; r < H; ++r) {
             frontier[r] = seen[r];
             for (Word x = seen[r]; x; x &= x - 1) dist[r * W + ctz(x)] = 0;
         }
         int layer = 0;
-        while (true) {
-            expand_into(frontier, next);
-            bool changed = false;
+        while (hi >= 0) {
+            expand_into(frontier, next, lo, hi);
+            int out_lo = max(0, lo - 1), out_hi = min(H - 1, hi + 1);
+            int next_lo = H, next_hi = -1;
             ++layer;
-            for (int r = 0; r < H; ++r) {
+            for (int r = out_lo; r <= out_hi; ++r) {
                 Word add = next[r] & ~seen[r];
                 next[r] = add;
                 if (!add) continue;
                 seen[r] |= add;
-                changed = true;
+                next_lo = min(next_lo, r);
+                next_hi = r;
                 for (Word x = add; x; x &= x - 1) dist[r * W + ctz(x)] = layer;
             }
-            if (!changed) break;
+            if (next_hi < 0) break;
             frontier.swap(next);
+            lo = next_lo;
+            hi = next_hi;
         }
     }
 
@@ -922,8 +1213,8 @@ public:
         vector<pair<int,int>> &path,
         vector<int> &dist
     ) const {
-        assert(in_bounds(a.first, a.second));
-        assert(in_bounds(b.first, b.second));
+        TITAN_BITBOARD_ASSERT(in_bounds(a.first, a.second));
+        TITAN_BITBOARD_ASSERT(in_bounds(b.first, b.second));
         path.clear();
         dist.assign(H * W, -1);
         if (!is_road(a.first, a.second) || !is_road(b.first, b.second)) return false;
@@ -935,24 +1226,33 @@ public:
         dist[b.first * W + b.second] = 0;
 
         bool found = a == b;
-        int layer = 0;
+        int layer = 0, lo = b.first, hi = b.first;
         while (!found) {
-            expand_into(frontier, next);
-            bool changed = false;
+            expand_into(frontier, next, lo, hi);
+            int out_lo = max(0, lo - 1), out_hi = min(H - 1, hi + 1);
+            int next_lo = H, next_hi = -1;
             ++layer;
-            for (int r = 0; r < H; ++r) {
+            for (int r = out_lo; r <= out_hi; ++r) {
                 Word add = next[r] & ~seen[r];
                 next[r] = add;
                 seen[r] |= add;
-                changed |= add != 0;
+                if (add) {
+                    next_lo = min(next_lo, r);
+                    next_hi = r;
+                }
                 for (Word x = add; x; x &= x - 1) {
                     int c = ctz(x);
                     dist[r * W + c] = layer;
                 }
             }
-            found = (next[a.first] & bit(a.second)) != 0;
-            if (!changed) return false;
-            if (!found) frontier.swap(next);
+            found = out_lo <= a.first && a.first <= out_hi
+                 && (next[a.first] & bit(a.second)) != 0;
+            if (next_hi < 0) return false;
+            if (!found) {
+                frontier.swap(next);
+                lo = next_lo;
+                hi = next_hi;
+            }
         }
 
         pair<int,int> cur = a;
@@ -975,8 +1275,63 @@ public:
 
     /// @brief a から b への最短経路を path に書く 到達不能なら false
     bool shortest_path(pair<int,int> a, pair<int,int> b, vector<pair<int,int>> &path) const {
-        vector<int> dist;
-        return shortest_path(a, b, path, dist);
+        TITAN_BITBOARD_ASSERT(in_bounds(a.first, a.second));
+        TITAN_BITBOARD_ASSERT(in_bounds(b.first, b.second));
+        path.clear();
+        if (!is_road(a.first, a.second) || !is_road(b.first, b.second)) return false;
+
+        clear(seen);
+        clear(frontier);
+        seen[b.first] = bit(b.second);
+        frontier[b.first] = bit(b.second);
+        path_dist[b.first * W + b.second] = 0;
+
+        bool found = a == b;
+        int layer = 0, lo = b.first, hi = b.first;
+        while (!found) {
+            expand_into(frontier, next, lo, hi);
+            int out_lo = max(0, lo - 1), out_hi = min(H - 1, hi + 1);
+            int next_lo = H, next_hi = -1;
+            ++layer;
+            for (int r = out_lo; r <= out_hi; ++r) {
+                Word add = next[r] & ~seen[r];
+                next[r] = add;
+                seen[r] |= add;
+                if (add) {
+                    next_lo = min(next_lo, r);
+                    next_hi = r;
+                }
+                for (Word x = add; x; x &= x - 1) {
+                    path_dist[r * W + ctz(x)] = layer;
+                }
+            }
+            found = out_lo <= a.first && a.first <= out_hi
+                 && (next[a.first] & bit(a.second)) != 0;
+            if (next_hi < 0) return false;
+            if (!found) {
+                frontier.swap(next);
+                lo = next_lo;
+                hi = next_hi;
+            }
+        }
+
+        pair<int,int> cur = a;
+        path.push_back(cur);
+        while (cur != b) {
+            int d = path_dist[cur.first * W + cur.second];
+            bool moved = false;
+            for (int k = 0; k < DIRS; ++k) {
+                int nr = cur.first + DR[k], nc = cur.second + DC[k];
+                if (!in_bounds(nr, nc) || !(seen[nr] & bit(nc))) continue;
+                if (path_dist[nr * W + nc] != d - 1) continue;
+                cur = {nr, nc};
+                path.push_back(cur);
+                moved = true;
+                break;
+            }
+            assert(moved);
+        }
+        return true;
     }
 
     /// @brief 多始点最短距離 dist と最近傍始点番号 src を書く 同距離は番号最小を選ぶ 未到達は -1
@@ -984,26 +1339,35 @@ public:
         dist.assign(H * W, -1);
         src.assign(H * W, -1);
         clear(seen);
+        int lo = H, hi = -1;
         int ns = sources.size();
         for (int i = 0; i < ns; ++i) {
             auto [r, c] = sources[i];
-            assert(in_bounds(r, c));
+            TITAN_BITBOARD_ASSERT(in_bounds(r, c));
             if (!is_road(r, c)) continue;
             int idx = r * W + c;
-            if (dist[idx] == -1) { dist[idx] = 0; src[idx] = i; seen[r] |= bit(c); }
+            if (dist[idx] == -1) {
+                dist[idx] = 0;
+                src[idx] = i;
+                seen[r] |= bit(c);
+                lo = min(lo, r);
+                hi = max(hi, r);
+            }
         }
         for (int r = 0; r < H; ++r) frontier[r] = seen[r];
         int layer = 0;
-        while (true) {
-            expand_into(frontier, next);
-            bool changed = false;
+        while (hi >= 0) {
+            expand_into(frontier, next, lo, hi);
+            int out_lo = max(0, lo - 1), out_hi = min(H - 1, hi + 1);
+            int next_lo = H, next_hi = -1;
             ++layer;
-            for (int r = 0; r < H; ++r) {
+            for (int r = out_lo; r <= out_hi; ++r) {
                 Word add = next[r] & ~seen[r];
                 next[r] = add;
                 if (!add) continue;
                 seen[r] |= add;
-                changed = true;
+                next_lo = min(next_lo, r);
+                next_hi = r;
                 for (Word x = add; x; x &= x - 1) {
                     int c = ctz(x);
                     int idx = r * W + c;
@@ -1011,7 +1375,7 @@ public:
                     int best = -1;
                     for (int k = 0; k < DIRS; ++k) {
                         int nr = r + DR[k], nc = c + DC[k];
-                        if (nr < 0 || nc < 0 || nr >= H || nc >= W) continue;
+                        if (nr < lo || nr > hi || nc < 0 || nc >= W) continue;
                         int nidx = nr * W + nc;
                         if (!(frontier[nr] & bit(nc))) continue;
                         if (best == -1 || src[nidx] < best) best = src[nidx];
@@ -1019,9 +1383,95 @@ public:
                     src[idx] = best;
                 }
             }
-            if (!changed) break;
+            if (next_hi < 0) break;
             frontier.swap(next);
+            lo = next_lo;
+            hi = next_hi;
         }
+    }
+
+    /// @brief 道グラフの関節点を out に書く / O(HW)
+    void articulation_cells(Set &out) const {
+        assert_set(out);
+        clear(out);
+        std::fill(dfs_disc.begin(), dfs_disc.end(), -1);
+        std::fill(dfs_parent.begin(), dfs_parent.end(), -1);
+        std::fill(dfs_next.begin(), dfs_next.end(), 0);
+        std::fill(dfs_children.begin(), dfs_children.end(), 0);
+        dfs_stack.clear();
+        int timer = 0;
+        for (int sr = 0; sr < H; ++sr) {
+            for (Word bits = road[sr]; bits; bits &= bits - 1) {
+                int sc = ctz(bits);
+                int root = sr * W + sc;
+                if (dfs_disc[root] != -1) continue;
+                dfs_disc[root] = dfs_low[root] = timer++;
+                dfs_stack.push_back(root);
+                while (!dfs_stack.empty()) {
+                    int u = dfs_stack.back();
+                    int r = u / W, c = u % W;
+                    if (dfs_next[u] < DIRS) {
+                        int k = dfs_next[u]++;
+                        int nr = r + DR[k], nc = c + DC[k];
+                        if (!in_bounds(nr, nc) || !((road[nr] >> nc) & 1)) continue;
+                        int v = nr * W + nc;
+                        if (dfs_disc[v] == -1) {
+                            dfs_parent[v] = u;
+                            ++dfs_children[u];
+                            dfs_disc[v] = dfs_low[v] = timer++;
+                            dfs_stack.push_back(v);
+                        } else if (v != dfs_parent[u]) {
+                            dfs_low[u] = min(dfs_low[u], dfs_disc[v]);
+                        }
+                        continue;
+                    }
+
+                    dfs_stack.pop_back();
+                    int p = dfs_parent[u];
+                    if (p == -1) {
+                        if (dfs_children[u] >= 2) out[r] |= bit(c);
+                        continue;
+                    }
+                    dfs_low[p] = min(dfs_low[p], dfs_low[u]);
+                    if (dfs_parent[p] != -1 && dfs_low[u] >= dfs_disc[p]) {
+                        out[p / W] |= bit(p % W);
+                    }
+                }
+            }
+        }
+    }
+
+    /// @brief 各連結成分について f(component_set, size) を呼ぶ 成分数を返す
+    ///        component_set はコールバック中だけ有効 同じ Bitboard の探索をコールバックから呼ばないこと
+    template<class F>
+    int for_each_component(F &&f) const {
+        build_runs();
+        int nruns = runs.size();
+        component_head.assign(nruns, -1);
+        component_next.resize(nruns);
+        component_roots.clear();
+        for (int i = 0; i < nruns; ++i) {
+            int root = find_run(i);
+            if (component_head[root] == -1) component_roots.push_back(root);
+            component_next[i] = component_head[root];
+            component_head[root] = i;
+        }
+
+        clear(comp);
+        touched_rows.clear();
+        for (int root : component_roots) {
+            for (int r : touched_rows) comp[r] = Word(0);
+            touched_rows.clear();
+            for (int i = component_head[root]; i != -1; i = component_next[i]) {
+                int r = runs[i].row;
+                if (!comp[r]) touched_rows.push_back(r);
+                comp[r] |= lowmask(runs[i].r) ^ lowmask(runs[i].l);
+            }
+            f(static_cast<const Set &>(comp), runs[root].size);
+        }
+        int result = component_roots.size();
+        runs.clear();
+        return result;
     }
 
     /// @brief 道セルの連結成分数を返す
@@ -1091,3 +1541,5 @@ using Bitboard64Diag  = Bitboard<uint64_t, Neighborhood::Eight>;
 using Bitboard128Diag = Bitboard<__uint128_t, Neighborhood::Eight>;
 
 }  // namespace titan23
+
+#undef TITAN_BITBOARD_ASSERT
