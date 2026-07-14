@@ -8,19 +8,33 @@
 - 返り値用の `Set` を呼び出し側で確保し、ホットパスでは再確保しない現在の方針は維持する。
 - 以下の速度評価には未計測の見積もりを含む。採否は最後に記載するベンチマークで決める。
 
+## 実装結果（2026-07-15）
+
+次を実装した。
+
+- `connected` の早期終了 + 行内一括 flood への切り替え
+- Kogge–Stone 型 `row_fill` を使う全成分 flood
+- `components`・`label`・`largest_component` の行ラン + Union-Find
+- `step`・`border` の 1 パス化と `shift` の分岐整理
+- `Set`・単一点を受け取る flood/BFS API
+- `distance`・`nearest_in_set`・`component`・`component_size`・`shortest_path`
+- 集合判定、方向別 shift、`rect`、`kth_cell`、`hash64`、形態演算、任意マスク表示
+- 4 近傍・8 近傍のコンパイル時切り替え
+- 入出力サイズ・非エイリアス条件のデバッグ検査
+
+作業バッファの `shared_ptr` 共有は採用しない。競プロ用途では盤面コピーを主要なボトルネックとせず、直接メンバの単純さとホットループのアクセス速度を優先する。固定長版、BMI2 専用選択、Zobrist hash は未実装とする。
+
 ## 結論
 
 実装候補の優先順位は次のとおり。
 
-1. `Bitboard` 自体を大量コピーするなら、作業バッファを盤面から分離する。
-2. `connected` を到達時点で打ち切る。
-3. `step` と `border` を 1 パス化する。
-4. `flood` 系に `Set`・単一点を受け取るオーバーロードを追加する。
-5. 全成分を求める flood に行内一括伝播を試し、現行方式と実測比較する。
-6. `largest_component` に残りセル数による枝刈りを入れる。
-7. `components`・`label`・`largest_component` について、行ラン + Union-Find 版を比較する。
-8. `bfs_nearest` は追加バッファを増やさず、`frontier` と `next` の役割を整理する。
-9. 8 近傍をコンパイル時の近傍種別として正式対応する。
+1. `connected` を到達時点で打ち切る。
+2. `step` と `border` を 1 パス化する。
+3. `flood` 系に `Set`・単一点を受け取るオーバーロードを追加する。
+4. 全成分を求める flood に行内一括伝播を使う。
+5. `components`・`label`・`largest_component` に行ラン + Union-Find を使う。
+6. `bfs_nearest` は追加バッファを増やさず、`frontier` と `next` の役割を整理する。
+7. 8 近傍をコンパイル時の近傍種別として正式対応する。
 
 追加メソッドでは、次を優先する。
 
@@ -33,7 +47,7 @@
 
 ## 高速化案
 
-### 1. `Bitboard` のコピーコストを下げる
+### 1. `Bitboard` のコピーコストを下げる（見送り）
 
 現在の `Bitboard` は次の 5 本の `vector<Word>` を持つ。
 
@@ -61,7 +75,7 @@ class Bitboard {
 
 探索メソッドへ `BitboardWorkspace &` を渡すか、1 インスタンスに 1 ワークスペースを外から関連付ける。これにより状態コピーは実質 `road` の `H` ワードだけになる。また、多数の盤面に対して 1 個のワークスペースを順次使い回せる。
 
-単一の盤面をコピーせず使い続ける用途では効果がないため、実際の利用形態を見て採用する。
+単一の盤面をコピーせず使い続ける用途では効果がない。今回は競プロ用途での単純さを優先し、Workspace 分離や `shared_ptr` 共有は行わない。
 
 ### 2. `connected` の早期終了
 
