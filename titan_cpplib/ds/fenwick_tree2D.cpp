@@ -15,7 +15,7 @@ struct FenwickTree2D {
 
     FenwickTree2D() {}
     FenwickTree2D(int h, int w) : _h(h+1), _w(w+1), a(_h*_w, 0) {
-        assert(_h * _w < 1e9);
+        assert((long long)_h * _w < 1e9);
     }
 
     void add(int h, int w, T x) {
