@@ -9,6 +9,8 @@ namespace titan23 {
 
 class NormalDist {
 private:
+    static constexpr const double PI = 3.14159265358979323846;
+    static constexpr const double EPSILON = 1e-12;
     static constexpr const double sqrt2 = 1.4142135623730951;
     static constexpr const double a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741, a4 = -1.453152027, a5 = 1.061405429;
     static constexpr const double p1 = 0.3275911;
@@ -19,16 +21,16 @@ private:
         if (x == 0) return 0;
         if (x <= -1.0) return -INFINITY;
         if (x >= 1.0) return INFINITY;
-        double ln = std::log(1.0 - x * x);
-        double sgn = std::copysign(1.0, x);
-        double term1 = 2.0 / (M_PI * a) + ln / 2.0;
+        double ln = log(1.0 - x * x);
+        double sgn = copysign(1.0, x);
+        double term1 = 2.0 / (PI * a) + ln / 2.0;
         double term2 = ln / a;
-        double approx = std::sqrt(std::sqrt(term1 * term1 - term2) - term1);
+        double approx = sqrt(sqrt(term1 * term1 - term2) - term1);
         double y = sgn * approx;
 
         // 精度向上
-        // double fx = std::erf(y) - x;
-        // double dfx = (2.0 / std::sqrt(M_PI)) * std::exp(-y * y);
+        // double fx = erf(y) - x;
+        // double dfx = (2.0 / sqrt(PI)) * exp(-y * y);
         // y = y - fx / dfx;
 
         return y;
@@ -37,14 +39,14 @@ private:
 public:
     /// 正規分布 N(mu, sigma) において、x 以下となる確率を返す
     static double cdf(double x, double mu, double sigma) {
-        return 0.5 * (1 + std::erf((x - mu) / (sigma * sqrt2)));
+        return 0.5 * (1 + erf((x - mu) / (sigma * sqrt2)));
     }
 
     static double cdf_approx(double x) {
         double sgn = (x < 0) ? -1.0 : 1.0;
-        x = std::fabs(x) / std::sqrt(2.0);
+        x = fabs(x) / sqrt(2.0);
         double t = 1.0 / (1.0 + p1 * x);
-        double y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * std::exp(-x * x);
+        double y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * exp(-x * x);
         return 0.5 * (1.0 + sgn * y);
     }
 
@@ -55,14 +57,14 @@ public:
 
     /// 正規分布 N(mu, sigma) における x の確率密度を返す
     static double pdf(double x, double mu, double sigma) {
-        double coeff = 1.0 / (sigma * std::sqrt(2.0 * M_PI));
-        double exponent = -0.5 * std::pow((x - mu) / sigma, 2);
-        return coeff * std::exp(exponent);
+        double coeff = 1.0 / (sigma * sqrt(2.0 * PI));
+        double exponent = -0.5 * pow((x - mu) / sigma, 2);
+        return coeff * exp(exponent);
     }
 
     /// 正規分布 N(mu, sigma) における x の対数確率密度を返す
     static double log_pdf(double x, double mu, double sigma) {
-        return -0.5 * std::log(2.0 * PI) - std::log(sigma) - 0.5 * std::pow((x - mu) / sigma, 2);
+        return -0.5 * log(2.0 * PI) - log(sigma) - 0.5 * pow((x - mu) / sigma, 2);
     }
 
     /// 正規分布 N(mu, sigma) に対して、観測した値が区間 [l, r] に含まれる確率を返す
@@ -80,7 +82,7 @@ public:
     }
 
     /// ベイズ更新：事前分布 N(mu_prior, sigma_prior) と観測データ (obs_val) および観測ノイズ N(0, sigma_obs) から事後分布の平均と標準偏差を返す
-    static std::pair<double, double> update_posterior(double mu_prior, double sigma_prior, double obs_val, double sigma_obs) {
+    static pair<double, double> update_posterior(double mu_prior, double sigma_prior, double obs_val, double sigma_obs) {
         if (sigma_prior < EPSILON) return {mu_prior, sigma_prior};
         if (sigma_obs < EPSILON) return {obs_val, 0.0};
 
@@ -90,7 +92,7 @@ public:
         double var_post = 1.0 / (1.0 / var_prior + 1.0 / var_obs);
         double mu_post = var_post * (mu_prior / var_prior + obs_val / var_obs);
 
-        return {mu_post, std::sqrt(var_post)};
+        return {mu_post, sqrt(var_post)};
     }
 
     /// 2つの正規分布 P=N(mu1, sigma1) と Q=N(mu2, sigma2) 間のKLダイバージェンス D_KL(P || Q) を返す
@@ -98,7 +100,7 @@ public:
         assert(sigma1 > 0.0 && sigma2 > 0.0);
         double var1 = sigma1 * sigma1;
         double var2 = sigma2 * sigma2;
-        return std::log(sigma2 / sigma1) + (var1 + std::pow(mu1 - mu2, 2)) / (2.0 * var2) - 0.5;
+        return log(sigma2 / sigma1) + (var1 + pow(mu1 - mu2, 2)) / (2.0 * var2) - 0.5;
     }
 };
 } // namespace titan23

@@ -13,7 +13,7 @@ private:
     double score_range;
     double delta;
     int min_samples;
-    bool is_maximize;
+    bool is_minimize;
     int max_seeds;
 
     vector<ScoreType> best_scores;
@@ -35,9 +35,9 @@ public:
     /// @param score_range 1つのシードに対するスコア差の最大幅（理論上の上限 - 下限）
     /// @param delta 誤って最良候補を枝刈りしてしまう確率の上限（有意水準に相当、例: 0.05）
     /// @param min_samples 枝刈り判定を開始する最低限の共通シード数
-    /// @param is_maximize 最大化問題の場合はtrue、最小化問題の場合はfalseを指定します
-    HoeffdingPruner(int max_seeds, double score_range, double delta=0.05, int min_samples=5, bool is_maximize=true)
-        : score_range(score_range), delta(delta), min_samples(min_samples), is_maximize(is_maximize), max_seeds(max_seeds),
+    /// @param is_minimize 最小化問題の場合はtrue、最大化問題の場合はfalseを指定します
+    HoeffdingPruner(int max_seeds, double score_range, double delta=0.05, int min_samples=5, bool is_minimize=true)
+        : score_range(score_range), delta(delta), min_samples(min_samples), is_minimize(is_minimize), max_seeds(max_seeds),
           best_count(0), best_sum(0), current_count(0), current_sum(0), common_count(0), diff_sum(0.0) {
 
         best_scores.assign(max_seeds, 0);
@@ -55,17 +55,17 @@ public:
             current_count++;
             if (has_best_score[seed]) {
                 common_count++;
-                double diff = is_maximize ? (double)(best_scores[seed] - score) 
-                                          : (double)(score - best_scores[seed]);
+                double diff = is_minimize ? (double)(score - best_scores[seed])
+                                          : (double)(best_scores[seed] - score);
                 diff_sum += diff;
             }
         } else {
             current_sum -= current_scores[seed];
             if (has_best_score[seed]) {
-                double old_diff = is_maximize ? (double)(best_scores[seed] - current_scores[seed]) 
-                                              : (double)(current_scores[seed] - best_scores[seed]);
-                double new_diff = is_maximize ? (double)(best_scores[seed] - score) 
-                                              : (double)(score - best_scores[seed]);
+                double old_diff = is_minimize ? (double)(current_scores[seed] - best_scores[seed])
+                                              : (double)(best_scores[seed] - current_scores[seed]);
+                double new_diff = is_minimize ? (double)(score - best_scores[seed])
+                                              : (double)(best_scores[seed] - score);
                 diff_sum += (new_diff - old_diff);
             }
         }
@@ -95,8 +95,8 @@ public:
                 double current_mean = (double)current_sum / current_count;
                 double best_mean = (double)best_sum / best_count;
 
-                if (is_maximize && current_mean > best_mean) update = true;
-                if (!is_maximize && current_mean < best_mean) update = true;
+                if (is_minimize && current_mean < best_mean) update = true;
+                if (!is_minimize && current_mean > best_mean) update = true;
             }
 
             if (update) {

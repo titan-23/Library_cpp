@@ -98,9 +98,6 @@ constにできるものはそうしたい
 - **[軽微] print() が acc[n-1] を飛ばす**。ループが `i < n-1` で acc(サイズ n+1)を出力し最後に acc.back()=acc[n] を出すため、acc[n-1] が出ない。
 - **[軽微]** prod/sum が同一実装(非可逆モノイドに prod の名は不適)。
 
-### cumulative_sum2D.cpp
-- 正しい。
-
 ### deletable_heap.cpp
 - 遅延削除ヒープのロジックは正しい(存在しないキーを erase すると壊れる仕様は一般的)。
 - **[バグ] DeletableMaxHeap::operator<<**。`os << action.d;` の `action` が未定義。使用した時点でコンパイルエラー。
@@ -220,22 +217,13 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 - splay(zig-zig/zig-zag のインライン展開)、link/cut、subtree_apply/sum、same の実装を確認した。正しい。
 - **[軽微]** build() のコメント「O(logn)」は O(n) の誤り。cut で辺ノードのメモリは解放されない。
 
-### fast_stack.cpp
-- 正しい(容量超過時は emplace_back で自動伸長)。
-
 ### fenwick_tree2D.cpp
 - add/sum は正しい。
 - **[注意] 単一引数 sum(h, w) の assert が過剰**。`h < _h` だが prefix 排他境界としては `h <= _h` が正しく、最終行/列の get(h,w) (h=_h-1) が assert で落ちる。
 
-### foldable_deque.cpp / foldable_stack.cpp
-- 正しい(SWAG スタック、rebuild の半分割・向きを検証。deque.cpp と違いこちらは正しい)。
-
 ### hash_dict.cpp
 - Swiss-table 風実装。ミラー領域(先頭16バイト)の維持、h2 と EMPTY の衝突回避、rebuild を確認した。正しい。削除は非対応(仕様)。
 - **[軽微]** operator[] が V を値で返すため `d[k] = v` ができない(誤解を招く API)。contains_set は名前に反して chmin 動作。
-
-### hash_set.cpp
-- 正しい。開番地法・削除なし。
 
 ### icpc_lazy_rbst.cpp
 - ICPC 紙譜面用の雛形で、大半がコメントアウト。有効部(build/merge/split)は正しい。
@@ -244,9 +232,6 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 ### imos.cpp
 - add_const / add_linear / build(2回積分)の式を検証した。正しい。
 - **[軽微]** build は破壊的で2回呼べない。namespace 閉じの `};` に余分なセミコロン。
-
-### index_set.cpp
-- 正しい。
 
 ### lazy_link_cut_tree.cpp / link_cut_tree.cpp / link_cut_tree_sum.cpp
 - expose(独自形状だが等価)、splay、evert、path_prod/apply、rdata の向き管理を確認した。正しい。sum 版はコメント通り可換前提。
@@ -314,12 +299,6 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 - ロジックは正しい(時刻の単調増加は assert で担保)。
 - **[バグ] partial_persistent_union_find.cpp がコンパイル不能**。`PartialPersistentArray` に既定コンストラクタがないのに、`PartialPersistentUnionFind()` がメンバ `par` を既定構築しようとするため、インスタンス化でエラーになる。`PartialPersistentArray() {}` を追加すれば解消する。include を補って単体コンパイルできるようにした結果、表面化した。
 
-### pbds_set.cpp / pbds_multiset.cpp
-- 正しい。
-
-### persistent_array.cpp
-- 正しい(ヒープ順ナビゲーションと tovector の BFS 順の一致を確認)。static プール共有は仕様。
-
 ### persistent_lazy_segment_tree.cpp / persistent_segment_tree.cpp
 - 正しい。propagate が共有ノードを書き換えるが、子をコピーして押し下げるため表現する列は不変(永続性は保たれる)。スレッド非対応。
 - **[軽微]** tovector の `vector<T> a(len()); a.resize(_len);` は冗長。copy_from は 0 番兵もコピーする(無害な無駄)。
@@ -367,12 +346,6 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 - **[注意] pop() の assert が誤り**。`assert(node->prev)` のため要素1個のスタックから pop できない。`assert(node)` が意図のはず。
 - **[軽微]** push は新スタックを返すのに pop は自身を書き換える(永続APIとして非対称)。
 
-### persistent_union_find.cpp / persistent_weighted_union_find.cpp
-- 正しい(サイズ併合で深さ O(logn)、全体 O(log²n))。
-
-### persistent_wbtree.cpp
-- 正しい(_merge_with_root/_split_node の copy-on-write 経路を確認)。
-
 ### range_product_dc.cpp
 - 正しい(分割統治、非可換対応の dp[l]・dp[r] 合成順も正しい)。
 - **[注意]** 空区間クエリ(l==r)は誤った値(a[l] 等)を返す。assert l<r を入れるべき。
@@ -418,16 +391,10 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 - 他は正しい。
 
 ### std_set.cpp
-- 正しい。**[軽微]** デフォルトコンストラクタの missing(-1)。get_min/get_max は空で UB。
+- **[軽微]** デフォルトコンストラクタの missing(-1)。get_min/get_max は空で UB。
 
 ### undoable_union_find.cpp / undoable_union_find_sum.cpp
 - 正しい。sum 版 undo の按分 `(delta)/(-py-px)*(-py)` は add_group が総サイズの倍数のみ加えるため整除される(確認済み)。
-
-### union_find.cpp / union_find_advance.cpp / weight_union_find.cpp
-- 正しい。
-
-### used_set.cpp
-- 正しい(IndexSet の内部を直接触る all_use/all_unuse も整合)。
 
 ### wavelet_matrix_bit.cpp
 - **[バグ] ファイル末尾に main() が残っている**。include すると main 重複でリンクエラー。

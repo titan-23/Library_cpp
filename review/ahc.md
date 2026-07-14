@@ -1,43 +1,12 @@
 # titan_cpplib/ahc レビュー(直下・pruner)
 
-対象は以下の13ファイル。テスト実行はせず、コードを読んで精査した。
-sa/ と beam_search/ は別ファイル(ahc_sa.md、ahc_beam_search.md)にまとめる。
-old/、test/、gomi、ahclib_results、可視化用 py、メモ系 md は対象外。
-
-- bitboard.cpp
-- cpu_timer.cpp
-- kmeans.cpp
-- kmeans_new.cpp
-- mcmc.cpp
-- normal_distribution.cpp
-- profiler.cpp
-- state_pool.cpp
-- template.cpp
-- timer.cpp
-- pruner/hoeffding_pruner.cpp
-- pruner/successive_halving_pruner.cpp
-- pruner/wilcoxon_pruner.cpp
-
 重要度は次の3段階で付けた。
 
 - **[バグ]** 誤動作・UB・コンパイル不能につながる
 - **[注意]** 特定条件で問題になる。仕様として明記すれば許容できる
 - **[軽微]** 動作に影響しない指摘
 
-## ディレクトリ横断の指摘
-
-- **[軽微] `<bits/stdc++.h>` の使用**。mcmc.cpp と profiler.cpp がライブラリファイルで使っており、CLAUDE.md に書いた規約と食い違う。
-- **[軽微] 慣例の不統一**。HoeffdingPruner は `is_maximize=true` が既定、WilcoxonPruner は `is_minimize=true` が既定で、向きが逆。取り違えやすい。
-
-## timer.cpp
-
-- 問題なし。
-- **[軽微]** elapsed() 内に旧実装のコメントアウトが残っている。
-
-## cpu_timer.cpp
-
-- 問題なし。Windows/Linux 両実装とも単位換算(100ns→ms、ns→ms)は正しい。
-- wall clock との違い、取得コスト、マルチスレッド時の挙動をコメントで説明しており適切。
+- `<bits/stdc++.h>` の使用は許容する。
 
 ## state_pool.cpp
 
@@ -45,19 +14,6 @@ old/、test/、gomi、ahclib_results、可視化用 py、メモ系 md は対象�
 - **[注意]** `del()` が二重解放を検出しない。同じ id を2回 del すると、以後 `gen()` が同じ id を2回返し、状態が壊れる。デバッグ用に検出があると安全。
 - **[軽微]** デストラクタがなく `new T` が解放されない。プロセス終了で回収されるためコンテスト用途では実害なし。
 - **[軽微]** `assert(id < pool.size())` は int と size_t の比較で警告が出る。
-
-## template.cpp
-
-- **[注意]** `template <class T, class U> T min(const T&, const U&)` が第一引数の型を返す。`min(3, 2.5)` は u=2.5 を返す分岐で int に切り詰められ 2 になる。max も同様。同型どうしは std::min が優先されるため、混合型のときだけ静かに値が壊れる。
-- それ以外はテンプレートとして妥当。
-
-## normal_distribution.cpp
-
-- **[バグ]** `log_pdf()` が未定義の `PI` を参照している。`M_PI` の誤り。非テンプレートクラスのためメンバ関数本体は include 時点でコンパイルされ、利用側が事前に PI を定義していない限りこのヘッダを include しただけで通らない。
-- **[バグ]** `update_posterior()` が未定義の `EPSILON` を参照している。リポジトリ内に定義は見つからなかった。同上の理由で include しただけで通らない。
-- **[軽微]** `M_PI` は C++ 標準にない。GCC では通るが移植性はない。
-- ロジックは確認した。cdf(erf 版)、cdf_approx(Abramowitz–Stegun 7.1.26、絶対誤差 1.5e-7 程度)、erfinv_approx(Winitzki 近似)、ベイズ更新、KL ダイバージェンスのいずれも式は正しい。
-- **[軽微]** erfinv_approx にニュートン法1回の精度向上がコメントアウトで残っている。inverse_cdf の精度が要る用途では有効化する価値がある。
 
 ## profiler.cpp
 
@@ -105,7 +61,6 @@ old/、test/、gomi、ahclib_results、可視化用 py、メモ系 md は対象�
 - ギブスサンプラーの数式を確認した。条件付き事後分布の精度(1/prior_var + Σc²/var_i)、平均分子(prior_mu/prior_var + Σc·r/var_i)、残差の差分更新、いずれも正しい。
 - prepare_buffers を毎回呼ぶ設計も、観測追加後の estimate_step で正しく効く。計算量コメント O(iterations·nnz + N + K) も正しい。
 - **[軽微]** `variance = E[X²] − E[X]²` は数値誤差で僅かに負になりうる。利用側で sqrt すると NaN になるため、max(0.0, ·) で丸めると安全。
-- **[軽微]** `<bits/stdc++.h>` を使っている。
 
 ## pruner/hoeffding_pruner.cpp
 
