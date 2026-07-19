@@ -10,17 +10,19 @@ using namespace std;
 // MultisetSum
 namespace titan23 {
 
+const int BUCKET_RATIO = 16;
+const int SPLIT_RATIO = 24;
+
 template<typename T>
 class MultisetSum {
     // ref: https://github.com/tatyam-prime/SortedSet/blob/main/SortedMultiset.py
 
 private:
-    const int BUCKET_RATIO = 16;
-    const int SPLIT_RATIO = 24;
     int n;
     T missing;
     vector<vector<T>> data;
     vector<T> bucket_data;
+    T S;
 
     int bisect_left(const vector<T> &a, const T &key) const {
         return lower_bound(a.begin(), a.end(), key) - a.begin();
@@ -51,11 +53,12 @@ private:
     }
 
 public:
-    MultisetSum() : n(0) {}
+    MultisetSum() : n(0), S(0) {}
 
-    MultisetSum(T missing) : n(0), missing(missing) {}
+    MultisetSum(T missing) : n(0), missing(missing), S(0) {}
 
-    MultisetSum(vector<T> a, T missing) : n(a.size()), missing(missing) {
+    MultisetSum(vector<T> a, T missing=-1) : n(a.size()), missing(missing), S(0) {
+        for (int i = 0; i < n; ++i) S += a[i];
         for (int i = 0; i < n-1; ++i) {
             if (a[i] > a[i+1]) {
                 sort(a.begin(), a.end());
@@ -81,6 +84,7 @@ public:
     }
 
     void add(const T &key) {
+        S += key;
         if (n == 0) {
             data.push_back({key});
             bucket_data.push_back(key);
@@ -97,6 +101,7 @@ public:
     }
 
     bool discard(const T &key) {
+        S -= key;
         auto [i, pos] = get_pos(key);
         if (i >= data.size() || pos >= data[i].size() || data[i][pos] != key) {
             return false;
@@ -121,6 +126,8 @@ public:
             k -= d.size();
         }
     }
+
+    T all_prod() const { return S; }
 
     T lt(const T &key) const {
         for (auto it = this->data.rbegin(); it != this->data.rend(); ++it) {
@@ -164,6 +171,7 @@ public:
         return this->missing;
     }
 
+    // x未満
     int index(const T &x) const {
         int ans = 0;
         for (const vector<T> &d : this->data) {
@@ -208,6 +216,25 @@ public:
             }
             u = v;
             if (u >= r) break;
+        }
+        return sum;
+    }
+
+    // high未満
+    T sum(T high) const {
+        if (data.empty() || high <= data.front().front()) return 0;
+        if (data.back().back() < high) return S;
+        T sum = 0;
+        for (int i = 0; i < data.size(); ++i) {
+            if (data[i].back() < high) {
+                sum += bucket_data[i];
+                continue;
+            }
+            for (int j = 0; j < data[i].size(); ++j) {
+                if (data[i][j] < high) sum += data[i][j];
+                else break;
+            }
+            break;
         }
         return sum;
     }

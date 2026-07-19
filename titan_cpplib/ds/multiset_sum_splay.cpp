@@ -9,6 +9,7 @@ template<typename T>
 class MultisetSumSplay {
 private:
     int root;
+    T S;
 
     struct MemoryAllocator {
 
@@ -192,12 +193,13 @@ private:
     }
 
 public:
-    MultisetSumSplay() : root(0) {}
-    MultisetSumSplay(vector<T> a) {
+    MultisetSumSplay() : root(0), S(0) {}
+    MultisetSumSplay(vector<T> a) : S(0) {
         if (a.empty()) {
-            root = nullptr;
+            root = 0;
             return;
         }
+        rep(i, a.size()) S += a[i];
         auto build = [&] (auto &&build, int l, int r) -> int {
             int mid = (l + r) / 2;
             int node = ma.new_node(a[mid]);
@@ -264,6 +266,7 @@ public:
         if (root == 0) return false;
         root = find_splay(root, key);
         if (ma.d[root].key == key) {
+            S -= key;
             remove_root();
             return true;
         }
@@ -271,6 +274,7 @@ public:
     }
 
     void remove(const T key) {
+        S -= key;
         root = find_splay(root, key);
         assert(ma.d[root].key == key);
         remove_root();
@@ -280,11 +284,13 @@ public:
         assert(0 <= k && k < len());
         root = kth_splay(root, k);
         T res = ma.d[root].key;
+        S -= res;
         remove_root();
         return res;
     }
 
     void add(T key) {
+        S += key;
         int node = ma.new_node(key);
         if (!root) {
             root = node;
@@ -304,6 +310,10 @@ public:
         update(root);
         update(node);
         root = node;
+    }
+
+    T all_prod() const {
+        return S;
     }
 
     T get(int k) {

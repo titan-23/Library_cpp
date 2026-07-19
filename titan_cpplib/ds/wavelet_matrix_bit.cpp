@@ -214,22 +214,3 @@ public:
     }
 };
 }  // namespace titan23
-
-
-
-
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(0);
-    int n, q;
-    cin >> n >> q;
-    vector<int> A(n);
-    for (int i = 0; i < n; ++i) cin >> A[i];
-    titan23::WaveletMatrix<int> wm(A);
-    for (int i = 0; i < q; ++i) {
-        int l, r, k;
-        cin >> l >> r >> k;
-        cout << wm.kth_smallest(l, r, k) << '\n';
-    }
-    return 0;
-}

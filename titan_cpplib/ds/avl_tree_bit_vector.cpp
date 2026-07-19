@@ -1,768 +1,705 @@
 #pragma once
 
-#include <iostream>
-#include <vector>
-#include <stack>
+#include <algorithm>
+#include <array>
 #include <cassert>
-#include <tuple>
-#include <nmmintrin.h>
-#include <stdint.h>
-#include "titan_cpplib/ds/fast_stack.cpp"
+#include <cstdint>
+#include <iostream>
+#include <utility>
+#include <vector>
 using namespace std;
 
 // AVLTreeBitVector
 namespace titan23 {
 
 class AVLTreeBitVector {
-  private:
-    using Node = int;
-    // using uint64 = unsigned long long;
-    // static constexpr const char _W = 63;
+private:
     using uint128 = __uint128_t;
-    static constexpr const char _W = 127;
 
-    FastStack<Node> path;
+    static constexpr int _W = 127;
+    static constexpr int _MAX_HEIGHT = 64;
 
-    Node _root, _end;
-    vector<uint128> _key;
-    vector<Node> _left, _right;
-    vector<int> _size, _total;
-    vector<char> _bit_len, _balance;
+    struct Node {
+        uint128 key;
+        int left;
+        int right;
+        int size;
+        int total;
+        uint8_t bit_len;
+        uint8_t key_total;
+        uint8_t height;
 
-    void _build(const vector<uint8_t> &a) {
-        auto rec = [&] (auto &&rec, Node l, Node r) -> pair<Node, char> {
-            Node mid = (l + r) >> 1;
-            char hl = 0, hr = 0;
-            if (l != mid) {
-                tie(_left[mid], hl) = rec(rec, l, mid);
-                _size[mid] += _size[_left[mid]];
-                _total[mid] += _total[_left[mid]];
-            }
-            if (mid + 1 != r) {
-                tie(_right[mid], hr) = rec(rec, mid+1, r);
-                _size[mid] += _size[_right[mid]];
-                _total[mid] += _total[_right[mid]];
-            }
-            _balance[mid] = hl - hr;
-            return {mid, (max(hl, hr)+1)};
-        };
+        Node() : key(0), left(0), right(0), size(0), total(0), bit_len(0), key_total(0), height(0) {}
 
-        const int n = a.size();
-        reserve(n);
-        Node pre_end = _end;
-        int indx = _end;
-        for (int i = 0; i < n; i += _W) {
-            int j = 0;
-            int pop = 0;
-            uint128 v = 0;
-            while (j < _W && i + j < n) {
-                v <<= 1;
-                if (a[i+j]) {
-                    v |= a[i+j];
-                    ++pop;
-                }
-                j++;
-            }
-            _key[indx] = v;
-            _bit_len[indx] = j;
-            _size[indx] = j;
-            _total[indx] = pop;
-            ++indx;
-        }
-        this->_end = indx;
-        this->_root = rec(rec, pre_end, _end).first;
-    }
+        Node(const uint128 key, const uint8_t bit_len, const uint8_t key_total)
+            : key(key), left(0), right(0), size(bit_len), total(key_total), bit_len(bit_len), key_total(key_total), height(1) {}
+    };
+
+    vector<Node> _nodes;
+    int _root;
 
     int _popcount(const uint128 n) const {
         return __builtin_popcountll(n >> 64) + __builtin_popcountll(n);
-        // return __builtin_popcountll(n);
     }
 
-    Node _rotate_L(Node node) {
-        Node u = _left[node];
-        _size[u] = _size[node];
-        _total[u] = _total[node];
-        _size[node] -= _size[_left[u]] + _bit_len[u];
-        _total[node] -= _total[_left[u]] + _popcount(_key[u]);
-        _left[node] = _right[u];
-        _right[u] = node;
-        if (_balance[u] == 1) {
-            _balance[u] = 0;
-            _balance[node] = 0;
-        } else {
-            _balance[u] = -1;
-            _balance[node] = 1;
+    int _prefix_total(const uint128 key, const int bit_len, const int take) const {
+        const uint64_t low = key;
+        if (bit_len <= 64) return __builtin_popcountll(low >> ((bit_len - take) & 63)) * (take != 0);
+        const int high_len = bit_len - 64;
+        const uint64_t high = key >> 64;
+        if (take <= high_len) return __builtin_popcountll(high >> (high_len - take));
+        return __builtin_popcountll(high) + __builtin_popcountll(low >> (bit_len - take));
+    }
+
+    bool _bit_at(const uint128 value, const int k) const {
+        const uint64_t word = k < 64 ? static_cast<uint64_t>(value) : static_cast<uint64_t>(value >> 64);
+        return (word >> (k & 63)) & 1;
+    }
+
+    uint128 _mask(const int bit_len) const { return bit_len == 0 ? 0 : (static_cast<uint128>(1) << bit_len) - 1; }
+
+    uint64_t _mask64(const int bit_len) const { return bit_len == 64 ? UINT64_MAX : bit_len == 0 ? 0 : (static_cast<uint64_t>(1) << bit_len) - 1; }
+
+    uint128 _bit_insert(const uint128 value, const int lower_bit_len, const bool bit) const {
+        const uint64_t low = value;
+        const uint64_t high = value >> 64;
+        if (lower_bit_len < 64) {
+            const uint64_t mask = _mask64(lower_bit_len);
+            const uint64_t new_low = ((low & ~mask) << 1) | (static_cast<uint64_t>(bit) << lower_bit_len) | (low & mask);
+            return (static_cast<uint128>((high << 1) | (low >> 63)) << 64) | new_low;
         }
-        return u;
+        const int k = lower_bit_len - 64;
+        const uint64_t mask = _mask64(k);
+        const uint64_t new_high = ((high & ~mask) << 1) | (static_cast<uint64_t>(bit) << k) | (high & mask);
+        return (static_cast<uint128>(new_high) << 64) | low;
     }
 
-    Node _rotate_R(Node node) {
-        Node u = _right[node];
-        _size[u] = _size[node];
-        _total[u] = _total[node];
-        _size[node] -= _size[_right[u]] + _bit_len[u];
-        _total[node] -= _total[_right[u]] + _popcount(_key[u]);
-        _right[node] = _left[u];
-        _left[u] = node;
-        if (_balance[u] == -1) {
-            _balance[u] = 0;
-            _balance[node] = 0;
-        } else {
-            _balance[u] = 1;
-            _balance[node] = -1;
+    uint128 _bit_pop(const uint128 value, const int lower_bit_len) const {
+        const uint64_t low = value;
+        const uint64_t high = value >> 64;
+        const int k = lower_bit_len - 1;
+        if (k < 64) {
+            const uint64_t new_low = ((low & ~_mask64(k + 1)) >> 1) | (low & _mask64(k)) | ((high & 1) << 63);
+            return (static_cast<uint128>(high >> 1) << 64) | new_low;
         }
-        return u;
+        const int high_k = k - 64;
+        const uint64_t new_high = ((high & ~_mask64(high_k + 1)) >> 1) | (high & _mask64(high_k));
+        return (static_cast<uint128>(new_high) << 64) | low;
     }
 
-    void _update_balance(Node node) {
-        if (_balance[node] == 1) {
-            _balance[_right[node]] = -1;
-            _balance[_left[node]] = 0;
-        } else if (_balance[node] == -1) {
-            _balance[_right[node]] = 0;
-            _balance[_left[node]] = 1;
-        } else {
-            _balance[_right[node]] = 0;
-            _balance[_left[node]] = 0;
+    int _make_node(const bool bit, const uint8_t bit_len = 1, const uint128 key = 0) {
+        const uint128 value = bit_len == 1 ? bit : key;
+        const uint8_t key_total = static_cast<uint8_t>(_popcount(value));
+        const int node = _nodes.size();
+        _nodes.emplace_back(value, bit_len, key_total);
+        return node;
+    }
+
+    int _size(const int node) const { return _nodes[node].size; }
+
+    int _total(const int node) const { return _nodes[node].total; }
+
+    int _height(const int node) const { return _nodes[node].height; }
+
+    int _balance(const int node) const { return _height(_nodes[node].left) - _height(_nodes[node].right); }
+
+    void _pull_aggregate(const int node) {
+        Node &n = _nodes[node];
+        n.size = _size(n.left) + n.bit_len + _size(n.right);
+        n.total = _total(n.left) + n.key_total + _total(n.right);
+    }
+
+    void _pull(const int node) {
+        Node &n = _nodes[node];
+        _pull_aggregate(node);
+        const int left_height = _height(n.left);
+        const int right_height = _height(n.right);
+        n.height = max(left_height, right_height) + 1;
+    }
+
+    int _rotate_left(const int node) {
+        const int right = _nodes[node].right;
+        assert(right != 0);
+        _nodes[node].right = _nodes[right].left;
+        _nodes[right].left = node;
+        _pull(node);
+        _pull(right);
+        return right;
+    }
+
+    int _rotate_right(const int node) {
+        const int left = _nodes[node].left;
+        assert(left != 0);
+        _nodes[node].left = _nodes[left].right;
+        _nodes[left].right = node;
+        _pull(node);
+        _pull(left);
+        return left;
+    }
+
+    int _rebalance(const int node) {
+        _pull(node);
+        const int balance = _balance(node);
+        if (balance == 2) {
+            const int left = _nodes[node].left;
+            if (_balance(left) < 0) {
+                _nodes[node].left = _rotate_left(left);
+            }
+            return _rotate_right(node);
         }
-        _balance[node] = 0;
+        if (balance == -2) {
+            const int right = _nodes[node].right;
+            if (_balance(right) > 0) {
+                _nodes[node].right = _rotate_right(right);
+            }
+            return _rotate_left(node);
+        }
+        return node;
     }
 
-    Node _rotate_LR(Node node) {
-        Node B = _left[node];
-        Node E = _right[B];
-        _size[E] = _size[node];
-        _size[node] -= _size[B] - _size[_right[E]];
-        _size[B] -= _size[_right[E]] + _bit_len[E];
-        _total[E] = _total[node];
-        _total[node] -= _total[B] - _total[_right[E]];
-        _total[B] -= _total[_right[E]] + _popcount(_key[E]);
-        _right[B] = _left[E];
-        _left[E] = B;
-        _left[node] = _right[E];
-        _right[E] = node;
-        _update_balance(E);
-        return E;
+    void _push_path(array<int, _MAX_HEIGHT> &path, uint64_t &directions, int &depth, const int node, const bool go_right) const {
+        assert(depth < _MAX_HEIGHT);
+        path[depth] = node;
+        if (go_right) {
+            directions |= static_cast<uint64_t>(1) << depth;
+        }
+        ++depth;
     }
 
-    Node _rotate_RL(Node node) {
-        Node C = _right[node];
-        Node D = _left[C];
-        _size[D] = _size[node];
-        _size[node] -= _size[C] - _size[_left[D]];
-        _size[C] -= _size[_left[D]] + _bit_len[D];
-        _total[D] = _total[node];
-        _total[node] -= _total[C] - _total[_left[D]];
-        _total[C] -= _total[_left[D]] + _popcount(_key[D]);
-        _left[C] = _right[D];
-        _right[D] = C;
-        _right[node] = _left[D];
-        _left[D] = node;
-        _update_balance(D);
-        return D;
+    void _add_path(const array<int, _MAX_HEIGHT> &path, const int begin, const int end, const int size_delta, const int total_delta) {
+        for (int i = begin; i < end; ++i) {
+            Node &node = _nodes[path[i]];
+            node.size += size_delta;
+            node.total += total_delta;
+        }
+    }
+
+    void _rebuild_path(const array<int, _MAX_HEIGHT> &path, const uint64_t directions, int depth, int child) {
+        while (depth > 0) {
+            --depth;
+            const int node = path[depth];
+            if ((directions >> depth) & 1) {
+                _nodes[node].right = child;
+            } else {
+                _nodes[node].left = child;
+            }
+            child = _rebalance(node);
+        }
+        _root = child;
+    }
+
+    void _build(const vector<uint8_t> &a, const int start, const int end) {
+        const int n = end - start;
+        if (n == 0) return;
+
+        reserve(n);
+        const int node_count = (n + _W - 1) / _W;
+        const int first_node = _nodes.size();
+        for (int i = 0; i < n; i += _W) {
+            uint128 key = 0;
+            const int bit_len = min(_W, n - i);
+            for (int j = 0; j < bit_len; ++j) key = (key << 1) | (a[start + i + j] != 0);
+            _nodes.emplace_back(key, bit_len, _popcount(key));
+        }
+
+        struct BuildTask {
+            int left;
+            int right;
+            int parent;
+            bool is_right;
+        };
+
+        vector<BuildTask> tasks;
+        vector<int> order;
+        tasks.reserve(node_count);
+        order.reserve(node_count);
+        tasks.push_back({first_node, first_node + node_count, 0, false});
+
+        while (!tasks.empty()) {
+            const BuildTask task = tasks.back();
+            tasks.pop_back();
+            const int mid = (task.left + task.right) / 2;
+            const int node = mid;
+            order.emplace_back(node);
+
+            if (task.parent == 0) {
+                _root = node;
+            } else if (task.is_right) {
+                _nodes[task.parent].right = node;
+            } else {
+                _nodes[task.parent].left = node;
+            }
+
+            if (mid + 1 < task.right) {
+                tasks.push_back({mid + 1, task.right, node, true});
+            }
+            if (task.left < mid) {
+                tasks.push_back({task.left, mid, node, false});
+            }
+        }
+
+        for (auto it = order.rbegin(); it != order.rend(); ++it) {
+            _pull(*it);
+        }
     }
 
     int _pref(int r) const {
-        Node node = _root;
-        int s = 0;
+        int node = _root;
+        int result = 0;
         while (r > 0) {
-            int t = _size[_left[node]] + _bit_len[node];
-            if (t - _bit_len[node] < r && r <= t) {
-                r -= _size[_left[node]];
-                s += _total[_left[node]] + _popcount(_key[node] >> (_bit_len[node] - r));
+            assert(node != 0);
+            const Node &n = _nodes[node];
+            const int left_size = _size(n.left);
+            if (r <= left_size) {
+                node = n.left;
+                continue;
+            }
+
+            const int node_end = left_size + n.bit_len;
+            if (r <= node_end) {
+                const int take = r - left_size;
+                result += _total(n.left) + _prefix_total(n.key, n.bit_len, take);
                 break;
             }
-            if (t > r) {
-                node = _left[node];
+
+            result += _total(n.left) + n.key_total;
+            r -= node_end;
+            node = n.right;
+        }
+        return result;
+    }
+
+    int _select_in_key(const Node &node, const int k, const bool bit) const {
+        int left = 0;
+        int right = node.bit_len;
+        while (right - left > 1) {
+            const int mid = (left + right) / 2;
+            const int ones = _prefix_total(node.key, node.bit_len, mid);
+            const int count = bit ? ones : mid - ones;
+            if (count > k) {
+                right = mid;
             } else {
-                s += _total[_left[node]] + _popcount(_key[node]);
-                node = _right[node];
-                r -= t;
+                left = mid;
             }
         }
-        return s;
+        return left;
     }
 
-    Node _make_node(const bool new_key, const char new_bit_len) {
-        if (_end >= _key.size()) {
-            _key.emplace_back(new_key);
-            _bit_len.emplace_back(new_bit_len);
-            _size.emplace_back(new_bit_len);
-            _total.emplace_back(new_key);
-            _left.emplace_back(0);
-            _right.emplace_back(0);
-            _balance.emplace_back(0);
-        } else {
-            _key[_end] = new_key;
-            _bit_len[_end] = new_bit_len;
-            _size[_end] = new_bit_len;
-            _total[_end] = new_key;
-        }
-        return _end++;
-    }
-
-    uint128 _bit_insert(uint128 v, char bl, bool key) const {
-        return ((((v >> bl) << 1) | key) << bl) | (v & (((uint128)1<<bl)-1));
-    }
-
-    uint128 _bit_pop(uint128 v, char bl) const {
-        return ((v >> bl) << ((bl-1))) | (v & (((uint128)1<<(bl-1))-1));
-    }
-
-    void _pop_under(int d, Node node, int res) {
-        int fd = 0, lmax_total = 0;
-        char lmax_bit_len = 0;
-        if (_left[node] && _right[node]) {
-            path.emplace(node);
-            d = (d << 1) | 1;
-            Node lmax = _left[node];
-            while (_right[lmax]) {
-                path.emplace(lmax);
-                d <<= 1;
-                fd = (fd << 1) | 1;
-                lmax = _right[lmax];
-            }
-            lmax_total = _popcount(_key[lmax]);
-            lmax_bit_len = _bit_len[lmax];
-            _key[node] = _key[lmax];
-            _bit_len[node] = lmax_bit_len;
-            node = lmax;
-        }
-        Node cnode = _left[node] == 0 ? _right[node] : _left[node];
-        if (!path.empty()) {
-            ((d & 1) ? _left[path.top()] : _right[path.top()]) = cnode;
-        } else {
-            _root = cnode;
+    void _pop_at_node(array<int, _MAX_HEIGHT> &path, uint64_t directions, int depth, const int node, const int k, const bool removed_bit) {
+        Node &target = _nodes[node];
+        if (target.bit_len > 1) {
+            target.key = _bit_pop(target.key, target.bit_len - k);
+            --target.bit_len;
+            target.key_total -= removed_bit;
+            --target.size;
+            target.total -= removed_bit;
+            _add_path(path, 0, depth, -1, -removed_bit);
             return;
         }
-        while (!path.empty()) {
-            Node new_node = 0;
-            node = path.top(); path.pop();
-            _balance[node] -= (d & 1) ? 1 : -1;
-            _size[node] -= (fd & 1) ? lmax_bit_len : 1;
-            _total[node] -= (fd & 1) ? lmax_total : res;
-            d >>= 1;
-            fd >>= 1;
-            if (_balance[node] == 2) {
-                new_node = _balance[_left[node]] < 0 ? _rotate_LR(node) : _rotate_L(node);
-            } else if (_balance[node] == -2) {
-                new_node = _balance[_right[node]] > 0 ? _rotate_RL(node) : _rotate_R(node);
-            } else if (_balance[node] != 0) {
-                break;
-            }
-            if (new_node) {
-                if (path.empty()) {
-                    _root = new_node;
-                    return;
-                }
-                ((d & 1) ? _left[path.top()] : _right[path.top()]) = new_node;
-                if (_balance[new_node] != 0) break;
-            }
-        }
-        while (!path.empty()) {
-            node = path.top(); path.pop();
-            _size[node] -= (fd & 1) ? lmax_bit_len : 1;
-            _total[node] -= (fd & 1) ? lmax_total : res;
-            fd >>= 1;
-        }
-    }
 
-    void _debug_acc() {
-        auto rec = [&] (auto &&rec, Node node) -> int {
-            int acc = _popcount(_key[node]);
-            if (_left[node]) acc += rec(rec, _left[node]);
-            if (_right[node]) acc += rec(rec, _right[node]);
-            if (acc != _total[node]) {
-                assert(false);
-            }
-            return acc;
-        };
-        rec(rec, _root);
-        cout << "debug_acc ok." << endl;
-    }
-
-    public:
-    AVLTreeBitVector()
-        : _root(0), _end(1),
-          _key(1, 0),
-          _left(1, 0), _right(1, 0),
-          _size(1, 0), _total(1, 0),
-          _bit_len(1, 0), _balance(1, 0), path(30) {
-    }
-
-    AVLTreeBitVector(const vector<uint8_t> &a)
-        : _root(0), _end(1),
-          _key(1, 0),
-          _left(1, 0), _right(1, 0),
-          _size(1, 0), _total(1, 0),
-          _bit_len(1, 0), _balance(1, 0), path(30) {
-        if (!a.empty()) _build(a);
-    }
-
-    void reserve(int n) {
-        n = n / _W + 1;
-        _key.insert(_key.end(), n, (uint128)0);
-        _left.insert(_left.end(), n, 0);
-        _right.insert(_right.end(), n, 0);
-        _size.insert(_size.end(), n, 0);
-        _total.insert(_total.end(), n, 0);
-        _bit_len.insert(_bit_len.end(), n, (char)0);
-        _balance.insert(_balance.end(), n, (char)0);
-    }
-
-    void insert(int k, bool key) {
-        if (!_root) {
-            Node new_node = _make_node(key, 1);
-            _root = new_node;
+        if (target.left == 0 || target.right == 0) {
+            const int child = target.left == 0 ? target.right : target.left;
+            _rebuild_path(path, directions, depth, child);
             return;
         }
-        Node node = _root;
-        int d = 0;
-        path.clear();
-        while (node) {
-            int t = _size[_left[node]] + _bit_len[node];
-            if (t - _bit_len[node] <= k && k <= t) break;
-            d <<= 1;
-            _size[node]++;
-            _total[node] += key;
-            path.emplace(node);
-            node = (t > k) ? _left[node] : _right[node];
-            if (t > k) d |= 1;
-            else k -= t;
+
+        _push_path(path, directions, depth, node, false);
+        int predecessor = target.left;
+        while (_nodes[predecessor].right != 0) {
+            _push_path(path, directions, depth, predecessor, true);
+            predecessor = _nodes[predecessor].right;
         }
-        k -= _size[_left[node]];
-        if (_bit_len[node] < _W) {
-            uint128 v = _key[node];
-            char bl = _bit_len[node] - k;
-            _key[node] = _bit_insert(v, bl, key);
-            _bit_len[node]++;
-            _size[node]++;
-            _total[node] += key;
-            return;
-        }
-        path.emplace(node);
-        _size[node]++;
-        _total[node] += key;
-        uint128 v = _key[node];
-        char bl = _W - k;
-        v = _bit_insert(v, bl, key);
-        uint128 left_key = v >> _W;
-        char left_key_popcount = left_key & 1;
-        _key[node] = v & (((uint128)1 << _W) - 1);
-        node = _left[node];
-        d = (d << 1) | 1;
-        if (!node) {
-            if (_bit_len[path.top()] < _W) {
-                _bit_len[path.top()]++;
-                _key[path.top()] = (_key[path.top()] << 1) | left_key;
-                return;
-            } else {
-                Node new_node = _make_node(left_key, 1);
-                _left[path.top()] = new_node;
-            }
-        } else {
-            path.emplace(node);
-            _size[node]++;
-            _total[node] += left_key_popcount;
-            d <<= 1;
-            while (_right[node]) {
-                node = _right[node];
-                path.emplace(node);
-                _size[node]++;
-                _total[node] += left_key_popcount;
-                d <<= 1;
-            }
-            if (_bit_len[node] < _W) {
-                _bit_len[node]++;
-                _key[node] = (_key[node] << 1) | left_key;
-                return;
-            } else {
-                Node new_node = _make_node(left_key, 1);
-                _right[node] = new_node;
-            }
-        }
-        Node new_node = 0;
-        while (!path.empty()) {
-            node = path.top(); path.pop();
-            _balance[node] += (d & 1) ? 1 : -1;
-            d >>= 1;
-            if (_balance[node] == 0) break;
-            if (_balance[node] == 2) {
-                new_node = _balance[_left[node]] == -1 ? _rotate_LR(node) : _rotate_L(node);
-                break;
-            } else if (_balance[node] == -2) {
-                new_node = _balance[_right[node]] == 1 ? _rotate_RL(node) : _rotate_R(node);
-                break;
-            }
-        }
-        if (new_node) {
-            if (!path.empty()) {
-                if (d & 1) {
-                    _left[path.top()] = new_node;
-                } else {
-                    _right[path.top()] = new_node;
-                }
-            } else {
-                _root = new_node;
-            }
-        }
+
+        target.key = _nodes[predecessor].key;
+        target.bit_len = _nodes[predecessor].bit_len;
+        target.key_total = _nodes[predecessor].key_total;
+        const int child = _nodes[predecessor].left;
+        _rebuild_path(path, directions, depth, child);
     }
 
-    bool pop(int k) {
-        Node node = _root;
-        int d = 0;
-        path.clear();
-        while (node) {
-            int t = _size[_left[node]] + _bit_len[node];
-            if (t - _bit_len[node] <= k && k < t) break;
-            path.emplace(node);
-            node = t > k ? _left[node] : _right[node];
-            d <<= 1;
-            if (t > k) d |= 1;
-            else k -= t;
-        }
-        k -= _size[_left[node]];
-        uint128 v = _key[node];
-        bool res = (v >> (_bit_len[node] - k - 1)) & 1;
-        if (_bit_len[node] == 1) {
-            _pop_under(d, node, res);
-            return res;
-        }
-        _key[node] = _bit_pop(v, _bit_len[node]-k);
-        --_bit_len[node];
-        --_size[node];
-        _total[node] -= res;
-        while (!path.empty()) {
-            node = path.top(); path.pop();
-            --_size[node];
-            _total[node] -= res;
-        }
-        return res;
+public:
+    AVLTreeBitVector() : _nodes(1), _root(0) {}
+
+    AVLTreeBitVector(const vector<uint8_t> &a) : _nodes(1), _root(0) {
+        _build(a, 0, a.size());
     }
 
-    void set(int k, bool v) {
-        Node node = _root;
-        path.clear();
+    AVLTreeBitVector(const vector<uint8_t> &a, const int start, const int end) : _nodes(1), _root(0) {
+        _build(a, start, end);
+    }
+
+    void clear() {
+        _nodes.resize(1);
+        _root = 0;
+    }
+
+    void reserve(const int n) {
+        _nodes.reserve((n + _W - 1) / _W + 1);
+    }
+
+    void insert(const int k, const bool bit) { _insert_and_rank1(k, bit); }
+
+    bool pop(const int k) { return _access_pop_and_rank1(k) & 1; }
+
+    void set(int k, const bool bit) {
+        assert(0 <= k && k < len());
+        array<int, _MAX_HEIGHT> path;
+        int depth = 0;
+        int node = _root;
+
         while (true) {
-            int t = _size[_left[node]] + _bit_len[node];
-            path.emplace(node);
-            if (t - _bit_len[node] <= k && k < t) {
-                k -= _size[_left[node]];
-                if (v) {
-                    _key[node] |= (uint128)1 << k;
-                } else {
-                    _key[node] &= ~((uint128)1 << k);
-                }
-                break;
+            Node &n = _nodes[node];
+            const int left_size = _size(n.left);
+            const int node_end = left_size + n.bit_len;
+            if (left_size <= k && k < node_end) {
+                k -= left_size;
+                const int shift = n.bit_len - k - 1;
+                const bool old = _bit_at(n.key, shift);
+                if (old == bit) return;
+                const int delta = bit ? 1 : -1;
+                n.key ^= static_cast<uint128>(1) << shift;
+                n.key_total += delta;
+                n.total += delta;
+                _add_path(path, 0, depth, 0, delta);
+                return;
             }
-            if (t > k) {
-                node = _left[node];
+
+            const bool go_right = node_end <= k;
+            assert(depth < _MAX_HEIGHT);
+            path[depth++] = node;
+            if (go_right) {
+                k -= node_end;
+                node = n.right;
             } else {
-                node = _right[node];
-                k -= t;
+                node = n.left;
             }
-        }
-        while (!path.empty()) {
-            node = path.top(); path.pop();
-            _total[node] = _popcount(_key[node]) + _total[_left[node]] + _total[_right[node]];
         }
     }
 
     vector<uint8_t> tovector() const {
-        vector<uint8_t> a(len());
-        if (!_root) return a;
-        int indx = 0;
-        stack<Node> st;
-        Node node = _root;
-        while ((!st.empty()) || node) {
-            if (node) {
-                st.emplace(node);
-                node = _left[node];
-            } else {
-                node = st.top(); st.pop();
-                uint128 key = _key[node];
-                for (int i = _bit_len[node]-1; i >= 0; --i) {
-                    a[indx++] = key >> i & 1;
-                }
-                node = _right[node];
+        vector<uint8_t> result(len());
+        if (_root == 0) return result;
+
+        array<int, _MAX_HEIGHT> stack;
+        int depth = 0;
+        int index = 0;
+        int node = _root;
+        while (node != 0 || depth > 0) {
+            while (node != 0) {
+                assert(depth < _MAX_HEIGHT);
+                stack[depth++] = node;
+                node = _nodes[node].left;
             }
+            node = stack[--depth];
+            const Node &n = _nodes[node];
+            for (int i = n.bit_len - 1; i >= 0; --i) {
+                result[index++] = (n.key >> i) & 1;
+            }
+            node = n.right;
         }
-        return a;
-        // auto rec = [&] (auto &&rec, Node node) -> void {
-        //     if (_left[node]) rec(rec, _left[node]);
-        //     uint128 key = _key[node];
-        //     for (int i = _bit_len[node]-1; i >= 0; --i) {
-        //         a[indx++] = key >> i & 1;
-        //     }
-        //     if (_right[node]) rec(rec, _right[node]);
-        // };
-        // rec(rec, _root);
-        // return a;
+        return result;
     }
 
     bool access(int k) const {
-        Node node = _root;
+        assert(0 <= k && k < len());
+        int node = _root;
         while (true) {
-            int t = _size[_left[node]] + _bit_len[node];
-            if (t - _bit_len[node] <= k && k < t) {
-                k -= _size[_left[node]];
-                return (_key[node] >> (_bit_len[node] - k - 1)) & 1;
+            const Node &n = _nodes[node];
+            const int left_size = _size(n.left);
+            const int node_end = left_size + n.bit_len;
+            if (left_size <= k && k < node_end) {
+                k -= left_size;
+                return _bit_at(n.key, n.bit_len - k - 1);
             }
-            if (t > k) {
-                node = _left[node];
+            if (k < left_size) {
+                node = n.left;
             } else {
-                node = _right[node];
-                k -= t;
+                k -= node_end;
+                node = n.right;
             }
         }
     }
 
-    int rank0(int r) const {
+    int rank0(const int r) const {
+        assert(0 <= r && r <= len());
         return r - _pref(r);
     }
 
-    int rank1(int r) const {
+    int rank1(const int r) const {
+        assert(0 <= r && r <= len());
         return _pref(r);
     }
 
-    int rank(int r, bool v) const {
-        return v ? rank1(r) : rank0(r);
+    int rank(const int r, const bool bit) const { return bit ? rank1(r) : rank0(r); }
+
+    pair<int, int> _rank0_pair(const int l, const int r) const {
+        assert(0 <= l && l <= r && r <= len());
+        return {l - _pref(l), r - _pref(r)};
     }
 
-    int select0(int k) const {
-        Node node = _root;
-        int s = 0;
+    int select0(const int k) const {
+        assert(0 <= k && k < len() - _total(_root));
+        int node = _root;
+        int offset = 0;
+        int target = k;
         while (true) {
-            int t = _size[_left[node]] - _total[_left[node]];
-            if (k < t) {
-                node = _left[node];
-            } else if (k >= t + _bit_len[node] - _popcount(_key[node])) {
-                s += _size[_left[node]] + _bit_len[node];
-                k -= t + _bit_len[node] - _popcount(_key[node]);
-                node = _right[node];
+            const Node &n = _nodes[node];
+            const int left_zero = _size(n.left) - _total(n.left);
+            const int key_zero = n.bit_len - n.key_total;
+            if (target < left_zero) {
+                node = n.left;
+            } else if (target < left_zero + key_zero) {
+                return offset + _size(n.left) + _select_in_key(n, target - left_zero, false);
             } else {
-                k -= t;
-                char l = 0, r = _bit_len[node];
-                while (r - l > 1) {
-                    char m = (l + r) >> 1;
-                    if (m - _popcount(_key[node]>>(_bit_len[node]-m)) > k) r = m;
-                    else l = m;
-                }
-                s += _size[_left[node]] + l;
-                break;
+                target -= left_zero + key_zero;
+                offset += _size(n.left) + n.bit_len;
+                node = n.right;
             }
         }
-        return s;
     }
 
-    int select1(int k) const {
-        Node node = _root;
-        int s = 0;
+    int select1(const int k) const {
+        assert(0 <= k && k < _total(_root));
+        int node = _root;
+        int offset = 0;
+        int target = k;
         while (true) {
-            if (k < _total[_left[node]]) {
-                node = _left[node];
-            } else if (k >= _total[_left[node]] + _popcount(_key[node])) {
-                s += _size[_left[node]] + _bit_len[node];
-                k -= _total[_left[node]] + _popcount(_key[node]);
-                node = _right[node];
+            const Node &n = _nodes[node];
+            const int left_one = _total(n.left);
+            if (target < left_one) {
+                node = n.left;
+            } else if (target < left_one + n.key_total) {
+                return offset + _size(n.left) + _select_in_key(n, target - left_one, true);
             } else {
-                k -= _total[_left[node]];
-                char l = 0, r = _bit_len[node];
-                while (r - l > 1) {
-                    char m = (l + r) >> 1;
-                    if (_popcount(_key[node]>>(_bit_len[node]-m)) > k) r = m;
-                    else l = m;
-                }
-                s += _size[_left[node]] + l;
-                break;
+                target -= left_one + n.key_total;
+                offset += _size(n.left) + n.bit_len;
+                node = n.right;
             }
         }
-        return s;
     }
 
-    int select(int k, bool v) const {
-        return v ? select1(k) : select0(k);
+    int select(const int k, const bool bit) const { return bit ? select1(k) : select0(k); }
+
+    int _select_pop(int k, const bool bit) {
+        assert(0 <= k && k < (bit ? _total(_root) : len() - _total(_root)));
+        array<int, _MAX_HEIGHT> path;
+        uint64_t directions = 0;
+        int depth = 0;
+        int offset = 0;
+        int node = _root;
+
+        while (true) {
+            const Node &n = _nodes[node];
+            const int left_count = bit ? _total(n.left) : _size(n.left) - _total(n.left);
+            const int key_count = bit ? n.key_total : n.bit_len - n.key_total;
+            if (k < left_count) {
+                _push_path(path, directions, depth, node, false);
+                node = n.left;
+            } else if (k < left_count + key_count) {
+                const int key_index = _select_in_key(n, k - left_count, bit);
+                const int result = offset + _size(n.left) + key_index;
+                _pop_at_node(path, directions, depth, node, key_index, bit);
+                return result;
+            } else {
+                k -= left_count + key_count;
+                offset += _size(n.left) + n.bit_len;
+                _push_path(path, directions, depth, node, true);
+                node = n.right;
+            }
+        }
     }
 
-    int _insert_and_rank1(int k, bool key) {
+    int _insert_and_rank1(int k, const bool bit) {
+        assert(0 <= k && k <= len());
         if (_root == 0) {
-            Node new_node = _make_node(key, 1);
-            _root = new_node;
+            _root = _make_node(bit);
             return 0;
         }
-        Node node = _root;
-        int s = 0;
-        path.clear();
-        int d = 0;
-        while (node) {
-            int t = _size[_left[node]] + _bit_len[node];
-            if (t - _bit_len[node] <= k && k <= t) break;
-            if (t <= k) {
-                s += _total[_left[node]] + _popcount(_key[node]);
-            }
-            d <<= 1;
-            _size[node]++;
-            _total[node] += key;
-            path.emplace(node);
-            node = t > k ? _left[node] : _right[node];
-            if (t > k) d |= 1;
-            else k -= t;
-        }
-        k -= _size[_left[node]];
-        s += _total[_left[node]] + _popcount(_key[node] >> (_bit_len[node] - k));
-        if (_bit_len[node] < _W) {
-            uint128 v = _key[node];
-            char bl = _bit_len[node] - k;
-            _key[node] = _bit_insert(v, bl, key);
-            _bit_len[node]++;
-            _size[node]++;
-            _total[node] += key;
-            return s;
-        }
-        path.emplace(node);
-        _size[node]++;
-        _total[node] += key;
-        uint128 v = _key[node];
-        char bl = _W - k;
-        v = _bit_insert(v, bl, key);
-        uint128 left_key = v >> _W;
-        char left_key_popcount = left_key & 1;
-        _key[node] = v & (((uint128)1 << _W) - 1);
-        node = _left[node];
-        d = d << 1 | 1;
-        if (!node) {
-            if (_bit_len[path.top()] < _W) {
-                _bit_len[path.top()]++;
-                _key[path.top()] = (_key[path.top()] << 1) | left_key;
-                return s;
+
+        array<int, _MAX_HEIGHT> path;
+        uint64_t directions = 0;
+        int depth = 0;
+        int result = 0;
+        int node = _root;
+
+        while (true) {
+            const Node &n = _nodes[node];
+            const int left_size = _size(n.left);
+            const int node_end = left_size + n.bit_len;
+            if (left_size <= k && k <= node_end) break;
+
+            const bool go_right = node_end < k;
+            _push_path(path, directions, depth, node, go_right);
+            if (go_right) {
+                result += _total(n.left) + n.key_total;
+                k -= node_end;
+                node = n.right;
             } else {
-                Node new_node = _make_node(left_key, 1);
-                _left[path.top()] = new_node;
-            }
-        } else {
-            path.emplace(node);
-            _size[node]++;
-            _total[node] += left_key_popcount;
-            d <<= 1;
-            while (_right[node]) {
-                node = _right[node];
-                path.emplace(node);
-                _size[node]++;
-                _total[node] += left_key_popcount;
-                d <<= 1;
-            }
-            if (_bit_len[node] < _W) {
-                _bit_len[node]++;
-                _key[node] = (_key[node] << 1) | left_key;
-                return s;
-            } else {
-                Node new_node = _make_node(left_key, 1);
-                _right[node] = new_node;
+                node = n.left;
             }
         }
-        Node new_node = 0;
-        while (!path.empty()) {
-            node = path.top(); path.pop();
-            _balance[node] += (d & 1) ? 1 : -1;
-            d >>= 1;
-            if (_balance[node] == 0) break;
-            if (_balance[node] == 2) {
-                new_node = _balance[_left[node]] == -1 ? _rotate_LR(node) : _rotate_L(node);
-                break;
-            } else if (_balance[node] == -2) {
-                new_node = _balance[_right[node]] == 1 ? _rotate_RL(node) : _rotate_R(node);
-                break;
-            }
+
+        Node &target = _nodes[node];
+        const int left_size = _size(target.left);
+        k -= left_size;
+        result += _total(target.left) + _prefix_total(target.key, target.bit_len, k);
+
+        if (target.bit_len < _W) {
+            target.key = _bit_insert(target.key, target.bit_len - k, bit);
+            ++target.bit_len;
+            target.key_total += bit;
+            ++target.size;
+            target.total += bit;
+            _add_path(path, 0, depth, 1, bit);
+            return result;
         }
-        if (new_node) {
-            if (!path.empty()) {
-                ((d & 1) ? _left[path.top()] : _right[path.top()]) = new_node;
-            } else {
-                _root = new_node;
-            }
+
+        const uint128 value = _bit_insert(target.key, _W - k, bit);
+        const bool overflow_bit = value >> _W;
+        target.key = value & _mask(_W);
+        target.key_total += bit;
+        target.key_total -= overflow_bit;
+
+        const int target_depth = depth;
+        _push_path(path, directions, depth, node, false);
+        int left = target.left;
+        if (left == 0) {
+            const int new_node = _make_node(overflow_bit);
+            _rebuild_path(path, directions, depth, new_node);
+            return result;
         }
-        return s;
+
+        while (_nodes[left].right != 0) {
+            _push_path(path, directions, depth, left, true);
+            left = _nodes[left].right;
+        }
+
+        if (_nodes[left].bit_len < _W) {
+            Node &left_node = _nodes[left];
+            left_node.key = (left_node.key << 1) | overflow_bit;
+            ++left_node.bit_len;
+            left_node.key_total += overflow_bit;
+            ++left_node.size;
+            left_node.total += overflow_bit;
+            _add_path(path, 0, target_depth + 1, 1, bit);
+            _add_path(path, target_depth + 1, depth, 1, overflow_bit);
+            return result;
+        }
+
+        _push_path(path, directions, depth, left, true);
+        const int new_node = _make_node(overflow_bit);
+        _rebuild_path(path, directions, depth, new_node);
+        return result;
     }
 
     int _access_pop_and_rank1(int k) {
-        int s = 0, d = 0;
-        Node node = _root;
-        path.clear();
-        while (node) {
-            int t = _size[_left[node]] + _bit_len[node];
-            if (t - _bit_len[node] <= k && k < t) break;
-            if (t <= k) {
-                s += _total[_left[node]] + _popcount(_key[node]);
+        assert(0 <= k && k < len());
+        array<int, _MAX_HEIGHT> path;
+        uint64_t directions = 0;
+        int depth = 0;
+        int result = 0;
+        int node = _root;
+
+        while (true) {
+            const Node &n = _nodes[node];
+            const int left_size = _size(n.left);
+            const int node_end = left_size + n.bit_len;
+            if (left_size <= k && k < node_end) break;
+
+            const bool go_right = node_end <= k;
+            _push_path(path, directions, depth, node, go_right);
+            if (go_right) {
+                result += _total(n.left) + n.key_total;
+                k -= node_end;
+                node = n.right;
+            } else {
+                node = n.left;
             }
-            path.emplace(node);
-            node = t > k ? _left[node] : _right[node];
-            d <<= 1;
-            if (t > k) d |= 1;
-            else k -= t;
         }
-        k -= _size[_left[node]];
-        s += _total[_left[node]] + _popcount(_key[node] >> (_bit_len[node] - k));
-        uint128 v = _key[node];
-        bool res = v >> (_bit_len[node] - k - 1) & 1;
-        if (_bit_len[node] == 1) {
-            _pop_under(d, node, res);
-            return (s << 1) | res;
-        }
-        _key[node] = _bit_pop(v, _bit_len[node]-k);
-        --_bit_len[node];
-        --_size[node];
-        _total[node] -= res;
-        while (!path.empty()) {
-            node = path.top(); path.pop();
-            --_size[node];
-            _total[node] -= res;
-        }
-        return (s << 1) | res;
+
+        Node &target = _nodes[node];
+        const int left_size = _size(target.left);
+        k -= left_size;
+        result += _total(target.left) + _prefix_total(target.key, target.bit_len, k);
+        const bool removed_bit = _bit_at(target.key, target.bit_len - k - 1);
+        _pop_at_node(path, directions, depth, node, k, removed_bit);
+        return (result << 1) | removed_bit;
     }
 
     pair<bool, int> _access_ans_rank1(int k) const {
-        Node node = _root;
-        int s = 0;
-        bool res;
+        assert(0 <= k && k < len());
+        int node = _root;
+        int result = 0;
         while (true) {
-            int t = _size[_left[node]] + _bit_len[node];
-            if (t - _bit_len[node] <= k && k < t) {
-                k -= _size[_left[node]];
-                s += _total[_left[node]] + _popcount(_key[node] >> (_bit_len[node] - k));
-                res = (_key[node] >> (_bit_len[node] - k - 1)) & 1;
-                break;
+            const Node &n = _nodes[node];
+            const int left_size = _size(n.left);
+            const int node_end = left_size + n.bit_len;
+            if (left_size <= k && k < node_end) {
+                k -= left_size;
+                result += _total(n.left) + _prefix_total(n.key, n.bit_len, k);
+                const bool bit = _bit_at(n.key, n.bit_len - k - 1);
+                return {bit, result};
             }
-            if (t > k) {
-                node = _left[node];
+            if (k < left_size) {
+                node = n.left;
             } else {
-                s += _total[_left[node]] + _popcount(_key[node]);
-                node = _right[node];
-                k -= t;
+                result += _total(n.left) + n.key_total;
+                k -= node_end;
+                node = n.right;
             }
         }
-        return make_pair(res, s);
+    }
+
+    pair<bool, int> _access_set_and_rank1(int k, const bool bit) {
+        assert(0 <= k && k < len());
+        array<int, _MAX_HEIGHT> path;
+        int depth = 0;
+        int node = _root;
+        int result = 0;
+        while (true) {
+            Node &n = _nodes[node];
+            const int left_size = _size(n.left);
+            const int node_end = left_size + n.bit_len;
+            if (left_size <= k && k < node_end) {
+                k -= left_size;
+                result += _total(n.left) + _prefix_total(n.key, n.bit_len, k);
+                const int shift = n.bit_len - k - 1;
+                const bool old = _bit_at(n.key, shift);
+                if (old != bit) {
+                    const int delta = bit ? 1 : -1;
+                    n.key ^= static_cast<uint128>(1) << shift;
+                    n.key_total += delta;
+                    n.total += delta;
+                    _add_path(path, 0, depth, 0, delta);
+                }
+                return {old, result};
+            }
+            path[depth++] = node;
+            if (k < left_size) {
+                node = n.left;
+            } else {
+                result += _total(n.left) + n.key_total;
+                k -= node_end;
+                node = n.right;
+            }
+        }
     }
 
     void print() const {
-        vector<uint8_t> a = tovector();
-        int n = (int)a.size();
+        const vector<uint8_t> a = tovector();
         cout << "[";
-        for (int i = 0; i < n-1; ++i) {
-            cout << a[i] << ", ";
+        bool first = true;
+        for (const uint8_t bit : a) {
+            if (!first) cout << ", ";
+            first = false;
+            cout << +bit;
         }
-        if (n > 0) {
-            cout << a.back();
-        }
-        cout << "]";
-        cout << endl;
+        cout << "]" << endl;
     }
 
-    bool empty() const {
-        return len() == 0;
-    }
+    bool empty() const { return _root == 0; }
 
-    int len() const {
-        return _size[_root];
-    }
+    int len() const { return _size(_root); }
 };
+
 } // namespace titan23

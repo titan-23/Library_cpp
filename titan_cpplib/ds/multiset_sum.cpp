@@ -189,7 +189,7 @@ public:
 public:
     MultisetSum() : root(nullptr) {}
     MultisetSum(T missing) : missing(missing), root(nullptr) {}
-    MultisetSum(const vector<T> &a, T missing) : missing(missing) {
+    MultisetSum(const vector<T> &a, T missing=-1) : missing(missing) {
         this->root = build(a);
     }
 
@@ -405,6 +405,7 @@ public:
         return s;
     }
 
+    // high未満かな
     T sum(T high) const {
         T s = 0;
         MultisetSumNodePtr node = root;
@@ -421,6 +422,10 @@ public:
             }
         }
         return s;
+    }
+
+    T all_prod() const {
+        return root->data;
     }
 
     T pop(int k=-1) {
