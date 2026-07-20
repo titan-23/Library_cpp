@@ -43,33 +43,45 @@ public:
     /// `[0, 1]` の乱数を返す(実数)
     constexpr double random() { return (double)(_xor128()) / 0xFFFFFFFF; }
 
-    /// `[0, end]` の乱数を返す(整数)
+    /// `[0, end]` の乱数を返す
     constexpr int randint(const int end) {
         assert(0 <= end);
-        return (((uint64_t)_xor128() * (end+1)) >> 32);
+        return (((uint64_t)_xor128() * ((uint64_t)end + 1)) >> 32);
     }
 
-    /// `[begin, end]` の乱数を返す(整数)
+    /// `[begin, end]` の乱数を返す
     constexpr int randint(const int begin, const int end) {
         assert(begin <= end);
-        return begin + (((uint64_t)_xor128() * (end-begin+1)) >> 32);
+        return begin + (((uint64_t)_xor128() * ((uint64_t)end - begin + 1)) >> 32);
     }
 
-    /// `[0, end)` の乱数を返す(整数)
+    /// `[0, end)` の乱数を返す
     constexpr int randrange(const int end) {
         assert(0 < end);
         return (((uint64_t)_xor128() * end) >> 32);
     }
 
-    /// `[begin, end)` の乱数を返す(整数)
+    /// `[begin, end)` の乱数を返す
     constexpr int randrange(const int begin, const int end) {
         assert(begin < end);
         return begin + (((uint64_t)_xor128() * (end-begin)) >> 32);
     }
 
-    /// `[0, u64_MAX)` の乱数を返す / zobrist hash等の使用を想定
+    /// `[0, u64_MAX]` の乱数を返す / zobrist hash等の使用を想定
     constexpr uint64_t rand_u64() {
         return ((uint64_t)_xor128() << 32) | _xor128();
+    }
+
+    /// `[0, end)` の乱数を返す(整数, 64bit)
+    constexpr long long randrange_ll(const long long end) {
+        assert(0 < end);
+        return (long long)(((__uint128_t)rand_u64() * (uint64_t)end) >> 64);
+    }
+
+    /// `[begin, end)` の乱数を返す(整数, 64bit)
+    constexpr long long randrange_ll(const long long begin, const long long end) {
+        assert(begin < end);
+        return begin + (long long)(((__uint128_t)rand_u64() * (uint64_t)(end-begin)) >> 64);
     }
 
     /// `[0, end)` の異なる乱数を2つ返す
@@ -148,8 +160,7 @@ public:
     }
 
     template <typename T>
-    constexpr T choice(const vector<T> &a, const vector<int> &w, bool normal) {
-        assert(normal == false);
+    constexpr T choice(const vector<T> &a, const vector<int> &w) {
         assert(a.size() == w.size());
         double sum = 0.0;
         for (const int &x: w) sum += x;
@@ -159,6 +170,7 @@ public:
             x[i] = (double)w[i] / sum;
             if (i-1 >= 0) x[i] += x[i-1];
         }
+        if (!x.empty()) x.back() = 1.0;
         return choice(a, x);
     }
 

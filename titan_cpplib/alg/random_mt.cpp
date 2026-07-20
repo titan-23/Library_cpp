@@ -15,57 +15,71 @@ namespace titan23 {
 
 class RandomMT {
 private:
-    std::mt19937 _mt;
+    mt19937 _mt;
 
 public:
-    RandomMT() : _mt(std::random_device{}()) {}
+    RandomMT() : _mt(random_device{}()) {}
 
     RandomMT(unsigned int seed) : _mt(seed) {}
 
     /// `[0.0, 1.0]` の乱数を返す(実数)
     double random() {
-        std::uniform_real_distribution<double> dist(0.0, 1.0);
+        uniform_real_distribution<double> dist(0.0, 1.0);
         return dist(_mt);
     }
 
     /// `[0, end]` の乱数を返す
     int randint(const int end) {
         assert(0 <= end);
-        std::uniform_int_distribution<int> dist(0, end);
+        uniform_int_distribution<int> dist(0, end);
         return dist(_mt);
     }
 
     /// `[begin, end]` の乱数を返す
     int randint(const int begin, const int end) {
         assert(begin <= end);
-        std::uniform_int_distribution<int> dist(begin, end);
+        uniform_int_distribution<int> dist(begin, end);
         return dist(_mt);
     }
 
     /// `[begin, end]` の乱数を返す
     long long randll(const long long begin, const long long end) {
         assert(begin <= end);
-        std::uniform_int_distribution<long long> dist(begin, end);
+        uniform_int_distribution<long long> dist(begin, end);
         return dist(_mt);
     }
 
     /// `[0, end)` の乱数を返す
     int randrange(const int end) {
         assert(0 < end);
-        std::uniform_int_distribution<int> dist(0, end - 1);
+        uniform_int_distribution<int> dist(0, end - 1);
         return dist(_mt);
     }
 
     /// `[begin, end)` の乱数を返す
     int randrange(const int begin, const int end) {
         assert(begin < end);
-        std::uniform_int_distribution<int> dist(begin, end - 1);
+        uniform_int_distribution<int> dist(begin, end - 1);
         return dist(_mt);
     }
 
-    /// `[0, u64_MAX)` の乱数を返す
+    /// `[0, u64_MAX]` の乱数を返す
     unsigned long long rand_u64() {
-        std::uniform_int_distribution<unsigned long long> dist;
+        uniform_int_distribution<unsigned long long> dist;
+        return dist(_mt);
+    }
+
+    /// `[0, end)` の乱数を返す(整数, 64bit)
+    long long randrange_ll(const long long end) {
+        assert(0 < end);
+        uniform_int_distribution<long long> dist(0, end - 1);
+        return dist(_mt);
+    }
+
+    /// `[begin, end)` の乱数を返す(整数, 64bit)
+    long long randrange_ll(const long long begin, const long long end) {
+        assert(begin < end);
+        uniform_int_distribution<long long> dist(begin, end - 1);
         return dist(_mt);
     }
 
@@ -75,7 +89,7 @@ public:
         int u = randrange(end);
         int v = u + randrange(1, end);
         if (v >= end) v -= end;
-        if (u > v) std::swap(u, v);
+        if (u > v) swap(u, v);
         return {u, v};
     }
 
@@ -91,7 +105,7 @@ public:
         int u = randrange(begin, end);
         int v = u + randrange(1, len);
         if (v >= end) v -= len;
-        if (u > v) std::swap(u, v);
+        if (u > v) swap(u, v);
         return {u, v};
     }
 
@@ -101,7 +115,7 @@ public:
         assert(cnt <= n);
         for (int i = 0; i < cnt; ++i) {
             int j = randrange(i, n);
-            std::swap(a[i], a[j]);
+            swap(a[i], a[j]);
         }
         return vector<int>(a.begin(), a.begin() + cnt);
     }
@@ -109,7 +123,7 @@ public:
     /// `[begin, end)` の乱数を返す(実数)
     double randdouble(const double begin, const double end) {
         assert(begin < end);
-        std::uniform_real_distribution<double> dist(begin, end);
+        uniform_real_distribution<double> dist(begin, end);
         return dist(_mt);
     }
 
@@ -122,10 +136,14 @@ public:
     /// ベクターaから重複なしでk個の要素をランダムに選んで返す
     template <typename T>
     vector<T> choices(const vector<T> &a, const int k) {
-        assert(a.size() >= k);
-        vector<int> indices(a.size());
-        std::iota(indices.begin(), indices.end(), 0);
-        std::shuffle(indices.begin(), indices.end(), _mt);
+        int n = a.size();
+        assert(0 <= k && k <= n);
+        vector<int> indices(n);
+        iota(indices.begin(), indices.end(), 0);
+        for (int i = 0; i < k; ++i) {
+            int j = randrange(i, n);
+            swap(indices[i], indices[j]);
+        }
         vector<T> result(k);
         for (int i = 0; i < k; ++i) {
             result[i] = a[indices[i]];
@@ -146,7 +164,7 @@ public:
         assert(normal == false);
         assert(a.size() == w.size());
 
-        double sum = std::accumulate(w.begin(), w.end(), 0.0);
+        double sum = accumulate(w.begin(), w.end(), 0.0);
         assert(sum > 0);
 
         vector<double> cw(w.size());
@@ -164,8 +182,8 @@ public:
     T choice(const vector<T> &a, const vector<double> &w) {
         assert(!a.empty() && a.size() == w.size());
         double val = random();
-        auto it = std::lower_bound(w.begin(), w.end(), val);
-        size_t idx = std::distance(w.begin(), it);
+        auto it = lower_bound(w.begin(), w.end(), val);
+        size_t idx = distance(w.begin(), it);
         if (idx >= a.size()) idx = a.size() - 1;
         return a[idx];
     }

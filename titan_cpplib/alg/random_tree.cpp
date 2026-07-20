@@ -74,17 +74,23 @@ public:
     /// ランダムな木(パスグラフ)の辺集合を返す / `O(nlogn)`
     vector<pair<int, int>> gen_path(int n) {
         // ホントにランダム一様???
+        assert(n >= 0);
+        vector<pair<int, int>> edges;
+        if (n <= 1) {
+            return edges;
+        }
         vector<int> p(n);
         for (int i = 0; i < n; ++i) {
             p[i] = i;
         }
         random.shuffle(p);
-        vector<pair<int, int>> edges(n-1);
+        edges.resize(n-1);
         for (int i = 0; i < n-1; ++i) {
             if (random.randint(1)) {
                 edges[i] = {p[i], p[i+1]};
-            } else {}
+            } else {
                 edges[i] = {p[i+1], p[i]};
+            }
         }
         random.shuffle(edges);
         return edges;

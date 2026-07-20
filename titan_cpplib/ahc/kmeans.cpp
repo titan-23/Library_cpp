@@ -78,7 +78,7 @@ public:
                 }
             }
             assert(flag);
-            ElmType tmpk = krnd.choice(X, p_f, false);
+            ElmType tmpk = krnd.choice(X, p_f);
             assert(cluster_set.find(tmpk) == cluster_set.end());
             first_cluster.emplace_back(tmpk);
             cluster_set.insert(tmpk);
@@ -173,7 +173,7 @@ public:
                 }
             }
             assert(flag);
-            ElmType tmpk = krnd.choice(X, p_f, false);
+            ElmType tmpk = krnd.choice(X, p_f);
             assert(cluster_set.find(tmpk) == cluster_set.end());
             first_cluster.emplace_back(tmpk);
             cluster_set.insert(tmpk);
