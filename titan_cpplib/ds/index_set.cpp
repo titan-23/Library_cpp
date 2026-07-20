@@ -10,7 +10,7 @@ namespace titan23 {
 
 class IndexSet {
     // https://topcoder-tomerun.hatenablog.jp/entry/2021/06/12/134643
-  public:
+public:
     vector<int> que, pos;
 
     IndexSet() {}

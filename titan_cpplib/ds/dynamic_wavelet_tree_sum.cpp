@@ -4,7 +4,11 @@
 #include <cassert>
 #include <cstdint>
 #include <iostream>
+#include <limits>
 #include <numeric>
+#include <queue>
+#include <tuple>
+#include <type_traits>
 #include <utility>
 #include <vector>
 #include "titan_cpplib/ds/b_tree_bit_vector_sum.cpp"
@@ -45,20 +49,32 @@ private:
 
     int bit_length(const unsigned long long n) const { return n == 0 ? 0 : 64 - __builtin_clzll(n); }
 
+    size_t _estimated_node_count(int n) const {
+        if (n == 0) return 1;
+        size_t limit = static_cast<size_t>(n) * 3;
+        size_t ans = 0;
+        size_t width = 1;
+        for (int depth = 0; depth < _log && ans < limit; ++depth) {
+            ans += min(static_cast<size_t>(n), width);
+            width = min(static_cast<size_t>(n), width * 2);
+        }
+        return min(ans, limit);
+    }
+
     int _make_node() {
         if (_free != _NIL) {
-            const int node = _free;
+            int node = _free;
             _free = _nodes[node].child[0];
             _nodes[node] = Node();
             return node;
         }
-        const int node = _nodes.size();
+        int node = _nodes.size();
         _nodes.emplace_back();
         return node;
     }
 
     int _make_node(const vector<uint8_t> &bits, const vector<int> &order, const vector<W> &weights, const int start, const int end) {
-        const int node = _make_node();
+        int node = _make_node();
         _nodes[node].v = _bitvectors.build(bits, order, weights, start, end);
         return node;
     }
@@ -74,9 +90,9 @@ private:
 
     void _prune_path(const array<int, _MAX_LOG> &path, const array<uint8_t, _MAX_LOG> &directions, const int depth) {
         for (int i = depth - 1; i > 0; --i) {
-            const int node = path[i];
+            int node = path[i];
             if (!_bitvectors.empty(_nodes[node].v)) break;
-            const int parent = path[i - 1];
+            int parent = path[i - 1];
             _nodes[parent].child[directions[i - 1]] = _NIL;
             _release_node(node);
         }
@@ -88,33 +104,29 @@ private:
             return;
         }
 
-        const int n = keys.size();
-        const size_t reserve_limit = static_cast<size_t>(n) * 3;
-        size_t reserve_nodes = 0;
-        size_t width = 1;
-        for (int depth = 0; depth < _log && reserve_nodes < reserve_limit; ++depth) {
-            reserve_nodes += min(static_cast<size_t>(n), width);
-            width = min(static_cast<size_t>(n), width * 2);
-        }
-        reserve_nodes = min(reserve_nodes, reserve_limit);
+        int n = keys.size();
+        size_t reserve_nodes = _estimated_node_count(n);
+        long long total_size = static_cast<long long>(n) * _log;
+        assert(reserve_nodes <= static_cast<size_t>(numeric_limits<int>::max()));
+        assert(total_size <= numeric_limits<int>::max());
         _nodes.reserve(reserve_nodes);
-        _bitvectors.reserve(n * _log, reserve_nodes);
+        _bitvectors.reserve(static_cast<int>(total_size), static_cast<int>(reserve_nodes));
 
         vector<int> order(n), work(n);
         vector<uint8_t> bits(n);
         iota(order.begin(), order.end(), 0);
 
-        auto build = [&](auto &&build, const int bit, const int left, const int right) -> int {
+        auto build = [&](auto &&build, int bit, int left, int right) -> int {
             if (left == right || bit < 0) return _NIL;
 
             int zeros = 0;
             for (int i = left; i < right; ++i) {
-                const bool b = (keys[order[i]] >> bit) & 1;
+                bool b = (keys[order[i]] >> bit) & 1;
                 bits[i] = b;
                 zeros += !b;
             }
 
-            const int node = _make_node(bits, order, weights, left, right);
+            int node = _make_node(bits, order, weights, left, right);
             int zero = left;
             int one = left + zeros;
             for (int i = left; i < right; ++i) {
@@ -126,9 +138,9 @@ private:
             }
             for (int i = left; i < right; ++i) order[i] = work[i];
 
-            const int mid = left + zeros;
-            const int child0 = build(build, bit - 1, left, mid);
-            const int child1 = build(build, bit - 1, mid, right);
+            int mid = left + zeros;
+            int child0 = build(build, bit - 1, left, mid);
+            int child1 = build(build, bit - 1, mid, right);
             _nodes[node].child[0] = child0;
             _nodes[node].child[1] = child1;
             return node;
@@ -140,8 +152,8 @@ private:
     int _range_freq_node(int node, int bit, int l, int r, const T x) const {
         int result = 0;
         while (node != _NIL && bit >= 0 && l < r) {
-            const auto data = _bitvectors.range_data(_nodes[node].v, l, r);
-            const bool b = (x >> bit) & 1;
+            auto data = _bitvectors.range_data(_nodes[node].v, l, r);
+            bool b = (x >> bit) & 1;
             if (b) {
                 result += data.r0 - data.l0;
                 l -= data.l0;
@@ -160,8 +172,8 @@ private:
         int count = 0;
         W sum = 0;
         while (node != _NIL && bit >= 0 && l < r) {
-            const auto data = _bitvectors.range_data(_nodes[node].v, l, r);
-            const bool b = (x >> bit) & 1;
+            auto data = _bitvectors.range_data(_nodes[node].v, l, r);
+            bool b = (x >> bit) & 1;
             if (b) {
                 count += data.r0 - data.l0;
                 sum += data.sum0;
@@ -179,10 +191,10 @@ private:
 
     T _extreme(int node, int bit, int l, int r, T value, const bool largest) const {
         while (bit >= 0) {
-            const auto data = _bitvectors.range_data(_nodes[node].v, l, r);
-            const int count0 = data.r0 - data.l0;
-            const int count1 = (r - l) - count0;
-            const bool b = largest ? count1 > 0 : count0 == 0;
+            auto data = _bitvectors.range_data(_nodes[node].v, l, r);
+            int count0 = data.r0 - data.l0;
+            int count1 = (r - l) - count0;
+            bool b = largest ? count1 > 0 : count0 == 0;
             if (b) {
                 value |= static_cast<T>(1) << bit;
                 l -= data.l0;
@@ -203,12 +215,12 @@ private:
         int node = _root;
         W result = 0;
         for (int bit = _log - 1; bit >= 0; --bit) {
-            const auto data = _bitvectors.range_data(_nodes[node].v, l, r);
-            const int count0 = data.r0 - data.l0;
-            const int count1 = (r - l) - count0;
-            const int preferred_count = largest ? count1 : count0;
-            const W preferred_sum = largest ? data.sum1 : data.sum0;
-            const bool preferred_bit = largest;
+            auto data = _bitvectors.range_data(_nodes[node].v, l, r);
+            int count0 = data.r0 - data.l0;
+            int count1 = (r - l) - count0;
+            int preferred_count = largest ? count1 : count0;
+            W preferred_sum = largest ? data.sum1 : data.sum0;
+            bool preferred_bit = largest;
 
             if (k <= preferred_count) {
                 if (k == preferred_count) return result + preferred_sum;
@@ -226,7 +238,7 @@ private:
 
             result += preferred_sum;
             k -= preferred_count;
-            const bool other_bit = !preferred_bit;
+            bool other_bit = !preferred_bit;
             if (bit == 0) return result + _bitvectors.sum_first_k(_nodes[node].v, l, r, other_bit, k);
             if (other_bit) {
                 l -= data.l0;
@@ -246,13 +258,13 @@ private:
         int node = _root;
         int result = 0;
         for (int bit = _log - 1; bit >= 0; --bit) {
-            const auto data = _bitvectors.range_data(_nodes[node].v, l, r);
+            auto data = _bitvectors.range_data(_nodes[node].v, l, r);
             if (bit == _log - 1 && data.sum0 + data.sum1 < target) return -1;
-            const int count0 = data.r0 - data.l0;
-            const int count1 = (r - l) - count0;
-            const int preferred_count = largest ? count1 : count0;
-            const W preferred_sum = largest ? data.sum1 : data.sum0;
-            const bool preferred_bit = largest;
+            int count0 = data.r0 - data.l0;
+            int count1 = (r - l) - count0;
+            int preferred_count = largest ? count1 : count0;
+            W preferred_sum = largest ? data.sum1 : data.sum0;
+            bool preferred_bit = largest;
 
             if (preferred_sum >= target) {
                 if (bit == 0) return result + _bitvectors.min_count_sum_ge(_nodes[node].v, l, r, preferred_bit, target);
@@ -269,7 +281,7 @@ private:
 
             result += preferred_count;
             target -= preferred_sum;
-            const bool other_bit = !preferred_bit;
+            bool other_bit = !preferred_bit;
             if (bit == 0) return result + _bitvectors.min_count_sum_ge(_nodes[node].v, l, r, other_bit, target);
             if (other_bit) {
                 l -= data.l0;
@@ -281,6 +293,62 @@ private:
             node = _nodes[node].child[other_bit];
         }
         return result;
+    }
+
+    template<class Pred>
+    tuple<int, T, W> _max_right(int l, int r, const bool largest, Pred pred) const {
+        assert(0 <= l && l <= r && r <= len());
+        assert(pred(W(0)));
+        int length = r - l;
+        W sum = range_sum(l, r);
+        if (pred(sum)) return {length, static_cast<T>(-1), sum};
+
+        int node = _root;
+        int count = 0;
+        W aggregate = 0;
+        T key = 0;
+        for (int bit = _log - 1; bit >= 0; --bit) {
+            auto data = _bitvectors.range_data(_nodes[node].v, l, r);
+            int count0 = data.r0 - data.l0;
+            int count1 = (r - l) - count0;
+            int preferred_count = largest ? count1 : count0;
+            W preferred_sum = largest ? data.sum1 : data.sum0;
+
+            bool b;
+            if (pred(aggregate + preferred_sum)) {
+                count += preferred_count;
+                aggregate += preferred_sum;
+                b = !largest;
+            } else {
+                b = largest;
+            }
+            if (b) key |= static_cast<T>(1) << bit;
+
+            if (bit == 0) {
+                int accepted = _bitvectors.max_count(_nodes[node].v, l, r, b, aggregate, pred);
+                return {count + accepted, key, aggregate};
+            }
+            if (b) {
+                l -= data.l0;
+                r -= data.r0;
+            } else {
+                l = data.l0;
+                r = data.r0;
+            }
+            node = _nodes[node].child[b];
+        }
+        assert(false);
+        return {};
+    }
+
+    W _quantile_target(const W total, const long long numerator, const long long denominator) const {
+        if constexpr (is_integral_v<W>) {
+            W den = static_cast<W>(denominator);
+            W num = static_cast<W>(numerator);
+            return total / den * num + (total % den * num + den - 1) / den;
+        } else {
+            return total * static_cast<W>(numerator) / static_cast<W>(denominator);
+        }
     }
 
 public:
@@ -295,7 +363,7 @@ public:
         : _root(_NIL), _free(_NIL), _sigma(sigma), _log(max(1, bit_length(static_cast<unsigned long long>(sigma - 1)))), _size(keys.size()) {
         assert(sigma > 0);
         assert(keys.size() == weights.size());
-        for (const T key : keys) assert(0 <= key && key < sigma);
+        for (T key : keys) assert(0 <= key && key < sigma);
         _build(keys, weights);
     }
 
@@ -304,8 +372,19 @@ public:
         : _root(_NIL), _free(_NIL), _sigma(sigma), _log(max(1, bit_length(static_cast<unsigned long long>(sigma - 1)))), _size(keys.size()) {
         assert(sigma > 0);
         vector<W> weights(keys.begin(), keys.end());
-        for (const T key : keys) assert(0 <= key && key < sigma);
+        for (T key : keys) assert(0 <= key && key < sigma);
         _build(keys, weights);
+    }
+
+    /// 最終的な要素数を見積もってNodeと動的ビット列の領域を予約する / 最悪 `O(nlog(σ))`
+    void reserve(int expected_size) {
+        assert(len() <= expected_size);
+        size_t nodes = _estimated_node_count(expected_size);
+        long long total_size = static_cast<long long>(expected_size) * _log;
+        assert(nodes <= static_cast<size_t>(numeric_limits<int>::max()));
+        assert(total_size <= numeric_limits<int>::max());
+        _nodes.reserve(nodes);
+        _bitvectors.reserve(static_cast<int>(total_size), static_cast<int>(nodes));
     }
 
     /// 位置 `k` に `(key, weight)` を挿入する / `O(log(n)log(σ))`
@@ -314,8 +393,8 @@ public:
         assert(0 <= key && key < _sigma);
         int node = _root;
         for (int bit = _log - 1; bit >= 0; --bit) {
-            const bool b = (key >> bit) & 1;
-            const int rank1 = _bitvectors.insert(_nodes[node].v, k, b, weight);
+            bool b = (key >> bit) & 1;
+            int rank1 = _bitvectors.insert(_nodes[node].v, k, b, weight);
             k = b ? rank1 : k - rank1;
             if (bit == 0) break;
             int child = _nodes[node].child[b];
@@ -343,9 +422,9 @@ public:
 
         for (int bit = _log - 1; bit >= 0; --bit) {
             path[depth] = node;
-            const auto data = _bitvectors.pop(_nodes[node].v, k);
+            auto data = _bitvectors.pop(_nodes[node].v, k);
             if (depth == 0) weight = data.weight;
-            const bool b = data.bit;
+            bool b = data.bit;
             if (b) {
                 key |= static_cast<T>(1) << bit;
                 k = data.rank1;
@@ -371,16 +450,16 @@ public:
         int node = _root;
 
         for (int bit = _log - 1; bit >= 0; --bit) {
-            const bool new_bit = (key >> bit) & 1;
-            const auto data = _bitvectors.set(_nodes[node].v, k, new_bit, weight);
-            const int old_k = data.bit ? data.rank1 : k - data.rank1;
+            bool new_bit = (key >> bit) & 1;
+            auto data = _bitvectors.set(_nodes[node].v, k, new_bit, weight);
+            int old_k = data.bit ? data.rank1 : k - data.rank1;
             if (data.bit == new_bit) {
                 k = old_k;
                 if (bit > 0) node = _nodes[node].child[data.bit];
                 continue;
             }
 
-            const int new_k = new_bit ? data.rank1 : k - data.rank1;
+            int new_k = new_bit ? data.rank1 : k - data.rank1;
             if (bit == 0) return;
 
             array<int, _MAX_LOG> old_path;
@@ -399,11 +478,11 @@ public:
             int new_pos = new_k;
             for (int lower = bit - 1; lower >= 0; --lower) {
                 old_path[old_depth] = old_node;
-                const auto old_data = _bitvectors.pop(_nodes[old_node].v, old_pos);
+                auto old_data = _bitvectors.pop(_nodes[old_node].v, old_pos);
                 old_pos = old_data.bit ? old_data.rank1 : old_pos - old_data.rank1;
 
-                const bool new_lower_bit = (key >> lower) & 1;
-                const int new_rank1 = _bitvectors.insert(_nodes[new_node].v, new_pos, new_lower_bit, weight);
+                bool new_lower_bit = (key >> lower) & 1;
+                int new_rank1 = _bitvectors.insert(_nodes[new_node].v, new_pos, new_lower_bit, weight);
                 new_pos = new_lower_bit ? new_rank1 : new_pos - new_rank1;
 
                 if (lower > 0) {
@@ -427,10 +506,28 @@ public:
     /// `weight = key` として更新する / `O(log(n)log(σ))`
     void set(const int k, const T key) { set(k, key, static_cast<W>(key)); }
 
+    /// 位置 `k` のキーだけを更新する / `O(log(n)log(σ))`
+    void set_key(int k, T key) {
+        auto [old_key, weight] = access_pair(k);
+        if (old_key != key) set(k, key, weight);
+    }
+
     /// 位置 `k` の重みだけを更新する / `O(log(n)log(σ))`
-    void set_weight(const int k, const W weight) {
-        const auto [key, old_weight] = access_pair(k);
-        if (old_weight != weight) set(k, key, weight);
+    void set_weight(int k, W weight) {
+        W old_weight = access_weight(k);
+        if (old_weight != weight) add_weight(k, weight - old_weight);
+    }
+
+    /// 位置 `k` の重みに `delta` を加える / `O(log(n)log(σ))`
+    void add_weight(int k, W delta) {
+        assert(0 <= k && k < len());
+        if (delta == W(0)) return;
+        int node = _root;
+        for (int bit = _log - 1; bit >= 0; --bit) {
+            auto data = _bitvectors.add_weight(_nodes[node].v, k, delta);
+            k = data.bit ? data.rank1 : k - data.rank1;
+            if (bit > 0) node = _nodes[node].child[data.bit];
+        }
     }
 
     /// 区間 `[0, r)` の `key` の個数を返す / `O(log(n)log(σ))`
@@ -440,8 +537,8 @@ public:
         int node = _root;
         for (int bit = _log - 1; bit >= 0; --bit) {
             if (node == _NIL || r == 0) return 0;
-            const auto data = _bitvectors.range_data(_nodes[node].v, 0, r);
-            const bool b = (key >> bit) & 1;
+            auto data = _bitvectors.range_data(_nodes[node].v, 0, r);
+            bool b = (key >> bit) & 1;
             r = b ? r - data.r0 : data.r0;
             node = _nodes[node].child[b];
         }
@@ -455,8 +552,8 @@ public:
         int node = _root;
         for (int bit = _log - 1; bit >= 0; --bit) {
             if (node == _NIL || l == r) return 0;
-            const auto data = _bitvectors.range_data(_nodes[node].v, l, r);
-            const bool b = (key >> bit) & 1;
+            auto data = _bitvectors.range_data(_nodes[node].v, l, r);
+            bool b = (key >> bit) & 1;
             if (b) {
                 l -= data.l0;
                 r -= data.r0;
@@ -469,6 +566,36 @@ public:
         return r - l;
     }
 
+    /// 区間 `[l, r)` でキーが `[lower, upper)` にある `k` 番目の位置を返す / `O(log^2(n)log(σ))`
+    /// 例: `[5, 1, 4, 1, 9]`, `[lower, upper) = [1, 5)`, `k = 2` なら `3`
+    int kth_index_in_value_range(const int l, const int r, const T lower, const T upper, const int k) const {
+        assert(0 <= k && k < range_freq(l, r, lower, upper));
+        int left = l;
+        int right = r;
+        while (right - left > 1) {
+            int middle = (left + right) / 2;
+            if (range_freq(l, middle, lower, upper) <= k) {
+                left = middle;
+            } else {
+                right = middle;
+            }
+        }
+        return right - 1;
+    }
+
+    /// 区間 `[l, r)` でキーが `[lower, upper)` にある最初の位置を返す / `O(log^2(n)log(σ))`
+    /// 例: `[5, 1, 4, 1, 9]`, `[lower, upper) = [1, 5)` なら `1`
+    int next_index_in_value_range(const int l, const int r, const T lower, const T upper) const {
+        return range_freq(l, r, lower, upper) == 0 ? -1 : kth_index_in_value_range(l, r, lower, upper, 0);
+    }
+
+    /// 区間 `[l, r)` でキーが `[lower, upper)` にある最後の位置を返す / `O(log^2(n)log(σ))`
+    /// 例: `[5, 1, 4, 1, 9]`, `[lower, upper) = [1, 5)` なら `3`
+    int prev_index_in_value_range(const int l, const int r, const T lower, const T upper) const {
+        int count = range_freq(l, r, lower, upper);
+        return count == 0 ? -1 : kth_index_in_value_range(l, r, lower, upper, count - 1);
+    }
+
     /// `k` 番目の `(key, weight)` を返す / `O(log(n)log(σ))`
     pair<T, W> access_pair(int k) const {
         assert(0 <= k && k < len());
@@ -476,7 +603,7 @@ public:
         T key = 0;
         W weight = 0;
         for (int bit = _log - 1; bit >= 0; --bit) {
-            const auto data = _bitvectors.access(_nodes[node].v, k);
+            auto data = _bitvectors.access(_nodes[node].v, k);
             if (bit == _log - 1) weight = data.weight;
             if (data.bit) {
                 key |= static_cast<T>(1) << bit;
@@ -505,9 +632,9 @@ public:
         int node = _root;
         T result = 0;
         for (int bit = _log - 1; bit >= 0; --bit) {
-            const auto data = _bitvectors.range_data(_nodes[node].v, l, r);
-            const int count0 = data.r0 - data.l0;
-            const bool b = count0 <= k;
+            auto data = _bitvectors.range_data(_nodes[node].v, l, r);
+            int count0 = data.r0 - data.l0;
+            bool b = count0 <= k;
             if (b) {
                 result |= static_cast<T>(1) << bit;
                 k -= count0;
@@ -525,16 +652,41 @@ public:
     /// 区間 `[l, r)` で降順 `k` 番目のキーを返す / `O(log(n)log(σ))`
     T kth_largest(const int l, const int r, const int k) const { return kth_smallest(l, r, r - l - k - 1); }
 
+    /// 区間 `[l, r)` で頻度が高いキーを最大 `k` 種類返す / 訪問Node数を `p` として `O(p(log(n)+log(p)))`
+    /// 例: `[1, 2, 1, 3, 1, 2]` で `topk(0, 6, 2)` は `{(1, 3), (2, 2)}`
+    vector<pair<T, int>> topk(int l, int r, int k) const {
+        assert(0 <= l && l <= r && r <= len());
+        vector<pair<T, int>> ans;
+        if (l == r || k <= 0) return ans;
+        priority_queue<tuple<int, T, int, int, int, int>> hq;
+        hq.emplace(r - l, 0, _root, _log - 1, l, r);
+        while (!hq.empty() && k > 0) {
+            auto [length, key, node, bit, ql, qr] = hq.top();
+            hq.pop();
+            if (bit < 0) {
+                ans.emplace_back(key, length);
+                --k;
+                continue;
+            }
+            auto data = _bitvectors.range_data(_nodes[node].v, ql, qr);
+            int cnt0 = data.r0 - data.l0;
+            int cnt1 = length - cnt0;
+            if (cnt0 > 0) hq.emplace(cnt0, key, _nodes[node].child[0], bit - 1, data.l0, data.r0);
+            if (cnt1 > 0) hq.emplace(cnt1, key | (static_cast<T>(1) << bit), _nodes[node].child[1], bit - 1, ql - data.l0, qr - data.r0);
+        }
+        return ans;
+    }
+
     /// 区間 `[l, r)` に過半数を占めるキーがあるか判定する / `O(log(n)log(σ))`
     pair<bool, T> has_majority(int l, int r) const {
         assert(0 <= l && l < r && r <= len());
         int node = _root;
-        const int length = (r - l) / 2 + 1;
+        int length = (r - l) / 2 + 1;
         T result = 0;
         for (int bit = _log - 1; bit >= 0; --bit) {
-            const auto data = _bitvectors.range_data(_nodes[node].v, l, r);
-            const int count0 = data.r0 - data.l0;
-            const int count1 = (r - l) - count0;
+            auto data = _bitvectors.range_data(_nodes[node].v, l, r);
+            int count0 = data.r0 - data.l0;
+            int count1 = (r - l) - count0;
             if (count0 >= length) {
                 l = data.l0;
                 r = data.r0;
@@ -575,10 +727,17 @@ public:
             if (bit > 0) node = _nodes[node].child[(key >> bit) & 1];
         }
         for (int bit = 0; bit < _log; ++bit) {
-            const int current = path[_log - bit - 1];
-            k = _bitvectors.select(_nodes[current].v, k, (key >> bit) & 1);
+            int p = path[_log - bit - 1];
+            k = _bitvectors.select(_nodes[p].v, k, (key >> bit) & 1);
         }
         return k;
+    }
+
+    /// 区間 `[l, r)` にある `k` 番目の `key` の位置を返す / `O(log(n)log(σ))`
+    /// 例: `[5, 1, 4, 1, 9]` で `range_select(1, 5, 1, 1)` は `3`
+    int range_select(int l, int r, int k, T key) const {
+        assert(0 <= k && k < range_count(l, r, key));
+        return select(rank(l, key) + k, key);
     }
 
     /// `k` 番目の `key` の位置を返して削除する / `O(log(n)log(σ))`
@@ -590,7 +749,7 @@ public:
         int node = _root;
         for (int bit = _log - 1; bit >= 0; --bit) {
             path[depth] = node;
-            const bool b = (key >> bit) & 1;
+            bool b = (key >> bit) & 1;
             if (bit > 0) {
                 directions[depth] = b;
                 node = _nodes[node].child[b];
@@ -598,8 +757,8 @@ public:
             ++depth;
         }
         for (int bit = 0; bit < _log; ++bit) {
-            const int current = path[_log - bit - 1];
-            k = _bitvectors.select_pop(_nodes[current].v, k, (key >> bit) & 1);
+            int p = path[_log - bit - 1];
+            k = _bitvectors.select_pop(_nodes[p].v, k, (key >> bit) & 1);
         }
         _prune_path(path, directions, depth);
         --_size;
@@ -620,8 +779,8 @@ public:
         T candidate_value = 0;
 
         for (int bit = _log - 1; node != _NIL && bit >= 0 && l < r; --bit) {
-            const auto data = _bitvectors.range_data(_nodes[node].v, l, r);
-            const bool b = (upper >> bit) & 1;
+            auto data = _bitvectors.range_data(_nodes[node].v, l, r);
+            bool b = (upper >> bit) & 1;
             if (b) {
                 if (data.l0 < data.r0) {
                     candidate = _nodes[node].child[0];
@@ -659,8 +818,8 @@ public:
         T candidate_value = 0;
 
         for (int bit = _log - 1; node != _NIL && bit >= 0 && l < r; --bit) {
-            const auto data = _bitvectors.range_data(_nodes[node].v, l, r);
-            const bool b = (lower >> bit) & 1;
+            auto data = _bitvectors.range_data(_nodes[node].v, l, r);
+            bool b = (lower >> bit) & 1;
             if (!b && r - data.r0 > l - data.l0) {
                 candidate = _nodes[node].child[1];
                 candidate_bit = bit - 1;
@@ -690,7 +849,7 @@ public:
     W range_sum(const int l, const int r) const {
         assert(0 <= l && l <= r && r <= len());
         if (l == r) return W(0);
-        const auto data = _bitvectors.range_data(_nodes[_root].v, l, r);
+        auto data = _bitvectors.range_data(_nodes[_root].v, l, r);
         return data.sum0 + data.sum1;
     }
 
@@ -727,13 +886,79 @@ public:
         return _sum_k(l, r, k, true);
     }
 
+    /// 小さいキーから集約した重みに対して `pred` が真である最大範囲を返す / `O(log(n)log(σ))`
+    /// 返り値は `(count, boundary_value, aggregate)`
+    /// `pred(0) == true` で、要素を加える順に一度偽になると真へ戻らないことを前提とする
+    /// 例: `[(1, 2), (2, 3), (3, 5)]`, `pred(sum) = (sum <= 4)` なら `(1, 2, 2)`
+    template<class Pred>
+    tuple<int, T, W> max_right_smallest(const int l, const int r, Pred pred) const {
+        return _max_right(l, r, false, pred);
+    }
+
+    /// 大きいキーから集約した重みに対して `pred` が真である最大範囲を返す / `O(log(n)log(σ))`
+    /// 返り値は `(count, boundary_value, aggregate)`
+    /// `pred(0) == true` で、要素を加える順に一度偽になると真へ戻らないことを前提とする
+    /// 例: `[(1, 2), (2, 3), (3, 5)]`, `pred(sum) = (sum <= 6)` なら `(1, 2, 5)`
+    template<class Pred>
+    tuple<int, T, W> max_right_largest(const int l, const int r, Pred pred) const {
+        return _max_right(l, r, true, pred);
+    }
+
+    /// 小さいキーから採用し、重みの総和が `budget` 以下である最大個数を返す / `O(log(n)log(σ))`
+    /// 全要素の重みが非負であることを前提とする
+    /// 例: `[(1, 2), (2, 3), (3, 5)]`, `budget = 4` なら `1`
+    int max_count_smallest_sum_le(const int l, const int r, const W budget) const {
+        assert(budget >= W(0));
+        auto [count, value, sum] = max_right_smallest(l, r, [&](W sum) { return sum <= budget; });
+        return count;
+    }
+
+    /// 大きいキーから採用し、重みの総和が `budget` 以下である最大個数を返す / `O(log(n)log(σ))`
+    /// 全要素の重みが非負であることを前提とする
+    /// 例: `[(1, 2), (2, 3), (3, 5)]`, `budget = 6` なら `1`
+    int max_count_largest_sum_le(const int l, const int r, const W budget) const {
+        assert(budget >= W(0));
+        auto [count, value, sum] = max_right_largest(l, r, [&](W sum) { return sum <= budget; });
+        return count;
+    }
+
+    /// 小さいキーからの累積重みが初めて `target` 以上になるキーを返す / `O(log(n)log(σ))`
+    /// 全要素の重みが非負で、`0 < target <= range_sum(l, r)` であることを前提とする
+    /// 例: `[(1, 2), (2, 3), (3, 5)]`, `target = 4` なら `2`
+    T weighted_quantile(const int l, const int r, const W target) const {
+        assert(W(0) < target && target <= range_sum(l, r));
+        auto [count, value, sum] = max_right_smallest(l, r, [&](W sum) { return sum < target; });
+        return value;
+    }
+
+    /// 重み付き `numerator / denominator` 分位点を返す / `O(log(n)log(σ))`
+    /// 全要素の重みが非負であることを前提とする
+    /// 例: `[(1, 2), (2, 3), (3, 5)]`, `numerator / denominator = 1 / 2` なら `2`
+    T weighted_quantile(const int l, const int r, const long long numerator, const long long denominator) const {
+        assert(0 < numerator && numerator <= denominator);
+        W total = range_sum(l, r);
+        assert(total > W(0));
+        return weighted_quantile(l, r, _quantile_target(total, numerator, denominator));
+    }
+
+    /// 重み付き中央値を返す / `O(log(n)log(σ))`
+    /// 全要素の重みが非負であることを前提とする
+    /// 例: `[(1, 2), (2, 3), (3, 5)]` なら `2`
+    T weighted_median(const int l, const int r) const {
+        return weighted_quantile(l, r, 1, 2);
+    }
+
     /// 小さいキーから採用し、重みの総和が `target` 以上になる最小個数を返す / `O(log(n)log(σ))`
+    /// 全要素の重みが非負であることを前提とし、達成できない場合は `-1` を返す
+    /// 例: `[(1, 2), (2, 3), (3, 5)]`, `target = 4` なら `2`
     int min_count_smallest_sum_ge(const int l, const int r, const W target) const {
         assert(0 <= l && l <= r && r <= len());
         return _min_count_sum_ge(l, r, target, false);
     }
 
     /// 大きいキーから採用し、重みの総和が `target` 以上になる最小個数を返す / `O(log(n)log(σ))`
+    /// 全要素の重みが非負であることを前提とし、達成できない場合は `-1` を返す
+    /// 例: `[(1, 2), (2, 3), (3, 5)]`, `target = 4` なら `1`
     int min_count_largest_sum_ge(const int l, const int r, const W target) const {
         assert(0 <= l && l <= r && r <= len());
         return _min_count_sum_ge(l, r, target, true);
@@ -749,12 +974,12 @@ public:
 
         vector<int> order(_size), work(_size);
         iota(order.begin(), order.end(), 0);
-        auto dfs = [&](auto &&dfs, const int node, const int bit, const int left, const int right) -> void {
+        auto dfs = [&](auto &&dfs, int node, int bit, int left, int right) -> void {
             if (left == right || bit < 0) return;
             const vector<uint8_t> bits = _bitvectors.tovector(_nodes[node].v).first;
             int zeros = 0;
             for (int i = left; i < right; ++i) {
-                const bool b = bits[i - left];
+                bool b = bits[i - left];
                 if (b) result[order[i]] |= static_cast<T>(1) << bit;
                 zeros += !b;
             }
@@ -768,7 +993,7 @@ public:
                 }
             }
             for (int i = left; i < right; ++i) order[i] = work[i];
-            const int mid = left + zeros;
+            int mid = left + zeros;
             dfs(dfs, _nodes[node].child[0], bit - 1, left, mid);
             dfs(dfs, _nodes[node].child[1], bit - 1, mid, right);
         };

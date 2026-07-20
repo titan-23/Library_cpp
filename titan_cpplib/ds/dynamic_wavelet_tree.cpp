@@ -5,6 +5,8 @@
 #include <cstdint>
 #include <iostream>
 #include <numeric>
+#include <queue>
+#include <tuple>
 #include <utility>
 #include <vector>
 // #include "titan_cpplib/ds/avl_tree_bit_vector.cpp"
@@ -45,21 +47,33 @@ private:
         return n == 0 ? 0 : 64 - __builtin_clzll(n);
     }
 
+    size_t _estimated_node_count(int n) const {
+        if (n == 0) return 1;
+        size_t limit = static_cast<size_t>(n) * 3;
+        size_t ans = 0;
+        size_t width = 1;
+        for (int depth = 0; depth < _log && ans < limit; ++depth) {
+            ans += min(static_cast<size_t>(n), width);
+            width = min(static_cast<size_t>(n), width * 2);
+        }
+        return max<size_t>(1, min(ans, limit));
+    }
+
     int _make_node() {
         if (_free != _NIL) {
-            const int node = _free;
+            int node = _free;
             _free = _nodes[node].child[0];
             _nodes[node].child[0] = _NIL;
             _nodes[node].child[1] = _NIL;
             return node;
         }
-        const int node = _nodes.size();
+        int node = _nodes.size();
         _nodes.emplace_back();
         return node;
     }
 
     int _make_node(const vector<uint8_t> &a, const int start, const int end) {
-        const int node = _nodes.size();
+        int node = _nodes.size();
         _nodes.emplace_back(a, start, end);
         return node;
     }
@@ -75,9 +89,9 @@ private:
 
     void _prune_path(const array<int, _MAX_LOG> &path, const array<uint8_t, _MAX_LOG> &directions, const int depth) {
         for (int i = depth - 1; i > 0; --i) {
-            const int node = path[i];
+            int node = path[i];
             if (!_nodes[node].v.empty()) break;
-            const int parent = path[i - 1];
+            int parent = path[i - 1];
             _nodes[parent].child[directions[i - 1]] = _NIL;
             _release_node(node);
         }
@@ -89,30 +103,23 @@ private:
             return;
         }
 
-        const int n = a.size();
-        const size_t reserve_limit = static_cast<size_t>(n) * 3;
-        size_t reserve_nodes = 0;
-        size_t width = 1;
-        for (int depth = 0; depth < _log && reserve_nodes < reserve_limit; ++depth) {
-            reserve_nodes += min(static_cast<size_t>(n), width);
-            width = min(static_cast<size_t>(n), width * 2);
-        }
-        _nodes.reserve(min(reserve_nodes, reserve_limit));
+        int n = a.size();
+        _nodes.reserve(_estimated_node_count(n));
         vector<int> order(n), work(n);
         vector<uint8_t> bits(n);
         iota(order.begin(), order.end(), 0);
 
-        auto build = [&](auto &&build, const int bit, const int left, const int right) -> int {
+        auto build = [&](auto &&build, int bit, int left, int right) -> int {
             if (left == right || bit < 0) return _NIL;
 
             int zeros = 0;
             for (int i = left; i < right; ++i) {
-                const bool b = (a[order[i]] >> bit) & 1;
+                bool b = (a[order[i]] >> bit) & 1;
                 bits[i] = b;
                 zeros += !b;
             }
 
-            const int node = _make_node(bits, left, right);
+            int node = _make_node(bits, left, right);
             int zero = left;
             int one = left + zeros;
             for (int i = left; i < right; ++i) {
@@ -124,9 +131,9 @@ private:
             }
             for (int i = left; i < right; ++i) order[i] = work[i];
 
-            const int mid = left + zeros;
-            const int child0 = build(build, bit - 1, left, mid);
-            const int child1 = build(build, bit - 1, mid, right);
+            int mid = left + zeros;
+            int child0 = build(build, bit - 1, left, mid);
+            int child1 = build(build, bit - 1, mid, right);
             _nodes[node].child[0] = child0;
             _nodes[node].child[1] = child1;
             return node;
@@ -138,8 +145,8 @@ private:
     int _range_freq_node(int node, int bit, int l, int r, const T x) const {
         int result = 0;
         while (node != _NIL && bit >= 0 && l < r) {
-            const auto [l0, r0] = _nodes[node].v._rank0_pair(l, r);
-            const bool b = (x >> bit) & 1;
+            auto [l0, r0] = _nodes[node].v._rank0_pair(l, r);
+            bool b = (x >> bit) & 1;
             if (b) {
                 result += r0 - l0;
                 l -= l0;
@@ -156,10 +163,10 @@ private:
 
     T _extreme(int node, int bit, int l, int r, T value, const bool largest) const {
         while (bit >= 0) {
-            const auto [l0, r0] = _nodes[node].v._rank0_pair(l, r);
-            const int count0 = r0 - l0;
-            const int count1 = (r - l) - count0;
-            const bool b = largest ? count1 > 0 : count0 == 0;
+            auto [l0, r0] = _nodes[node].v._rank0_pair(l, r);
+            int count0 = r0 - l0;
+            int count1 = (r - l) - count0;
+            bool b = largest ? count1 > 0 : count0 == 0;
             if (b) {
                 value |= (T)1 << bit;
                 l -= l0;
@@ -189,14 +196,21 @@ public:
         _build(a);
     }
 
+    /// 最終的な要素数を見積もってNodeと根の動的ビット列の領域を予約する / 最悪 `O(nlog(σ))`
+    void reserve(int expected_size) {
+        assert(len() <= expected_size);
+        _nodes.reserve(_estimated_node_count(expected_size));
+        if (_log > 0) _nodes[_root].v.reserve(expected_size);
+    }
+
     /// 位置 `k` に `x` を挿入する / `O(log(n)log(σ))`
     void insert(int k, const T x) {
         assert(0 <= k && k <= len());
         assert(0 <= x && x < _sigma);
         int node = _root;
         for (int bit = _log - 1; bit >= 0; --bit) {
-            const bool b = (x >> bit) & 1;
-            const int rank1 = _nodes[node].v._insert_and_rank1(k, b);
+            bool b = (x >> bit) & 1;
+            int rank1 = _nodes[node].v._insert_and_rank1(k, b);
             k = b ? rank1 : k - rank1;
             if (bit == 0) break;
             int child = _nodes[node].child[b];
@@ -220,9 +234,9 @@ public:
 
         for (int bit = _log - 1; bit >= 0; --bit) {
             path[depth] = node;
-            const int sb = _nodes[node].v._access_pop_and_rank1(k);
-            const bool b = sb & 1;
-            const int rank1 = sb >> 1;
+            int sb = _nodes[node].v._access_pop_and_rank1(k);
+            bool b = sb & 1;
+            int rank1 = sb >> 1;
             if (b) {
                 result |= (T)1 << bit;
                 k = rank1;
@@ -248,16 +262,16 @@ public:
         int node = _root;
 
         for (int bit = _log - 1; bit >= 0; --bit) {
-            const bool new_bit = (x >> bit) & 1;
-            const auto [old_bit, rank1] = _nodes[node].v._access_set_and_rank1(k, new_bit);
-            const int old_k = old_bit ? rank1 : k - rank1;
+            bool new_bit = (x >> bit) & 1;
+            auto [old_bit, rank1] = _nodes[node].v._access_set_and_rank1(k, new_bit);
+            int old_k = old_bit ? rank1 : k - rank1;
             if (old_bit == new_bit) {
                 k = old_k;
                 if (bit > 0) node = _nodes[node].child[old_bit];
                 continue;
             }
 
-            const int new_k = new_bit ? rank1 : k - rank1;
+            int new_k = new_bit ? rank1 : k - rank1;
             if (bit == 0) return;
 
             array<int, _MAX_LOG> old_path;
@@ -276,13 +290,13 @@ public:
             int new_pos = new_k;
             for (int lower = bit - 1; lower >= 0; --lower) {
                 old_path[old_depth] = old_node;
-                const int sb = _nodes[old_node].v._access_pop_and_rank1(old_pos);
-                const bool old_lower_bit = sb & 1;
-                const int old_rank1 = sb >> 1;
+                int sb = _nodes[old_node].v._access_pop_and_rank1(old_pos);
+                bool old_lower_bit = sb & 1;
+                int old_rank1 = sb >> 1;
                 old_pos = old_lower_bit ? old_rank1 : old_pos - old_rank1;
 
-                const bool new_lower_bit = (x >> lower) & 1;
-                const int new_rank1 = _nodes[new_node].v._insert_and_rank1(new_pos, new_lower_bit);
+                bool new_lower_bit = (x >> lower) & 1;
+                int new_rank1 = _nodes[new_node].v._insert_and_rank1(new_pos, new_lower_bit);
                 new_pos = new_lower_bit ? new_rank1 : new_pos - new_rank1;
 
                 if (lower > 0) {
@@ -303,6 +317,9 @@ public:
         }
     }
 
+    /// 位置 `k` の値を `x` に更新する / 共通prefixを除き `O(log(n)log(σ))`
+    void set_key(int k, T x) { set(k, x); }
+
     /// 区間 `[0, r)` の `x` の個数を返す / `O(log(n)log(σ))`
     int rank(int r, const T x) const {
         assert(0 <= r && r <= len());
@@ -310,7 +327,7 @@ public:
         int node = _root;
         for (int bit = _log - 1; bit >= 0; --bit) {
             if (node == _NIL) return 0;
-            const bool b = (x >> bit) & 1;
+            bool b = (x >> bit) & 1;
             r = _nodes[node].v.rank(r, b);
             node = _nodes[node].child[b];
         }
@@ -324,12 +341,42 @@ public:
         int node = _root;
         for (int bit = _log - 1; bit >= 0; --bit) {
             if (node == _NIL) return 0;
-            const bool b = (x >> bit) & 1;
+            bool b = (x >> bit) & 1;
             l = _nodes[node].v.rank(l, b);
             r = _nodes[node].v.rank(r, b);
             node = _nodes[node].child[b];
         }
         return r - l;
+    }
+
+    /// 区間 `[l, r)` で値が `[lower, upper)` にある `k` 番目の位置を返す / `O(log^2(n)log(σ))`
+    /// 例: `[5, 1, 4, 1, 9]`, `[lower, upper) = [1, 5)`, `k = 2` なら `3`
+    int kth_index_in_value_range(const int l, const int r, const T lower, const T upper, const int k) const {
+        assert(0 <= k && k < range_freq(l, r, lower, upper));
+        int left = l;
+        int right = r;
+        while (right - left > 1) {
+            int middle = (left + right) / 2;
+            if (range_freq(l, middle, lower, upper) <= k) {
+                left = middle;
+            } else {
+                right = middle;
+            }
+        }
+        return right - 1;
+    }
+
+    /// 区間 `[l, r)` で値が `[lower, upper)` にある最初の位置を返す / `O(log^2(n)log(σ))`
+    /// 例: `[5, 1, 4, 1, 9]`, `[lower, upper) = [1, 5)` なら `1`
+    int next_index_in_value_range(const int l, const int r, const T lower, const T upper) const {
+        return range_freq(l, r, lower, upper) == 0 ? -1 : kth_index_in_value_range(l, r, lower, upper, 0);
+    }
+
+    /// 区間 `[l, r)` で値が `[lower, upper)` にある最後の位置を返す / `O(log^2(n)log(σ))`
+    /// 例: `[5, 1, 4, 1, 9]`, `[lower, upper) = [1, 5)` なら `3`
+    int prev_index_in_value_range(const int l, const int r, const T lower, const T upper) const {
+        int count = range_freq(l, r, lower, upper);
+        return count == 0 ? -1 : kth_index_in_value_range(l, r, lower, upper, count - 1);
     }
 
     /// `k` 番目の要素を返す / `O(log(n)log(σ))`
@@ -338,7 +385,7 @@ public:
         int node = _root;
         T result = 0;
         for (int bit = _log - 1; bit >= 0; --bit) {
-            const auto [b, rank1] = _nodes[node].v._access_ans_rank1(k);
+            auto [b, rank1] = _nodes[node].v._access_ans_rank1(k);
             if (b) {
                 result |= (T)1 << bit;
                 k = rank1;
@@ -357,9 +404,9 @@ public:
         int node = _root;
         T result = 0;
         for (int bit = _log - 1; bit >= 0; --bit) {
-            const auto [l0, r0] = _nodes[node].v._rank0_pair(l, r);
-            const int count0 = r0 - l0;
-            const bool b = count0 <= k;
+            auto [l0, r0] = _nodes[node].v._rank0_pair(l, r);
+            int count0 = r0 - l0;
+            bool b = count0 <= k;
             if (b) {
                 result |= (T)1 << bit;
                 k -= count0;
@@ -379,15 +426,40 @@ public:
         return kth_smallest(l, r, r - l - k - 1);
     }
 
+    /// 区間 `[l, r)` で頻度が高い値を最大 `k` 種類返す / 訪問Node数を `p` として `O(p(log(n)+log(p)))`
+    /// 例: `[1, 2, 1, 3, 1, 2]` で `topk(0, 6, 2)` は `{(1, 3), (2, 2)}`
+    vector<pair<T, int>> topk(int l, int r, int k) const {
+        assert(0 <= l && l <= r && r <= len());
+        vector<pair<T, int>> ans;
+        if (l == r || k <= 0) return ans;
+        priority_queue<tuple<int, T, int, int, int, int>> hq;
+        hq.emplace(r - l, 0, _root, _log - 1, l, r);
+        while (!hq.empty() && k > 0) {
+            auto [length, x, node, bit, ql, qr] = hq.top();
+            hq.pop();
+            if (bit < 0) {
+                ans.emplace_back(x, length);
+                --k;
+                continue;
+            }
+            auto [l0, r0] = _nodes[node].v._rank0_pair(ql, qr);
+            int cnt0 = r0 - l0;
+            int cnt1 = length - cnt0;
+            if (cnt0 > 0) hq.emplace(cnt0, x, _nodes[node].child[0], bit - 1, l0, r0);
+            if (cnt1 > 0) hq.emplace(cnt1, x | (static_cast<T>(1) << bit), _nodes[node].child[1], bit - 1, ql - l0, qr - r0);
+        }
+        return ans;
+    }
+
     pair<bool, T> has_majority(int l, int r) const {
         assert(0 <= l && l < r && r <= len());
         int node = _root;
-        const int length = (r - l) / 2 + 1;
+        int length = (r - l) / 2 + 1;
         T result = 0;
         for (int bit = _log - 1; bit >= 0; --bit) {
-            const auto [l0, r0] = _nodes[node].v._rank0_pair(l, r);
-            const int count0 = r0 - l0;
-            const int count1 = (r - l) - count0;
+            auto [l0, r0] = _nodes[node].v._rank0_pair(l, r);
+            int count0 = r0 - l0;
+            int count1 = (r - l) - count0;
             if (count0 >= length) {
                 l = l0;
                 r = r0;
@@ -424,9 +496,9 @@ public:
         int right = r;
         for (int bit = _log - 1; bit >= 0; --bit) {
             if (node == _NIL || left == right) return 0;
-            const auto [l0, r0] = _nodes[node].v._rank0_pair(left, right);
-            const bool lower_bit = (lower >> bit) & 1;
-            const bool upper_bit = (upper >> bit) & 1;
+            auto [l0, r0] = _nodes[node].v._rank0_pair(left, right);
+            bool lower_bit = (lower >> bit) & 1;
+            bool upper_bit = (upper >> bit) & 1;
             if (lower_bit == upper_bit) {
                 if (lower_bit) {
                     left -= l0;
@@ -439,9 +511,9 @@ public:
                 continue;
             }
 
-            const int left_count = r0 - l0;
-            const int lower_part = left_count - _range_freq_node(_nodes[node].child[0], bit - 1, l0, r0, lower);
-            const int upper_part = _range_freq_node(_nodes[node].child[1], bit - 1, left - l0, right - r0, upper);
+            int left_count = r0 - l0;
+            int lower_part = left_count - _range_freq_node(_nodes[node].child[0], bit - 1, l0, r0, lower);
+            int upper_part = _range_freq_node(_nodes[node].child[1], bit - 1, left - l0, right - r0, upper);
             return lower_part + upper_part;
         }
         return 0;
@@ -457,10 +529,17 @@ public:
             if (bit > 0) node = _nodes[node].child[(x >> bit) & 1];
         }
         for (int bit = 0; bit < _log; ++bit) {
-            const int current = path[_log - bit - 1];
-            k = _nodes[current].v.select(k, (x >> bit) & 1);
+            int p = path[_log - bit - 1];
+            k = _nodes[p].v.select(k, (x >> bit) & 1);
         }
         return k;
+    }
+
+    /// 区間 `[l, r)` にある `k` 番目の `x` の位置を返す / `O(log(n)log(σ))`
+    /// 例: `[5, 1, 4, 1, 9]` で `range_select(1, 5, 1, 1)` は `3`
+    int range_select(int l, int r, int k, T x) const {
+        assert(0 <= k && k < range_count(l, r, x));
+        return select(rank(l, x) + k, x);
     }
 
     /// `k` 番目の `x` の位置を返して削除する / `O(log(n)log(σ))`
@@ -471,7 +550,7 @@ public:
         int node = _root;
         for (int bit = _log - 1; bit >= 0; --bit) {
             path[depth] = node;
-            const bool b = (x >> bit) & 1;
+            bool b = (x >> bit) & 1;
             if (bit > 0) {
                 directions[depth] = b;
                 node = _nodes[node].child[b];
@@ -479,8 +558,8 @@ public:
             ++depth;
         }
         for (int bit = 0; bit < _log; ++bit) {
-            const int current = path[_log - bit - 1];
-            k = _nodes[current].v._select_pop(k, (x >> bit) & 1);
+            int p = path[_log - bit - 1];
+            k = _nodes[p].v._select_pop(k, (x >> bit) & 1);
         }
         _prune_path(path, directions, depth);
         --_size;
@@ -501,8 +580,8 @@ public:
         T candidate_value = 0;
 
         for (int bit = _log - 1; node != _NIL && bit >= 0 && l < r; --bit) {
-            const auto [l0, r0] = _nodes[node].v._rank0_pair(l, r);
-            const bool b = (x >> bit) & 1;
+            auto [l0, r0] = _nodes[node].v._rank0_pair(l, r);
+            bool b = (x >> bit) & 1;
             if (b) {
                 if (l0 < r0) {
                     candidate = _nodes[node].child[0];
@@ -540,8 +619,8 @@ public:
         T candidate_value = 0;
 
         for (int bit = _log - 1; node != _NIL && bit >= 0 && l < r; --bit) {
-            const auto [l0, r0] = _nodes[node].v._rank0_pair(l, r);
-            const bool b = (x >> bit) & 1;
+            auto [l0, r0] = _nodes[node].v._rank0_pair(l, r);
+            bool b = (x >> bit) & 1;
             if (!b && r - r0 > l - l0) {
                 candidate = _nodes[node].child[1];
                 candidate_bit = bit - 1;
@@ -577,14 +656,14 @@ public:
 
         vector<int> order(_size), work(_size);
         iota(order.begin(), order.end(), 0);
-        auto dfs = [&](auto &&dfs, const int node, const int bit, const int left, const int right) -> void {
+        auto dfs = [&](auto &&dfs, int node, int bit, int left, int right) -> void {
             if (left == right || bit < 0) return;
 
             int zeros = 0;
             {
                 const vector<uint8_t> bits = _nodes[node].v.tovector();
                 for (int i = left; i < right; ++i) {
-                    const bool b = bits[i - left];
+                    bool b = bits[i - left];
                     if (b) result[order[i]] |= (T)1 << bit;
                     zeros += !b;
                 }
@@ -600,7 +679,7 @@ public:
                 for (int i = left; i < right; ++i) order[i] = work[i];
             }
 
-            const int mid = left + zeros;
+            int mid = left + zeros;
             dfs(dfs, _nodes[node].child[0], bit - 1, left, mid);
             dfs(dfs, _nodes[node].child[1], bit - 1, mid, right);
         };
@@ -613,7 +692,7 @@ public:
         const vector<T> a = tovector();
         cout << "[";
         bool first = true;
-        for (const T value : a) {
+        for (T value : a) {
             if (!first) cout << ", ";
             first = false;
             cout << value;

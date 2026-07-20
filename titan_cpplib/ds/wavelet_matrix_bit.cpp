@@ -3,6 +3,7 @@
 #include <vector>
 #include <queue>
 #include <array>
+#include <tuple>
 #include "titan_cpplib/ds/bit_vector.cpp"
 using namespace std;
 
@@ -98,6 +99,13 @@ public:
         return s;
     }
 
+    /// 区間 `[l, r)` にある `k` 番目の `x` の位置を返す / `O(log(n)log(σ))`
+    /// 例: `[5, 1, 4, 1, 9]` で `range_select(1, 5, 1, 1)` は `3`
+    int range_select(const int l, const int r, const int k, const T x) const {
+        assert(0 <= k && k < range_count(l, r, x));
+        return select(rank(l, x) + k, x);
+    }
+
     // `a[l, r)` の中で k 番目に **小さい** 値を返します。
     T kth_smallest(int l, int r, int k) const {
         T s = 0;
@@ -122,19 +130,44 @@ public:
         return kth_smallest(l, r, r-l-k-1);
     }
 
+    /// 区間 `[l, r)` に過半数を占める値があるか判定する / `O(log(σ))`
+    /// 例: `[2, 1, 2, 2]` では `{true, 2}`、`[1, 2, 3]` では `{false, 0}`
+    pair<bool, T> has_majority(int l, int r) const {
+        assert(0 <= l && l < r && r <= len());
+        const int majority = (r - l) / 2 + 1;
+        T result = 0;
+        for (int bit = log - 1; bit >= 0; --bit) {
+            const int l0 = v[bit].rank0(l);
+            const int r0 = v[bit].rank0(r);
+            const int count0 = r0 - l0;
+            const int count1 = (r - l) - count0;
+            if (count0 >= majority) {
+                l = l0;
+                r = r0;
+            } else if (count1 >= majority) {
+                result |= static_cast<T>(1) << bit;
+                l = mid[bit] + l - l0;
+                r = mid[bit] + r - r0;
+            } else {
+                return {false, 0};
+            }
+        }
+        return {true, result};
+    }
+
     // `a[l, r)` の中で、要素を出現回数が多い順にその頻度とともに `k` 個返します。
-    vector<pair<int, int>> topk(int l, int r, int k) {
+    vector<pair<T, int>> topk(int l, int r, int k) const {
         // heap[-length, x, l, bit]
         priority_queue<tuple<int, T, int, int>> hq;
-        hq.emplace(r-l, 0, l, log-1);
         vector<pair<T, int>> ans;
-        while (!hq.empty()) {
+        if (l == r || k <= 0) return ans;
+        hq.emplace(r-l, 0, l, log-1);
+        while (!hq.empty() && k > 0) {
             auto [length, x, l, bit] = hq.top();
             hq.pop();
             if (bit == -1) {
                 ans.emplace_back(x, length);
-                k -= 1;
-                if (k == 0) break;
+                --k;
             } else {
                 r = l + length;
                 int l0 = v[bit].rank0(l);
@@ -190,7 +223,8 @@ public:
     }
 
     T next_value(int l, int r, T x) const {
-        return kth_smallest(l, r, range_freq(l, r, x));
+        const int count = range_freq(l, r, x);
+        return count == r - l ? static_cast<T>(-1) : kth_smallest(l, r, count);
     }
 
     //`a[l, r)` に含まれる `x` の個数を返します。
@@ -198,11 +232,48 @@ public:
         return rank(r, x) - rank(l, x);
     }
 
+    /// 区間 `[l, r)` で値が `[lower, upper)` にある `k` 番目の位置を返す / `O(log(n)log(σ))`
+    /// 例: `[5, 1, 4, 1, 9]`, `[lower, upper) = [1, 5)`, `k = 2` なら `3`
+    int kth_index_in_value_range(const int l, const int r, const T lower, const T upper, const int k) const {
+        assert(0 <= k && k < range_freq(l, r, lower, upper));
+        int left = l;
+        int right = r;
+        while (right - left > 1) {
+            const int middle = (left + right) / 2;
+            if (range_freq(l, middle, lower, upper) <= k) {
+                left = middle;
+            } else {
+                right = middle;
+            }
+        }
+        return right - 1;
+    }
+
+    /// 区間 `[l, r)` で値が `[lower, upper)` にある最初の位置を返す / `O(log(n)log(σ))`
+    /// 例: `[5, 1, 4, 1, 9]`, `[lower, upper) = [1, 5)` なら `1`
+    int next_index_in_value_range(const int l, const int r, const T lower, const T upper) const {
+        return range_freq(l, r, lower, upper) == 0 ? -1 : kth_index_in_value_range(l, r, lower, upper, 0);
+    }
+
+    /// 区間 `[l, r)` で値が `[lower, upper)` にある最後の位置を返す / `O(log(n)log(σ))`
+    /// 例: `[5, 1, 4, 1, 9]`, `[lower, upper) = [1, 5)` なら `3`
+    int prev_index_in_value_range(const int l, const int r, const T lower, const T upper) const {
+        const int count = range_freq(l, r, lower, upper);
+        return count == 0 ? -1 : kth_index_in_value_range(l, r, lower, upper, count - 1);
+    }
+
+    /// 配列を返す / `O(nlog(σ))`
+    vector<T> tovector() const {
+        vector<T> result(n);
+        for (int i = 0; i < n; ++i) result[i] = access(i);
+        return result;
+    }
+
     int len() const {
         return n;
     }
 
-    friend ostream& operator<<(ostream& os, const titan23::WaveletMatrix<T>& wm) {
+    friend ostream& operator<<(ostream& os, const titan23::WaveletMatrix<T, log>& wm) {
         int n = wm.len();
         os << "[";
         for (int i = 0; i < n; ++i) {

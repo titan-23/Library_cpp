@@ -49,6 +49,18 @@ int naive_min_count(const vector<Key> &keys, const vector<Weight> &weights, cons
     return -1;
 }
 
+vector<pair<Key, int>> naive_topk(const vector<Key> &keys, const int l, const int r, const int k) {
+    vector<int> count(SIGMA);
+    for (int i = l; i < r; ++i) ++count[keys[i]];
+    vector<pair<Key, int>> result;
+    for (int key = 0; key < SIGMA; ++key) {
+        if (count[key] > 0) result.emplace_back(key, count[key]);
+    }
+    sort(result.begin(), result.end(), [](const auto &a, const auto &b) { return a.second != b.second ? a.second > b.second : a.first > b.first; });
+    if (static_cast<int>(result.size()) > k) result.resize(k);
+    return result;
+}
+
 void verify_all(const Tree &tree, const vector<Key> &keys, const vector<Weight> &weights) {
     assert(tree.len() == static_cast<int>(keys.size()));
     assert(tree.tovector() == keys);
@@ -144,6 +156,14 @@ void verify_query(const Tree &tree, const vector<Key> &keys, const vector<Weight
     const auto [found, majority_key] = tree.has_majority(l, r);
     assert(found == (majority != -1));
     if (found) assert(majority_key == majority);
+
+    const int position = l + rng() % (r - l);
+    const Key selected_key = keys[position];
+    int occurrence = 0;
+    for (int i = l; i < position; ++i) occurrence += keys[i] == selected_key;
+    assert(tree.range_select(l, r, occurrence, selected_key) == position);
+    const int top = rng() % (SIGMA + 1);
+    assert(tree.topk(l, r, top) == naive_topk(keys, l, r, top));
 }
 
 void run(const uint64_t seed) {
@@ -155,9 +175,10 @@ void run(const uint64_t seed) {
         weights[i] = rng() % 30;
     }
     Tree tree(SIGMA, keys, weights);
+    tree.reserve(500);
 
     for (int query = 0; query < 30000; ++query) {
-        int operation = rng() % 12;
+        int operation = rng() % 14;
         if (keys.empty()) operation = 0;
         if (keys.size() >= 500 && operation == 0) operation = 1;
 
@@ -199,6 +220,16 @@ void run(const uint64_t seed) {
             assert(tree.select_remove(occurrence, key) == position);
             keys.erase(keys.begin() + position);
             weights.erase(weights.begin() + position);
+        } else if (operation == 6) {
+            const int k = rng() % keys.size();
+            const Weight delta = rng() % 10;
+            tree.add_weight(k, delta);
+            weights[k] += delta;
+        } else if (operation == 7) {
+            const int k = rng() % keys.size();
+            const Key key = rng() % SIGMA;
+            tree.set_key(k, key);
+            keys[k] = key;
         } else {
             verify_query(tree, keys, weights, rng);
         }

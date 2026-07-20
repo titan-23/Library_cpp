@@ -232,6 +232,8 @@ class DynamicWaveletMatrix {
     }
 
     int range_freq(int l, int r, T x) const {
+        if (x <= 0) return 0;
+        if (x >= _sigma) return r - l;
         int ans = 0;
         for (int bit = _log-1; bit >= 0; --bit) {
             int l0 = _v[bit].rank0(l);
@@ -248,7 +250,7 @@ class DynamicWaveletMatrix {
         return ans;
     }
 
-    int range_freq(int l, int r, int x, int y) const {
+    int range_freq(int l, int r, T x, T y) const {
         return range_freq(l, r, y) - range_freq(l, r, x);
     }
 
@@ -268,6 +270,36 @@ class DynamicWaveletMatrix {
 
     int range_count(int l, int r, T x) const {
         return rank(r, x) - rank(l, x);
+    }
+
+    /// 区間 `[l, r)` で値が `[lower, upper)` にある `k` 番目の位置を返す / `O(log^2(n)log(σ))`
+    /// 例: `[5, 1, 4, 1, 9]`, `[lower, upper) = [1, 5)`, `k = 2` なら `3`
+    int kth_index_in_value_range(const int l, const int r, const T lower, const T upper, const int k) const {
+        assert(0 <= k && k < range_freq(l, r, lower, upper));
+        int left = l;
+        int right = r;
+        while (right - left > 1) {
+            const int middle = (left + right) / 2;
+            if (range_freq(l, middle, lower, upper) <= k) {
+                left = middle;
+            } else {
+                right = middle;
+            }
+        }
+        return right - 1;
+    }
+
+    /// 区間 `[l, r)` で値が `[lower, upper)` にある最初の位置を返す / `O(log^2(n)log(σ))`
+    /// 例: `[5, 1, 4, 1, 9]`, `[lower, upper) = [1, 5)` なら `1`
+    int next_index_in_value_range(const int l, const int r, const T lower, const T upper) const {
+        return range_freq(l, r, lower, upper) == 0 ? -1 : kth_index_in_value_range(l, r, lower, upper, 0);
+    }
+
+    /// 区間 `[l, r)` で値が `[lower, upper)` にある最後の位置を返す / `O(log^2(n)log(σ))`
+    /// 例: `[5, 1, 4, 1, 9]`, `[lower, upper) = [1, 5)` なら `3`
+    int prev_index_in_value_range(const int l, const int r, const T lower, const T upper) const {
+        const int count = range_freq(l, r, lower, upper);
+        return count == 0 ? -1 : kth_index_in_value_range(l, r, lower, upper, count - 1);
     }
 
     vector<T> tovector() const {

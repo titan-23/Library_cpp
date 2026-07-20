@@ -401,9 +401,14 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 - **[注意]** クラス名が wavelet_matrix.cpp と同じ WaveletMatrix でテンプレート引数が異なるため、同時 include で再宣言エラー。
 - **[軽微]** `#pragma unroll` は GCC では未知プラグマ。
 
-### wavelet_matrix_cumulative_sum.cpp / wavelet_matrix_min.cpp
-- 正しい(重み集約・座標圧縮・y ビット木走査を確認)。min 版のクエリは O(log)。
-- **[軽微]** 負の座標は境界検索 `make_pair(x, (T)0)` の仮定に反する(非負前提を明記)。cumsum 版の log は sigma 基準で圧縮後より大きくなりがち。
+### wavelet_matrix_2d_sum.cpp
+- 同じ座標への登録を別々の点として保持する、静的な2次元点集合の総和版。
+- `range_sum`, `count_sum_lt`, `range_count`, `kth_y`, `sum_k_smallest_y`, `sum_k_largest_y` を持つ。
+- x・yとも座標圧縮しているため負の座標を扱える。総和APIでは負の重みも扱える。
+
+### wavelet_matrix_2d_min.cpp / wavelet_matrix_2d_monoid.cpp
+- min版は各レベルの静的RMQにより `range_min/max`, `range_argmin/argmax` を `O(log n)` で処理する。同値なら先に登録した点を選ぶ。
+- monoid版は各レベルのSegment Treeにより長方形内の `range_prod` を `O(log^2 n)` で処理する。演算は可換モノイドに限定される。
 
 ### wb_tree.cpp
 - 正しい(実数 ALPHA 方式)。

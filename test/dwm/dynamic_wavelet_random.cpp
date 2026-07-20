@@ -44,6 +44,18 @@ int naive_next(const vector<int> &a, const int l, const int r, const int lower) 
     return result == SIGMA ? -1 : result;
 }
 
+vector<pair<int, int>> naive_topk(const vector<int> &a, const int l, const int r, const int k) {
+    vector<int> count(SIGMA);
+    for (int i = l; i < r; ++i) ++count[a[i]];
+    vector<pair<int, int>> result;
+    for (int value = 0; value < SIGMA; ++value) {
+        if (count[value] > 0) result.emplace_back(value, count[value]);
+    }
+    sort(result.begin(), result.end(), [](const auto &a, const auto &b) { return a.second != b.second ? a.second > b.second : a.first > b.first; });
+    if (static_cast<int>(result.size()) > k) result.resize(k);
+    return result;
+}
+
 void verify_all(
     const titan23::DynamicWaveletMatrix<int> &matrix,
     const titan23::DynamicWaveletTree<int> &tree,
@@ -65,9 +77,10 @@ void run(const uint64_t seed) {
     vector<int> initial = expected;
     titan23::DynamicWaveletMatrix<int> matrix(SIGMA, initial);
     titan23::DynamicWaveletTree<int> tree(SIGMA, initial);
+    tree.reserve(500);
 
     for (int query = 0; query < 30000; ++query) {
-        int operation = static_cast<int>(rng() % 15);
+        int operation = static_cast<int>(rng() % 17);
         if (expected.empty()) operation = 0;
         if (expected.size() >= 500 && operation == 0) operation = 1;
 
@@ -87,7 +100,7 @@ void run(const uint64_t seed) {
             const int k = static_cast<int>(rng() % expected.size());
             const int value = (rng() & 1) ? static_cast<int>(rng() % SIGMA) : expected[k] ^ 1;
             matrix.set(k, value);
-            tree.set(k, value);
+            tree.set_key(k, value);
             expected[k] = value;
         } else if (operation == 3) {
             const int k = static_cast<int>(rng() % expected.size());
@@ -161,7 +174,7 @@ void run(const uint64_t seed) {
                     assert(matrix_value == majority);
                     assert(tree_value == majority);
                 }
-            } else {
+            } else if (operation == 13 || operation == 14) {
                 const int position = static_cast<int>(rng() % expected.size());
                 const int value = expected[position];
                 int occurrence = 0;
@@ -173,6 +186,15 @@ void run(const uint64_t seed) {
                     assert(matrix.pop(position) == value);
                     expected.erase(expected.begin() + position);
                 }
+            } else if (operation == 15) {
+                const int position = l + static_cast<int>(rng() % (r - l));
+                const int value = expected[position];
+                int occurrence = 0;
+                for (int i = l; i < position; ++i) occurrence += expected[i] == value;
+                assert(tree.range_select(l, r, occurrence, value) == position);
+            } else {
+                const int k = static_cast<int>(rng() % (SIGMA + 1));
+                assert(tree.topk(l, r, k) == naive_topk(expected, l, r, k));
             }
         }
 
@@ -184,6 +206,7 @@ void run(const uint64_t seed) {
 void test_sigma_one() {
     vector<int> expected(200, 0);
     titan23::DynamicWaveletTree<int> tree(1, expected);
+    tree.reserve(400);
     mt19937_64 rng(1234567);
 
     for (int query = 0; query < 10000; ++query) {
@@ -199,7 +222,7 @@ void test_sigma_one() {
             expected.erase(expected.begin() + k);
         } else if (operation == 2) {
             const int k = static_cast<int>(rng() % expected.size());
-            tree.set(k, 0);
+            tree.set_key(k, 0);
         } else if (operation == 3) {
             const int k = static_cast<int>(rng() % expected.size());
             assert(tree.access(k) == 0);
@@ -213,6 +236,10 @@ void test_sigma_one() {
         assert(tree.len() == static_cast<int>(expected.size()));
         assert(tree.tovector() == expected);
         assert(tree.rank(expected.size(), 0) == static_cast<int>(expected.size()));
+        if (!expected.empty()) {
+            assert(tree.range_select(0, expected.size(), expected.size() - 1, 0) == static_cast<int>(expected.size()) - 1);
+            assert((tree.topk(0, expected.size(), 1) == vector<pair<int, int>>{{0, static_cast<int>(expected.size())}}));
+        }
     }
 }
 

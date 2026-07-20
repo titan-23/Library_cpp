@@ -39,35 +39,33 @@ private:
     int bit_length(const unsigned long long n) const { return n == 0 ? 0 : 64 - __builtin_clzll(n); }
 
     W _zero_range_sum(const int bit, const int l, const int r) const {
-        const size_t base = static_cast<size_t>(bit) * _stride;
+        size_t base = static_cast<size_t>(bit) * _stride;
         return _zero_sum[base + r] - _zero_sum[base + l];
     }
 
     void _build(const vector<T> &keys, const vector<W> &weights) {
         assert(keys.size() == weights.size());
-        for (const T key : keys) assert(0 <= key && key < _sigma);
+        for (T key : keys) assert(0 <= key && key < _sigma);
 
         _original_sum.assign(_n + 1, W(0));
         for (int i = 0; i < _n; ++i) _original_sum[i + 1] = _original_sum[i] + weights[i];
 
-        vector<T> current_keys = keys;
-        vector<T> work_keys(_n);
-        vector<W> current_weights = weights;
-        vector<W> work_weights(_n);
+        vector<T> a = keys, na(_n);
+        vector<W> w = weights, nw(_n);
         _zero_sum.assign(static_cast<size_t>(_log) * _stride, W(0));
 
         for (int bit = _log - 1; bit >= 0; --bit) {
             _v[bit] = BitVector(_n);
-            const size_t base = static_cast<size_t>(bit) * _stride;
+            size_t offset = static_cast<size_t>(bit) * _stride;
             int zeros = 0;
             for (int i = 0; i < _n; ++i) {
-                const bool b = (current_keys[i] >> bit) & 1;
+                bool b = (a[i] >> bit) & 1;
                 if (b) {
                     _v[bit].set(i);
                 } else {
                     ++zeros;
                 }
-                _zero_sum[base + i + 1] = _zero_sum[base + i] + (b ? W(0) : current_weights[i]);
+                _zero_sum[offset + i + 1] = _zero_sum[offset + i] + (b ? W(0) : w[i]);
             }
             _v[bit].build();
             _mid[bit] = zeros;
@@ -75,42 +73,42 @@ private:
             int zero = 0;
             int one = zeros;
             for (int i = 0; i < _n; ++i) {
-                const bool b = (current_keys[i] >> bit) & 1;
-                const int index = b ? one++ : zero++;
-                work_keys[index] = current_keys[i];
-                work_weights[index] = current_weights[i];
+                bool b = (a[i] >> bit) & 1;
+                int p = b ? one++ : zero++;
+                na[p] = a[i];
+                nw[p] = w[i];
             }
-            current_keys.swap(work_keys);
-            current_weights.swap(work_weights);
+            a.swap(na);
+            w.swap(nw);
         }
 
         _leaf_sum.assign(_n + 1, W(0));
-        for (int i = 0; i < _n; ++i) _leaf_sum[i + 1] = _leaf_sum[i] + current_weights[i];
+        for (int i = 0; i < _n; ++i) _leaf_sum[i + 1] = _leaf_sum[i] + w[i];
     }
 
     W _sum_k(int l, int r, int k, const bool largest) const {
         if (k == 0) return W(0);
-        W current_sum = range_sum(l, r);
-        if (k == r - l) return current_sum;
+        W sum = range_sum(l, r);
+        if (k == r - l) return sum;
         if (_log == 0) return _leaf_sum[l + k] - _leaf_sum[l];
 
         W result = 0;
         for (int bit = _log - 1; bit >= 0; --bit) {
-            const int l0 = _v[bit].rank0(l);
-            const int r0 = _v[bit].rank0(r);
-            const int l1 = _mid[bit] + l - l0;
-            const int r1 = _mid[bit] + r - r0;
-            const int count0 = r0 - l0;
-            const int count1 = r1 - l1;
-            const W sum0 = _zero_range_sum(bit, l, r);
-            const W sum1 = current_sum - sum0;
-            const int preferred_count = largest ? count1 : count0;
-            const W preferred_sum = largest ? sum1 : sum0;
+            int l0 = _v[bit].rank0(l);
+            int r0 = _v[bit].rank0(r);
+            int l1 = _mid[bit] + l - l0;
+            int r1 = _mid[bit] + r - r0;
+            int count0 = r0 - l0;
+            int count1 = r1 - l1;
+            W sum0 = _zero_range_sum(bit, l, r);
+            W sum1 = sum - sum0;
+            int preferred_count = largest ? count1 : count0;
+            W preferred_sum = largest ? sum1 : sum0;
 
             if (k <= preferred_count) {
                 if (k == preferred_count) return result + preferred_sum;
                 if (bit == 0) {
-                    const int begin = largest ? l1 : l0;
+                    int begin = largest ? l1 : l0;
                     return result + _leaf_sum[begin + k] - _leaf_sum[begin];
                 }
                 if (largest) {
@@ -120,24 +118,24 @@ private:
                     l = l0;
                     r = r0;
                 }
-                current_sum = preferred_sum;
+                sum = preferred_sum;
                 continue;
             }
 
             result += preferred_sum;
             k -= preferred_count;
             if (bit == 0) {
-                const int begin = largest ? l0 : l1;
+                int begin = largest ? l0 : l1;
                 return result + _leaf_sum[begin + k] - _leaf_sum[begin];
             }
             if (largest) {
                 l = l0;
                 r = r0;
-                current_sum = sum0;
+                sum = sum0;
             } else {
                 l = l1;
                 r = r1;
-                current_sum = sum1;
+                sum = sum1;
             }
         }
         return result;
@@ -146,36 +144,36 @@ private:
     int _leaf_min_count(const int l, const int r, const T key, const W target) const {
         if constexpr (is_integral_v<T> && is_integral_v<W>) {
             if (_weight_is_key) {
-                const W weight = static_cast<W>(key);
+                W weight = static_cast<W>(key);
                 assert(weight > 0);
                 return static_cast<int>(target / weight + (target % weight != 0));
             }
         }
-        const W goal = _leaf_sum[l] + target;
-        const auto it = lower_bound(_leaf_sum.begin() + l + 1, _leaf_sum.begin() + r + 1, goal);
+        W goal = _leaf_sum[l] + target;
+        auto it = lower_bound(_leaf_sum.begin() + l + 1, _leaf_sum.begin() + r + 1, goal);
         assert(it != _leaf_sum.begin() + r + 1);
         return it - (_leaf_sum.begin() + l);
     }
 
     int _min_count_sum_ge(int l, int r, W target, const bool largest) const {
         if (target <= W(0)) return 0;
-        W current_sum = range_sum(l, r);
-        if (current_sum < target) return -1;
+        W sum = range_sum(l, r);
+        if (sum < target) return -1;
         if (_log == 0) return _leaf_min_count(l, r, 0, target);
 
         int result = 0;
         T key = 0;
         for (int bit = _log - 1; bit >= 0; --bit) {
-            const int l0 = _v[bit].rank0(l);
-            const int r0 = _v[bit].rank0(r);
-            const int l1 = _mid[bit] + l - l0;
-            const int r1 = _mid[bit] + r - r0;
-            const int count0 = r0 - l0;
-            const int count1 = r1 - l1;
-            const W sum0 = _zero_range_sum(bit, l, r);
-            const W sum1 = current_sum - sum0;
-            const int preferred_count = largest ? count1 : count0;
-            const W preferred_sum = largest ? sum1 : sum0;
+            int l0 = _v[bit].rank0(l);
+            int r0 = _v[bit].rank0(r);
+            int l1 = _mid[bit] + l - l0;
+            int r1 = _mid[bit] + r - r0;
+            int count0 = r0 - l0;
+            int count1 = r1 - l1;
+            W sum0 = _zero_range_sum(bit, l, r);
+            W sum1 = sum - sum0;
+            int preferred_count = largest ? count1 : count0;
+            W preferred_sum = largest ? sum1 : sum0;
 
             bool b;
             if (preferred_sum >= target) {
@@ -188,21 +186,108 @@ private:
             if (b) key |= static_cast<T>(1) << bit;
 
             if (bit == 0) {
-                const int begin = b ? l1 : l0;
-                const int end = b ? r1 : r0;
+                int begin = b ? l1 : l0;
+                int end = b ? r1 : r0;
                 return result + _leaf_min_count(begin, end, key, target);
             }
             if (b) {
                 l = l1;
                 r = r1;
-                current_sum = sum1;
+                sum = sum1;
             } else {
                 l = l0;
                 r = r0;
-                current_sum = sum0;
+                sum = sum0;
             }
         }
         return result;
+    }
+
+    template<class Pred>
+    tuple<int, T, W> _max_right(int l, int r, const bool largest, Pred pred) const {
+        assert(0 <= l && l <= r && r <= len());
+        assert(pred(W(0)));
+        int length = r - l;
+        W sum = range_sum(l, r);
+        if (pred(sum)) return {length, static_cast<T>(-1), sum};
+
+        int count = 0;
+        W aggregate = 0;
+        T key = 0;
+        if (_log == 0) {
+            int ok = 0;
+            int ng = length + 1;
+            while (ng - ok > 1) {
+                int mid = (ok + ng) / 2;
+                if (pred(_leaf_sum[l + mid] - _leaf_sum[l])) {
+                    ok = mid;
+                } else {
+                    ng = mid;
+                }
+            }
+            return {ok, 0, _leaf_sum[l + ok] - _leaf_sum[l]};
+        }
+
+        for (int bit = _log - 1; bit >= 0; --bit) {
+            int l0 = _v[bit].rank0(l);
+            int r0 = _v[bit].rank0(r);
+            int l1 = _mid[bit] + l - l0;
+            int r1 = _mid[bit] + r - r0;
+            int count0 = r0 - l0;
+            int count1 = r1 - l1;
+            W sum0 = _zero_range_sum(bit, l, r);
+            W sum1 = sum - sum0;
+            int preferred_count = largest ? count1 : count0;
+            W preferred_sum = largest ? sum1 : sum0;
+
+            bool b;
+            if (pred(aggregate + preferred_sum)) {
+                count += preferred_count;
+                aggregate += preferred_sum;
+                b = !largest;
+            } else {
+                b = largest;
+            }
+            if (b) key |= static_cast<T>(1) << bit;
+
+            if (bit == 0) {
+                int begin = b ? l1 : l0;
+                int end = b ? r1 : r0;
+                int ok = 0;
+                int ng = end - begin + 1;
+                while (ng - ok > 1) {
+                    int mid = (ok + ng) / 2;
+                    if (pred(aggregate + _leaf_sum[begin + mid] - _leaf_sum[begin])) {
+                        ok = mid;
+                    } else {
+                        ng = mid;
+                    }
+                }
+                aggregate += _leaf_sum[begin + ok] - _leaf_sum[begin];
+                return {count + ok, key, aggregate};
+            }
+            if (b) {
+                l = l1;
+                r = r1;
+                sum = sum1;
+            } else {
+                l = l0;
+                r = r0;
+                sum = sum0;
+            }
+        }
+        assert(false);
+        return {};
+    }
+
+    W _quantile_target(const W total, const long long numerator, const long long denominator) const {
+        if constexpr (is_integral_v<W>) {
+            W den = static_cast<W>(denominator);
+            W num = static_cast<W>(numerator);
+            return total / den * num + (total % den * num + den - 1) / den;
+        } else {
+            return total * static_cast<W>(numerator) / static_cast<W>(denominator);
+        }
     }
 
 public:
@@ -288,6 +373,36 @@ public:
         return r - l;
     }
 
+    /// 区間 `[l, r)` でキーが `[lower, upper)` にある `k` 番目の位置を返す / `O(log(n)log(σ))`
+    /// 例: `[5, 1, 4, 1, 9]`, `[lower, upper) = [1, 5)`, `k = 2` なら `3`
+    int kth_index_in_value_range(const int l, const int r, const T lower, const T upper, const int k) const {
+        assert(0 <= k && k < range_freq(l, r, lower, upper));
+        int left = l;
+        int right = r;
+        while (right - left > 1) {
+            int middle = (left + right) / 2;
+            if (range_freq(l, middle, lower, upper) <= k) {
+                left = middle;
+            } else {
+                right = middle;
+            }
+        }
+        return right - 1;
+    }
+
+    /// 区間 `[l, r)` でキーが `[lower, upper)` にある最初の位置を返す / `O(log(n)log(σ))`
+    /// 例: `[5, 1, 4, 1, 9]`, `[lower, upper) = [1, 5)` なら `1`
+    int next_index_in_value_range(const int l, const int r, const T lower, const T upper) const {
+        return range_freq(l, r, lower, upper) == 0 ? -1 : kth_index_in_value_range(l, r, lower, upper, 0);
+    }
+
+    /// 区間 `[l, r)` でキーが `[lower, upper)` にある最後の位置を返す / `O(log(n)log(σ))`
+    /// 例: `[5, 1, 4, 1, 9]`, `[lower, upper) = [1, 5)` なら `3`
+    int prev_index_in_value_range(const int l, const int r, const T lower, const T upper) const {
+        int count = range_freq(l, r, lower, upper);
+        return count == 0 ? -1 : kth_index_in_value_range(l, r, lower, upper, count - 1);
+    }
+
     /// `k` 番目の `key` の位置を返す / `O(log(n)log(σ))`
     int select(int k, const T key) const {
         assert(0 <= key && key < _sigma);
@@ -323,9 +438,9 @@ public:
         assert(0 <= k && k < r - l);
         T result = 0;
         for (int bit = _log - 1; bit >= 0; --bit) {
-            const int l0 = _v[bit].rank0(l);
-            const int r0 = _v[bit].rank0(r);
-            const int count0 = r0 - l0;
+            int l0 = _v[bit].rank0(l);
+            int r0 = _v[bit].rank0(r);
+            int count0 = r0 - l0;
             if (count0 <= k) {
                 result |= static_cast<T>(1) << bit;
                 k -= count0;
@@ -345,13 +460,13 @@ public:
     /// 区間 `[l, r)` に過半数を占めるキーがあるか判定する / `O(log(σ))`
     pair<bool, T> has_majority(int l, int r) const {
         assert(0 <= l && l < r && r <= len());
-        const int majority = (r - l) / 2 + 1;
+        int majority = (r - l) / 2 + 1;
         T result = 0;
         for (int bit = _log - 1; bit >= 0; --bit) {
-            const int l0 = _v[bit].rank0(l);
-            const int r0 = _v[bit].rank0(r);
-            const int count0 = r0 - l0;
-            const int count1 = (r - l) - count0;
+            int l0 = _v[bit].rank0(l);
+            int r0 = _v[bit].rank0(r);
+            int count0 = r0 - l0;
+            int count1 = (r - l) - count0;
             if (count0 >= majority) {
                 l = l0;
                 r = r0;
@@ -375,19 +490,19 @@ public:
         priority_queue<tuple<int, T, int, int>> heap;
         heap.emplace(r - l, 0, l, _log - 1);
         while (!heap.empty() && k > 0) {
-            const auto [length, key, left, bit] = heap.top();
+            auto [length, key, left, bit] = heap.top();
             heap.pop();
             if (bit < 0) {
                 result.emplace_back(key, length);
                 --k;
                 continue;
             }
-            const int right = left + length;
-            const int l0 = _v[bit].rank0(left);
-            const int r0 = _v[bit].rank0(right);
+            int right = left + length;
+            int l0 = _v[bit].rank0(left);
+            int r0 = _v[bit].rank0(right);
             if (l0 < r0) heap.emplace(r0 - l0, key, l0, bit - 1);
-            const int l1 = _mid[bit] + left - l0;
-            const int r1 = _mid[bit] + right - r0;
+            int l1 = _mid[bit] + left - l0;
+            int r1 = _mid[bit] + right - r0;
             if (l1 < r1) heap.emplace(r1 - l1, key | (static_cast<T>(1) << bit), l1, bit - 1);
         }
         return result;
@@ -400,8 +515,8 @@ public:
         if (upper >= _sigma) return r - l;
         int result = 0;
         for (int bit = _log - 1; bit >= 0; --bit) {
-            const int l0 = _v[bit].rank0(l);
-            const int r0 = _v[bit].rank0(r);
+            int l0 = _v[bit].rank0(l);
+            int r0 = _v[bit].rank0(r);
             if ((upper >> bit) & 1) {
                 result += r0 - l0;
                 l = _mid[bit] + l - l0;
@@ -422,13 +537,13 @@ public:
 
     /// 区間 `[l, r)` で `upper` 未満のうち最大のキーを返す / `O(log(σ))`
     T prev_value(const int l, const int r, const T upper) const {
-        const int count = range_freq(l, r, upper);
+        int count = range_freq(l, r, upper);
         return count == 0 ? static_cast<T>(-1) : kth_smallest(l, r, count - 1);
     }
 
     /// 区間 `[l, r)` で `lower` 以上のうち最小のキーを返す / `O(log(σ))`
     T next_value(const int l, const int r, const T lower) const {
-        const int count = range_freq(l, r, lower);
+        int count = range_freq(l, r, lower);
         return count == r - l ? static_cast<T>(-1) : kth_smallest(l, r, count);
     }
 
@@ -446,8 +561,8 @@ public:
         int count = 0;
         W sum = 0;
         for (int bit = _log - 1; bit >= 0; --bit) {
-            const int l0 = _v[bit].rank0(l);
-            const int r0 = _v[bit].rank0(r);
+            int l0 = _v[bit].rank0(l);
+            int r0 = _v[bit].rank0(r);
             if ((upper >> bit) & 1) {
                 count += r0 - l0;
                 sum += _zero_range_sum(bit, l, r);
@@ -484,8 +599,71 @@ public:
         return _sum_k(l, r, k, true);
     }
 
+    /// 小さいキーから集約した重みに対して `pred` が真である最大範囲を返す / `O(log(σ)+log(n))`
+    /// 返り値は `(count, boundary_value, aggregate)`
+    /// `pred(0) == true` で、要素を加える順に一度偽になると真へ戻らないことを前提とする
+    /// 例: `[(1, 2), (2, 3), (3, 5)]`, `pred(sum) = (sum <= 4)` なら `(1, 2, 2)`
+    template<class Pred>
+    tuple<int, T, W> max_right_smallest(const int l, const int r, Pred pred) const {
+        return _max_right(l, r, false, pred);
+    }
+
+    /// 大きいキーから集約した重みに対して `pred` が真である最大範囲を返す / `O(log(σ)+log(n))`
+    /// 返り値は `(count, boundary_value, aggregate)`
+    /// `pred(0) == true` で、要素を加える順に一度偽になると真へ戻らないことを前提とする
+    /// 例: `[(1, 2), (2, 3), (3, 5)]`, `pred(sum) = (sum <= 6)` なら `(1, 2, 5)`
+    template<class Pred>
+    tuple<int, T, W> max_right_largest(const int l, const int r, Pred pred) const {
+        return _max_right(l, r, true, pred);
+    }
+
+    /// 小さいキーから採用し、重みの総和が `budget` 以下である最大個数を返す / `O(log(σ)+log(n))`
+    /// 全要素の重みが非負であることを前提とする
+    /// 例: `[(1, 2), (2, 3), (3, 5)]`, `budget = 4` なら `1`
+    int max_count_smallest_sum_le(const int l, const int r, const W budget) const {
+        assert(budget >= W(0));
+        auto [count, value, sum] = max_right_smallest(l, r, [&](W sum) { return sum <= budget; });
+        return count;
+    }
+
+    /// 大きいキーから採用し、重みの総和が `budget` 以下である最大個数を返す / `O(log(σ)+log(n))`
+    /// 全要素の重みが非負であることを前提とする
+    /// 例: `[(1, 2), (2, 3), (3, 5)]`, `budget = 6` なら `1`
+    int max_count_largest_sum_le(const int l, const int r, const W budget) const {
+        assert(budget >= W(0));
+        auto [count, value, sum] = max_right_largest(l, r, [&](W sum) { return sum <= budget; });
+        return count;
+    }
+
+    /// 小さいキーからの累積重みが初めて `target` 以上になるキーを返す / `O(log(σ)+log(n))`
+    /// 全要素の重みが非負で、`0 < target <= range_sum(l, r)` であることを前提とする
+    /// 例: `[(1, 2), (2, 3), (3, 5)]`, `target = 4` なら `2`
+    T weighted_quantile(const int l, const int r, const W target) const {
+        assert(W(0) < target && target <= range_sum(l, r));
+        auto [count, value, sum] = max_right_smallest(l, r, [&](W sum) { return sum < target; });
+        return value;
+    }
+
+    /// 重み付き `numerator / denominator` 分位点を返す / `O(log(σ)+log(n))`
+    /// 全要素の重みが非負であることを前提とする
+    /// 例: `[(1, 2), (2, 3), (3, 5)]`, `numerator / denominator = 1 / 2` なら `2`
+    T weighted_quantile(const int l, const int r, const long long numerator, const long long denominator) const {
+        assert(0 < numerator && numerator <= denominator);
+        W total = range_sum(l, r);
+        assert(total > W(0));
+        return weighted_quantile(l, r, _quantile_target(total, numerator, denominator));
+    }
+
+    /// 重み付き中央値を返す / `O(log(σ)+log(n))`
+    /// 全要素の重みが非負であることを前提とする
+    /// 例: `[(1, 2), (2, 3), (3, 5)]` なら `2`
+    T weighted_median(const int l, const int r) const {
+        return weighted_quantile(l, r, 1, 2);
+    }
+
     /// 小さいキーから採用し、重みの総和が `target` 以上になる最小個数を返す / 一般重みは `O(log(σ)+log(n))`、`weight = key` は `O(log(σ))`
     /// 重みが非負であることを前提とし、達成できない場合は `-1` を返す
+    /// 例: `[(1, 2), (2, 3), (3, 5)]`, `target = 4` なら `2`
     int min_count_smallest_sum_ge(const int l, const int r, const W target) const {
         assert(0 <= l && l <= r && r <= len());
         return _min_count_sum_ge(l, r, target, false);
@@ -493,6 +671,7 @@ public:
 
     /// 大きいキーから採用し、重みの総和が `target` 以上になる最小個数を返す / 一般重みは `O(log(σ)+log(n))`、`weight = key` は `O(log(σ))`
     /// 重みが非負であることを前提とし、達成できない場合は `-1` を返す
+    /// 例: `[(1, 2), (2, 3), (3, 5)]`, `target = 4` なら `1`
     int min_count_largest_sum_ge(const int l, const int r, const W target) const {
         assert(0 <= l && l <= r && r <= len());
         return _min_count_sum_ge(l, r, target, true);

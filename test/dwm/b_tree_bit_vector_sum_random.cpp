@@ -107,7 +107,7 @@ void run(const uint64_t seed) {
     BitVector tree;
     auto sequence = tree.build(bits, order, weights, 0, bits.size());
     for (int query = 0; query < 30000; ++query) {
-        int operation = rng() % 7;
+        int operation = rng() % 8;
         if (bits.empty()) operation = 0;
         if (bits.size() >= 500 && operation == 0) operation = 1;
 
@@ -146,6 +146,14 @@ void run(const uint64_t seed) {
                 bits.erase(bits.begin() + position);
                 weights.erase(weights.begin() + position);
             }
+        } else if (operation == 4) {
+            const int k = rng() % bits.size();
+            const Weight delta = rng() % 20;
+            const auto result = tree.add_weight(sequence, k, delta);
+            assert(result.bit == bits[k]);
+            assert(result.rank1 == rank1(bits, k));
+            assert(result.weight == weights[k]);
+            weights[k] += delta;
         }
 
         if (query % 131 == 0) verify(tree, sequence, bits, weights, rng);

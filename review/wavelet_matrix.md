@@ -1,4 +1,4 @@
-# Wavelet Matrix 系データ構造の整理と拡張案
+# Wavelet Matrix 系データ構造の整理と実装状況
 
 ## 1. 目的
 
@@ -6,8 +6,8 @@
 
 - 各実装の現在の役割
 - 既存APIの差異
-- 総和・重み付きクエリの追加案
-- 静的版・動的版それぞれに追加したい機能
+- 総和・重み付きクエリ
+- 静的版・動的版へ追加した機能
 - 追加前に整理したい仕様・境界条件
 - 推奨するクラス構成と実装順序
 
@@ -26,62 +26,42 @@
 
 | ファイル | クラス | 主な用途 | 現在の主な機能 |
 |---|---|---|---|
-| [`wavelet_matrix.cpp`](../titan_cpplib/ds/wavelet_matrix.cpp) | `WaveletMatrix<T>` | 通常の静的な配列 | `access`, `rank`, `select`, `kth_smallest`, `kth_largest`, `topk`, `range_freq`, `prev_value`, `next_value`, `sum` |
+| [`wavelet_matrix.cpp`](../titan_cpplib/ds/wavelet_matrix.cpp) | `WaveletMatrix<T>` | 通常の静的な配列 | 通常の検索API、majority、値域内の元配列位置探索 |
 | [`wavelet_matrix_sum.cpp`](../titan_cpplib/ds/wavelet_matrix_sum.cpp) | `WaveletMatrixSum<T, W>` | 総和付きの静的な配列 | 通常の検索API、値域総和、昇順・降順先頭 `k` 個の総和、目標和へ達する最小個数 |
 | [`wavelet_matrix_fenwick.cpp`](../titan_cpplib/ds/wavelet_matrix_fenwick.cpp) | `WaveletMatrixFenwick<T, W>` | キー固定・重み更新可能な配列 | 静的総和版と共通のAPI、`set_weight`, `add_weight` |
 | [`wavelet_matrix_bit.cpp`](../titan_cpplib/ds/wavelet_matrix_bit.cpp) | `WaveletMatrix<T, log>` | ビット幅をコンパイル時に固定した静的版 | 通常版とほぼ同じ検索API |
-| [`wavelet_matrix_cumulative_sum.cpp`](../titan_cpplib/ds/wavelet_matrix_cumulative_sum.cpp) | `WaveletMatrixCumulativeSum<T, W>` | オフライン2次元点集合の重み総和 | 点の登録、構築、長方形領域の総和 |
-| [`wavelet_matrix_min.cpp`](../titan_cpplib/ds/wavelet_matrix_min.cpp) | `WaveletMatrixMin<T, W>` | オフライン2次元点集合の最小値 | 点の登録、構築、長方形領域の最小値 |
+| [`wavelet_matrix_2d_sum.cpp`](../titan_cpplib/ds/wavelet_matrix_2d_sum.cpp) | `WaveletMatrix2DSum<T, W>` | オフライン2次元点集合の重み総和 | 長方形和、個数、`kth_y`、昇順・降順先頭 `k` 点の総和 |
+| [`wavelet_matrix_2d_min.cpp`](../titan_cpplib/ds/wavelet_matrix_2d_min.cpp) | `WaveletMatrix2DMin<T, W>` | オフライン2次元点集合の最小値・最大値 | `range_min/max`, `range_argmin/argmax` |
+| [`wavelet_matrix_2d_monoid.cpp`](../titan_cpplib/ds/wavelet_matrix_2d_monoid.cpp) | `WaveletMatrix2DMonoid<T, S, op, e>` | オフライン2次元点集合の可換モノイド積 | 長方形内の `range_prod` |
 | [`dynamic_wavelet_matrix.cpp`](../titan_cpplib/ds/dynamic_wavelet_matrix.cpp) | `DynamicWaveletMatrix<T>` | 各ビットレベルに動的ビット列を持つ可変長配列 | 挿入、削除、更新、順位・頻度検索、`topk`, majority |
 | [`dynamic_wavelet_tree.cpp`](../titan_cpplib/ds/dynamic_wavelet_tree.cpp) | `DynamicWaveletTree<T>` | キーのprefixごとにNodeを持つ可変長配列 | 挿入、削除、更新、順位・頻度検索、majority |
 | [`dynamic_wavelet_tree_sum.cpp`](../titan_cpplib/ds/dynamic_wavelet_tree_sum.cpp) | `DynamicWaveletTreeSum<T, W>` | 総和付きの可変長配列 | 挿入、削除、更新、検索API、静的総和版と共通の総和API |
 
 ### 2.1 通常の静的 `WaveletMatrix`
 
-一般的な1次元配列の Wavelet Matrix である。検索系APIは概ね揃っている。
+一般的な1次元配列の Wavelet Matrix である。検索系APIに加え、`has_majority`, `range_select`, `tovector` と値域内の元配列位置探索を備える。
 
-現在の `sum(l, r)` は、`topk(l, r, r-l)` で区間内の相異なる値を列挙し、`value * count` を加算している。このため、計算量は `O(D L)` となる。単純な区間総和としては重く、総和付き Wavelet Matrix の代用にはならない。
+以前の `sum(l, r)` は、区間内の相異なる値を列挙する `O(DL)` の実装だったため削除した。総和には `WaveletMatrixSum` または `WaveletMatrixFenwick` を使う。
 
 ### 2.2 固定ビット幅版 `wavelet_matrix_bit.cpp`
 
 ビット数をテンプレート引数にして `std::array` を使う実装である。ループの展開や動的配列の回避を狙った高速版と考えられる。
 
-ただし、通常版と同じ名前空間に同じクラス名 `WaveletMatrix` を定義しているため、両方を同時にincludeできない。役割を明確にするため、例えば `WaveletMatrixFixed<T, LOG>` への改名が望ましい。
+通常版と同じ名前空間に同じクラス名 `WaveletMatrix` を定義しているため、両方を同時にincludeできない。クラス名は現状のままとする。
 
-また、現在の `sum()` は `assert(false)` で利用不能になっている。総和を提供しないならAPI自体を削除し、提供するなら総和付き固定ビット幅版として実装を分けた方が安全である。
+現在の `sum()` は `assert(false)` で利用不能だが、今回の整理対象にはせず現状のまま残す。
 
-### 2.3 `WaveletMatrixCumulativeSum`
+### 2.3 `WaveletMatrix2DSum`
 
-これは通常の配列WMというより、点 `(x, y)` に重み `w` を持たせたオフライン2次元データ構造である。
+点 `(x, y)` と重みを先に登録して構築する、オフライン2次元データ構造である。長方形和に加え、`y` による個数・順位・先頭 `k` 点の総和を提供する。
 
-```cpp
-sum(x1, x2, y1, y2)
-```
+同じ座標への複数登録は別々の点として数える。総和では全登録の重みを加え、`range_count` と `kth_y` では登録回数を使う。
 
-により、領域
+### 2.4 `WaveletMatrix2DMin` と `WaveletMatrix2DMonoid`
 
-```text
-[x1, x2) × [y1, y2)
-```
+`WaveletMatrix2DMin` は各レベルに静的RMQを持ち、長方形内の最小値・最大値とその点を返す。同値の場合は先に登録した点を選ぶ。
 
-にある点の重み総和を求められる。
-
-配列 `a` から構築するコンストラクタでは、点 `(i, a[i])` に重み `a[i]` を設定している。そのため、実質的に
-
-```text
-インデックスが [l, r)
-かつ値が [lower, upper)
-```
-
-である要素の総和を既に計算できる。
-
-一方で、通常の1次元WMとしての `rank`, `kth_smallest`, `sum_k_smallest` などは公開されていない。
-
-### 2.4 `WaveletMatrixMin`
-
-`WaveletMatrixCumulativeSum` と同様に、オフライン2次元点集合を対象とする。長方形領域内の重みの最小値を返す。
-
-通常の配列に対する「値で絞り込んだ集約」という点では総和版と同じ構造だが、累積和ではなく静的RMQを各レベルに持っている。
+`WaveletMatrix2DMonoid` は各レベルにSegment Treeを持つ一般化版である。2次元点集合には自然な積順序がないため、演算が可換であることを前提とする。
 
 ### 2.5 `DynamicWaveletMatrix`
 
@@ -105,8 +85,8 @@ T access(int k) const;
 int rank(int r, T value) const;
 int range_count(int l, int r, T value) const;
 
-int count_lt(int l, int r, T upper) const;
-int count_range(int l, int r, T lower, T upper) const;
+int range_freq(int l, int r, T upper) const;
+int range_freq(int l, int r, T lower, T upper) const;
 
 T kth_smallest(int l, int r, int k) const;
 T kth_largest(int l, int r, int k) const;
@@ -124,14 +104,14 @@ int len() const;
 vector<T> tovector() const;
 ```
 
-既存の `range_freq` は、
+値域の個数取得には、既存の次のオーバーロードをそのまま使う。
 
 ```cpp
 range_freq(l, r, upper)
 range_freq(l, r, lower, upper)
 ```
 
-の2通りにオーバーロードされている。互換性のため残しつつ、意味が明確な `count_lt` と `count_range` を別名として提供する案もある。
+`count_lt` と `count_range` の別名は追加しない。
 
 ## 4. 総和・重み付きクエリ
 
@@ -310,41 +290,21 @@ WMを使った二分探索には、次の2通りがある。
 
 #### 4.5.1 値順の `max_right`
 
-中心となる内部プリミティブは次の形である。
+`WaveletMatrixSum`, `WaveletMatrixFenwick`, `DynamicWaveletTreeSum` に次のAPIを実装した。
 
 ```cpp
 template<class Pred>
-int max_count_smallest(
-    int l,
-    int r,
-    Pred pred
-) const;
+tuple<int, T, W> max_right_smallest(int l, int r, Pred pred) const;
 
 template<class Pred>
-int max_count_largest(
-    int l,
-    int r,
-    Pred pred
-) const;
+tuple<int, T, W> max_right_largest(int l, int r, Pred pred) const;
 ```
 
-`max_count_smallest` は、区間 `[l, r)` をキーの昇順に並べ、その先頭から集約した値 `aggregate` について、`pred(aggregate)` が真である最大の要素数を返す。`max_count_largest` は降順版である。
+返り値は `(count, boundary_value, aggregate)` の順である。`count` は採用できた個数、`boundary_value` は次に採用する要素のキー、`aggregate` は採用済みの重みの総和を表す。全要素を採用できた場合の `boundary_value` は `-1` とする。
 
-Segment Treeの `max_right` を、元配列の位置順ではなくキーの値順に行う操作に相当する。`pred(identity) == true` であり、一度偽になった後は偽のままであることを前提とする。
+個数だけが必要なら、返り値の `get<0>` を使う。単なる別名となる汎用の `max_count_smallest` と `max_count_largest` は提供しない。
 
-必要なら、個数だけでなく次も同じ探索から返せる。
-
-```cpp
-struct ValueOrderSearchResult {
-    int count;
-    T boundary_value;
-    W aggregate;
-};
-```
-
-- `count`: 条件を満たす範囲で採用できた個数
-- `boundary_value`: 次に採用すると条件が変わる要素のキー
-- `aggregate`: 採用済み要素の集約値
+Segment Treeの `max_right` を、元配列の位置順ではなくキーの値順に行う操作に相当する。`pred(0) == true` であり、要素を加える順に一度偽になった後は偽のままであることを前提とする。
 
 同じキーを持つ要素を途中まで採る場合は、葉の中でも `max_right` を行う。
 
@@ -362,7 +322,7 @@ struct ValueOrderSearchResult {
 | 重み付き `q` 分位点 | `target = ceil(total_weight * q)` とした境界キー |
 | 累積重みが指定割合へ達する最初のキー | `prefix_weight < target` |
 
-公開APIの候補は次の通りである。
+次の公開APIを実装した。
 
 ```cpp
 int max_count_smallest_sum_le(
@@ -394,9 +354,18 @@ T weighted_quantile(
     int r,
     W target
 ) const;
+
+T weighted_quantile(
+    int l,
+    int r,
+    long long numerator,
+    long long denominator
+) const;
+
+T weighted_median(int l, int r) const;
 ```
 
-`weighted_quantile` の `target` は、昇順の累積重みが初めて `target` 以上になるキーを求めるものとする。中央値や割合指定の分位点はこのラッパーとして提供できる。
+3引数の `weighted_quantile` は、昇順の累積重みが初めて `target` 以上になるキーを返す。4引数版は `numerator / denominator` 分位点、`weighted_median` はその `1 / 2` ラッパーである。
 
 #### 4.5.3 総和以外から導出する操作
 
@@ -411,7 +380,7 @@ T weighted_quantile(
 | 最小値 | `minimum > target` | 最小値が閾値以下になる最小個数 |
 | gcd | `gcd != 1` | gcdが初めて1になる最小個数 |
 
-ここで集約対象はキー自身とは限らず、各キーに付随する重み・属性でもよい。キー自身の最大値を昇順に集約する場合など、既存の `count_lt` や `kth_smallest` へ単純化できるものもある。
+ここで集約対象はキー自身とは限らず、各キーに付随する重み・属性でもよい。キー自身の最大値を昇順に集約する場合など、既存の `range_freq` や `kth_smallest` へ単純化できるものもある。
 
 通常の静的WMで枝の区間集約を取得する方法は、演算によって異なる。
 
@@ -442,7 +411,7 @@ sum_lt(l, r, value)
 
 #### 4.5.5 元配列上の位置を求める探索
 
-値順ではなく元配列上の位置を求める場合は、外側の二分探索が有用である。
+値順ではなく元配列上の位置を求める次のAPIを、配列を扱う各WMへ実装した。
 
 ```cpp
 int next_index_in_value_range(
@@ -471,12 +440,14 @@ int kth_index_in_value_range(
 例えば `next_index_in_value_range` は、
 
 ```text
-count_range(l, mid, lower, upper) > 0
+range_freq(l, mid, lower, upper) > 0
 ```
 
 を満たす最小の `mid` を二分探索すれば求められる。`kth_index_in_value_range` では右辺を `> k` にする。
 
-ただし、値が1種類に固定されている場合は既存の `rank` と `select` を組み合わせた方が速い。値域全体を対象とする位置探索だけを二分探索の候補とする。
+`next` と `prev` は該当要素がなければ `-1` を返す。`kth` の `k` は0-indexedであり、該当個数未満であることを前提とする。
+
+値が1種類に固定されている場合は、既存の `rank` と `select` を組み合わせた方が速い。
 
 #### 4.5.6 計算量
 
@@ -567,9 +538,9 @@ void add_weight(int k, W delta);
 
 `min_count_smallest_sum_ge` と `min_count_largest_sum_ge` を使う場合は、更新後を含めて全要素の重みが非負であることを前提とする。その他の総和APIでは負の重みも扱える。
 
-### 5.4 追加したい非総和API
+### 5.4 追加した非総和API
 
-通常の静的 `WaveletMatrix` には、動的版とのAPI統一のため次を追加する候補がある。
+通常の静的 `WaveletMatrix` に次を追加した。
 
 ```cpp
 has_majority(l, r)
@@ -583,159 +554,66 @@ tovector()
 select(rank(l, value) + k, value)
 ```
 
-## 6. 固定ビット幅版への追加案
+列挙で総和を求めていた既存の `sum()` は削除した。総和が必要なら `WaveletMatrixSum` または `WaveletMatrixFenwick` を使う。
 
-固定ビット幅版は、通常版とAPIを揃えつつ、クラス名を分離する。
+## 6. 固定ビット幅版のAPI整理
 
-```cpp
-template<typename T, int LOG>
-class WaveletMatrixFixed;
-```
+固定ビット幅版はクラス名と `sigma` の仕様を変更せず、総和付き固定ビット幅版も追加しない。
 
-総和を必要とする場合は、軽量版を太らせず、別クラスにする案が自然である。
+通常版とのAPI統一のため、次を追加した。
 
-```cpp
-template<typename T, typename W, int LOG>
-class WaveletMatrixFixedSum;
-```
+- `has_majority`
+- `range_select`
+- `tovector`
+- `next_index_in_value_range`
+- `prev_index_in_value_range`
+- `kth_index_in_value_range`
 
-固定ビット幅版については、現在次の点も整理が必要である。
+`topk` の返り値型は `vector<pair<T, int>>` に修正した。既存の利用不能な `sum()` はそのまま残している。
 
-- 通常版と同名で同時includeできない
-- `sum()` が `assert(false)` になっている
-- `topk` の返り値型が `T` ではなく `int` に固定されている箇所がある
-- `sigma` が上端、最大値、ビットマスクのどれを表すかが曖昧
+## 7. `WaveletMatrix2DSum`
 
-## 7. `WaveletMatrixCumulativeSum` への追加案
-
-現在の長方形和を基礎に、次のAPIを追加すると、2次元点集合として機能が揃う。
+[`wavelet_matrix_2d_sum.cpp`](../titan_cpplib/ds/wavelet_matrix_2d_sum.cpp) に次を実装した。
 
 ```cpp
 W range_sum(T x1, T x2) const;
-
-W sum_lt(
-    T x1,
-    T x2,
-    T y
-) const;
-
-pair<int, W> count_sum_lt(
-    T x1,
-    T x2,
-    T y
-) const;
-
-int range_count(
-    T x1,
-    T x2,
-    T y1,
-    T y2
-) const;
-
-T kth_y(
-    T x1,
-    T x2,
-    int k
-) const;
-
-W sum_k_smallest_y(
-    T x1,
-    T x2,
-    int k
-) const;
-
-W sum_k_largest_y(
-    T x1,
-    T x2,
-    int k
-) const;
+W range_sum(T x1, T x2, T y1, T y2) const;
+W sum_lt(T x1, T x2, T upper) const;
+pair<int, W> count_sum_lt(T x1, T x2, T upper) const;
+int range_count(T x1, T x2, T y1, T y2) const;
+T kth_y(T x1, T x2, int k) const;
+W sum_k_smallest_y(T x1, T x2, int k) const;
+W sum_k_largest_y(T x1, T x2, int k) const;
 ```
 
-クラス名は、通常の配列向け総和WMと区別するため、例えば次のようにする。
+点は `add_point(x, y, weight)` で登録してから `build()` する。同じ座標への登録をuniqueせず、1登録を1点として保持する。
+
+同じ `y` の途中で `sum_k_smallest_y` または `sum_k_largest_y` が打ち切られる場合は、`x` の昇順、同じ `x` では登録順に採用する。
+
+## 8. `WaveletMatrix2DMin` と `WaveletMatrix2DMonoid`
+
+[`wavelet_matrix_2d_min.cpp`](../titan_cpplib/ds/wavelet_matrix_2d_min.cpp) に次を実装した。
 
 ```cpp
-WaveletMatrix2DSum<X, Y, W>
+W range_min(T x1, T x2, T y1, T y2) const;
+tuple<W, T, T> range_argmin(T x1, T x2, T y1, T y2) const;
+W range_max(T x1, T x2, T y1, T y2) const;
+tuple<W, T, T> range_argmax(T x1, T x2, T y1, T y2) const;
 ```
 
-### 7.1 重複点の仕様
+`range_argmin` と `range_argmax` の返り値は `(weight, x, y)` である。問い合わせ長方形に点が存在することを前提とし、重みが同じなら先に登録した点を返す。
 
-現在の構築処理では座標 `(x, y)` をuniqueし、同じ座標の重みを同じ位置へ加算している。
+[`wavelet_matrix_2d_monoid.cpp`](../titan_cpplib/ds/wavelet_matrix_2d_monoid.cpp) の `WaveletMatrix2DMonoid<T, S, op, e>` は、長方形内の `range_prod` を提供する。`op` は可換モノイドであることを前提とする。
 
-したがって、現状の総和については重複点の重みが合算される。一方、`count` や `kth_y` を追加する場合は、
+総和版は累積和、Min版は静的RMQ、一般モノイド版はSegment Treeを各レベルに持つ。専用版の方が一般モノイド版より高速かつ省メモリである。
 
-- 同一座標の複数登録を複数点として数える
-- 同一座標を1点として数える
+## 9. `DynamicWaveletMatrix` の総和版
 
-のどちらかを明確にする必要がある。
+`DynamicWaveletMatrixSum<T, W>` は追加しない。動的なキー・重み・配列長と総和クエリを同時に扱う用途には、実装済みの `DynamicWaveletTreeSum<T, W>` を使う。
 
-## 8. `WaveletMatrixMin` への追加案
+`DynamicWaveletMatrix` に同じ重み情報を追加すると検索専用版まで重くなり、別クラスにすると重い動的総和構造が重複するためである。
 
-総和とは別の2次元集約構造として、次の追加が考えられる。
-
-```cpp
-W range_min(x1, x2, y1, y2) const;
-pair<W, Point> range_argmin(x1, x2, y1, y2) const;
-
-W range_max(x1, x2, y1, y2) const;
-pair<W, Point> range_argmax(x1, x2, y1, y2) const;
-```
-
-一般化する場合は次のようなモノイド版も考えられる。
-
-```cpp
-WaveletMatrix2DMonoid<X, Y, S, op, e>
-```
-
-ただし、総和は累積和、最小値は静的RMQというように、演算ごとにより適した内部構造がある。性能を重視する場合、`Sum` と `Min` の専用クラスを残す方がよい。
-
-## 9. `DynamicWaveletMatrix` への追加案
-
-### 9.1 総和の持ち方
-
-各ビットレベルに、ビット列と同じ並びの動的集約列を追加する。各レベルでキーを0側・1側へ移動させるのと同時に、重みも同じ位置へ移動させる。
-
-候補となるAPIは次の通り。
-
-```cpp
-W range_sum(int l, int r) const;
-pair<int, W> count_sum_lt(int l, int r, T upper) const;
-W sum_lt(int l, int r, T upper) const;
-W sum_range(int l, int r, T lower, T upper) const;
-W sum_k_smallest(int l, int r, int k) const;
-W sum_k_largest(int l, int r, int k) const;
-```
-
-### 9.2 重み付き更新
-
-キーと重みを分離する場合は、次の更新APIが必要になる。
-
-```cpp
-void insert(int pos, T key, W weight);
-pair<T, W> pop(int pos);
-
-void set_key(int pos, T key);
-void set_weight(int pos, W weight);
-void add_weight(int pos, W delta);
-```
-
-`set_weight` と `add_weight` はキーの経路を変更せず、各レベルの集約列だけを更新する。
-
-### 9.3 計算量
-
-| 操作 | 計算量 |
-|---|---:|
-| `range_sum(l, r)` | `O(log n)` |
-| `count_sum_lt` | `O(L log n)` |
-| `sum_range` | `O(L log n)` |
-| `sum_k_smallest` | `O(L log n)` |
-| `insert`, `pop`, `set_key` | `O(L log n)` |
-| 追加メモリ | `O(nL)` 個の重み情報 |
-
-### 9.4 既存実装で先に統一したい点
-
-空配列用コンストラクタは `bit_length(sigma-1)`、配列付きコンストラクタは `bit_length(sigma)` を使っている。値域の意味とビット数を統一してから総和を追加したい。
-
-## 10. `DynamicWaveletTree` への追加案
+## 10. `DynamicWaveletTree` の総和版と追加API
 
 ### 10.1 総和の持ち方
 
@@ -766,7 +644,9 @@ zero_sum[i] = (v[i] == 0 ? value[i] : 0);
 void insert(int pos, T key, W weight);
 pair<T, W> pop(int pos);
 void set(int pos, T key, W weight);
+void set_key(int pos, T key);
 void set_weight(int pos, W weight);
+void add_weight(int pos, W delta);
 ```
 
 総和APIは次の通りである。
@@ -784,15 +664,17 @@ int min_count_largest_sum_ge(int l, int r, W target) const;
 
 最小個数探索では、各階層で優先する枝の総和が目標以上ならその枝へ降り、足りなければ枝全体を採用して反対側へ降りる。同値キーの葉では安定順序の重み列に対して直接 `max_right` 相当の探索を行う。重みが非負であることを前提とする。
 
-### 10.2 追加したいAPI
+### 10.2 検索APIと領域予約
 
-総和系に加えて、`DynamicWaveletMatrix` とのAPI差を埋めるため次を追加する候補がある。
+`DynamicWaveletTree` と `DynamicWaveletTreeSum` の両方に、次を実装した。
 
 ```cpp
-topk(l, r, k)
-range_select(l, r, k, value)
-reserve(expected_size)
+vector<pair<T, int>> topk(int l, int r, int k) const;
+int range_select(int l, int r, int k, T value) const;
+void reserve(int expected_size);
 ```
+
+`reserve` は最終要素数の見積もりからNode領域を予約する。総和版では、全prefix Nodeが共有するB-treeの葉・内部Node領域も予約する。
 
 ## 11. 境界条件の仕様
 
@@ -842,16 +724,16 @@ sum_k_smallest(l, r, k)
 
 ```cpp
 WaveletMatrix<T>
-WaveletMatrixFixed<T, LOG>
+WaveletMatrix<T, LOG>
 
 WaveletMatrixSum<T, W>
-WaveletMatrixFixedSum<T, W, LOG>
+WaveletMatrixFenwick<T, W>
 
-WaveletMatrix2DSum<X, Y, W>
-WaveletMatrix2DMin<X, Y, W>
+WaveletMatrix2DSum<T, W>
+WaveletMatrix2DMin<T, W>
+WaveletMatrix2DMonoid<T, S, op, e>
 
 DynamicWaveletMatrix<T>
-DynamicWaveletMatrixSum<T, W>
 
 DynamicWaveletTree<T>
 DynamicWaveletTreeSum<T, W>
@@ -859,42 +741,16 @@ DynamicWaveletTreeSum<T, W>
 
 別クラスにせず集約ポリシーをテンプレート引数にする方法もあるが、総和付き版は `O(nL)` 個の重み情報を追加する。総和を使わないケースのメモリとコンパイル時間を増やさないため、まずは別クラスにする方が単純である。
 
-## 13. 推奨する実装優先順位
+## 13. 実装状況
 
-### 優先度0: 既存実装の整理
+- `WaveletMatrixSum` と `WaveletMatrixFenwick` の総和・値順探索APIを実装済み
+- 通常版と固定ビット幅版の指定された検索APIを実装済み
+- `DynamicWaveletTreeSum` の総和・重み更新・値順探索APIを実装済み
+- `DynamicWaveletTree` 系の `topk`, `range_select`, `reserve`, `set_key` を実装済み
+- `WaveletMatrix2DSum`, `WaveletMatrix2DMin`, `WaveletMatrix2DMonoid` を実装済み
+- `DynamicWaveletMatrixSum` は追加せず、同等用途を `DynamicWaveletTreeSum` に集約
 
-1. 固定ビット幅版を `WaveletMatrixFixed` へ改名する
-2. `sigma` とビット数の定義を全実装で統一する
-
-### 優先度1: 静的総和（`WaveletMatrixSum` として実装済み）
-
-1. 既存 `WaveletMatrixCumulativeSum` の内部構造を参考にする
-2. 配列向け `WaveletMatrixSum<T, W>` を用意する
-3. `range_sum`, `count_sum_lt`, `sum_range` を追加する
-4. `sum_k_smallest`, `sum_k_largest` を追加する
-5. 通常版の低速な `sum` を置き換えるか非推奨にする
-
-### 優先度2: 動的総和（`DynamicWaveletTreeSum` として実装済み）
-
-1. `DynamicWaveletMatrixSum<T, W>` または `DynamicWaveletTreeSum<T, W>` を追加する
-2. 重み付き `insert`, `pop`, `set_weight` を追加する
-3. 総和クエリを静的版と同じ名前・意味にする
-4. メモリ量と速度を比較する
-
-### 優先度3: APIの統一
-
-1. 静的版へ `has_majority` を追加する
-2. `DynamicWaveletTree` へ `topk` を追加する
-3. 全配列版へ `range_select` を追加する
-4. `count_lt`, `count_range` など明示的な別名を検討する
-5. 座標圧縮ラッパーを追加する
-
-### 優先度4: 2次元集約の拡張
-
-1. `WaveletMatrixCumulativeSum` を `WaveletMatrix2DSum` として整理する
-2. `WaveletMatrixMin` を `WaveletMatrix2DMin` として整理する
-3. `count`, `kth_y`, `sum_k_smallest_y` を追加する
-4. 必要ならモノイド版を検討する
+今後の候補は、全実装における `sigma` とビット数の定義統一、座標圧縮ラッパー、総和以外の値順集約である。
 
 ## 14. テスト項目
 
@@ -935,18 +791,30 @@ DynamicWaveletTreeSum<T, W>
 - 任意位置からの `pop`
 - `set_key`
 - `set_weight`
+- `add_weight`
 - 更新後の `access`
 - 更新後の `rank`
 - 更新後の `kth_smallest`
+- 更新後の `topk`
+- 更新後の `range_select`
 - 更新後のすべての総和クエリ
 - 空から構築して再び空になる操作列
 
-### 14.4 実装間比較
+### 14.4 2次元版
+
+- x・yが負の点
+- 同一座標への複数登録
+- 同じyを持つ点の安定順序
+- 長方形の個数・総和・`kth_y`・先頭k点の総和
+- 最小値・最大値と同値時の登録順
+- 可換モノイド版とナイーブ実装の一致
+
+### 14.5 実装間比較
 
 同じ配列に対し、次の結果が一致することを確認する。
 
 - `WaveletMatrix`
-- `WaveletMatrixFixed`
+- `wavelet_matrix_bit.cpp` の固定ビット幅版
 - `DynamicWaveletMatrix`
 - `DynamicWaveletTree`
 - ナイーブ実装
@@ -955,10 +823,8 @@ DynamicWaveletTreeSum<T, W>
 
 ## 15. まとめ
 
-既存実装には、通常の静的WM、固定ビット幅版、2次元総和版、2次元最小値版、動的WM、動的WTが存在する。
+検索専用版と集約版を分けたまま、静的総和、重み更新可能な静的総和、動的総和、2次元総和・最小値・可換モノイドを整備した。
 
-静的な値域付き総和の基礎機能は `WaveletMatrixCumulativeSum` に既に存在する。ただし通常の配列WMとはAPIと役割が分離されており、`sum_k_smallest` などは未実装である。
+値順の述語探索は専用Result型を持たず、`tuple<int, T, W>` で `(count, boundary_value, aggregate)` を返す。重み付き分位点、元配列位置探索、通常版・固定ビット幅版・動的Wavelet Treeの指定APIも追加済みである。
 
-配列向けの静的総和版 `WaveletMatrixSum`、キー固定・重み更新版 `WaveletMatrixFenwick`、動的総和版 `DynamicWaveletTreeSum` は、検索専用版から分離して実装した。各総和版でクエリAPIと境界条件を揃えている。
-
-今後の候補は、固定ビット幅版の名前と仕様の整理、2次元集約版のAPI拡張、および検索専用版同士のAPI統一である。
+2次元版は1登録を1点として扱う多重集合仕様で統一した。動的総和は `DynamicWaveletTreeSum` に集約し、`DynamicWaveletMatrixSum` は追加しない。
