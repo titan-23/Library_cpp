@@ -19,12 +19,12 @@ pair<T, vector<tuple<int, int, int>>> minimum_spanning_tree(int n, const vector<
     vector<tuple<int, int, int>> res;
     T s = 0;
     for (const auto &[w, idx] : F) {
-        auto [u, v] = E[idx];
+        auto [u, v, ew] = E[idx];
         if (uf.same(u, v)) continue;
         uf.unite(u, v);
-        ans.emplace_back(idx, u, v);
-        s += w
+        res.emplace_back(idx, u, v);
+        s += w;
     }
-    return {s, ans};
+    return {s, res};
 }
 }  // namespace titan23

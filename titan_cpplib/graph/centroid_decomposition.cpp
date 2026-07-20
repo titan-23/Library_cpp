@@ -4,6 +4,7 @@
 using namespace std;
 
 namespace titan23 {
+
 class CentroidDecomposition {
 private:
     int C;
@@ -20,7 +21,7 @@ private:
         return sub[v];
     }
 
-    int find_centroid(int v, int p, int mid) {
+    int find_centroid(int v, int p, int mid) const {
         for (int x : G[v]) {
             if (x == p || banned[x]) continue;
             if (sub[x] > mid) return find_centroid(x, v, mid);
@@ -41,7 +42,7 @@ private:
     }
 
     template <typename F>
-    void inner_solve(int v, int p, F& func) {
+    void inner_solve(int v, int p, F &&func) {
         func(v, solve_banned);
         solve_banned[v] = true;
         for (int x : T[v]) if (x != p) {
@@ -50,8 +51,10 @@ private:
     }
 
 public:
-    CentroidDecomposition(vector<vector<int>> G) : G(G) {
+    CentroidDecomposition() : C(-1) {}
+    CentroidDecomposition(const vector<vector<int>> &G) : G(G) {
         int n = G.size();
+        if (n == 0) return;
         T.resize(n);
         sub.resize(n);
         banned.resize(n, false);
@@ -67,8 +70,19 @@ public:
     // パスの重複に注意 / 元の木と重心分解の木の混同に注意
     // bannedを見てはいけない
     // cd.solve([&] (int v, const vector<bool>& banned) {});
+
+    // solve(func) は重心分解木 T を根 C から葉に向かって辿り、各頂点 v で func(v, banned) を呼ぶ
+    // 第2引数の banned は、v より上位で既に中心として使われた頂点が true になっている配列
+    // v の処理後に v 自身も true になってから、T の子へ降りる
+    // つまり func が呼ばれた時点で、元の木 G 上で v から辿れる頂点のうち banned が false な範囲が
+    // 「v を中心として今回処理すべき部分木」にあたる
+    // func 内で部分木を探索するときは元の木 G の隣接リストを辿り、banned が true な頂点には踏み込まない
+    // v をまたぐパスを数えるときは、v の子部分木ごとに独立に集計してから組み合わせる
+    // 同じ子部分木に属する2頂点間の対は v をまたがないため、まとめて集計すると重複や誤カウントになる
+    // cd.solve([&] (int v, const vector<bool>& banned) { ... });
     template <typename F>
-    void solve(F func) {
+    void solve(F &&func) {
+        if (n == 0) return;
         fill(solve_banned.begin(), solve_banned.end(), false);
         inner_solve(C, -1, func);
     }

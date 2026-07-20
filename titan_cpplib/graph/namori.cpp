@@ -5,20 +5,25 @@
 #include <queue>
 #include <random>
 #include <climits>
+#include <cassert>
 using namespace std;
 
 namespace titan23 {
 
 using u64 = unsigned long long;
 
+// なもりグラフ(連結, N=M)
 class Namori {
 private:
     int n;
     vector<vector<int>> G;
     vector<bool> is_cycle;
-    vector<int> cycle;
-    vector<vector<vector<int>>> forest;
 
+public:
+    vector<int> cycle;                   // サイクルを構成する頂点列
+    vector<vector<vector<int>>> forest;  // forest[i] は cycle[i] を根とする木の辺 {子, 親} の列
+
+private:
     using u64 = unsigned long long;
     using u128 = __uint128_t;
     const u64 MOD = (1ull<<61)-1;
@@ -49,9 +54,12 @@ private:
     }
 
 public:
-    Namori(vector<vector<int>> G) : n(G.size()), G(G) {
+    Namori() : n(0) {}
+    Namori(const vector<vector<int>> &G) : n(G.size()), G(G) {
         vector<int> deg(n, 0);
-        for (int v = 0; v < n; ++v) for (int x : G[v]) deg[x]++;
+        int deg_sum = 0;
+        for (int v = 0; v < n; ++v) for (int x : G[v]) { deg[x]++; deg_sum++; }
+        assert(deg_sum == 2*n); // N=M
         queue<int> todo;
         for (int v = 0; v < n; ++v) if (deg[v] == 1) todo.push(v);
         is_cycle.resize(n, true);
@@ -79,11 +87,13 @@ public:
             }
             F[v] = tree;
         }
+        for (int i = 0; i < n; ++i) assert(seen[i]); // 非連結
         int v = -1;
         for (int i = 0; i < n; ++i) if (is_cycle[i]) {
             v = i;
             break;
         }
+        assert(v != -1); // 木
         vector<int> visit(n, false);
         visit[v] = true;
         cycle.push_back(v);
@@ -102,8 +112,12 @@ public:
             cycle.push_back(v);
             forest.push_back(F[v]);
         }
+        int cycle_cnt = 0;
+        for (int i = 0; i < n; ++i) if (is_cycle[i]) cycle_cnt++;
+        assert((int)cycle.size() == cycle_cnt); // サイクルが複数
     }
 
+    // グラフの同型判定用ハッシュ値を返す / O(n)
     u64 get_hash(int seed) {
         int M = 2*n+1;
         mt19937_64 rnd(seed);

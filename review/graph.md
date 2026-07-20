@@ -11,19 +11,10 @@
 | ファイル | 内容 |
 |---|---|
 | warshall_floayd_simd.cpp | AVX-512 命令を使っており AtCoder ジャッジ (Zen3) では SIGILL |
-| namori.cpp | なもりグラフ以外(木)を渡すと cycle 検出に失敗し `visit[-1]` で UB |
-| minimum_spanning_tree.cpp | 重みなし・ソートなしなので「E が重み順」という暗黙の前提がある。前提を満たさなければ MST にならない |
 
 ## 横断事項
 
-- **[軽微] 隣接リストの値渡し**が散見される(get_scc_graph、namori、centroid_decomposition、hld の build_list 等)。グラフ全体をコピーするので定数倍が悪い。
-
-## centroid_decomposition.cpp
-
-- **[注意]** n==0 で `build(0)` が範囲外アクセス。頂点数1以上が前提。
-- **[軽微]** コンストラクタが `vector<vector<int>> G` の値渡し + `G(G)` でコピーが2回走る。const 参照 + コピー、または move にできる。
-- **[軽微]** dfs / find_centroid が再帰で、深さは成分サイズに比例する。AtCoder のスタックサイズなら実害なし。
-- solve() の使い方コメント(パス重複・banned の扱い)は有用。
+- **[軽微] 隣接リストの値渡し**が散見される(hld の build_list 等)。グラフ全体をコピーするので定数倍が悪い。
 
 ## dijkstra.cpp / dijkstra_path.cpp
 
@@ -36,17 +27,13 @@
 - **[軽微]** lca_mul に空配列を渡すと範囲外。
 - **[軽微]** コンストラクタの vertexcost が値渡し。
 
-## get_scc_graph.cpp
-
-- **[軽微]** G が値渡し。dfs が再帰。
-
 ## graph.cpp
 
 - **[注意] 有向/無向の仕様が曖昧**。add_edge は G[u] にしか追加しない(有向)が、is_bipartite と minimum_spanning_tree は無向前提のアルゴリズム。無向で使うなら両方向 add_edge する必要があり、その場合 E に辺が2本入って MST のソート量が倍になる。クラスとしてどちらかに決めてコメント化すべき。
 - **[軽微]** is_bipartite 末尾の `col[c] == -1` チェックはデッドコード。全頂点を外側ループで開始するので -1 は残らない。
 - **[軽微]** topological_sort はサイクルがあると部分列を返す。検出は結果サイズの比較を呼び出し側でやる仕様なら、その旨のコメントがほしい。
 - **[軽微]** get_G() がコピーを返す。const 参照返しでよい。
-- minimum_spanning_tree はソートしてから Kruskal で正しい(単体の minimum_spanning_tree.cpp と挙動が違う点は後述)。
+- minimum_spanning_tree はソートしてから Kruskal で正しい。
 
 ## hashed_rooted_tree.cpp
 
@@ -84,10 +71,6 @@
 - **[軽微]** `int s[n]` は VLA で標準外(GCC 拡張)。vector か固定長で書けるとよい。
 - **[軽微]** 末尾コメントの `namspace` は typo。
 
-## minimum_spanning_tree.cpp
-
-- **[注意] 名前と実装が乖離**。辺に重みがなくソートもしないので、実体は「E の順に採用する全域森」であり、MST になるのは E が重み昇順に整列済みのときだけ。graph.cpp の同名メソッドはソートするので挙動が違う。前提(整列済み)をコメントに明記するか、重み付きにしてソートを入れるべき。
-
 ## minimum_steiner_tree.cpp
 
 - 最短路 Prim ヒューリスティックによる近似解法。zp_ バッファの前回呼び出しからのリセット、経路上の頂点追加時の min_d 更新、swap-pop による端子除去、非端子葉の刈り込みを確認した。ロジックに誤りはない。
@@ -95,12 +78,6 @@
 - **[注意]** 到達不能な端子があると best_idx == -1 で無言で break し、結果にその端子が含まれない。
 - **[軽微]** `const vector<int>& path = dist_path.get_path(...)` は一時オブジェクトへの const 参照束縛で合法だが、値受けの方が読みやすい。
 - build_prim_fullsearch の始点全探索と cost 集計(採用辺は元グラフの辺なので get_dist が辺重みに一致)も正しい。
-
-## namori.cpp
-
-- **[注意] 前提が「連結でサイクルをちょうど1つ持つ」**。木を渡すと is_cycle が全 false になり、`v = -1` のまま `visit[v]` で UB。assert かコメントがほしい。
-- **[軽微]** cycle / forest に getter がなく、外から使えるのは get_hash だけ。構築結果を使う想定なら公開が必要。
-- **[軽微]** get_hash 呼び出しごとに全ハッシュを再計算する。同一 seed で複数グラフを比較する用途なら問題ない。
 
 ## perfect_binary_tree.cpp
 

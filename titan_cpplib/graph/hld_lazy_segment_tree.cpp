@@ -23,32 +23,32 @@ private:
 public:
     HLDLazySegmentTree() {}
 
-    HLDLazySegmentTree(titan23::HLD &hld, int n) : hld(hld) {
-        this->seg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(n);
-        this->rseg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(n);
+    HLDLazySegmentTree(titan23::HLD &hld) : hld(hld) {
+        seg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(hld.n);
+        rseg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(hld.n);
     }
 
     HLDLazySegmentTree(titan23::HLD &hld, vector<T> a) : hld(hld) {
         vector<T> b = hld.build_list(a);
-        this->seg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(b);
+        seg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(b);
         reverse(b.begin(), b.end());
-        this->rseg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(b);
+        rseg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(b);
     }
 
     /// @brief 隣接リスト G と根から構築する / O(N)
     HLDLazySegmentTree(const vector<vector<int>> &G, const int root) {
-        this->hld = titan23::HLD(G, root);
-        this->seg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(hld.n);
-        this->rseg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(hld.n);
+        hld = titan23::HLD(G, root);
+        seg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(hld.n);
+        rseg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(hld.n);
     }
 
     /// @brief 隣接リスト G と根から構築し、頂点 k の値を a[k] とする / O(N)
     HLDLazySegmentTree(const vector<vector<int>> &G, const int root, const vector<T> &a) {
-        this->hld = titan23::HLD(G, root);
+        hld = titan23::HLD(G, root);
         vector<T> b = hld.build_list(a);
-        this->seg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(b);
+        seg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(b);
         reverse(b.begin(), b.end());
-        this->rseg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(b);
+        rseg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(b);
     }
 
     T path_prod(int u, int v) {
