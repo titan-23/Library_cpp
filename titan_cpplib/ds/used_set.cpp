@@ -1,10 +1,11 @@
 #pragma once
 
 #include "titan_cpplib/ds/index_set.cpp"
-
+#include "titan_cpplib/alg/random.cpp"
 using namespace std;
 
 namespace titan23 {
+
 class UsedSet {
 public:
     titan23::IndexSet used, unused;
@@ -53,6 +54,23 @@ public:
     bool empty_unuse() const { return unused.empty(); }
     int len_use() const { return used.len(); }
     int len_unuse() const { return unused.len(); }
+
+    int rnd_get_use(titan23::Random &rnd) { return used.get(rnd.randrange(len_use())); }
+    int rnd_get_use(titan23::Random &rnd) { return unused.get(rnd.randrange(len_unuse())); }
+
+    int rnd_pop_use(titan23::Random &rnd) {
+        int i = rnd.randrange(len_use());
+        int v = used.get(i);
+        use(v);
+        return v;
+    }
+
+    int rnd_pop_unuse(titan23::Random &rnd) {
+        int i = rnd.randrange(len_unuse());
+        int v = unused.get(i);
+        unuse(v);
+        return v;
+    }
 
     friend ostream& operator<<(ostream& os, const titan23::UsedSet &ust) {
         os << "used : " << ust.used << " / " << ust.unused;
