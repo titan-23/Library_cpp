@@ -35,7 +35,7 @@ public:
     void erase(const T key, ll cnt = 1) {
         auto it = s.find(key);
         if (it == s.end()) return;
-        cnt = max(0, it->second - cnt);
+        cnt = max(0LL, it->second - cnt);
         len -= it->second - cnt;
         it->second = cnt;
         if (it->second == 0) s.erase(it);

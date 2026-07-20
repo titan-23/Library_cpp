@@ -20,33 +20,32 @@ constにできるものはそうしたい
 
 ## バグ一覧(要約)
 
-| ファイル | 内容 |
-|---|---|
-| bbst_node.cpp | _prev のロジック誤り。_next/_prev はループで null 参照 |
-| deque.cpp | _rebuild が壊れており、基本操作で誤った要素を返す・要素を失う |
-| multiset_sum.cpp / avl_tree_multiset.cpp | pop() のデフォルト k=-1 で無限降下 |
-| dual_commutative_segment_tree.cpp | tovector() const が非 const を呼びコンパイル不能 |
-| dual_segment_tree.cpp | コンストラクタ(n, init) が init を無視 |
-| dual_segment_tree_RUQ2.cpp | vector 版コンストラクタの時刻 off-by-one で範囲外参照 |
-| dynamic_lazy_segment_tree(_array).cpp | 完全な重複ファイル。print() の `++id` がコンパイル不能 |
-| dynamic_segment_tree_init.cpp | update() が欠損子の寄与を座標 mid() で計算(長さでない) |
-| dynamic_list.cpp | access/pop/set が bool 型のままで T が 0/1 に切り捨て |
-| dynamic_wavelet_matrix.cpp | long long 版 bit_length が __builtin_clz(32bit) を使用 |
-| min_heap.cpp / max_heap.cpp | _down の `i<<1\|1 < n` が優先順位誤りで範囲外アクセス |
-| offline_RUQ.cpp | nxt のサイズ不足で範囲外アクセス |
-| lazy_rbst.cpp | merge の集約順が非可換モノイドで誤り |
-| lazy_wb_tree.cpp | set() の `stack = {node}` がコンパイル不能 |
-| wordsize_tree_set.cpp | tovector が 0 を詰める。lt の実装誤り。fill の残留ビット |
-| std_multiset.cpp | erase() の `max(0, ll)` がコンパイル不能 |
-| static_set.cpp | StaticSet(missing) で n が未初期化 |
-| wavelet_matrix_bit.cpp | ライブラリファイルに main() が残存 |
-| partial_persistent_union_find.cpp | `PartialPersistentArray` に既定コンストラクタがなく、`PartialPersistentUnionFind()` がインスタンス化不能 |
-| persistent_set.cpp / persistent_multiset.cpp | 空 vector で _build が範囲外参照。split/pop が未定義の _split_node を呼ぶ |
-| persistent_multiset.cpp | find/remove がコンパイル不能(未定義変数 s, cnt)。add の既存キー経路が copy を木に繋がない |
-| persistent_lazy_wbtree.cpp / persistent_seg_wbtree.cpp | set() がコンパイル不能(stack の list 初期化と emplace_back)。copy() が自己呼び出しでコンパイル不能 |
-| multiset_sum_splay.cpp | vector 版コンストラクタと merge() がコンパイル不能(int への nullptr 代入等) |
-| deletable_heap.cpp | operator<< が未定義変数 action を参照 |
-| cuckoo_hash_table.cpp | 先頭に `raise NotImprementedError`(意図的な未完成品) |
+| ファイル                                               | 内容                                                                                                     |
+| ------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| bbst_node.cpp                                          | _prev のロジック誤り。_next/_prev はループで null 参照                                                   |
+| deque.cpp                                              | _rebuild が壊れており、基本操作で誤った要素を返す・要素を失う                                            |
+| multiset_sum.cpp / avl_tree_multiset.cpp               | pop() のデフォルト k=-1 で無限降下                                                                       |
+| dual_commutative_segment_tree.cpp                      | tovector() const が非 const を呼びコンパイル不能                                                         |
+| dual_segment_tree.cpp                                  | コンストラクタ(n, init) が init を無視                                                                   |
+| dual_segment_tree_RUQ2.cpp                             | vector 版コンストラクタの時刻 off-by-one で範囲外参照                                                    |
+| dynamic_lazy_segment_tree(_array).cpp                  | 完全な重複ファイル。print() の `++id` がコンパイル不能                                                   |
+| dynamic_segment_tree_init.cpp                          | update() が欠損子の寄与を座標 mid() で計算(長さでない)                                                   |
+| dynamic_list.cpp                                       | access/pop/set が bool 型のままで T が 0/1 に切り捨て                                                    |
+| dynamic_wavelet_matrix.cpp                             | long long 版 bit_length が __builtin_clz(32bit) を使用                                                   |
+| min_heap.cpp / max_heap.cpp                            | _down の `i<<1\|1 < n` が優先順位誤りで範囲外アクセス                                                    |
+| offline_RUQ.cpp                                        | nxt のサイズ不足で範囲外アクセス                                                                         |
+| lazy_rbst.cpp                                          | merge の集約順が非可換モノイドで誤り                                                                     |
+| lazy_wb_tree.cpp                                       | set() の `stack = {node}` がコンパイル不能                                                               |
+| wordsize_tree_set.cpp                                  | tovector が 0 を詰める。lt の実装誤り。fill の残留ビット                                                 |
+| static_set.cpp                                         | StaticSet(missing) で n が未初期化                                                                       |
+| wavelet_matrix_bit.cpp                                 | ライブラリファイルに main() が残存                                                                       |
+| partial_persistent_union_find.cpp                      | `PartialPersistentArray` に既定コンストラクタがなく、`PartialPersistentUnionFind()` がインスタンス化不能 |
+| persistent_set.cpp / persistent_multiset.cpp           | 空 vector で _build が範囲外参照。split/pop が未定義の _split_node を呼ぶ                                |
+| persistent_multiset.cpp                                | find/remove がコンパイル不能(未定義変数 s, cnt)。add の既存キー経路が copy を木に繋がない                |
+| persistent_lazy_wbtree.cpp / persistent_seg_wbtree.cpp | set() がコンパイル不能(stack の list 初期化と emplace_back)。copy() が自己呼び出しでコンパイル不能       |
+| multiset_sum_splay.cpp                                 | vector 版コンストラクタと merge() がコンパイル不能(int への nullptr 代入等)                              |
+| deletable_heap.cpp                                     | operator<< が未定義変数 action を参照                                                                    |
+| cuckoo_hash_table.cpp                                  | 先頭に `raise NotImprementedError`(意図的な未完成品)                                                     |
 
 ## 横断事項
 
@@ -77,7 +76,6 @@ constにできるものはそうしたい
 - **[バグ] _prev**。最後の `now->right->_max()` は `now->left->_max()` であるべき。
 - **[バグ] _next/_prev のループ**。`now->par` が null になった後に `now->right` を読む(null 参照)。また `now->right->_min()` はノード側クラスのメソッドを呼ぶ形で、BBSTNode の static 関数は呼ばれない。現状どこからも使われていないため実害は未発生。
 - **[軽微]** #pragma once も include もない。
-- rotate 系4関数は正しい(利用側多数で確認)。
 
 ### bloom_filter.cpp
 - 正しい。splitmix64 の逐次ストリームで K 個のハッシュを生成する設計も問題ない。
@@ -87,12 +85,10 @@ constにできるものはそうしたい
 - **[バグ(意図的)]** 先頭行が `raise NotImprementedError` で、コンパイル不能にしてある未完成ファイル。main とテストコードも同居。rehash が再構築中のテーブルへ挿入する等、実装も未完成。使用しないこと。
 
 ### cumulative_sum.cpp
-- 本体は正しい。
 - **[軽微] print() が acc[n-1] を飛ばす**。ループが `i < n-1` で acc(サイズ n+1)を出力し最後に acc.back()=acc[n] を出すため、acc[n-1] が出ない。
 - **[軽微]** prod/sum が同一実装(非可逆モノイドに prod の名は不適)。
 
 ### deletable_heap.cpp
-- 遅延削除ヒープのロジックは正しい(存在しないキーを erase すると壊れる仕様は一般的)。
 - **[バグ] DeletableMaxHeap::operator<<**。`os << action.d;` の `action` が未定義。使用した時点でコンパイルエラー。
 - **[軽微]** Min 版に Max 版のような空チェック assert がない。
 
@@ -109,7 +105,6 @@ constにできるものはそうしたい
 ### dual_commutative_segment_tree.cpp
 - **[バグ] `tovector() const` が非 const の all_propagate() を呼ぶ**。インスタンス化するとコンパイルエラー。
 - **[軽微]** n=0 で `__builtin_clz(0)` の UB。
-- apply の葉直接更新と get の可換合成は正しい。
 
 ### dual_segment_tree.cpp
 - **[バグ] コンストラクタ(n, init) が init を使っていない**。_data はデフォルト構築のまま。
@@ -157,7 +152,6 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 - **[軽微]** メンバ宣言順と初期化リスト順が不一致(-Wreorder)。
 
 ### dynamic_bit_vector.cpp
-- ロジックは正しい(select0/1、分割、_insert_and_rank1 の後半走査を確認)。
 - **[注意] 計算量**。バケット上限1000固定で再平衡なし。バケット数が n/500 まで増え、get_bucket/rank が O(バケット数) の線形走査のため、大きい n では O(√n) にならない。
 - **[軽微]** `_access_pop_and_rank1` は k が範囲外だと未初期化変数を使う。`prek` 未使用。
 
@@ -237,7 +231,6 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 - **[バグ] pop() のデフォルト k=-1**。find_kth(-1) は左端まで降りて assert 失敗(NDEBUG では null 参照)。負の添字対応をするなら事前に `k += len()` が要る。
 - **[注意]** `data`(部分和)の型が T。T=int だと総和が容易にあふれる。bisect_left_sum は負のキーで greedy が壊れる(非負前提を明記すべき)。
 - **[軽微]** デフォルトコンストラクタで missing 未初期化。index/index_right の戻りが int(valsize は long long)。
-- それ以外(add/discard/remove_iter/_add_balance/_remove_balance/le/lt/ge/gt/index/sum)は検証済みで正しい。remove_iter のキー複製と `<=` 判定の整合も確認した。
 
 ### multiset_sum_qd.cpp
 - **[注意]** クラス名が multiset_sum.cpp と同じ `MultisetSum` で、sum の意味も異なる(こちらは添字区間、あちらは値未満)。名前変更を推奨。
@@ -261,7 +254,6 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 - **[バグ] partial_persistent_union_find.cpp がコンパイル不能**。`PartialPersistentArray` に既定コンストラクタがないのに、`PartialPersistentUnionFind()` がメンバ `par` を既定構築しようとするため、インスタンス化でエラーになる。`PartialPersistentArray() {}` を追加すれば解消する。include を補って単体コンパイルできるようにした結果、表面化した。
 
 ### persistent_lazy_segment_tree.cpp / persistent_segment_tree.cpp
-- 正しい。propagate が共有ノードを書き換えるが、子をコピーして押し下げるため表現する列は不変(永続性は保たれる)。スレッド非対応。
 - **[軽微]** tovector の `vector<T> a(len()); a.resize(_len);` は冗長。copy_from は 0 番兵もコピーする(無害な無駄)。
 
 ### persistent_set.cpp
@@ -295,18 +287,11 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 - **[注意] reverse は非可換 op で誤り**(rdata なし)。set() の番兵書き込みも同じ。
 
 ### multiset_sum_splay.cpp
-- splay 本体(rotate/splay/add/discard/remove_root/kth_splay/index 系/count_sumlim)は正しい。find_splay の res 初期値が root のままでも add の分岐と噛み合うことを確認した。
 - **[バグ] vector コンストラクタがコンパイル不能**。`root = nullptr;`(root は int)、`ma.d[node].left->par`(int に ->)、`update(ma.d[node])`(int 引数に Node& を渡す)の3点。
 - **[バグ] merge() がコンパイル不能**。`other.root = nullptr;`(int への nullptr 代入)。
 - **[注意] clear() が共有プールを破壊する**。static な ma を reset するため、同じ型の他インスタンスが全て無効になる。
 - **[注意]** count_sumlim は非負要素前提(負があると greedy が壊れる)。コメントに明記がない。
 - **[軽微]** `<bits/stdc++.h>` 使用。`d.size() > ptr` の符号比較警告。
-
-### segment_tree2D.cpp
-- **[注意]** prod は行と列の合成順が混ざるため op は可換前提。ドキュメント化されていない。
-
-### sparse_segment_tree2D.cpp / sparse_segment_tree2DFAST.cpp
-- **[軽微]** FAST 版の H 上限 assert(1e8)は妥当。
 
 ### sparse_table.cpp / sparse_table_min.cpp
 - **[注意]** SparseTable は重なり合う区間を op するため冪等演算限定だが、その旨のコメントがない(sum を渡すと誤る)。
@@ -321,9 +306,6 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 ### static_multiset.cpp / static_set.cpp
 - **[バグ] StaticSet(T missing) が n を初期化しない**(このコンストラクタで作ると len() が未定義値)。
 - **[軽微]** デフォルトコンストラクタの missing(-1) は数値以外の T で不成立。
-
-### std_multiset.cpp
-- **[バグ] erase()**。`max(0, it->second - cnt)` は int と long long の混在でテンプレート解決に失敗しコンパイルエラー。`max(0LL, ...)` が正しい。
 
 ### std_set.cpp
 - **[軽微]** デフォルトコンストラクタの missing(-1)。get_min/get_max は空で UB。
