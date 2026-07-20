@@ -342,10 +342,6 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 - **[注意]** count_sumlim は非負要素前提(負があると greedy が壊れる)。コメントに明記がない。
 - **[軽微]** `<bits/stdc++.h>` 使用。`d.size() > ptr` の符号比較警告。
 
-### persistent_stack.cpp
-- **[注意] pop() の assert が誤り**。`assert(node->prev)` のため要素1個のスタックから pop できない。`assert(node)` が意図のはず。
-- **[軽微]** push は新スタックを返すのに pop は自身を書き換える(永続APIとして非対称)。
-
 ### range_product_dc.cpp
 - 正しい(分割統治、非可換対応の dp[l]・dp[r] 合成順も正しい)。
 - **[注意]** 空区間クエリ(l==r)は誤った値(a[l] 等)を返す。assert l<r を入れるべき。

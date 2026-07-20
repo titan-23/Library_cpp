@@ -30,12 +30,12 @@ public:
         weight = WType(w);
     }
 
-    /// @brief 全体をコピーした uf を返す / O(1)
+    /// @brief コピーして返す / O(1)
     PersistentWeightedUnionFind copy() const {
         return PersistentWeightedUnionFind(n, par.copy(), weight.copy());
     }
 
-    /// @brief x の属する木の根を返す / O(log^2 n)
+    /// @brief x の属する集合の代表元を返す / O(log^2 n)
     int root(int x) const {
         while (1) {
             int p = par.get(x);
@@ -55,7 +55,7 @@ public:
         }
     }
 
-    /// @brief v[y] - v[x] = w となるよう統合し、{矛盾なしか, 新しい uf} を返す / O(log^2 n) 時間 / O(logn) 空間
+    /// @brief `v[y] - v[x] = w` とし、{矛盾なしか, 新しい uf} を返す / O(log^2 n) 時間 / O(logn) 空間
     pair<bool, PersistentWeightedUnionFind> unite(int x, int y, T w) const {
         T px = potential(x), py = potential(y);
         int rx = root(x), ry = root(y);
@@ -76,17 +76,17 @@ public:
         return {true, PersistentWeightedUnionFind(n, np, nw)};
     }
 
-    /// @brief x の属する木の要素数を返す / O(log^2 n)
+    /// @brief `x` の属する集合の要素数を返す / O(log^2 n)
     int size(int x) const {
         return -par.get(root(x));
     }
 
-    /// @brief x と y が同じ木に属するかを返す / O(log^2 n)
+    /// @brief `x` と `y` が同じ集合に属するかを返す / O(log^2 n)
     bool same(int x, int y) const {
         return root(x) == root(y);
     }
 
-    /// @brief v[y] - v[x] を返す。同じ木に属することが前提 / O(log^2 n)
+    /// @brief `v[y] - v[x]` を返す。同じ集合に属することが前提 / O(log^2 n)
     T diff(int x, int y) const {
         assert(same(x, y));
         return potential(y) - potential(x);

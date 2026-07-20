@@ -1,7 +1,9 @@
 #pragma once
 
+#include <iostream>
 #include <vector>
 #include <cassert>
+#include "titan_cpplib/others/print.cpp"
 using namespace std;
 
 // PersistentStack
@@ -32,23 +34,23 @@ public:
         return node->key;
     }
 
-    T pop() {
+    pair<PersistentStack<T>, T> pop() const {
+        assert(node);
         T res = node->key;
-        assert(node->prev);
-        node = node->prev;
-        return res;
+        PersistentStack<T> s(node->prev);
+        return {s, res};
     }
 
-    PersistentStack copy() const {
+    PersistentStack<T> copy() const {
         NodePtr new_node = node ? (new Node(node->key, node->prev)) : nullptr;
-        PersistentStack s(new_node);
+        PersistentStack<T> s(new_node);
         return s;
     }
 
-    PersistentStack push(T key) {
+    PersistentStack<T> push(const T &key) const {
         NodePtr new_node = new Node(key);
         new_node->prev = this->node;
-        PersistentStack s(new_node);
+        PersistentStack<T> s(new_node);
         return s;
     }
 
@@ -61,6 +63,10 @@ public:
         }
         reverse(a.begin(), a.end());
         return a;
+    }
+
+    friend ostream& operator<<(ostream& os, const PersistentStack<T> &s) {
+        return os << s.tovector();
     }
 };
 }  // namespase titan23
