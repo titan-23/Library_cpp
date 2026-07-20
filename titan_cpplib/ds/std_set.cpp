@@ -3,6 +3,7 @@
 #include <vector>
 #include <optional>
 #include <iostream>
+#include <cassert>
 
 using namespace std;
 
@@ -53,10 +54,12 @@ public:
     }
 
     T get_min() const {
+        assert(!s.empty());
         return *s.begin();
     }
 
     T get_max() const {
+        assert(!s.empty());
         auto it = s.end();
         it--;
         return *it;

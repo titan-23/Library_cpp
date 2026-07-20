@@ -7,17 +7,18 @@ using namespace std;
 
 namespace titan23 {
 
-template <class T, T (*op)(T, T), T (*e)()>
+template <class T, T (*op)(T, T), T (*e)(), T (*inv)(T)>
 class SqrtSegmentTree {
 private:
     int n, size;
     vector<vector<T>> a;
     vector<T> data;
+    T total;
 
 public:
-    SqrtSegmentTree() {}
+    SqrtSegmentTree() : n(0), size(0), total(e()) {}
 
-    SqrtSegmentTree(int n) : n(n) {
+    SqrtSegmentTree(int n) : n(n), total(e()) {
         size = sqrt(n) + 1;
         int bucket_cnt = (n+size-1)/size;
         a.resize(bucket_cnt);
@@ -29,7 +30,7 @@ public:
         }
     }
 
-    SqrtSegmentTree(vector<T> A) : n(A.size()) {
+    SqrtSegmentTree(const vector<T> &A) : n(A.size()), total(e()) {
         size = sqrt(n) + 1;
         int bucket_cnt = (n+size-1)/size;
         a.resize(bucket_cnt);
@@ -41,11 +42,12 @@ public:
                 s = op(s, a[i][j]);
             }
             data[i] = s;
+            total = op(total, s);
         }
     }
 
+    /// @brief 区間 `[l, r)` の総積を返す / O(√n)
     T prod(int l, int r) const {
-        // O(√N)
         assert(0 <= l && l <= r && r <= n);
         if (l == r) return e();
         int k1 = l / size;
@@ -65,24 +67,25 @@ public:
         return s;
     }
 
+    /// @brief 全体の総積を返す / O(1)
     T all_prod() const {
-        // O(√N)
-        T s = e();
-        for (const T t : data) s = s = op(s, t);
-        return s;
+        return total;
     }
 
+    /// @brief `a[i]` を返す / O(1)
     T get(int i) const {
-        // O(1)
         int k = i / size;
         return a[k][i-k*size];
     }
 
-    void set(int i, T v) {
+    /// @brief `a[i]` を `v` に変更する / O(1)(`op` が可換群であることが前提)
+    void set(int i, const T &v) {
         int k = i / size;
-        a[k][i-k*size] = v;
-        data[k] = e();
-        for (T t : a[k]) data[k] = op(data[k], t);
+        int j = i - k*size;
+        T old_bucket = data[k];
+        data[k] = op(op(data[k], inv(a[k][j])), v);
+        a[k][j] = v;
+        total = op(op(total, inv(old_bucket)), data[k]);
     }
 };
 } // namespace titan23

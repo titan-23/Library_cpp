@@ -8,6 +8,8 @@ count_range, range_countの名前や引数名を統一したい
 
 constにできるものはそうしたい
 
+set系、pop_min,pop_max,get_min,get_maxなどいろいろ統一したい
+
 ===
 
 全115ファイル精査済み。
@@ -32,11 +34,9 @@ constにできるものはそうしたい
 | dynamic_segment_tree_init.cpp                          | update() が欠損子の寄与を座標 mid() で計算(長さでない)                                                   |
 | dynamic_list.cpp                                       | access/pop/set が bool 型のままで T が 0/1 に切り捨て                                                    |
 | dynamic_wavelet_matrix.cpp                             | long long 版 bit_length が __builtin_clz(32bit) を使用                                                   |
-| min_heap.cpp / max_heap.cpp                            | _down の `i<<1\|1 < n` が優先順位誤りで範囲外アクセス                                                    |
 | offline_RUQ.cpp                                        | nxt のサイズ不足で範囲外アクセス                                                                         |
 | lazy_rbst.cpp                                          | merge の集約順が非可換モノイドで誤り                                                                     |
 | lazy_wb_tree.cpp                                       | set() の `stack = {node}` がコンパイル不能                                                               |
-| wordsize_tree_set.cpp                                  | tovector が 0 を詰める。lt の実装誤り。fill の残留ビット                                                 |
 | static_set.cpp                                         | StaticSet(missing) で n が未初期化                                                                       |
 | wavelet_matrix_bit.cpp                                 | ライブラリファイルに main() が残存                                                                       |
 | partial_persistent_union_find.cpp                      | `PartialPersistentArray` に既定コンストラクタがなく、`PartialPersistentUnionFind()` がインスタンス化不能 |
@@ -223,10 +223,6 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 - **[注意] API が未完成**。`T sum(int l, int d, int k, ll a, ll b)` は b が未使用で、a も assert(a==1) 固定。呼び出せる形になっていない。
 - **[軽微]** 空間 O(nB)=O(n√n)。コメントに明記なし。
 
-### max_heap.cpp / min_heap.cpp
-- **[バグ] _down のループ条件**。`while (i<<1|1 < n)` は演算子優先順位により `(i<<1) | (1 < n)` と解釈される。n≥2 では常に真になり、葉に達したとき `a[u]`(u≥n)の範囲外読み取り、場合により範囲外 swap(書き込み)が起きる。`while ((i<<1|1) < n)` が正しい。両ファイル共通。pushpoop/replace も _down 経由で影響。
-- **[軽微]** 空での pop/get は UB。`pushpoop` の綴り。
-
 ### multiset_sum.cpp
 - **[バグ] pop() のデフォルト k=-1**。find_kth(-1) は左端まで降りて assert 失敗(NDEBUG では null 参照)。負の添字対応をするなら事前に `k += len()` が要る。
 - **[注意]** `data`(部分和)の型が T。T=int だと総和が容易にあふれる。bisect_left_sum は負のキーで greedy が壊れる(非負前提を明記すべき)。
@@ -300,15 +296,9 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 ### splay_node.cpp
 - **[注意] split(node, key) の null 参照**。全要素が key より大きいとき find_splay が nullptr を返し、直後の `node->key` で落ちる。
 
-### sqrt_segment_tree.cpp
-- **[軽微]** all_prod の `s = s = op(s, t)` の二重代入。set が O(√n)(可逆なら O(1) 化可能)。
-
 ### static_multiset.cpp / static_set.cpp
 - **[バグ] StaticSet(T missing) が n を初期化しない**(このコンストラクタで作ると len() が未定義値)。
 - **[軽微]** デフォルトコンストラクタの missing(-1) は数値以外の T で不成立。
-
-### std_set.cpp
-- **[軽微]** デフォルトコンストラクタの missing(-1)。get_min/get_max は空で UB。
 
 ### wavelet_matrix_bit.cpp
 - **[バグ] ファイル末尾に main() が残っている**。include すると main 重複でリンクエラー。
@@ -337,8 +327,3 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 - **[軽微]** balance_check の `!weight_left()*DELTA >= ...` は優先順位誤りで機能していない(デバッグ関数)。
 - **[軽微]** prod/apply の全被覆判定 `right < r`(lazy_rbst と同じ、性能のみ)。
 
-### wordsize_tree_set.cpp
-- **[バグ] tovector()**。`a[idx] = 0;` としており全要素が 0 になる。`a[idx] = v;` が正しい。
-- **[バグ] lt()**。`return le(v+1);` は「v 以下」を返し得る。`v == 0 ? -1 : le(v-1)` が正しい。gt は正しい。
-- **[注意] fill(n)**。全レベルを全ビット1にした後、data[0] の最終ワードしかマスクしない。n が「最終ワードに届かない」場合、n..u-1 のビットが立ったままになる。n==u(全埋め)以外では使えない。
-- **[軽微]** remove の引数型が u64(他は int)。

@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <vector>
+#include <cassert>
 using namespace std;
 
 // MinHeap
@@ -20,7 +21,7 @@ private:
 
     void _down(int i) {
         int n = a.size();
-        while (i<<1|1 < n) {
+        while ((i<<1|1) < n) {
             int u = i*2+1, v = i*2+2;
             if (v < n && a[u] > a[v]) u = v;
             if (a[i] > a[u]) {
@@ -50,11 +51,13 @@ public:
 
     /// 最小の要素を返す / `O(1)`
     T get_min() const {
+        assert(!a.empty());
         return a[0];
     }
 
     /// 最小の要素を削除して返す / `O(logn)`
     T pop_min() {
+        assert(!a.empty());
         T res = a[0];
         a[0] = a.back();
         a.pop_back();

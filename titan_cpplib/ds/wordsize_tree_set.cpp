@@ -100,13 +100,13 @@ public:
         return true;
     }
 
-    void remove(u64 v) {
+    void remove(int v) {
         if (!discard(v)) {
             assert(false);
         }
     }
 
-    int ge(int v) {
+    int ge(int v) const {
         int d = 0;
         while (1) {
             if (d >= (int)data.size() || ((v>>6) >= data[d].size())) { return -1; }
@@ -125,11 +125,11 @@ public:
         return v;
     }
 
-    int gt(int v) {
+    int gt(int v) const {
         return ge(v+1);
     }
 
-    int le(int v) {
+    int le(int v) const {
         int d = 0;
         while (1) {
             if (v < 0 || d >= (int)data.size()) return -1;
@@ -148,43 +148,44 @@ public:
         return v;
     }
 
-    int lt(int v) {
-        return le(v+1);
+    int lt(int v) const {
+        return v == 0 ? -1 : le(v-1);
     }
 
-    bool contains(int v) {
+    bool contains(int v) const {
         return (data[0][v>>6] >> (v&63) & 1) == 1;
     }
 
     void fill(int n) {
         _len = n;
-        for (int d = 0; d < data.size(); ++d) {
-            for (int i = 0; i < data[d].size(); ++i) {
-                data[d][i] = ~0ull;
+        for (int d = 0; d < (int)data.size(); ++d) {
+            int words = (int)data[d].size();
+            int word = n >> 6;
+            int rem = n & 63;
+            for (int i = 0; i < word && i < words; ++i) data[d][i] = ~0ull;
+            if (word < words) {
+                data[d][word] = (rem == 0) ? 0ull : ((1ull << rem) - 1);
+                for (int i = word + 1; i < words; ++i) data[d][i] = 0;
             }
-        }
-        int rem = n & 63;
-        if (rem != 0) {
-            data[0].back() &= (1ull << rem) - 1;
+            n = (n + 63) >> 6;
         }
     }
 
-    int len() { return _len; }
+    int len() const { return _len; }
 
-    vector<int> tovector() {
+    vector<int> tovector() const {
         int v = 0;
         vector<int> a(_len);
         int idx = 0;
         if (contains(v)) {
-            a[0] = 0;
+            a[idx] = v;
             idx++;
-            v = gt(v);
         }
         while (1) {
             int nxt = gt(v);
             if (nxt == -1) break;
             v = nxt;
-            a[idx] = 0;
+            a[idx] = v;
             idx++;
         }
         return a;
