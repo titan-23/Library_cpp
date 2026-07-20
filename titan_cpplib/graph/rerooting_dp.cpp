@@ -11,7 +11,7 @@ template<typename E,
         T (*apply_vertex)(T, int),
         T (*apply_edge)(T, E, int, int),
         T (*e)()>
-vector<T> rerooting_dp(const vector<vector<pair<int, E>>> G) {
+vector<T> rerooting_dp(const vector<vector<pair<int, E>>> &G) {
     int n = G.size();
     vector<vector<T>> dp(n);
     for (int i = 0; i < n; ++i) {

@@ -16,8 +16,7 @@
 
 ## 横断事項
 
-- **[軽微] 非 inline の自由関数**が dijkstra、bfs_path、minimum_spanning_tree、get_scc_graph、rerooting_dp にある。複数翻訳単位で ODR 違反。単一ファイル提出なら実害なし。
-- **[軽微] 隣接リストの値渡し**が散見される(rerooting_dp、get_scc_graph、namori、centroid_decomposition、hld の build_list 等)。グラフ全体をコピーするので定数倍が悪い。特に rerooting_dp は `const vector<...> G` で `&` の付け忘れに見える。
+- **[軽微] 隣接リストの値渡し**が散見される(get_scc_graph、namori、centroid_decomposition、hld の build_list 等)。グラフ全体をコピーするので定数倍が悪い。
 
 ## centroid_decomposition.cpp
 
@@ -28,15 +27,10 @@
 
 ## dijkstra.cpp / dijkstra_path.cpp
 
-- どちらも正しい。標準的な O((N+M)logN)。
 - **[注意]** `d + c` を INF ガードなしで計算するので、INF は型の最大値の半分以下を渡す前提。コメントに明記がない。
 
 ## euler_tour.cpp
 
-- 正しい。以下を確認した。
-  - in/out 巡回(サイズ 2n)と touch 巡回(サイズ 2n-1)を1回の DFS で構築する部分。`nodeout[v] = 退場位置+1` の規約と、subtree/path 各クエリの区間の整合。
-  - 4本の FenwickTree(頂点/辺 × subtree/path)への +w/-w の置き方と add_vertex / add_edge の更新位置。
-  - LCA 用セグ木の `(depth << bit) + i` エンコード。bit は touch 巡回長に対して足りている。
 - **[注意]** T が符号なし整数だと path 用の -w が壊れる。符号付き前提。
 - **[軽微]** set_edge は u, v が隣接している前提だが assert がない。非隣接だとパス全体との差分を1辺に足してしまう。
 - **[軽微]** lca_mul に空配列を渡すと範囲外。
@@ -56,7 +50,6 @@
 
 ## hashed_rooted_tree.cpp
 
-- 部分木の高さで乱数を引く木ハッシュ。mul / mod の桁あふれがないこと(61bit mod の縮約が1回の条件減算で足りること)を確認した。ロジックは正しい。
 - **[軽微]** `uniform_int_distribution<u64> dist(47, (1ull<<61)-1)` の上限が MOD ちょうどで、R[i] == MOD ≡ 0 になり得る。確率は無視できるが上限は MOD-1 が正しい。
 - **[軽微]** G が値渡し。dfs が再帰。
 
@@ -74,8 +67,6 @@
 
 ## hungarian.cpp
 
-- kopricky のコードの移植(出典リンクあり)。U×U の graph 行列でダミー列を持たせて U>V を処理する構造、双対の更新、増加路探索を確認した。出典どおりのロジックで問題は見つからなかった。
-- min_cost_assignment の転置ラッパも割当の逆写像まで正しい。
 - **[注意]** cost が空(行数0)だと `_cost[0]` で UB。min_cost_assignment 経由でも n==0 は素通りする。
 - **[軽微]** 計算量のコメントがない(O(n³) 相当)。禁止辺を最大値で表すと桁あふれする旨の注意書きは適切。
 
@@ -107,7 +98,6 @@
 
 ## namori.cpp
 
-- 次数1の剥がし込みによるサイクル検出、サイクル順の走査、木部分の高さ添字ハッシュ、サイクル列のロリハを回転×反転で最小化する正規化、いずれもロジックは正しい。`4*MOD + acc[r] - acc[l]` の u64 上での帳尻(アンダーフロー時も一周して正になる)と mod() の縮約も確認した。
 - **[注意] 前提が「連結でサイクルをちょうど1つ持つ」**。木を渡すと is_cycle が全 false になり、`v = -1` のまま `visit[v]` で UB。assert かコメントがほしい。
 - **[軽微]** cycle / forest に getter がなく、外から使えるのは get_hash だけ。構築結果を使う想定なら公開が必要。
 - **[軽微]** get_hash 呼び出しごとに全ハッシュを再計算する。同一 seed で複数グラフを比較する用途なら問題ない。
@@ -118,12 +108,6 @@
 - **[軽微]** `assert(u <= numeric_limits<T>::max())` は恒真で意味がない。
 - **[軽微]** T が符号なしだと par(root) の -1 が wrap する。la(u, k) は k がビット幅以上でシフト UB(公開 API 経由では起きない)。
 - **[軽微]** 全メソッドが状態を持たないので static にできる。
-
-## rerooting_dp.cpp
-
-- 全方位木DP。上り DP(topo 逆順)、下り DP での prefix(ls)/suffix(rs) 分割、rs バッファの使い回しが毎頂点で上書きされてから読まれること、親寄与 dp[v][pdx[v]] が親の処理で設定済みであることを確認した。ロジックは正しい。
-- **[注意] G が値渡し**(`const vector<vector<pair<int, E>>> G`)。`&` の付け忘れに見える。グラフ全体をコピーする。
-- 末尾の使い方コメント(apply_vertex / apply_edge の図)は有用。
 
 ## rooted_tree.cpp
 
@@ -138,7 +122,6 @@
 - **[注意] AVX-512 命令(_mm512_*)を使用**。AtCoder の現行ジャッジ(AMD EPYC 7763、Zen3)は AVX-512 非対応で、-mavx512f でコンパイルしても実行時に SIGILL になる。実戦で使うなら _mm256(AVX2)版に書き直す必要がある。
 - **[注意]** 内側ループで d[k*n+j] == INF をスキップしないため、負の辺重みがあると `d_ik + INF` が INF 未満になり INF 近傍のゴミが距離として残る。非負重みなら問題ない(min で INF が保たれる)。
 - n の8の倍数への切り上げとパディング行の扱いは正しい(パディング頂点の対角は INF のままだが参照されない)。
-- **[軽微]** ファイル名の floayd は typo。
 
 ## warshall_floyd.cpp
 

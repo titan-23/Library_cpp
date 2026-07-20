@@ -7,7 +7,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// 最小全域木の辺集合を返す / (idx, u, v) / O()
+/// 最小全域木を求める / (idx, u, v) / O()
 template<typename T>
 pair<T, vector<tuple<int, int, int>>> minimum_spanning_tree(int n, const vector<tuple<int, int, T>> &E) {
     vector<tuple<T, int>> F(E.size());

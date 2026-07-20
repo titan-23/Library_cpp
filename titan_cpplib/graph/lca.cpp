@@ -11,7 +11,7 @@ using namespace std;
 namespace titan23 {
 
 /**
- * @brief 静的なグラフに対しLCAを求めるだけのライブラリ
+ * @brief 静的なグラフに対しLCAを求めるライブラリ
  * <O(n), O(1)>
  */
 class LCA {
@@ -21,14 +21,14 @@ private:
     titan23::StaticRmQ<int> st;
 
 public:
-    LCA() {}
+    LCA() : n(0) {}
 
-    /// 隣接リスト `G` 、根 `root` として前計算をする / `O(n)`
+    /// @brief 隣接リスト `G` 、根 `root` として前計算をする / `O(n)`
     LCA(const vector<vector<int>> &G, const int root) :
             n((int)G.size()), path(n), nodein(n, -1) {
         vector<int> par(n, -1);
         int time = -1, ptr = 0;
-        int s[n];
+        vector<int> s(n);
         s[ptr++] = root;
         while (ptr) {
             int v = s[--ptr];
@@ -50,7 +50,7 @@ public:
         st = titan23::StaticRmQ<int>(a, INT_MAX);
     }
 
-    /// `u`, `v` の lca を求める / `O(1)`
+    /// @brief `u`, `v` の lca を求める / `O(1)`
     int lca(const int u, const int v) const {
         if (u == v) return u;
         int l = nodein[u], r = nodein[v];
@@ -58,7 +58,7 @@ public:
         return path[st.prod(l, r)];
     }
 
-    /// 頂点集合 `a` の lca を求める / `O(|a|)`
+    /// @brief 頂点集合 `a` の lca を求める / `O(|a|)`
     int lca_mul(const vector<int> &a) const {
         assert(!a.empty());
         int l = n*2+1;
@@ -72,4 +72,4 @@ public:
         return path[st.prod(l, r)];
     }
 };
-}  // namspace titan23
+}  // namespace titan23
