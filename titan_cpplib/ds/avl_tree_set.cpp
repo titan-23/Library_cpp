@@ -111,8 +111,8 @@ private:
 
     public:
     AVLTreeSet() : missing(-1), root(nullptr) {}
-    AVLTreeSet(T missing) : missing(-1), root(nullptr) {}
-    AVLTreeSet(const vector<T> &a, T missing) : missing(-1) {
+    AVLTreeSet(T missing) : missing(missing), root(nullptr) {}
+    AVLTreeSet(const vector<T> &a, T missing) : missing(missing) {
         this->root = build(a);
     }
 

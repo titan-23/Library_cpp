@@ -42,7 +42,7 @@ public:
         auto dfs = [&] (auto &&dfs, int L, int R, vector<tuple<int, int, int>> &Q) -> void {
             if (R - L <= 1) {
                 for (auto &[qdx, l, r] : Q) {
-                    ans[qdx] = a[l];
+                    ans[qdx] = (l == r) ? e() : a[l];
                 }
                 return;
             }

@@ -47,4 +47,4 @@ public:
         return vector<T>(s1.begin(), s1.begin() + n);
     }
 };
-};
+} // namespace titan23

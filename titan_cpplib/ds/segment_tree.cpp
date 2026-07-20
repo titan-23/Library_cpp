@@ -79,7 +79,7 @@ public:
 
     template<typename F>  // F: function<bool (T)> f
     int max_right(int l, F &&f) const {
-        assert(0 <= l && l <= _size);
+        assert(0 <= l && l <= n);
         // assert(f(e()));
         if (l == n) return n;
         l += _size;
