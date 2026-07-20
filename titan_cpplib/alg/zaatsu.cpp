@@ -16,42 +16,51 @@ class Zaatsu {
 private:
     vector<T> a;
     int n;
+    bool built;
 
 public:
-    Zaatsu() : n(0) {}
+    Zaatsu() : n(0), built(true) {}
 
     /// @brief `used_items` からなる集合を管理するインスタンスを生成
     Zaatsu(const vector<T> &used_items) : a(used_items) {
-        sort(a.begin(), a.end());
-        a.erase(unique(a.begin(), a.end()), a.end());
-        n = (int)a.size();
+        build();
     }
 
     /// @brief `v` を追加する
     void add(const T &v) {
         a.push_back(v);
+        built = false;
     }
 
     /// @brief 構築する
     void build() {
         sort(a.begin(), a.end());
         a.erase(unique(a.begin(), a.end()), a.end());
-        n = (int)a.size();
+        n = a.size();
+        built = true;
     }
 
     /// @brief 要素の種類数を返す
-    int len() const { return n; }
+    int len() const {
+        assert(built);
+        return n;
+    }
 
     /// @brief 要素の種類数を返す
-    int size() const { return n; }
+    int size() const {
+        assert(built);
+        return n;
+    }
 
     /// @brief `v` を座標圧縮する
     int to_zaatsu(const T &v) const {
+        assert(built);
         return lower_bound(a.begin(), a.end(), v) - a.begin();
     }
 
     /// @brief 座標圧縮された要素 `x` を戻す
     T to_origin(const int &x) const {
+        assert(built);
         assert(0 <= x && x < n);
         return a[x];
     }

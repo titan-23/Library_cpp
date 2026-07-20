@@ -13,7 +13,6 @@
 - random_tree.cpp
 - traveling_salesman_problem.cpp **[完了]**
 - tree_generator.cpp
-- zaatsu.cpp
 
 重要度は次の3段階で付けた。
 
@@ -22,34 +21,6 @@
 - **[軽微]** 動作に影響しない指摘
 
 全指摘に対応し、残りがないファイルは見出しとファイル一覧に **[完了]** を付ける。
-
-## double_sigma.cpp **[完了]**
-
-- ロジックは全メソッド正しい。`MultisetSum::index(a)` が「a 未満の個数」、`sum(a)` が「a 未満の総和」を返すことを確認済みで、online 系の計算と整合している。
-
-## doubling.cpp **[完了]**
-
-- 構築 O(n log LIM)、クエリ O(log LIM) で正しい。
-- start が -1 になった直後に break するため、`db[i][-1]` へのアクセスは起きない。この点は正しい。
-
-## doubling_monoid.cpp **[完了]**
-
-- doubling.cpp と同じ構造で、モノイド積の合成順(`op(res, db[i][start].second)`)も左から右で正しい。
-
-## itertools.cpp **[完了]**
-
-- 列挙系(combinations、combinations_bit、submasks、partitions、grouping_pair、product、permutations、combinations_with_replacement)はいずれも境界条件(r=0、repeat=0、空集合)を含め正しい。
-- `nCr` は途中の `res * (n - r + i)` で真値が long long に収まる範囲でもオーバーフローし得るが、その規模は列挙不能で厳密値の用途もないため対応しない。
-
-## lis.cpp **[完了]**
-
-- LIS、LIS_vec とも O(n log n) で正しい。strict/非 strict の lower_bound/upper_bound の使い分けも正しい。
-
-## mo.cpp **[完了]**
-
-- Hilbert order による並べ替え、区間伸縮の順序(add してから del)とも正しい。
-- 計算量は実測で O(n√q)。`cost/(n√q)` は n, q を振ってもほぼ一定、`cost/(q√n)` は一定でない。コメントも `O(n√q)` に修正済み。
-- run_light / run / run_range の eval 計算とソートの重複は現状維持とする。
 
 ## random.cpp
 
@@ -95,8 +66,3 @@
 - **[軽微]** `gen_lobster` はコメントの通りパラメータの根拠が不明。D > 2 になり得るため、厳密にはロブスター木(全頂点が主鎖から距離 2 以内)の定義を満たさない場合がある。
 - **[軽微]** 内部 UnionFind は tree_generator 専用の重複実装。ds/union_find.cpp を使えば減らせるが、生成器の独立性を優先するなら現状でよい。
 
-## zaatsu.cpp
-
-- 圧縮・復元のロジックは正しい。
-- **[注意]** `to_zaatsu` は未登録の値でも黙って挿入位置を返す。誤用検出のため `assert(res < n && a[res] == v)` を入れるか、この挙動を仕様としてコメントに明記した方がよい。
-- **[軽微]** `add` 後に `build` を忘れると `to_zaatsu` が壊れるが、検出手段がない。build 済みフラグを持つ手もある。
