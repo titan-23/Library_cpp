@@ -1,33 +1,5 @@
 # titan_cpplib/graph レビュー
 
-対象は25ファイル。
-
-- bfs_path.cpp
-- centroid_decomposition.cpp
-- dijkstra.cpp
-- dijkstra_path.cpp
-- euler_tour.cpp
-- get_scc_graph.cpp
-- graph.cpp
-- hashed_rooted_tree.cpp
-- hld.cpp
-- hld_edge_lazy_segment_tree.cpp
-- hld_edge_segment_tree.cpp
-- hld_lazy_segment_tree.cpp
-- hld_segment_tree.cpp
-- hungarian.cpp
-- k_nearest_sources.cpp
-- lca.cpp
-- minimum_spanning_tree.cpp
-- minimum_steiner_tree.cpp
-- namori.cpp
-- perfect_binary_tree.cpp
-- rerooting_dp.cpp
-- rooted_tree.cpp
-- warshall_floayd_simd.cpp
-- warshall_floyd.cpp
-- warshall_floyd_path.cpp
-
 重要度は3段階。
 
 - **[バグ]** 誤動作・UB・コンパイル不能につながる
@@ -39,7 +11,6 @@
 | ファイル | 内容 |
 |---|---|
 | warshall_floayd_simd.cpp | AVX-512 命令を使っており AtCoder ジャッジ (Zen3) では SIGILL |
-| get_scc_graph.cpp | groups だけ番号を反転しており、F・ids・ids_inv と対応しない |
 | namori.cpp | なもりグラフ以外(木)を渡すと cycle 検出に失敗し `visit[-1]` で UB |
 | minimum_spanning_tree.cpp | 重みなし・ソートなしなので「E が重み順」という暗黙の前提がある。前提を満たさなければ MST にならない |
 
@@ -48,13 +19,8 @@
 - **[軽微] 非 inline の自由関数**が dijkstra、bfs_path、minimum_spanning_tree、get_scc_graph、rerooting_dp にある。複数翻訳単位で ODR 違反。単一ファイル提出なら実害なし。
 - **[軽微] 隣接リストの値渡し**が散見される(rerooting_dp、get_scc_graph、namori、centroid_decomposition、hld の build_list 等)。グラフ全体をコピーするので定数倍が悪い。特に rerooting_dp は `const vector<...> G` で `&` の付け忘れに見える。
 
-## bfs_path.cpp
-
-- 正しい。s==t で {s} を返す境界も問題ない。
-
 ## centroid_decomposition.cpp
 
-- dfs / find_centroid / build のロジックは正しい。「サイズが total/2 を超える子へ降りる」方式で、部分木サイズは元の根からの値を使ってよいことも確認した。
 - **[注意]** n==0 で `build(0)` が範囲外アクセス。頂点数1以上が前提。
 - **[軽微]** コンストラクタが `vector<vector<int>> G` の値渡し + `G(G)` でコピーが2回走る。const 参照 + コピー、または move にできる。
 - **[軽微]** dfs / find_centroid が再帰で、深さは成分サイズに比例する。AtCoder のスタックサイズなら実害なし。
@@ -78,8 +44,6 @@
 
 ## get_scc_graph.cpp
 
-- Tarjan 風 SCC 自体は正しい(lowlink の更新、処理済み頂点の order=n 化も確認)。
-- **[バグ] 返り値の番号系が不整合**。groups は `groups[group_cnt-1-ids[v]]` でトポロジカル順に並べ替えているが、F・ids・ids_inv は生の番号のまま(こちらは逆トポロジカル順で、辺は大きい id から小さい id へ向く)。つまり groups[i] と F の頂点 i は別の成分を指す。ACL のように ids 自体を `group_cnt-1-ids[v]` に反転してから全部を作るべき。現状 groups と F を組み合わせると誤る。
 - **[軽微]** G が値渡し。dfs が再帰。
 
 ## graph.cpp
@@ -103,25 +67,10 @@
 - **[軽微]** for_each_vertex_path が返す区間列は順序を保証しないので可換モノイド専用。非可換は HLDSegmentTree 側で対応済みだが、使い分けのコメントがあるとよい。
 - **[軽微]** build_list が値渡し。
 
-## hld_segment_tree.cpp
-
-- 正しい。path_prod の非可換対応(u 側は rseg で u→head の向き、v 側は seg で head→v の向き、lres と rres の結合順)と、rseg の添字変換 `i → n-1-i` の全区間を確認した。
-- get の「O(1)」表記は segment_tree.get が葉の直接参照なので正しい。
-
-## hld_edge_segment_tree.cpp
-
-- 正しい。辺属性(深い側の頂点に持たせる)での境界、同一列内最終区間の `nodein+1` による自辺の除外、subtree_prod の `nodein[v]+1` を確認した。
-- 重み付き隣接リストからのコンストラクタも、G が両方向に辺を持つ前提で正しい。
-
 ## hld_lazy_segment_tree.cpp
 
-- 正しい。path_apply / subtree_apply が seg と rseg の両方に対応区間で作用させている点、区間の対応(`[l, r) → [n-r, n-l)`)を確認した。
 - **[軽微]** `(HLD&, int n)` コンストラクタは n == hld.n が前提だが検証がない。HLDSegmentTree は hld.n を直接使う形で、インターフェースが揃っていない。
 - **[軽微]** print.cpp の include は未使用。コンストラクタの a が値渡し。
-
-## hld_edge_lazy_segment_tree.cpp
-
-- 正しい。path_apply の u==v ガード、辺属性の区間境界、subtree_apply の rseg 側 `[n-nodeout, n-nodein-1)` を確認した。
 
 ## hungarian.cpp
 
@@ -132,7 +81,6 @@
 
 ## k_nearest_sources.cpp
 
-- 多始点 Dijkstra + 遅延削除で「相異なる始点による近い方 K 個」を保持するロジックは正しい。update() の同一始点の in-place 改善、最悪要素の置換、pop 時の有効性チェックを確認した。
 - **[注意] 計算量表記が過小**。update() 内に K 要素の線形走査があるので、実際は O(K(N+M)(K + log(KN)))。K が大きいときに表記 O(K(N+M)log(KN)) との差が効く。頂点ごとの dist をヒープや hash にすれば表記どおりになるが、K が小さい想定なら現状のコメント修正だけでよい。
 - **[軽微]** queue/deque の残骸コメントと qu_push / qu_top / qu_pop のラッパは消してよい。
 

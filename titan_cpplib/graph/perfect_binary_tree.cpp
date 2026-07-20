@@ -7,7 +7,7 @@
 #include <type_traits>
 using namespace std;
 
-// PerfectBinaryTree
+// PerfectBinaryTree / (T: 符号付き整数)
 namespace titan23 {
 
 // 1-indexedの完全二分木クラス

@@ -57,11 +57,14 @@ tuple<vector<vector<int>>, vector<vector<int>>, vector<int>, vector<vector<int>>
             dfs(dfs, v);
         }
     }
+    for (int v = 0; v < n; ++v) {
+        ids[v] = group_cnt-1-ids[v];
+    }
     vector<vector<int>> groups(group_cnt);
     for (int v = 0; v < n; ++v) {
-        groups[group_cnt-1-ids[v]].push_back(v);
+        groups[ids[v]].push_back(v);
     }
-    vector<vector<int>> F(*max_element(ids.begin(), ids.end())+1);
+    vector<vector<int>> F(group_cnt);
     for (int v = 0; v < n; ++v) {
         for (int x : G[v]) {
             if (ids[v] != ids[x]) {

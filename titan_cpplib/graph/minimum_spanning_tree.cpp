@@ -6,15 +6,25 @@
 using namespace std;
 
 namespace titan23 {
-/// 最小全域木の辺集合を返す
-vector<pair<int, int>> minimum_spanning_tree(int n, const vector<pair<int, int>> &E) {
+
+/// 最小全域木の辺集合を返す / (idx, u, v) / O()
+template<typename T>
+pair<T, vector<tuple<int, int, int>>> minimum_spanning_tree(int n, const vector<tuple<int, int, T>> &E) {
+    vector<tuple<T, int>> F(E.size());
+    for (int i = 0; i < (int)E.size(); ++i) {
+        F[i] = {get<2>(E[i]), i};
+    }
+    sort(F.begin(), F.end());
     titan23::UnionFind uf(n);
-    vector<pair<int, int>> ans;
-    for (const auto &[u, v] : E) {
+    vector<tuple<int, int, int>> res;
+    T s = 0;
+    for (const auto &[w, idx] : F) {
+        auto [u, v] = E[idx];
         if (uf.same(u, v)) continue;
         uf.unite(u, v);
-        ans.emplace_back(u, v);
+        ans.emplace_back(idx, u, v);
+        s += w
     }
-    return ans;
+    return {s, ans};
 }
 }  // namespace titan23
