@@ -15,7 +15,7 @@ using ll = long long;
 
 /**
  * @brief 非負辺専用の Warshall-Floyd
- * @details 構築時および add_edge で与える辺の重みは 0 以上であること。
+ * @details 構築時および `add_edge` で与える辺の重みは `0` 以上。
  */
 class WarshallFloydSIMDNonnegative {
 private:
@@ -27,9 +27,7 @@ public:
     WarshallFloydSIMDNonnegative() : n(0) {}
 
     /// @brief 時間 O(|V|^3), 空間 O(|V|^2)
-    WarshallFloydSIMDNonnegative(
-        const vector<vector<pair<int, ll>>> &G
-    ) : n(G.size()) {
+    WarshallFloydSIMDNonnegative(const vector<vector<pair<int, ll>>> &G) : n(G.size()) {
         n = (n + 7) & ~7;
         d.assign(n*n, INF);
 
@@ -56,7 +54,7 @@ public:
         }
     }
 
-    /// @brief 重みwの辺(s, t)を追加する / O(|V|^2)
+    /// @brief 重み `w` の有向辺 `(s, t)` を追加する / O(|V|^2)
     void add_edge(int s, int t, ll w) {
         assert(w >= 0);
         if (w >= d[s*n+t]) return;
@@ -72,10 +70,6 @@ public:
                 _mm512_storeu_si512((__m512i*)&d[i*n+j], v_min);
             }
         }
-    }
-
-    ll get_inf() const {
-        return INF;
     }
 
     /// @brief O(1)

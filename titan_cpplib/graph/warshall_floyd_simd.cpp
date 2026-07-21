@@ -9,11 +9,13 @@
 
 using namespace std;
 
-// WarshallFloydSIMD
 namespace titan23 {
 
 using ll = long long;
 
+/**
+ * @brief AVX-512 を用いた Warshall-Floyd
+ */
 class WarshallFloydSIMD {
 private:
     int n;
@@ -44,11 +46,13 @@ public:
         for (int v = 0; v < (int)G.size(); ++v) {
             d[v*n+v] = 0;
             for (const auto &[x, c]: G[v]) {
-                d[v*n+x] = min(d[v*n+x], c);
+                ll cost = c < -INF ? -INF : c;
+                d[v*n+x] = min(d[v*n+x], cost);
             }
         }
 
         __m512i v_inf = _mm512_set1_epi64(INF);
+        __m512i v_ninf = _mm512_set1_epi64(-INF);
         for (int k = 0; k < n; ++k) {
             for (int i = 0; i < n; ++i) {
                 if (i == k || d[i*n+k] == INF) continue;
@@ -58,6 +62,7 @@ public:
                     __m512i v_d_kj = _mm512_loadu_si512((__m512i*)&d[k*n+j]);
                     __mmask8 finite = _mm512_cmpneq_epi64_mask(v_d_kj, v_inf);
                     __m512i v_sum = _mm512_add_epi64(v_d_ik, v_d_kj);
+                    v_sum = _mm512_max_epi64(v_sum, v_ninf);
                     __m512i v_min = _mm512_min_epi64(v_d_ij, v_sum);
                     v_min = _mm512_mask_mov_epi64(v_d_ij, finite, v_min);
                     _mm512_storeu_si512((__m512i*)&d[i*n+j], v_min);
@@ -84,8 +89,9 @@ public:
         }
     }
 
-    /// @brief 重みwの辺(s, t)を追加する / O(|V|^2)
+    /// @brief 重み `w` の有向辺 `(s, t)` を追加する / O(|V|^2)
     void add_edge(int s, int t, ll w) {
+        if (w < -INF) w = -INF;
         int st = s*n+t;
         if (neg_inf[st] || w >= d[st]) return;
 
@@ -106,6 +112,7 @@ public:
         if (new_neg_cycle) neg_cycle = true;
 
         __m512i v_inf = _mm512_set1_epi64(INF);
+        __m512i v_ninf = _mm512_set1_epi64(-INF);
         for (int i = 0; i < n; ++i) {
             if (!to_s_neg_inf[i] && to_s[i] == INF) continue;
 
@@ -132,6 +139,7 @@ public:
                 __m512i v_from_t = _mm512_loadu_si512((__m512i*)&from_t[j]);
                 __mmask8 finite = _mm512_cmpneq_epi64_mask(v_from_t, v_inf);
                 __m512i v_new_d = _mm512_add_epi64(v_isw, v_from_t);
+                v_new_d = _mm512_max_epi64(v_new_d, v_ninf);
                 __m512i v_min = _mm512_min_epi64(v_d_ij, v_new_d);
                 v_min = _mm512_mask_mov_epi64(v_d_ij, finite, v_min);
                 _mm512_storeu_si512((__m512i*)&d[i*n+j], v_min);
@@ -139,17 +147,13 @@ public:
         }
     }
 
-    ll get_inf() const {
-        return INF;
-    }
-
-    /// @brief s から t に到達できるか / O(1)
+    /// @brief `s` から `t` に到達できるか / O(1)
     bool reachable(int s, int t) const {
         int idx = s*n+t;
         return neg_inf[idx] || d[idx] != INF;
     }
 
-    /// @brief s から t への経路上に負閉路があるか / O(1)
+    /// @brief `s` から `t` への経路上に負閉路があるか / O(1)
     bool is_neg_inf(int s, int t) const {
         return neg_inf[s*n+t];
     }
@@ -159,7 +163,7 @@ public:
         return neg_cycle;
     }
 
-    /// @brief is_neg_inf(s, t) == false のときのみ有効 / O(1)
+    /// @brief `is_neg_inf(s, t) == false` のときのみ有効 / O(1)
     ll get_dist(int s, int t) const {
         assert(!is_neg_inf(s, t));
         return d[s*n+t];

@@ -1,12 +1,16 @@
 #pragma once
 
+#include <algorithm>
 #include <cassert>
+#include <utility>
 #include <vector>
 using namespace std;
 
-// WarshallFloydPath
 namespace titan23 {
 
+/**
+ * @brief 経路復元付き Warshall-Floyd
+ */
 template<typename T>
 class WarshallFloydPath {
 private:
@@ -22,7 +26,15 @@ private:
     vector<int> from_t_neg_inf;
     bool negative_cycle;
 
-    /// @brief 負閉路を経由できる頂点対を NEG_INF にする / O(|V|^3)
+    T add_dist(T a, T b) const {
+        if (a >= INF || b >= INF) return INF;
+        if (a <= -INF || b <= -INF) return -INF;
+        if (b < 0 && a <= -INF-b) return -INF;
+        if (b > 0 && a >= INF-b) return INF;
+        return a+b;
+    }
+
+    /// @brief 負閉路を経由できる頂点対を `NEG_INF` にする / O(|V|^3)
     void set_negative_infinity() {
         vector<int> negative_vertices;
         for (int v = 0; v < n; ++v) {
@@ -69,8 +81,9 @@ public:
                 if (dik == INF) continue;
                 for (int j = 0; j < n; ++j) {
                     if (dist[k*n+j] == INF) continue;
-                    if (dist[i*n+j] > dik + dist[k*n+j]) {
-                        dist[i*n+j] = dik + dist[k*n+j];
+                    T new_dist = add_dist(dik, dist[k*n+j]);
+                    if (dist[i*n+j] > new_dist) {
+                        dist[i*n+j] = new_dist;
                         nxt[i*n+j] = nxt[i*n+k];
                     }
                 }
@@ -79,7 +92,7 @@ public:
         set_negative_infinity();
     }
 
-    /// @brief 重みwの辺(s, t)を追加する / O(|V|^2)
+    /// @brief 重み `w` の有向辺 `(s, t)` を追加する / O(|V|^2)
     void add_edge(int s, int t, T w) {
         int st = s*n+t;
         if (neg_inf[st] || w >= dist[st]) return;
@@ -93,7 +106,7 @@ public:
         }
 
         int ts = t*n+s;
-        bool new_negative_cycle = neg_inf[ts] || (dist[ts] != INF && dist[ts] + w < 0);
+        bool new_negative_cycle = neg_inf[ts] || (dist[ts] != INF && add_dist(dist[ts], w) < 0);
         if (new_negative_cycle) negative_cycle = true;
 
         for (int i = 0; i < n; ++i) {
@@ -108,7 +121,7 @@ public:
                     continue;
                 }
                 if (neg_inf[ij]) continue;
-                T new_dist = to_s[i] + w + from_t[j];
+                T new_dist = add_dist(add_dist(to_s[i], w), from_t[j]);
                 if (dist[ij] == INF || dist[ij] > new_dist) {
                     dist[ij] = new_dist;
                     nxt[ij] = i == s ? t : next_to_s[i];
@@ -117,13 +130,13 @@ public:
         }
     }
 
-    /// @brief s から t に到達できるか / O(1)
+    /// @brief `s` から `t` に到達できるか / O(1)
     bool reachable(int s, int t) const {
         int idx = s*n+t;
         return neg_inf[idx] || dist[idx] != INF;
     }
 
-    /// @brief s から t への経路上に負閉路があるか / O(1)
+    /// @brief `s` から `t` への経路上に負閉路があるか / O(1)
     bool is_neg_inf(int s, int t) const {
         return neg_inf[s*n+t];
     }
@@ -133,13 +146,13 @@ public:
         return negative_cycle;
     }
 
-    /// @brief is_neg_inf(s, t) == false のときのみ有効 / O(1)
+    /// @brief `is_neg_inf(s, t) == false` のときのみ有効 / O(1)
     T get_dist(int s, int t) const {
         assert(!is_neg_inf(s, t));
         return dist[s*n+t];
     }
 
-    /// @brief 到達不能または NEG_INF の場合は空配列を返す / O(|path|)
+    /// @brief 到達不能または `NEG_INF` の場合は空配列を返す / O(|path|)
     vector<int> get_path(int s, int t) const {
         vector<int> path;
         int idx = s*n+t;
