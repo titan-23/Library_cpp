@@ -5,7 +5,9 @@
 #include <cmath>
 #include <cassert>
 #include <stack>
+#include <tuple>
 #include <memory>
+#include <algorithm>
 #include "titan_cpplib/others/print.cpp"
 using namespace std;
 
@@ -62,12 +64,12 @@ class PersistentMultiset {
         }
 
         void balance_check() const {
-            if (!weight_left()*DELTA >= weight_right()) {
+            if (!(weight_left()*DELTA >= weight_right())) {
                 cerr << weight_left() << ", " << weight_right() << endl;
                 cerr << "not weight_left()*DELTA >= weight_right()." << endl;
                 assert(false);
             }
-            if (!weight_right() * DELTA >= weight_left()) {
+            if (!(weight_right() * DELTA >= weight_left())) {
                 cerr << weight_left() << ", " << weight_right() << endl;
                 cerr << "not weight_right() * DELTA >= weight_left()." << endl;
                 assert(false);
@@ -87,7 +89,7 @@ class PersistentMultiset {
         }
 
         void debug() const {
-            cout << "this : key=" << key << ", size=" << size << endl;
+            cout << "this : key=" << key << ", size=" << size << ", cnt=" << cnt << endl;
             if (left)  cout << "to-left" << endl;
             if (right) cout << "to-right" << endl;
             cout << endl;
@@ -97,16 +99,28 @@ class PersistentMultiset {
     };
 
     void _build(vector<T> a) {
+        sort(a.begin(), a.end());
+        vector<pair<T, int>> b;
+        for (const T &x : a) {
+            if (!b.empty() && b.back().first == x) {
+                b.back().second++;
+            } else {
+                b.emplace_back(x, 1);
+            }
+        }
         auto build = [&] (auto &&build, int l, int r) -> NodePtr {
             int mid = (l + r) >> 1;
-            NodePtr node = make_shared<Node>(a[mid]);
+            NodePtr node = make_shared<Node>(b[mid].first, b[mid].second);
             if (l != mid) node->left = build(build, l, mid);
             if (mid+1 != r) node->right = build(build, mid+1, r);
             node->update();
             return node;
         };
-        sort(a.begin(), a.end());
-        root = build(build, 0, (int)a.size());
+        if (b.empty()) {
+            root = nullptr;
+            return;
+        }
+        root = build(build, 0, (int)b.size());
     }
 
     NodePtr _rotate_right(NodePtr &node) {
@@ -180,14 +194,32 @@ class PersistentMultiset {
         return _split_node_idx(node, node->size-1);
     }
 
+    // すべての l のキー <= すべての r のキー を前提に連結する。
+    // 境界のキーが等しいときは cnt を統合し、1キー1ノードを保つ。
     NodePtr _merge_node(NodePtr l, NodePtr r) {
-        if ((!l) && (!r)) {return nullptr;}
-        if (!l) {return r->copy();}
-        if (!r) {return l->copy();}
-        l = l->copy();
-        r = r->copy();
+        if ((!l) && (!r)) { return nullptr; }
+        if (!l) { return r; }
+        if (!r) { return l; }
         auto [l_, root_] = _pop_right(l);
+        NodePtr rmin = r;
+        while (rmin->left) rmin = rmin->left;
+        if (rmin->key == root_->key) {
+            NodePtr r2 = _add_leftmost(r, root_->cnt);
+            return _merge_node(l_, r2);
+        }
         return _merge_with_root(l_, root_, r);
+    }
+
+    // node の最小キーのノードに cnt を加える。最小キー == 加算対象キーであることを前提とする。
+    NodePtr _add_leftmost(NodePtr node, int cnt) {
+        node = node->copy();
+        node->cnt_subtree += cnt;
+        if (node->left) {
+            node->left = _add_leftmost(node->left, cnt);
+        } else {
+            node->cnt += cnt;
+        }
+        return node;
     }
 
     pair<NodePtr, NodePtr> _split_node_key(NodePtr &node, const T &key) {
@@ -203,6 +235,7 @@ class PersistentMultiset {
         }
     }
 
+    // ノード数 k で分割する。左に k ノード、右に残り。
     pair<NodePtr, NodePtr> _split_node_idx(NodePtr &node, int k) {
         if (!node) {return {nullptr, nullptr};}
         int tmp = node->left ? k-node->left->size : k;
@@ -215,6 +248,36 @@ class PersistentMultiset {
             auto [l, r] = _split_node_idx(node->right, tmp-1);
             return {_merge_with_root(node->left, node, l), r};
         }
+    }
+
+    // 要素数 k で分割する。左に小さい方から k 要素、右に残り。
+    // k が同一キーの多重度の途中に落ちるときはノードを分ける。
+    pair<NodePtr, NodePtr> _split_node_cnt(NodePtr node, int k) {
+        if (!node) { return {nullptr, nullptr}; }
+        int left_cnt = node->left ? node->left->cnt_subtree : 0;
+        if (k <= left_cnt) {
+            auto [l, r] = _split_node_cnt(node->left, k);
+            return {l, _merge_with_root(r, node, node->right)};
+        } else if (k >= left_cnt + node->cnt) {
+            auto [l, r] = _split_node_cnt(node->right, k - left_cnt - node->cnt);
+            return {_merge_with_root(node->left, node, l), r};
+        } else {
+            int a = k - left_cnt; // 1 <= a <= cnt-1
+            NodePtr node_l = make_shared<Node>(node->key, a);
+            NodePtr node_r = make_shared<Node>(node->key, node->cnt - a);
+            NodePtr lt = _merge_with_root(node->left, node_l, nullptr);
+            NodePtr rt = _merge_with_root(nullptr, node_r, node->right);
+            return {lt, rt};
+        }
+    }
+
+    NodePtr _find_node(const T &key) const {
+        NodePtr node = root;
+        while (node) {
+            if (key == node->key) return node;
+            node = key < node->key ? node->left : node->right;
+        }
+        return nullptr;
     }
 
     PersistentMultiset<T> _new(NodePtr root) const {
@@ -234,89 +297,99 @@ class PersistentMultiset {
     }
 
     pair<PersistentMultiset<T>, PersistentMultiset<T>> split(int k) {
-        auto [l, r] = _split_node(this->root, k);
+        assert(0 <= k && k <= len());
+        auto [l, r] = _split_node_cnt(this->root, k);
         return {_new(l), _new(r)};
     }
 
-    NodePtr find(T key) const {
-        NodePtr node = root;
-        while (node) {
-            s.emplace(node);
-            if (key == node->key) return node;
-            node = key < node->key ? node->left : node->right;
-        }
-        return nullptr;
-    }
-
     PersistentMultiset<T> add(T key, int cnt = 1) {
-        NodePtr it = find(key);
-        if (it != nullptr) {
-            assert(this->root);
-            NodePtr new_root = this->root->copy();
-            NodePtr node = new_root;
-            while (node) {
-                node->cnt_subtree += cnt;
-                if (key == node->key) {
-                    node->cnt += cnt;
-                    break;
-                }
-                node = key < node->key ? node->left->copy() : node->right->copy();
-            }
-            return _new(new_root);
+        assert(cnt >= 1);
+        NodePtr it = _find_node(key);
+        if (it == nullptr) {
+            auto [s, t] = _split_node_key(root, key);
+            NodePtr new_node = make_shared<Node>(key, cnt);
+            return _new(_merge_with_root(s, new_node, t));
         }
-        auto [s, t] = _split_node_key(root, key);
-        NodePtr new_node = make_shared<Node>(key, cnt);
-        return _new(_merge_with_root(s, new_node, t));
+        NodePtr new_root = root->copy();
+        NodePtr node = new_root;
+        while (true) {
+            node->cnt_subtree += cnt;
+            if (key == node->key) {
+                node->cnt += cnt;
+                break;
+            }
+            if (key < node->key) {
+                node->left = node->left->copy();
+                node = node->left;
+            } else {
+                node->right = node->right->copy();
+                node = node->right;
+            }
+        }
+        return _new(new_root);
     }
 
-    PersistentMultiset<T> remove(T key) {
-        NodePtr it = find(key);
-        if (it != nullptr && it->cnt > 1) {
-            assert(this->root);
-            NodePtr new_root = this->root->copy();
+    // key を cnt 個削除する。存在数以上を指定するとそのキーを丸ごと削除する。
+    // key が無いときは変更しない。
+    PersistentMultiset<T> remove(T key, int cnt = 1) {
+        assert(cnt >= 1);
+        NodePtr it = _find_node(key);
+        if (it == nullptr) {
+            return _new(root ? root->copy() : nullptr);
+        }
+        if (it->cnt > cnt) {
+            NodePtr new_root = root->copy();
             NodePtr node = new_root;
-            while (node) {
+            while (true) {
                 node->cnt_subtree -= cnt;
                 if (key == node->key) {
                     node->cnt -= cnt;
                     break;
                 }
-                node = key < node->key ? node->left->copy() : node->right->copy();
+                if (key < node->key) {
+                    node->left = node->left->copy();
+                    node = node->left;
+                } else {
+                    node->right = node->right->copy();
+                    node = node->right;
+                }
             }
             return _new(new_root);
         }
         auto [s_, t] = _split_node_key(this->root, key);
         auto [s, tmp] = _pop_right(s_);
         assert(tmp->key == key);
-        NodePtr root = _merge_node(s, t);
-        return _new(root);
+        NodePtr new_root = _merge_node(s, t);
+        return _new(new_root);
     }
 
-    bool contains(T key) const {
-        NodePtr node = root;
-        while (node) {
-            if (key == node->key) return true;
-            node = key < node->key ? node->left : node->right;
-        }
-        return false;
+    bool contains(const T &key) const {
+        return _find_node(key) != nullptr;
     }
 
+    int count(const T &key) const {
+        NodePtr it = _find_node(key);
+        return it ? it->cnt : 0;
+    }
+
+    // 小さい方から 0-indexed で k 番目の要素を返す。多重度を数える。
     T get(int k) const {
         assert(0 <= k && k < len());
         NodePtr node = root;
         while (true) {
             assert(node);
-            int t = node->left ? (node->cnt + node->left->cnt_subtree) : node->cnt;
-            if (t-node->cnt <= k && k < t) return node->key;
-            if (t > k) {
+            int left_cnt = node->left ? node->left->cnt_subtree : 0;
+            if (left_cnt <= k && k < left_cnt + node->cnt) return node->key;
+            if (k < left_cnt) {
                 node = node->left;
             } else {
-                k -= t;
+                k -= left_cnt + node->cnt;
                 node = node->right;
             }
         }
     }
 
+    // key 未満の要素数を返す。
     int index(const T &key) const {
         int k = 0;
         NodePtr node = root;
@@ -335,6 +408,7 @@ class PersistentMultiset {
         return k;
     }
 
+    // key 以下の要素数を返す。
     int index_right(const T &key) const {
         int k = 0;
         NodePtr node = root;
@@ -353,15 +427,14 @@ class PersistentMultiset {
         return k;
     }
 
+    // 小さい方から k 番目の要素を1つ取り出す。
     pair<PersistentMultiset<T>, T> pop(int k) {
         assert(0 <= k && k < len());
-        auto [s_, t] = _split_node(this->root, k+1);
-        auto [s, tmp] = _pop_right(s_);
-        NodePtr root = _merge_node(s, t);
-        return {_new(root), tmp->key};
+        T key = get(k);
+        return {remove(key), key};
     }
 
-    vector<T> tovector() {
+    vector<T> tovector() const {
         NodePtr node = root;
         stack<NodePtr> s;
         vector<T> a;
@@ -372,7 +445,7 @@ class PersistentMultiset {
                 node = node->left;
             } else {
                 node = s.top(); s.pop();
-                a.emplace_back(node->key);
+                for (int i = 0; i < node->cnt; ++i) a.emplace_back(node->key);
                 node = node->right;
             }
         }
@@ -383,51 +456,35 @@ class PersistentMultiset {
         return _new(this->root ? this->root->copy() : nullptr);
     }
 
-    T get(int k) {
-        assert(0 <= k && k < len());
-        NodePtr node = root;
-        while (1) {
-            int t = node->left ? node->left->size : 0;
-            if (t == k) {
-                return node->key;
-            }
-            if (t < k) {
-                k -= t + 1;
-                node = node->right;
-            } else {
-                node = node->left;
-            }
-        }
-    }
-
+    // 多重度を含む要素数。
     int len() const {
-        return root ? root->size : 0;
+        return root ? root->cnt_subtree : 0;
     }
 
     void check() const {
-        auto rec = [&] (auto &&rec, NodePtr node) -> pair<int, int> {
-            int ls = 0, rs = 0;
+        auto rec = [&] (auto &&rec, NodePtr node) -> tuple<int, int, int> {
+            int ls = 0, rs = 0, lc = 0, rc = 0;
             int height = 0;
-            int h;
             if (node->left) {
-                pair<int, int> res = rec(rec, node->left);
-                ls = res.first;
-                h = res.second;
+                auto [s, c, h] = rec(rec, node->left);
+                ls = s; lc = c;
                 height = max(height, h);
             }
             if (node->right) {
-                pair<int, int> res = rec(rec, node->right);
-                rs = res.first;
-                h = res.second;
+                auto [s, c, h] = rec(rec, node->right);
+                rs = s; rc = c;
                 height = max(height, h);
             }
             node->balance_check();
-            int s = ls + rs + 1;
-            assert(s == node->size);
-            return {s, height+1};
+            assert(node->cnt >= 1);
+            int size = ls + rs + 1;
+            int cnt_subtree = lc + rc + node->cnt;
+            assert(size == node->size);
+            assert(cnt_subtree == node->cnt_subtree);
+            return {size, cnt_subtree, height+1};
         };
         if (root == nullptr) return;
-        auto [_, h] = rec(rec, root);
+        auto [_, c, h] = rec(rec, root);
         cerr << PRINT_GREEN << "OK : height=" << h << PRINT_NONE << endl;
     }
 
