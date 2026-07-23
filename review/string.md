@@ -18,10 +18,6 @@
 - **[軽微]** trie 隣接リストは add_string のたびに重複辺を積み、build() で unique する。共有プレフィックスが多いと一時メモリが総文字数比例で膨らむ。
 - **[軽微]** メンバ宣言順(node, trie, failtree, root)と初期化リスト順が不一致(-Wreorder)。`get(v)` が Node を値渡しで返す。
 
-## brackets.cpp
-
-- 正しい。(sum, prefix-min) のモノイドで区間の正当括弧列判定を行う定石構成。単位元の min=1e9 も op で正しく吸収される。
-
 ## dynamic_aho_corasick.cpp
 
 - 二進分割(binary grouping)による動的化。ブロックのマージが二進カウンタとして正しく動くこと、pos と neg の差分で削除を表現する設計を確認した。追加は償却 O(|p| log q)、search は O(|s| log q)。
@@ -33,7 +29,6 @@
 
 - 回文木(EerTree)。add の get_upper、suffix_link の決定、suffix_link_dep による回文数カウント、get_freq の伝播順(suffix_link が常に小さい添字を指す)を確認した。正しい。「aa」のように空ノード経由で長さ2の回文を作る経路も机上で追跡した。
 - **[注意] ノード添字の規約が2種類混在**。get_suff / get_range_from_idx / enumerate_suffix は内部番号(番兵2個を含む)を使い、idx_to_range / idx_to_string / get_freq / count_unique_palindromes は外部番号(0 始まり、内部番号-2)を使う。get_range_from_idx と idx_to_range は同じ計算で規約だけ違うため、取り違えやすい。関数コメントでの明示か、片方への統一を推奨する。
-- **[軽微]** print() は yosupo 提出用と思われる1始まりの出力でデバッグ専用。コメントアウトされた array 版 child が本体に残っている。
 
 ## hash_string.cpp
 
@@ -42,11 +37,6 @@
 - **[注意] コンストラクタの extend 条件が off-by-one**。`if (n > hsb->get_cap()) extend(...)` は、cap がちょうど n のとき extend せず、get(0, r) の `invb[n-r]`(r=0 で invb[n])が範囲外参照になる。必要なのは添字 n までなので、条件は `n+1 > get_cap()` 相当が正しい。HashStringBase(n) で作った直後(cap=n+1)は問題にならない。
 - **[注意]** 文字を `c-'a'+1` で数値化しており、英小文字以外は壊れる。前提のコメントがない。
 - **[軽微]** set を使わない場合も seg を常に構築する(O(n) の無駄)。メンバ宣言順と初期化リスト順の不一致(-Wreorder)。get_lcp は set 使用後 O(n log²n) になる。
-
-## is_kaibun.cpp
-
-- 正しい。
-- **[軽微]** `namespace titan23` の外にある。size_t と int の比較警告が出る形。
 
 ## suffix_automaton.cpp
 
@@ -62,7 +52,3 @@
   - size() は root の count を返すため空文字列を数えない。
   - 空文字列を扱わないなら実害はない。扱わない前提をコメントに書くか、境界を直すかのどちらかにするとよい。
 - **[軽微]** erase はノードの参照を切るだけで領域を再利用しない。print() の色付き出力は環境依存(ANSI エスケープ)。
-
-## z_algorithm.cpp
-
-- 正しい(snuke 氏の `i += k; j -= k` 方式と一致することを確認)。n=0 も対応済み。

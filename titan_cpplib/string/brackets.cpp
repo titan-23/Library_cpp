@@ -1,4 +1,5 @@
 #pragma once
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -56,7 +57,7 @@ public:
     /// @brief 現在の文字列を返す
     string get_string() const { return s; }
 
-    friend ostream& operator<<(ostream& os, const titan23::Brackets &S) {
+    friend ostream& operator<<(ostream& os, const Brackets &S) {
         os << S.s;
         return os;
     }
