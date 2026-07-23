@@ -16,6 +16,8 @@ private:
     vector<int> primelist;
 
 public:
+    PrimeFactorizer() {}
+
     /// @brief <O(√nloglog√n), O(√n)>
     /// @param n 最大値
     PrimeFactorizer(long long n) {
