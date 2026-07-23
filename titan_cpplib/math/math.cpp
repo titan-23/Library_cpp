@@ -35,7 +35,7 @@ T pow_mod(T a, T b, const T mod) {
     return res;
 }
 
-long long pow(long long a, long long b) {
+long long powll(long long a, long long b) {
     long long res = 1;
     while (b) {
         if (b & 1) res *= a;
@@ -47,9 +47,9 @@ long long pow(long long a, long long b) {
 // pow ----------------
 
 // factorial -----------------
-long long factorial(long long x) {
+long long factorial(int x) {
     long long res = 1;
-    for (long long i = 1ll; i <= x; ++i) {
+    for (int i = 1ll; i <= x; ++i) {
         res *= i;
     }
     return res;
