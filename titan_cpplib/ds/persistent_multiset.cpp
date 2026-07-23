@@ -431,7 +431,7 @@ class PersistentMultiset {
         cerr << PRINT_GREEN << "OK : height=" << h << PRINT_NONE << endl;
     }
 
-    friend ostream& operator<<(ostream& os, PersistentMultiset<T> &tree) {
+    friend ostream& operator<<(ostream& os, const PersistentMultiset<T> &tree) {
         vector<T> a = tree.tovector();
         os << "{";
         for (int i = 0; i < (int)a.size()-1; ++i) {

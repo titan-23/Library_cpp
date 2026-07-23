@@ -184,7 +184,6 @@ private:
     vector<T> tovector() {
         if (len() == 0) return {};
         vector<T> a(len());
-        a.resize(_len);
         auto dfs = [&](auto &&dfs, int node, int l, int r) -> void {
             propagate(node);
             if (r - l == 1) {

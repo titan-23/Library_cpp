@@ -24,18 +24,22 @@ public:
     }
 
     T pop_min() {
+        assert(!hq.empty());
         while (!lazy.empty() && lazy.top() == hq.top()) {
             hq.pop(); lazy.pop();
         }
+        assert(!hq.empty());
         T key = hq.top();
         hq.pop();
         return key;
     }
 
     T get_min() {
+        assert(!hq.empty());
         while (!lazy.empty() && lazy.top() == hq.top()) {
             hq.pop(); lazy.pop();
         }
+        assert(!hq.empty());
         return hq.top();
     }
 
@@ -45,6 +49,27 @@ public:
 
     int len() const {
         return hq.size() - lazy.size();
+    }
+
+    friend ostream& operator<<(ostream& os, const titan23::DeletableMinHeap<T> &heap) {
+        auto hq = heap.hq;
+        auto lazy = heap.lazy;
+        vector<T> res;
+        while (!hq.empty()) {
+            while (!lazy.empty() && lazy.top() == hq.top()) {
+                hq.pop(); lazy.pop();
+            }
+            if (hq.empty()) break;
+            res.push_back(hq.top());
+            hq.pop();
+        }
+        os << "[";
+        for (int i = 0; i < (int)res.size(); ++i) {
+            os << res[i];
+            if (i + 1 < (int)res.size()) os << ", ";
+        }
+        os << "]";
+        return os;
     }
 };
 
@@ -92,8 +117,24 @@ public:
         return hq.size() - lazy.size();
     }
 
-    friend ostream& operator<<(ostream& os, const titan23::DeletableMaxHeap<T> &hq) {
-        os << action.d;
+    friend ostream& operator<<(ostream& os, const titan23::DeletableMaxHeap<T> &heap) {
+        auto hq = heap.hq;
+        auto lazy = heap.lazy;
+        vector<T> res;
+        while (!hq.empty()) {
+            while (!lazy.empty() && lazy.top() == hq.top()) {
+                hq.pop(); lazy.pop();
+            }
+            if (hq.empty()) break;
+            res.push_back(hq.top());
+            hq.pop();
+        }
+        os << "[";
+        for (int i = 0; i < (int)res.size(); ++i) {
+            os << res[i];
+            if (i + 1 < (int)res.size()) os << ", ";
+        }
+        os << "]";
         return os;
     }
 };

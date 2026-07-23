@@ -51,13 +51,12 @@ public:
 
     void print() const {
         cout << '[';
-        for (int i = 0; i < n-1; ++i) {
+        for (int i = 0; i < n; ++i) {
             cout << acc[i] << ", ";
         }
         if (n > 0) cout << acc.back();
         cout << ']' << endl;
     }
-
 
     friend ostream& operator<<(ostream& os, CumulativeSum<T> &s) {
         os << s.acc;
