@@ -432,8 +432,8 @@ public:
             vector<int> best_route = route;
             ScoreType best_linear_dist = current_linear_dist;
             vector<int> route_pos(N, -1);
-            for(int i = 0; i < n; ++i) route_pos[route[i]] = i;
-            for(int step = 0; step < 100; ++step) {
+            for (int i = 0; i < n; ++i) route_pos[route[i]] = i;
+            for (int step = 0; step < 100; ++step) {
                 int idx1 = -1;
                 double best_val = -1e18;
                 for (int i = 0; i < n; ++i) {
@@ -467,7 +467,7 @@ public:
                         } else {
                             reverse(route.begin() + idx4, route.begin() + idx1 + 1);
                         }
-                        for(int i = 0; i < n; ++i) route_pos[route[i]] = i;
+                        for (int i = 0; i < n; ++i) route_pos[route[i]] = i;
                         if (current_linear_dist < best_linear_dist) {
                             best_linear_dist = current_linear_dist;
                             best_route = route;
@@ -483,7 +483,7 @@ public:
                 score += (best_linear_dist * best_linear_dist) - (old_d * old_d);
                 dists[r1] = best_linear_dist;
                 tr = best_route;
-                for(int i = 0; i < n; ++i) {
+                for (int i = 0; i < n; ++i) {
                     pos_idx[tr[i]] = i;
                 }
             }
@@ -530,14 +530,14 @@ public:
             vector<int> new_tour;
             int sz = tours[r].size();
             new_tour.reserve(sz);
-            for(int i = 0; i <= p1; ++i) new_tour.push_back(tours[r][i]);
-            for(int i = p3 + 1; i <= p4; ++i) new_tour.push_back(tours[r][i]);
-            for(int i = p2 + 1; i <= p3; ++i) new_tour.push_back(tours[r][i]);
-            for(int i = p1 + 1; i <= p2; ++i) new_tour.push_back(tours[r][i]);
-            for(int i = p4 + 1; i < sz; ++i) new_tour.push_back(tours[r][i]);
+            for (int i = 0; i <= p1; ++i) new_tour.push_back(tours[r][i]);
+            for (int i = p3 + 1; i <= p4; ++i) new_tour.push_back(tours[r][i]);
+            for (int i = p2 + 1; i <= p3; ++i) new_tour.push_back(tours[r][i]);
+            for (int i = p1 + 1; i <= p2; ++i) new_tour.push_back(tours[r][i]);
+            for (int i = p4 + 1; i < sz; ++i) new_tour.push_back(tours[r][i]);
 
             tours[r] = std::move(new_tour);
-            for(int i = 0; i < sz; ++i) pos_idx[tours[r][i]] = i;
+            for (int i = 0; i < sz; ++i) pos_idx[tours[r][i]] = i;
             dists[r] += changed.diff_d1;
         } else if (changed.type == 4) {
             int r1 = changed.r1, r2 = changed.r2;
@@ -549,8 +549,8 @@ public:
 
             dists[r1] += changed.diff_d1;
             dists[r2] += changed.diff_d2;
-            for(int i = u; i < tours[r1].size(); ++i) pos_idx[tours[r1][i]] = i;
-            for(int i = w + 1; i < tours[r2].size(); ++i) {
+            for (int i = u; i < tours[r1].size(); ++i) pos_idx[tours[r1][i]] = i;
+            for (int i = w + 1; i < tours[r2].size(); ++i) {
                 pos_route[tours[r2][i]] = r2;
                 pos_idx[tours[r2][i]] = i;
             }
@@ -569,8 +569,8 @@ public:
 
             dists[r1] += changed.diff_d1;
             dists[r2] += changed.diff_d2;
-            for(int i = u1; i < tours[r1].size(); ++i) { pos_route[tours[r1][i]] = r1; pos_idx[tours[r1][i]] = i; }
-            for(int i = u2; i < tours[r2].size(); ++i) { pos_route[tours[r2][i]] = r2; pos_idx[tours[r2][i]] = i; }
+            for (int i = u1; i < tours[r1].size(); ++i) { pos_route[tours[r1][i]] = r1; pos_idx[tours[r1][i]] = i; }
+            for (int i = u2; i < tours[r2].size(); ++i) { pos_route[tours[r2][i]] = r2; pos_idx[tours[r2][i]] = i; }
         }
     }
 

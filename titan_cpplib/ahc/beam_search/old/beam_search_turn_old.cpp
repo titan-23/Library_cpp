@@ -592,7 +592,7 @@ public:
                 for (int t = turn; t <= max_turn_global; ++t) {
                     if (turn_to_pool_idx[t] == -1) continue;
                     Candidates& cands = cands_pool[turn_to_pool_idx[t]];
-                    for(int i = 0; i < cands.size(); ++i) {
+                    for (int i = 0; i < cands.size(); ++i) {
                         int id = cands.next_beam[i].action_id;
                         if(is_survived_node[id]) active_ids.push_back(id);
                     }
