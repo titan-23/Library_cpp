@@ -48,12 +48,12 @@ private:
             if (this->left) {
                 this->data = op(this->data, this->left->data);
             } else {
-                this->data = op(this->data, pow(dseg->init_val, mid()));
+                this->data = op(this->data, pow(dseg->init_val, mid() - l));
             }
             if (this->right) {
                 this->data = op(this->data, this->right->data);
             } else {
-                this->data = op(this->data, pow(dseg->init_val, mid()));
+                this->data = op(this->data, pow(dseg->init_val, r - mid()));
             }
         }
 
@@ -100,8 +100,8 @@ private:
     DynamicSegmentTreeInit(const IndexType u_, T init) {
         assert(u_ > 0);
         this->u = 1ll << bit_length(u_);
-        this->root = new Node(this, 0, this->u);
         this->init_val = init;
+        this->root = new Node(this, 0, this->u);
     }
 
     T prod(IndexType l, IndexType r) const {

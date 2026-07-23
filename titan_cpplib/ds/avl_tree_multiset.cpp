@@ -373,7 +373,7 @@ public:
         return index(high) - index(low);
     }
 
-    T pop(int k=-1) {
+    T pop(int k) {
         AVLTreeMultisetNodePtr node = find_kth(k);
         T key = node->key;
         node->val -= 1;

@@ -228,7 +228,7 @@ class EulerTourTree {
         _init_build(a);
     }
 
-    /// 隣接リストから構築する / `O(logn)`
+    /// 隣接リストから構築する / `O(n)`
     void build(vector<vector<int>> &G) {
         vector<int> seen(n, 0);
         vector<long long> a;

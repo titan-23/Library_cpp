@@ -27,7 +27,7 @@ public:
      *
      * @param missing 使用しない値
      */
-    StaticSet(T missing) : missing(missing) {}
+    StaticSet(T missing) : missing(missing), n(0) {}
 
     /**
      * @brief Construct a new Static Set object / `O(nlogn)`
