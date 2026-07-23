@@ -65,11 +65,6 @@
 - **[注意]** n+1 ≧ mod のとき逆元テーブルが破綻する(mod が素数でも i が mod の倍数で inv が 0 になる)。mod より大きい n を渡さない前提の明記か assert が要る。
 - **[軽微]** nPr / nCr は上限側の範囲チェックがなく、コンストラクタで確保したサイズを超える n を渡すと範囲外参照になる。
 
-## osak.cpp
-
-- 本体(osa_k 法の min_factor 篩、素因数分解、約数列挙)は正しい。
-- **[軽微]** get_divisors 内の sort(g) は p_factorization が昇順を返すため冗長。末尾の unique も構成上不要。
-
 ## pollard_rho.cpp
 
 - 構成: Miller-Rabin の証人から因数を取り出し、失敗時に Floyd 循環検出の ρ 法へフォールバックする方式。factorize の分解ループも含めロジックは正しい。

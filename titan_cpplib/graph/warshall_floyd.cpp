@@ -43,6 +43,7 @@ public:
         for (int v = 0; v < n; ++v) {
             dist[v*n+v] = 0;
             for (const auto &[x, c]: G[v]) {
+                assert(c < INF);
                 dist[v*n+x] = min(dist[v*n+x], c);
             }
         }
