@@ -9,14 +9,15 @@
 #include <unordered_map>
 using namespace std;
 
-// DyCone
+// DyConeSum
 namespace titan23 {
 
-/// @brief オフライン動的連結性 / 全体で期待 `O((n+q)logn)`
+/// @brief オフライン動的連結性(点加算・成分加算・成分和つき) / 全体で期待 `O((n+q)logn)`
 /// @note 更新はためておき、`run()` で順に処理する
-class DyCone {
+template<typename T>
+class DyConeSum {
 private:
-    static constexpr int ADD = 0, DEL = 1, QUERY = 2;
+    static constexpr int ADD = 0, DEL = 1, POINT = 2, GROUP = 3, QUERY = 4;
     static constexpr int NEVER = -INT_MAX;
 
     struct Node { int par, w; };
@@ -26,13 +27,19 @@ private:
     int group_count_;
     vector<Node> nd;
     vector<int> rd, sz, stk;
+    vector<T> val, lz, acc;
     vector<Event> Q;
+    vector<T> vals;
     vector<pair<int, int>> chain;
     unordered_map<long long, int> mp;
 
     void shortcut(int u) {
         int p = nd[u].par;
+        T d = lz[p] * sz[u];
+        val[p] -= val[u] + d;
         sz[p] -= sz[u];
+        val[u] += d;
+        lz[u] += lz[p];
         nd[u].par = nd[p].par;
     }
 
@@ -50,16 +57,20 @@ private:
             stk.push_back(u);
             u = nd[u].par;
         }
+        acc[u] = lz[u];
         int m = stk.size();
         for (int i = m-1; i >= 0; --i) {
-            int v = stk[i];
-            sz[nd[v].par] -= sz[v];
+            int v = stk[i], p = nd[v].par;
+            val[p] -= val[v] + lz[p] * sz[v];
+            sz[p] -= sz[v];
+            acc[v] = acc[p] + lz[v];
         }
     }
 
     int connect(int u, int w = 0) {
         while (nd[u].w <= w) {
             int p = nd[u].par;
+            val[p] += val[u] + lz[p] * sz[u];
             sz[p] += sz[u];
             u = p;
         }
@@ -85,6 +96,9 @@ private:
             v = connect(v, w);
             if (rd[u] < rd[v]) swap(u, v);
             int np = nd[v].par, nw = nd[v].w;
+            T nlz = acc[v] - acc[u];
+            val[v] += (nlz - lz[v]) * sz[v];
+            lz[v] = nlz;
             nd[v] = {u, w};
             u = np;
             w = nw;
@@ -96,10 +110,16 @@ private:
         while (nd[u].par != u) {
             if (nd[u].w == w) {
                 int x = u;
+                T L = T();
                 while (nd[x].par != x) {
-                    x = nd[x].par;
-                    sz[x] -= sz[u];
+                    int p = nd[x].par;
+                    L += lz[p];
+                    val[p] -= val[u] + L * sz[u];
+                    sz[p] -= sz[u];
+                    x = p;
                 }
+                val[u] += L * sz[u];
+                lz[u] += L;
                 nd[u] = {u, 1};
                 if (find(u) != find(v)) group_count_++;
                 return;
@@ -124,14 +144,38 @@ private:
         sub_del(v, u, w);
     }
 
-public:
-    DyCone() : n(0) {}
+    void inner_add_point(int u, T x) {
+        while (true) {
+            if (nd[u].par == u) {
+                val[u] += x;
+                break;
+            }
+            while (nd[nd[u].par].w <= nd[u].w) shortcut(u);
+            val[u] += x;
+            u = nd[u].par;
+        }
+    }
 
-    /// @brief 頂点数 `n` で初期化する / `O(n)`
-    DyCone(int n, int seed = 1321312) : n(n), group_count_(n), nd(n), rd(n), sz(n, 1) {
+    void inner_add_group(int u, T x) {
+        int r = find(u);
+        lz[r] += x;
+        val[r] += x * sz[r];
+    }
+
+public:
+    DyConeSum() : n(0) {}
+
+    /// @brief 頂点数 `n`、各頂点の値 `0` で初期化する / `O(n)`
+    DyConeSum(int n, int seed = 1321312)
+            : n(n), group_count_(n), nd(n), rd(n), sz(n, 1), val(n), lz(n), acc(n) {
         for (int i = 0; i < n; ++i) nd[i] = {i, 1};
         iota(rd.begin(), rd.end(), 0);
         shuffle(rd.begin(), rd.end(), mt19937(seed));
+    }
+
+    /// @brief 各頂点の値を `init` で初期化する / `O(n)`
+    DyConeSum(const vector<T> &init, int seed = 1321312) : DyConeSum(init.size(), seed) {
+        val = init;
     }
 
     /// @brief 更新 `cap` 個分の領域を確保する / `O(cap)`
@@ -171,6 +215,20 @@ public:
         Q.emplace_back(DEL, u, v, -t);
     }
 
+    /// @brief 頂点 `u` に `x` を加算する / 期待 `O(logn)`
+    void add_point(int u, T x) {
+        assert(0 <= u && u < n);
+        Q.emplace_back(POINT, u, vals.size(), NEVER);
+        vals.push_back(x);
+    }
+
+    /// @brief `u` と同じ成分の全頂点に `x` を加算する / 期待 `O(logn)`
+    void add_group(int u, T x) {
+        assert(0 <= u && u < n);
+        Q.emplace_back(GROUP, u, vals.size(), NEVER);
+        vals.push_back(x);
+    }
+
     /// @brief ここをクエリ時刻とする / `O(1)`
     void next_query() {
         Q.emplace_back(QUERY, 0, 0, NEVER);
@@ -187,6 +245,8 @@ public:
             switch (e.type) {
                 case ADD: inner_add_edge(e.u, e.v, e.w); break;
                 case DEL: inner_delete_edge(e.u, e.v, e.w); break;
+                case POINT: inner_add_point(e.u, vals[e.v]); break;
+                case GROUP: inner_add_group(e.u, vals[e.v]); break;
                 case QUERY: out(k++); break;
             }
         }
@@ -202,6 +262,12 @@ public:
     int size(int u) {
         assert(0 <= u && u < n);
         return sz[find(u)];
+    }
+
+    /// @brief `u` と同じ成分の値の総和を返す / 期待 `O(logn)`
+    T sum(int u) {
+        assert(0 <= u && u < n);
+        return val[find(u)];
     }
 
     /// @brief 成分の個数を返す / `O(1)`
