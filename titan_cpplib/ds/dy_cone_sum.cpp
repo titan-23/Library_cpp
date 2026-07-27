@@ -12,8 +12,7 @@ using namespace std;
 // DyConeSum
 namespace titan23 {
 
-/// @brief オフライン動的連結性(点加算・成分加算・成分和つき) / 全体で期待 `O((n+q)logn)`
-/// @note 更新はためておき、`run()` で順に処理する
+/// @brief オフラインダイコネ / 全体で期待 `O((n+q)logn)`
 template<typename T>
 class DyConeSum {
 private:
@@ -201,7 +200,7 @@ public:
         Q.emplace_back(ADD, u, v, NEVER);
     }
 
-    /// @brief 辺 `(u, v)` を削除する。今ある辺だけ削除できる / 期待 `O(logn)`
+    /// @brief 辺 `(u, v)` を削除する 存在する辺のみ削除できる / 期待 `O(logn)`
     void delete_edge(int u, int v) {
         assert(0 <= u && u < n && 0 <= v && v < n);
         if (u == v) return;
@@ -229,7 +228,7 @@ public:
         vals.push_back(x);
     }
 
-    /// @brief ここをクエリ時刻とする / `O(1)`
+    /// @brief クエリ時刻とする / `O(1)`
     void next_query() {
         Q.emplace_back(QUERY, 0, 0, NEVER);
     }
