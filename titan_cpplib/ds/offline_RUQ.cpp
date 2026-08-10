@@ -16,14 +16,17 @@ private:
     vector<tuple<int, int, T>> Q;
 
     int find(int x) {
-        if (nxt[x] == x) return x;
-        return nxt[x] = find(nxt[x]);
+        while (nxt[x] != x) {
+            nxt[x] = nxt[nxt[x]];
+            x = nxt[x];
+        }
+        return x;
     }
 
 public:
     OfflineRUQ() : n(0) {}
-    OfflineRUQ(int n, T init) : n(n), a(n, init), nxt(n) {}
-    OfflineRUQ(int n, const vector<T> &a) : n(n), a(a), nxt(n) {}
+    OfflineRUQ(int n, T init) : n(n), a(n, init), nxt(n+1) {}
+    OfflineRUQ(int n, const vector<T> &a) : n(n), a(a), nxt(n+1) {}
 
     void reserve(int q) {
         Q.reserve(q);

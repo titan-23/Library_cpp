@@ -88,10 +88,6 @@ set系、pop_min,pop_max,get_min,get_maxなどいろいろ統一したい
 - **[軽微] print() が acc[n-1] を飛ばす**。ループが `i < n-1` で acc(サイズ n+1)を出力し最後に acc.back()=acc[n] を出すため、acc[n-1] が出ない。
 - **[軽微]** prod/sum が同一実装(非可逆モノイドに prod の名は不適)。
 
-### deletable_heap.cpp
-- **[バグ] DeletableMaxHeap::operator<<**。`os << action.d;` の `action` が未定義。使用した時点でコンパイルエラー。
-- **[軽微]** Min 版に Max 版のような空チェック assert がない。
-
 ### deque.cpp
 - **[バグ] _rebuild が壊れている**。
   - 2つのループの分岐が両方 `front_vec 優先` のため、要素が片側に寄ったまま再分配されない。例: `Deque({1,2,3,4})` に pop_front すると _rebuild 後も front が空のままで、`back_vec.back()=4` を返す(正しくは 1)。
@@ -250,7 +246,7 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 - **[バグ] partial_persistent_union_find.cpp がコンパイル不能**。`PartialPersistentArray` に既定コンストラクタがないのに、`PartialPersistentUnionFind()` がメンバ `par` を既定構築しようとするため、インスタンス化でエラーになる。`PartialPersistentArray() {}` を追加すれば解消する。include を補って単体コンパイルできるようにした結果、表面化した。
 
 ### persistent_lazy_segment_tree.cpp / persistent_segment_tree.cpp
-- **[軽微]** tovector の `vector<T> a(len()); a.resize(_len);` は冗長。copy_from は 0 番兵もコピーする(無害な無駄)。
+- **[軽微]** copy_from は 0 番兵もコピーする(無害な無駄)。
 
 ### persistent_set.cpp
 - **[バグ] _build が空 vector で範囲外参照**。`build(0, 0)` が `a[0]` を読む。persistent_wbtree にはある空チェックがない。
@@ -301,7 +297,6 @@ yosupo 提出の移植。処理を全て追った。想定入力(自己ループ
 - **[軽微]** デフォルトコンストラクタの missing(-1) は数値以外の T で不成立。
 
 ### wavelet_matrix_bit.cpp
-- **[バグ] ファイル末尾に main() が残っている**。include すると main 重複でリンクエラー。
 - **[注意]** クラス名が wavelet_matrix.cpp と同じ WaveletMatrix でテンプレート引数が異なるため、同時 include で再宣言エラー。
 - **[軽微]** `#pragma unroll` は GCC では未知プラグマ。
 

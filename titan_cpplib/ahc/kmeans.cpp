@@ -98,7 +98,7 @@ public:
         assert((int)init_centers.size() == k);
         assert((int)target_sizes.size() == k);
         long long sum_sizes = 0;
-        for(int s : target_sizes) sum_sizes += s;
+        for (int s : target_sizes) sum_sizes += s;
         assert(sum_sizes == n);
         vector<ElmType> cluster_centers = init_centers;
         vector<int> labels(n, -1);

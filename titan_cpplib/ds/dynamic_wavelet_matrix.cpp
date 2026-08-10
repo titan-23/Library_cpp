@@ -32,11 +32,11 @@ class DynamicWaveletMatrix {
     }
 
     int bit_length(const long long n) const {
-        return n == 0 ? 0 : 64 - __builtin_clz(n);
+        return n == 0 ? 0 : 64 - __builtin_clzll(n);
     }
 
     int bit_length(const unsigned long long n) const {
-        return n == 0 ? 0 : 64 - __builtin_clz(n);
+        return n == 0 ? 0 : 64 - __builtin_clzll(n);
     }
 
     void _build(vector<T> a) {

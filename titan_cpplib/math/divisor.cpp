@@ -86,23 +86,6 @@ vector<int> primefactor_num(int n) {
     return cnt;
 }
 
-// エラトステネスの篩(N以下の素数を返す) / O(NloglogN)
-vector<int> get_primelist(int n) {
-    if (n <= 1) return {};
-    vector<int> p(n+1, 1);
-    p[0] = 0;
-    p[1] = 0;
-    vector<int> res;
-    for (long long i = 2; i <= n; ++i) {
-        if (!p[i]) continue;
-        res.emplace_back(i);
-        for (int j = i+i; j <= n; j += i) {
-            p[j] = 0;
-        }
-    }
-    return res;
-}
-
 // 事前にエラトステネスとかでsart(N)以下の素数を全列挙しておく
 // O(sqrt(N)log(log(sqrt(N)) + log(N))
 vector<pair<int, int>> factorization_eratos(int n, const vector<int> &primes) {

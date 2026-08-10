@@ -13,8 +13,7 @@ struct Deque {
     vector<T> front_vec, back_vec;
 
     Deque() {}
-
-    Deque(vector<T> a) : back_vec(a) {}
+    Deque(const vector<T> &a) : back_vec(a) {}
 
     void _rebuild() {
         int n = (int)(front_vec.size() + back_vec.size()) / 2;
@@ -37,8 +36,8 @@ struct Deque {
                 new_back.emplace_back(back_vec[idx_back++]);
             }
         }
-        this->front_vec = new_front;
-        this->back_vec = new_back;
+        front_vec = move(new_front);
+        back_vec = move(new_back);
     }
 
     void push_back(const T v) {

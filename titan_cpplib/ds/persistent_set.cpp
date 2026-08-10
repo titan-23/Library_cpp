@@ -6,6 +6,7 @@
 #include <cassert>
 #include <stack>
 #include <memory>
+#include <algorithm>
 #include "titan_cpplib/others/print.cpp"
 using namespace std;
 
@@ -53,12 +54,12 @@ class PersistentSet {
         }
 
         void balance_check() const {
-            if (!weight_left()*DELTA >= weight_right()) {
+            if (!(weight_left()*DELTA >= weight_right())) {
                 cerr << weight_left() << ", " << weight_right() << endl;
                 cerr << "not weight_left()*DELTA >= weight_right()." << endl;
                 assert(false);
             }
-            if (!weight_right() * DELTA >= weight_left()) {
+            if (!(weight_right() * DELTA >= weight_left())) {
                 cerr << weight_left() << ", " << weight_right() << endl;
                 cerr << "not weight_right() * DELTA >= weight_left()." << endl;
                 assert(false);
@@ -88,6 +89,8 @@ class PersistentSet {
     };
 
     void _build(vector<T> a) {
+        sort(a.begin(), a.end());
+        a.erase(unique(a.begin(), a.end()), a.end());
         auto build = [&] (auto &&build, int l, int r) -> NodePtr {
             int mid = (l + r) >> 1;
             NodePtr node = make_shared<Node>(a[mid]);
@@ -96,7 +99,10 @@ class PersistentSet {
             node->update();
             return node;
         };
-        sort(a.begin(), a.end());
+        if (a.empty()) {
+            root = nullptr;
+            return;
+        }
         root = build(build, 0, (int)a.size());
     }
 
@@ -225,7 +231,8 @@ class PersistentSet {
     }
 
     pair<PersistentSet<T>, PersistentSet<T>> split(int k) {
-        auto [l, r] = _split_node(this->root, k);
+        assert(0 <= k && k <= len());
+        auto [l, r] = _split_node_idx(this->root, k);
         return {_new(l), _new(r)};
     }
 
@@ -308,13 +315,13 @@ class PersistentSet {
 
     pair<PersistentSet<T>, T> pop(int k) {
         assert(0 <= k && k < len());
-        auto [s_, t] = _split_node(this->root, k+1);
+        auto [s_, t] = _split_node_idx(this->root, k+1);
         auto [s, tmp] = _pop_right(s_);
         NodePtr root = _merge_node(s, t);
         return {_new(root), tmp->key};
     }
 
-    vector<T> tovector() {
+    vector<T> tovector() const {
         NodePtr node = root;
         stack<NodePtr> s;
         vector<T> a;
@@ -334,23 +341,6 @@ class PersistentSet {
 
     PersistentSet<T> copy() const {
         return _new(this->root ? this->root->copy() : nullptr);
-    }
-
-    T get(int k) {
-        assert(0 <= k && k < len());
-        NodePtr node = root;
-        while (1) {
-            int t = node->left ? node->left->size : 0;
-            if (t == k) {
-                return node->key;
-            }
-            if (t < k) {
-                k -= t + 1;
-                node = node->right;
-            } else {
-                node = node->left;
-            }
-        }
     }
 
     int len() const {
@@ -384,7 +374,7 @@ class PersistentSet {
         cerr << PRINT_GREEN << "OK : height=" << h << PRINT_NONE << endl;
     }
 
-    friend ostream& operator<<(ostream& os, PersistentSet<T> &tree) {
+    friend ostream& operator<<(ostream& os, const PersistentSet<T> &tree) {
         vector<T> a = tree.tovector();
         os << "{";
         for (int i = 0; i < (int)a.size()-1; ++i) {

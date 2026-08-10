@@ -1,12 +1,12 @@
-// DyCone の正当性ストレステスト
+// DyConeSum の正当性ストレステスト
 // ランダムな操作列を生成し、毎回 DSU を作り直す愚直解と照合する
-// 自己ループ・多重辺・削除後の再追加を含む
+// 自己ループ・多重辺・削除後の再追加・成分加算を含む
 //
-// g++ -std=c++20 -O2 -Wall -Wextra -I . -o stress test/dycone/stress.cpp
-// ./stress [iters]
+// g++ -std=c++20 -O2 -Wall -Wextra -I . -o stress_sum test/dycone/stress_sum.cpp
+// ./stress_sum [iters]
 
 #include <bits/stdc++.h>
-#include "titan_cpplib/ds/dy_cone.cpp"
+#include "titan_cpplib/ds/dy_cone_sum.cpp"
 using namespace std;
 using ll = long long;
 
@@ -23,8 +23,9 @@ struct DSU {
     }
 };
 
-// 操作種別 0:add_edge 1:delete_edge 2:size 3:same 4:group_count
-struct Op { int t, u, v; };
+// 操作種別 0:add_edge 1:delete_edge 2:add_point 3:add_group
+//          4:sum 5:size 6:same 7:group_count
+struct Op { int t, u, v; ll x; };
 
 int main(int argc, char **argv) {
     int iters = argc > 1 ? atoi(argv[1]) : 2000;
@@ -38,7 +39,7 @@ int main(int argc, char **argv) {
         vector<pair<int,int>> alive;
         for (int i = 0; i < q; ++i) {
             int r = rng() % 100;
-            if (r < 30) {
+            if (r < 25) {
                 int u, v;
                 if (!alive.empty() && rng() % 10 == 0) {
                     tie(u, v) = alive[rng() % alive.size()]; // 多重辺
@@ -49,42 +50,52 @@ int main(int argc, char **argv) {
                 }
                 if (u > v) swap(u, v);
                 alive.push_back({u, v});
-                ops.push_back({0, u, v});
-            } else if (r < 55 && !alive.empty()) {
+                ops.push_back({0, u, v, 0});
+            } else if (r < 45 && !alive.empty()) {
                 int j = rng() % alive.size();
                 auto [u, v] = alive[j];
                 alive[j] = alive.back(); alive.pop_back();
-                ops.push_back({1, u, v});
-            } else if (r < 70) {
-                ops.push_back({2, (int)(rng() % n), 0});
-            } else if (r < 90) {
-                ops.push_back({3, (int)(rng() % n), (int)(rng() % n)});
+                ops.push_back({1, u, v, 0});
+            } else if (r < 57) {
+                ops.push_back({2, (int)(rng() % n), 0, (ll)(rng() % 201) - 100});
+            } else if (r < 69) {
+                ops.push_back({3, (int)(rng() % n), 0, (ll)(rng() % 201) - 100});
+            } else if (r < 80) {
+                ops.push_back({4, (int)(rng() % n), 0, 0});
+            } else if (r < 88) {
+                ops.push_back({5, (int)(rng() % n), 0, 0});
+            } else if (r < 96) {
+                ops.push_back({6, (int)(rng() % n), (int)(rng() % n), 0});
             } else {
-                ops.push_back({4, 0, 0});
+                ops.push_back({7, 0, 0, 0});
             }
         }
 
-        // DyCone
-        titan23::DyCone dc(n, rng());
+        // DyConeSum
+        titan23::DyConeSum<ll> dc(n, rng());
         vector<int> qpos; // k 番目のクエリの ops 添字
         for (int i = 0; i < (int)ops.size(); ++i) {
             const Op &o = ops[i];
             switch (o.t) {
                 case 0: dc.add_edge(o.u, o.v); break;
                 case 1: dc.delete_edge(o.u, o.v); break;
+                case 2: dc.add_point(o.u, o.x); break;
+                case 3: dc.add_group(o.u, o.x); break;
                 default: qpos.push_back(i); dc.next_query(); break;
             }
         }
         vector<ll> got;
         dc.run([&] (int k) {
             const Op &o = ops[qpos[k]];
-            if (o.t == 2) got.push_back(dc.size(o.u));
-            else if (o.t == 3) got.push_back(dc.same(o.u, o.v));
+            if (o.t == 4) got.push_back(dc.sum(o.u));
+            else if (o.t == 5) got.push_back(dc.size(o.u));
+            else if (o.t == 6) got.push_back(dc.same(o.u, o.v));
             else got.push_back(dc.group_count());
         });
 
         // 愚直解
         vector<ll> want;
+        vector<ll> val(n, 0);
         vector<pair<int,int>> cur;
         for (const Op &o : ops) {
             if (o.t == 0) {
@@ -97,14 +108,24 @@ int main(int argc, char **argv) {
                 }
                 continue;
             }
+            if (o.t == 2) {
+                val[o.u] += o.x;
+                continue;
+            }
             DSU d(n);
             int gc = n;
             for (auto &[a, b] : cur) if (d.u(a, b)) gc--;
-            if (o.t == 2) {
+            if (o.t == 3) {
+                for (int x = 0; x < n; ++x) if (d.f(x) == d.f(o.u)) val[x] += o.x;
+            } else if (o.t == 4) {
+                ll s = 0;
+                for (int x = 0; x < n; ++x) if (d.f(x) == d.f(o.u)) s += val[x];
+                want.push_back(s);
+            } else if (o.t == 5) {
                 int c = 0;
                 for (int x = 0; x < n; ++x) if (d.f(x) == d.f(o.u)) c++;
                 want.push_back(c);
-            } else if (o.t == 3) {
+            } else if (o.t == 6) {
                 want.push_back(d.f(o.u) == d.f(o.v));
             } else {
                 want.push_back(gc);

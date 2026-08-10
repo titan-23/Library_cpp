@@ -15,7 +15,6 @@ vector<int> get_primelist(int n) {
     vector<bool> is_prime(n + 1, true);
     is_prime[0] = false;
     is_prime[1] = false;
-    vector<int> primelist;
     for (int i = 2; i * i <= n; ++i) {
         if (is_prime[i]) {
             for (int j = i * i; j <= n; j += i) {
@@ -23,6 +22,7 @@ vector<int> get_primelist(int n) {
             }
         }
     }
+    vector<int> primelist;
     for (int i = 2; i <= n; ++i) {
         if (is_prime[i]) {
             primelist.emplace_back(i);
@@ -32,8 +32,8 @@ vector<int> get_primelist(int n) {
 }
 
 /// @brief 区間 [l, r) の素数を列挙
-/// 時間計算量: O(√r + (r - l) loglog r)
-/// 空間計算量: O(√r + (r - l))
+/// 時間計算量: O(√r + (r-l) loglog r)
+/// 空間計算量: O(√r + (r-l))
 vector<long long> get_primelist_range(long long l, long long r) {
     assert(l <= r);
     if (r <= 2) return {};

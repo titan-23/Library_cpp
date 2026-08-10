@@ -65,7 +65,6 @@ public:
             return {1};
         }
         vector<int> g = p_factorization(n);
-        sort(g.begin(), g.end());
         vector<pair<int, int>> f = rle(g);
         int m = f.size();
         vector<int> ret;
@@ -89,7 +88,6 @@ public:
 
         dfs(dfs, 0, 1);
         sort(ret.begin(), ret.end());
-        ret.erase(unique(ret.begin(), ret.end()), ret.end());
         return ret;
     }
 };

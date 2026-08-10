@@ -11,7 +11,7 @@ class BloomFilter {
 private:
     using u64 = unsigned long long;
     int size;
-    std::vector<u64> bits;
+    vector<u64> bits;
     int msk;
     static constexpr int K = 3; // ハッシュ関数の数
 
@@ -23,7 +23,7 @@ private:
         return p;
     }
 
-    std::array<u64, K> get_hashes(u64 key) const {
+    array<u64, K> get_hashes(u64 key) const {
         auto splitmix64 = [&] () -> u64 {
             key += 0x9e3779b97f4a7c15;
             u64 z = key;
@@ -86,7 +86,7 @@ public:
     void clear() {
         if (empty()) return;
         size = 0;
-        std::fill(bits.begin(), bits.end(), 0);
+        fill(bits.begin(), bits.end(), 0);
     }
 };
 

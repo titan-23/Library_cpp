@@ -18,6 +18,7 @@ public:
 
     /// `[0, u)` をすべて未使用として構築する / `O(u)`
     UsedSet(int u) : u(u), used(u), unused(u) {
+        assert(u >= 0);
         for (int i = 0; i < u; ++i) {
             unused.add(i);
         }
@@ -94,33 +95,33 @@ public:
     int len_unuse() const { return unused.len(); }
 
     /// 使用済み集合からランダムに1要素を返す / `O(1)`
-    int rnd_get_use(titan23::Random &rnd) const {
+    int rnd_get_from_use(titan23::Random &rnd) const {
         assert(!empty_use());
         return used.get(rnd.randrange(len_use()));
     }
 
     /// 未使用集合からランダムに1要素を返す / `O(1)`
-    int rnd_get_unuse(titan23::Random &rnd) const {
+    int rnd_get_from_unuse(titan23::Random &rnd) const {
         assert(!empty_unuse());
         return unused.get(rnd.randrange(len_unuse()));
     }
 
     /// 使用済み集合からランダムに1要素を取り出し、未使用にして返す / `O(1)`
-    int rnd_pop_use(titan23::Random &rnd) {
-        int v = rnd_get_use(rnd);
+    int rnd_pop_from_use(titan23::Random &rnd) {
+        int v = rnd_get_from_use(rnd);
         unuse(v);
         return v;
     }
 
     /// 未使用集合からランダムに1要素を取り出し、使用済みにして返す / `O(1)`
-    int rnd_pop_unuse(titan23::Random &rnd) {
-        int v = rnd_get_unuse(rnd);
+    int rnd_pop_from_unuse(titan23::Random &rnd) {
+        int v = rnd_get_from_unuse(rnd);
         use(v);
         return v;
     }
 
     friend ostream& operator<<(ostream& os, const UsedSet &ust) {
-        os << "used : " << ust.used << " / " << ust.unused;
+        os << "[UsedSet] used : " << ust.used << " / unused : " << ust.unused;
         return os;
     }
 };
