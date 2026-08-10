@@ -237,6 +237,7 @@ private:
 public:
     SortableArray() {}
 
+    /// @brief 長さ N として初期化する / O(N)
     SortableArray(int n) : n(n), ws(n), nodeptr(n), is_rev(n, false) {
         for (int i = 0; i < n; ++i) {
             nodeptr[i] = new Node(T{});
@@ -253,6 +254,7 @@ public:
         for (int i = 1; i < n; ++i) nodeptr[i] = nullptr;
     }
 
+    /// @brief 配列 a で初期化する / O(N)
     SortableArray(vector<T> a) : n(a.size()), ws(n), nodeptr(n), is_rev(n, false) {
         ws.fill(n);
         for (int i = 0; i < n; ++i) {
@@ -292,6 +294,7 @@ public:
         fw = titan23::FenwickTree<int>(fw_init);
     }
 
+    /// @brief A[k] を返す / 償却 O(log^2 N)
     T get(int k) {
         assert(0 <= k && k < n);
         make_kyokai(k);
@@ -301,6 +304,7 @@ public:
         return ptr->key;
     }
 
+    /// @brief A[k] を key に変更する / 償却 O(log^2 N)
     void set(int k, T key) {
         assert(0 <= k && k < n);
         make_kyokai(k);
@@ -312,6 +316,7 @@ public:
         is_rev[k] = false;
     }
 
+    /// @brief 区間 [l, r) を昇順にソートする reverse=true のときは降順にソートする / 償却 O(log^2 N)
     void sort(int l, int r, bool reverse=false) {
         assert(0 <= l && l <= r && r <= n);
         if (r - l <= 1) return;
@@ -338,6 +343,7 @@ public:
         fw.add(l, s);
     }
 
+    /// @brief vector として返す / O(N)
     vector<T> tovector() {
         vector<T> a; a.reserve(n);
         for (int i = 0; i < n; ++i) {
