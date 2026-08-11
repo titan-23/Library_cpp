@@ -21,8 +21,7 @@ template <class T, class U> bool chmin(T &t, const U &u) { if (t > u) { t = u; r
 template <class T, class U> bool chmax(T &t, const U &u) { if (t < u) { t = u; return true; } return false; }
 
 // #include "titan_cpplib/others/print.cpp"
-#include "titan_cpplib/ahc/kmeans.cpp"
-#include "titan_cpplib/ahc/kmeans_new.cpp"
+#include "titan_cpplib/ahc/kmeans_balanced.cpp"
 
 double calc_dist(const pair<double, double>& a, const pair<double, double>& b) {
     double dx = a.first - b.first;
@@ -30,14 +29,18 @@ double calc_dist(const pair<double, double>& a, const pair<double, double>& b) {
     return dx * dx + dy * dy;
 }
 
-pair<double, double> calc_mean(const vector<pair<double, double>>& pts) {
-    if (pts.empty()) return {0.0, 0.0};
+pair<double, double> calc_mean(const vector<pair<double, double>>& pts, span<const int> members) {
     double sum_x = 0.0, sum_y = 0.0;
-    for (const auto& p : pts) {
+    for (int i : members) {
+        const auto& p = pts[i];
         sum_x += p.first;
         sum_y += p.second;
     }
-    return {sum_x / pts.size(), sum_y / pts.size()};
+    return {sum_x / members.size(), sum_y / members.size()};
+}
+
+long long calc_flow_cost(const pair<double, double>& a, const pair<double, double>& b) {
+    return llround(calc_dist(a, b) * 1e6);
 }
 
 void solve() {
@@ -49,13 +52,8 @@ void solve() {
 
     int max_iter = 1e5;
 
-    auto kmeans = titan23::make_kmeans<pair<double, double>>(
-        k, max_iter, calc_dist, calc_mean, /*seed=*/0, /*verbose=*/false
-    );
-    // titan23::Kmeans<double, pair<double, double>, calc_dist, calc_mean> kmeans(k, max_iter);
-
-    auto result = kmeans.fit(points);
-    const vector<int>& labels = result.first;
+    auto result = titan23::kmeans_balanced_exact(points, A, calc_dist, calc_flow_cost, calc_mean, {.max_iterations=max_iter, .seed=0});
+    const vector<int>& labels = result.labels;
     rep(i, n) {
         cout << labels[i] << (i == n-1 ? "" : " ");
     }

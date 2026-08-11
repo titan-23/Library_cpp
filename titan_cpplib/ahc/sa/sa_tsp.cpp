@@ -53,14 +53,14 @@ long double kmeans_dist(const ElmType &a, const ElmType &b) {
     return dx * dx + dy * dy;
 }
 
-ElmType kmeans_mean(const vector<ElmType> &pts) {
-    if (pts.empty()) return {0.0, 0.0};
+ElmType kmeans_mean(const vector<ElmType> &pts, span<const int> members) {
     long double sx = 0, sy = 0;
-    for (const auto &p : pts) {
+    for (int i : members) {
+        const auto &p = pts[i];
         sx += p.first;
         sy += p.second;
     }
-    return {sx / (long double)pts.size(), sy / (long double)pts.size()};
+    return {sx / (long double)members.size(), sy / (long double)members.size()};
 }
 
 class State {
@@ -146,8 +146,8 @@ public:
         }
 
         // 3. K-means 実行
-        titan23::Kmeans<long double, ElmType, kmeans_dist, kmeans_mean> kmeans(K, 20);
-        auto [labels, final_centers] = kmeans.fit(city_coords, init_centers);
+        auto kmeans_result = titan23::kmeans_from_centers(city_coords, init_centers, kmeans_dist, kmeans_mean, 20);
+        const vector<int>& labels = kmeans_result.labels;
 
         // 4. 各クラスタごとに都市を分類
         vector<vector<int>> clusters(K);
@@ -536,7 +536,7 @@ public:
             for (int i = p1 + 1; i <= p2; ++i) new_tour.push_back(tours[r][i]);
             for (int i = p4 + 1; i < sz; ++i) new_tour.push_back(tours[r][i]);
 
-            tours[r] = std::move(new_tour);
+            tours[r] = move(new_tour);
             for (int i = 0; i < sz; ++i) pos_idx[tours[r][i]] = i;
             dists[r] += changed.diff_d1;
         } else if (changed.type == 4) {
