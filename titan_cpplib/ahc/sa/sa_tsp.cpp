@@ -4,7 +4,7 @@
 #include "titan_cpplib/alg/random.cpp"
 #include "titan_cpplib/others/print.cpp"
 #include "titan_cpplib/ahc/sa/sa.cpp"
-#include "titan_cpplib/ahc/kmeans.cpp"
+#include "titan_cpplib/ahc/kmeans/kmeans.cpp"
 using namespace std;
 using ll = long long;
 #define rep(i, n) for (int i = 0; i < (int)(n); ++i)

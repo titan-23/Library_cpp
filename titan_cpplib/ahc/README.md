@@ -63,10 +63,10 @@
 - `pruner/hoeffding_pruner.cpp`: 同じ入力で得たスコア差を Hoeffding の不等式で判定する。
 - `pruner/wilcoxon_pruner.cpp`: 同じ入力で得たスコア差を Wilcoxon 符号順位検定で判定する。
 - `pruner/successive_halving_pruner.cpp`: 評価の途中で候補数を段階的に減らす。
-- `kmeans.cpp`: Lloyd 法、K-means++、複数初期値に対応する通常版。
-- `kmeans_hamerly.cpp`: Hamerly 法で不要な距離計算を省く版。
-- `kmeans_balanced.cpp`: クラスタの個数制約を最小費用流で扱う版。
-- `kmeans.md`: 各方式の選び方、インターフェース、使用例、計算量。
+- `kmeans/kmeans.cpp`: Lloyd 法、K-means++、複数初期値に対応する通常版。
+- `kmeans/kmeans_hamerly.cpp`: Hamerly 法で不要な距離計算を省く版。
+- `kmeans/kmeans_balanced.cpp`: クラスタの個数制約を最小費用流で扱う版。
+- `kmeans/how_to_use_kmeans.md`: 各方式の選び方、インターフェース、使用例、計算量。
 - `normal_distribution.cpp`: 正規分布の確率、密度、逆累積確率などの計算。
 - `mcmc.cpp`: 線形な正規分布モデルに特化した Gibbs sampler。
 

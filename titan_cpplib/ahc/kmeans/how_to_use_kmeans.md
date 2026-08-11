@@ -81,7 +81,7 @@ Center center_of(const vector<Point>& points, span<const int> members);
 
 ```cpp
 #include <bits/stdc++.h>
-#include "titan_cpplib/ahc/kmeans.cpp"
+#include "titan_cpplib/ahc/kmeans/kmeans.cpp"
 using namespace std;
 using Point = pair<double, double>;
 
@@ -122,7 +122,7 @@ auto result = titan23::kmeans_best_of(points, 2, 8, cost, center_of, {.max_itera
 ## Hamerly法
 
 ```cpp
-#include "titan_cpplib/ahc/kmeans_hamerly.cpp"
+#include "titan_cpplib/ahc/kmeans/kmeans_hamerly.cpp"
 
 double metric(const Point& a, const Point& b) {
     return hypot(a.first - b.first, a.second - b.second);
@@ -138,7 +138,7 @@ auto result = titan23::kmeans_hamerly(points, 2, cost, metric, center_of, {.max_
 ## 個数制約付き版
 
 ```cpp
-#include "titan_cpplib/ahc/kmeans_balanced.cpp"
+#include "titan_cpplib/ahc/kmeans/kmeans_balanced.cpp"
 
 long long flow_cost(const Point& a, const Point& b) {
     return llround(cost(a, b) * 1000000);
