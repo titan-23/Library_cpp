@@ -40,8 +40,8 @@
 - `replica_run`: 複数温度を OpenMP で並列探索するレプリカ交換法。主にローカル調査用。
 - `sa_state.cpp`: `modify`、`rollback`、`advance` などを埋める雛形。
 - `how_to_use_sa.md`: 状態の更新手順、差分計算、採択判定、並列実行時の注意をまとめた説明。
-- `sa_tsp.cpp`: 巡回セールスマン問題を題材にした大きな使用例。
-- `km.cpp` と各 Python ファイル: K-means、巡回路、レプリカ交換の実験・可視化用。
+- `test/sa_tsp.cpp`: 巡回セールスマン問題を題材にした大きな使用例。
+- `test/` の Python ファイルと TSP 入力: 巡回路やレプリカ交換の手動確認・可視化用。
 
 焼きなましもスコアを小さいほど良いものとして扱う。`modify` で変更候補を作り、不採択なら `rollback`、採択なら `advance` を呼ぶ。
 
@@ -67,6 +67,7 @@
 - `kmeans/kmeans_hamerly.cpp`: Hamerly 法で不要な距離計算を省く版。
 - `kmeans/kmeans_balanced.cpp`: クラスタの個数制約を最小費用流で扱う版。
 - `kmeans/how_to_use_kmeans.md`: 各方式の選び方、インターフェース、使用例、計算量。
+- `kmeans/test/`: 個数制約付き K-means の手動確認コード、入出力、可視化用ファイル。
 - `normal_distribution.cpp`: 正規分布の確率、密度、逆累積確率などの計算。
 - `mcmc.cpp`: 線形な正規分布モデルに特化した Gibbs sampler。
 
@@ -81,7 +82,7 @@
 - 提出用の中心候補: `beam_search.cpp`、`beam_search_turn.cpp`、`sa.cpp`、Bitboard、各種タイマー。
 - 問題ごとに書き換えるもの: `beam_search_state*.cpp`、`sa_state.cpp`。
 - 比較・高度な派生: 状態複製版、操作合成版、圧縮木版、レプリカ交換版。
-- 個別実験: `beam_search/test/`、`sa/sa_tsp.cpp`、可視化用 Python、入力・出力・画像。
+- 個別実験: `beam_search/test/`、`sa/test/`、`kmeans/test/`。
 - 設計だけのもの: `dynamic_beam_width_proposal.md`、日本語の解法文書。
 - 過去のもの: `beam_search/old/`。
 
