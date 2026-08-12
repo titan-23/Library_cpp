@@ -19,6 +19,17 @@ static bool is_log_initialized = [] {
     return true;
 }();
 
+namespace detail {
+
+inline void check_sa_run_time_limit(double time_limit) {
+    if (!isfinite(time_limit) || time_limit < 0) throw invalid_argument("sa_run: TIME_LIMIT must be finite and nonnegative");
+}
+
+inline void check_replica_run_arguments(double time_limit, int num_replicas) {
+    if (!isfinite(time_limit) || time_limit < 0) throw invalid_argument("replica_run: TIME_LIMIT must be finite and nonnegative");
+    if (num_replicas <= 0) throw invalid_argument("replica_run: NUM_REPLICAS must be positive");
+}
+
 /// @brief 焼きなましを実行する
 /// @tparam State
 /// @param TIME_LIMIT 実行時間[ms]
@@ -26,29 +37,26 @@ static bool is_log_initialized = [] {
 /// @param verbose ログ出力をするかどうか
 /// @return State::Result 最良解
 template<class State>
-typename State::Result sa_run(const double TIME_LIMIT, const uint32_t seed=23, const bool verbose=true) {
+typename State::Result sa_run_impl(const double TIME_LIMIT, const bool verbose, titan23::Timer& sa_timer, State& state) {
     // 準備
-    titan23::Timer sa_timer;
-    titan23::Random sa_rnd;
+    typename State::Result best_result = state.get_result();
+    if (TIME_LIMIT == 0) return best_result;
 
+    titan23::Random sa_rnd;
     const double START_TEMP = State::param.start_temp;
     const double END_TEMP   = max(State::param.end_temp, 1e-9);
-    const double TEMP_VAL = (START_TEMP - END_TEMP) / TIME_LIMIT;
     const int TEMP_TABLE_SIZE = 4096;
     vector<double> TEMP_TABLE(TEMP_TABLE_SIZE);
     for (int i = 0; i < TEMP_TABLE_SIZE; ++i) {
         TEMP_TABLE[i] = START_TEMP * pow(END_TEMP / START_TEMP, (double)i / (TEMP_TABLE_SIZE - 1));
     }
 
-    State state;
     int64_t iter = 0, bst_cnt = 0, upd_cnt = 0;
     int64_t valid_cnt = 0;
     vector<int64_t> accept(state.changed.TYPE_CNT), accept_worse(state.changed.TYPE_CNT), modify(state.changed.TYPE_CNT);
     double now_time = 0;
 
     // 初期化
-    state.init(seed);
-    typename State::Result best_result = state.get_result();
     typename State::ScoreType score = best_result.score;
     if (verbose) {
         cerr << "init-fin" << endl;
@@ -129,17 +137,30 @@ typename State::Result sa_run(const double TIME_LIMIT, const uint32_t seed=23, c
 /// @param seed 乱数のベースシード値
 /// @param verbose ログ出力をするかどうか
 /// @return State::Result 最良解
-template<class State>
-typename State::Result sa_multi_run(
+template<class State, class StateFactory>
+typename State::Result sa_multi_run_impl(
     const double TIME_LIMIT,
     const double FIRST_PHASE_RATIO,
     const int NUM_STARTS,
-    const uint32_t seed = 23,
-    const bool verbose = true)
+    const uint32_t seed,
+    const bool verbose,
+    StateFactory& state_factory)
 {
     titan23::Timer sa_timer;
-    titan23::Random sa_rnd;
+    if (!isfinite(TIME_LIMIT) || TIME_LIMIT < 0) throw invalid_argument("sa_multi_run: TIME_LIMIT must be finite and nonnegative");
+    if (!isfinite(FIRST_PHASE_RATIO) || FIRST_PHASE_RATIO <= 0 || FIRST_PHASE_RATIO > 1) throw invalid_argument("sa_multi_run: FIRST_PHASE_RATIO must be finite, positive, and at most 1");
+    if (NUM_STARTS <= 0) throw invalid_argument("sa_multi_run: NUM_STARTS must be positive");
+    if (TIME_LIMIT == 0) {
+        optional<typename State::Result> best_result;
+        for (int i = 0; i < NUM_STARTS; ++i) {
+            State state = state_factory(seed + i);
+            typename State::Result result = state.get_result();
+            if (!best_result || result.score < best_result->score) best_result.emplace(move(result));
+        }
+        return move(*best_result);
+    }
 
+    titan23::Random sa_rnd;
     const double phase1_time_limit = TIME_LIMIT * FIRST_PHASE_RATIO;
     const double time_per_start = phase1_time_limit / NUM_STARTS;
     const double START_TEMP = State::param.start_temp;
@@ -151,21 +172,19 @@ typename State::Result sa_multi_run(
         TEMP_TABLE[i] = START_TEMP * pow(END_TEMP / START_TEMP, (double)i / (TEMP_TABLE_SIZE - 1));
     }
 
-    State best_overall_state;
-    typename State::Result best_overall_result;
-    bool is_first = true;
+    optional<State> best_overall_state;
+    optional<typename State::Result> best_overall_result;
 
     for (int i = 0; i < NUM_STARTS; ++i) {
-        State state;
-        state.init(seed + i);
+        double start_time = sa_timer.elapsed();
+        State state = state_factory(seed + i);
 
         State best_local_state = state;
         typename State::Result best_local_result = state.get_result();
         typename State::ScoreType score = best_local_result.score;
 
         int64_t iter = 0;
-        double start_time = sa_timer.elapsed();
-        double now_time = start_time;
+        double now_time = sa_timer.elapsed();
 
         while (true) {
             now_time = sa_timer.elapsed();
@@ -195,21 +214,20 @@ typename State::Result sa_multi_run(
             }
         }
 
-        if (is_first || best_local_result.score < best_overall_result.score) {
-            best_overall_state = best_local_state;
-            best_overall_result = best_local_result;
-            is_first = false;
+        if (!best_overall_result || best_local_result.score < best_overall_result->score) {
+            best_overall_state.emplace(move(best_local_state));
+            best_overall_result.emplace(move(best_local_result));
         }
     }
 
     if (verbose) {
         cerr << "--- Phase 1 finish ---" << endl;
-        cerr << "Best score in Phase 1: " << best_overall_result.true_score << " (" << best_overall_result.score << ")" << endl;
+        cerr << "Best score in Phase 1: " << best_overall_result->true_score << " (" << best_overall_result->score << ")" << endl;
         cerr << "Elapsed time: " << sa_timer.elapsed() << " ms" << endl;
     }
 
-    State state = best_overall_state;
-    typename State::Result best_result = best_overall_result;
+    State state = move(*best_overall_state);
+    typename State::Result best_result = move(*best_overall_result);
     typename State::ScoreType score = state.get_score();
 
     int64_t iter = 0, bst_cnt = 0, upd_cnt = 0, valid_cnt = 0;
@@ -298,45 +316,35 @@ typename State::Result sa_multi_run(
 /// @param record 可視化用に記録するかどうか
 /// @return State::Result 最良解
 template<class State>
-typename State::Result replica_run(
+typename State::Result replica_run_impl(
     const double TIME_LIMIT,
-    const int NUM_REPLICAS=32,
-    const int SWAP_ITER_INTERVAL=100,
-    const bool verbose=true,
-    const bool record=false
+    const int NUM_REPLICAS,
+    const int SWAP_ITER_INTERVAL,
+    const bool verbose,
+    const bool record,
+    titan23::Timer& sa_timer,
+    vector<State>& states
 ) {
-    titan23::Timer sa_timer;
-    thread_local titan23::Random sa_rnd;
+    vector<int> rep_idx(NUM_REPLICAS);
+    iota(rep_idx.begin(), rep_idx.end(), 0);
 
+    typename State::Result best_result = states[0].get_result();
+    for (int i = 1; i < NUM_REPLICAS; ++i) {
+        if (states[i].get_score() < best_result.score) best_result = states[i].get_result();
+    }
+    if (TIME_LIMIT == 0) return best_result;
+
+    thread_local titan23::Random sa_rnd;
     vector<double> temps(NUM_REPLICAS);
     for (int i = 0; i < NUM_REPLICAS; ++i) {
         temps[i] = State::param.start_temp * pow(State::param.end_temp / State::param.start_temp, (double)i / max(1, NUM_REPLICAS-1));
     }
-    vector<State> states(NUM_REPLICAS);
-    vector<int> rep_idx(NUM_REPLICAS);
-
-    #pragma omp parallel
-    {
-        #pragma omp for schedule(static)
-        for (int i = 0; i < NUM_REPLICAS; ++i) {
-            states[i].init(1000 + i);
-            rep_idx[i] = i;
-        }
-    }
-
     int max_threads = omp_get_max_threads();
     int type_cnt = max(1, states[0].changed.TYPE_CNT);
     vector<vector<int64_t>> accept(max_threads, vector<int64_t>(type_cnt, 0));
     vector<vector<int64_t>> accept_worse(max_threads, vector<int64_t>(type_cnt, 0));
     vector<vector<int64_t>> modify(max_threads, vector<int64_t>(type_cnt, 0));
     vector<int64_t> iter(max_threads, 0);
-
-    typename State::Result best_result = states[0].get_result();
-    for (int i = 1; i < NUM_REPLICAS; ++i) {
-        if (states[i].get_score() < best_result.score) {
-            best_result = states[i].get_result();
-        }
-    }
 
     if (verbose) {
         cerr << "init-fin" << endl;
@@ -500,5 +508,113 @@ typename State::Result replica_run(
         }
     }
     return best_result;
+}
+} // namespace detail
+
+template<class State, class StateFactory, enable_if_t<is_invocable_r_v<State, StateFactory&, uint32_t>, int> = 0>
+typename State::Result sa_run(
+    const double TIME_LIMIT,
+    StateFactory&& state_factory,
+    const uint32_t seed = 23,
+    const bool verbose = true
+) {
+    static_assert(is_same_v<invoke_result_t<StateFactory&, uint32_t>, State>, "sa_run: state_factory must return State by value");
+    titan23::Timer sa_timer;
+    detail::check_sa_run_time_limit(TIME_LIMIT);
+    State state = state_factory(seed);
+    return detail::sa_run_impl(TIME_LIMIT, verbose, sa_timer, state);
+}
+
+template<class State>
+typename State::Result sa_run(const double TIME_LIMIT, const uint32_t seed=23, const bool verbose=true) {
+    titan23::Timer sa_timer;
+    detail::check_sa_run_time_limit(TIME_LIMIT);
+    State state{};
+    state.init(seed);
+    return detail::sa_run_impl(TIME_LIMIT, verbose, sa_timer, state);
+}
+
+template<class State, class StateFactory, enable_if_t<is_invocable_r_v<State, StateFactory&, uint32_t>, int> = 0>
+typename State::Result sa_multi_run(
+    const double TIME_LIMIT,
+    const double FIRST_PHASE_RATIO,
+    const int NUM_STARTS,
+    StateFactory&& state_factory,
+    const uint32_t seed = 23,
+    const bool verbose = true
+) {
+    static_assert(is_same_v<invoke_result_t<StateFactory&, uint32_t>, State>, "sa_multi_run: state_factory must return State by value");
+    return detail::sa_multi_run_impl<State>(TIME_LIMIT, FIRST_PHASE_RATIO, NUM_STARTS, seed, verbose, state_factory);
+}
+
+template<class State>
+typename State::Result sa_multi_run(
+    const double TIME_LIMIT,
+    const double FIRST_PHASE_RATIO,
+    const int NUM_STARTS,
+    const uint32_t seed = 23,
+    const bool verbose = true
+) {
+    auto state_factory = [](uint32_t current_seed) {
+        State state{};
+        state.init(current_seed);
+        return state;
+    };
+    return detail::sa_multi_run_impl<State>(TIME_LIMIT, FIRST_PHASE_RATIO, NUM_STARTS, seed, verbose, state_factory);
+}
+
+template<class State, class StateFactory, enable_if_t<is_invocable_r_v<State, StateFactory&, uint32_t>, int> = 0>
+typename State::Result replica_run(
+    const double TIME_LIMIT,
+    StateFactory&& state_factory,
+    const int NUM_REPLICAS = 32,
+    const int SWAP_ITER_INTERVAL = 100,
+    const bool verbose = true,
+    const bool record = false
+) {
+    static_assert(is_same_v<invoke_result_t<StateFactory&, uint32_t>, State>, "replica_run: state_factory must return State by value");
+    titan23::Timer sa_timer;
+    detail::check_replica_run_arguments(TIME_LIMIT, NUM_REPLICAS);
+    vector<State> states;
+    states.reserve(NUM_REPLICAS);
+    {
+        vector<optional<State>> initialized_states(NUM_REPLICAS);
+        vector<exception_ptr> initialization_errors(NUM_REPLICAS);
+        #pragma omp parallel for schedule(static)
+        for (int i = 0; i < NUM_REPLICAS; ++i) {
+            try {
+                initialized_states[i].emplace(state_factory(1000 + i));
+            } catch (...) {
+                initialization_errors[i] = current_exception();
+            }
+        }
+        for (int i = 0; i < NUM_REPLICAS; ++i) if (initialization_errors[i]) rethrow_exception(initialization_errors[i]);
+        for (int i = 0; i < NUM_REPLICAS; ++i) states.emplace_back(move(*initialized_states[i]));
+    }
+    return detail::replica_run_impl(TIME_LIMIT, NUM_REPLICAS, SWAP_ITER_INTERVAL, verbose, record, sa_timer, states);
+}
+
+template<class State>
+typename State::Result replica_run(
+    const double TIME_LIMIT,
+    const int NUM_REPLICAS=32,
+    const int SWAP_ITER_INTERVAL=100,
+    const bool verbose=true,
+    const bool record=false
+) {
+    titan23::Timer sa_timer;
+    detail::check_replica_run_arguments(TIME_LIMIT, NUM_REPLICAS);
+    vector<State> states(NUM_REPLICAS);
+    vector<exception_ptr> initialization_errors(NUM_REPLICAS);
+    #pragma omp parallel for schedule(static)
+    for (int i = 0; i < NUM_REPLICAS; ++i) {
+        try {
+            states[i].init(1000 + i);
+        } catch (...) {
+            initialization_errors[i] = current_exception();
+        }
+    }
+    for (int i = 0; i < NUM_REPLICAS; ++i) if (initialization_errors[i]) rethrow_exception(initialization_errors[i]);
+    return detail::replica_run_impl(TIME_LIMIT, NUM_REPLICAS, SWAP_ITER_INTERVAL, verbose, record, sa_timer, states);
 }
 } // namespace sa

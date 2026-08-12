@@ -116,6 +116,7 @@ public:
     State() {}
 
     void init(uint32_t seed=23) {
+        sarnd.set_seed(seed);
         tours.assign(K, vector<int>());
         dists.assign(K, 0);
         pos_route.assign(N, -1);
@@ -623,8 +624,8 @@ void input() {
 
 void solve() {
     sa::sa_init();
-    sa::State::Result result = sa::sa_run<sa::State>(100000, true);
-    // OMP_NUM_THREADS=32 time ./a.out < fnl4461.tsp > out.txt
+    sa::State::Result result = sa::sa_run<sa::State>(100000, 23, true);
+    // OMP_NUM_THREADS=32 time ./a.out < data/fnl4461.tsp > out.txt
     // sa::State::Result result = sa::replica_run<sa::State>(10000, 32, 100, true);
     result.print();
     cerr << "Score = " << result.score << endl;

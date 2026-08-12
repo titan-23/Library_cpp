@@ -110,8 +110,8 @@ def main():
     plt.title(f"mTSP: MaxDist={max_dist}, TotalDist={total_dist}")
     plt.legend()
     plt.grid(True)
-    plt.savefig("result2.png")
-    print(f"Saved to result2.png (Total: {total_dist}, Max: {max_dist})")
+    plt.savefig("example_output.png")
+    print(f"Saved to example_output.png (Total: {total_dist}, Max: {max_dist})")
 
 
 if __name__ == "__main__":

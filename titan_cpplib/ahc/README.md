@@ -40,10 +40,28 @@
 - `replica_run`: 複数温度を OpenMP で並列探索するレプリカ交換法。主にローカル調査用。
 - `sa_state.cpp`: `modify`、`rollback`、`advance` などを埋める雛形。
 - `how_to_use_sa.md`: 状態の更新手順、差分計算、採択判定、並列実行時の注意をまとめた説明。
-- `test/sa_tsp.cpp`: 巡回セールスマン問題を題材にした大きな使用例。
-- `test/` の Python ファイルと TSP 入力: 巡回路やレプリカ交換の手動確認・可視化用。
+- `test/vis_replica.py`: レプリカ交換の記録を描画する補助処理。
 
 焼きなましもスコアを小さいほど良いものとして扱う。`modify` で変更候補を作り、不採択なら `rollback`、採択なら `advance` を呼ぶ。
+
+引数のある状態を使う場合は、seedから状態を作る関数を `sa_run` へ渡せる。TSPの初期局所探索など、探索前の処理もこの関数内で組み立てられる。
+
+## 巡回セールスマン問題
+
+`tsp/` は対称TSP向けの状態と近傍操作を提供する。
+
+- `tsp.cpp`: 問題、候補表、単一巡回路の状態、最近傍初期解。
+- `tsp_symmetric_moves.cpp`: 2-opt、Or-opt、反転Or-opt、Double Bridge。
+- `tsp_local_search.cpp`: 全探索または候補制限付き2-opt局所探索。
+- `tsp_guided_local_search.cpp`: 標準的な誘導局所探索。
+- `tsp_edge_penalty_search.cpp`: `tsp/examples/tsp2.py`の処理順を保った比較用探索。
+- `tsp_initial_state.cpp`: SAの初期状態を改善する方法の切り替え。
+- `multiple_tours.cpp`: 固定デポを持つ複数巡回路の区間移動・交換。
+- `how_to_use_tsp.md`: 使用例、利用条件、計算量。
+- `test/`: 差分、不変条件、比較用探索、SA連携の自動確認。
+- `examples/`: 参照元の大きなSA例、`tsp2.py`、TSPLIB入力、可視化。
+
+巡回順、点から位置への逆引き、巡回費用は`TspState`が一体で管理する。近傍は先に費用差だけを作り、採択後に状態へ適用できるため、焼きなましの遅延適用に使える。
 
 ## グリッド用ビット集合
 
@@ -68,6 +86,7 @@
 - `kmeans/kmeans_balanced.cpp`: クラスタの個数制約を最小費用流で扱う版。
 - `kmeans/how_to_use_kmeans.md`: 各方式の選び方、インターフェース、使用例、計算量。
 - `kmeans/test/`: 個数制約付き K-means の手動確認コード、入出力、可視化用ファイル。
+- `tsp/`: 対称TSPの状態、近傍、局所探索、誘導局所探索、複数巡回路。
 - `normal_distribution.cpp`: 正規分布の確率、密度、逆累積確率などの計算。
 - `mcmc.cpp`: 線形な正規分布モデルに特化した Gibbs sampler。
 
@@ -82,7 +101,7 @@
 - 提出用の中心候補: `beam_search.cpp`、`beam_search_turn.cpp`、`sa.cpp`、Bitboard、各種タイマー。
 - 問題ごとに書き換えるもの: `beam_search_state*.cpp`、`sa_state.cpp`。
 - 比較・高度な派生: 状態複製版、操作合成版、圧縮木版、レプリカ交換版。
-- 個別実験: `beam_search/test/`、`sa/test/`、`kmeans/test/`。
+- 個別実験: `beam_search/test/`、`sa/test/`、`kmeans/test/`、`tsp/examples/`。
 - 設計だけのもの: `dynamic_beam_width_proposal.md`、日本語の解法文書。
 - 過去のもの: `beam_search/old/`。
 
