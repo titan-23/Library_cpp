@@ -5,6 +5,7 @@
 #include <memory>
 
 #include "titan_cpplib/others/print.cpp"
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 // DynamicLazySegmentTree
@@ -38,10 +39,6 @@ template <class IndexType,
         T (*pow)(T, IndexType)>
 class DynamicLazySegmentTree {
     private:
-    static int bit_length(long long x) {
-        return x == 0 ? 0 : 64 - __builtin_clzll(x);
-    }
-
     struct Node;
     using NodePtr = Node*;
     // using NodePtr = shared_ptr<Node>;

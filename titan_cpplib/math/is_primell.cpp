@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include "titan_cpplib/math/math.cpp"
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 namespace titan23 {
@@ -15,7 +16,7 @@ bool is_primell(long long n) {
     if (n == 2 || n == 7 || n == 61) return true;
     if (n % 2 == 0) return false;
     long long d = n - 1;
-    long long s = __builtin_ctzll(d);
+    long long s = countr_zero(d);
     d >>= s;
     const auto &A = n < 4759123141 ? is_primell_A1 : is_primell_A2;
     for (const long long &a : A) {

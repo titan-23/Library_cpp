@@ -63,14 +63,9 @@
 
 巡回順、点から位置への逆引き、巡回費用は`TspState`が一体で管理する。近傍は先に費用差だけを作り、採択後に状態へ適用できるため、焼きなましの遅延適用に使える。
 
-## グリッド用ビット集合
+## グリッド
 
-- `bitboard.cpp`: 各行を一つの 64 または 128 ビット整数で持つ。幅 128 以下の盤面向け。
-- `flat_bitboard.cpp`: 盤面全体を一つの 64 または 128 ビット整数に収める。総セル数 128 以下の盤面向け。
-- `bitboard_common.cpp`: 4 近傍と 8 近傍の共通定義。
-- `bitboard_proposal.md`: 実装済みの高速化、追加機能、検証内容と残件の記録。
-
-両実装は、集合演算、膨張・収縮、到達集合、最短距離、最短路、連結成分、関節点などを提供する。探索用の作業領域を内部で共有するため、同じインスタンスを同時に複数の探索へ使わない。
+- `grid/`: Bitboardによる盤面処理と、一般的なGrid実装の設計案。選び方と文書一覧は `grid/README.md` を参照。
 
 ## その他の共通部品
 
@@ -81,14 +76,18 @@
 - `pruner/hoeffding_pruner.cpp`: 同じ入力で得たスコア差を Hoeffding の不等式で判定する。
 - `pruner/wilcoxon_pruner.cpp`: 同じ入力で得たスコア差を Wilcoxon 符号順位検定で判定する。
 - `pruner/successive_halving_pruner.cpp`: 評価の途中で候補数を段階的に減らす。
-- `kmeans/kmeans.cpp`: Lloyd 法、K-means++、複数初期値に対応する通常版。
-- `kmeans/kmeans_hamerly.cpp`: Hamerly 法で不要な距離計算を省く版。
-- `kmeans/kmeans_balanced.cpp`: クラスタの個数制約を最小費用流で扱う版。
-- `kmeans/how_to_use_kmeans.md`: 各方式の選び方、インターフェース、使用例、計算量。
-- `kmeans/test/`: 個数制約付き K-means の手動確認コード、入出力、可視化用ファイル。
+- `clustering/`: K-means、個数制約付きK-means、クラスタリングSA、階層型クラスタリング。選び方と文書一覧は `clustering/README.md` を参照。
 - `tsp/`: 対称TSPの状態、近傍、局所探索、誘導局所探索、複数巡回路。
 - `normal_distribution.cpp`: 正規分布の確率、密度、逆累積確率などの計算。
 - `mcmc.cpp`: 線形な正規分布モデルに特化した Gibbs sampler。
+
+AHC専用ではないが、空間的な近傍候補を作る部品として次も利用できる。
+
+- `geometry/delaunay_triangulation.cpp`: 整数座標点のドロネー三角形分割と隣接点。
+- `geometry/voronoi_diagram.cpp`: 指定長方形内へ切り取ったボロノイ領域。
+- `geometry/kd_tree.cpp`: 多次元点の最近点、上位k点、半径内の点を探すk-d tree。
+- `geometry/how_to_use_delaunay_voronoi.md`: 重複点と退化入力の扱い、使用例、計算量。
+- `geometry/how_to_use_kd_tree.md`: 点型、所有関係、検索方法、計算量。
 
 ## 解法設計の文書
 
@@ -101,7 +100,7 @@
 - 提出用の中心候補: `beam_search.cpp`、`beam_search_turn.cpp`、`sa.cpp`、Bitboard、各種タイマー。
 - 問題ごとに書き換えるもの: `beam_search_state*.cpp`、`sa_state.cpp`。
 - 比較・高度な派生: 状態複製版、操作合成版、圧縮木版、レプリカ交換版。
-- 個別実験: `beam_search/test/`、`sa/test/`、`kmeans/test/`、`tsp/examples/`。
+- 個別実験: `beam_search/test/`、`sa/test/`、`clustering/test/`、`clustering/benchmark/`、`tsp/examples/`。
 - 設計だけのもの: `dynamic_beam_width_proposal.md`、日本語の解法文書。
 - 過去のもの: `beam_search/old/`。
 

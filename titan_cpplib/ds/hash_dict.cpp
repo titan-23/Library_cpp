@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include "titan_cpplib/others/bit.cpp"
 #include <random>
 #include <cassert>
 #include <algorithm>
@@ -97,7 +98,7 @@ public:
 
             int mask = _mm_movemask_epi8(_mm_cmpeq_epi8(meta_data, match));
             while (mask != 0) {
-                int bit_pos = __builtin_ctz(mask);
+                int bit_pos = countr_zero(mask);
                 int target = (idx + bit_pos) & msk;
                 if (keys[target] == key) {
                     return {target, true};
@@ -107,7 +108,7 @@ public:
 
             int empty_mask = _mm_movemask_epi8(_mm_cmpeq_epi8(meta_data, empty_match));
             if (empty_mask != 0) {
-                int bit_pos = __builtin_ctz(empty_mask);
+                int bit_pos = countr_zero(empty_mask);
                 int target = (idx + bit_pos) & msk;
                 return {target, false};
             }

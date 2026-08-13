@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <cassert>
+#include "titan_cpplib/others/bit.cpp"
 
 using namespace std;
 
@@ -21,13 +22,9 @@ private:
     vector<T> sp_data;
     vector<int> offset;
 
-    static int bit_length(const u64 x) {
-        return x == 0 ? 0 : 64 - __builtin_clzll(x);
-    }
-
     void build_sparse_table(const vector<T> &a) {
         int sp_n = a.size();
-        int log = 32 - __builtin_clz(sp_n) - 1;
+        int log = bit_length(sp_n) - 1;
         offset.resize(log+1);
         int sm = 0;
         for (int i = 0; i <= log; ++i) {
@@ -51,7 +48,7 @@ private:
 
     T prod_sp(const int l, const int r) const {
         if (l == r) return INF;
-        int u = 32 - __builtin_clz(r-l) - 1;
+        int u = bit_length(r-l) - 1;
         return min(sp_data[offset[u]+l], sp_data[offset[u]+r-(1<<u)]);
     }
 
@@ -70,7 +67,7 @@ public:
             T mn = bucket[start];
             for (int j = 0; j < W; ++j) {
                 while (mask) {
-                    int p = 63 - __builtin_clzll(mask);
+                    int p = bit_length(mask) - 1;
                     if (bucket[start + p] > bucket[start + j]) {
                         mask ^= (1ull << p);
                     } else {
@@ -96,13 +93,13 @@ public:
         const int rem_r = (r - 1) & 63;
         if (k1 == k2) {
             const u64 mask = bucket_bit[k1 * W + rem_r] & ~((1ull << rem_l) - 1);
-            return bucket[k1 * W + __builtin_ctzll(mask)];
+            return bucket[k1 * W + countr_zero(mask)];
         }
         const u64 maskL = bucket_bit[k1 * W + 63] & ~((1ull << rem_l) - 1);
         const u64 maskR = bucket_bit[k2 * W + rem_r];
         T ans = min(
-            bucket[k1 * W + __builtin_ctzll(maskL)],
-            bucket[k2 * W + __builtin_ctzll(maskR)]
+            bucket[k1 * W + countr_zero(maskL)],
+            bucket[k2 * W + countr_zero(maskR)]
         );
         return min(ans, prod_sp(k1 + 1, k2));
     }

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 // BitVector
@@ -23,7 +24,7 @@ public:
 
     void build() {
         for (int i = 0; i < bsize; ++i) {
-            acc[i+1] += acc[i] + __builtin_popcountll(bit[i]);
+            acc[i+1] += acc[i] + popcount(bit[i]);
         }
     }
 
@@ -32,11 +33,11 @@ public:
     }
 
     int rank0(const int r) const {
-        return r - (acc[r>>6] + __builtin_popcountll(bit[r>>6] & ((1ull << (r & 63)) - 1)));
+        return r - (acc[r>>6] + popcount(bit[r>>6] & ((1ull << (r & 63)) - 1)));
     }
 
     int rank1(const int r) const {
-        return acc[r>>6] + __builtin_popcountll(bit[r>>6] & ((1ull << (r & 63)) - 1));
+        return acc[r>>6] + popcount(bit[r>>6] & ((1ull << (r & 63)) - 1));
     }
 
     int rank(const int r, const bool v) const {

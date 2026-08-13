@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 // SparseTable
@@ -19,7 +20,7 @@ public:
     SparseTable() {}
     SparseTable(const vector<T> &a) : n((int)a.size()) {
         if (n == 0) return;
-        int log = 32 - __builtin_clz(n) - 1;
+        int log = bit_length(n) - 1;
         offset.resize(log+1);
         int sm = 0;
         for (int i = 0; i <= log; ++i) {
@@ -44,7 +45,7 @@ public:
     T prod(const int l, const int r) const {
         assert(0 <= l && l <= r && r <= n);
         if (l == r) return e();
-        int u = 32 - __builtin_clz(r-l) - 1;
+        int u = bit_length(r-l) - 1;
         return op(data[offset[u]+l], data[offset[u]+r-(1<<u)]);
     }
 

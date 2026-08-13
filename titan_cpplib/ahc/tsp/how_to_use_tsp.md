@@ -157,22 +157,21 @@ auto result = improve_tsp_initial_state(
 
 既定は `none`。誘導局所探索は初期費用を下げる一方でSA本体の時間を減らすため、小さい上限から比較する。候補表は初期状態の改善とSAの近傍選択で共有する。
 
-焼きなましへ渡すときは、状態生成関数の中で初期巡回路と任意の改善を組み立てる。
+焼きなましへ渡すときは、初期巡回路と任意の改善を組み立ててから、初期化済みの状態を渡す。
 
 ```cpp
 #include "titan_cpplib/ahc/sa/sa.cpp"
 
-auto factory = [&](uint32_t seed) {
-    auto tsp = problem.make_nearest_neighbor_state(0);
-    improve_tsp_initial_state(
-        problem, candidates, tsp, initial_options);
-    return State(problem, candidates, move(tsp), seed);
-};
-auto result = sa::sa_run<State>(
-    1900.0, factory, 23, true);
+Timer timer;
+auto tsp = problem.make_nearest_neighbor_state(0);
+improve_tsp_initial_state(
+    problem, candidates, tsp, initial_options);
+State state(problem, candidates, move(tsp), 23);
+double remaining = max(0.0, 1900.0 - timer.elapsed());
+auto result = sa::sa_run<State>(remaining, state, true);
 ```
 
-`initial_options.search = TspInitialSearch::none` なら初期改善を行わない。状態生成の時間も `sa_run` の制限時間に含まれる。ただし状態生成そのものは途中で中断しないため、重い初期探索には個別の時間または評価回数上限を設定する。
+`initial_options.search = TspInitialSearch::none` なら初期改善を行わない。上の例では状態構築時間を全体の1900msから引いている。ただし状態構築そのものは途中で中断しないため、重い初期探索には個別の時間または評価回数上限を設定する。
 
 SA側の `State` は、確定済みの `TspState` と未適用の操作を一つ持つ。`modify` では費用差だけを `score` に反映し、`advance` で `TspState::apply`、`rollback` で未適用操作の破棄を行う。反復の境界では未適用操作を残さない。
 

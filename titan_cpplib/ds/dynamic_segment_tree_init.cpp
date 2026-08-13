@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <cassert>
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 // DynamicSegmentTreeInit
@@ -14,10 +15,6 @@ template <class IndexType,
         T (*pow)(T, IndexType)>
 class DynamicSegmentTreeInit {
 private:
-    static int bit_length(IndexType x) {
-        return x == 0 ? 0 : 64 - __builtin_clzll(x);
-    }
-
     struct Node;
     using NodePtr = Node*;
     NodePtr root;

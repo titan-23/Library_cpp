@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 // DualSegmentTreeRUQ
@@ -12,10 +13,6 @@ namespace titan23 {
 template <class T>
 class DualSegmentTreeRUQ {
 private:
-    int bit_length(const int x) const {
-        return x == 0 ? 0 : 32 - __builtin_clz(x);
-    }
-
     int n, time, log, size;
     vector<T> stamp;
     vector<int> data;

@@ -7,7 +7,7 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
-#include "titan_cpplib/ahc/kmeans/kmeans.cpp"
+#include "titan_cpplib/ahc/clustering/kmeans.cpp"
 using namespace std;
 namespace titan23 {
 struct ClusterSizeRange {

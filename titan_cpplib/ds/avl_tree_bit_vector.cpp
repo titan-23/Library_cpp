@@ -7,6 +7,7 @@
 #include <iostream>
 #include <utility>
 #include <vector>
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 // AVLTreeBitVector
@@ -38,17 +39,13 @@ private:
     vector<Node> _nodes;
     int _root;
 
-    int _popcount(const uint128 n) const {
-        return __builtin_popcountll(n >> 64) + __builtin_popcountll(n);
-    }
-
     int _prefix_total(const uint128 key, const int bit_len, const int take) const {
         const uint64_t low = key;
-        if (bit_len <= 64) return __builtin_popcountll(low >> ((bit_len - take) & 63)) * (take != 0);
+        if (bit_len <= 64) return titan23::popcount(low >> ((bit_len - take) & 63)) * (take != 0);
         const int high_len = bit_len - 64;
         const uint64_t high = key >> 64;
-        if (take <= high_len) return __builtin_popcountll(high >> (high_len - take));
-        return __builtin_popcountll(high) + __builtin_popcountll(low >> (bit_len - take));
+        if (take <= high_len) return titan23::popcount(high >> (high_len - take));
+        return titan23::popcount(high) + titan23::popcount(low >> (bit_len - take));
     }
 
     bool _bit_at(const uint128 value, const int k) const {
@@ -89,7 +86,7 @@ private:
 
     int _make_node(const bool bit, const uint8_t bit_len = 1, const uint128 key = 0) {
         const uint128 value = bit_len == 1 ? bit : key;
-        const uint8_t key_total = static_cast<uint8_t>(_popcount(value));
+        const uint8_t key_total = static_cast<uint8_t>(popcount(value));
         const int node = _nodes.size();
         _nodes.emplace_back(value, bit_len, key_total);
         return node;
@@ -199,7 +196,7 @@ private:
             uint128 key = 0;
             const int bit_len = min(_W, n - i);
             for (int j = 0; j < bit_len; ++j) key = (key << 1) | (a[start + i + j] != 0);
-            _nodes.emplace_back(key, bit_len, _popcount(key));
+            _nodes.emplace_back(key, bit_len, popcount(key));
         }
 
         struct BuildTask {

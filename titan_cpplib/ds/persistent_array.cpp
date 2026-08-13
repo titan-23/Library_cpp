@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include "titan_cpplib/ds/fast_stack.cpp"
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 // PersistentArray
@@ -68,10 +69,6 @@ private:
 
     int root;
     int n;
-
-    int bit_length(const int n) const {
-        return n == 0 ? 0 : 32 - __builtin_clz(n);
-    }
 
     void _build(vector<T> &a) {
         if (n == 0) {

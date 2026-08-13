@@ -6,6 +6,7 @@
 #include <stack>
 #include "titan_cpplib/math/math.cpp"
 #include "titan_cpplib/math/is_primell.cpp"
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 namespace titan23 {
@@ -16,10 +17,6 @@ private:
     // long long;
     vector<ll> L = {2, 325, 9375, 28178, 450775, 9780504, 1795265022};
     vector<ll> P200 = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197, 199};
-
-    inline int bit_length(ll x) const {
-        return x ? 64 - __builtin_clzll(x) : 0;
-    }
 
     ll pollard_rho(ll n) {
         if ((n & 1) == 0) return 2;

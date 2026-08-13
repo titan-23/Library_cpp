@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <vector>
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 namespace titan23 {
@@ -68,7 +69,7 @@ public:
     SparseSegmentTree2DFAST() {}
     SparseSegmentTree2DFAST(IndexType H, IndexType W) : H(H), W(W) {
         assert(H < 1e8);
-        log = H == 0 ? 0 : 32-__builtin_clz(H);
+        log = bit_length(H);
         size = 1<<log;
         dat.resize(size*2, 0);
         new_node_x(); // for dammy

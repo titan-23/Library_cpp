@@ -10,6 +10,7 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include "titan_cpplib/others/bit.cpp"
 #include "titan_cpplib/ds/bit_vector.cpp"
 using namespace std;
 
@@ -35,8 +36,6 @@ private:
     vector<W> _zero_sum;
     vector<W> _original_sum;
     vector<W> _leaf_sum;
-
-    int bit_length(const unsigned long long n) const { return n == 0 ? 0 : 64 - __builtin_clzll(n); }
 
     W _zero_range_sum(const int bit, const int l, const int r) const {
         size_t base = static_cast<size_t>(bit) * _stride;

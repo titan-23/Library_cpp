@@ -1,4 +1,5 @@
 #include <vector>
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 // PersistentArray
@@ -30,10 +31,6 @@ class PersistentArray {
             return node;
         }
     };
-
-    int bit_length(const int n) const {
-        return n == 0 ? 0 : 32 - __builtin_clz(n);
-    }
 
     void _build(const vector<T> &a) {
         int n = a.size();

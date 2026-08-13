@@ -3,6 +3,7 @@
 #include <vector>
 #include <random>
 #include <cassert>
+#include "titan_cpplib/others/bit.cpp"
 
 using namespace std;
 
@@ -38,11 +39,6 @@ private:
             if (keys[h] == key) return {h, true};
             h = (h + 1) & msk;
         }
-    }
-
-    int bit_length(const int x) const {
-        if (x == 0) return 0;
-        return 32 - __builtin_clz(x);
     }
 
     void rebuild() {

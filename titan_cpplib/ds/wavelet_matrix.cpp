@@ -3,6 +3,7 @@
 #include <vector>
 #include <queue>
 #include "titan_cpplib/ds/bit_vector.cpp"
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 // WaveletMatrix
@@ -16,11 +17,6 @@ private:
     vector<BitVector> v;
     vector<int> mid;
     int n;
-
-    int bit_length(T n) const {
-        unsigned long long x = static_cast<unsigned long long>(n);
-        return x == 0 ? 0 : 64 - __builtin_clzll(x);
-    }
 
     void build(vector<T> a) {
         for (int bit = log-1; bit >= 0; --bit) {

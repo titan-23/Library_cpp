@@ -2,6 +2,7 @@
 #include <vector>
 #include <cassert>
 #include "titan_cpplib/others/print.cpp"
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 namespace titan23 {
@@ -11,10 +12,6 @@ private:
     using u64 = unsigned long long;
     int u, _len;
     vector<vector<u64>> data;
-
-    inline constexpr int bit_length(const u64 x) const {
-        return x ? 64-__builtin_clzll(x) : 0;
-    }
 
     void _build(int u, vector<u64> &A) {
         data[0] = A;

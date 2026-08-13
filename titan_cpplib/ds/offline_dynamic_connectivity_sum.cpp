@@ -5,6 +5,7 @@
 #include <cassert>
 #include <unordered_map>
 #include "titan_cpplib/ds/undoable_union_find_sum.cpp"
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 // OfflineDynamicConnectivitySum
@@ -19,10 +20,6 @@ private:
     unordered_map<long long, long long> start;
     vector<vector<long long>> data;
     vector<pair<long long, long long>> edge_data;
-
-    int bit_length(const int n) const {
-        return n ? 32 - __builtin_clz(n) : 0;
-    }
 
     void _internal_add(int l, int r, const long long edge) {
         l += size;

@@ -4,7 +4,7 @@
 #include <cassert>
 #include <algorithm>
 #include <limits>
-#include <type_traits>
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 // PerfectBinaryTree / (T: 符号付き整数)
@@ -14,18 +14,6 @@ namespace titan23 {
 
 template<typename T=long long>
 class PerfectBinaryTree {
-private:
-    int bit_length(T x) {
-        if (x == 0) return 0;
-        using U = make_unsigned_t<T>;
-        U y = (U)x;
-        if constexpr (is_same_v<U, unsigned __int128>) {
-            unsigned long long hi = (unsigned long long)(y >> 64);
-            if (hi) return 128 - __builtin_clzll(hi);
-        }
-        return 64 - __builtin_clzll((unsigned long long)y);
-    }
-
 public:
     PerfectBinaryTree() {}
 

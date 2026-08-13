@@ -4,7 +4,7 @@
 
 - `kmeans.cpp`: Lloyd 法、K-means++、複数初期値
 - `kmeans_hamerly.cpp`: Hamerly 法による距離計算の省略
-- `kmeans_balanced.cpp`: クラスタの個数制約。`atcoder::mcf_graph` に依存
+- `kmeans_balanced.cpp`: クラスタの個数制約を最小費用流で扱う版。`atcoder::mcf_graph` に依存
 
 通常版は `kmeans.cpp` だけを読み込みます。Hamerly法と個数制約付き版は、それぞれのファイルが `kmeans.cpp` を読み込みます。
 
@@ -63,6 +63,8 @@ result.converged;       // 返却状態が固定点なら true
 
 個数制約付き版には、返却状態を `flow_cost` で評価した `total_flow_cost` もあります。
 
+個数制約付き版は、中心を固定したときの所属を最小費用流で決めます。この所属は、個数制約を満たすものの中で `flow_cost` の合計が最小です。その後で各クラスタの中心を更新し、同じ処理を繰り返します。したがって、固定した中心に対する所属は正確に求まりますが、中心の更新まで含めたクラスタリング全体の最適解を保証するものではありません。
+
 反復上限に達した場合、中心は返却された所属点から計算済みですが、その中心に対して全点を再割当した状態とは限りません。この場合は `converged == false` です。
 
 ## 渡す関数
@@ -81,7 +83,7 @@ Center center_of(const vector<Point>& points, span<const int> members);
 
 ```cpp
 #include <bits/stdc++.h>
-#include "titan_cpplib/ahc/kmeans/kmeans.cpp"
+#include "titan_cpplib/ahc/clustering/kmeans.cpp"
 using namespace std;
 using Point = pair<double, double>;
 
@@ -122,7 +124,7 @@ auto result = titan23::kmeans_best_of(points, 2, 8, cost, center_of, {.max_itera
 ## Hamerly法
 
 ```cpp
-#include "titan_cpplib/ahc/kmeans/kmeans_hamerly.cpp"
+#include "titan_cpplib/ahc/clustering/kmeans_hamerly.cpp"
 
 double metric(const Point& a, const Point& b) {
     return hypot(a.first - b.first, a.second - b.second);
@@ -138,7 +140,7 @@ auto result = titan23::kmeans_hamerly(points, 2, cost, metric, center_of, {.max_
 ## 個数制約付き版
 
 ```cpp
-#include "titan_cpplib/ahc/kmeans/kmeans_balanced.cpp"
+#include "titan_cpplib/ahc/clustering/kmeans_balanced.cpp"
 
 long long flow_cost(const Point& a, const Point& b) {
     return llround(cost(a, b) * 1000000);
@@ -157,7 +159,7 @@ auto result = titan23::kmeans_balanced_exact(points, sizes, cost, flow_cost, cen
 
 `flow_cost` は0以上で、`long long` 以下の幅の符号付き整数を返します。全点分の合計を `long long` に収め、最大値と `n+k+3` の積を AtCoder Library の上限 `8*10^18+1000` 以下にします。浮動小数からの丸め方は問題ごとに異なるため、ライブラリ内では変換しません。`cost` と `flow_cost` の順序が一致しない場合は費用の単調減少を保証できないため、途中で得た実行可能な状態のうち `total_cost` が最小のものを返します。
 
-下限0のクラスタは空でも正当です。空クラスタの中心は前回値を維持し、流で決めた所属先を別処理で変更しません。
+下限0のクラスタは空でも正当です。空クラスタの中心は前回値を維持し、最小費用流で決めた所属を別の処理で変更しません。
 
 ## 計算量
 

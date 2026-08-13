@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <utility>
 #include <vector>
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 // BTreeBitVectorSum
@@ -93,7 +94,7 @@ private:
 
     bool _bit_at(const Leaf &leaf, const int k) const { return (leaf.bits >> k) & 1; }
 
-    int _leaf_ones(const Leaf &leaf) const { return __builtin_popcount(leaf.bits & _mask(leaf.count)); }
+    int _leaf_ones(const Leaf &leaf) const { return popcount(leaf.bits & _mask(leaf.count)); }
 
     int _make_leaf() {
         if (_free_leaf != 0) {
@@ -517,7 +518,7 @@ private:
 
     Prefix _leaf_prefix(const int leaf, const int take) const {
         const Leaf &node = _leaves[leaf];
-        Prefix result{__builtin_popcount(node.bits & _mask(take)), 0, 0};
+        Prefix result{popcount(node.bits & _mask(take)), 0, 0};
         for (int i = 0; i < take; ++i) {
             result.sum += node.weight[i];
             if (_bit_at(node, i)) result.sum1 += node.weight[i];
@@ -758,7 +759,7 @@ public:
             --level;
         }
         const Leaf &leaf = _leaves[node];
-        rank1 += __builtin_popcount(leaf.bits & _mask(k));
+        rank1 += popcount(leaf.bits & _mask(k));
         return {_bit_at(leaf, k), rank1, leaf.weight[k]};
     }
 
@@ -790,7 +791,7 @@ public:
         }
 
         Leaf &leaf = _leaves[node];
-        rank1 += __builtin_popcount(leaf.bits & _mask(k));
+        rank1 += popcount(leaf.bits & _mask(k));
         if (leaf.count < _LEAF_CAP) {
             _insert_leaf(node, k, bit, weight);
             _add_path(path, slots, depth, {1, bit, weight, bit ? weight : W(0)});
@@ -828,7 +829,7 @@ public:
         }
 
         Leaf &leaf = _leaves[node];
-        rank1 += __builtin_popcount(leaf.bits & _mask(k));
+        rank1 += popcount(leaf.bits & _mask(k));
         bool bit = _bit_at(leaf, k);
         W weight = leaf.weight[k];
         _erase_leaf(node, k);
@@ -862,7 +863,7 @@ public:
         }
 
         Leaf &leaf = _leaves[node];
-        rank1 += __builtin_popcount(leaf.bits & _mask(k));
+        rank1 += popcount(leaf.bits & _mask(k));
         bool old_bit = _bit_at(leaf, k);
         W old_weight = leaf.weight[k];
         if (old_bit == bit && old_weight == weight) return {old_bit, rank1, old_weight};
@@ -895,7 +896,7 @@ public:
         }
 
         Leaf &leaf = _leaves[node];
-        rank1 += __builtin_popcount(leaf.bits & _mask(k));
+        rank1 += popcount(leaf.bits & _mask(k));
         bool bit = _bit_at(leaf, k);
         W old_weight = leaf.weight[k];
         leaf.weight[k] += delta;

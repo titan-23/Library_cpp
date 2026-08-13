@@ -4,6 +4,7 @@
 #include <vector>
 #include "titan_cpplib/others/print.cpp"
 #include "titan_cpplib/ds/fast_stack.cpp"
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 namespace titan23 {
@@ -74,10 +75,6 @@ private:
     using PSEG = PersistentSegmentTree<T, op, e>;
     int root;
     int _len;
-
-    int bit_length(int x) {
-        return x ? 32 - __builtin_clz(x) : 0;
-    }
 
     void update(int node) {
         ma.data[node] = op(ma.data[ma.tree[node].left], ma.data[ma.tree[node].right]);

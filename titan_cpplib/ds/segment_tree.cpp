@@ -3,6 +3,7 @@
 #include <vector>
 #include <cassert>
 #include "titan_cpplib/others/print.cpp"
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 namespace titan23 {
@@ -13,11 +14,6 @@ private:
     int n, _size, _log;
     vector<T> data;
     vector<int> lazy;
-
-    int bit_length(const int x) const {
-        if (x == 0) return 0;
-        return 32 - __builtin_clz(x);
-    }
 
 public:
     SegmentTree() {}

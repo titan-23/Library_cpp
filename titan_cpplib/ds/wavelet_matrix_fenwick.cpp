@@ -10,6 +10,7 @@
 #include <vector>
 #include "titan_cpplib/ds/bit_vector.cpp"
 #include "titan_cpplib/ds/fenwick_tree.cpp"
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 // WaveletMatrixFenwick
@@ -34,8 +35,6 @@ private:
     vector<FenwickTree<W>> _zero_sum;
     FenwickTree<W> _original_sum;
     FenwickTree<W> _leaf_sum;
-
-    int bit_length(const unsigned long long n) const { return n == 0 ? 0 : 64 - __builtin_clzll(n); }
 
     W _zero_range_sum(const int bit, const int l, const int r) const { return _zero_sum[bit].sum(l, r); }
 

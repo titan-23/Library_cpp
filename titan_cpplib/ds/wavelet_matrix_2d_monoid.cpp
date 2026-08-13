@@ -8,6 +8,7 @@
 #include <vector>
 #include "titan_cpplib/ds/bit_vector.cpp"
 #include "titan_cpplib/ds/segment_tree.cpp"
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 namespace titan23 {
@@ -37,8 +38,6 @@ private:
     int _log;
     int _n;
     bool _built;
-
-    static int _bit_length(unsigned long long x) { return x == 0 ? 0 : 64 - __builtin_clzll(x); }
 
     pair<int, int> _x_range(T x1, T x2) const {
         assert(_built);
@@ -117,7 +116,7 @@ public:
             auto &[x, py, value] = a[i];
             y[i] = lower_bound(_y.begin(), _y.end(), py) - _y.begin();
         }
-        _log = _bit_length(_y.empty() ? 0 : _y.size() - 1);
+        _log = bit_length(_y.empty() ? 0 : _y.size() - 1);
         _v.assign(_log, BitVector());
         _mid.assign(_log, 0);
         _seg.clear();

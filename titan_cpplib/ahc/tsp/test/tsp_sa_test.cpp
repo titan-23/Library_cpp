@@ -100,17 +100,11 @@ int main() {
     TspInitialStateOptions initial_options;
     initial_options.search = TspInitialSearch::two_opt;
     initial_options.local_search.max_evaluated_moves = 1000;
-    auto factory = [&](uint32_t seed) {
-        auto tsp = problem.make_nearest_neighbor_state(0);
-        improve_tsp_initial_state(problem, candidates, tsp, initial_options);
-        return TspSaState(problem, candidates, move(tsp), seed);
-    };
-    auto result = sa::sa_run<TspSaState>(1.0, factory, 23, false);
+    auto tsp = problem.make_nearest_neighbor_state(0);
+    improve_tsp_initial_state(problem, candidates, tsp, initial_options);
+    TspSaState state(problem, candidates, move(tsp), 23);
+    auto result = sa::sa_run<TspSaState>(1.0, state, false);
     assert(result.order.size() == (size_t)n);
     assert(result.order[0] == 0);
-    auto multi_result = sa::sa_multi_run<TspSaState>(1.0, 0.5, 2, factory, 23, false);
-    assert(multi_result.order.size() == (size_t)n);
-    auto replica_result = sa::replica_run<TspSaState>(0.0, factory, 2, 10, false, false);
-    assert(replica_result.order.size() == (size_t)n);
     cout << "ok\n";
 }

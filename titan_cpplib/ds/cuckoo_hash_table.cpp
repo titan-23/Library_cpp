@@ -11,6 +11,7 @@ raise NotImprementedError
 #include <random>
 #include <cassert>
 #include <iostream>
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 class CuckooHashTable {
@@ -37,11 +38,6 @@ class CuckooHashTable {
         for (u64 key : T2) {
             if (key != NIL) insert(key);
         }
-    }
-
-    int bit_length(const int x) const {
-        if (x == 0) return 0;
-        return 32 - __builtin_clz(x);
     }
 
     void rebuild() {

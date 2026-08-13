@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <vector>
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 // SegmentTree2D
@@ -14,10 +15,6 @@ private:
     int h, w;
     int hs, ws;
     vector<vector<T>> data;
-
-    inline int bit_length(int x) const {
-        return x ? 32 - __builtin_clz(x) : 0;
-    }
 
 public:
     SegmentTree2D() {}

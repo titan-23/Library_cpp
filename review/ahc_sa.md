@@ -81,4 +81,4 @@ mTSP の実装例。近傍の差分計算はすべて検証した。
 ## kmeans.md
 
 - 旧版 kmeans.cpp の仕様書。記載内容(テンプレート引数、fit/fit_flow の仕様)は実装と一致している。
-- **[軽微]** ahc/kmeans.cpp の文書が sa/ 配下にあり、置き場所が分かりにくい。kmeans_new.cpp の記載もない。
+- **[軽微]** ahc/clustering の文書が sa/ 配下にあり、置き場所が分かりにくい。kmeans_new.cpp の記載もない。

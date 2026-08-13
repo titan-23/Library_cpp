@@ -8,6 +8,7 @@
 #include <memory>
 #include <utility>
 #include <vector>
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 // BTreeBitVector
@@ -56,17 +57,13 @@ private:
     int _free_internal_head;
     uint8_t _height;
 
-    int _popcount(const uint128 n) const {
-        return __builtin_popcountll(n >> 64) + __builtin_popcountll(n);
-    }
-
     int _prefix_total(const uint128 key, const int bit_len, const int take) const {
         const uint64_t low = key;
-        if (bit_len <= 64) return __builtin_popcountll(low >> ((bit_len - take) & 63)) * (take != 0);
+        if (bit_len <= 64) return titan23::popcount(low >> ((bit_len - take) & 63)) * (take != 0);
         const int high_len = bit_len - 64;
         const uint64_t high = key >> 64;
-        if (take <= high_len) return __builtin_popcountll(high >> (high_len - take));
-        return __builtin_popcountll(high) + __builtin_popcountll(low >> (bit_len - take));
+        if (take <= high_len) return titan23::popcount(high >> (high_len - take));
+        return titan23::popcount(high) + titan23::popcount(low >> (bit_len - take));
     }
 
     bool _bit_at(const uint128 value, const int k) const {
@@ -373,10 +370,10 @@ private:
         }
         node.key[chunk] = value >> _SPLIT_W;
         node.bit_len[chunk] = _SPLIT_W;
-        node.key_total[chunk] = _popcount(node.key[chunk]);
+        node.key_total[chunk] = popcount(node.key[chunk]);
         node.key[chunk + 1] = static_cast<uint64_t>(value);
         node.bit_len[chunk + 1] = _SPLIT_W;
-        node.key_total[chunk + 1] = _popcount(node.key[chunk + 1]);
+        node.key_total[chunk + 1] = popcount(node.key[chunk + 1]);
         ++node.count;
         _pull_leaf(leaf);
     }
@@ -653,7 +650,7 @@ private:
                 for (int k = 0; k < bit_len; ++k) key = (key << 1) | (a[index + k] != 0);
                 node.key[j] = key;
                 node.bit_len[j] = bit_len;
-                node.key_total[j] = _popcount(key);
+                node.key_total[j] = popcount(key);
                 index += bit_len;
             }
             node.count = take;
@@ -770,7 +767,7 @@ private:
             const int left_len = (bit_len + 1) / 2;
             const int right_len = bit_len - left_len;
             const uint64_t left = word >> right_len;
-            const int count = __builtin_popcountll(left);
+            const int count = titan23::popcount(left);
             if (k < count) {
                 word = left;
                 bit_len = left_len;
@@ -793,7 +790,7 @@ private:
             high ^= _mask64(high_len);
             low ^= _mask64(low_len);
         }
-        const int high_count = __builtin_popcountll(high);
+        const int high_count = titan23::popcount(high);
         if (k < high_count) return _select64(high, high_len, k);
         return high_len + _select64(low, low_len, k - high_count);
     }
@@ -1209,11 +1206,11 @@ private:
 
     int _prefix_total(const int take) const {
         const uint64_t low = _data.key.low;
-        if (_bit_len <= 64) return __builtin_popcountll(low >> ((_bit_len - take) & 63)) * (take != 0);
+        if (_bit_len <= 64) return titan23::popcount(low >> ((_bit_len - take) & 63)) * (take != 0);
         const int high_len = _bit_len - 64;
         const uint64_t high = _data.key.high;
-        if (take <= high_len) return __builtin_popcountll(high >> (high_len - take));
-        return __builtin_popcountll(high) + __builtin_popcountll(low >> (_bit_len - take));
+        if (take <= high_len) return titan23::popcount(high >> (high_len - take));
+        return titan23::popcount(high) + titan23::popcount(low >> (_bit_len - take));
     }
 
     bool _bit_at(const int k) const {

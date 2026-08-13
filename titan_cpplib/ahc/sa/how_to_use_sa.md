@@ -2,7 +2,7 @@
 
 ### 0. ライブラリ概要
 
-提供関数は `sa_run`、`sa_multi_run`、`replica_run`。署名・用途は 0.5 参照。
+提供関数は `sa_run`(提出用) と `replica_run`(ローカル専用)。署名・用途は 0.5 参照。
 スコアは 最小化 で扱われます。最大化問題の場合はスコアを負にしてください。
 
 ライフサイクル — `sa_run`
@@ -23,13 +23,11 @@ while (時間内):
 
 `replica_run` の State 側呼び出し順は `sa_run` と同一。threshold 計算・レプリカ間スワップ・各レプリカへの seed 付与はすべてライブラリ内部で、ユーザ実装は不要。
 
-状態生成関数を渡す版では、`state.init(seed)` の代わりに `State state = factory(seed)` を行う。引数のあるコンストラクタ、共有する読み取り専用データ、初期局所探索を使う場合はこちらを選ぶ。
-
 重要な前提
 
 - 関数のシグネチャは 絶対に変更しないでください。
-- 旧APIを使う場合は `State` と `Changed` のデフォルトコンストラクタ、および `State::init(seed)` が必要です。状態生成関数版では `State` のデフォルトコンストラクタは不要です。
-- `sa_run` と `replica_run` の探索ループ内では `State` 自体をコピーしません。`sa_multi_run` は各始点の最良状態を保存するため、確定状態のコピー構築・コピー代入を行います。
+- seed版と `replica_run` を使う場合、`State` および `Changed` のデフォルトコンストラクタが必要です。初期化済みState版だけを使う場合、`State` のデフォルトコンストラクタは不要です。
+- 探索ループ内で `State` 自体のコピーは発生しません。単一インスタンスを差分更新で使い回します。
 - グローバル変数・関数内 `static` 変数の新規定義は禁止します。必要な状態はすべて `State` または `Changed` のメンバとして持たせてください。`replica_run` は OpenMP でスレッド並列動作します。各スレッドは異なる `State` インスタンスを担当するため `State` メンバへの競合はありませんが、グローバル変数や `static` 変数は複数スレッドから同時アクセスされデータ競合が発生します。
 
 ### 0.5 セットアップ(最小テンプレート / ここだけで初回統合が完結する)
@@ -38,7 +36,7 @@ while (時間内):
 
 | ファイル | 役割 |
 |---|---|
-| `titan_cpplib/ahc/sa/sa.cpp` | エンジン本体。`sa_run`/`sa_multi_run`/`replica_run` を提供。`<omp.h>`・`timer.cpp`・`random.cpp` を自動 include |
+| `titan_cpplib/ahc/sa/sa.cpp` | エンジン本体。`sa_run`/`replica_run` を提供。`<omp.h>`・`timer.cpp`・`random.cpp` を自動 include |
 | `titan_cpplib/ahc/sa/sa_state.cpp` | **これをコピーして使う雛形**(`namespace sa { class State {...} }`)。冒頭で `sa.cpp` を include 済み |
 
 ユーザは `sa_state.cpp` 相当を自分のファイルにし、`State` の `TODO` を埋めるだけ。エンジンの個別 include は不要。
@@ -48,7 +46,7 @@ while (時間内):
 | 記号 | 所有 | 備考 |
 |---|---|---|
 | `ScoreType` | **ユーザ**(`State` 内 `using ScoreType = double;`) | 既定 double。整数スコアなら `long long` 等に変更。**最小化** |
-| `sarnd` | 旧API用の雛形が供給(`State` の public メンバ `titan23::Random`) | 旧APIでは削除せず、`init` 内で `sarnd.set_seed(seed)` を呼ぶ。状態生成関数版では名前・配置を問わない |
+| `sarnd` | seed版の雛形が供給(`State` の public メンバ `titan23::Random`) | seed版では `init` 内 `sarnd.set_seed(seed)` 必須。初期化済みState版は任意の乱数器を使える |
 | `is_valid` / `score` / `reset_is_valid` / `get_score` / `get_true_score` / `get_result` | 雛形が供給 | シグネチャ変更禁止。中身は仕様(Section 2)通りに |
 | `Param`(`inline static`) / `Changed` / `Result` | 雛形に枠あり・**ユーザが中身** | `start_temp`/`end_temp`、`TYPE_CNT`/`type`、`Result::print` を埋める |
 
@@ -107,37 +105,21 @@ int main() {
 template<class State> State::Result
 sa_run(double TIME_LIMIT, uint32_t seed=23, bool verbose=true);
 
-template<class State, class StateFactory> State::Result
-sa_run(double TIME_LIMIT, StateFactory&& factory,
-       uint32_t seed=23, bool verbose=true);
-
 template<class State> State::Result
-sa_multi_run(double TIME_LIMIT, double first_phase_ratio, int num_starts,
-             uint32_t seed=23, bool verbose=true);
-
-template<class State, class StateFactory> State::Result
-sa_multi_run(double TIME_LIMIT, double first_phase_ratio, int num_starts,
-             StateFactory&& factory, uint32_t seed=23, bool verbose=true);
+sa_run(double TIME_LIMIT, State& state, bool verbose=true);
 
 template<class State> State::Result
 replica_run(double TIME_LIMIT, int NUM_REPLICAS=32, int SWAP_ITER_INTERVAL=100,
             bool verbose=true, bool record=false);    // レプリカ交換(OpenMP 並列)
-
-template<class State, class StateFactory> State::Result
-replica_run(double TIME_LIMIT, StateFactory&& factory,
-            int NUM_REPLICAS=32, int SWAP_ITER_INTERVAL=100,
-            bool verbose=true, bool record=false);
 ```
 
 | 関数 | 主な引数 | 用途 |
 |---|---|---|
 | `sa_run` | TIME_LIMIT[ms], seed, verbose | **提出はこれ**。単一 State の通常焼きなまし。本番(AtCoder)解はこちらで実装・チューニング |
-| `sa_multi_run` | + 第1段階の割合、始点数 | 複数の初期状態を短く探索し、最良状態から残り時間を探索 |
+| `sa_run`（初期化済みState版） | TIME_LIMIT[ms], state, verbose | 引数付きコンストラクタや外部で作った初期状態を探索する。`TIME_LIMIT` はこの関数を呼んでからの時間 |
 | `replica_run` | + NUM_REPLICAS, SWAP_ITER_INTERVAL, record | **ローカル専用ツール(提出しない)**。スレッド並列で長時間回し、良解・良パラメータ・構造の知見をオフラインで得るための探索 |
 
-状態生成関数は `uint32_t` のseedを受け、初期化済みの `State` を値で返す。未確定の遷移を残してはいけない。`replica_run` では同じ生成関数を複数スレッドから同時に呼ぶため、共有する可変乱数や作業配列を捕捉しない。
-
-`TIME_LIMIT` は有限かつ0以上。0なら生成した初期状態のうち最良の結果だけを返す。状態生成時間も制限時間に含むが、生成関数自体は途中で中断しない。`sa_multi_run` の第1段階の割合は `0 < first_phase_ratio <= 1`、始点数は正とする。
+seed版は `State::init(seed)` の時間も `TIME_LIMIT` に含める。初期化後の残り時間で探索し、探索開始時を `progress=0` として初期温度から冷却する。初期化済みState版で状態構築も全体時間へ含めたい場合は、呼び出し側で構築時間を引いた残り時間を渡す。
 
 位置づけ: `replica_run` は提出物ではなくローカルでの良解探索器。`-fopenmp` でビルドし、
 `TIME_LIMIT` を長め・`NUM_REPLICAS` をローカルのコア数程度にして長時間回す。
@@ -199,10 +181,10 @@ replica_run(double TIME_LIMIT, StateFactory&& factory,
   - 内部スコアの `score` と生のスコアの `true_score` をメンバとして持たせてください。
   - `void print(ostream &os = cout) const` に解答の出力処理を実装してください。
 
-#### `State::init`（旧API）
+#### `State::init`
 
 - シグネチャ: `void init(uint32_t seed)`
-- 目的: 状態生成関数を渡さない旧APIで、探索開始時の初期状態を構築します。状態生成関数版には不要です。
+- 目的: seed版の探索開始時に初期状態を構築します。初期化済みState版だけを使う場合は不要です。
 - 要件:
   - 冒頭で `sarnd.set_seed(seed)` を呼んで乱数シードを設定してください。`sa_run` はユーザ指定の seed を、`replica_run` はレプリカごとに異なる seed を渡します。
   - 盤面の初期化と初期スコアの計算を行ってください。
@@ -212,7 +194,7 @@ replica_run(double TIME_LIMIT, StateFactory&& factory,
 - シグネチャ: `void modify(const int64_t iter, const ScoreType threshold, const double progress)`
 - 目的: 近傍操作を選択し、スコアを差分更新します。
 - 要件:
-  - 旧APIの雛形では `sarnd` を用いて近傍操作を選択してください。状態生成関数版では、factoryへ渡されたseedで初期化した任意の乱数器をState内に持てます。
+  - 雛形では `sarnd` を用いて近傍操作を選択してください。初期化済みState版では、事前にseedを設定した任意の乱数器をState内に持てます。
   - 操作の種類を `changed.type` に代入し、ロールバックに必要な情報を `changed` に保存してください。
   - 次状態のスコアを差分計算し `score` に代入してください。直後にライブラリが `get_score()` を呼びます。
   - ルール違反・早期打ち切りは Section 1「スコア計算の早期打ち切り」に従い `is_valid=false` で即リターン。`is_valid=false` でも `rollback()` は必ず呼ばれるため、`modify` 内で盤面を部分変更した場合はそれも `rollback` で戻すこと。

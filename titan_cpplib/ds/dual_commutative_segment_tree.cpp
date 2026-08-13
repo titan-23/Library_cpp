@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 // DualCommutativeSegmentTree
@@ -24,7 +25,7 @@ namespace titan23 {
 
     void _build(const int n) {
       this->_n = n;
-      this->_log = 32 - __builtin_clz(n);
+      this->_log = bit_length(n);
       this->_size = 1 << _log;
       this->_data.resize(_n, e());
       this->_lazy.resize(_size, id());

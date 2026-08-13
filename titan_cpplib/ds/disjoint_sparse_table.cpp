@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 namespace titan23 {
@@ -23,7 +24,7 @@ public:
             data = {a[0]};
             return;
         }
-        int log = 32 - __builtin_clz(n - 1);
+        int log = bit_length(n - 1);
         data.assign(log * n, e());
         for (int i = 0; i < n; ++i) {
             data[i] = a[i];
@@ -50,7 +51,7 @@ public:
         assert(0 <= l && l <= r && r <= n);
         if (l == r) return e();
         if (l+1 == r) return data[l];
-        int u = 31 - __builtin_clz(l ^ (r-1));
+        int u = bit_length(l ^ (r-1)) - 1;
         return op(data[u*n+l], data[u*n+(r-1)]);
     }
 

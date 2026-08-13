@@ -8,7 +8,8 @@
 #include <utility>
 #include <ostream>
 #include <algorithm>
-#include "titan_cpplib/ahc/bitboard_common.cpp"
+#include "titan_cpplib/ahc/grid/bitboard_common.cpp"
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 #ifdef TITAN_DEBUG
@@ -415,33 +416,17 @@ private:
 public:
     /// @brief 立っているビット数
     int popcount(Word x) const {
-        if constexpr (sizeof(Word) <= 8) {
-            return __builtin_popcountll((uint64_t)x);
-        } else {
-            return __builtin_popcountll((uint64_t)x) + __builtin_popcountll((uint64_t)(x >> 64));
-        }
+        return titan23::popcount(x);
     }
 
     /// @brief 最下位の立っているビットの位置 x != 0 が前提
     int ctz(Word x) const {
-        if constexpr (sizeof(Word) <= 8) {
-            return __builtin_ctzll((uint64_t)x);
-        } else {
-            uint64_t lo = (uint64_t)x;
-            if (lo) return __builtin_ctzll(lo);
-            return 64 + __builtin_ctzll((uint64_t)(x >> 64));
-        }
+        return titan23::countr_zero(x);
     }
 
     /// @brief 最上位の立っているビットの位置 x != 0 が前提
     int msb(Word x) const {
-        if constexpr (sizeof(Word) <= 8) {
-            return 63 - __builtin_clzll((uint64_t)x);
-        } else {
-            uint64_t hi = (uint64_t)(x >> 64);
-            if (hi) return 127 - __builtin_clzll(hi);
-            return 63 - __builtin_clzll((uint64_t)x);
-        }
+        return titan23::bit_length(x) - 1;
     }
 
     Bitboard() : H(0), W(0), FULL(0) {}
@@ -1014,7 +999,7 @@ public:
                 unsigned reached = direct & (0u - direct);
                 unsigned queue = reached;
                 while (queue) {
-                    int u = __builtin_ctz(queue);
+                    int u = countr_zero(queue);
                     queue &= queue - 1;
                     for (int v = 0; v < 8; ++v) {
                         if (!(mask & (1u << v)) || (reached & (1u << v))) continue;

@@ -21,7 +21,7 @@ template <class T, class U> bool chmin(T &t, const U &u) { if (t > u) { t = u; r
 template <class T, class U> bool chmax(T &t, const U &u) { if (t < u) { t = u; return true; } return false; }
 
 // #include "titan_cpplib/others/print.cpp"
-#include "titan_cpplib/ahc/kmeans/kmeans_balanced.cpp"
+#include "titan_cpplib/ahc/clustering/kmeans_balanced.cpp"
 
 double calc_dist(const pair<double, double>& a, const pair<double, double>& b) {
     double dx = a.first - b.first;

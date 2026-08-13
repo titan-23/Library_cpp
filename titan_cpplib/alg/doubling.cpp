@@ -3,6 +3,7 @@
 #include <vector>
 #include <cassert>
 #include <algorithm>
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 namespace titan23 {
@@ -13,11 +14,6 @@ private:
     int n, log;
     long long lim;
     vector<vector<int>> db;
-
-    int bit_length(long long LIM) {
-        if (LIM == 0) return 0;
-        return 64 - __builtin_clzll(LIM);
-    }
 
 public:
     /// @param LIM kth の最大値

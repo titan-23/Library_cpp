@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 // DualSegmentTree
@@ -23,7 +24,7 @@ struct DualSegmentTree {
 
     DualSegmentTree(const int n, const T init) {
         this->_n = n;
-        this->_log = 32 - __builtin_clz(n);
+        this->_log = bit_length(n);
         this->_size = 1 << _log;
         this->_data.resize(_size);
         this->_lazy.resize(_size, id());
@@ -32,7 +33,7 @@ struct DualSegmentTree {
     DualSegmentTree(const vector<T> a) {
         int n = (int)a.size();
         this->_n = n;
-        this->_log = 32 - __builtin_clz(n);
+        this->_log = bit_length(n);
         this->_size = 1 << _log;
         this->_data.resize(_size);
         this->_lazy.resize(_size, id());

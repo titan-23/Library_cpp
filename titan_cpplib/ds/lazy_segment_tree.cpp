@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <cassert>
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 // LazySegmentTree
@@ -15,11 +16,6 @@ private:
     int n, log, size;
     vector<T> data;
     vector<F> lazy;
-
-    static int bit_length(const int x) {
-        if (x == 0) return 0;
-        return 32 - __builtin_clz(x);
-    }
 
     void update(int k) {
         data[k] = op(data[k << 1], data[k << 1 | 1]);

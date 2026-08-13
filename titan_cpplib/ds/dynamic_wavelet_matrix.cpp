@@ -6,6 +6,7 @@
 #include <queue>
 #include "titan_cpplib/ds/avl_tree_bit_vector.cpp"
 #include "titan_cpplib/others/print.cpp"
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 // DynamicWaveletMatrix
@@ -26,18 +27,6 @@ class DynamicWaveletMatrix {
     vector<AVLTreeBitVector> _v;
     vector<int> _mid;
     int _size;
-
-    int bit_length(const int n) const {
-        return n == 0 ? 0 : 32 - __builtin_clz(n);
-    }
-
-    int bit_length(const long long n) const {
-        return n == 0 ? 0 : 64 - __builtin_clzll(n);
-    }
-
-    int bit_length(const unsigned long long n) const {
-        return n == 0 ? 0 : 64 - __builtin_clzll(n);
-    }
 
     void _build(vector<T> a) {
         if (a.empty()) return;

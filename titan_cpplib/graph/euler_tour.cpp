@@ -5,6 +5,7 @@
 #include <algorithm>
 #include "titan_cpplib/ds/fenwick_tree.cpp"
 #include "titan_cpplib/ds/segment_tree.cpp"
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 namespace titan23 {
@@ -33,10 +34,6 @@ private:
     static long long e() { return (long long)1e18; };
 
     titan23::SegmentTree<long long, op, e> seg;
-
-    static int bit_length(const int x) {
-        return x == 0 ? 0 : 32 - __builtin_clz(x);
-    }
 
 public:
 

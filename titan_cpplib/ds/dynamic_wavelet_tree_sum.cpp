@@ -11,6 +11,7 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include "titan_cpplib/others/bit.cpp"
 #include "titan_cpplib/ds/b_tree_bit_vector_sum.cpp"
 using namespace std;
 
@@ -46,8 +47,6 @@ private:
     T _sigma;
     int _log;
     int _size;
-
-    int bit_length(const unsigned long long n) const { return n == 0 ? 0 : 64 - __builtin_clzll(n); }
 
     size_t _estimated_node_count(int n) const {
         if (n == 0) return 1;

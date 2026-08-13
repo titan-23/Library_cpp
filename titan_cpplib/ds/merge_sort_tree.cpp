@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <iostream>
 #include <vector>
+#include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
 namespace titan23 {
@@ -18,10 +19,6 @@ private:
     };
 
     vector<Data> data;
-
-    int bit_length(const int x) const {
-        return x > 0 ? 32 - __builtin_clz(x) : 0;
-    }
 
 public:
     MergeSortTree() {}
