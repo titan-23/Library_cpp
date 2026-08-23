@@ -223,6 +223,7 @@ public:
      * @return vector<Action>
      */
     vector<Action> search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
+        if (param.max_turn <= 0 || param.beam_width <= 0) return {};
         init_bs();
         if (verbose) {
             beam_log::start_banner(cerr, "BeamSearchWithTree (tour)", param);
@@ -289,6 +290,12 @@ public:
                                      best_finished_score, true, (int)best_finished_path.size());
             }
             return best_finished_path;
+        }
+
+        if (candidates.size() == 0) {
+            beam_log::on_no_candidates(cerr, 0);
+            assert(candidates.size() > 0);
+            return {};
         }
 
         finalize_generation(1);
@@ -403,6 +410,7 @@ public:
             if (candidates.size() == 0) {
                 beam_log::on_no_candidates(cerr, turn);
                 assert(candidates.size() > 0);
+                return {};
             }
 
             if (verbose) {

@@ -332,6 +332,7 @@ public:
      * @return vector<Action> 合成済み Action を含む列
      */
     vector<Action> search(BeamParam &param, const bool verbose=false) {
+        if (param.max_turn <= 0 || param.beam_width <= 0) return {};
         init_bs();
         if (verbose) {
             beam_log::start_banner(cerr, "BeamSearchRadix", param);
@@ -367,6 +368,7 @@ public:
             if (candidates.size() == 0) {
                 beam_log::on_no_candidates(cerr, turn);
                 assert(candidates.size() > 0);
+                return {};
             }
 
             if (verbose) {

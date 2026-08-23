@@ -32,7 +32,7 @@ private:
         using T = pair<ScoreType, int>;
         vector<HashType> hashidx;
         titan23::HashDict<int> func;
-        int beam_width, entry;
+        int beam_width = 0, entry = 0;
         int s = 1;
         vector<T> seg;
 
@@ -192,6 +192,7 @@ private:
 
 public:
     vector<Action> search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
+        if (param.max_turn <= 0 || param.beam_width <= 0) return {};
         init_bs(param);
         if (verbose) {
             beam_log::start_banner(cerr, "NaiveBeamSearch", param);
@@ -220,6 +221,7 @@ public:
                 }
                 beam_log::on_no_candidates(cerr, turn);
                 assert(candidates.size() > 0);
+                return {};
             }
             if (verbose) {
                 BeamCandidate bests = candidates.get_best();

@@ -72,6 +72,10 @@ public:
         // TODO
         // action.target_turn = turn + 1; などの設定をここで行う
 
+        if (action.target_turn <= turn || action.target_turn >= (int)thresholds.size()) {
+            return {INF, 0, false};
+        }
+
         action.nxt_score = nxt_score;
         action.nxt_hash = nxt_hash;
         return {nxt_score, nxt_hash, finished};

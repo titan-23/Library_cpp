@@ -134,7 +134,7 @@ private:
         using T = pair<ScoreType, int>;
         vector<HashType> hashidx; // slot → hash
         titan23::HashDict<int, false> hash_to_idx;
-        int beam_width, entry;
+        int beam_width = 0, entry = 0;
         int s = 1;
         vector<T> seg;
         bool is_built = false; // entry==beam_width で segtree を構築。それまで seg は参照しない
@@ -304,7 +304,7 @@ private:
 #ifdef BS_DEBUG
         beam_log::assert_check(target_turn > turn, "target_turn > turn", __FILE__, __LINE__, "target_turn=" + to_string(target_turn) + ", turn=" + to_string(turn));
 #endif
-        if (target_turn > max_turn_global) return;
+        if (target_turn <= turn || target_turn > max_turn_global) return;
         if (!finished && score >= thresholds[target_turn]) return;
         pair<int, bool> seen_pos;
         if (use_global_seen) {
@@ -370,6 +370,7 @@ private:
 #ifdef BS_DEBUG
             bs.beam_log_threshold_check(target_turn);
 #endif
+            if (target_turn < 0 || target_turn > bs.max_turn_global) return INF;
             return bs.thresholds[target_turn];
         }
         inline void operator()(Action& a) { bs.process_candidate(st, a, parent_leaf, parent_aid, turn); }
@@ -685,6 +686,7 @@ private:
 
 public:
     vector<Action> search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
+        if (param.max_turn <= 0 || param.beam_width <= 0) return {};
         init_bs(param);
         if (verbose) {
             beam_log::start_banner(cerr, "BeamSearchWithTree (multi-turn)", param);

@@ -260,7 +260,7 @@ void enumerate_actions(const int turn, const Action &last_action, Submit &&submi
 - どのプールに候補を入れるかのキー。重複排除も同じプール内で行われる。
 - 通常は `try_op` 内で操作パラメータから計算して `action.target_turn` に書き込む。`enumerate_actions` で先に決めてもよい。
 - submit 時点の論理ターン(＝親の `target_turn`)より真に大きく、`max_turn` 以下にする。親以下の値を入れた候補は展開されないまま捨てられ、不正に短い解が返る原因になる。`-1` は root sentinel 専用。
-- `target_turn > max_turn` の候補は、submit してもエラーにならず捨てられる。`max_turn` は到達しうる上限以上に設定する。プールは実際に使う `target_turn` の分しか確保されないので、大きめにしてもメモリはほとんど増えない。
+- `target_turn > max_turn` の候補は、submit してもエラーにならず捨てられる。ただし `try_op` 内で `thresholds[target_turn]` を参照する前に、`target_turn < (int)thresholds.size()` を確認すること。`max_turn` は到達しうる上限以上に設定する。プールは実際に使う `target_turn` の分しか確保されないので、大きめにしてもメモリはほとんど増えない。
 
 #### `try_op` の差分
 
@@ -294,8 +294,9 @@ class State {
     tuple<ScoreType, HashType, bool>
     try_op(Action &action, const vector<ScoreType>& thresholds) const {
         // 1. action.target_turn を計算して書き込む
-        // 2. thresholds[action.target_turn] と比較して早期 reject
-        // 3. 通った手だけロールバック情報を action に書く
+        // 2. action.target_turn が thresholds の範囲外なら INF で reject
+        // 3. thresholds[action.target_turn] と比較して早期 reject
+        // 4. 通った手だけロールバック情報を action に書く
     }
 
     template<class Submit>
