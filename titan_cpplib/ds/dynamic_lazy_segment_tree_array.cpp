@@ -1,3 +1,4 @@
+/// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/ds/dynamic_lazy_segment_tree_array.cpp
 #pragma once
 
 #include <iostream>

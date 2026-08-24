@@ -1,3 +1,4 @@
+/// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/string/dynamic_aho_corasick.cpp
 #pragma once
 #include <vector>
 #include <string>

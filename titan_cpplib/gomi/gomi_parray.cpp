@@ -1,3 +1,4 @@
+/// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/gomi/gomi_parray.cpp
 #include <vector>
 #include "titan_cpplib/others/bit.cpp"
 using namespace std;

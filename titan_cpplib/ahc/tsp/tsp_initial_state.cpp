@@ -1,3 +1,4 @@
+/// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/ahc/tsp/tsp_initial_state.cpp
 #pragma once
 #include <cstdint>
 #include "titan_cpplib/ahc/tsp/tsp_edge_penalty_search.cpp"

@@ -1,3 +1,4 @@
+/// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/ahc/grid/flat_bitboard.cpp
 #pragma once
 
 #include <algorithm>

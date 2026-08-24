@@ -1,3 +1,4 @@
+/// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/ds/dual_segment_tree2D_RUQ.cpp
 #pragma once
 
 #include <vector>

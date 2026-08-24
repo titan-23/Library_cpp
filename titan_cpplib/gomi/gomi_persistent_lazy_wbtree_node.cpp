@@ -1,3 +1,4 @@
+/// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/gomi/gomi_persistent_lazy_wbtree_node.cpp
 #include <iostream>
 #include <vector>
 #include <cmath>

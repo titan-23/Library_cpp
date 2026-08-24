@@ -1,3 +1,4 @@
+/// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/ahc/pruner/successive_halving_pruner.cpp
 #pragma once
 
 #include <vector>

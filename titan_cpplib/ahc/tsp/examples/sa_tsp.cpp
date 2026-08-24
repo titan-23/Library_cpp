@@ -1,3 +1,4 @@
+/// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/ahc/tsp/examples/sa_tsp.cpp
 // OMP_NUM_THREADS=8 time ./a.out < in/0000.txt > out.txt
 #include <bits/stdc++.h>
 #include "titan_cpplib/ahc/timer.cpp"

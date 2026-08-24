@@ -1,3 +1,4 @@
+/// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/ds/icpc_lazy_rbst.cpp
 #pragma once
 
 // n=5e5, q=5e5 -> 1200ms

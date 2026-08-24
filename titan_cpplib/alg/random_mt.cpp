@@ -1,3 +1,4 @@
+/// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/alg/random_mt.cpp
 #pragma once
 
 #include <cassert>

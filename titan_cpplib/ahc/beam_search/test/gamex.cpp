@@ -1,3 +1,4 @@
+/// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/ahc/beam_search/test/gamex.cpp
 #pragma GCC target("avx2")
 #pragma GCC optimize("O3")
 #pragma GCC optimize("unroll-loops")

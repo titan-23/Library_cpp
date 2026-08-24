@@ -1,3 +1,4 @@
+/// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/graph/hld_edge_lazy_segment_tree.cpp
 #pragma once
 
 #include <vector>

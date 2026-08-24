@@ -1,3 +1,4 @@
+/// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/ahc/clustering/benchmark/generate_cases.cpp
 #include <algorithm>
 #include <cmath>
 #include <cstdint>

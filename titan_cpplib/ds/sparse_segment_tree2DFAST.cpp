@@ -1,3 +1,4 @@
+/// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/ds/sparse_segment_tree2DFAST.cpp
 #pragma once
 
 #include <cassert>

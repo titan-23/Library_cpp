@@ -1,3 +1,4 @@
+/// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/ahc/sa/sa_state.cpp
 #pragma once
 
 // OMP_NUM_THREADS=32 time ./a.out < in/0000.txt > out.txt

@@ -1,3 +1,4 @@
+/// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/ahc/beam_search/naive_beam_search.cpp
 #pragma once
 #include <bits/stdc++.h>
 #include "titan_cpplib/others/print.cpp"

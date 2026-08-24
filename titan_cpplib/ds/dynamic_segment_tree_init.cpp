@@ -1,3 +1,4 @@
+/// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/ds/dynamic_segment_tree_init.cpp
 #pragma once
 
 #include <iostream>

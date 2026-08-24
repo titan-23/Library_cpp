@@ -1,3 +1,4 @@
+/// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/gomi/gomi_p-lazy-wb.cpp
 #include <iostream>
 #include <vector>
 #include <cmath>

@@ -1,3 +1,4 @@
+/// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/ds/linear_cum_sum.cpp
 #pragma once
 
 #include <vector>
