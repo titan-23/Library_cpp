@@ -79,4 +79,4 @@ public:
         return {get_score(), get_true_score()};
     }
 };
-}
+} // namespace sa
