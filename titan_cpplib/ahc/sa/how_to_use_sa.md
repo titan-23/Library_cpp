@@ -110,20 +110,23 @@ sa_run(double TIME_LIMIT, State& state, bool verbose=true);
 
 template<class State> State::Result
 replica_run(double TIME_LIMIT, int NUM_REPLICAS=32, int SWAP_ITER_INTERVAL=100,
-            bool verbose=true, bool record=false);    // レプリカ交換(OpenMP 並列)
+            bool verbose=true, bool record=false, uint32_t seed=23); // レプリカ交換(OpenMP 並列)
 ```
 
 | 関数 | 主な引数 | 用途 |
 |---|---|---|
 | `sa_run` | TIME_LIMIT[ms], seed, verbose | **提出はこれ**。単一 State の通常焼きなまし。本番(AtCoder)解はこちらで実装・チューニング |
 | `sa_run`（初期化済みState版） | TIME_LIMIT[ms], state, verbose | 引数付きコンストラクタや外部で作った初期状態を探索する。`TIME_LIMIT` はこの関数を呼んでからの時間 |
-| `replica_run` | + NUM_REPLICAS, SWAP_ITER_INTERVAL, record | **ローカル専用ツール(提出しない)**。スレッド並列で長時間回し、良解・良パラメータ・構造の知見をオフラインで得るための探索 |
+| `replica_run` | + NUM_REPLICAS, SWAP_ITER_INTERVAL, record, seed | **ローカル専用ツール(提出しない)**。スレッド並列で長時間回し、良解・良パラメータ・構造の知見をオフラインで得るための探索 |
 
 seed版は `State::init(seed)` の時間も `TIME_LIMIT` に含める。初期化後の残り時間で探索し、探索開始時を `progress=0` として初期温度から冷却する。初期化済みState版で状態構築も全体時間へ含めたい場合は、呼び出し側で構築時間を引いた残り時間を渡す。
 
 位置づけ: `replica_run` は提出物ではなくローカルでの良解探索器。`-fopenmp` でビルドし、
 `TIME_LIMIT` を長め・`NUM_REPLICAS` をローカルのコア数程度にして長時間回す。
 そこで得た知見(到達可能スコア帯・有効な近傍/初期解・パラメータ)を `sa_run`(提出用)に反映する。
+`seed` から各 State、各温度の受理判定、レプリカ交換用の独立した乱数列を生成する。
+`record=true` の記録時と `verbose=true` の終了時は、異なる State の `get_true_score()` を並列に呼ぶため、
+`get_true_score()` は共有可変データへ書き込まないようにする。
 
 #### ビルド注意
 

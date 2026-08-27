@@ -314,6 +314,7 @@ typename State::Result sa_multi_run(
 /// @param SWAP_ITER_INTERVAL 熱浴交換のイテレーション回数
 /// @param verbose ログ出力するかどうか
 /// @param record 可視化用に記録するかどうか
+/// @param seed 乱数のベースシード値
 /// @return State::Result 最良解
 template<class State>
 typename State::Result replica_run(
@@ -321,10 +322,31 @@ typename State::Result replica_run(
     const int NUM_REPLICAS=32,
     const int SWAP_ITER_INTERVAL=100,
     const bool verbose=true,
-    const bool record=false
+    const bool record=false,
+    const uint32_t seed=23
 ) {
     titan23::Timer sa_timer;
-    thread_local titan23::Random sa_rnd;
+
+    auto make_seed = [seed](const uint64_t stream_id) -> uint32_t {
+        uint64_t z = (static_cast<uint64_t>(seed) << 32) ^ stream_id;
+        z += 0x9e3779b97f4a7c15ULL;
+        z = (z ^ (z >> 30)) * 0xbf58476d1ce4e5b9ULL;
+        z = (z ^ (z >> 27)) * 0x94d049bb133111ebULL;
+        z ^= z >> 31;
+        return static_cast<uint32_t>(z ^ (z >> 32));
+    };
+
+    struct alignas(64) PaddedRandom {
+        titan23::Random value;
+    };
+
+    vector<PaddedRandom> accept_rnd(NUM_REPLICAS);
+    vector<uint32_t> state_seeds(NUM_REPLICAS);
+    for (int i = 0; i < NUM_REPLICAS; ++i) {
+        state_seeds[i] = make_seed(2ULL * i);
+        accept_rnd[i].value.set_seed(make_seed(2ULL * i + 1));
+    }
+    titan23::Random swap_rnd(make_seed(UINT64_MAX));
 
     vector<double> temps(NUM_REPLICAS);
     for (int i = 0; i < NUM_REPLICAS; ++i) {
@@ -332,13 +354,16 @@ typename State::Result replica_run(
     }
     vector<State> states(NUM_REPLICAS);
     vector<int> rep_idx(NUM_REPLICAS);
+    vector<typename State::ScoreType> scores(NUM_REPLICAS);
+    vector<int64_t> iter(NUM_REPLICAS, 0);
 
     #pragma omp parallel
     {
         #pragma omp for schedule(static)
         for (int i = 0; i < NUM_REPLICAS; ++i) {
-            states[i].init(1000 + i);
+            states[i].init(state_seeds[i]);
             rep_idx[i] = i;
+            scores[i] = states[i].get_score();
         }
     }
 
@@ -347,14 +372,13 @@ typename State::Result replica_run(
     vector<vector<int64_t>> accept(max_threads, vector<int64_t>(type_cnt, 0));
     vector<vector<int64_t>> accept_worse(max_threads, vector<int64_t>(type_cnt, 0));
     vector<vector<int64_t>> modify(max_threads, vector<int64_t>(type_cnt, 0));
-    vector<int64_t> iter(max_threads, 0);
 
-    typename State::Result best_result = states[0].get_result();
+    int best_idx = 0;
     for (int i = 1; i < NUM_REPLICAS; ++i) {
-        if (states[i].get_score() < best_result.score) {
-            best_result = states[i].get_result();
-        }
+        if (scores[i] < scores[best_idx]) best_idx = i;
     }
+    typename State::Result best_result = states[best_idx].get_result();
+    scores[best_idx] = best_result.score;
 
     if (verbose) {
         cerr << "init-fin" << endl;
@@ -384,6 +408,8 @@ typename State::Result replica_run(
         }
     }
     int record_num = 0;
+    using TrueScoreType = decay_t<decltype(declval<State&>().get_true_score())>;
+    vector<TrueScoreType> record_scores(NUM_REPLICAS);
     double last_print_time = 0.0;
     const double PRINT_INTERVAL = 10000.0; // 10sec
 
@@ -398,20 +424,24 @@ typename State::Result replica_run(
                 int r = rep_idx[i];
                 double now_temp = temps[i];
                 double progress = now_time / TIME_LIMIT;
+                typename State::ScoreType cur_score = scores[r];
+                int64_t local_iter = iter[r];
+                titan23::Random &rnd = accept_rnd[i].value;
 
                 for (int step = 0; step < SWAP_ITER_INTERVAL; ++step) {
-                    typename State::ScoreType cur_score = states[r].get_score();
-                    typename State::ScoreType threshold = cur_score - now_temp * LOG_TABLE[sa_rnd.randrange(LOG_TABLE_SIZE)];
+                    typename State::ScoreType threshold = cur_score - now_temp * LOG_TABLE[rnd.randrange(LOG_TABLE_SIZE)];
                     states[r].reset_is_valid();
-                    states[r].modify(iter[r], threshold, progress);
-                    ++iter[r];
+                    states[r].modify(local_iter, threshold, progress);
+                    ++local_iter;
                     modify[tid][states[r].changed.type]++;
                     typename State::ScoreType new_score = states[r].get_score();
 
                     if (states[r].is_valid && new_score <= threshold) {
+                        bool accepted_worse = new_score > cur_score;
                         states[r].advance();
+                        cur_score = new_score;
                         accept[tid][states[r].changed.type]++;
-                        if (new_score > cur_score) accept_worse[tid][states[r].changed.type]++;
+                        if (accepted_worse) accept_worse[tid][states[r].changed.type]++;
                         if (new_score < thread_best_results[tid].score) {
                             thread_best_results[tid] = states[r].get_result();
                         }
@@ -420,6 +450,8 @@ typename State::Result replica_run(
                         states[r].score = cur_score;
                     }
                 }
+                scores[r] = cur_score;
+                iter[r] = local_iter;
             }
         }
         total_iter += (int64_t)NUM_REPLICAS * SWAP_ITER_INTERVAL;
@@ -437,9 +469,13 @@ typename State::Result replica_run(
 
         if (record) {
             if (score_log.is_open()) {
+                #pragma omp parallel for schedule(static)
+                for (int i = 0; i < NUM_REPLICAS; ++i) {
+                    record_scores[i] = states[rep_idx[i]].get_true_score();
+                }
                 score_log << now_time;
                 for (int i = 0; i < NUM_REPLICAS; ++i) {
-                    score_log << "," << states[rep_idx[i]].get_true_score();
+                    score_log << "," << record_scores[i];
                 }
                 score_log << "\n";
             }
@@ -468,10 +504,10 @@ typename State::Result replica_run(
             int r1 = rep_idx[i], r2 = rep_idx[i+1];
             double T1 = temps[i];
             double T2 = temps[i+1];
-            typename State::ScoreType E1 = states[r1].get_score();
-            typename State::ScoreType E2 = states[r2].get_score();
-            double delta = (E1 - E2) * (1.0 / T1 - 1.0 / T2);
-            bool do_swap = delta >= 0.0 || LOG_TABLE[sa_rnd.randrange(LOG_TABLE_SIZE)] < delta;
+            typename State::ScoreType E1 = scores[r1];
+            typename State::ScoreType E2 = scores[r2];
+            double delta = (static_cast<double>(E1) - static_cast<double>(E2)) * (1.0 / T1 - 1.0 / T2);
+            bool do_swap = delta >= 0.0 || LOG_TABLE[swap_rnd.randrange(LOG_TABLE_SIZE)] < delta;
 
             swap_attempt_total++;
             if (do_swap) {
@@ -513,8 +549,12 @@ typename State::Result replica_run(
         cerr << "Avg time/swap    : " << (swap_cnt > 0 ? now_time / swap_cnt : 0.0) << " ms" << endl;
         cerr << "Best Score       : " << best_result.true_score << " (" << best_result.score << ")" << endl;
         cerr << "--- Final Scores by Temp ---" << endl;
+        #pragma omp parallel for schedule(static)
         for (int i = 0; i < NUM_REPLICAS; ++i) {
-            cerr << "  Temp[" << i << "] (" << temps[i] << ") : " << states[rep_idx[i]].get_true_score() << endl;
+            record_scores[i] = states[rep_idx[i]].get_true_score();
+        }
+        for (int i = 0; i < NUM_REPLICAS; ++i) {
+            cerr << "  Temp[" << i << "] (" << temps[i] << ") : " << record_scores[i] << endl;
         }
     }
     return best_result;
