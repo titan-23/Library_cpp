@@ -1,5 +1,12 @@
 /// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/ahc/clustering/test/hierarchical_clustering_test.cpp
-#include <bits/stdc++.h>
+#include <algorithm>
+#include <cassert>
+#include <cmath>
+#include <cstdlib>
+#include <iostream>
+#include <random>
+#include <utility>
+#include <vector>
 #include "titan_cpplib/ahc/clustering/hierarchical_clustering.cpp"
 using namespace std;
 using namespace titan23;
@@ -150,8 +157,29 @@ void test_boundaries() {
     assert(failed);
 }
 
+void test_equal_distances() {
+    vector<TestPoint> points(20, {1, 1});
+    int point_count = points.size();
+    for (auto linkage : {HierarchicalLinkage::single, HierarchicalLinkage::complete, HierarchicalLinkage::average,
+                         HierarchicalLinkage::ward}) {
+        auto result = hierarchical_clustering(points, point_distance, linkage);
+        assert((int)result.merges.size() == point_count - 1);
+        vector<int> sizes(2 * point_count - 1, 1);
+        for (int index = 0; index < (int)result.merges.size(); ++index) {
+            const auto& merge = result.merges[index];
+            assert(0 <= merge.left && merge.left < point_count + index);
+            assert(0 <= merge.right && merge.right < point_count + index);
+            assert(merge.distance == 0);
+            assert(merge.size == sizes[merge.left] + sizes[merge.right]);
+            sizes[point_count + index] = merge.size;
+        }
+        assert(sizes.back() == point_count);
+    }
+}
+
 int main() {
     test_against_naive();
     test_boundaries();
+    test_equal_distances();
     cout << "ok\n";
 }

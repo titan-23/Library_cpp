@@ -1,5 +1,16 @@
 /// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/ahc/clustering/test/clustering_sa_test.cpp
-#include <bits/stdc++.h>
+#include <algorithm>
+#include <array>
+#include <cassert>
+#include <cmath>
+#include <cstdint>
+#include <cstdlib>
+#include <iostream>
+#include <limits>
+#include <numeric>
+#include <stdexcept>
+#include <utility>
+#include <vector>
 #include "titan_cpplib/ahc/clustering/clustering_sa.cpp"
 using namespace std;
 using namespace titan23;
@@ -60,10 +71,14 @@ ClusteringNeighborhoodWeights only_move(int type) {
     return weights;
 }
 
-int exercise_move(const vector<Point>& points, const vector<int>& initial_labels, const vector<ClusteringSizeRange>& ranges, int type, int iterations, double rebuild_three_probability = 0, ClusteringSaStatistics* statistics = nullptr, int rebuild_three_same_state_threshold = 0) {
+int exercise_move(const vector<Point>& points, const vector<int>& initial_labels,
+                  const vector<ClusteringSizeRange>& ranges, int type, int iterations,
+                  double rebuild_three_probability = 0,
+                  ClusteringSaStatistics* statistics = nullptr, int rebuild_three_same_state_threshold = 0,
+                  int nearby_cluster_count = 3) {
     ClusteringSaProblem problem(points);
     ClusteringSaOptions options;
-    options.nearby_cluster_count = 3;
+    options.nearby_cluster_count = nearby_cluster_count;
     options.cluster_samples = 8;
     options.point_samples = 8;
     options.swap_partner_samples = 12;
@@ -124,6 +139,13 @@ int main() {
     assert(exercise_move(points, labels, exact_ranges, clustering_swap, 500) > 0);
     assert(exercise_move(points, labels, exact_ranges, clustering_cycle, 500) > 0);
     assert(exercise_move(points, labels, exact_ranges, clustering_rebuild, 200) > 0);
+    vector<Point> imbalanced_points;
+    for (int point = 0; point < 16; ++point) imbalanced_points.push_back({(double)point, 0, 0});
+    vector<int> imbalanced_labels(16);
+    imbalanced_labels.back() = 1;
+    swap(imbalanced_points[0], imbalanced_points.back());
+    assert(exercise_move(imbalanced_points, imbalanced_labels, make_exact_clustering_size_ranges({15, 1}),
+                         clustering_rebuild, 200) > 0);
     ClusteringSaStatistics rebuild_three_statistics;
     assert(exercise_move(points, labels, exact_ranges, clustering_rebuild, 200, 1, &rebuild_three_statistics) > 0);
     assert(rebuild_three_statistics.rebuild_three_attempts > 0);
@@ -133,6 +155,23 @@ int main() {
     ClusteringSaStatistics stagnation_statistics;
     assert(exercise_move(points, labels, exact_ranges, clustering_rebuild, 400, 0, &stagnation_statistics, 1) > 0);
     assert(stagnation_statistics.rebuild_three_attempts > 0);
+
+    vector<Point> many_cluster_points;
+    vector<int> many_cluster_labels;
+    for (int cluster = 0; cluster < 17; ++cluster) for (int index = 0; index < 2; ++index) {
+        many_cluster_points.push_back({cluster * 3.0 + index * 0.1, (double)(cluster % 4), index * 0.25});
+        many_cluster_labels.push_back(cluster);
+    }
+    vector<ClusteringSizeRange> many_cluster_ranges = make_exact_clustering_size_ranges(vector<int>(17, 2));
+    for (int nearby_cluster_count : {0, 1, 8, 9, 16}) {
+        assert(exercise_move(many_cluster_points, many_cluster_labels, many_cluster_ranges, clustering_swap, 300,
+                             0, nullptr, 0, nearby_cluster_count) > 0);
+    }
+    vector<Point> equal_center_points(34, {1, 1, 1});
+    for (int nearby_cluster_count : {8, 9}) {
+        assert(exercise_move(equal_center_points, many_cluster_labels, many_cluster_ranges, clustering_swap, 300,
+                             0, nullptr, 0, nearby_cluster_count) > 0);
+    }
 
     vector<pair<double, double>> pair_points = {{0, 0}, {1, 0}, {10, 0}, {11, 0}};
     ClusteringSaProblem pair_problem(pair_points, 2, [](const auto& point, int axis) { return axis == 0 ? point.first : point.second; });

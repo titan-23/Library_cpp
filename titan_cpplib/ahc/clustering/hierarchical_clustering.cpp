@@ -151,7 +151,8 @@ struct RawMerge {
     long double distance;
 };
 
-inline long double updated_distance(HierarchicalLinkage linkage, long double distance_ac, long double distance_bc, long double distance_ab, int size_a, int size_b, int size_c) {
+inline long double updated_distance(HierarchicalLinkage linkage, long double distance_ac, long double distance_bc,
+                                    long double distance_ab, int size_a, int size_b, int size_c) {
     if (linkage == HierarchicalLinkage::single) return min(distance_ac, distance_bc);
     if (linkage == HierarchicalLinkage::complete) return max(distance_ac, distance_bc);
     if (linkage == HierarchicalLinkage::average) return (size_a * distance_ac + size_b * distance_bc) / (size_a + size_b);
@@ -191,7 +192,8 @@ inline HierarchicalClusteringResult reorder_merges(int point_count, const vector
 }
 
 template <class PointDistance>
-HierarchicalClusteringResult hierarchical_clustering_by_index(int point_count, PointDistance point_distance, HierarchicalLinkage linkage = HierarchicalLinkage::average) {
+HierarchicalClusteringResult hierarchical_clustering_by_index(
+    int point_count, PointDistance point_distance, HierarchicalLinkage linkage = HierarchicalLinkage::average) {
     using DistanceResult = remove_cv_t<remove_reference_t<invoke_result_t<PointDistance&, int, int>>>;
     static_assert(is_convertible_v<DistanceResult, long double>, "point_distance must return a value convertible to long double");
     if (point_count < 0) throw invalid_argument("hierarchical_clustering: point_count must not be negative");
@@ -199,9 +201,10 @@ HierarchicalClusteringResult hierarchical_clustering_by_index(int point_count, P
     result.point_count = point_count;
     if (point_count <= 1) return result;
     hierarchical_clustering_internal::PackedDistances distances(point_count);
-    vector<char> active((size_t)point_count, true);
+    vector<int> active_clusters((size_t)point_count);
     vector<int> node((size_t)point_count);
     vector<int> cluster_size((size_t)point_count, 1);
+    iota(active_clusters.begin(), active_clusters.end(), 0);
     iota(node.begin(), node.end(), 0);
     for (int b = 1; b < point_count; ++b) {
         for (int a = 0; a < b; ++a) {
@@ -216,18 +219,14 @@ HierarchicalClusteringResult hierarchical_clustering_by_index(int point_count, P
     raw_merges.reserve((size_t)point_count - 1);
     vector<int> chain;
     chain.reserve((size_t)point_count);
-    int active_count = point_count;
-    while (active_count > 1) {
-        if (chain.empty()) {
-            int start = 0;
-            while (!active[start]) ++start;
-            chain.push_back(start);
-        }
+    while ((int)active_clusters.size() > 1) {
+        // Each merge keeps the smaller slot, so cluster 0 remains active.
+        if (chain.empty()) chain.push_back(0);
         int a = chain.back();
         int nearest = -1;
         long double nearest_distance = numeric_limits<long double>::infinity();
-        for (int b = 0; b < point_count; ++b) {
-            if (!active[b] || b == a) continue;
+        for (int b : active_clusters) {
+            if (b == a) continue;
             long double distance = distances.get(a, b);
             if (nearest == -1 || distance < nearest_distance || (distance == nearest_distance && node[b] < node[nearest])) {
                 nearest = b;
@@ -251,18 +250,22 @@ HierarchicalClusteringResult hierarchical_clustering_by_index(int point_count, P
         int right = node[b];
         int minimum_point = min(left < point_count ? left : raw_merges[left - point_count].minimum_point,
                                 right < point_count ? right : raw_merges[right - point_count].minimum_point);
-        long double merge_distance = linkage == HierarchicalLinkage::ward ? sqrt(max((long double)0, nearest_distance)) : nearest_distance;
+        long double merge_distance = nearest_distance;
+        if (linkage == HierarchicalLinkage::ward) merge_distance = sqrt(max((long double)0, nearest_distance));
         raw_merges.push_back({left, right, size_a + size_b, minimum_point, merge_distance});
-        for (int c = 0; c < point_count; ++c) {
-            if (!active[c] || c == a || c == b) continue;
+        for (int c : active_clusters) {
+            if (c == a || c == b) continue;
             long double updated = hierarchical_clustering_internal::updated_distance(
                 linkage, distances.get(a, c), distances.get(b, c), nearest_distance, size_a, size_b, cluster_size[c]);
             distances.set(keep, c, updated);
         }
-        active[remove] = false;
+        auto remove_position = lower_bound(active_clusters.begin(), active_clusters.end(), remove);
+        if (remove_position == active_clusters.end() || *remove_position != remove) {
+            throw logic_error("hierarchical_clustering: active cluster was not found");
+        }
+        active_clusters.erase(remove_position);
         node[keep] = new_node;
         cluster_size[keep] = size_a + size_b;
-        --active_count;
     }
     return hierarchical_clustering_internal::reorder_merges(point_count, raw_merges);
 }

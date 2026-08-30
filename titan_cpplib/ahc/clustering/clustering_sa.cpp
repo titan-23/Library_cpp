@@ -339,6 +339,8 @@ public:
     }
 
 private:
+    static constexpr int NEARBY_INSERTION_LIMIT = 8;
+
     struct RelocateMove {
         int point = -1;
         int source = -1;
@@ -382,6 +384,9 @@ private:
     double current_progress_ = 0;
     int nearby_count_ = 0;
     vector<int> nearby_clusters_;
+    vector<pair<double, int>> nearby_work_;
+    vector<int> nearby_work_counts_;
+    vector<pair<double, int>> neighbor_work_;
     vector<int> alternative_cluster_;
     vector<double> assignment_gap_;
     vector<double> point_cost_;
@@ -401,8 +406,8 @@ private:
     vector<int> pending_rebuild_labels_;
     vector<double> pending_rebuild_sum1_;
     vector<double> pending_rebuild_sum2_;
-    vector<pair<double, int>> neighbor_work_;
     vector<pair<double, int>> point_priority_work_;
+    vector<double> rebuild_own_cost_work_;
     vector<int> rebuild_selected_generation_;
     int rebuild_generation_ = 0;
     vector<pair<double, int>> rebuild_order_;
@@ -519,10 +524,15 @@ private:
         int dimension = problem_->dimension();
         nearby_count_ = min(options_.nearby_cluster_count, max(0, cluster_count - 1));
         nearby_clusters_.resize((size_t)cluster_count * nearby_count_);
+        if (nearby_count_ > 0 && nearby_count_ <= NEARBY_INSERTION_LIMIT) {
+            nearby_work_.resize((size_t)cluster_count * nearby_count_);
+            nearby_work_counts_.resize(cluster_count);
+        } else if (nearby_count_ > 8) {
+            neighbor_work_.reserve(max(0, cluster_count - 1));
+        }
         alternative_cluster_.resize(problem_->point_count(), -1);
         assignment_gap_.resize(problem_->point_count(), numeric_limits<double>::infinity());
         point_cost_.resize(problem_->point_count());
-        neighbor_work_.reserve(max(0, cluster_count - 1));
         point_priority_work_.reserve(problem_->point_count());
         rebuild_selected_generation_.resize(problem_->point_count());
         int rebuild_limit = min(options_.rebuild_point_limit, problem_->point_count());
@@ -612,19 +622,58 @@ private:
     void refresh_candidates() {
         int point_count = problem_->point_count();
         int cluster_count = partition_.cluster_count();
-        if (nearby_count_ > 0) for (int cluster = 0; cluster < cluster_count; ++cluster) {
-            neighbor_work_.clear();
-            for (int other = 0; other < cluster_count; ++other) if (other != cluster) neighbor_work_.emplace_back(squared_center_distance(cluster, other), other);
+        if (nearby_count_ > 0) {
             auto less_neighbor = [](const pair<double, int>& a, const pair<double, int>& b) {
                 if (a.first < b.first) return true;
                 if (b.first < a.first) return false;
                 return a.second < b.second;
             };
-            if (nearby_count_ < cluster_count - 1) nth_element(neighbor_work_.begin(), neighbor_work_.begin() + nearby_count_, neighbor_work_.end(), less_neighbor);
-            sort(neighbor_work_.begin(), neighbor_work_.begin() + nearby_count_, less_neighbor);
-            for (int index = 0; index < nearby_count_; ++index) nearby_clusters_[(size_t)cluster * nearby_count_ + index] = neighbor_work_[index].second;
+            if (nearby_count_ <= NEARBY_INSERTION_LIMIT) {
+                fill(nearby_work_counts_.begin(), nearby_work_counts_.end(), 0);
+                auto add_neighbor = [&](int cluster, pair<double, int> candidate) {
+                    pair<double, int>* begin = nearby_work_.data() + (size_t)cluster * nearby_count_;
+                    int& count = nearby_work_counts_[cluster];
+                    int position = lower_bound(begin, begin + count, candidate, less_neighbor) - begin;
+                    if (count < nearby_count_) {
+                        move_backward(begin + position, begin + count, begin + count + 1);
+                        begin[position] = candidate;
+                        ++count;
+                    } else if (position < nearby_count_) {
+                        move_backward(begin + position, begin + nearby_count_ - 1, begin + nearby_count_);
+                        begin[position] = candidate;
+                    }
+                };
+                for (int cluster = 0; cluster < cluster_count; ++cluster) {
+                    for (int other = cluster + 1; other < cluster_count; ++other) {
+                        double distance = squared_center_distance(cluster, other);
+                        add_neighbor(cluster, {distance, other});
+                        add_neighbor(other, {distance, cluster});
+                    }
+                }
+                for (int cluster = 0; cluster < cluster_count; ++cluster) {
+                    pair<double, int>* begin = nearby_work_.data() + (size_t)cluster * nearby_count_;
+                    for (int index = 0; index < nearby_count_; ++index) {
+                        nearby_clusters_[(size_t)cluster * nearby_count_ + index] = begin[index].second;
+                    }
+                }
+            } else {
+                for (int cluster = 0; cluster < cluster_count; ++cluster) {
+                    neighbor_work_.clear();
+                    for (int other = 0; other < cluster_count; ++other) if (other != cluster) {
+                        neighbor_work_.emplace_back(squared_center_distance(cluster, other), other);
+                    }
+                    if (nearby_count_ < cluster_count - 1) {
+                        nth_element(neighbor_work_.begin(), neighbor_work_.begin() + nearby_count_,
+                                    neighbor_work_.end(), less_neighbor);
+                    }
+                    sort(neighbor_work_.begin(), neighbor_work_.begin() + nearby_count_, less_neighbor);
+                    for (int index = 0; index < nearby_count_; ++index) {
+                        nearby_clusters_[(size_t)cluster * nearby_count_ + index] = neighbor_work_[index].second;
+                    }
+                }
+                neighbor_work_.clear();
+            }
         }
-        neighbor_work_.clear();
         for (int point = 0; point < point_count; ++point) {
             int current = partition_.label(point);
             double current_cost = problem_->squared_distance_to_center(point, center_data(current));
@@ -909,8 +958,11 @@ private:
         };
         int boundary_count = (take + 1) / 2;
         point_priority_work_.clear();
-        for (int point : members) {
+        rebuild_own_cost_work_.resize(members.size());
+        for (int index = 0; index < (int)members.size(); ++index) {
+            int point = members[index];
             double own_cost = problem_->squared_distance_to_center(point, center_data(cluster));
+            rebuild_own_cost_work_[index] = own_cost;
             double other_cost = problem_->squared_distance_to_center(point, center_data(other1));
             if (other2 != -1) other_cost = min(other_cost, problem_->squared_distance_to_center(point, center_data(other2)));
             point_priority_work_.emplace_back(other_cost - own_cost, point);
@@ -918,12 +970,15 @@ private:
         append_best(boundary_count);
         int distant_count = take - boundary_count;
         point_priority_work_.clear();
-        for (int point : members) if (rebuild_selected_generation_[point] != rebuild_generation_) {
-            double own_cost = problem_->squared_distance_to_center(point, center_data(cluster));
-            point_priority_work_.emplace_back(-own_cost, point);
+        for (int index = 0; index < (int)members.size(); ++index) {
+            int point = members[index];
+            if (rebuild_selected_generation_[point] != rebuild_generation_) {
+                point_priority_work_.emplace_back(-rebuild_own_cost_work_[index], point);
+            }
         }
         append_best(distant_count);
         point_priority_work_.clear();
+        rebuild_own_cost_work_.clear();
     }
 
     void copy_point_to_center(int point, vector<double>& center) {
@@ -951,7 +1006,7 @@ private:
         return takes;
     }
 
-    bool assign_rebuild_three(const array<int, 3>& takes) {
+    bool assign_rebuild_three(const array<int, 3>& takes, bool compare_previous, bool& same_assignment) {
         int selected_count = pending_rebuild_points_.size();
         size_t width2 = (size_t)takes[1] + 1;
         size_t width1 = (size_t)takes[0] + 1;
@@ -980,7 +1035,7 @@ private:
                 for (int second_count = minimum_second; second_count <= maximum_second; ++second_count) {
                     size_t source = (size_t)first_count * width2 + second_count;
                     double base_cost = rebuild_three_dp_current_[source];
-                    if (!isfinite(base_cost)) continue;
+                    if (base_cost == infinity) continue;
                     int third_count = point_index - first_count - second_count;
                     auto relax = [&](int cluster_index, int next_first, int next_second) {
                         size_t destination = (size_t)next_first * width2 + next_second;
@@ -1001,12 +1056,15 @@ private:
         int second_count = takes[1];
         size_t final_state = (size_t)first_count * width2 + second_count;
         if (!isfinite(rebuild_three_dp_current_[final_state])) return false;
+        same_assignment = compare_previous;
         pending_rebuild_labels_.resize(selected_count);
         for (int point_index = selected_count; point_index > 0; --point_index) {
             size_t state = (size_t)first_count * width2 + second_count;
             int cluster_index = rebuild_three_predecessor_[(size_t)point_index * state_count + state];
             if (cluster_index < 0 || cluster_index >= 3) throw logic_error("ClusteringSaState: failed to restore a three-cluster assignment");
-            pending_rebuild_labels_[point_index - 1] = rebuild_three_clusters_[cluster_index];
+            int label = rebuild_three_clusters_[cluster_index];
+            if (same_assignment && pending_rebuild_labels_[point_index - 1] != label) same_assignment = false;
+            pending_rebuild_labels_[point_index - 1] = label;
             if (cluster_index == 0) --first_count;
             else if (cluster_index == 1) --second_count;
         }
@@ -1092,7 +1150,9 @@ private:
         }
         array<double, 3> final_squared_norm_sums{};
         for (int iteration = 0; iteration < options_.rebuild_iterations; ++iteration) {
-            if (!assign_rebuild_three(takes)) return false;
+            bool same_assignment = false;
+            if (!assign_rebuild_three(takes, iteration > 0, same_assignment)) return false;
+            if (same_assignment) break;
             rebuild_three_sums_ = rebuild_three_core_sums_;
             final_squared_norm_sums = core_squared_norm_sums;
             for (int index = 0; index < selected_count; ++index) {
@@ -1232,8 +1292,19 @@ private:
                 return pending_rebuild_points_[a.second] < pending_rebuild_points_[b.second];
             };
             nth_element(rebuild_order_.begin(), rebuild_order_.begin() + take1, rebuild_order_.end(), less_assignment);
+            bool same_assignment = iteration > 0;
+            if (take1 <= take2) {
+                for (int rank = 0; same_assignment && rank < take1; ++rank) {
+                    if (pending_rebuild_labels_[rebuild_order_[rank].second] != cluster1) same_assignment = false;
+                }
+            } else {
+                for (int rank = take1; same_assignment && rank < selected_count; ++rank) {
+                    if (pending_rebuild_labels_[rebuild_order_[rank].second] != cluster2) same_assignment = false;
+                }
+            }
             fill(pending_rebuild_labels_.begin(), pending_rebuild_labels_.end(), cluster2);
             for (int rank = 0; rank < take1; ++rank) pending_rebuild_labels_[rebuild_order_[rank].second] = cluster1;
+            if (same_assignment) break;
             rebuild_sum1_ = rebuild_core_sum1_;
             rebuild_sum2_ = rebuild_core_sum2_;
             final_squared_norm1 = core_squared_norm1;

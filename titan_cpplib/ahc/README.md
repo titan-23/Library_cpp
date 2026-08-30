@@ -86,8 +86,13 @@ AHC専用ではないが、空間的な近傍候補を作る部品として次�
 - `geometry/delaunay_triangulation.cpp`: 整数座標点のドロネー三角形分割と隣接点。
 - `geometry/voronoi_diagram.cpp`: 指定長方形内へ切り取ったボロノイ領域。
 - `geometry/kd_tree.cpp`: 多次元点の最近点、上位k点、半径内の点を探すk-d tree。
+- `geometry/kd_tree_2d.cpp`: 検索定数とメモリを抑えた静的2次元k-d tree。
+- `geometry/incremental_kd_tree_2d.cpp`: 点番号を保ったまま追加できる2次元k-d tree。
 - `geometry/how_to_use_delaunay_voronoi.md`: 重複点と退化入力の扱い、使用例、計算量。
 - `geometry/how_to_use_kd_tree.md`: 点型、所有関係、検索方法、計算量。
+- `geometry/how_to_use_kd_tree_2d.md`: 静的版と追加対応版の選び方、所有関係、追加、計算量。
+- `geometry/benchmark/kd_tree_benchmark.cpp`: 各k-d treeの構築、検索、追加の定数倍を比較する
+  ベンチマーク。
 
 ## 解法設計の文書
 

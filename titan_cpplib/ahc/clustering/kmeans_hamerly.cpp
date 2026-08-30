@@ -32,14 +32,14 @@ Distance lower_after_move(Distance value, Distance movement) {
 }
 
 template <class Distance, class Point, class Center, class MetricFn>
-void assign_all_metric(const vector<Point>& points, const vector<Center>& centers, const vector<int>& old_labels, vector<int>& new_labels, vector<int>& counts, vector<Distance>& upper, vector<Distance>& lower, MetricFn& metric) {
+void assign_all_metric(const vector<Point>& points, const vector<Center>& centers, vector<int>& labels,
+                       vector<int>& counts, vector<Distance>& upper, vector<Distance>& lower, MetricFn& metric) {
     int n = points.size(), cluster_count = centers.size();
-    new_labels.resize(n);
     counts.assign(cluster_count, 0);
     upper.resize(n);
     lower.resize(n);
     for (int i = 0; i < n; ++i) {
-        int initial = old_labels[i] == -1 ? 0 : old_labels[i];
+        int initial = labels[i] == -1 ? 0 : labels[i];
         int best = initial;
         Distance best_distance = metric_value<Distance>(metric(points[i], centers[initial]));
         Distance second_distance = numeric_limits<Distance>::infinity();
@@ -54,7 +54,7 @@ void assign_all_metric(const vector<Point>& points, const vector<Center>& center
                 second_distance = candidate;
             }
         }
-        new_labels[i] = best;
+        labels[i] = best;
         ++counts[best];
         upper[i] = best_distance;
         lower[i] = second_distance;
@@ -77,12 +77,14 @@ void calculate_separation(const vector<Center>& centers, vector<Distance>& separ
 }
 
 template <class Distance, class Point, class Center, class MetricFn>
-void assign_hamerly(const vector<Point>& points, const vector<Center>& centers, const vector<int>& old_labels, vector<int>& new_labels, vector<int>& counts, vector<Distance>& upper, vector<Distance>& lower, vector<Distance>& separation, MetricFn& metric) {
+bool assign_hamerly(const vector<Point>& points, const vector<Center>& centers, vector<int>& labels,
+                    vector<int>& counts, vector<Distance>& upper, vector<Distance>& lower,
+                    vector<Distance>& separation, MetricFn& metric) {
     int n = points.size(), cluster_count = centers.size();
     calculate_separation<Distance>(centers, separation, metric);
-    new_labels = old_labels;
+    bool changed = false;
     for (int i = 0; i < n; ++i) {
-        int assigned = old_labels[i];
+        int assigned = labels[i];
         Distance boundary = max(lower[i], separation[assigned]);
         if (upper[i] <= boundary) continue;
         upper[i] = metric_value<Distance>(metric(points[i], centers[assigned]));
@@ -101,12 +103,16 @@ void assign_hamerly(const vector<Point>& points, const vector<Center>& centers, 
                 second_distance = candidate;
             }
         }
-        new_labels[i] = best;
         upper[i] = best_distance;
         lower[i] = second_distance;
+        if (best != assigned) {
+            labels[i] = best;
+            --counts[assigned];
+            ++counts[best];
+            changed = true;
+        }
     }
-    counts.assign(cluster_count, 0);
-    for (int label : new_labels) ++counts[label];
+    return changed;
 }
 
 template <class Distance, class Point, class Center, class MetricFn>
@@ -149,7 +155,7 @@ auto run_hamerly(const vector<Point>& points, vector<Center> centers, CostFn& co
     using Distance = conditional_t<is_integral_v<RawDistance>, long double, common_type_t<RawDistance, double>>;
     check_lloyd_input(points.size(), centers.size(), max_iterations);
     int n = points.size(), cluster_count = centers.size();
-    vector<int> labels(n, -1), new_labels(n), counts, offsets, members, cursor;
+    vector<int> labels(n, -1), counts, offsets, members, cursor;
     vector<Distance> upper, lower, separation, movement;
     vector<Cost> assigned_cost;
     vector<Center> new_centers;
@@ -157,18 +163,19 @@ auto run_hamerly(const vector<Point>& points, vector<Center> centers, CostFn& co
     int iterations = 0;
     bool converged = false, first = true;
     while (iterations < max_iterations) {
-        if (first) assign_all_metric<Distance>(points, centers, labels, new_labels, counts, upper, lower, metric);
-        else assign_hamerly<Distance>(points, centers, labels, new_labels, counts, upper, lower, separation, metric);
+        bool changed = true;
+        if (first) assign_all_metric<Distance>(points, centers, labels, counts, upper, lower, metric);
+        else {
+            changed = assign_hamerly<Distance>(points, centers, labels, counts, upper, lower, separation, metric);
+        }
         bool has_empty = find(counts.begin(), counts.end(), 0) != counts.end();
         bool repaired = false;
         if (has_empty) {
             assigned_cost.clear();
             assigned_cost.reserve(n);
-            for (int i = 0; i < n; ++i) assigned_cost.emplace_back(cost(points[i], centers[new_labels[i]]));
-            repaired = repair_empty_clusters(new_labels, counts, assigned_cost);
+            for (int i = 0; i < n; ++i) assigned_cost.emplace_back(cost(points[i], centers[labels[i]]));
+            repaired = repair_empty_clusters(labels, counts, assigned_cost);
         }
-        bool changed = new_labels != labels;
-        labels.swap(new_labels);
         if (!first && !changed && !repaired) {
             converged = true;
             break;

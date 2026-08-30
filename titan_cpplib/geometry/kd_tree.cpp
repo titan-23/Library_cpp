@@ -6,185 +6,292 @@
 #include <functional>
 #include <limits>
 #include <optional>
-#include <queue>
 #include <span>
 #include <stdexcept>
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include "titan_cpplib/geometry/kd_tree_common.cpp"
+
 using namespace std;
+
 namespace titan23 {
-struct KdNeighbor {
-    int index;
-    long double squared_distance;
 
-    long double distance() const { return sqrt(squared_distance); }
-};
-
-template <class Point, class GetCoordinate>
+template <class Point, class GetCoordinate, class Scalar_ = long double>
 class KdTree {
 public:
+    using Scalar = Scalar_;
     using Coordinate = remove_cv_t<remove_reference_t<invoke_result_t<const GetCoordinate&, const Point&, int>>>;
-    static_assert(is_convertible_v<Coordinate, long double>, "GetCoordinate must return a value convertible to long double");
+    using Neighbor = KdNeighborT<Scalar>;
+
+    static_assert(is_floating_point_v<Scalar>, "Scalar must be a floating-point type");
+    static_assert(is_convertible_v<Coordinate, Scalar>, "GetCoordinate must return a value convertible to Scalar");
+
+    KdTree(const KdTree&) = default;
+
+    KdTree& operator=(const KdTree& other)
+        requires (is_copy_constructible_v<GetCoordinate> && is_nothrow_swappable_v<GetCoordinate>) {
+        if (this == &other) return *this;
+        KdTree copy(other);
+        swap_with(copy);
+        return *this;
+    }
+
+    KdTree& operator=(const KdTree&)
+        requires (!(is_copy_constructible_v<GetCoordinate> && is_nothrow_swappable_v<GetCoordinate>)) = delete;
+
+    KdTree(KdTree&& other) noexcept(is_nothrow_move_constructible_v<GetCoordinate>)
+        : get_coordinate_(move(other.get_coordinate_)),
+          points_(move(other.points_)),
+          dimension_(other.dimension_),
+          coordinates_(move(other.coordinates_)),
+          nodes_(move(other.nodes_)),
+          root_(other.root_) {
+        other.points_.clear();
+        other.coordinates_.clear();
+        other.nodes_.clear();
+        other.dimension_ = 0;
+        other.root_ = -1;
+    }
+
+    KdTree& operator=(KdTree&& other) noexcept(is_nothrow_move_assignable_v<GetCoordinate>)
+        requires is_move_assignable_v<GetCoordinate> {
+        if (this == &other) return *this;
+        get_coordinate_ = move(other.get_coordinate_);
+        points_ = move(other.points_);
+        dimension_ = other.dimension_;
+        coordinates_ = move(other.coordinates_);
+        nodes_ = move(other.nodes_);
+        root_ = other.root_;
+        other.points_.clear();
+        other.coordinates_.clear();
+        other.nodes_.clear();
+        other.dimension_ = 0;
+        other.root_ = -1;
+        return *this;
+    }
 
     KdTree(vector<Point> points, int dimension, GetCoordinate get_coordinate)
-        : points_(move(points)), dimension_(dimension), get_coordinate_(move(get_coordinate)) {
+        : get_coordinate_(move(get_coordinate)), points_(move(points)), dimension_(dimension) {
         if (dimension_ <= 0) throw invalid_argument("KdTree: dimension must be positive");
-        if (points_.size() > (size_t)numeric_limits<int>::max()) throw invalid_argument("KdTree: points.size() must fit in int");
-        size_t coordinate_count = points_.size();
-        if (coordinate_count > numeric_limits<size_t>::max() / (size_t)dimension_) throw length_error("KdTree: coordinate table is too large");
-        coordinates_.resize(coordinate_count * (size_t)dimension_);
+        if (points_.size() > (size_t)numeric_limits<int>::max()) {
+            throw invalid_argument("KdTree: points.size() must fit in int");
+        }
+        size_t point_count = points_.size();
+        if (point_count > numeric_limits<size_t>::max() / (size_t)dimension_) {
+            throw length_error("KdTree: coordinate table is too large");
+        }
+        coordinates_.resize(point_count * (size_t)dimension_);
         for (int point = 0; point < (int)points_.size(); ++point) {
             for (int axis = 0; axis < dimension_; ++axis) {
-                long double coordinate = (long double)invoke(get_coordinate_, points_[point], axis);
-                if (!isfinite(coordinate)) throw invalid_argument("KdTree: every coordinate must be finite");
-                coordinates_[(size_t)point * dimension_ + axis] = coordinate;
+                Scalar value = detail::kd_checked_coordinate<Scalar>(
+                    invoke(get_coordinate_, points_[point], axis),
+                    "KdTree: every coordinate must be finite and fit in Scalar"
+                );
+                coordinates_[(size_t)point * dimension_ + axis] = value;
             }
         }
-        order_.resize(points_.size());
-        for (int point = 0; point < (int)points_.size(); ++point) order_[point] = point;
+
+        vector<int> order(points_.size());
+        for (int point = 0; point < (int)points_.size(); ++point) order[point] = point;
         nodes_.reserve(points_.size());
-        root_ = build(0, (int)order_.size());
-        order_.clear();
-        order_.shrink_to_fit();
+        root_ = build(order, 0, (int)order.size());
     }
 
     int point_count() const { return (int)points_.size(); }
     int dimension() const { return dimension_; }
     const vector<Point>& points() const { return points_; }
-    const Point& point(int index) const {
-        check_point(index);
-        return points_[index];
+    const Point& point(int id) const {
+        check_point(id);
+        return points_[id];
     }
 
-    optional<KdNeighbor> nearest_neighbor(const Point& query, int excluded_index = -1) const {
-        vector<long double> coordinates = query_coordinates(query);
-        return nearest_neighbor(span<const long double>(coordinates), excluded_index);
+    optional<Neighbor> nearest_neighbor(const Point& q, int exclude = -1) const {
+        check_excluded_index(exclude);
+        if (dimension_ == 0) return nullopt;
+        vector<Scalar> coordinates = query_coordinates(q);
+        return nearest_neighbor_impl(coordinates, exclude);
     }
 
-    optional<KdNeighbor> nearest_neighbor(span<const long double> query, int excluded_index = -1) const {
-        check_query(query);
-        check_excluded_index(excluded_index);
-        KdNeighbor best{-1, numeric_limits<long double>::infinity()};
-        search_nearest(root_, query.data(), excluded_index, best);
-        if (best.index == -1) return nullopt;
-        return best;
+    optional<Neighbor> nearest_neighbor(span<const Scalar> q, int exclude = -1) const {
+        check_excluded_index(exclude);
+        if (dimension_ == 0) return nullopt;
+        check_query(q);
+        return nearest_neighbor_impl(q, exclude);
     }
 
-    optional<KdNeighbor> nearest_neighbor_of(int point_index) const {
-        check_point(point_index);
-        return nearest_neighbor(point_coordinates(point_index), point_index);
+    optional<Neighbor> nearest_neighbor_of(int id) const {
+        check_point(id);
+        return nearest_neighbor_impl(point_coordinates(id), id);
     }
 
-    vector<KdNeighbor> k_nearest_neighbors(const Point& query, int count, int excluded_index = -1) const {
-        vector<long double> coordinates = query_coordinates(query);
-        return k_nearest_neighbors(span<const long double>(coordinates), count, excluded_index);
+    vector<Neighbor> k_nearest_neighbors(const Point& q, int k, int exclude = -1) const {
+        vector<Neighbor> out;
+        k_nearest_neighbors(q, k, out, exclude);
+        return out;
     }
 
-    vector<KdNeighbor> k_nearest_neighbors(span<const long double> query, int count, int excluded_index = -1) const {
-        check_query(query);
-        check_excluded_index(excluded_index);
-        if (count < 0) throw invalid_argument("KdTree::k_nearest_neighbors: count must not be negative");
-        int available = point_count() - (excluded_index == -1 ? 0 : 1);
-        int result_count = min(count, available);
-        if (result_count == 0) return {};
-        using Candidate = pair<long double, int>;
-        vector<Candidate> storage;
-        storage.reserve((size_t)result_count);
-        priority_queue<Candidate, vector<Candidate>> candidates(less<Candidate>(), move(storage));
-        search_k_nearest(root_, query.data(), excluded_index, result_count, candidates);
-        vector<KdNeighbor> result;
-        result.reserve(candidates.size());
-        while (!candidates.empty()) {
-            auto [distance, index] = candidates.top();
-            candidates.pop();
-            result.push_back({index, distance});
+    void k_nearest_neighbors(const Point& q, int k, vector<Neighbor>& out, int exclude = -1) const {
+        check_excluded_index(exclude);
+        int take = checked_result_count(k, exclude);
+        if (dimension_ == 0) {
+            out.clear();
+            return;
         }
-        sort_neighbors(result);
-        return result;
+        vector<Scalar> coordinates = query_coordinates(q);
+        k_nearest_neighbors_impl(coordinates, take, exclude, out);
     }
 
-    vector<KdNeighbor> k_nearest_neighbors_of(int point_index, int count) const {
-        check_point(point_index);
-        return k_nearest_neighbors(point_coordinates(point_index), count, point_index);
+    vector<Neighbor> k_nearest_neighbors(span<const Scalar> q, int k, int exclude = -1) const {
+        vector<Neighbor> out;
+        k_nearest_neighbors(q, k, out, exclude);
+        return out;
     }
 
-    vector<KdNeighbor> radius_neighbors(const Point& query, long double radius, int excluded_index = -1, bool sort_by_distance = true) const {
-        vector<long double> coordinates = query_coordinates(query);
-        return radius_neighbors(span<const long double>(coordinates), radius, excluded_index, sort_by_distance);
+    void k_nearest_neighbors(span<const Scalar> q, int k, vector<Neighbor>& out, int exclude = -1) const {
+        check_excluded_index(exclude);
+        int take = checked_result_count(k, exclude);
+        if (dimension_ == 0) {
+            out.clear();
+            return;
+        }
+        check_query(q);
+        k_nearest_neighbors_impl(q, take, exclude, out);
     }
 
-    vector<KdNeighbor> radius_neighbors(span<const long double> query, long double radius, int excluded_index = -1, bool sort_by_distance = true) const {
-        check_query(query);
-        check_excluded_index(excluded_index);
-        if (!isfinite(radius) || radius < 0) throw invalid_argument("KdTree::radius_neighbors: radius must be finite and nonnegative");
-        long double squared_radius = radius * radius;
-        vector<KdNeighbor> result;
-        search_radius(root_, query.data(), excluded_index, squared_radius, result);
-        if (sort_by_distance) sort_neighbors(result);
-        return result;
+    vector<Neighbor> k_nearest_neighbors_of(int id, int k) const {
+        vector<Neighbor> out;
+        k_nearest_neighbors_of(id, k, out);
+        return out;
     }
 
-    vector<KdNeighbor> radius_neighbors_of(int point_index, long double radius, bool sort_by_distance = true) const {
-        check_point(point_index);
-        return radius_neighbors(point_coordinates(point_index), radius, point_index, sort_by_distance);
+    void k_nearest_neighbors_of(int id, int k, vector<Neighbor>& out) const {
+        check_point(id);
+        int take = checked_result_count(k, id);
+        k_nearest_neighbors_impl(point_coordinates(id), take, id, out);
+    }
+
+    vector<Neighbor> radius_neighbors(const Point& q, Scalar radius, int exclude = -1,
+                                      bool sort_by_distance = true) const {
+        vector<Neighbor> out;
+        radius_neighbors(q, radius, out, exclude, sort_by_distance);
+        return out;
+    }
+
+    void radius_neighbors(const Point& q, Scalar radius, vector<Neighbor>& out, int exclude = -1,
+                          bool sort_by_distance = true) const {
+        check_excluded_index(exclude);
+        Scalar radius2 = checked_squared_radius(radius);
+        if (dimension_ == 0) {
+            out.clear();
+            return;
+        }
+        vector<Scalar> coordinates = query_coordinates(q);
+        radius_neighbors_impl(coordinates, radius2, exclude, sort_by_distance, out);
+    }
+
+    vector<Neighbor> radius_neighbors(span<const Scalar> q, Scalar radius, int exclude = -1,
+                                      bool sort_by_distance = true) const {
+        vector<Neighbor> out;
+        radius_neighbors(q, radius, out, exclude, sort_by_distance);
+        return out;
+    }
+
+    void radius_neighbors(span<const Scalar> q, Scalar radius, vector<Neighbor>& out, int exclude = -1,
+                          bool sort_by_distance = true) const {
+        check_excluded_index(exclude);
+        Scalar radius2 = checked_squared_radius(radius);
+        if (dimension_ == 0) {
+            out.clear();
+            return;
+        }
+        check_query(q);
+        radius_neighbors_impl(q, radius2, exclude, sort_by_distance, out);
+    }
+
+    vector<Neighbor> radius_neighbors_of(int id, Scalar radius, bool sort_by_distance = true) const {
+        vector<Neighbor> out;
+        radius_neighbors_of(id, radius, out, sort_by_distance);
+        return out;
+    }
+
+    void radius_neighbors_of(int id, Scalar radius, vector<Neighbor>& out, bool sort_by_distance = true) const {
+        check_point(id);
+        Scalar radius2 = checked_squared_radius(radius);
+        radius_neighbors_impl(point_coordinates(id), radius2, id, sort_by_distance, out);
     }
 
 private:
     struct Node {
-        int point;
+        int id;
         int left;
         int right;
         int axis;
     };
 
+    struct NeighborLess {
+        bool operator()(const Neighbor& a, const Neighbor& b) const {
+            if (a.squared_distance != b.squared_distance) {
+                return a.squared_distance < b.squared_distance;
+            }
+            return a.index < b.index;
+        }
+    };
+
+    GetCoordinate get_coordinate_;
     vector<Point> points_;
     int dimension_;
-    GetCoordinate get_coordinate_;
-    vector<long double> coordinates_;
-    vector<int> order_;
+    vector<Scalar> coordinates_;
     vector<Node> nodes_;
     int root_ = -1;
 
-    long double coordinate(int point, int axis) const {
-        return coordinates_[(size_t)point * dimension_ + axis];
+    void swap_with(KdTree& other) noexcept(is_nothrow_swappable_v<GetCoordinate>) {
+        points_.swap(other.points_);
+        swap(dimension_, other.dimension_);
+        swap(get_coordinate_, other.get_coordinate_);
+        coordinates_.swap(other.coordinates_);
+        nodes_.swap(other.nodes_);
+        swap(root_, other.root_);
     }
 
-    span<const long double> point_coordinates(int point) const {
-        return span<const long double>(coordinates_.data() + (size_t)point * dimension_, (size_t)dimension_);
+    Scalar coordinate(int id, int axis) const {
+        return coordinates_[(size_t)id * dimension_ + axis];
     }
 
-    int build(int left, int right) {
-        if (left >= right) return -1;
-        int axis = widest_axis(left, right);
-        int middle = left + (right - left) / 2;
-        nth_element(order_.begin() + left, order_.begin() + middle, order_.begin() + right, [&](int point1, int point2) {
-            long double coordinate1 = coordinate(point1, axis);
-            long double coordinate2 = coordinate(point2, axis);
-            if (coordinate1 != coordinate2) return coordinate1 < coordinate2;
-            return point1 < point2;
+    span<const Scalar> point_coordinates(int id) const {
+        return span<const Scalar>(coordinates_.data() + (size_t)id * dimension_, (size_t)dimension_);
+    }
+
+    int build(vector<int>& order, int l, int r) {
+        if (l >= r) return -1;
+        int axis = widest_axis(order, l, r);
+        int mid = l + (r - l) / 2;
+        nth_element(order.begin() + l, order.begin() + mid, order.begin() + r, [&](int a, int b) {
+            Scalar x = coordinate(a, axis);
+            Scalar y = coordinate(b, axis);
+            if (x != y) return x < y;
+            return a < b;
         });
         int node = (int)nodes_.size();
-        nodes_.push_back({order_[middle], -1, -1, axis});
-        int left_child = build(left, middle);
-        int right_child = build(middle + 1, right);
-        nodes_[node].left = left_child;
-        nodes_[node].right = right_child;
+        nodes_.push_back({order[mid], -1, -1, axis});
+        nodes_[node].left = build(order, l, mid);
+        nodes_[node].right = build(order, mid + 1, r);
         return node;
     }
 
-    int widest_axis(int left, int right) const {
+    int widest_axis(const vector<int>& order, int l, int r) const {
         int best_axis = 0;
-        long double best_width = -1;
+        Scalar best_width = -1;
         for (int axis = 0; axis < dimension_; ++axis) {
-            long double minimum = coordinate(order_[left], axis);
-            long double maximum = minimum;
-            for (int i = left + 1; i < right; ++i) {
-                long double value = coordinate(order_[i], axis);
-                minimum = min(minimum, value);
-                maximum = max(maximum, value);
+            Scalar lo = coordinate(order[l], axis);
+            Scalar hi = lo;
+            for (int i = l + 1; i < r; ++i) {
+                Scalar value = coordinate(order[i], axis);
+                lo = min(lo, value);
+                hi = max(hi, value);
             }
-            long double width = maximum - minimum;
+            Scalar width = hi - lo;
+            if (!isfinite(width)) throw overflow_error("KdTree: coordinate spread does not fit in Scalar");
             if (width > best_width) {
                 best_width = width;
                 best_axis = axis;
@@ -193,99 +300,164 @@ private:
         return best_axis;
     }
 
-    vector<long double> query_coordinates(const Point& query) const {
-        vector<long double> coordinates((size_t)dimension_);
-        for (int axis = 0; axis < dimension_; ++axis) coordinates[axis] = (long double)invoke(get_coordinate_, query, axis);
-        check_query(coordinates);
+    vector<Scalar> query_coordinates(const Point& q) const {
+        vector<Scalar> coordinates(dimension_);
+        for (int axis = 0; axis < dimension_; ++axis) {
+            coordinates[axis] = detail::kd_checked_coordinate<Scalar>(
+                invoke(get_coordinate_, q, axis), "KdTree: every query coordinate must be finite and fit in Scalar"
+            );
+        }
         return coordinates;
     }
 
-    long double squared_distance(int point, const long double* query) const {
-        long double result = 0;
+    Scalar squared_distance(int id, const Scalar* q) const {
+        Scalar dist2 = 0;
         for (int axis = 0; axis < dimension_; ++axis) {
-            long double difference = coordinate(point, axis) - query[axis];
-            result += difference * difference;
+            Scalar diff = coordinate(id, axis) - q[axis];
+            Scalar diff2 = diff * diff;
+            if (!isfinite(diff2) || dist2 > numeric_limits<Scalar>::max() - diff2) {
+                throw overflow_error("KdTree: squared distance does not fit in Scalar");
+            }
+            dist2 += diff2;
         }
-        if (!isfinite(result)) throw overflow_error("KdTree: squared distance does not fit in long double");
-        return result;
+        return dist2;
     }
 
-    static bool better(long double distance, int index, const KdNeighbor& current) {
-        return current.index == -1 || distance < current.squared_distance || (distance == current.squared_distance && index < current.index);
+    static bool better(Scalar dist2, int id, const Neighbor& best) {
+        return best.index == -1 || dist2 < best.squared_distance ||
+               (dist2 == best.squared_distance && id < best.index);
     }
 
-    void search_nearest(int node, const long double* query, int excluded_index, KdNeighbor& best) const {
+    optional<Neighbor> nearest_neighbor_impl(span<const Scalar> q, int exclude) const {
+        Neighbor best{-1, numeric_limits<Scalar>::infinity()};
+        search_nearest(root_, q.data(), exclude, best);
+        if (best.index == -1) return nullopt;
+        return best;
+    }
+
+    void search_nearest(int node, const Scalar* q, int exclude, Neighbor& best) const {
         if (node == -1) return;
-        const auto& current = nodes_[node];
-        long double difference = query[current.axis] - coordinate(current.point, current.axis);
-        int near_child = difference <= 0 ? current.left : current.right;
-        int far_child = difference <= 0 ? current.right : current.left;
-        search_nearest(near_child, query, excluded_index, best);
-        if (current.point != excluded_index) {
-            long double distance = squared_distance(current.point, query);
-            if (better(distance, current.point, best)) best = {current.point, distance};
+        const Node& cur = nodes_[node];
+        Scalar diff = q[cur.axis] - coordinate(cur.id, cur.axis);
+        int near = diff <= 0 ? cur.left : cur.right;
+        int far = diff <= 0 ? cur.right : cur.left;
+        search_nearest(near, q, exclude, best);
+        if (cur.id != exclude) {
+            Scalar dist2 = squared_distance(cur.id, q);
+            if (better(dist2, cur.id, best)) best = {cur.id, dist2};
         }
-        long double plane_distance = difference * difference;
-        if (best.index == -1 || plane_distance <= best.squared_distance) search_nearest(far_child, query, excluded_index, best);
+        Scalar plane2 = diff * diff;
+        if (best.index == -1 || plane2 <= best.squared_distance) {
+            search_nearest(far, q, exclude, best);
+        }
     }
 
-    using Candidate = pair<long double, int>;
+    void k_nearest_neighbors_impl(span<const Scalar> q, int k, int exclude, vector<Neighbor>& out) const {
+        out.clear();
+        out.reserve(k);
+        if (k == 0) return;
+        int available = point_count() - (exclude == -1 ? 0 : 1);
+        if (k == available) {
+            for (int id = 0; id < point_count(); ++id) {
+                if (id != exclude) {
+                    out.push_back({id, squared_distance(id, q.data())});
+                }
+            }
+            sort_neighbors(out);
+            return;
+        }
+        search_k_nearest(root_, q.data(), exclude, k, out);
+        sort_neighbors(out);
+    }
 
-    void search_k_nearest(int node, const long double* query, int excluded_index, int count, priority_queue<Candidate, vector<Candidate>>& candidates) const {
+    void search_k_nearest(int node, const Scalar* q, int exclude, int k, vector<Neighbor>& out) const {
         if (node == -1) return;
-        const auto& current = nodes_[node];
-        long double difference = query[current.axis] - coordinate(current.point, current.axis);
-        int near_child = difference <= 0 ? current.left : current.right;
-        int far_child = difference <= 0 ? current.right : current.left;
-        search_k_nearest(near_child, query, excluded_index, count, candidates);
-        if (current.point != excluded_index) {
-            long double distance = squared_distance(current.point, query);
-            Candidate candidate{distance, current.point};
-            if ((int)candidates.size() < count) candidates.push(candidate);
-            else if (candidate < candidates.top()) {
-                candidates.pop();
-                candidates.push(candidate);
+        const Node& cur = nodes_[node];
+        Scalar diff = q[cur.axis] - coordinate(cur.id, cur.axis);
+        int near = diff <= 0 ? cur.left : cur.right;
+        int far = diff <= 0 ? cur.right : cur.left;
+        search_k_nearest(near, q, exclude, k, out);
+        if (cur.id != exclude) {
+            Neighbor candidate{cur.id, squared_distance(cur.id, q)};
+            if ((int)out.size() < k) {
+                out.push_back(candidate);
+                push_heap(out.begin(), out.end(), NeighborLess{});
+            } else if (NeighborLess{}(candidate, out.front())) {
+                // Replacing the heap root needs only one sift-down.
+                int pos = 0;
+                int size = (int)out.size();
+                while (pos < size / 2) {
+                    int child = pos * 2 + 1;
+                    if (child + 1 < size && NeighborLess{}(out[child], out[child + 1])) ++child;
+                    if (!NeighborLess{}(candidate, out[child])) break;
+                    out[pos] = out[child];
+                    pos = child;
+                }
+                out[pos] = candidate;
             }
         }
-        long double plane_distance = difference * difference;
-        if ((int)candidates.size() < count || plane_distance <= candidates.top().first) {
-            search_k_nearest(far_child, query, excluded_index, count, candidates);
+        Scalar plane2 = diff * diff;
+        if ((int)out.size() < k || plane2 <= out.front().squared_distance) {
+            search_k_nearest(far, q, exclude, k, out);
         }
     }
 
-    void search_radius(int node, const long double* query, int excluded_index, long double squared_radius, vector<KdNeighbor>& result) const {
+    void radius_neighbors_impl(span<const Scalar> q, Scalar radius2, int exclude, bool sort_by_distance,
+                               vector<Neighbor>& out) const {
+        out.clear();
+        search_radius(root_, q.data(), exclude, radius2, out);
+        if (sort_by_distance) sort_neighbors(out);
+    }
+
+    void search_radius(int node, const Scalar* q, int exclude, Scalar radius2, vector<Neighbor>& out) const {
         if (node == -1) return;
-        const auto& current = nodes_[node];
-        long double difference = query[current.axis] - coordinate(current.point, current.axis);
-        int near_child = difference <= 0 ? current.left : current.right;
-        int far_child = difference <= 0 ? current.right : current.left;
-        search_radius(near_child, query, excluded_index, squared_radius, result);
-        if (current.point != excluded_index) {
-            long double distance = squared_distance(current.point, query);
-            if (distance <= squared_radius) result.push_back({current.point, distance});
+        const Node& cur = nodes_[node];
+        Scalar diff = q[cur.axis] - coordinate(cur.id, cur.axis);
+        int near = diff <= 0 ? cur.left : cur.right;
+        int far = diff <= 0 ? cur.right : cur.left;
+        search_radius(near, q, exclude, radius2, out);
+        if (cur.id != exclude) {
+            Scalar dist2 = squared_distance(cur.id, q);
+            if (dist2 <= radius2) out.push_back({cur.id, dist2});
         }
-        if (difference * difference <= squared_radius) search_radius(far_child, query, excluded_index, squared_radius, result);
+        if (diff * diff <= radius2) search_radius(far, q, exclude, radius2, out);
     }
 
-    static void sort_neighbors(vector<KdNeighbor>& neighbors) {
-        sort(neighbors.begin(), neighbors.end(), [](const KdNeighbor& a, const KdNeighbor& b) {
-            if (a.squared_distance != b.squared_distance) return a.squared_distance < b.squared_distance;
-            return a.index < b.index;
-        });
+    static void sort_neighbors(vector<Neighbor>& out) {
+        sort(out.begin(), out.end(), NeighborLess{});
     }
 
-    void check_point(int point) const {
-        if (point < 0 || point >= point_count()) throw out_of_range("KdTree: point index is out of range");
+    int checked_result_count(int k, int exclude) const {
+        if (k < 0) throw invalid_argument("KdTree::k_nearest_neighbors: count must not be negative");
+        int available = point_count() - (exclude == -1 ? 0 : 1);
+        return min(k, available);
     }
 
-    void check_excluded_index(int point) const {
-        if (point < -1 || point >= point_count()) throw out_of_range("KdTree: excluded index is out of range");
+    static Scalar checked_squared_radius(Scalar radius) {
+        if (!isfinite(radius) || radius < 0) {
+            throw invalid_argument("KdTree::radius_neighbors: radius must be finite and nonnegative");
+        }
+        Scalar radius2 = radius * radius;
+        if (!isfinite(radius2)) {
+            throw overflow_error("KdTree::radius_neighbors: squared radius does not fit in Scalar");
+        }
+        return radius2;
     }
 
-    void check_query(span<const long double> query) const {
-        if (query.size() != (size_t)dimension_) throw invalid_argument("KdTree: query dimension does not match the tree");
-        for (long double coordinate : query) {
-            if (!isfinite(coordinate)) throw invalid_argument("KdTree: every query coordinate must be finite");
+    void check_point(int id) const {
+        if (id < 0 || id >= point_count()) throw out_of_range("KdTree: point index is out of range");
+    }
+
+    void check_excluded_index(int id) const {
+        if (id < -1 || id >= point_count()) throw out_of_range("KdTree: excluded index is out of range");
+    }
+
+    void check_query(span<const Scalar> q) const {
+        if (q.size() != (size_t)dimension_) {
+            throw invalid_argument("KdTree: query dimension does not match the tree");
+        }
+        for (Scalar value : q) {
+            if (!isfinite(value)) throw invalid_argument("KdTree: every query coordinate must be finite");
         }
     }
 };
@@ -295,4 +467,11 @@ auto make_kd_tree(vector<Point> points, int dimension, GetCoordinate get_coordin
     using Getter = decay_t<GetCoordinate>;
     return KdTree<Point, Getter>(move(points), dimension, move(get_coordinate));
 }
+
+template <class Scalar, class Point, class GetCoordinate>
+auto make_kd_tree_as(vector<Point> points, int dimension, GetCoordinate get_coordinate) {
+    using Getter = decay_t<GetCoordinate>;
+    return KdTree<Point, Getter, Scalar>(move(points), dimension, move(get_coordinate));
+}
+
 }
