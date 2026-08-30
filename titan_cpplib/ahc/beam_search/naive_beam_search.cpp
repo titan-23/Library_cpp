@@ -6,6 +6,7 @@
 #include "titan_cpplib/ahc/timer.cpp"
 #include "titan_cpplib/ds/hash_dict.cpp"
 #include "titan_cpplib/ahc/beam_search/beam_param.cpp"
+#include "titan_cpplib/ahc/beam_search/beam_result.cpp"
 #include "titan_cpplib/ahc/beam_search/beam_log.cpp"
 using namespace std;
 
@@ -22,6 +23,8 @@ namespace flying_squirrel {
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
 class NaiveBeamSearch {
 private:
+    using Result = BeamResult<ScoreType, Action, State>;
+
     struct BeamCandidate {
         int par_idx;
         ScoreType score;
@@ -192,8 +195,11 @@ private:
     };
 
 public:
-    vector<Action> search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
-        if (param.max_turn <= 0 || param.beam_width <= 0) return {};
+    template<bool materialize_final_state=true>
+    Result search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
+        if (param.max_turn <= 0 || param.beam_width <= 0) {
+            return {{}, INF, 0, 0.0, BeamStatus::InvalidParameter, nullptr};
+        }
         init_bs(param);
         if (verbose) {
             beam_log::start_banner(cerr, "NaiveBeamSearch", param);
@@ -221,8 +227,8 @@ public:
                     break;
                 }
                 beam_log::on_no_candidates(cerr, turn);
-                assert(candidates.size() > 0);
-                return {};
+                double elapsed_ms = beam_timer.elapsed();
+                return {{}, INF, turn, elapsed_ms, BeamStatus::NoCandidates, nullptr};
             }
             if (verbose) {
                 BeamCandidate bests = candidates.get_best();
@@ -242,13 +248,16 @@ public:
             turns_done = turn + 1;
         }
         if (found_finished) {
+            vector<Action> sol = build_history(best_finished_history_id);
+            double elapsed_ms = beam_timer.elapsed();
             if (verbose) {
                 beam_log::on_solution_found(cerr, turns_done, best_finished_score);
-                vector<Action> sol = build_history(best_finished_history_id);
-                beam_log::end_banner(cerr, "solution found", turns_done, param.max_turn, beam_timer.elapsed(), param.ave_width(), best_finished_score, true, (int)sol.size());
-                return sol;
+                beam_log::end_banner(cerr, "solution found", turns_done, param.max_turn,
+                                     elapsed_ms, param.ave_width(), best_finished_score, true, (int)sol.size());
             }
-            return build_history(best_finished_history_id);
+            unique_ptr<State> fs;
+            if constexpr (materialize_final_state) fs = make_final_state<true>(initial_state, sol);
+            return {move(sol), best_finished_score, turns_done, elapsed_ms, BeamStatus::Finished, move(fs)};
         }
         int best_idx = 0;
         for (int i = 1; i < (int)beam.size(); ++i) {
@@ -257,11 +266,16 @@ public:
             }
         }
         vector<Action> sol = build_history(beam[best_idx].history_id);
+        double elapsed_ms = beam_timer.elapsed();
         if (verbose) {
             beam_log::on_max_turn(cerr);
-            beam_log::end_banner(cerr, "max_turn reached", turns_done, param.max_turn, beam_timer.elapsed(), param.ave_width(), beam[best_idx].score, true, (int)sol.size());
+            beam_log::end_banner(cerr, "max_turn reached", turns_done, param.max_turn,
+                                 elapsed_ms, param.ave_width(), beam[best_idx].score, true, (int)sol.size());
         }
-        return sol;
+        ScoreType best_score = beam[best_idx].score;
+        unique_ptr<State> fs;
+        if constexpr (materialize_final_state) fs = make_final_state<true>(beam[best_idx].state, sol, (int)sol.size());
+        return {move(sol), best_score, turns_done, elapsed_ms, BeamStatus::MaxTurnReached, move(fs)};
     }
 };
 } // namespace flying_squirrel

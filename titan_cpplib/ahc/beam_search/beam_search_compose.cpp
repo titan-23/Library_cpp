@@ -6,6 +6,7 @@
 #include "titan_cpplib/ahc/timer.cpp"
 #include "titan_cpplib/ds/hash_dict.cpp"
 #include "titan_cpplib/ahc/beam_search/beam_param.cpp"
+#include "titan_cpplib/ahc/beam_search/beam_result.cpp"
 #include "titan_cpplib/ahc/beam_search/beam_log.cpp"
 #include "titan_cpplib/ahc/beam_search/beam_history.cpp"
 #include "titan_cpplib/ahc/beam_search/candidates.cpp"
@@ -17,6 +18,8 @@ namespace flying_squirrel {
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
 class BeamSearchWithTree {
 private:
+    using Result = BeamResult<ScoreType, Action, State>;
+
     titan23::Random rnd;
     titan23::Timer beam_timer;
     Action DAMMY_ACTION;
@@ -248,6 +251,26 @@ private:
         }
     }
 
+    // 探索用 state をルートへ戻して返却経路を再生する。ghost は state に
+    // 適用されていないため rollback しない。false 特殊化では全処理が消える。
+    template<bool materialize_final_state>
+    unique_ptr<State> build_final_state(State& state, const vector<Action>& result_actions, int current_depth) {
+        if constexpr (materialize_final_state) {
+            for (int d = current_depth; d > freed_to; --d) {
+                if (!is_ghost(trace[d])) state.rollback(act(trace[d]));
+            }
+            for (auto it = result_prefix.rbegin(); it != result_prefix.rend(); ++it) {
+                state.rollback(*it);
+            }
+            return make_final_state<true>(state, result_actions);
+        } else {
+            (void)state;
+            (void)result_actions;
+            (void)current_depth;
+            return nullptr;
+        }
+    }
+
     // enumerate_actions / try_op 一体化用 sink。
     // enumerate_actions が action を生成し submit(a) を呼ぶと try_op + INF/finished 判定 + push + history を行う。
     // 中間 actions バッファを挟まない。旧 enumerate_actions(vector&, ...) は requires で従来パスに分岐。
@@ -377,10 +400,14 @@ public:
      *
      * @param param ターン数、ビーム幅を指定するパラメータ構造体
      * @param verbose ログ出力するかどうか
-     * @return vector<Action>
+     * @tparam materialize_final_state 最終 State を構築するか。既定は true
+     * @return BeamResult
      */
-    vector<Action> search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
-        if (param.max_turn <= 0 || param.beam_width <= 0) return {};
+    template<bool materialize_final_state=true>
+    Result search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
+        if (param.max_turn <= 0 || param.beam_width <= 0) {
+            return {{}, INF, 0, 0.0, BeamStatus::InvalidParameter, nullptr};
+        }
         init_bs();
         if (verbose) {
             beam_log::start_banner(cerr, "BeamSearchWithTree (tour)", param);
@@ -438,22 +465,25 @@ public:
         }
 
         if (found_finished) {
+            double elapsed_ms = beam_timer.elapsed();
             if constexpr (record_history) dump_history_json(history_file, INF, history, snapshots);
             if (verbose) {
                 beam_log::on_solution_found(cerr, 1, best_finished_score);
                 beam_log::width_trace(cerr, param.width_hist);
                 beam_log::end_banner(cerr, "solution found", 1, param.max_turn,
-                                     beam_timer.elapsed(), param.ave_width(),
+                                     elapsed_ms, param.ave_width(),
                                      best_finished_score, true, (int)best_finished_path.size());
                 print_counters();
             }
-            return best_finished_path;
+            unique_ptr<State> fs;
+            if constexpr (materialize_final_state) fs = build_final_state<true>(state, best_finished_path, 0);
+            return {move(best_finished_path), best_finished_score, 1, elapsed_ms, BeamStatus::Finished, move(fs)};
         }
 
         if (candidates.size() == 0) {
             beam_log::on_no_candidates(cerr, 0);
-            assert(candidates.size() > 0);
-            return {};
+            double elapsed_ms = beam_timer.elapsed();
+            return {{}, INF, 0, elapsed_ms, BeamStatus::NoCandidates, nullptr};
         }
 
         // 世代1（深さ1ノード）を確定し cand を ActionId 参照で構築。
@@ -572,22 +602,26 @@ public:
             }
 
             if (found_finished) {
+                double elapsed_ms = beam_timer.elapsed();
                 if constexpr (record_history) dump_history_json(history_file, INF, history, snapshots);
                 if (verbose) {
                     beam_log::on_solution_found(cerr, turn + 1, best_finished_score);
                     beam_log::width_trace(cerr, param.width_hist);
                     beam_log::end_banner(cerr, "solution found", turn + 1, param.max_turn,
-                                         beam_timer.elapsed(), param.ave_width(),
+                                         elapsed_ms, param.ave_width(),
                                          best_finished_score, true, (int)best_finished_path.size());
                     print_counters();
                 }
-                return best_finished_path;
+                unique_ptr<State> fs;
+                if constexpr (materialize_final_state) fs = build_final_state<true>(state, best_finished_path, turn);
+                return {move(best_finished_path), best_finished_score, turn + 1, elapsed_ms,
+                        BeamStatus::Finished, move(fs)};
             }
 
             if (candidates.size() == 0) {
                 beam_log::on_no_candidates(cerr, turn);
-                assert(candidates.size() > 0);
-                return {};
+                double elapsed_ms = beam_timer.elapsed();
+                return {{}, INF, turn, elapsed_ms, BeamStatus::NoCandidates, nullptr};
             }
 
             if (verbose) {
@@ -640,16 +674,19 @@ public:
         }
         ret.push_back(act(cand[best_idx].action_id));
 
+        double elapsed_ms = beam_timer.elapsed();
         if constexpr (record_history) dump_history_json(history_file, INF, history, snapshots);
         if (verbose) {
             beam_log::on_max_turn(cerr);
             beam_log::width_trace(cerr, param.width_hist);
             beam_log::end_banner(cerr, "max_turn reached", turns_done, param.max_turn,
-                                 beam_timer.elapsed(), param.ave_width(),
+                                 elapsed_ms, param.ave_width(),
                                  best_score, true, (int)ret.size());
             print_counters();
         }
-        return ret;
+        unique_ptr<State> fs;
+        if constexpr (materialize_final_state) fs = build_final_state<true>(state, ret, param.max_turn - 1);
+        return {move(ret), best_score, turns_done, elapsed_ms, BeamStatus::MaxTurnReached, move(fs)};
     }
 };
 } // namespace flying_squirrel

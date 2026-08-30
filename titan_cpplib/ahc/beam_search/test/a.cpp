@@ -378,9 +378,12 @@ flying_squirrel::BeamParam gen_param(int max_turn, int beam_width, double time_l
     return {max_turn, beam_width, time_limit, is_adjusting, clear_hash_every_turn};
 }
 
-vector<Action> search(flying_squirrel::BeamParam &param, const bool verbose=false, const string& history_file = "") {
+using Result = flying_squirrel::BeamResult<ScoreType, Action, State>;
+
+template<bool materialize_final_state=true>
+Result search(flying_squirrel::BeamParam &param, const bool verbose=false, const string& history_file = "") {
     flying_squirrel::BeamSearchWithTree<ScoreType, HashType, Action, State, INF, false> bs;
-    return bs.search(param, verbose, history_file);
+    return bs.search<materialize_final_state>(param, verbose, history_file);
 }
 } // namespace beam_search
 
@@ -388,7 +391,8 @@ vector<Action> search(flying_squirrel::BeamParam &param, const bool verbose=fals
 void solve() {
     beam_search::beam_init();
     auto param = flying_squirrel::BeamParam(1200, 1e4, 1900, false, false);
-    auto ans = beam_search::search(param, true, "");
+    auto result = beam_search::search<false>(param, true, "");
+    auto &ans = result.actions;
     cerr << ans.size() << endl;
     for (auto action : ans) {
         cout << action;

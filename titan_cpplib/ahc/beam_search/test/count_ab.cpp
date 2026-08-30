@@ -360,13 +360,16 @@ flying_squirrel::BeamParam gen_param(int max_turn, int beam_width, double time_l
     return {max_turn, beam_width, time_limit, is_adjusting, clear_hash_every_turn};
 }
 
-vector<Action> search(flying_squirrel::BeamParam &param, const bool verbose=false) {
+using Result = flying_squirrel::BeamResult<ScoreType, Action, State>;
+
+template<bool materialize_final_state=true>
+Result search(flying_squirrel::BeamParam &param, const bool verbose=false) {
 #if defined(ENGINE_RADIX)
     flying_squirrel::BeamSearchRadix<ScoreType, HashType, Action, State, INF> bs;
-    return bs.search(param, verbose);
+    return bs.search<materialize_final_state>(param, verbose);
 #else
     flying_squirrel::BeamSearchWithTree<ScoreType, HashType, Action, State, INF, false> bs;
-    return bs.search(param, verbose, "");
+    return bs.search<materialize_final_state>(param, verbose, "");
 #endif
 }
 } // namespace beam_search
@@ -385,7 +388,8 @@ const char* engine_name() {
 void solve() {
     beam_search::beam_init();
     auto param = flying_squirrel::BeamParam(1200, 1e4, 1900, false, false);
-    auto ans = beam_search::search(param, true);
+    auto result = beam_search::search<false>(param, true);
+    auto &ans = result.actions;
     cerr << ans.size() << endl;
     long long primitive = 0;
     for (auto &action : ans) primitive += 1 + (long long)action.chain.size();

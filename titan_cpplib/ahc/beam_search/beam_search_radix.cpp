@@ -3,6 +3,7 @@
 #include <bits/stdc++.h>
 #include "titan_cpplib/ahc/timer.cpp"
 #include "titan_cpplib/ahc/beam_search/beam_param.cpp"
+#include "titan_cpplib/ahc/beam_search/beam_result.cpp"
 #include "titan_cpplib/ahc/beam_search/beam_log.cpp"
 #include "titan_cpplib/ahc/beam_search/candidates.cpp"
 
@@ -20,6 +21,8 @@ namespace flying_squirrel {
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF>
 class BeamSearchRadix {
 private:
+    using Result = BeamResult<ScoreType, Action, State>;
+
     static constexpr int NIL = -1;
 
     struct Node {
@@ -330,10 +333,14 @@ public:
      *
      * @param param ターン数、ビーム幅を指定するパラメータ構造体
      * @param verbose ログ出力するかどうか
-     * @return vector<Action> 合成済み Action を含む列
+     * @tparam materialize_final_state 最終 State を構築するか。既定は true
+     * @return BeamResult。actions は合成済み Action を含む
      */
-    vector<Action> search(BeamParam &param, const bool verbose=false) {
-        if (param.max_turn <= 0 || param.beam_width <= 0) return {};
+    template<bool materialize_final_state=true>
+    Result search(BeamParam &param, const bool verbose=false) {
+        if (param.max_turn <= 0 || param.beam_width <= 0) {
+            return {{}, INF, 0, 0.0, BeamStatus::InvalidParameter, nullptr};
+        }
         init_bs();
         if (verbose) {
             beam_log::start_banner(cerr, "BeamSearchRadix", param);
@@ -356,20 +363,27 @@ public:
             dfs_expand(state, turn);
 
             if (found_finished) {
+                double elapsed_ms = beam_timer.elapsed();
                 if (verbose) {
                     beam_log::on_solution_found(cerr, turn + 1, best_finished_score);
                     beam_log::width_trace(cerr, param.width_hist);
                     beam_log::end_banner(cerr, "solution found", turn + 1, param.max_turn,
-                                         beam_timer.elapsed(), param.ave_width(),
+                                         elapsed_ms, param.ave_width(),
                                          best_finished_score, true, (int)best_finished_path.size());
                 }
-                return best_finished_path;
+                int prefix_size = (int)result_prefix.size();
+                unique_ptr<State> fs;
+                if constexpr (materialize_final_state) {
+                    fs = make_final_state<true>(state, best_finished_path, prefix_size);
+                }
+                return {move(best_finished_path), best_finished_score, turn + 1, elapsed_ms,
+                        BeamStatus::Finished, move(fs)};
             }
 
             if (candidates.size() == 0) {
                 beam_log::on_no_candidates(cerr, turn);
-                assert(candidates.size() > 0);
-                return {};
+                double elapsed_ms = beam_timer.elapsed();
+                return {{}, INF, turn, elapsed_ms, BeamStatus::NoCandidates, nullptr};
             }
 
             if (verbose) {
@@ -391,15 +405,18 @@ public:
         }
         vector<Action> ret;
         build_path_to(best_leaf, ret);
+        double elapsed_ms = beam_timer.elapsed();
 
         if (verbose) {
             beam_log::on_max_turn(cerr);
             beam_log::width_trace(cerr, param.width_hist);
             beam_log::end_banner(cerr, "max_turn reached", turns_done, param.max_turn,
-                                 beam_timer.elapsed(), param.ave_width(),
+                                 elapsed_ms, param.ave_width(),
                                  pool[best_leaf].score, true, (int)ret.size());
         }
-        return ret;
+        unique_ptr<State> fs;
+        if constexpr (materialize_final_state) fs = make_final_state<true>(state, ret, (int)result_prefix.size());
+        return {move(ret), pool[best_leaf].score, turns_done, elapsed_ms, BeamStatus::MaxTurnReached, move(fs)};
     }
 };
 } // namespace flying_squirrel

@@ -75,17 +75,21 @@ namespace beam_search {
     };
     class State { /* init/try_op/apply_op/rollback/enumerate_actions(submit)/print/get_state_info */ };
 
-    vector<Action> search(flying_squirrel::BeamParam &param, const bool verbose=false, const string& history_file = "") {
+    using Result = flying_squirrel::BeamResult<ScoreType, Action, State>;
+
+    template<bool materialize_final_state=true>
+    Result search(flying_squirrel::BeamParam &param, const bool verbose=false, const string& history_file = "") {
         flying_squirrel::BeamSearchWithTree<ScoreType, HashType, Action, State, INF> bs;
-        return bs.search(param, verbose, history_file);
+        return bs.search<materialize_final_state>(param, verbose, history_file);
     }
 }
 
 int main() {
     flying_squirrel::BeamParam param(/*max_turn=*/2000, /*beam_width=*/100,
                                      /*time_limit_ms=*/-1, /*is_adjusting=*/false);
-    auto res = beam_search::search(param);
-    for (auto &a : res) { /* a を根→葉の順に適用して解を再生・出力 */ }
+    auto result = beam_search::search(param); // search<true>() と同じ。最終 State を構築する
+    for (auto &a : result.actions) { /* a を根→葉の順に適用して解を再生・出力 */ }
+    // result.final_state は result.actions 適用後の State
 }
 ```
 
@@ -107,10 +111,27 @@ int main() {
 
 #### 戻り値の意味
 
-`search()` は根から最良葉(`finished` 優先・最小スコア)までの `Action` 列を、`apply_op` すべき順序で返す。
-解の再生は先頭から順に適用するだけ。途中状態の再構築は不要。
+`search()` は `BeamResult<ScoreType, Action, State>` を返す。
 
-既定では `max_turn` ターンまで進むため、`finished` に到達しなければ戻り値の長さは `max_turn` になる。`finished` で打ち切られたときだけ、その時点までの短い列になる。
+| フィールド | 意味 |
+|---|---|
+| `actions` | 根から最良葉までの `Action` 列。`apply_op` すべき順序 |
+| `score` | `actions` の末端候補を選択した `try_op` の評価値。経路が無い場合は `INF` |
+| `turns_done` | 探索が処理した論理ターン数 |
+| `elapsed_ms` | `State::init()` から `actions` 確定までの時間。最終 State 構築は含まない |
+| `status` | `Finished` / `MaxTurnReached` / `NoCandidates` / `InvalidParameter` |
+| `final_state` | `actions` 適用後の `State`。構築しない場合や経路が無い場合は `nullptr` |
+
+`search()` のテンプレート引数 `materialize_final_state` は既定で `true`。最終 State が不要なら
+`search<false>(param, ...)` とする。この場合、最終 State の復元処理は `if constexpr` で
+コンパイル時に除去される。
+
+解の再生には `result.actions` を先頭から順に適用する。最終状態を直接使う場合は
+`result.final_state` が保持する `State` を参照する。
+
+既定では `max_turn` ターンまで進むため、`finished` に到達しなければ
+`actions.size()` は `max_turn` になる。
+`finished` で打ち切られたときだけ、その時点までの短い列になる。
 
 ---
 
@@ -203,7 +224,9 @@ Zobrist Hash の設計
 - `last_action` はターン 0 の呼び出しではダミー値。`turn == 0` のときは参照しない。
 - 明らかにスコアが悪化する手や、直前操作を単純に打ち消すだけの逆操作は submit しない。
 - 良さそうな手を先に submit すると `submit.threshold()` が早く下がり、後続の手の枝刈りや `try_op` の早期打ち切りが効きやすくなる。
-- あるターンで生き残った全ノードがスコア有限の手を1つも submit しないと、候補が空になり `assert` 停止する(turn 版の挙動は Section 3)。行き止まりノードは何も submit しなければ枝が消えるだけだが、全ノードが同時に詰む問題では `max_turn` を到達可能な深さに合わせる。`finished=true` はゴール到達の表現に使い、行き止まりには使わない。
+- あるターンで生き残った全ノードがスコア有限の手を1つも submit しないと、探索は
+  `BeamStatus::NoCandidates` で終了する。行き止まりノードは何も submit しなければ枝が消える。
+  `finished=true` はゴール到達の表現に使い、行き止まりには使わない。
 - ホットパス。詳細は Section 1。
 
 ```cpp
@@ -251,7 +274,7 @@ void enumerate_actions(const int turn, const Action &last_action, Submit &&submi
 | ビーム重複排除粒度 | per-turn | per-`target_turn` |
 | `is_adjusting=true` の実効幅 | `beam_width` を超えうる | `beam_width` が上限 |
 | `hash_window_turns` | 有効 | 無視される |
-| 候補が空になったとき | `assert` 停止 | 停止せず、その時点までの部分解を返す |
+| 候補が空になったとき | `NoCandidates`。経路は空 | `NoCandidates`。確定済み接頭辞を返す場合がある |
 
 クラス(`BeamSearchWithTree`)、`init`/`apply_op`/`rollback`/`print`/`get_state_info`、上表以外の `BeamParam` フィールド、戻り値の意味、Section 1 の高速化指針、Section 2 の対称性・score/hash・finished の扱いは base 版と同じ。
 
@@ -312,4 +335,6 @@ class State {
 - `target_turn` のステップ幅は一定でなくてよい。同じ呼び出しで遠い/近い target が混ざってよい(ただし各候補は親の `target_turn` より真に大きいこと)。
 - `clear_hash_every_turn=false` は全 `target_turn` 跨ぎで hash dedup する。新規候補は「未登録／既登録より小さい `target_turn`／同じ `target_turn` で低スコア」のときだけ通る。既に大きい `target_turn` のプールに居る同 hash entry は除去されない。hash 自体は base と同じく状態を表すだけでよく、`target_turn` を含める必要はない。
 - `max_turn` が小さすぎると、それを超える手が捨てられて探索の幅が狭くなる。最初は大きめにして、ログの `target_turn` 分布を見てから絞るのが安全。
-- 戻り値は base と同様、根 → 最良葉(`finished` 優先・最小スコア)までの `Action` 列。長さは finished 到達時のその直前 target_turn まで、または木内の最小 `target_turn` が `max_turn` に達するまで進めた時点の最良パス長になる。
+- `result.actions` は base と同様、根 → 最良葉(`finished` 優先・最小スコア)までの `Action` 列。
+  長さは finished 到達時のその直前 target_turn まで、または木内の最小 `target_turn` が
+  `max_turn` に達するまで進めた時点の最良パス長になる。

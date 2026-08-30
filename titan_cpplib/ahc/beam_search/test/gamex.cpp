@@ -238,8 +238,11 @@ flying_squirrel::BeamParam gen_param(int max_turn, int beam_width, double time_l
     return {max_turn, beam_width, time_limit, is_adjusting, a};
 }
 
-vector<Action> search(flying_squirrel::BeamParam &param, const bool verbose=false) {
-    return bs.search(param, verbose, "hist.json");
+using Result = flying_squirrel::BeamResult<ScoreType, Action, State>;
+
+template<bool materialize_final_state=true>
+Result search(flying_squirrel::BeamParam &param, const bool verbose=false) {
+    return bs.search<materialize_final_state>(param, verbose, "hist.json");
 }
 } // namespace beam_search
 
@@ -344,9 +347,8 @@ void solve() {
     }
 
     auto param = beam_search::gen_param(2500, 2000, 1, false, true);
-    vector<beam_search::Action> ans = beam_search::search(param, true);
-
-    print_ans(ans);
+    auto result = beam_search::search<false>(param, true);
+    print_ans(result.actions);
 }
 
 int main() {

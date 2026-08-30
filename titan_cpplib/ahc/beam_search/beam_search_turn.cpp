@@ -6,6 +6,7 @@
 #include "titan_cpplib/ahc/timer.cpp"
 #include "titan_cpplib/ds/hash_dict.cpp"
 #include "titan_cpplib/ahc/beam_search/beam_param.cpp"
+#include "titan_cpplib/ahc/beam_search/beam_result.cpp"
 #include "titan_cpplib/ahc/beam_search/beam_log.cpp"
 using namespace std;
 
@@ -16,6 +17,8 @@ constexpr const bool SORT_CANDIDATES_BY_SCORE = false; // true: 全体を (par, 
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
 class BeamSearchWithTree {
 private:
+    using Result = BeamResult<ScoreType, Action, State>;
+
     static constexpr const int PRE_ORDER = -1;
     static constexpr const int POST_ORDER = -2;
     titan23::Timer beam_timer;
@@ -587,13 +590,15 @@ private:
         if (delta > 0) param.note_target_step(delta);
     }
 
-    void get_result() {
+    ScoreType get_result() {
         ActionId target_aid = BAD_ID;
         Action best_action;
+        ScoreType selected_score = INF;
 
         if (found_finished) {
             target_aid = best_finished_par_aid;
             best_action = best_finished_action;
+            selected_score = best_finished_score;
         } else {
             ScoreType best_score = INF;
             for (int t = 0; t <= max_turn_global; ++t) {
@@ -611,13 +616,12 @@ private:
                 }
                 if (target_aid != BAD_ID) break;
             }
+            selected_score = best_score;
         }
 
         if (target_aid == BAD_ID) {
-             if (found_finished) {
-                 result.emplace_back(best_action);
-             }
-             return;
+            if (found_finished) result.emplace_back(best_action);
+            return selected_score;
         }
 
         for (const auto& node : tree) {
@@ -629,7 +633,7 @@ private:
                     if (found_finished) {
                         result.emplace_back(best_action);
                     }
-                    return;
+                    return selected_score;
                 }
             } else if (dir_or_leaf_id == PRE_ORDER) {
                 result.emplace_back(action);
@@ -637,6 +641,7 @@ private:
                 result.pop_back();
             }
         }
+        return selected_score;
     }
 
     void init_bs(BeamParam &param) {
@@ -686,8 +691,11 @@ private:
     }
 
 public:
-    vector<Action> search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
-        if (param.max_turn <= 0 || param.beam_width <= 0) return {};
+    template<bool materialize_final_state=true>
+    Result search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
+        if (param.max_turn <= 0 || param.beam_width <= 0) {
+            return {{}, INF, 0, 0.0, BeamStatus::InvalidParameter, nullptr};
+        }
         init_bs(param);
         if (verbose) {
             beam_log::start_banner(cerr, "BeamSearchWithTree (multi-turn)", param);
@@ -716,13 +724,18 @@ public:
 
             if (found_finished) {
                 turns_done = turn + 1;
-                get_result();
+                int applied_prefix = (int)result.size();
+                ScoreType result_score = get_result();
+                double elapsed_ms = beam_timer.elapsed();
                 if constexpr (record_history) dump_history_json(history_file);
                 if (verbose) {
                     beam_log::on_solution_found(cerr, turns_done, best_finished_score);
-                    beam_log::end_banner(cerr, "solution found", turns_done, param.max_turn, beam_timer.elapsed(), param.ave_width(), best_finished_score, true, result.size());
+                    beam_log::end_banner(cerr, "solution found", turns_done, param.max_turn,
+                                         elapsed_ms, param.ave_width(), best_finished_score, true, result.size());
                 }
-                return result;
+                unique_ptr<State> fs;
+                if constexpr (materialize_final_state) fs = make_final_state<true>(state, result, applied_prefix);
+                return {move(result), result_score, turns_done, elapsed_ms, BeamStatus::Finished, move(fs)};
             }
 
             if (verbose) {
@@ -793,13 +806,23 @@ public:
             turns_done = turn + 1;
         }
 
-        get_result();
+        int applied_prefix = (int)result.size();
+        ScoreType result_score = get_result();
+        double elapsed_ms = beam_timer.elapsed();
         if constexpr (record_history) dump_history_json(history_file);
+        BeamStatus status = result_score < INF ? BeamStatus::MaxTurnReached : BeamStatus::NoCandidates;
         if (verbose) {
-            beam_log::on_max_turn(cerr);
-            beam_log::end_banner(cerr, "max_turn reached", turns_done, param.max_turn, beam_timer.elapsed(), param.ave_width(), (ScoreType)0, false, result.size());
+            if (status == BeamStatus::MaxTurnReached) beam_log::on_max_turn(cerr);
+            else beam_log::on_no_candidates(cerr, turns_done);
+            const char* reason = status == BeamStatus::MaxTurnReached ? "max_turn reached" : "no candidates";
+            beam_log::end_banner(cerr, reason, turns_done, param.max_turn,
+                                 elapsed_ms, param.ave_width(), result_score, result_score < INF, result.size());
         }
-        return result;
+        unique_ptr<State> fs;
+        if constexpr (materialize_final_state) {
+            if (!result.empty()) fs = make_final_state<true>(state, result, applied_prefix);
+        }
+        return {move(result), result_score, turns_done, elapsed_ms, status, move(fs)};
     }
 };
 } // namespace flying_squirrel

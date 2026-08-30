@@ -396,9 +396,12 @@ flying_squirrel::BeamParam gen_param(int max_turn, int beam_width, double time_l
     return {max_turn, beam_width, time_limit, is_adjusting, clear_hash_every_turn};
 }
 
-vector<Action> search(flying_squirrel::BeamParam &param, const bool verbose=false) {
+using Result = flying_squirrel::BeamResult<ScoreType, Action, State>;
+
+template<bool materialize_final_state=true>
+Result search(flying_squirrel::BeamParam &param, const bool verbose=false) {
     flying_squirrel::BeamSearchWithTree<ScoreType, HashType, Action, State, INF, false> bs;
-    return bs.search(param, verbose, "history.json");
+    return bs.search<materialize_final_state>(param, verbose, "history.json");
 }
 } // namespace beam_search
 
@@ -409,11 +412,11 @@ struct S {
 void solve() {
     beam_search::beam_init();
     auto param = beam_search::gen_param(40*100, 100, 1900, false, true);
-    auto result = beam_search::search(param, true);
-    cerr << "resulit.size()=" << result.size() << endl;
+    auto result = beam_search::search<false>(param, true);
+    cerr << "resulit.size()=" << result.actions.size() << endl;
     vector<vector<S>> ans;
     int pre_turn = -1;
-    for (auto &res : result) {
+    for (auto &res : result.actions) {
         if (res.pre_turn != pre_turn) {
             ans.push_back({});
         }
