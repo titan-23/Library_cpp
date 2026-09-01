@@ -13,9 +13,10 @@ struct BeamCandidate {
     int parent_leaf;
     ScoreType score;
     Action action;
-    int node_id = -1; // record_history 用
+    int node_id = -1; // 履歴記録用
 };
 
+/// @brief ハッシュの重複を除き、上位候補をビーム幅まで保持する
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
 class Candidates {
 private:
@@ -56,11 +57,10 @@ public:
 
     ScoreType threshold() const { return entry < beam_width ? INF : seg[1].first; }
 
-    /// @param node_id record_history 用。比較・選択に使わないので探索挙動には影響しない
-    bool push(
-        ScoreType score, HashType hash,
-        int parent_leaf, Action action, int node_id = -1
-    ) {
+    /// @brief 候補が採用された場合は true を返す
+    /// @param node_id 履歴記録用の ID
+    ///                候補の比較には使用しない
+    bool push(ScoreType score, HashType hash, int parent_leaf, Action action, int node_id = -1) {
         if (is_built && score >= seg[1].first) {
             return false;
         }
@@ -99,8 +99,7 @@ public:
         return true;
     }
 
-    /// push の遅延実体化版。採用が確定した場合のみ make() で Action を作る
-    /// 棄却 (threshold 落ち / hash 重複) 時の Action コピーを避ける
+    /// @brief 採用が決まった候補だけ make() で Action を生成する
     template<class Make>
     bool push_lazy(ScoreType score, HashType hash, int parent_leaf, Make &&make, int node_id = -1) {
         if (is_built && score >= seg[1].first) {
@@ -150,8 +149,9 @@ public:
         return true;
     }
 
-    /// @param hash_window_turns clear_hash=false のとき、K ターンに 1 回 hash dict を全 clear。
-    ///                          0 なら従来通り無制限蓄積。
+    /// @brief 次ターンに向けて候補を初期化する
+    /// @param hash_window_turns clear_hash が false のときにハッシュを破棄する間隔
+    ///                          0 なら破棄しない
     void reset(int turn, int w, bool clear_hash, int hash_window_turns = 0) {
         beam_width = w;
         while (s < w) {
@@ -168,12 +168,9 @@ public:
         if (clear_hash) {
             func.clear();
         } else {
-            // 周期 clear: K ターンに 1 回「古い -2 マーカーを全部捨てる」だけ。
-            // 直後に今ターンの survivor だけ -2 を付け直すので、窓は常に
-            // 「直近 1〜K ターン分の survivor のみ」になる。
-            bool periodic_clear = hash_window_turns > 0
-                                  && (turn % hash_window_turns == 0);
+            bool periodic_clear = hash_window_turns > 0 && (turn % hash_window_turns == 0);
             if (periodic_clear) func.clear();
+            // 前ターンの生存候補は、定期破棄時も予約済みとして引き継ぐ
             for (int i = 0; i < entry; ++i) {
                 func.set(hashidx[i], -2);
             }
@@ -186,16 +183,14 @@ public:
     }
 
     BeamCandidate<ScoreType, Action> get_best() {
-        return *min_element(next_beam.begin(), next_beam.begin() + entry, [] (const BeamCandidate<ScoreType, Action> &left, const BeamCandidate<ScoreType, Action> &right) {
-            return left.score < right.score;
-        });
+        return *min_element(next_beam.begin(), next_beam.begin() + entry,
+                            [] (const BeamCandidate<ScoreType, Action> &left,
+                                const BeamCandidate<ScoreType, Action> &right) {
+                                return left.score < right.score;
+                            });
     }
 };
 
-// ---- フラット pool 版 ----------------------------------------------------
-// Action 実体を中に持たず ActionId (= 4B int) で参照する版。
-// beam_search.cpp が action_pool でフラット管理するので、ここは hash 重複排除と
-// segtree による worst 管理だけを担う。push は採否を {slot, evicted_aid} で返す。
 using ActionId = int;
 inline constexpr ActionId BAD_ID_FLAT = -1;
 
@@ -205,17 +200,16 @@ struct BeamCandidateFlat {
     ScoreType score;
     HashType hash;
     ActionId aid;
-    int node_id = -1; // record_history 用
+    int node_id = -1; // 履歴記録用
 };
 
+/// @brief 候補の格納位置と、置き換えられた ActionId を表す
 struct PushResult {
-    // 採用: 0..beam_width-1 (next_beam 内のスロット位置)
-    // 棄却: -1
-    int slot;
-    // 押し出された / 置換された旧 aid。なければ BAD_ID_FLAT。
-    ActionId evicted_aid;
+    int slot; // 棄却時は -1
+    ActionId evicted_aid; // 置き換えなしなら BAD_ID_FLAT
 };
 
+/// @brief Action を ID で参照し、ハッシュの重複排除と上位候補の保持を行う
 template<typename ScoreType, typename HashType, ScoreType INF>
 class CandidatesFlat {
 private:
@@ -256,10 +250,11 @@ public:
 
     ScoreType threshold() const { return entry < beam_width ? INF : seg[1].first; }
 
-    /// aid は呼び出し側 (beam_search) が arena_put_reserve で取って渡す。
-    /// 戻り値: PushResult{slot, evicted_aid}.
-    ///   - slot < 0 のとき棄却。呼び出し側で arena_release(aid) すること。
-    ///   - slot >= 0 のとき採用。evicted_aid != BAD_ID_FLAT なら旧 aid を arena_release すること。
+    /// @brief ActionId 付きの候補を追加する
+    /// @param aid 呼び出し側で確保した ActionId
+    /// @return slot が -1 なら棄却
+    ///         evicted_aid が BAD_ID_FLAT でなければ旧 ActionId が置き換えられている
+    /// @note 棄却された aid と、置き換えられた evicted_aid は呼び出し側が解放する
     PushResult push(ScoreType score, HashType hash, int parent_leaf, ActionId aid, int node_id = -1) {
         if (is_built && score >= seg[1].first) {
             return {-1, BAD_ID_FLAT};
@@ -302,6 +297,9 @@ public:
         return {i, old_aid};
     }
 
+    /// @brief 次ターンに向けて候補を初期化する
+    /// @param hash_window_turns clear_hash が false のときにハッシュを破棄する間隔
+    ///                          0 なら破棄しない
     void reset(int turn, int w, bool clear_hash, int hash_window_turns = 0) {
         beam_width = w;
         while (s < w) {
@@ -318,9 +316,9 @@ public:
         if (clear_hash) {
             func.clear();
         } else {
-            bool periodic_clear = hash_window_turns > 0
-                                  && (turn % hash_window_turns == 0);
+            bool periodic_clear = hash_window_turns > 0 && (turn % hash_window_turns == 0);
             if (periodic_clear) func.clear();
+            // 前ターンの生存候補は、定期破棄時も予約済みとして引き継ぐ
             for (int i = 0; i < entry; ++i) {
                 func.set(hashidx[i], -2);
             }

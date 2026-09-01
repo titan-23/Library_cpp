@@ -11,13 +11,8 @@ using namespace std;
 
 namespace flying_squirrel {
 
-// 圧縮辺木ビームサーチ
-// 生存木を明示ノードで持ち、辺 = 合成済み Action
-// - 単一子になった内部ノードは即座に縮約し、親子の辺を Action::compose で 1 本にまとめる
-// - 根直下の単一子辺は合成せず確定列 result_prefix へ移す
-// - compose が false を返した辺は単一子のまま残す
-// - 手術は DFS 後の state が根にいる状態で行うため、
-//   適用済み action が合成で書き換わる問題は起きない
+/// @brief Action を辺に持ち、単一子の経路を縮約するビームサーチ
+/// 根直下の辺は合成せず、確定した操作列として保持する
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF>
 class BeamSearchRadix {
 private:
@@ -26,12 +21,12 @@ private:
     static constexpr int NIL = -1;
 
     struct Node {
-        Action edge;   // 親からこのノードへの合成済み Action
+        Action edge; // 親からの合成済み Action
         int parent;
         int child_cnt;
         int first_child;
         int prev_sibling, next_sibling;
-        ScoreType score;  // 葉: 自身のスコア / 内部: 部分木最小 (monotone_skip 時のみ維持)
+        ScoreType score; // 葉は自身のスコア、内部ノードは monotone_skip 時の部分木最小値
     };
 
     titan23::Timer beam_timer;
@@ -43,11 +38,11 @@ private:
     int live_nodes;
 
     vector<int> leaves, next_leaves;
-    vector<Action> result_prefix;   // 確定した根側の Action 列
-    vector<Action> actions;         // 旧式 enumerate_actions 用
-    vector<int> visited_leaves;     // 今ターン展開した葉。cand の parent_leaf はこの序数
+    vector<Action> result_prefix; // 根側で確定した Action 列
+    vector<Action> actions; // 従来形式の enumerate_actions 用
+    vector<int> visited_leaves; // このターンに展開した葉 候補の parent_leaf はこの添字
     vector<int> bucket_cnt, bucket_items;
-    vector<int> stk;                // DFS 用作業領域。(node << 1) | phase
+    vector<int> stk; // DFS 用の (node << 1) | phase
     vector<int> porder;
 
     Candidates<ScoreType, HashType, Action, State, INF, false> candidates;
@@ -78,7 +73,7 @@ private:
         return id;
     }
 
-    // edge は解放しない。再利用時の move 代入が古い実体を潰す
+    /// @brief edge を残したままノードを再利用リストへ戻す
     void free_node(int id) {
         free_ids.push_back(id);
         --live_nodes;
@@ -95,9 +90,9 @@ private:
         nc.next_sibling = NIL;
     }
 
-    // 辺の縮約: 単一子の内部ノード v (!= root) を消し、
-    // v の辺の後ろに子の辺を合成して子の辺とする
-    // compose が false なら何もしない
+    /// @brief root 以外の単一子内部ノードを縮約する
+    /// Action::compose が失敗した場合は木を変更しない
+    /// @pre v != root かつ pool[v].child_cnt == 1
     void contract(int v) {
         int c = pool[v].first_child;
         if (!pool[v].edge.compose(pool[c].edge)) return;
@@ -114,7 +109,7 @@ private:
         free_node(v);
     }
 
-    // 子を失った葉 v から枯れ枝を根方向へ刈り、単一子になった祖先は縮約を試す
+    /// @brief 子を失った葉から枯れ枝を刈り、単一子になった祖先を縮約する
     void remove_dead(int v) {
         while (v != root && pool[v].child_cnt == 0) {
             int p = pool[v].parent;
@@ -125,7 +120,7 @@ private:
         if (v != root && pool[v].child_cnt == 1) contract(v);
     }
 
-    // result_prefix + (root, v] の辺列を out に組む。v 自身の辺を含む
+    /// @brief result_prefix と (root, v] の辺列を out に格納する
     void build_path_to(int v, vector<Action> &out) const {
         out = result_prefix;
         size_t base = out.size();
@@ -136,12 +131,12 @@ private:
         reverse(out.begin() + base, out.end());
     }
 
-    // enumerate_actions が生成した action を try_op と候補登録へ流す受け口
+    /// @brief enumerate_actions が列挙した Action を評価し、候補として登録する
     struct Submitter {
         BeamSearchRadix &bs;
         State &st;
-        int parent_node;  // 葉のノード id (finished 経路復元用)
-        int parent_ord;   // 葉の訪問序数 (cand の parent_leaf)
+        int parent_node; // 完成経路の復元に使う葉ノード
+        int parent_ord; // 候補の parent_leaf に使う訪問順
         int turn;
 
         inline ScoreType threshold() const { return bs.candidates.threshold(); }
@@ -159,7 +154,7 @@ private:
                 }
                 return;
             }
-            // 採用確定時のみコピーする
+            // 採用時だけ Action をコピーする
             bs.candidates.push_lazy(score, hash, parent_ord, [&]() -> Action { return a; });
         }
     };
@@ -178,8 +173,8 @@ private:
         }
     }
 
-    // 根から DFS し全葉を展開する。下り辺で apply、上り辺で rollback
-    // 終了時 state は根に戻っている
+    /// @brief 根から DFS してすべての葉を展開する
+    /// 下り辺で apply_op、上り辺で rollback し、終了時は state を根に戻す
     void dfs_expand(State &state, int turn) {
         visited_leaves.clear();
         stk.clear();
@@ -193,7 +188,7 @@ private:
                 continue;
             }
             if (v != root) {
-                // 部分木最小スコア >= threshold なら単調性の下で全滅するので打ち切る
+                // スコアの単調性から部分木全体を枝刈りできる
                 if (monotone_skip && pool[v].score >= candidates.threshold()) {
                     continue;
                 }
@@ -203,7 +198,7 @@ private:
             if (pool[v].child_cnt == 0) {
                 expand_leaf(state, v, turn);
             } else {
-                // 子リストは score 降順なので pop 順は良い方から。threshold が早く締まる
+                // 子はスコア降順に並び、スタックからは良い順に取り出される
                 for (int c = pool[v].first_child; c != NIL; c = pool[c].next_sibling) {
                     stk.push_back(c << 1);
                 }
@@ -211,10 +206,10 @@ private:
         }
     }
 
-    // 木の更新。DFS 後の state が根にいる状態で呼ぶ
-    // 新しい葉の接続 -> 枯れ枝刈りと縮約 -> 根の確定、の順に行う
+    /// @brief 候補を接続し、枯れ枝の削除と縮約を行う
+    /// DFS の後で state が根にある状態で呼び出す
     void surgery(State &state) {
-        // 候補を親序数でバケット分けする
+        // 候補を親ごとにバケット分けする
         int sz = candidates.size();
         int L = (int)visited_leaves.size();
         bucket_cnt.assign(L + 1, 0);
@@ -223,22 +218,21 @@ private:
         }
         for (int p = 0; p < L; ++p) bucket_cnt[p + 1] += bucket_cnt[p];
         bucket_items.resize(sz);
-        // bucket_cnt[p] を書き込みカーソルとして使い、後で 1 つ戻す
+        // bucket_cnt[p] を書き込み位置に使い、後で先頭位置に戻す
         for (int i = 0; i < sz; ++i) {
             bucket_items[bucket_cnt[candidates.next_beam[i].parent_leaf]++] = i;
         }
         for (int p = L; p > 0; --p) bucket_cnt[p] = bucket_cnt[p - 1];
         bucket_cnt[0] = 0;
 
-        // 新しい葉の接続: score 昇順に先頭挿入するので子リストは score 降順になる
+        // スコア昇順で先頭挿入し、子リストを降順に保つ
         next_leaves.clear();
         for (int p = 0; p < L; ++p) {
             int lo = bucket_cnt[p], hi = bucket_cnt[p + 1];
             if (lo == hi) continue;
             int d = hi - lo;
             if (d == 2) {
-                if (candidates.next_beam[bucket_items[lo]].score >
-                    candidates.next_beam[bucket_items[lo + 1]].score) {
+                if (candidates.next_beam[bucket_items[lo]].score > candidates.next_beam[bucket_items[lo + 1]].score) {
                     swap(bucket_items[lo], bucket_items[lo + 1]);
                 }
             } else if (d > 2) {
@@ -262,15 +256,15 @@ private:
             }
         }
 
-        // 枯れ枝刈りと縮約
+        // 枯れ枝を刈り、単一子の経路を縮約する
         for (int v : leaves) {
             if (v == root) continue;
             if (pool[v].child_cnt == 0) remove_dead(v);
             else if (pool[v].child_cnt == 1) contract(v);
         }
 
-        // 根の確定: 根直下が単一子の間、その辺を確定して根を進める
-        // 二度と歩かない辺なので合成せず、state は確定辺を apply して追従する
+        // 根直下が単一子の間はその辺を確定し、state と根を進める
+        // 以後辿らない辺のため Action は合成しない
         while (pool[root].child_cnt == 1) {
             int c = pool[root].first_child;
             result_prefix.push_back(pool[c].edge);
@@ -285,8 +279,8 @@ private:
         if (monotone_skip) recompute_subtree_best();
     }
 
-    // 内部ノードの score を部分木最小に更新する
-    // pre-order の逆順に畳めば子が親より先に確定する
+    /// @brief 内部ノードのスコアを部分木の最小値に更新する
+    /// pre-order の逆順にたどり、子から親へ最小値を伝播させる
     void recompute_subtree_best() {
         porder.clear();
         stk.clear();
@@ -324,18 +318,15 @@ private:
     }
 
 public:
-    /// @brief スコア単調 (子スコア >= 親スコア) な問題向けの部分木 skip を有効化する
-    /// 単調性がない問題で有効にすると解が劣化しうる
+    /// @brief 子のスコアが親以上になる問題で、部分木の枝刈りを有効にする
+    /// スコアにこの単調性がない場合は解が劣化しうる
     void set_monotone_skip(bool enable) { monotone_skip = enable; }
 
-    /**
-     * @brief ビームサーチをする
-     *
-     * @param param ターン数、ビーム幅を指定するパラメータ構造体
-     * @param verbose ログ出力するかどうか
-     * @tparam materialize_final_state 最終 State を構築するか。既定は true
-     * @return BeamResult。actions は合成済み Action を含む
-     */
+    /// @brief ビームサーチを実行する
+    /// @tparam materialize_final_state 最終状態を構築するか
+    /// @param param ターン数やビーム幅などの設定
+    /// @param verbose ログを出力するか
+    /// @return 合成済み Action を含む探索結果
     template<bool materialize_final_state=true>
     Result search(BeamParam &param, const bool verbose=false) {
         if (param.max_turn <= 0 || param.beam_width <= 0) {
@@ -367,9 +358,9 @@ public:
                 if (verbose) {
                     beam_log::on_solution_found(cerr, turn + 1, best_finished_score);
                     beam_log::width_trace(cerr, param.width_hist);
-                    beam_log::end_banner(cerr, "solution found", turn + 1, param.max_turn,
-                                         elapsed_ms, param.ave_width(),
-                                         best_finished_score, true, (int)best_finished_path.size());
+                    beam_log::end_banner(cerr, "solution found", turn + 1, param.max_turn, elapsed_ms,
+                                         param.ave_width(), best_finished_score, true,
+                                         (int)best_finished_path.size());
                 }
                 int prefix_size = (int)result_prefix.size();
                 unique_ptr<State> fs;
@@ -388,9 +379,8 @@ public:
 
             if (verbose) {
                 BeamCandidate<ScoreType, Action> bests = candidates.get_best();
-                beam_log::turn_line(cerr, turn + 1, param.max_turn, now_time,
-                                    w, live_nodes, (int)candidates.size(),
-                                    explored_per_turn, bests.score);
+                beam_log::turn_line(cerr, turn + 1, param.max_turn, now_time, w, live_nodes,
+                                    (int)candidates.size(), explored_per_turn, bests.score);
             }
 
             surgery(state);
@@ -410,9 +400,8 @@ public:
         if (verbose) {
             beam_log::on_max_turn(cerr);
             beam_log::width_trace(cerr, param.width_hist);
-            beam_log::end_banner(cerr, "max_turn reached", turns_done, param.max_turn,
-                                 elapsed_ms, param.ave_width(),
-                                 pool[best_leaf].score, true, (int)ret.size());
+            beam_log::end_banner(cerr, "max_turn reached", turns_done, param.max_turn, elapsed_ms,
+                                 param.ave_width(), pool[best_leaf].score, true, (int)ret.size());
         }
         unique_ptr<State> fs;
         if constexpr (materialize_final_state) fs = make_final_state<true>(state, ret, (int)result_prefix.size());

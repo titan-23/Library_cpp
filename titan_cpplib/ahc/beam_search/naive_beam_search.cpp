@@ -12,14 +12,9 @@ using namespace std;
 
 namespace flying_squirrel {
 
-/// @brief 愚直ビームサーチ
-/// @note 要件: init, try_op, apply_op, enumerate_actions
-/// @tparam ScoreType スコアの型
-/// @tparam HashType ハッシュの型
-/// @tparam Action Action
-/// @tparam State State
-/// @tparam INF INF(NOTE -INFが成り立つ)
-/// @tparam record_history 途中状態を可視化する用のログ出力を出すかどうか
+/// @brief 状態をノードごとに複製する単純なビームサーチ
+/// @note State は init(), try_op(), apply_op(), enumerate_actions() を実装する必要がある
+/// @tparam INF 無効なスコアを表す値で、-INF も表現できる必要がある
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
 class NaiveBeamSearch {
 private:
@@ -50,17 +45,16 @@ private:
         }
 
     public:
-        // 次のビーム候補を保持する配列
         vector<BeamCandidate> next_beam;
 
         Candidates() {}
 
         int size() const { return entry; }
 
-        /// @brief 現在のworstを返す / これ以上なら意味ない
+        /// @brief 採用可能なスコアの上限を返す
         ScoreType threshold() const { return entry < beam_width ? INF : seg[1].first; }
 
-        /// 追加できたらtrueを返す
+        /// @brief 候補が採用された場合は true を返す
         bool push(ScoreType score, HashType hash, int par, Action action) {
             if (entry == beam_width && score >= seg[1].first) {
                 return false;
@@ -68,7 +62,7 @@ private:
             auto dat = func.get_pos(hash);
             int idx = func.inner_get(dat, -1);
             if (idx == -2) {
-                // 過去ターンで採用済みのハッシュ → 即 drop
+                // 過去ターンで採用済み
                 return false;
             }
             if (idx != -1) {
@@ -112,8 +106,7 @@ private:
             if (clear_hash) {
                 func.clear();
             } else {
-                bool periodic_clear = hash_window_turns > 0
-                                      && (turn % hash_window_turns == 0);
+                bool periodic_clear = hash_window_turns > 0 && (turn % hash_window_turns == 0);
                 if (periodic_clear) func.clear();
                 for (int i = 0; i < entry; ++i) {
                     func.set(hashidx[i], -2);
@@ -126,9 +119,10 @@ private:
         }
 
         BeamCandidate get_best() {
-            return *min_element(next_beam.begin(), next_beam.begin() + entry, [] (const BeamCandidate &left, const BeamCandidate &right) {
-                return left.score < right.score;
-            });
+            return *min_element(next_beam.begin(), next_beam.begin() + entry,
+                                [] (const BeamCandidate &left, const BeamCandidate &right) {
+                                    return left.score < right.score;
+                                });
         }
     } candidates;
 
@@ -168,7 +162,7 @@ private:
         return res;
     }
 
-    // enumerate_actions が action を生成し submit(a) を呼ぶと try_op + 判定 + push を行う。
+    /// @brief enumerate_actions から受け取った操作を評価して候補に追加する
     struct Submitter {
         NaiveBeamSearch &bs;
         State &st;
@@ -195,6 +189,7 @@ private:
     };
 
 public:
+    /// @brief 指定した設定でビームサーチを実行する
     template<bool materialize_final_state=true>
     Result search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
         if (param.max_turn <= 0 || param.beam_width <= 0) {
@@ -213,7 +208,8 @@ public:
         int turns_done = 0;
         for (int turn = 0; turn < param.max_turn; ++turn) {
             double now_time = beam_timer.elapsed();
-            const int width = param.get_beam_width(param.max_turn - turn, (int)beam.size(), param.time_limit - beam_timer.elapsed());
+            const int width = param.get_beam_width(param.max_turn - turn, (int)beam.size(),
+                                                   param.time_limit - beam_timer.elapsed());
             candidates.reset(turn, width, param.clear_hash_every_turn, param.hash_window_turns);
             for (int i = 0; i < (int)beam.size(); ++i) {
                 State &state = beam[i].state;
@@ -232,7 +228,8 @@ public:
             }
             if (verbose) {
                 BeamCandidate bests = candidates.get_best();
-                beam_log::turn_line(cerr, turn + 1, param.max_turn, now_time, width, (int)beam.size(), (int)candidates.size(), -1, bests.score);
+                beam_log::turn_line(cerr, turn + 1, param.max_turn, now_time, width, (int)beam.size(),
+                                    (int)candidates.size(), -1, bests.score);
             }
             next_beam.clear();
             for (int i = 0; i < (int)candidates.size(); ++i) {
@@ -274,7 +271,8 @@ public:
         }
         ScoreType best_score = beam[best_idx].score;
         unique_ptr<State> fs;
-        if constexpr (materialize_final_state) fs = make_final_state<true>(beam[best_idx].state, sol, (int)sol.size());
+        if constexpr (materialize_final_state)
+            fs = make_final_state<true>(beam[best_idx].state, sol, (int)sol.size());
         return {move(sol), best_score, turns_done, elapsed_ms, BeamStatus::MaxTurnReached, move(fs)};
     }
 };

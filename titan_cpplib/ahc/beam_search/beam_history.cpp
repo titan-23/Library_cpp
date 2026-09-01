@@ -4,9 +4,9 @@
 
 using namespace std;
 
-/// ビームサーチの可視化用探索履歴
 namespace flying_squirrel {
 
+/// @brief 可視化用の探索ノード
 template<typename ScoreType, typename HashType>
 struct HistoryNode {
     int node_id;
@@ -16,21 +16,19 @@ struct HistoryNode {
     HashType hash;
     string action_str;
     string state_info;
-    int status; // 0: 採用, 1: 破棄, 2: 無効
+    int status; // 0: 採用、1: 破棄、2: 無効
 };
 
+/// @brief 各ターンで有効なノードの一覧
 struct TurnSnapshot {
     int turn;
     vector<int> active_node_ids;
 };
 
+/// @brief 探索履歴とターンごとのスナップショットを JSON に出力する
 template<typename ScoreType, typename HashType>
-void dump_history_json(
-    const string& filename,
-    ScoreType INF,
-    const vector<HistoryNode<ScoreType, HashType>>& history,
-    const vector<TurnSnapshot>& snapshots
-) {
+void dump_history_json(const string& filename, ScoreType INF, const vector<HistoryNode<ScoreType, HashType>>& history,
+                       const vector<TurnSnapshot>& snapshots) {
     ofstream ofs(filename);
     ofs << "{\n  \"INF\": " << INF << ",\n  \"nodes\": [\n";
     for (size_t i = 0; i < history.size(); ++i) {

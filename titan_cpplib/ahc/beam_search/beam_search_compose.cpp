@@ -15,6 +15,7 @@ using namespace std;
 
 namespace flying_squirrel {
 
+/// @brief 子が1つだけの親子の Action を合成して探索するビームサーチ
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
 class BeamSearchWithTree {
 private:
@@ -32,46 +33,28 @@ private:
     vector<HistoryNode<ScoreType, HashType>> history;
     vector<TurnSnapshot> snapshots;
 
-    // そのターンで実際に探索した頂点数 (= try_op 呼び出し回数)。
-    // INF で弾かれたものも、finished で終端扱いされたものも含む。
+    // 1ターン内の try_op 呼び出し回数
     int explored_per_turn;
 
-    // ---- 計測用カウンタ (compose 効果の比較指標) -------------------------
-    // cnt_apply/cnt_rollback   : DFS が実際に state.apply_op/rollback を呼んだ回数
-    // cnt_*_ghost              : ghost のため skip した回数 (ghost 版のみ非ゼロ)
-    // cnt_compose_align        : compose_pass の state alignment 用 apply/rollback
-    // cnt_tour_total           : 各ターンの tour.size() の合計
-    // cnt_cand_total           : 各ターンの生存ノード数 Σ|cand|
-    long long cnt_apply, cnt_rollback;
-    long long cnt_apply_ghost, cnt_rollback_ghost;
-    long long cnt_compose_align;
-    long long cnt_tour_total, cnt_cand_total;
+    /// @brief Action 合成の効果を測るための探索カウンタ
+    long long cnt_apply, cnt_rollback;             // 実行した apply_op と rollback の回数
+    long long cnt_apply_ghost, cnt_rollback_ghost; // ghost のため省略した回数
+    long long cnt_compose_align;                   // 状態調整に使った apply_op と rollback の合計
+    long long cnt_tour_total, cnt_cand_total;      // tour の要素数と生存候補数の累計
 
+    /// @brief Action 合成に関する計測値を出力する
     void print_counters() const {
         cerr << "[counters]" << endl;
-        cerr << "  apply_op    real=" << cnt_apply
-             << " ghost_skip=" << cnt_apply_ghost
+        cerr << "  apply_op    real=" << cnt_apply << " ghost_skip=" << cnt_apply_ghost
              << " total_slots=" << (cnt_apply + cnt_apply_ghost) << endl;
-        cerr << "  rollback    real=" << cnt_rollback
-             << " ghost_skip=" << cnt_rollback_ghost
+        cerr << "  rollback    real=" << cnt_rollback << " ghost_skip=" << cnt_rollback_ghost
              << " total_slots=" << (cnt_rollback + cnt_rollback_ghost) << endl;
         cerr << "  compose_align apply+rollback=" << cnt_compose_align << endl;
         cerr << "  tour_total=" << cnt_tour_total << endl;
         cerr << "  cand_total (sum|cand|)=" << cnt_cand_total << endl;
     }
 
-    // ---- Action プール（世代ブロック arena ＋ 確定接頭辞バルク解放） ------------
-    // tour/trace/next_tour/cand は Action 実体でなく ActionId（8B ハンドル）を運ぶ。
-    // Action 実体は生成世代＝深さごとのブロックに1回だけ置き、以後コピー・移動しない。
-    // ハンドル＝(gen<<SLOT_BITS)|slot。gblock[gen] は確定時にだけ作る固定長 vector で
-    // 再確保されないため参照は安定。
-    //
-    // 解放基準: ある世代の処理後、その世代の全葉の global-LCA 深さ
-    // L = turn - max(lca_dist)。次世代以降の DFS が触れる最小深さは L で単調非減少。
-    // ゆえに深さ < L は二度と参照されない。L 未満のブロックをバルク解放し、
-    // 確定一本道の Action は解放直前に trace から result_prefix へ退避。
-    // メモリは生存窓×W に収まり、最終解 = result_prefix ＋ 未確定サフィックス再構築で
-    // 挙動完全不変。
+    /// @brief 世代番号とスロット番号を詰めた Action の識別子
     using ActionId = uint64_t;
     static constexpr int SLOT_BITS = 24;
     static constexpr ActionId SLOT_MASK = (ActionId(1) << SLOT_BITS) - 1;
@@ -83,12 +66,8 @@ private:
         return gblock[(size_t)(id >> SLOT_BITS)][(size_t)(id & SLOT_MASK)];
     }
 
-    // ---- Compose 関連 ----------------------------------------------------
-    // gblock_ghost[gen][slot] が 1 なら、その slot の Action は forced-chain の
-    // 中間ノードとして合成済み（実体は consumed・未定義）で apply/rollback は no-op。
-    // prev_leaf_action_ids は直前の finalize 済み世代の leaf -> ActionId 表。
-    // compose_pass は cand を parent_leaf 群に分け、count==1 の親を
-    // 「親 then 子」で合成して親 slot を ghost 化する。
+    /// @brief 合成済みの中間 Action と直前世代の葉を管理する
+    /// ghost のスロットにある Action は参照せず、apply_op と rollback の対象にも含めない
     vector<vector<uint8_t>> gblock_ghost;
     vector<vector<uint8_t>> ghost_slab_pool;
     vector<ActionId> prev_leaf_action_ids;
@@ -100,19 +79,9 @@ private:
         gblock_ghost[(size_t)(id >> SLOT_BITS)][(size_t)(id & SLOT_MASK)] = 1;
     }
 
-    // finalize_generation 直後（cand が sort 済み）に呼ぶ。
-    // parent_leaf が同じ cand が 1 個しかない親について parent.compose(child) を試み、
-    // 成功したら composed を child slot へ swap、親 slot を ghost マーク。
-    // compose が false を返した親はそのまま（合成不可、または合成を望まない）。
-    //
-    // 重要 (state alignment): 直前の inner loop の最後の iter (i=0) は
-    // trace[turn] = cand[0]_{turn}.action_id を apply した直後に終わる。state には
-    // この action の効果が乗っている。compose_pass がこの action を ghost 化すると
-    // 次 turn 冒頭で trace[turn] が ghost (no-op) として skip され、代わりに
-    // 合成済み child action (= parent + child の効果) が apply されるため、
-    // parent の効果が二重に乗る。これを防ぐため、compose が parent_a を破壊する
-    // 前に rollback で state から parent の効果を抜く。compose が false で
-    // 終わった場合は元に戻すため re-apply する。
+    /// @brief 子が1つだけの親 Action を子へ合成し、親を ghost にする
+    /// state に適用中の親は合成前に取り消し、合成に失敗した場合は再適用する
+    /// @pre cand は parent_leaf 順に整列済みであること
     void compose_pass(int turn, State& s) {
         int n = (int)cand.size();
         int i = 0;
@@ -146,16 +115,11 @@ private:
         }
     }
 
-    // 現 cand の action_id 列を prev_leaf_action_ids に snapshot。
-    // 次ターンの compose_pass がこれを「親世代の leaf 情報」として参照する。
-    //
-    // 重要: 子 cand の parent_leaf は親 DFS の reverse iter 順 (= now_leaf_idx) で
-    // 振られる。cand_T[i] (sorted index) は size-1-i 番目の reverse iter で処理され、
-    // submit した子の parent_leaf = size-1-i。よって parent_leaf=p で参照する親は
-    // cand_T_sorted[size-1-p]。snapshot は reverse 順に詰める。
+    /// @brief 現世代の ActionId を次ターンの親葉順で保存する
     void snapshot_leaf_actions() {
         int n = (int)cand.size();
         prev_leaf_action_ids.resize(n);
+        // parent_leaf は候補の逆順走査で採番されるため、ActionId も逆順に格納する
         for (int i = 0; i < n; ++i) {
             prev_leaf_action_ids[n - 1 - i] = cand[i].action_id;
         }
@@ -166,33 +130,31 @@ private:
         ScoreType score;
         ActionId action_id;
         int node_id = -1;
-        int action_count = 0; // この cand の実深さ。非 composed=gen、composed 子=gen-1
+        int action_count = 0; // 候補が属する論理深さ
     };
 
     Candidates<ScoreType, HashType, Action, State, INF, record_history> candidates;
     vector<ActionId> trace;
     vector<ActionId> tour;
     vector<int> leaf;
-    vector<int> eff_depth;        // leaf[] と並走。leaf k の実深さ(action_count)
+    vector<int> eff_depth; // 各葉の論理深さ
     vector<CandIdx> cand;
 
     vector<ActionId> next_tour;
     vector<int> next_leaf;
-    vector<int> next_eff_depth;   // eff_depth[] の構築中バッファ
+    vector<int> next_eff_depth;
     vector<Action> actions;
 
-    int freed_to;                 // 深さ <= freed_to は解放済み。result_prefix.size() と一致
-    vector<Action> result_prefix; // 確定 Action 列（深さ 1..freed_to、順序通り）
-    vector<vector<Action>> slab_pool; // 確定済みブロックの再利用バッファ。free せず使い回す
+    int freed_to;                     // 解放済みの最大深さ
+    vector<Action> result_prefix;     // 確定区間にある非 ghost の Action
+    vector<vector<Action>> slab_pool; // 解放した世代ブロックの再利用プール
 
-    // 深さ < L のブロックは次世代以降の DFS が触れない（L は単調非減少）。
-    // 確定接頭辞 Action を trace から退避し、ブロックは free せず capacity を保ったまま
-    // slab_pool へ退避して使い回す。同時生存ブロック数＝生存窓深に収束し churn が消える。
-    // 深さ d (<= L-1) では全葉が同一ノードなので trace[d] が確定ノードそのもの。
+    /// @brief 確定した接頭辞を退避し、参照されなくなった世代ブロックを再利用プールへ移す
+    /// @param L 次世代以降で参照される最小の深さ
     void confirm_and_free(int L) {
         while (freed_to + 1 < L) {
             int d = freed_to + 1;
-            // ghost は最終 Action 列に含まない（composed 本体は chain の終端 slot にある）
+            // 合成後の Action は連鎖の終端にあるため、ghost は結果に含めない
             if (!is_ghost(trace[d])) {
                 result_prefix.push_back(act(trace[d]));
             }
@@ -204,9 +166,7 @@ private:
         }
     }
 
-    // candidates.next_beam[0..W) の生存 Action を世代ブロック gen へ1回 move し、
-    // cand を ActionId 参照で組み直す。これが採用ノードごと1回の実体コピー。
-    // ブロックは slab_pool から取り回し、capacity を再利用して再確保を避ける。
+    /// @brief 生存候補の Action を世代ブロックへ移し、参照用の候補列を構築する
     void finalize_generation(int gen) {
         int sz = (int)candidates.size();
         if ((int)gblock.size() <= gen) gblock.resize(gen + 1);
@@ -225,16 +185,12 @@ private:
         cand.reserve(sz);
         for (int i = 0; i < sz; ++i) {
             gblock[gen][i] = move(candidates.next_beam[i].action);
-            cand.push_back({candidates.next_beam[i].parent_leaf,
-                            candidates.next_beam[i].score,
-                            make_id(gen, i),
-                            candidates.next_beam[i].node_id,
-                            gen});
+            cand.push_back({candidates.next_beam[i].parent_leaf, candidates.next_beam[i].score, make_id(gen, i),
+                            candidates.next_beam[i].node_id, gen});
         }
     }
 
-    // ActionId 区間を実体 Action 列へ展開する。最終解の組み立て用。
-    // ghost は composed 本体ではないので skip。
+    /// @brief ActionId の範囲にある非 ghost の Action を列へ展開する
     template<class It>
     void materialize(vector<Action>& dst, It first, It last) {
         for (It it = first; it != last; ++it) {
@@ -242,8 +198,7 @@ private:
         }
     }
 
-    // 確定接頭辞 ＋ trace[freed_to+1..upto] を best_finished_path に組む。
-    // result_prefix は確定一本道 ＝ 旧 act(trace[1..freed_to]) と同値なので挙動不変。
+    /// @brief 確定した接頭辞と未確定の trace から終了経路を構築する
     void build_best_path(int upto) {
         best_finished_path = result_prefix;
         for (int k = freed_to + 1; k <= upto; ++k) {
@@ -251,8 +206,8 @@ private:
         }
     }
 
-    // 探索用 state をルートへ戻して返却経路を再生する。ghost は state に
-    // 適用されていないため rollback しない。false 特殊化では全処理が消える。
+    /// @brief 探索状態をルートへ戻し、返却経路を適用した最終状態を構築する
+    /// ghost は状態に適用されていないため rollback しない
     template<bool materialize_final_state>
     unique_ptr<State> build_final_state(State& state, const vector<Action>& result_actions, int current_depth) {
         if constexpr (materialize_final_state) {
@@ -271,15 +226,13 @@ private:
         }
     }
 
-    // enumerate_actions / try_op 一体化用 sink。
-    // enumerate_actions が action を生成し submit(a) を呼ぶと try_op + INF/finished 判定 + push + history を行う。
-    // 中間 actions バッファを挟まない。旧 enumerate_actions(vector&, ...) は requires で従来パスに分岐。
+    /// @brief 列挙された Action の評価、終了判定、候補登録を行う
     struct Submitter {
         BeamSearchWithTree &bs;
         State &st;
         int parent_leaf, parent_node_id, turn;
 
-        // ライブの最新 worst。push が進むたび縮むので enumerate_actions 側の早期枝刈りに使える。
+        /// @brief 現在の枝刈り閾値を返す
         inline ScoreType threshold() const { return bs.candidates.threshold(); }
 
         inline void operator()(Action &a) {
@@ -318,6 +271,7 @@ private:
         }
     };
 
+    /// @brief 探索ごとの作業領域、記録、計測値を初期化する
     void init_bs() {
         beam_timer.reset();
         rnd = titan23::Random();
@@ -352,8 +306,7 @@ private:
         }
     }
 
-    // 当該ターンの生存 node_id を集め、生き残らなかった status==0 を 1 に直し snapshot を積む。
-    // candidates.next_beam を読むだけで探索状態は変更しない。beam_search.cpp と同ロジック。
+    /// @brief 生存候補を記録し、脱落した履歴ノードの状態を更新する
     void record_turn_survivors(int turn_label) {
         unordered_set<int> survived;
         for (int i = 0; i < (int)candidates.size(); ++i) {
@@ -368,23 +321,18 @@ private:
         snapshots.push_back({turn_label, vector<int>(survived.begin(), survived.end())});
     }
 
-    // tour[leaf[k]..leaf[k+1]) を末尾 dst_end の手前にランク順に貼り込む共通ロジック。
-    // dst_end は「親パス末尾の一つ後ろ」（葉のアクションを書く位置 = ancestor path one-past-end）。
-    // 「経路復元: 親 leaf へ向かう祖先ぶんの action を tour から復元する」処理。
-    // ActionId（8B）コピーなので Action 実体は動かさない。
-    // tour 上の segment k = tour[leaf[k]..leaf[k+1]) を、その葉の実深さ eff_depth[k]
-    // を底として dst_base[depth] へ深さ明示で貼り込む。深さキーの ratchet で
-    // 各 segment は「まだ書かれていない、より浅い側」だけを書く。
-    // 結果として分岐部 trace[dL+1..dC-1] のみが更新され、共有接頭辞は不変。
+    /// @brief 親葉までの差分経路を tour から深さ順に復元する
+    /// 未復元の浅い区間だけをコピーし、共有接頭辞を保持する
+    /// @param dst_base dst_base[d] を深さ d の書き込み先とする出力範囲
     template<class It>
     inline void copy_tour_path(int parent_leaf, int leaf_end, It dst_base) {
-        int written_floor = INT_MAX; // 既に書かれた最も浅い深さ
+        int written_floor = INT_MAX; // 復元済み区間の最小深さ
         for (int k = parent_leaf; k < leaf_end; ++k) {
             int w0 = leaf[k];
             int w1 = leaf[k + 1];
             int seg_len = w1 - w0;
-            int bot = eff_depth[k];           // segment の最深
-            int top = bot - seg_len + 1;      // segment の最浅
+            int bot = eff_depth[k];      // 区間の最大深さ
+            int top = bot - seg_len + 1; // 区間の最小深さ
             if (top < written_floor) {
                 int hi = bot < written_floor - 1 ? bot : written_floor - 1;
                 int copy_len = hi - top + 1;
@@ -395,14 +343,12 @@ private:
     }
 
 public:
-    /**
-     * @brief ビームサーチをする
-     *
-     * @param param ターン数、ビーム幅を指定するパラメータ構造体
-     * @param verbose ログ出力するかどうか
-     * @tparam materialize_final_state 最終 State を構築するか。既定は true
-     * @return BeamResult
-     */
+    /// @brief ビームサーチを実行する
+    /// @tparam materialize_final_state 最終状態を構築する場合は true
+    /// @param param 探索ターン数とビーム幅の設定
+    /// @param verbose ログを出力する場合は true
+    /// @param history_file record_history が true のときに履歴を JSON で出力するファイル名
+    /// @return 探索結果
     template<bool materialize_final_state=true>
     Result search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
         if (param.max_turn <= 0 || param.beam_width <= 0) {
@@ -455,8 +401,7 @@ public:
                         int nidv = node_id_counter++;
                         string as = action.to_string();
                         bool ok = candidates.push(score, hash, 0, move(action), nidv);
-                        history.push_back({nidv, -1, 1, score, hash,
-                                           move(as), state.get_state_info(), ok ? 0 : 1});
+                        history.push_back({nidv, -1, 1, score, hash, move(as), state.get_state_info(), ok ? 0 : 1});
                     } else {
                         candidates.push(score, hash, 0, move(action));
                     }
@@ -470,8 +415,7 @@ public:
             if (verbose) {
                 beam_log::on_solution_found(cerr, 1, best_finished_score);
                 beam_log::width_trace(cerr, param.width_hist);
-                beam_log::end_banner(cerr, "solution found", 1, param.max_turn,
-                                     elapsed_ms, param.ave_width(),
+                beam_log::end_banner(cerr, "solution found", 1, param.max_turn, elapsed_ms, param.ave_width(),
                                      best_finished_score, true, (int)best_finished_path.size());
                 print_counters();
             }
@@ -486,11 +430,8 @@ public:
             return {{}, INF, 0, elapsed_ms, BeamStatus::NoCandidates, nullptr};
         }
 
-        // 世代1（深さ1ノード）を確定し cand を ActionId 参照で構築。
         finalize_generation(1);
         cnt_cand_total += cand.size();
-        // 世代1 は parent_leaf = 0 のみで分岐なし、compose_pass の対象外。
-        // 次世代の compose_pass が親として参照するので action_id を snapshot しておく。
         snapshot_leaf_actions();
         if constexpr (record_history) record_turn_survivors(1);
         leaf = {0};
@@ -508,8 +449,7 @@ public:
             explored_per_turn = 0;
 
             int li = leaf.size() - 1;
-            int gL = INT_MAX;   // 全 cand を通じた最浅の LCA 深さ（確定解放の基準）
-            // dP_state: 現在 state がいる深さ。turn 開始時は前世代の最後の葉。
+            int gL = INT_MAX; // 全候補の LCA の深さ 世代ブロックの解放基準に使う
             int dP_state = eff_depth.back();
 
             if (!cand.empty()) {
@@ -518,13 +458,12 @@ public:
 
             for (int i = (int)cand.size() - 1; i >= 0; --i) {
                 const auto &c = cand[i];
-                int dC = c.action_count;          // この cand の深さ
+                int dC = c.action_count;
 
-                // dL = LCA(前cand, c) の深さ。区間 [parent_leaf, li) の各 segment の
-                // 底 eff_depth[k] から長さ leaf[k+1]-leaf[k] を引いた値の最小。
+                // 区間内の各差分経路から、直前の候補との LCA の深さを求める
                 int dL;
                 if (c.parent_leaf >= li) {
-                    dL = eff_depth[c.parent_leaf];      // 区間空 = 親自身が LCA
+                    dL = eff_depth[c.parent_leaf]; // 区間が空なら親自身が LCA となる
                 } else {
                     dL = INT_MAX;
                     for (int k = c.parent_leaf; k < li; ++k) {
@@ -607,9 +546,8 @@ public:
                 if (verbose) {
                     beam_log::on_solution_found(cerr, turn + 1, best_finished_score);
                     beam_log::width_trace(cerr, param.width_hist);
-                    beam_log::end_banner(cerr, "solution found", turn + 1, param.max_turn,
-                                         elapsed_ms, param.ave_width(),
-                                         best_finished_score, true, (int)best_finished_path.size());
+                    beam_log::end_banner(cerr, "solution found", turn + 1, param.max_turn, elapsed_ms,
+                                         param.ave_width(), best_finished_score, true, (int)best_finished_path.size());
                     print_counters();
                 }
                 unique_ptr<State> fs;
@@ -626,9 +564,8 @@ public:
 
             if (verbose) {
                 BeamCandidate<ScoreType, Action> bests = candidates.get_best();
-                beam_log::turn_line(cerr, turn + 1, param.max_turn, now_time,
-                                    w, (int)tour.size(), (int)candidates.size(),
-                                    explored_per_turn, bests.score);
+                beam_log::turn_line(cerr, turn + 1, param.max_turn, now_time, w, (int)tour.size(),
+                                    (int)candidates.size(), explored_per_turn, bests.score);
             }
 
             if constexpr (record_history) record_turn_survivors(turn + 1);
@@ -640,14 +577,12 @@ public:
             swap(eff_depth, next_eff_depth);
             cnt_tour_total += tour.size();
 
-            // 世代 turn+1 を確定し cand を ActionId 参照で構築。
             finalize_generation(turn + 1);
             cnt_cand_total += cand.size();
             sort(cand.begin(), cand.end(), [](const CandIdx& a, const CandIdx& b) {
                 if (a.parent_leaf != b.parent_leaf) return a.parent_leaf < b.parent_leaf;
                 return a.score < b.score;
             });
-            // 親世代 (turn) の単一子 leaf を検出して compose、続けて今世代の leaf を snapshot。
             compose_pass(turn, state);
             snapshot_leaf_actions();
 
@@ -664,7 +599,7 @@ public:
             }
         }
 
-        // best cand の祖先パスを trace に復元（共有接頭辞は不変、分岐部のみ更新）。
+        // 最良候補の分岐部分を trace に復元する
         copy_tour_path(cand[best_idx].parent_leaf, (int)leaf.size() - 1, trace.begin());
         int dBest = cand[best_idx].action_count;
         vector<Action> ret = result_prefix;
@@ -679,9 +614,8 @@ public:
         if (verbose) {
             beam_log::on_max_turn(cerr);
             beam_log::width_trace(cerr, param.width_hist);
-            beam_log::end_banner(cerr, "max_turn reached", turns_done, param.max_turn,
-                                 elapsed_ms, param.ave_width(),
-                                 best_score, true, (int)ret.size());
+            beam_log::end_banner(cerr, "max_turn reached", turns_done, param.max_turn, elapsed_ms,
+                                 param.ave_width(), best_score, true, (int)ret.size());
             print_counters();
         }
         unique_ptr<State> fs;

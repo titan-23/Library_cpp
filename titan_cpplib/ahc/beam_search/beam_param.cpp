@@ -3,91 +3,62 @@
 
 #include "titan_cpplib/others/print.cpp"
 
-namespace flying_squirrel { // flying squirrel
+namespace flying_squirrel {
 
+/// @brief ビームサーチの設定と動的ビーム幅の計測値を管理する
 struct BeamParam {
     int max_turn, beam_width;
-    // time_limit は ms 単位 (Timer::elapsed() と単位を揃える)。1 秒なら 1000。
+    /// @brief 制限時間 [ms]
     double time_limit;
     bool is_adjusting;
-    // 毎ターン Candidates 内の hash dict を clear するか。
-    // true : 各ターンの beam 内重複排除のみ行う安全な既定動作。
-    // false: clear のオーバーヘッドを省くが、State 側の hash がターン情報を含まないと
-    //        ターン跨ぎの stale entry により候補が黙って drop される。設計を理解した上で使うこと。
+
+    /// @brief ターンごとに重複判定用ハッシュを破棄するか
+    /// false にする場合、State のハッシュにターン情報が含まれないと、別ターンの候補も重複とみなされる
     bool clear_hash_every_turn;
 
-    // clear_hash_every_turn=false のときのみ意味を持つ。
-    // > 0 のとき、K = hash_window_turns ターンに 1 回 hash dict を全 clear して
-    // 古い entry を捨てる。これにより dict size を高々 O(K * W) に抑える。
-    // = 0 (デフォルト) では従来通り無制限蓄積。
-    // 厳密に「過去 K ターン」ではなく「最後の clear から 1〜K ターン分」の窓になる点に注意。
+    /// @brief 固定深さ版と naive 版で、古いハッシュを破棄する間隔 0 なら破棄しない
+    /// 保持範囲は最後の破棄から 1〜K ターン分で、厳密な直近 K ターンではない
+    /// @note 可変ターン版では使用しない
     int hash_window_turns;
 
-    // 内部で使用する変数
+    // 通常ターンとメタターンで共用する累積値
     int pool_size_sum, beam_width_sum, turn_sum;
     double time_sum;
     int prev_beam_width;
 
-    // 動的ビーム幅の推移 report 用。timestamp / timestamp_meta が
-    // 毎ターン (メタターン) 末尾に実効幅を push する。探索挙動には不使用。
+    // 各ターンの実効幅 ログ出力にのみ使用する
     vector<int> width_hist;
 
-    // target_turn 進行速度の実測 (beam_search_turn.cpp のマルチターン用)
-    // 1 メタターンで進む target_turn の期待値 = target_step_sum / target_step_count
+    // beam_search_turn.cpp で使う target_turn 進行量の累積値
     long long target_step_sum;
     long long target_step_count;
 
-    // beam_search_turn.cpp の global seen_hash の初期キャパシティのヒント (0 で自動)
+    // beam_search_turn.cpp の global seen_hash に与える初期容量のヒント 0 なら自動
     int seen_hash_capacity_hint;
 
-    // ---- 累積コスト計測 (beam_search_turn.cpp 用) ----
-    // 全時間は ms 単位 (param.time_limit と一致)。
-    //
-    // dt は active メタターン (applied_w > 0) と empty メタターン
-    // (applied_w = 0) で構造的に違う:
-    //   - empty : dt = tree 走査のみ。W に依存しない
-    //   - active: dt = W に比例する成分が支配
-    // 単一の EMA / 平均で混ぜると bimodal な分布を平均してしまい、
-    // empty が多いほど平均が下振れ、W を絞るタイミングが遅れる。
-    // したがって active / empty を別々に累積で記録し、線形スケーリングは
-    // active 成分にだけ適用する。詳細は recommend_width 参照。
-    //
-    //   time_active_sum / count_active : active メタターン累積
-    //   time_empty (= time_sum - time_active_sum) は副次的に求まる
-    //   count_empty (= turn_sum - count_active) も同様
-    //   beam_width_sum は applied_w の累積 (= active 時のみ加算される)
-    //
-    // 補助 EMA (現状 recommend_width 内では未使用、観測用):
-    //   ema_active_rate : EMA( applied_w > 0 ? 1 : 0 )
-    //   ema_step        : EMA( delta_target )    残メタターン推定用
+    // 展開のあるメタターンの累積時間と回数 時間は ms 単位
     double time_active_sum;
     long long count_active;
+
+    // 展開の有無と target_turn 進行量の EMA
     double ema_active_rate;
     double ema_step;
-    int    meta_sample_count;
+    int meta_sample_count;
 
-    // EMA 平滑化係数 (0 < alpha <= 1, 大きいほど直近重視)
+    // EMA の平滑化係数 大きいほど直近の値を重視する
     double ema_alpha_rate;
     double ema_alpha_step;
 
-    // 動的調整の安全率。予測 1 メタターン時間が予算を超過しないように、
-    // 推奨幅をこの倍率だけ下振れさせる。
+    // 推奨幅に掛ける安全率
     double width_safety_factor;
 
-    // 計測安定化のため、最初の数メタターンは固定幅で動かす。
-    // EMA に十分なサンプルが入ってから動的調整を始める。
+    // 動的調整を始めるまでのメタターン数
     int calibration_meta_count;
 
     BeamParam() { init(); }
 
-    BeamParam(
-        int max_turn,
-        int beam_width,
-        double time_limit,
-        bool is_adjusting=false,
-        bool clear_hash_every_turn=true,
-        int hash_window_turns=0
-    ) {
+    BeamParam(int max_turn, int beam_width, double time_limit, bool is_adjusting=false,
+              bool clear_hash_every_turn=true, int hash_window_turns=0) {
         init();
         this->max_turn = max_turn;
         this->beam_width = beam_width;
@@ -137,77 +108,49 @@ struct BeamParam {
         width_hist.push_back(beam_width);
     }
 
-    // beam_search_turn.cpp 用: 1 メタターン分の計測サンプルを EMA に流し、
-    // 互換のため累積指標 (turn_sum / time_sum 等) も同時に更新する。
-    //   dt_expand_ms : get_next_beam の所要時間 [ms]
-    //   dt_update_ms : sort + update_tree の所要時間 [ms]
-    //   tree_size    : update_tree 後の tree.size()
-    //   exp_count    : current_new_candidates.size() (採用された展開数)
-    //   applied_w    : このメタターン中に展開した leaf 数
-    //                  (= target_turn == 現メタターン だった tree 内 leaf 数)
-    //   delta_target : 1 メタターンで進んだ target_turn の量 (>=0)
-    //
-    // dt_expand_ms / dt_update_ms は分けて取っているが、現状の累積モデルでは
-    // 合算 dt のみを使う。分割は将来の精度向上のため signature だけ残す。
-    void timestamp_meta(double dt_expand_ms, double dt_update_ms,
-                        int tree_size, int exp_count,
-                        int applied_w, int delta_target) {
+    /// @brief 1 メタターンの計測値を記録し、進行量の EMA を更新する
+    /// @param dt_expand_ms 候補展開の所要時間 [ms]
+    /// @param dt_update_ms ソートとツリー更新の所要時間 [ms]
+    /// @param tree_size 更新後の探索木のノード数
+    /// @param exp_count 一時的に候補へ登録された件数 現在は未使用
+    /// @param applied_w 展開した葉の数
+    /// @param delta_target target_turn の進行量
+    void timestamp_meta(double dt_expand_ms, double dt_update_ms, int tree_size, int exp_count, int applied_w,
+                        int delta_target) {
         double dt_ms = dt_expand_ms + dt_update_ms;
 
-        // active / empty を分けて累積する。
-        // empty は dt が W に依存しないので別計上したい。
+        // 展開のないターンはビーム幅に依存しないため、分けて計測する
         if (applied_w > 0) {
             time_active_sum += dt_ms;
             count_active++;
         }
-        // 補助 EMA (観測用)
-        ema_active_rate = ema_update(ema_active_rate,
-                                     (applied_w > 0 ? 1.0 : 0.0),
-                                     ema_alpha_rate);
-        // ema_step は zero meta-turn も含めた平均にする
-        // (0 を入れずに更新すると進捗ゼロの実態を反映できず remain_meta を過小評価する)
+        ema_active_rate = ema_update(ema_active_rate, (applied_w > 0 ? 1.0 : 0.0), ema_alpha_rate);
+        // 進行しなかったターンも残りターン数の推定に含める
         ema_step = ema_update(ema_step, (double)max(0, delta_target), ema_alpha_step);
         meta_sample_count++;
 
-        // 互換のため既存の累積も更新する。
         (void)exp_count;
         pool_size_sum  += tree_size;
-        beam_width_sum += applied_w;  // applied_w==0 のとき加算されないので、結果として active 時の W 累積
+        beam_width_sum += applied_w;
         time_sum       += dt_ms;
         turn_sum++;
         width_hist.push_back(applied_w);
     }
 
-    // beam_search_turn.cpp 用: target_turn の進行量を記録する (累積のみ)。
-    // EMA 更新は timestamp_meta 側で行う。
+    /// @brief target_turn の進行量を累積する
     void note_target_step(int step) {
         target_step_sum += step;
         target_step_count++;
     }
 
-    // モデルが予測に使える状態か。active を 1 回以上観測している必要がある。
+    /// @brief 展開コストを予測できるかを返す
     bool cost_model_ready() const {
         return count_active > 0 && turn_sum > 0;
     }
 
-    // 残り remain_meta メタターンを remain_time_ms 以内に収める W を返す。
-    // モデル未初期化なら -1。
-    //
-    // active メタターン (dt_active = a + b*W に近い) と empty メタターン
-    // (dt_empty = const) を分けて扱う:
-    //   rate            = count_active / turn_sum
-    //   dt_empty        = (time_sum - time_active_sum) / (turn_sum - count_active)
-    //   dt_active_obs   = time_active_sum / count_active        (W=w_obs での実測)
-    //   w_obs           = beam_width_sum / count_active         (active 時の平均 W)
-    //
-    //   target_dt        = remain_time / remain_meta
-    //   target_dt_active = (target_dt - (1-rate) * dt_empty) / rate
-    //   W*               = w_obs * target_dt_active / dt_active_obs
-    //
-    // dt_active が W に厳密に比例する仮定 (overhead 無視) なので多少
-    // バイアスはあるが、recommend_width は毎メタターン何度も呼ばれるので
-    // 反復で自己補正される (W を下げれば dt_active 累積が下がり、次の
-    // 推奨も整合する)。
+    /// @brief 残り時間から推奨ビーム幅を求める
+    /// @details 展開のあるターンの時間だけをビーム幅に比例させ、展開のないターンは固定費として扱う
+    /// @return 計測不足の場合は -1
     int recommend_width(double remain_time_ms, int remain_meta) const {
         if (!cost_model_ready())       return -1;
         if (remain_time_ms  <= 0.0)    return 1;
@@ -223,8 +166,7 @@ struct BeamParam {
 
         double dt_empty = 0.0;
         if ((long long)turn_sum > count_active) {
-            dt_empty = (time_sum - time_active_sum)
-                     / (double)((long long)turn_sum - count_active);
+            dt_empty = (time_sum - time_active_sum) / (double)((long long)turn_sum - count_active);
             if (dt_empty < 0.0) dt_empty = 0.0;
         }
 
@@ -239,12 +181,12 @@ struct BeamParam {
         return W;
     }
 
+    /// @brief 通常のビームサーチで次ターンの幅を求める
     int get_beam_width(int remain_turn, int now_pool_size, double remain_time) {
-        // return beam_width;
         if (!is_adjusting || turn_sum <= 10) {
             return beam_width;
         }
-        // 10回ごとに更新してみる
+        // 幅の更新は 10 ターンごとに行う
         if (turn_sum % 10 != 0 && prev_beam_width != -1) {
             return prev_beam_width;
         }
@@ -258,8 +200,8 @@ struct BeamParam {
         return beam_width;
     }
 
-    // @deprecated `beam_log::end_banner` で同等の情報が出力される。
-    // 個別に呼ぶことも引き続き可能。
+    /// @brief 累積した平均ビーム幅を標準エラーに出力する
+    /// @deprecated beam_log::end_banner で同等の情報を出力できる
     void report() const {
         cerr << to_bold("BeamParam-report----------------") << endl;
         if (turn_sum == 0) {
@@ -270,7 +212,7 @@ struct BeamParam {
         cerr << "--------------------------------" << endl;
     }
 
-    // 平均ビーム幅 (turn_sum == 0 の時は 0)
+    /// @brief 累積値から平均ビーム幅を求める
     double ave_width() const {
         return turn_sum > 0 ? (double)beam_width_sum / turn_sum : 0.0;
     }
@@ -280,7 +222,8 @@ BeamParam gen_param(int max_turn, int beam_width) {
     return {max_turn, beam_width, -1};
 }
 
-BeamParam gen_param(int max_turn, int beam_width, double time_limit, bool is_adjusting, bool clear_hash_every_turn=true) {
+BeamParam gen_param(int max_turn, int beam_width, double time_limit, bool is_adjusting,
+                    bool clear_hash_every_turn=true) {
     return {max_turn, beam_width, time_limit, is_adjusting, clear_hash_every_turn};
 }
 } // namespace flying_squirrel

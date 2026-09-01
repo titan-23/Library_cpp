@@ -55,10 +55,9 @@ inline void start_banner(ostream& os, const char* impl_name, const BeamParam& pa
 }
 
 template<class ScoreType>
-inline void turn_line(ostream& os, int turn, int max_turn, double elapsed_ms, int width, int pool, int cand, int explored, ScoreType best_score, bool has_best = true) {
-    (void)pool; // 木サイズ。コンパクト表示のため非表示（必要なら一行戻す）
-    // expl = そのターン実際に探索した頂点数 (= try_op の呼び出し回数)
-    // cand = expl のうちビームに残った件数 / w = ビーム幅
+inline void turn_line(ostream& os, int turn, int max_turn, double elapsed_ms, int width, int pool, int cand,
+                      int explored, ScoreType best_score, bool has_best = true) {
+    (void)pool;
     ostringstream ss;
     ss << setw(4) << setfill(' ') << turn << "/"
        << setw(4) << setfill(' ') << max_turn << setfill(' ')
@@ -93,7 +92,8 @@ inline void on_max_turn(ostream& os) {
 }
 
 template<class ScoreType>
-inline void end_banner(ostream& os, const char* reason, int turns_done, int max_turn, double total_ms, double ave_width, ScoreType best_score, bool has_best, int actions_count) {
+inline void end_banner(ostream& os, const char* reason, int turns_done, int max_turn, double total_ms,
+                       double ave_width, ScoreType best_score, bool has_best, int actions_count) {
     os << tag_plain() << "------------------------------------------------\n";
     os << tag_bs()    << col_ok(string("finished: ") + reason) << "\n";
     os << tag_info()  << "  turns done    = " << turns_done << " / " << max_turn << "\n";
@@ -110,21 +110,16 @@ inline void end_banner_extra(ostream& os, const string& key, long long value) {
     os << tag_info() << "  " << left << setw(14) << key << "= " << value << "\n";
 }
 
-// 動的ビーム幅の推移を 1 行 sparkline + 統計で出す。
-// hist は timestamp / timestamp_meta が貯めた毎ターンの実効幅。
-// 点数が cols を超える場合はバケット平均でダウンサンプルする
-// (推移の形は保たれる)。is_adjusting=false でも幅一定の確認に使える。
+/// @brief 実効ビーム幅の推移をスパークラインと統計値で出力する
 inline void width_trace(ostream& os, const vector<int>& hist, int cols = 40) {
     if (hist.empty()) {
         os << tag_info() << "  wtrace = (no samples)\n";
         return;
     }
-    static const char* blocks[8] = {
-        "▁","▂","▃","▄","▅","▆","▇","█"
-    };
+    static const char* blocks[8] = {"▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"};
     const int n = (int)hist.size();
 
-    // ダウンサンプル: cols 個のバケットに平均化
+    // 標本数が cols を超える場合はバケット平均で圧縮する
     vector<double> bucket;
     if (n <= cols) {
         bucket.assign(hist.begin(), hist.end());

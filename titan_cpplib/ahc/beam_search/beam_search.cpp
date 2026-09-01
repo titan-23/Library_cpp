@@ -15,6 +15,7 @@ using namespace std;
 
 namespace flying_squirrel {
 
+/// @brief 木上の状態差分を利用して候補を展開するビームサーチ
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
 class BeamSearchWithTree {
 private:
@@ -32,7 +33,7 @@ private:
     vector<HistoryNode<ScoreType, HashType>> history;
     vector<TurnSnapshot> snapshots;
 
-    // try_op 呼び出し回数
+    // 1ターン内の try_op 呼び出し回数
     int explored_per_turn;
 
     using ActionId = uint64_t;
@@ -63,14 +64,13 @@ private:
     vector<int> next_leaf;
     vector<Action> actions;
 
-    int freed_to;                 // 深さ <= freed_to は解放済み。result_prefix.size() と一致
-    vector<Action> result_prefix; // 確定 Action 列（深さ 1..freed_to、順序通り）
-    vector<vector<Action>> slab_pool; // 確定済みブロックの再利用バッファ。free せず使い回す
+    int freed_to;                     // 解放済みの最大深さ
+                                      // result_prefix.size() と一致する
+    vector<Action> result_prefix;     // 確定した深さ 1..freed_to の Action
+    vector<vector<Action>> slab_pool; // 解放した世代ブロックの再利用プール
 
-    // 深さ < L のブロックは次世代以降の DFS が触れない(L は単調非減少)。
-    // 確定接頭辞 Action を trace から退避し、ブロックは free せず capacity を保ったまま
-    // slab_pool へ退避して使い回す。同時生存ブロック数＝生存窓深に収束し churn が消える。
-    // 深さ d (<= L-1) では全葉が同一ノードなので trace[d] が確定ノードそのもの。
+    /// @brief 確定した接頭辞を退避し、参照されなくなった世代ブロックを再利用プールへ移す
+    /// @param L 次世代以降で参照される最小の深さ
     void confirm_and_free(int L) {
         while (freed_to + 1 < L) {
             int d = freed_to + 1;
@@ -81,9 +81,7 @@ private:
         }
     }
 
-    // candidates.next_beam[0..W) の生存 Action を世代ブロック gen へ1回 move し、
-    // cand を ActionId 参照で組み直す。これが採用ノードごと1回の実体コピー。
-    // ブロックは slab_pool から取り回し、capacity を再利用して再確保を避ける。
+    /// @brief 生存候補の Action を世代ブロックへ移し、参照用の候補列を構築する
     void finalize_generation(int gen) {
         int sz = (int)candidates.size();
         if ((int)gblock.size() <= gen) gblock.resize(gen + 1);
@@ -96,28 +94,24 @@ private:
         cand.reserve(sz);
         for (int i = 0; i < sz; ++i) {
             gblock[gen][i] = move(candidates.next_beam[i].action);
-            cand.push_back({candidates.next_beam[i].parent_leaf,
-                            candidates.next_beam[i].score,
-                            make_id(gen, i),
+            cand.push_back({candidates.next_beam[i].parent_leaf, candidates.next_beam[i].score, make_id(gen, i),
                             candidates.next_beam[i].node_id});
         }
     }
 
-    // ActionId 区間を実体 Action 列へ展開する。最終解の組み立て用。
+    /// @brief ActionId の範囲を Action の列へ展開する
     template<class It>
     void materialize(vector<Action>& dst, It first, It last) {
         for (It it = first; it != last; ++it) dst.push_back(act(*it));
     }
 
-    // 確定接頭辞 ＋ trace[freed_to+1..upto] を best_finished_path に組む。
-    // result_prefix は確定一本道 ＝ 旧 act(trace[1..freed_to]) と同値なので挙動不変。
+    /// @brief 確定した接頭辞と未確定の trace から終了経路を構築する
     void build_best_path(int upto) {
         best_finished_path = result_prefix;
         for (int k = freed_to + 1; k <= upto; ++k) best_finished_path.push_back(act(trace[k]));
     }
 
-    // 探索用 state は最後に訪れた親ノード上にある。最終 State が必要な場合だけ
-    // ルートまで戻し、返却経路を再生する。false 特殊化では全処理が消える。
+    /// @brief 探索状態をルートへ戻し、返却経路を適用した最終状態を構築する
     template<bool materialize_final_state>
     unique_ptr<State> build_final_state(State& state, const vector<Action>& result_actions, int current_depth) {
         if constexpr (materialize_final_state) {
@@ -136,13 +130,13 @@ private:
         }
     }
 
-    // enumerate_actions が action を生成し submit(a) を呼ぶと
-    // try_op + INF/finished 判定 + push + history を行う。
+    /// @brief 列挙された Action の評価、終了判定、候補登録を行う
     struct Submitter {
         BeamSearchWithTree &bs;
         State &st;
         int parent_leaf, parent_node_id, turn;
 
+        /// @brief 現在の枝刈り閾値を返す
         inline ScoreType threshold() const { return bs.candidates.threshold(); }
 
         inline void operator()(Action &a) {
@@ -181,6 +175,7 @@ private:
         }
     };
 
+    /// @brief 探索ごとの作業領域と記録を初期化する
     void init_bs() {
         beam_timer.reset();
         rnd = titan23::Random();
@@ -206,9 +201,7 @@ private:
         }
     }
 
-    // record_history only
-    // 当該ターンの生存 node_id を集め、生き残らなかった status==0 を 1 に直し snapshot を積む。
-    // candidates.next_beam を読むだけで探索状態は変更しない。
+    /// @brief 生存候補を記録し、脱落した履歴ノードの状態を更新する
     void record_turn_survivors(int turn_label) {
         unordered_set<int> survived;
         for (int i = 0; i < (int)candidates.size(); ++i) {
@@ -223,6 +216,8 @@ private:
         snapshots.push_back({turn_label, vector<int>(survived.begin(), survived.end())});
     }
 
+    /// @brief 親葉までの差分経路を tour から復元する
+    /// @param dst_end 復元先となる親経路の終端
     template<class It>
     inline void copy_tour_path(int parent_leaf, int leaf_end, It dst_end) {
         int prog = 0;
@@ -239,14 +234,12 @@ private:
     }
 
 public:
-    /**
-     * @brief ビームサーチをする
-     *
-     * @param param ターン数、ビーム幅を指定するパラメータ構造体
-     * @param verbose ログ出力するかどうか
-     * @tparam materialize_final_state 最終 State を構築するか。既定は true
-     * @return BeamResult
-     */
+    /// @brief ビームサーチを実行する
+    /// @tparam materialize_final_state 最終状態を構築する場合は true
+    /// @param param 探索ターン数とビーム幅の設定
+    /// @param verbose ログを出力する場合は true
+    /// @param history_file record_history が true のときに履歴を JSON で出力するファイル名
+    /// @return 探索結果
     template<bool materialize_final_state=true>
     Result search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
         if (param.max_turn <= 0 || param.beam_width <= 0) {
@@ -299,8 +292,7 @@ public:
                         int nidv = node_id_counter++;
                         string as = action.to_string();
                         bool ok = candidates.push(score, hash, 0, move(action), nidv);
-                        history.push_back({nidv, -1, 1, score, hash,
-                                           move(as), state.get_state_info(), ok ? 0 : 1});
+                        history.push_back({nidv, -1, 1, score, hash, move(as), state.get_state_info(), ok ? 0 : 1});
                     } else {
                         candidates.push(score, hash, 0, move(action));
                     }
@@ -314,8 +306,7 @@ public:
             if (verbose) {
                 beam_log::on_solution_found(cerr, 1, best_finished_score);
                 beam_log::width_trace(cerr, param.width_hist);
-                beam_log::end_banner(cerr, "solution found", 1, param.max_turn,
-                                     elapsed_ms, param.ave_width(),
+                beam_log::end_banner(cerr, "solution found", 1, param.max_turn, elapsed_ms, param.ave_width(),
                                      best_finished_score, true, (int)best_finished_path.size());
             }
             unique_ptr<State> fs;
@@ -432,9 +423,8 @@ public:
                 if (verbose) {
                     beam_log::on_solution_found(cerr, turn + 1, best_finished_score);
                     beam_log::width_trace(cerr, param.width_hist);
-                    beam_log::end_banner(cerr, "solution found", turn + 1, param.max_turn,
-                                         elapsed_ms, param.ave_width(),
-                                         best_finished_score, true, (int)best_finished_path.size());
+                    beam_log::end_banner(cerr, "solution found", turn + 1, param.max_turn, elapsed_ms,
+                                         param.ave_width(), best_finished_score, true, (int)best_finished_path.size());
                 }
                 unique_ptr<State> fs;
                 if constexpr (materialize_final_state) fs = build_final_state<true>(state, best_finished_path, turn);
@@ -450,9 +440,8 @@ public:
 
             if (verbose) {
                 BeamCandidate<ScoreType, Action> bests = candidates.get_best();
-                beam_log::turn_line(cerr, turn + 1, param.max_turn, now_time,
-                                    w, (int)tour.size(), (int)candidates.size(),
-                                    explored_per_turn, bests.score);
+                beam_log::turn_line(cerr, turn + 1, param.max_turn, now_time, w, (int)tour.size(),
+                                    (int)candidates.size(), explored_per_turn, bests.score);
             }
 
             if constexpr (record_history) record_turn_survivors(turn + 1);
@@ -493,9 +482,8 @@ public:
         if (verbose) {
             beam_log::on_max_turn(cerr);
             beam_log::width_trace(cerr, param.width_hist);
-            beam_log::end_banner(cerr, "max_turn reached", turns_done, param.max_turn,
-                                 elapsed_ms, param.ave_width(),
-                                 best_score, true, (int)ret.size());
+            beam_log::end_banner(cerr, "max_turn reached", turns_done, param.max_turn, elapsed_ms,
+                                 param.ave_width(), best_score, true, (int)ret.size());
         }
         unique_ptr<State> fs;
         if constexpr (materialize_final_state) fs = build_final_state<true>(state, ret, param.max_turn - 1);
