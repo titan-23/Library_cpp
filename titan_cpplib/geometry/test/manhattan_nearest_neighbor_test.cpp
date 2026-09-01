@@ -28,13 +28,13 @@ bool in_direction(const Point& p, long long x, long long y, int direction) {
     return p.x >= x && p.y <= y;
 }
 
-array<int, 4> brute_four(const vector<Point>& points, const vector<bool>& active, long long x, long long y) {
+array<int, 4> brute_four(const vector<Point>& points, const vector<int>& cnt, long long x, long long y) {
     array<int, 4> answer = {-1, -1, -1, -1};
     array<long long, 4> best{};
     int n = points.size();
     for (int direction = 0; direction < 4; ++direction) {
         for (int i = 0; i < n; ++i) {
-            if (!active[i] || !in_direction(points[i], x, y, direction)) continue;
+            if (cnt[i] == 0 || !in_direction(points[i], x, y, direction)) continue;
             long long d = distance(points[i], x, y);
             if (answer[direction] == -1 || d < best[direction] ||
                 (d == best[direction] && i < answer[direction])) {
@@ -46,12 +46,12 @@ array<int, 4> brute_four(const vector<Point>& points, const vector<bool>& active
     return answer;
 }
 
-int brute_nearest(const vector<Point>& points, const vector<bool>& active, long long x, long long y) {
+int brute_nearest(const vector<Point>& points, const vector<int>& cnt, long long x, long long y) {
     int answer = -1;
     long long best = 0;
     int n = points.size();
     for (int i = 0; i < n; ++i) {
-        if (!active[i]) continue;
+        if (cnt[i] == 0) continue;
         long long d = distance(points[i], x, y);
         if (answer == -1 || d < best || (d == best && i < answer)) {
             answer = i;
@@ -68,6 +68,7 @@ void test_basic() {
     Tree tree(points);
 
     assert(tree.nearest(0, 0) == -1);
+    assert(tree.nearest_dist(0, 0) == -1);
     assert((tree.nearest_four(0, 0) == array<int, 4>{-1, -1, -1, -1}));
 
     tree.add(0);
@@ -76,16 +77,21 @@ void test_basic() {
     tree.add(3);
     assert((tree.nearest_four(0, 0) == array<int, 4>{0, 1, 2, 3}));
     assert(tree.nearest(0, 0) == 0);
+    assert(tree.nearest_dist(0, 0) == 7);
 
     tree.add(4);
     tree.add(5);
     assert((tree.nearest_four(0, 0) == array<int, 4>{4, 5, 2, 3}));
     assert(tree.nearest(0, 0) == 5);
+    assert(tree.nearest_dist(0, 0) == 2);
 
-    // 同じ点を再度追加しても結果は変わらない
+    // 同じIDを再度追加すると個数が増える
     tree.add(5);
     assert(tree.nearest(0, 0) == 5);
 
+    tree.remove(5);
+    assert((tree.nearest_four(0, 0) == array<int, 4>{4, 5, 2, 3}));
+    assert(tree.nearest(0, 0) == 5);
     tree.remove(5);
     assert((tree.nearest_four(0, 0) == array<int, 4>{4, 1, 2, 3}));
     assert(tree.nearest(0, 0) == 4);
@@ -105,6 +111,25 @@ void test_basic() {
     assert(tree.nearest(0, 0) == 4);
     tree.add(5);
     assert(tree.nearest(0, 0) == 5);
+}
+
+void test_id_multiset() {
+    Tree tree({{2, 0}, {9, 0}});
+    tree.add(0);
+    tree.add(0);
+    tree.remove(0);
+    assert(tree.nearest(0, 0) == 0);
+    assert(tree.nearest_dist(0, 0) == 2);
+    tree.remove(0);
+    assert(tree.nearest(0, 0) == -1);
+
+    tree.add_all();
+    tree.add(0);
+    tree.add_all();
+    tree.remove(0);
+    assert(tree.nearest(0, 0) == 0);
+    tree.remove(0);
+    assert(tree.nearest(0, 0) == 1);
 }
 
 void test_closed_boundaries_and_ties() {
@@ -183,7 +208,7 @@ void test_random() {
     shuffle(points.begin(), points.end(), rng);
 
     Tree tree(points);
-    vector<bool> active(n, false);
+    vector<int> cnt(n, 0);
     vector<int> order(n);
     for (int i = 0; i < n; ++i) order[i] = i;
     shuffle(order.begin(), order.end(), rng);
@@ -192,14 +217,14 @@ void test_random() {
         if (step > 0) {
             int index = order[step - 1];
             tree.add(index);
-            active[index] = true;
+            ++cnt[index];
         }
         if (step < 30 || step % 5 == 0) {
             for (int trial = 0; trial < 20; ++trial) {
                 long long x = static_cast<long long>(rng() % 121) - 60;
                 long long y = static_cast<long long>(rng() % 121) - 60;
-                assert(tree.nearest_four(x, y) == brute_four(points, active, x, y));
-                assert(tree.nearest(x, y) == brute_nearest(points, active, x, y));
+                assert(tree.nearest_four(x, y) == brute_four(points, cnt, x, y));
+                assert(tree.nearest(x, y) == brute_nearest(points, cnt, x, y));
             }
         }
     }
@@ -217,28 +242,29 @@ void test_random_add_remove() {
     }
 
     Tree tree(points);
-    vector<bool> active(n, false);
+    vector<int> cnt(n, 0);
     for (int step = 0; step < 3000; ++step) {
         int index = rng() % n;
         if (rng() & 1) {
             tree.add(index);
-            active[index] = true;
+            ++cnt[index];
         } else {
             tree.remove(index);
-            active[index] = false;
+            if (cnt[index] > 0) --cnt[index];
         }
 
         for (int trial = 0; trial < 3; ++trial) {
             long long x = static_cast<long long>(rng() % 81) - 40;
             long long y = static_cast<long long>(rng() % 81) - 40;
-            assert(tree.nearest_four(x, y) == brute_four(points, active, x, y));
-            assert(tree.nearest(x, y) == brute_nearest(points, active, x, y));
+            assert(tree.nearest_four(x, y) == brute_four(points, cnt, x, y));
+            assert(tree.nearest(x, y) == brute_nearest(points, cnt, x, y));
         }
     }
 }
 
 int main() {
     test_basic();
+    test_id_multiset();
     test_closed_boundaries_and_ties();
     test_large_coordinates();
     test_coordinate_template();

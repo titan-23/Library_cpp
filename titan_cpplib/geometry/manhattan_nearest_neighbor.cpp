@@ -19,8 +19,9 @@ namespace titan23 {
  *
  * コンストラクタには、将来追加する可能性がある点をすべて渡す
  * 点IDはコンストラクタへ渡したvectorのindexとする
- * `add(id)` で点を有効化し、`remove(id)` で無効化できる
- * `add_all()` で全点を一括して有効化できる
+ * `add(id)` で点を1個追加し、`remove(id)` で1個削除できる
+ * 同じIDを複数個保持でき、個数が正なら検索対象になる
+ * `add_all()` で個数0の全点を1個にできる
  * `nearest` で全体の最近傍を、
  * `nearest_four` で閉じた4象限それぞれの最近傍を取得できる
  * 同距離ではIDが小さい点を返し、該当する点がなければ `-1` を返す
@@ -236,11 +237,11 @@ private:
     enum Side : int { EAST = 0, WEST = 1 };
     static constexpr int SIDE_COUNT = 2;
 
-    vector<Point> points; vector<array<int, 2>> rank; vector<uint8_t> active; vector<T> xs, ys;
+    vector<Point> points; vector<array<int, 2>> rank; vector<int> cnt; vector<T> xs, ys;
     vector<array<int, DIRECTION_COUNT>> prio; array<vector<int>, DIRECTION_COUNT> order;
     array<PrefixMin2D, SIDE_COUNT> trees;
-    int active_count = 0;
-    bool full_built = false, full_ready = false;
+    int used = 0;
+    bool cached = false, all = false;
 
     int x_rank(int idx, int side) const {
         int r = rank[idx][0];
@@ -256,8 +257,8 @@ private:
         int xle = xlt + (xi != xs.end() && *xi == x);
         int yle = ylt + (yi != ys.end() && *yi == y);
         int xge = xs.size() - xlt;
-        auto east = full_ready ? trees[EAST].prod_full(xge, ylt, yle) : trees[EAST].prod(xge, ylt, yle);
-        auto west = full_ready ? trees[WEST].prod_full(xle, ylt, yle) : trees[WEST].prod(xle, ylt, yle);
+        auto east = all ? trees[EAST].prod_full(xge, ylt, yle) : trees[EAST].prod(xge, ylt, yle);
+        auto west = all ? trees[WEST].prod_full(xle, ylt, yle) : trees[WEST].prod(xle, ylt, yle);
         array<int, DIRECTION_COUNT> p = {east[0], west[0], west[1], east[1]};
         for (int dir = 0; dir < DIRECTION_COUNT; ++dir) ans[dir] = p[dir] < 0 ? -1 : order[dir][p[dir]];
         return ans;
@@ -269,6 +270,21 @@ private:
 
     T distance(int idx, T x, T y) const {
         return absolute(points[idx].x - x) + absolute(points[idx].y - y);
+    }
+
+    pair<int, T> nearest_pair(T x, T y) const {
+        auto ids = nearest_four_idx(x, y);
+        int ans = -1;
+        T best = 0;
+        for (int idx : ids) {
+            if (idx == -1) continue;
+            T dist = distance(idx, x, y);
+            if (ans == -1 || dist < best || (dist == best && idx < ans)) {
+                ans = idx;
+                best = dist;
+            }
+        }
+        return {ans, best};
     }
 
     void build_priority() {
@@ -339,7 +355,7 @@ private:
             }
             trees[side].build(xs.size(), rs);
         }
-        active.assign(points.size(), false);
+        cnt.assign(points.size(), 0);
     }
 
 public:
@@ -347,44 +363,44 @@ public:
 
     explicit ManhattanNearest(vector<Point> ps) : points(move(ps)) { build(); }
 
-    /// 事前登録した点を有効化する
-    /// 同じIDを複数回追加しても2回目以降は何もしない
+    /// 事前登録した点を1個追加する
     void add(int id) {
         int n = points.size();
         if (id < 0 || id >= n) {
             throw out_of_range("ManhattanNearest::add: point ID is out of range");
         }
-        if (active[id]) return;
-        active[id] = true;
-        ++active_count;
+        if (cnt[id]++ > 0) return;
+        ++used;
 
         trees[EAST].set(x_rank(id, EAST), id, prio[id][NE], prio[id][SE]);
         trees[WEST].set(x_rank(id, WEST), id, prio[id][NW], prio[id][SW]);
-        if (active_count == n && full_built) full_ready = true;
+        if (used == n && cached) all = true;
     }
 
-    /// 事前登録した全点を有効化する
+    /// 個数0の全点を1個にする
     void add_all() {
         int n = points.size();
         trees[EAST].set_all(n, prio, NE, SE, [&](int idx) { return x_rank(idx, EAST); });
         trees[WEST].set_all(n, prio, NW, SW, [&](int idx) { return x_rank(idx, WEST); });
-        active.assign(n, true);
-        active_count = n;
-        full_built = true;
-        full_ready = true;
+        for (int& c : cnt) {
+            if (c == 0) c = 1;
+        }
+        used = n;
+        cached = true;
+        all = true;
     }
 
-    /// 追加済みの点を無効化する
-    /// 未追加のIDを指定した場合は何もしない
+    /// 追加済みの点を1個削除する
+    /// 個数0のIDを指定した場合は何もしない
     void remove(int id) {
         int n = points.size();
         if (id < 0 || id >= n) {
             throw out_of_range("ManhattanNearest::remove: point ID is out of range");
         }
-        if (!active[id]) return;
-        active[id] = false;
-        --active_count;
-        full_ready = false;
+        if (cnt[id] == 0) return;
+        if (--cnt[id] > 0) return;
+        --used;
+        all = false;
 
         trees[EAST].set(x_rank(id, EAST), id, -1, -1);
         trees[WEST].set(x_rank(id, WEST), id, -1, -1);
@@ -393,18 +409,14 @@ public:
     /// 追加済みの全点からManhattan距離最小の点のIDを返す
     /// 点がなければ -1
     int nearest(T x, T y) const {
-        auto ids = nearest_four_idx(x, y);
-        int ans = -1;
-        T best = 0;
-        for (int idx : ids) {
-            if (idx == -1) continue;
-            T dist = distance(idx, x, y);
-            if (ans == -1 || dist < best || (dist == best && idx < ans)) {
-                ans = idx;
-                best = dist;
-            }
-        }
-        return ans;
+        return nearest_pair(x, y).first;
+    }
+
+    /// 追加済みの全点との最小Manhattan距離を返す
+    /// 点がなければ -1
+    T nearest_dist(T x, T y) const {
+        auto res = nearest_pair(x, y);
+        return res.first < 0 ? -1 : res.second;
     }
 
     /// NE, NW, SW, SE の各閉象限でManhattan距離最小の点のIDを返す

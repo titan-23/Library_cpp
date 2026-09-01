@@ -13,6 +13,14 @@ using namespace titan23;
 using Clock = chrono::steady_clock;
 using Tree = ManhattanNearest<long long>;
 
+#ifndef MANHATTAN_BENCH_N
+#define MANHATTAN_BENCH_N 200000
+#endif
+
+#ifndef MANHATTAN_BENCH_Q
+#define MANHATTAN_BENCH_Q 200000
+#endif
+
 template<class F>
 double measure(F&& f) {
     auto start = Clock::now();
@@ -22,8 +30,8 @@ double measure(F&& f) {
 }
 
 int main() {
-    constexpr int N = 200000;
-    constexpr int Q = 200000;
+    constexpr int N = MANHATTAN_BENCH_N;
+    constexpr int Q = MANHATTAN_BENCH_Q;
     mt19937_64 rng(23);
 
     vector<Tree::Point> ps;
@@ -49,6 +57,9 @@ int main() {
     double nearest_sec = measure([&] {
         for (auto [x, y] : qs) checksum += static_cast<uint64_t>(tree.nearest(x, y) + 1);
     });
+    double dist_sec = measure([&] {
+        for (auto [x, y] : qs) checksum += static_cast<uint64_t>(tree.nearest_dist(x, y) + 1);
+    });
     double four_sec = measure([&] {
         for (auto [x, y] : qs) {
             auto ids = tree.nearest_four(x, y);
@@ -58,6 +69,9 @@ int main() {
     tree.remove(0);
     double dynamic_nearest_sec = measure([&] {
         for (auto [x, y] : qs) checksum += static_cast<uint64_t>(tree.nearest(x, y) + 1);
+    });
+    double dynamic_dist_sec = measure([&] {
+        for (auto [x, y] : qs) checksum += static_cast<uint64_t>(tree.nearest_dist(x, y) + 1);
     });
     double dynamic_four_sec = measure([&] {
         for (auto [x, y] : qs) {
@@ -73,13 +87,15 @@ int main() {
         for (int i = 0; i < N; ++i) tree.add(i);
     });
 
-    cout << fixed << setprecision(3);
+    cout << fixed << setprecision(6);
     cout << "N=" << N << " Q=" << Q << '\n';
     cout << "build        " << build_sec << " s\n";
     cout << "add_all      " << add_sec << " s\n";
     cout << "nearest Q    " << nearest_sec << " s\n";
+    cout << "distance Q   " << dist_sec << " s\n";
     cout << "nearest4 Q   " << four_sec << " s\n";
     cout << "nearest dyn  " << dynamic_nearest_sec << " s\n";
+    cout << "distance dyn " << dynamic_dist_sec << " s\n";
     cout << "nearest4 dyn " << dynamic_four_sec << " s\n";
     cout << "remove N     " << remove_sec << " s\n";
     cout << "re-add N     " << readd_sec << " s\n";
