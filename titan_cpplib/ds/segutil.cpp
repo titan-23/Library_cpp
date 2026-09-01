@@ -34,10 +34,10 @@ template<typename T> T op_and(T s, T t) { return s & t; }
 template<typename T> T e_and() { return ~T(0); }
 
 template<typename T> pair<T, int> op_min_idx(pair<T, int> s, pair<T, int> t) { return min(s, t); }
-template<typename T> pair<T, int> e_min_idx() { return {numeric_limits<T>::max(), -1}; }
+template<typename T> pair<T, int> e_min_idx() { return {numeric_limits<T>::max(), numeric_limits<int>::max()}; }
 
 template<typename T> pair<T, int> op_max_idx(pair<T, int> s, pair<T, int> t) { return tie(t.first, s.second) < tie(s.first, t.second) ? s : t; }
-template<typename T> pair<T, int> e_max_idx() { return {numeric_limits<T>::lowest(), -1}; }
+template<typename T> pair<T, int> e_max_idx() { return {numeric_limits<T>::lowest(), numeric_limits<int>::max()}; }
 
 // (値, 個数)
 template<typename T> pair<T, int> op_min_cnt(pair<T, int> s, pair<T, int> t) {
@@ -117,11 +117,11 @@ using SegOr = titan23::SegmentTree<T, op_or<T>, e_or<T>>;
 template<typename T>
 using SegAnd = titan23::SegmentTree<T, op_and<T>, e_and<T>>;
 
-// (区間min, その添字) を返す / 要素は {値, 添字} で持つ
+// (区間min, その値を取る最小の添字) を返す / 要素は {値, 添字} で持つ
 template<typename T>
 using SegMinIdx = titan23::SegmentTree<pair<T, int>, op_min_idx<T>, e_min_idx<T>>;
 
-// (区間max, その添字) を返す / 要素は {値, 添字} で持つ
+// (区間max, その値を取る最小の添字) を返す / 要素は {値, 添字} で持つ
 template<typename T>
 using SegMaxIdx = titan23::SegmentTree<pair<T, int>, op_max_idx<T>, e_max_idx<T>>;
 

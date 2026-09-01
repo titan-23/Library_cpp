@@ -82,6 +82,80 @@ namespace lazy_segment_tree {
         T, map_set_sum<T>, comp_set<T>, id_set<T>
     >;
 
+    // 区間一次関数更新 / 区間和
+    // 各要素 x に f(x) = a*x+b を作用させる
+    template<typename T>
+    struct F_Affine {
+        T a, b;
+        bool operator==(const F_Affine &rhs) const { return a == rhs.a && b == rhs.b; }
+        bool operator!=(const F_Affine &rhs) const { return !(*this == rhs); }
+    };
+    template<typename T> Dat<T> map_affine_sum(F_Affine<T> f, Dat<T> s) {
+        return {f.a * s.val + f.b * s.size, s.size};
+    }
+    // f(g(x))
+    template<typename T> F_Affine<T> comp_affine(F_Affine<T> f, F_Affine<T> g) {
+        return {f.a * g.a, f.a * g.b + f.b};
+    }
+    template<typename T> F_Affine<T> id_affine() { return {1, 0}; }
+    // 初期化: `{val, 1}`
+    // 更新: `seg.apply(l, r, {a, b});`
+    template<typename T>
+    using LazySegAffineSum = titan23::LazySegmentTree<
+        Dat<T>, op_sum_size<T>, e_sum_size<T>,
+        F_Affine<T>, map_affine_sum<T>, comp_affine<T>, id_affine<T>
+    >;
+
+    // 区間代入・区間加算 / 区間和・区間最小値・区間最大値
+    template<typename T>
+    struct Stats {
+        T sum, mn, mx;
+        int size;
+    };
+    template<typename T> Stats<T> op_stats(Stats<T> a, Stats<T> b) {
+        return {a.sum + b.sum, min(a.mn, b.mn), max(a.mx, b.mx), a.size + b.size};
+    }
+    template<typename T> Stats<T> e_stats() {
+        return {0, numeric_limits<T>::max(), numeric_limits<T>::lowest(), 0};
+    }
+
+    // x -> (has_set ? set_val : x) + add_val
+    template<typename T>
+    struct F_SetAdd {
+        bool has_set;
+        T set_val, add_val;
+
+        static F_SetAdd set(T x) { return {true, x, 0}; }
+        static F_SetAdd add(T x) { return {false, 0, x}; }
+
+        bool operator==(const F_SetAdd &rhs) const {
+            return has_set == rhs.has_set && set_val == rhs.set_val && add_val == rhs.add_val;
+        }
+        bool operator!=(const F_SetAdd &rhs) const { return !(*this == rhs); }
+    };
+    template<typename T> Stats<T> map_set_add_stats(F_SetAdd<T> f, Stats<T> s) {
+        if (s.size == 0) return s;
+        if (f.has_set) {
+            T val = f.set_val + f.add_val;
+            return {val * s.size, val, val, s.size};
+        }
+        return {s.sum + f.add_val * s.size, s.mn + f.add_val, s.mx + f.add_val, s.size};
+    }
+    // f(g(x))
+    template<typename T> F_SetAdd<T> comp_set_add(F_SetAdd<T> f, F_SetAdd<T> g) {
+        if (f.has_set) return f;
+        return {g.has_set, g.set_val, g.add_val + f.add_val};
+    }
+    template<typename T> F_SetAdd<T> id_set_add() { return {false, 0, 0}; }
+    // 初期化: `{val, val, val, 1}`
+    // 更新: `F_SetAdd<T>::set(x)` / `F_SetAdd<T>::add(x)`
+    // 取得: `seg.prod(l, r).sum` / `.mn` / `.mx`
+    template<typename T>
+    using LazySegSetAddStats = titan23::LazySegmentTree<
+        Stats<T>, op_stats<T>, e_stats<T>,
+        F_SetAdd<T>, map_set_add_stats<T>, comp_set_add<T>, id_set_add<T>
+    >;
+
     // 区間chmin / 区間最小値
     template<typename T>
     using LazySegChminMin = titan23::LazySegmentTree<
