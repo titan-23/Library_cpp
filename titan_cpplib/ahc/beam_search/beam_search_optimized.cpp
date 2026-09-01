@@ -1,8 +1,6 @@
-/// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/ahc/beam_search/beam_search.cpp
 #pragma once
 #include <bits/stdc++.h>
 #include "titan_cpplib/others/print.cpp"
-#include "titan_cpplib/alg/random.cpp"
 #include "titan_cpplib/ahc/timer.cpp"
 #include "titan_cpplib/ds/hash_dict.cpp"
 #include "titan_cpplib/ahc/beam_search/beam_param.cpp"
@@ -15,13 +13,13 @@ using namespace std;
 
 namespace flying_squirrel {
 
-/// @brief 木上の状態差分を利用して候補を展開するビームサーチ
+/// @brief 木上の状態差分と深さ別スロットを利用して候補を展開するビームサーチ
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
 class BeamSearchWithTree {
 private:
     using Result = BeamResult<ScoreType, Action, State>;
+    using Slot = uint32_t;
 
-    titan23::Random rnd;
     titan23::Timer beam_timer;
     Action DAMMY_ACTION;
 
@@ -32,90 +30,89 @@ private:
     int node_id_counter;
     vector<HistoryNode<ScoreType, HashType>> history;
     vector<TurnSnapshot> snapshots;
-
-    // 1ターン内の try_op 呼び出し回数
     int explored_per_turn;
 
-    using ActionId = uint64_t;
-    static constexpr int SLOT_BITS = 24;
-    static constexpr ActionId SLOT_MASK = (ActionId(1) << SLOT_BITS) - 1;
     vector<vector<Action>> gblock;
-    static inline ActionId make_id(int gen, int slot) {
-        return (ActionId(gen) << SLOT_BITS) | ActionId(slot);
-    }
-    inline Action& act(ActionId id) {
-        return gblock[(size_t)(id >> SLOT_BITS)][(size_t)(id & SLOT_MASK)];
+
+    inline Action& act(int depth, Slot slot) {
+        return gblock[(size_t)depth][(size_t)slot];
     }
 
     struct CandIdx {
         int parent_leaf;
         ScoreType score;
-        ActionId action_id;
+        Slot action_slot;
         int node_id = -1;
     };
 
     Candidates<ScoreType, HashType, Action, State, INF, record_history> candidates;
-    vector<ActionId> trace;
-    vector<ActionId> tour;
+    vector<Slot> trace;
+    vector<Slot> tour;
     vector<int> leaf;
     vector<CandIdx> cand;
 
-    vector<ActionId> next_tour;
+    vector<Slot> next_tour;
     vector<int> next_leaf;
     vector<Action> actions;
+    size_t logical_tour_size;
 
-    int freed_to;                     // 解放済みの最大深さで result_prefix.size() と一致する
-    vector<Action> result_prefix;     // 確定した深さ 1..freed_to の Action
-    vector<vector<Action>> slab_pool; // 解放した世代ブロックの再利用プール
+    int freed_to;
+    vector<Action> result_prefix;
+    vector<vector<Action>> slab_pool;
 
     /// @brief 確定した接頭辞を退避し、参照されなくなった世代ブロックを再利用プールへ移す
-    /// @param L 次世代以降で参照される最小の深さ
-    void confirm_and_free(int L) {
-        while (freed_to + 1 < L) {
-            int d = freed_to + 1;
-            result_prefix.push_back(act(trace[d]));
-            gblock[d].clear();
-            slab_pool.push_back(move(gblock[d]));
-            freed_to = d;
+    /// @param limit 次世代以降で参照される最小の深さ
+    void confirm_and_free(int limit) {
+        while (freed_to + 1 < limit) {
+            int depth = freed_to + 1;
+            result_prefix.push_back(move(act(depth, trace[depth])));
+            gblock[depth].clear();
+            slab_pool.push_back(move(gblock[depth]));
+            freed_to = depth;
         }
     }
 
-    /// @brief 生存候補の Action を世代ブロックへ移し、参照用の候補列を構築する
+    /// @brief 生存候補の Action を世代ブロックへ直接ムーブ構築し、参照用の候補列を構築する
     void finalize_generation(int gen) {
         int sz = (int)candidates.size();
+        assert(sz >= 0 && (uint64_t)sz <= numeric_limits<Slot>::max());
         if ((int)gblock.size() <= gen) gblock.resize(gen + 1);
         if (!slab_pool.empty()) {
             gblock[gen] = move(slab_pool.back());
             slab_pool.pop_back();
         }
-        gblock[gen].resize(sz);
+        vector<Action>& block = gblock[gen];
+        block.clear();
+        block.reserve(sz);
         cand.clear();
         cand.reserve(sz);
         for (int i = 0; i < sz; ++i) {
-            gblock[gen][i] = move(candidates.next_beam[i].action);
-            cand.push_back({candidates.next_beam[i].parent_leaf, candidates.next_beam[i].score, make_id(gen, i),
-                            candidates.next_beam[i].node_id});
+            block.emplace_back(move(candidates.next_beam[i].action));
+            cand.push_back({candidates.next_beam[i].parent_leaf, candidates.next_beam[i].score,
+                            (Slot)i, candidates.next_beam[i].node_id});
         }
     }
 
-    /// @brief ActionId の範囲を Action の列へ展開する
+    /// @brief 深さが既知のスロット列を Action 列へ展開する
     template<class It>
-    void materialize(vector<Action>& dst, It first, It last) {
-        for (It it = first; it != last; ++it) dst.push_back(act(*it));
+    void materialize(vector<Action>& dst, int depth, It first, It last) {
+        for (It it = first; it != last; ++it, ++depth) dst.push_back(act(depth, *it));
     }
 
     /// @brief 確定した接頭辞と未確定の trace から終了経路を構築する
     void build_best_path(int upto) {
         best_finished_path = result_prefix;
-        for (int k = freed_to + 1; k <= upto; ++k) best_finished_path.push_back(act(trace[k]));
+        for (int depth = freed_to + 1; depth <= upto; ++depth) {
+            best_finished_path.push_back(act(depth, trace[depth]));
+        }
     }
 
     /// @brief 探索状態をルートへ戻し、返却経路を適用した最終状態を構築する
     template<bool materialize_final_state>
     unique_ptr<State> build_final_state(State& state, const vector<Action>& result_actions, int current_depth) {
         if constexpr (materialize_final_state) {
-            for (int d = current_depth; d > freed_to; --d) {
-                state.rollback(act(trace[d]));
+            for (int depth = current_depth; depth > freed_to; --depth) {
+                state.rollback(act(depth, trace[depth]));
             }
             for (auto it = result_prefix.rbegin(); it != result_prefix.rend(); ++it) {
                 state.rollback(*it);
@@ -138,14 +135,14 @@ private:
         /// @brief 現在の枝刈り閾値を返す
         inline ScoreType threshold() const { return bs.candidates.threshold(); }
 
-        inline void operator()(Action &a) {
+        inline void operator()(Action &action) {
             ++bs.explored_per_turn;
-            ScoreType th = bs.candidates.threshold();
-            auto [score, hash, finished] = st.try_op(a, th);
+            ScoreType threshold = bs.candidates.threshold();
+            auto [score, hash, finished] = st.try_op(action, threshold);
             if (score >= INF) {
                 if constexpr (record_history) {
-                    bs.history.push_back({bs.node_id_counter++, parent_node_id, turn + 1,
-                                          score, hash, a.to_string(), st.get_state_info(), 2});
+                    bs.history.push_back({bs.node_id_counter++, parent_node_id, turn + 1, score, hash,
+                                          action.to_string(), st.get_state_info(), 2});
                 }
                 return;
             }
@@ -154,22 +151,22 @@ private:
                     bs.found_finished = true;
                     bs.best_finished_score = score;
                     bs.build_best_path(turn);
-                    bs.best_finished_path.push_back(a);
+                    bs.best_finished_path.push_back(action);
                 }
                 if constexpr (record_history) {
-                    bs.history.push_back({bs.node_id_counter++, parent_node_id, turn + 1,
-                                          score, hash, a.to_string(), st.get_state_info(), 0});
+                    bs.history.push_back({bs.node_id_counter++, parent_node_id, turn + 1, score, hash,
+                                          action.to_string(), st.get_state_info(), 0});
                 }
                 return;
             }
             if constexpr (record_history) {
-                int nidv = bs.node_id_counter++;
-                string as = a.to_string();
-                bool ok = bs.candidates.push(score, hash, parent_leaf, a, nidv);
-                bs.history.push_back({nidv, parent_node_id, turn + 1,
-                                      score, hash, move(as), st.get_state_info(), ok ? 0 : 1});
+                int node_id = bs.node_id_counter++;
+                string action_string = action.to_string();
+                bool accepted = bs.candidates.push_lazy(score, hash, parent_leaf, [&] { return action; }, node_id);
+                bs.history.push_back({node_id, parent_node_id, turn + 1, score, hash, move(action_string),
+                                      st.get_state_info(), accepted ? 0 : 1});
             } else {
-                bs.candidates.push(score, hash, parent_leaf, a);
+                bs.candidates.push_lazy(score, hash, parent_leaf, [&] { return action; });
             }
         }
     };
@@ -177,7 +174,6 @@ private:
     /// @brief 探索ごとの作業領域と記録を初期化する
     void init_bs() {
         beam_timer.reset();
-        rnd = titan23::Random();
         found_finished = false;
         best_finished_score = INF;
         best_finished_path.clear();
@@ -190,6 +186,7 @@ private:
         actions.clear();
         gblock.clear();
         slab_pool.clear();
+        logical_tour_size = 0;
         freed_to = 0;
         result_prefix.clear();
         explored_per_turn = 0;
@@ -219,15 +216,15 @@ private:
     /// @param dst_end 復元先となる親経路の終端
     template<class It>
     inline void copy_tour_path(int parent_leaf, int leaf_end, It dst_end) {
-        int prog = 0;
+        int progress = 0;
         for (int k = parent_leaf; k < leaf_end; ++k) {
-            int w0 = leaf[k];
-            int w1 = leaf[k + 1];
-            int rank = w1 - w0;
-            if (prog < rank) {
-                int copy_len = rank - prog;
-                copy(tour.begin() + w0, tour.begin() + w0 + copy_len, dst_end - rank);
-                prog = rank;
+            int begin = leaf[k];
+            int end = leaf[k + 1];
+            int rank = end - begin;
+            if (progress < rank) {
+                int copy_len = rank - progress;
+                copy(tour.begin() + begin, tour.begin() + begin + copy_len, dst_end - rank);
+                progress = rank;
             }
         }
     }
@@ -246,7 +243,7 @@ public:
         }
         init_bs();
         if (verbose) {
-            beam_log::start_banner(cerr, "BeamSearchWithTree (tour)", param);
+            beam_log::start_banner(cerr, "BeamSearchWithTree (tour optimized)", param);
             if (param.is_adjusting) beam_log::warn(cerr, "dynamic beam width is experimental");
         }
         State state;
@@ -254,12 +251,12 @@ public:
         trace.resize(param.max_turn + 1);
         int turns_done = 0;
 
-        int w = param.get_beam_width(param.max_turn, 0, param.time_limit);
-        candidates.reset(0, w, param.clear_hash_every_turn, param.hash_window_turns);
+        int width = param.get_beam_width(param.max_turn, 0, param.time_limit);
+        candidates.reset(0, width, true, param.hash_window_turns);
 
-        if constexpr (requires(Submitter &e) { state.enumerate_actions(0, DAMMY_ACTION, e); }) {
-            Submitter submit{*this, state, 0, -1, 0};
-            state.enumerate_actions(0, DAMMY_ACTION, submit);
+        if constexpr (requires(Submitter &submitter) { state.enumerate_actions(0, DAMMY_ACTION, submitter); }) {
+            Submitter submitter{*this, state, 0, -1, 0};
+            state.enumerate_actions(0, DAMMY_ACTION, submitter);
         } else {
             actions.clear();
             state.enumerate_actions(actions, 0, DAMMY_ACTION, candidates.threshold());
@@ -288,12 +285,13 @@ public:
                     }
                 } else {
                     if constexpr (record_history) {
-                        int nidv = node_id_counter++;
-                        string as = action.to_string();
-                        bool ok = candidates.push(score, hash, 0, move(action), nidv);
-                        history.push_back({nidv, -1, 1, score, hash, move(as), state.get_state_info(), ok ? 0 : 1});
+                        int node_id = node_id_counter++;
+                        string action_string = action.to_string();
+                        bool accepted = candidates.push_lazy(score, hash, 0, [&] { return move(action); }, node_id);
+                        history.push_back({node_id, -1, 1, score, hash, move(action_string), state.get_state_info(),
+                                           accepted ? 0 : 1});
                     } else {
-                        candidates.push(score, hash, 0, move(action));
+                        candidates.push_lazy(score, hash, 0, [&] { return move(action); });
                     }
                 }
             }
@@ -308,9 +306,12 @@ public:
                 beam_log::end_banner(cerr, "solution found", 1, param.max_turn, elapsed_ms, param.ave_width(),
                                      best_finished_score, true, (int)best_finished_path.size());
             }
-            unique_ptr<State> fs;
-            if constexpr (materialize_final_state) fs = build_final_state<true>(state, best_finished_path, 0);
-            return {move(best_finished_path), best_finished_score, 1, elapsed_ms, BeamStatus::Finished, move(fs)};
+            unique_ptr<State> final_state;
+            if constexpr (materialize_final_state) {
+                final_state = build_final_state<true>(state, best_finished_path, 0);
+            }
+            return {move(best_finished_path), best_finished_score, 1, elapsed_ms, BeamStatus::Finished,
+                    move(final_state)};
         }
 
         if (candidates.size() == 0) {
@@ -329,58 +330,64 @@ public:
 
             next_tour.clear();
             next_leaf.clear();
-            w = param.get_beam_width(param.max_turn - turn, cand.size(), param.time_limit - beam_timer.elapsed());
-            candidates.reset(turn, w, param.clear_hash_every_turn, param.hash_window_turns);
+            size_t omitted_prefix_size = 0;
+            width = param.get_beam_width(param.max_turn - turn, cand.size(), param.time_limit - now_time);
+            candidates.reset(turn, width, param.clear_hash_every_turn, param.hash_window_turns);
             explored_per_turn = 0;
 
-            int li = leaf.size() - 1;
-            int f = 0;
-            int max_lca_dist = 0;
+            int leaf_index = (int)leaf.size() - 1;
+            int after_first = 0;
+            int max_internal_lca_dist = 0;
 
-            if (!cand.empty()) {
-                trace[turn] = cand.back().action_id;
-            }
+            if (!cand.empty()) trace[turn] = cand.back().action_slot;
 
             for (int i = (int)cand.size() - 1; i >= 0; --i) {
-                const auto &c = cand[i];
+                const CandIdx &current = cand[i];
 
                 int lca_dist = 0;
-                int now_lca = leaf[li];
-                for (int k = li - 1; k >= c.parent_leaf; --k) {
-                    if (now_lca - leaf[k] > lca_dist) {
-                        lca_dist = now_lca - leaf[k];
-                    }
-                    now_lca = leaf[k];
+                int current_lca = leaf[leaf_index];
+                for (int k = leaf_index - 1; k >= current.parent_leaf; --k) {
+                    if (current_lca - leaf[k] > lca_dist) lca_dist = current_lca - leaf[k];
+                    current_lca = leaf[k];
                 }
-                if (lca_dist > max_lca_dist) max_lca_dist = lca_dist;
-
-                for (int k = 0; k < lca_dist + f; ++k) {
-                    state.rollback(act(trace[turn - 1 + f - k]));
+                if (after_first && lca_dist > max_internal_lca_dist) {
+                    max_internal_lca_dist = lca_dist;
                 }
 
-                next_tour.insert(next_tour.end(), trace.begin() + (turn - lca_dist), trace.begin() + (turn + 1));
-                f = 1;
-
-                trace[turn] = c.action_id;
-                copy_tour_path(c.parent_leaf, li, trace.begin() + turn);
-
-                for (int k = turn - lca_dist; k <= turn; ++k) {
-                    state.apply_op(act(trace[k]));
+                for (int k = 0; k < lca_dist + after_first; ++k) {
+                    int depth = turn - 1 + after_first - k;
+                    state.rollback(act(depth, trace[depth]));
                 }
 
-                int now_leaf_idx = next_leaf.size();
-                if constexpr (requires(Submitter &e) { state.enumerate_actions(turn, DAMMY_ACTION, e); }) {
-                    Submitter submit{*this, state, now_leaf_idx, c.node_id, turn};
-                    state.enumerate_actions(turn, act(c.action_id), submit);
+                if (!after_first) omitted_prefix_size = (size_t)lca_dist + 1;
+                if (after_first) {
+                    next_tour.insert(next_tour.end(), trace.begin() + (turn - lca_dist),
+                                     trace.begin() + (turn + 1));
+                }
+                after_first = 1;
+
+                trace[turn] = current.action_slot;
+                copy_tour_path(current.parent_leaf, leaf_index, trace.begin() + turn);
+
+                for (int depth = turn - lca_dist; depth <= turn; ++depth) {
+                    state.apply_op(act(depth, trace[depth]));
+                }
+
+                int current_leaf_index = (int)next_leaf.size();
+                if constexpr (requires(Submitter &submitter) {
+                                  state.enumerate_actions(turn, DAMMY_ACTION, submitter);
+                              }) {
+                    Submitter submitter{*this, state, current_leaf_index, current.node_id, turn};
+                    state.enumerate_actions(turn, act(turn, current.action_slot), submitter);
                 } else {
                     actions.clear();
-                    state.enumerate_actions(actions, turn, act(c.action_id), candidates.threshold());
+                    state.enumerate_actions(actions, turn, act(turn, current.action_slot), candidates.threshold());
                     explored_per_turn += (int)actions.size();
                     for (Action &action : actions) {
                         auto [score, hash, finished] = state.try_op(action, candidates.threshold());
                         if (score >= INF) {
                             if constexpr (record_history) {
-                                history.push_back({node_id_counter++, c.node_id, turn + 1, score, hash,
+                                history.push_back({node_id_counter++, current.node_id, turn + 1, score, hash,
                                                    action.to_string(), state.get_state_info(), 2});
                             }
                             continue;
@@ -391,29 +398,31 @@ public:
                                 best_finished_score = score;
                                 build_best_path(turn);
                                 if constexpr (record_history) {
-                                    history.push_back({node_id_counter++, c.node_id, turn + 1, score, hash,
+                                    history.push_back({node_id_counter++, current.node_id, turn + 1, score, hash,
                                                        action.to_string(), state.get_state_info(), 0});
                                 }
                                 best_finished_path.push_back(move(action));
                             } else if constexpr (record_history) {
-                                history.push_back({node_id_counter++, c.node_id, turn + 1, score, hash,
+                                history.push_back({node_id_counter++, current.node_id, turn + 1, score, hash,
                                                    action.to_string(), state.get_state_info(), 0});
                             }
                         } else {
                             if constexpr (record_history) {
-                                int nidv = node_id_counter++;
-                                string as = action.to_string();
-                                bool ok = candidates.push(score, hash, now_leaf_idx, move(action), nidv);
-                                history.push_back({nidv, c.node_id, turn + 1, score, hash,
-                                                   move(as), state.get_state_info(), ok ? 0 : 1});
+                                int node_id = node_id_counter++;
+                                string action_string = action.to_string();
+                                bool accepted = candidates.push_lazy(score, hash, current_leaf_index,
+                                                                     [&] { return move(action); }, node_id);
+                                history.push_back({node_id, current.node_id, turn + 1, score, hash,
+                                                   move(action_string), state.get_state_info(), accepted ? 0 : 1});
                             } else {
-                                candidates.push(score, hash, now_leaf_idx, move(action));
+                                candidates.push_lazy(score, hash, current_leaf_index,
+                                                     [&] { return move(action); });
                             }
                         }
                     }
                 }
-                next_leaf.push_back(next_tour.size());
-                li = c.parent_leaf;
+                next_leaf.push_back((int)next_tour.size());
+                leaf_index = current.parent_leaf;
             }
 
             if (found_finished) {
@@ -423,12 +432,15 @@ public:
                     beam_log::on_solution_found(cerr, turn + 1, best_finished_score);
                     beam_log::width_trace(cerr, param.width_hist);
                     beam_log::end_banner(cerr, "solution found", turn + 1, param.max_turn, elapsed_ms,
-                                         param.ave_width(), best_finished_score, true, (int)best_finished_path.size());
+                                         param.ave_width(), best_finished_score, true,
+                                         (int)best_finished_path.size());
                 }
-                unique_ptr<State> fs;
-                if constexpr (materialize_final_state) fs = build_final_state<true>(state, best_finished_path, turn);
+                unique_ptr<State> final_state;
+                if constexpr (materialize_final_state) {
+                    final_state = build_final_state<true>(state, best_finished_path, turn);
+                }
                 return {move(best_finished_path), best_finished_score, turn + 1, elapsed_ms,
-                        BeamStatus::Finished, move(fs)};
+                        BeamStatus::Finished, move(final_state)};
             }
 
             if (candidates.size() == 0) {
@@ -438,43 +450,48 @@ public:
             }
 
             if (verbose) {
-                BeamCandidate<ScoreType, Action> bests = candidates.get_best();
-                beam_log::turn_line(cerr, turn + 1, param.max_turn, now_time, w, (int)tour.size(),
-                                    (int)candidates.size(), explored_per_turn, bests.score);
+                BeamCandidate<ScoreType, Action> best = candidates.get_best();
+                beam_log::turn_line(cerr, turn + 1, param.max_turn, now_time, width,
+                                    (int)logical_tour_size, (int)candidates.size(), explored_per_turn, best.score);
             }
 
             if constexpr (record_history) record_turn_survivors(turn + 1);
 
-            confirm_and_free(turn - max_lca_dist);
+            if (cand.size() == 1) {
+                confirm_and_free(turn + 1);
+            } else {
+                confirm_and_free(turn - max_internal_lca_dist);
+            }
 
             swap(tour, next_tour);
             swap(leaf, next_leaf);
+            logical_tour_size = tour.size() + omitted_prefix_size;
 
             finalize_generation(turn + 1);
-            sort(cand.begin(), cand.end(), [](const CandIdx& a, const CandIdx& b) {
-                if (a.parent_leaf != b.parent_leaf) return a.parent_leaf < b.parent_leaf;
-                return a.score < b.score;
+            sort(cand.begin(), cand.end(), [](const CandIdx& left, const CandIdx& right) {
+                if (left.parent_leaf != right.parent_leaf) return left.parent_leaf < right.parent_leaf;
+                return left.score < right.score;
             });
 
-            param.timestamp(tour.size(), candidates.size(), beam_timer.elapsed() - now_time);
+            param.timestamp((int)logical_tour_size, candidates.size(), beam_timer.elapsed() - now_time);
             turns_done = turn + 1;
         }
 
-        int best_idx = -1;
+        int best_index = -1;
         ScoreType best_score = INF;
         for (int i = 0; i < (int)cand.size(); ++i) {
-            if (best_idx == -1 || cand[i].score < best_score) {
+            if (best_index == -1 || cand[i].score < best_score) {
                 best_score = cand[i].score;
-                best_idx = i;
+                best_index = i;
             }
         }
 
-        vector<ActionId> ridx(trace.begin() + 1, trace.begin() + param.max_turn);
-        copy_tour_path(cand[best_idx].parent_leaf, (int)leaf.size() - 1, ridx.end());
-        vector<Action> ret = result_prefix;
-        ret.reserve(result_prefix.size() + (ridx.size() - freed_to) + 1);
-        materialize(ret, ridx.begin() + freed_to, ridx.end());
-        ret.push_back(act(cand[best_idx].action_id));
+        vector<Slot> result_slots(trace.begin() + 1, trace.begin() + param.max_turn);
+        copy_tour_path(cand[best_index].parent_leaf, (int)leaf.size() - 1, result_slots.end());
+        vector<Action> result = result_prefix;
+        result.reserve(result_prefix.size() + (result_slots.size() - freed_to) + 1);
+        materialize(result, freed_to + 1, result_slots.begin() + freed_to, result_slots.end());
+        result.push_back(act(param.max_turn, cand[best_index].action_slot));
 
         double elapsed_ms = beam_timer.elapsed();
         if constexpr (record_history) dump_history_json(history_file, INF, history, snapshots);
@@ -482,11 +499,13 @@ public:
             beam_log::on_max_turn(cerr);
             beam_log::width_trace(cerr, param.width_hist);
             beam_log::end_banner(cerr, "max_turn reached", turns_done, param.max_turn, elapsed_ms,
-                                 param.ave_width(), best_score, true, (int)ret.size());
+                                 param.ave_width(), best_score, true, (int)result.size());
         }
-        unique_ptr<State> fs;
-        if constexpr (materialize_final_state) fs = build_final_state<true>(state, ret, param.max_turn - 1);
-        return {move(ret), best_score, turns_done, elapsed_ms, BeamStatus::MaxTurnReached, move(fs)};
+        unique_ptr<State> final_state;
+        if constexpr (materialize_final_state) {
+            final_state = build_final_state<true>(state, result, param.max_turn - 1);
+        }
+        return {move(result), best_score, turns_done, elapsed_ms, BeamStatus::MaxTurnReached, move(final_state)};
     }
 };
-} // namespace flying_squirrel
+}

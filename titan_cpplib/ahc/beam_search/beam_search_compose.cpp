@@ -66,10 +66,11 @@ private:
         return gblock[(size_t)(id >> SLOT_BITS)][(size_t)(id & SLOT_MASK)];
     }
 
-    /// @brief 合成済みの中間 Action と直前世代の葉を管理する
+    /// @brief 世代ブロック内で ghost となった Action を記録する
     /// ghost のスロットにある Action は参照せず、apply_op と rollback の対象にも含めない
     vector<vector<uint8_t>> gblock_ghost;
     vector<vector<uint8_t>> ghost_slab_pool;
+    /// @brief 直前世代の葉に対応する ActionId を保持する
     vector<ActionId> prev_leaf_action_ids;
 
     inline bool is_ghost(ActionId id) const {

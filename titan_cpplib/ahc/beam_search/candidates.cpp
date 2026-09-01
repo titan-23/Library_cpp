@@ -58,8 +58,7 @@ public:
     ScoreType threshold() const { return entry < beam_width ? INF : seg[1].first; }
 
     /// @brief 候補が採用された場合は true を返す
-    /// @param node_id 履歴記録用の ID
-    ///                候補の比較には使用しない
+    /// @param node_id 履歴記録用の ID で、候補の比較には使用しない
     bool push(ScoreType score, HashType hash, int parent_leaf, Action action, int node_id = -1) {
         if (is_built && score >= seg[1].first) {
             return false;
@@ -150,8 +149,7 @@ public:
     }
 
     /// @brief 次ターンに向けて候補を初期化する
-    /// @param hash_window_turns clear_hash が false のときにハッシュを破棄する間隔
-    ///                          0 なら破棄しない
+    /// @param hash_window_turns clear_hash が false のときにハッシュを破棄する間隔で、0 なら破棄しない
     void reset(int turn, int w, bool clear_hash, int hash_window_turns = 0) {
         beam_width = w;
         while (s < w) {
@@ -252,8 +250,7 @@ public:
 
     /// @brief ActionId 付きの候補を追加する
     /// @param aid 呼び出し側で確保した ActionId
-    /// @return slot が -1 なら棄却
-    ///         evicted_aid が BAD_ID_FLAT でなければ旧 ActionId が置き換えられている
+    /// @return 棄却時は slot が -1 で、置換時は evicted_aid に旧 ActionId を返す
     /// @note 棄却された aid と、置き換えられた evicted_aid は呼び出し側が解放する
     PushResult push(ScoreType score, HashType hash, int parent_leaf, ActionId aid, int node_id = -1) {
         if (is_built && score >= seg[1].first) {
@@ -298,8 +295,7 @@ public:
     }
 
     /// @brief 次ターンに向けて候補を初期化する
-    /// @param hash_window_turns clear_hash が false のときにハッシュを破棄する間隔
-    ///                          0 なら破棄しない
+    /// @param hash_window_turns clear_hash が false のときにハッシュを破棄する間隔で、0 なら破棄しない
     void reset(int turn, int w, bool clear_hash, int hash_window_turns = 0) {
         beam_width = w;
         while (s < w) {

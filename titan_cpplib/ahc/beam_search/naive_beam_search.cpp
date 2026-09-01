@@ -271,8 +271,7 @@ public:
         }
         ScoreType best_score = beam[best_idx].score;
         unique_ptr<State> fs;
-        if constexpr (materialize_final_state)
-            fs = make_final_state<true>(beam[best_idx].state, sol, (int)sol.size());
+        if constexpr (materialize_final_state) fs = make_final_state<true>(beam[best_idx].state, sol, (int)sol.size());
         return {move(sol), best_score, turns_done, elapsed_ms, BeamStatus::MaxTurnReached, move(fs)};
     }
 };

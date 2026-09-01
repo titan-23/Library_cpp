@@ -173,7 +173,7 @@ private:
         }
     }
 
-    /// @brief 根から DFS してすべての葉を展開する
+    /// @brief 根から DFS し、枝刈りされなかった葉を展開する
     /// 下り辺で apply_op、上り辺で rollback し、終了時は state を根に戻す
     void dfs_expand(State &state, int turn) {
         visited_leaves.clear();
@@ -359,8 +359,7 @@ public:
                     beam_log::on_solution_found(cerr, turn + 1, best_finished_score);
                     beam_log::width_trace(cerr, param.width_hist);
                     beam_log::end_banner(cerr, "solution found", turn + 1, param.max_turn, elapsed_ms,
-                                         param.ave_width(), best_finished_score, true,
-                                         (int)best_finished_path.size());
+                                         param.ave_width(), best_finished_score, true, (int)best_finished_path.size());
                 }
                 int prefix_size = (int)result_prefix.size();
                 unique_ptr<State> fs;

@@ -178,8 +178,7 @@ private:
 
         /// @brief 候補を登録し、生存フラグを更新する
         /// @return 登録先の添字 棄却した場合は -1
-        int push(ScoreType score, HashType hash, int par, ActionId aid, vector<uint8_t>& is_survived,
-                 int target_turn) {
+        int push(ScoreType score, HashType hash, int par, ActionId aid, vector<uint8_t>& is_survived, int target_turn) {
             if (is_built && score >= seg[1].first) {
                 return -1;
             }
@@ -392,8 +391,7 @@ private:
     void beam_log_threshold_check(int target_turn) const {
         beam_log::assert_check(0 <= target_turn && target_turn <= max_turn_global,
                                "0 <= target_turn && target_turn <= max_turn_global", __FILE__, __LINE__,
-                               "target_turn=" + to_string(target_turn) +
-                                   ", max_turn=" + to_string(max_turn_global));
+                               "target_turn=" + to_string(target_turn) + ", max_turn=" + to_string(max_turn_global));
     }
 #endif
 

@@ -6,6 +6,12 @@
 
 #if defined(TEST_TURN)
 #include "titan_cpplib/ahc/beam_search/beam_search_turn.cpp"
+#elif defined(TEST_OPTIMIZED)
+#include "titan_cpplib/ahc/beam_search/beam_search_optimized.cpp"
+#elif defined(TEST_PARENT)
+#include "titan_cpplib/ahc/beam_search/beam_search_parent.cpp"
+#elif defined(TEST_PARENT_COMPACT)
+#include "titan_cpplib/ahc/beam_search/beam_search_parent_compact.cpp"
 #elif defined(TEST_COMPOSE)
 #include "titan_cpplib/ahc/beam_search/beam_search_compose.cpp"
 #elif defined(TEST_RADIX)
