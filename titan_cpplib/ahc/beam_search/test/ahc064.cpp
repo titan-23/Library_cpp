@@ -13,7 +13,11 @@ template <class T, class U> T max(const T &t, const U &u) { return t < u ? u : t
 #include "titan_cpplib/alg/random.cpp"
 #include "titan_cpplib/others/print.cpp"
 
+#ifdef TURN_BEAM_AHC064_OPTIMIZED
+#include "titan_cpplib/ahc/beam_search/beam_search_turn_optimized.cpp"
+#else
 #include "titan_cpplib/ahc/beam_search/beam_search_turn.cpp"
+#endif
 
 constexpr const int N = 10;
 constexpr const int MAX_S = 15;
@@ -412,7 +416,13 @@ struct S {
 void solve() {
     beam_search::beam_init();
     auto param = beam_search::gen_param(40*100, 100, 1900, false, true);
-    auto result = beam_search::search<false>(param, true);
+    auto result = beam_search::search<false>(param,
+#ifdef TURN_BEAM_AHC064_QUIET
+                                             false
+#else
+                                             true
+#endif
+    );
     cerr << "resulit.size()=" << result.actions.size() << endl;
     vector<vector<S>> ans;
     int pre_turn = -1;
