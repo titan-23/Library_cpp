@@ -5,8 +5,8 @@
 2026-09-01 時点のコード監査と外部調査を記録する。特定の test を速くするための調整ではなく、型、ビーム幅、
 分岐数、重複率、木形状が異なる利用者へ適用できるライブラリ設計を対象とする。
 
-既存ソースの整理ではコメントと改行だけを変更し、`beam_search.cpp` の性能ロジックは基準実装として残す。
-高速化は同じ外部 interface の新しい backend へ分離し、固定幅の差分試験と合成ベンチマークで検証する。
+調査時は旧 `beam_search.cpp` を基準として高速化を別backendへ実装し、固定幅の差分試験と合成benchmarkで検証した。
+2026-09-02に高速化版を標準の `beam_search.cpp` へ昇格し、旧実装は差分試験用baselineへ移した。
 
 ## 読む順序
 
@@ -21,7 +21,7 @@
 9. [parallel_and_batch.md](./parallel_and_batch.md): CPU 並列、BatchState、GPU、multi-start
 10. [literature.md](./literature.md): 外部一次資料と現行コードへの適用条件
 11. [benchmark_plan.md](./benchmark_plan.md): 汎用性と探索結果を保つための測定計画
-12. [benchmark_results.md](./benchmark_results.md): 通常版、optimized版、2種類のdirect parent版の実測
+12. [benchmark_results.md](./benchmark_results.md): 旧基準版、現行標準版、2種類のdirect parent版の実測
 13. [constant_factor_microbench_results.md](./constant_factor_microbench_results.md): Actionとtimerの独立測定
 14. [topology_microbench_results.md](./topology_microbench_results.md): postorderとparentのbuild、decode分離測定
 15. [parent_implementation_audit.md](./parent_implementation_audit.md): direct parent実装の独立監査
@@ -38,9 +38,9 @@
 ## 実装と検証の入口
 
 - [beam_search.cpp](../../titan_cpplib/ahc/beam_search/beam_search.cpp)
-  64 bit ActionIdを使う比較基準
-- [beam_search_optimized.cpp](../../titan_cpplib/ahc/beam_search/beam_search_optimized.cpp)
-  先頭prefix除去、32 bit slot、prefix確定、Action保存、timerの改善版
+  先頭prefix除去、32 bit slot、prefix確定、Action保存、timer改善を含む現行標準版
+- [beam_search_baseline.cpp](../../test/ahc/beam_search_baseline.cpp)
+  64 bit ActionIdを使う差分試験用の旧基準版
 - [beam_search_parent.cpp](../../titan_cpplib/ahc/beam_search/beam_search_parent.cpp)
   独立 `frontier_slot` を持つdirect parent correctness oracle
 - [beam_search_parent_compact.cpp](../../titan_cpplib/ahc/beam_search/beam_search_parent_compact.cpp)
@@ -52,7 +52,8 @@
 - [topology_microbench.cpp](./topology_microbench.cpp): metadata buildとsuffix decodeだけを分離するdriver
 - [run_topology_microbench.sh](./run_topology_microbench.sh): topology kernelの再現script
 
-`benchmark_results.md` の実測値を使う場合は、記載されたsource hashと手元の実装が一致することを確認する。
+`benchmark_results.md` のsource hashは昇格前の計測snapshotを示す。昇格では性能ロジックを変えず、配置と公開名を
+変更した。性能計測は取り直していない。
 
 ## 現時点の要約
 
@@ -70,7 +71,7 @@
 
 ## Backend 選択の入口
 
-- 標準 `tour` 版を汎用の逐次基準とし、optimized、parent oracle、parent compactを比較backendとして測る。
+- 現行標準版を通常利用し、旧baseline、parent oracle、parent compactを検証・比較用backendとして残す。
 - State copy が小さく、apply/rollback が相対的に高価なら naive 版も候補にする。型サイズだけでは自動選択しない。
 - 単一子が多く `compose()` が安価なら Compose / Radix を比較する。連続配置と物理縮約の損益は実測で決める。
 - 可変ターンは dense 平坦木を基準とし、`K << L` かつ `Q/K` や `R/K` が大きい場合だけ sparse 版を試す。

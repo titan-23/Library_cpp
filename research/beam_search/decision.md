@@ -5,12 +5,15 @@
 対象は `titan_cpplib/ahc/beam_search/beam_search.cpp` と同じ固定深さ、単一 `State`、辺単位の
 `apply_op()` / `rollback()` 契約である。`beam_search_state.cpp`、`beam_search_state_turn.cpp`、`old/` は対象外とする。
 
+調査時の旧 `beam_search.cpp` は2026-09-02に `test/ahc/beam_search_baseline.cpp` へ移し、定数倍改善版を
+現行の `beam_search.cpp` へ昇格した。以下で旧実装を扱う箇所は調査時点の基準版を指す。
+
 調査は次の二系統へ分ける。
 
 1. 現在の帰りがけ順方式を保った定数倍改善
 2. 帰りがけ順を毎世代再構築しない新しい履歴構造
 
-現在の `beam_search.cpp` は明示木や完全 Euler tour ではなく、既に traP の記事にある帰りがけ順方式である。
+調査時の旧基準版も現行標準版も、明示木や完全 Euler tourではなくtraPの記事にある帰りがけ順方式である。
 従って、比較対象は「明示木に LCA を足すこと」ではなく、帰りがけ順より後の表現である。
 
 ## 現時点の判断
@@ -68,7 +71,7 @@ active trie の各辺 handle を1回ずつ持つ reverse front coding になる�
 初回 prefixは `[0, leaf[0])` の全要素が到達不能である。最初の葉では何も出力せず `next_leaf[0]=0` とすれば、
 全ての境界差と後続segmentは変わらない。`W=1` では tourが空になるのが正しい。
 
-現在の64 bit `ActionId` は generationを上位bitへ持つが、tour内のhandleを解釈する論理深さは常に分かる。
+旧基準版の64 bit `ActionId` は generationを上位bitへ持つが、tour内のhandleを解釈する論理深さは常に分かる。
 従って `uint32_t slot` と深さから `gblock[depth][slot]` を引ける。これは構造を変えず、依存loadも増やさない。
 
 prefix確定では、世代開始 endpointから最初のcurrent葉へのentry jumpを、展開後frontierの共通prefixへ含める
@@ -83,10 +86,10 @@ survivor parentだけへの遅延 tour構築は低リスク案ではない。世
 timerは世代全体を1 readにするのではなく、loop開始直後の値を残時間計算にも使い、通常経路を3 readから2 readへ減らす。
 動的幅では観測時刻が変わるため、固定幅の完全同値と記録済み幅列のreplayを先に検証する。
 
-### 実装済みのoptimized backend
+### 現行標準版へ昇格した定数倍改善
 
-`beam_search_optimized.cpp` を新設し、外部 interfaceを現在の `BeamSearchWithTree` と合わせる。既存
-`beam_search.cpp` は比較基準として残す。
+調査中は `beam_search_optimized.cpp` として別実装し、外部interfaceを `BeamSearchWithTree` に合わせた。
+検証後はこの実装を標準の `beam_search.cpp` へ昇格し、旧実装をtest用baselineとして残した。
 
 相互作用が小さく正しさを確認できた次を実装した。
 
@@ -208,14 +211,14 @@ frontier_slot[j] = cand[C-1-j].action_slot
 
 ### 4 backend実測後の判断
 
-CPU 0固定、warmup 2、7反復の15ケースでは、optimized版は基準版に対して0.661倍から0.995倍だった。
-一方、parent oracleとparent compactはoptimized版に対して多くのケースで遅く、3%を超えて短かったのは
+CPU 0固定、warmup 2、7反復の15ケースでは、現行標準版は旧基準版に対して0.661倍から0.995倍だった。
+一方、parent oracleとparent compactは現行標準版に対して多くのケースで遅く、3%を超えて短かったのは
 compact版の親入替ケースだけだった。compact/oracleは0.959倍から1.013倍で、独立frontier metadataの削除による
 汎用的なCPU時間短縮は確認できなかった。
 
-従って、今回の測定範囲ではoptimized版を通常版の有力な後継候補とし、2種類のparent版は構造比較と
-特定の木形状をprofileするためのbackendとして残す。これは1台、1 compiler、合成15ケースの結果であり、
-optimized版を全環境で最速とする主張ではない。3%未満または1 ms未満の差は勝敗判定に使わない。
+従って、今回の測定範囲では現行標準版を通常利用し、2種類のparent版は構造比較と特定の木形状をprofileするための
+backendとして残す。これは1台、1 compiler、合成15ケースの結果であり、現行標準版を全環境で最速とする主張ではない。
+3%未満または1 ms未満の差は勝敗判定に使わない。
 詳細値は `benchmark_results.md`、topology kernelの分離測定は `topology_microbench_results.md` を参照する。
 
 ## 無条件に新構造へ置換しない理由
@@ -308,8 +311,8 @@ StateとActionのサイズ、操作cost、重複率、候補採用比も独立�
 1. `parent_backend_model.py` の順序、LCP、prefix、親表現、State walk検証は完了
 2. `cost_model.py` の `W=1`、`P=1`、`P=W`、`G>>E_live` のbyte再計算は完了
 3. State操作counterと同値性digestは実装済み
-4. `beam_search_optimized.cpp` は実装済み
-5. 64 bit currentと32 bit optimizedの初回比較は完了
+4. 32 bit slot版は実装済みで、現在は標準の `beam_search.cpp`
+5. 64 bit baselineと32 bit標準版の初回比較は完了
 6. `beam_search_parent.cpp` の独立frontier付きdirect parent版は実装済み
 7. 3方式の初回合成benchmarkは完了
 8. `beam_search_parent_compact.cpp` のcand導出版は実装済み

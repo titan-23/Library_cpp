@@ -13,13 +13,16 @@
 この文書では、測定済みの事実とコードからの推論を区別する。本文のコード監査を先に固定し、その後の実装と
 実測を追記する。
 
+本文の `beam_search.cpp` の行単位監査は昇格前の旧基準版を指す。現在は定数倍改善版が標準の
+`beam_search.cpp` で、旧版は `test/ahc/beam_search_baseline.cpp` に保存する。
+
 ## 実装後の状態
 
-- 通常版を保つ定数倍改善は `beam_search_optimized.cpp` へ実装済み
+- 通常版を保つ定数倍改善は現行の `beam_search.cpp` へ昇格済み
 - direct parent oracleは `beam_search_parent.cpp` へ実装済み
 - frontierをcandから導出するdirect parent版は `beam_search_parent_compact.cpp` へ実装済み
 - 4 backendの差分試験、sanitizer、構造modelを実行済み
-- 最終実測ではoptimized版が15ケースすべてで基準版以下、parent版は一律には勝たなかった
+- 最終実測では現行標準版が15ケースすべてで旧基準版以下、parent版は一律には勝たなかった
 - 詳細値と測定限界は `benchmark_results.md`、個別kernelは `constant_factor_microbench_results.md` を正本とする
 
 ## 結論概要
@@ -160,7 +163,7 @@ Radix 版は明示ノードを持ち、単一子の内部ノードを `Action::c
 
 ## 既に確認できた優先候補
 
-以下は候補パイプライン全体に残る仮説である。optimized版へ実装済みの項目は個別に明記する。
+以下は候補パイプライン全体に残る仮説である。現行標準版へ実装済みの項目は個別に明記する。
 
 ### P0: 候補ハッシュ表の増大を `O(W)` に抑える
 
@@ -194,7 +197,7 @@ Action arena が一度 `A` まで増える問題を直さない。最終案で�
 コールバック形式では、標準版と Compose 版が `Candidates::push()` に Action を値渡しする。このコピーは
 関数内の閾値判定やハッシュ重複判定より前に起こる。Radix 版は既に `push_lazy()` を使っている。
 
-標準optimized版は採用時だけActionを保存する経路へ変更済みで、独立kernelでも棄却率が高い領域の効果を確認した。
+現行標準版は採用時だけActionを保存する経路へ変更済みで、独立kernelでも棄却率が高い領域の効果を確認した。
 Compose版への適用と、候補から世代blockへの二段ownership除去は未実装である。
 
 ### P0: 可変ターン版の候補プール容量を実 occupancy に合わせる
@@ -305,7 +308,7 @@ Radix 版の `monotone_skip` はこの性質を部分木へ使っている。標
 
 ## 今後の実測と実装
 
-通常optimized版とdirect parent版の初回実装・実測は完了した。次は
+現行標準版とdirect parent版の初回実装・実測は完了した。次は
 [汎用合成ベンチマーク計画](./benchmark_plan.md) に従い、候補集合と順序を保存する変更を一つずつ測る。特に
 `A/W`、`K/L`、`R/K`、`R/Q`、Action size、State costを直交させ、単一の問題やtestに最適化しない。
 

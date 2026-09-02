@@ -2,12 +2,12 @@
 
 ## 先に結論
 
-`beam_search.cpp` は、明示木を持つ従来版ではなく、traP の記事で説明されている帰りがけ順の
+調査時の旧 `beam_search.cpp` は、明示木を持つ従来版ではなく、traP の記事で説明されている帰りがけ順の
 `tour`、`leaf`、`trace` を使う高速化後の方式である。
 
-本稿の設計後、`beam_search_optimized.cpp`、`beam_search_parent.cpp`、
-`beam_search_parent_compact.cpp` を別backendとして実装した。実測は `benchmark_results.md`、
-実装監査は `parent_implementation_audit.md` と `research_synthesis_audit.md` を参照する。
+本稿の設計後に定数倍改善版と2種類のparent版を別backendとして実装した。定数倍改善版は検証後に標準の
+`beam_search.cpp` へ昇格し、旧版は `test/ahc/beam_search_baseline.cpp` へ移した。実測は
+`benchmark_results.md`、実装監査は `parent_implementation_audit.md` と `research_synthesis_audit.md` を参照する。
 
 - [差分更新ビームサーチライブラリの実装](https://eijirou-kyopro.hatenablog.com/entry/2024/02/01/115639)
 - [木上のビームサーチ：高速化編](https://trap.jp/post/2920/)

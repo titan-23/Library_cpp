@@ -13,9 +13,9 @@
 #include <vector>
 
 #if defined(BEAM_BENCH_BASELINE)
+#include "test/ahc/beam_search_baseline.cpp"
+#elif defined(BEAM_BENCH_STANDARD)
 #include "titan_cpplib/ahc/beam_search/beam_search.cpp"
-#elif defined(BEAM_BENCH_OPTIMIZED)
-#include "titan_cpplib/ahc/beam_search/beam_search_optimized.cpp"
 #elif defined(BEAM_BENCH_PARENT)
 #include "titan_cpplib/ahc/beam_search/beam_search_parent.cpp"
 #elif defined(BEAM_BENCH_PARENT_COMPACT)
@@ -429,8 +429,8 @@ string topology_name(Topology topology) {
 string backend_name() {
 #if defined(BEAM_BENCH_BASELINE)
     return "baseline";
-#elif defined(BEAM_BENCH_OPTIMIZED)
-    return "optimized";
+#elif defined(BEAM_BENCH_STANDARD)
+    return "standard";
 #elif defined(BEAM_BENCH_PARENT)
     return "parent_oracle";
 #else

@@ -2,13 +2,13 @@
 
 ## 対象と結論
 
-対象は `titan_cpplib/ahc/beam_search/beam_search.cpp` のみとする
+対象は調査時の旧 `beam_search.cpp` とし、現在は `test/ahc/beam_search_baseline.cpp` に保存する
 
 `beam_search_state.cpp`、`beam_search_state_turn.cpp`、`old/` は対象外とする
 
 ここでの store 数と byte 数はコードから求めた設計時の値である
 
-このgateに基づくcombined版は `beam_search_optimized.cpp` へ実装済みで、個別kernelとend-to-end結果は
+このgateに基づくcombined版は現行の `beam_search.cpp` へ昇格済みで、個別kernelとend-to-end結果は
 `constant_factor_microbench_results.md` と `benchmark_results.md` に記録した
 
 第一の optimized backend へ入れる項目は次とする

@@ -6,8 +6,8 @@
 
 #if defined(TEST_TURN)
 #include "titan_cpplib/ahc/beam_search/beam_search_turn.cpp"
-#elif defined(TEST_OPTIMIZED)
-#include "titan_cpplib/ahc/beam_search/beam_search_optimized.cpp"
+#elif defined(TEST_BASELINE)
+#include "test/ahc/beam_search_baseline.cpp"
 #elif defined(TEST_PARENT)
 #include "titan_cpplib/ahc/beam_search/beam_search_parent.cpp"
 #elif defined(TEST_PARENT_COMPACT)

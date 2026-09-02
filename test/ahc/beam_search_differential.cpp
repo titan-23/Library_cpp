@@ -13,14 +13,16 @@
 #include <utility>
 #include <vector>
 
-#if defined(TEST_BEAM_OPTIMIZED)
-#include "titan_cpplib/ahc/beam_search/beam_search_optimized.cpp"
+#if defined(TEST_BEAM_BASELINE)
+#include "test/ahc/beam_search_baseline.cpp"
+#elif defined(TEST_BEAM_STANDARD)
+#include "titan_cpplib/ahc/beam_search/beam_search.cpp"
 #elif defined(TEST_BEAM_PARENT_COMPACT)
 #include "titan_cpplib/ahc/beam_search/beam_search_parent_compact.cpp"
 #elif defined(TEST_BEAM_PARENT)
 #include "titan_cpplib/ahc/beam_search/beam_search_parent.cpp"
 #else
-#include "titan_cpplib/ahc/beam_search/beam_search.cpp"
+#error Define one TEST_BEAM backend macro
 #endif
 
 using namespace std;
@@ -592,7 +594,7 @@ void run_reused_mode(TestedBeam<use_callback, false> &beam, const Scenario &scen
     print_outcome<false>(scenario, outcome, mode);
 }
 
-#if defined(TEST_BEAM_OPTIMIZED) || defined(TEST_BEAM_PARENT) || defined(TEST_BEAM_PARENT_COMPACT)
+#if defined(TEST_BEAM_STANDARD) || defined(TEST_BEAM_PARENT) || defined(TEST_BEAM_PARENT_COMPACT)
 template<bool use_callback>
 void verify_search_reuse_clears_hash(const filesystem::path &history_directory, int &run_index) {
     ScenarioBuilder builder("reused_clear_hash_false", 1, 3);
@@ -858,7 +860,7 @@ int main(int argc, char **argv) {
             run_reused_mode<false, true>(beam, hand_cases.back(), history_directory, run_index,
                                          "reused_vector_state_3");
         }
-#if defined(TEST_BEAM_OPTIMIZED) || defined(TEST_BEAM_PARENT) || defined(TEST_BEAM_PARENT_COMPACT)
+#if defined(TEST_BEAM_STANDARD) || defined(TEST_BEAM_PARENT) || defined(TEST_BEAM_PARENT_COMPACT)
         verify_search_reuse_clears_hash<true>(history_directory, run_index);
         verify_search_reuse_clears_hash<false>(history_directory, run_index);
 #endif

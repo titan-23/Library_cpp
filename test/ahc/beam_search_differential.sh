@@ -16,7 +16,7 @@ source_file="$script_dir/beam_search_differential.cpp"
 random_cases="${BEAM_RANDOM_CASES:-120}"
 
 "$cxx" "${common[@]}" -DTEST_BEAM_BASELINE "$source_file" -o "$work_dir/baseline.bin"
-"$cxx" "${common[@]}" -DTEST_BEAM_OPTIMIZED "$source_file" -o "$work_dir/optimized.bin"
+"$cxx" "${common[@]}" -DTEST_BEAM_STANDARD "$source_file" -o "$work_dir/standard.bin"
 "$cxx" "${common[@]}" -DTEST_BEAM_PARENT "$source_file" -o "$work_dir/parent.bin"
 "$cxx" "${common[@]}" -DTEST_BEAM_PARENT_COMPACT "$source_file" -o "$work_dir/parent_compact.bin"
 
@@ -32,11 +32,11 @@ run_backend() {
 }
 
 run_backend baseline
-run_backend optimized
+run_backend standard
 run_backend parent
 run_backend parent_compact
 
-diff -u "$work_dir/baseline.out" "$work_dir/optimized.out"
+diff -u "$work_dir/baseline.out" "$work_dir/standard.out"
 diff -u "$work_dir/baseline.out" "$work_dir/parent.out"
 diff -u "$work_dir/baseline.out" "$work_dir/parent_compact.out"
 echo "beam_search differential test passed"
