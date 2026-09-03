@@ -16,9 +16,9 @@ namespace titan23 {
 template<typename W>
 class BTreeBitVectorSum {
 private:
-    static constexpr int _LEAF_CAP = 8;
+    static constexpr int _LEAF_CAP = 16;
     static constexpr int _LEAF_MIN = _LEAF_CAP / 2;
-    static constexpr int _BRANCH = 12;
+    static constexpr int _BRANCH = 16;
     static constexpr int _BRANCH_MIN = _BRANCH / 2;
     static constexpr int _MAX_HEIGHT = 16;
 
@@ -236,7 +236,8 @@ private:
         }
     }
 
-    void _add_path(const array<int, _MAX_HEIGHT> &path, const array<int, _MAX_HEIGHT> &slots, const int depth, const Stats &delta) {
+    void _add_path(const array<int, _MAX_HEIGHT>& path, const array<int, _MAX_HEIGHT>& slots,
+                   const int depth, const Stats& delta) {
         for (int i = 0; i < depth; ++i) {
             Internal &node = _internals[path[i]];
             for (int j = slots[i]; j < node.count; ++j) {
@@ -248,7 +249,19 @@ private:
         }
     }
 
-    void _sync_path(const array<int, _MAX_HEIGHT> &path, const array<int, _MAX_HEIGHT> &slots, const int depth, int child, int child_level) {
+    void _add_weight_path(const array<int, _MAX_HEIGHT>& path, const array<int, _MAX_HEIGHT>& slots,
+                          const int depth, const W delta, const bool bit) {
+        for (int i = 0; i < depth; ++i) {
+            Internal& node = _internals[path[i]];
+            for (int j = slots[i]; j < node.count; ++j) {
+                node.child_sum[j] += delta;
+                if (bit) node.child_sum1[j] += delta;
+            }
+        }
+    }
+
+    void _sync_path(const array<int, _MAX_HEIGHT>& path, const array<int, _MAX_HEIGHT>& slots,
+                    const int depth, int child, int child_level) {
         for (int i = depth - 1; i >= 0; --i) {
             _set_child(path[i], slots[i], child, child_level);
             child = path[i];
@@ -317,7 +330,9 @@ private:
         return right;
     }
 
-    void _propagate_split(Sequence &sequence, const array<int, _MAX_HEIGHT> &path, const array<int, _MAX_HEIGHT> &slots, int depth, int left, int right, int child_level) {
+    void _propagate_split(Sequence& sequence, const array<int, _MAX_HEIGHT>& path,
+                          const array<int, _MAX_HEIGHT>& slots, int depth, int left, int right,
+                          int child_level) {
         while (depth > 0) {
             --depth;
             int parent = path[depth];
@@ -413,7 +428,8 @@ private:
         left_node.count += right_node.count;
     }
 
-    void _rebalance_internal(Sequence &sequence, const array<int, _MAX_HEIGHT> &path, const array<int, _MAX_HEIGHT> &slots, const int node_depth, const int level) {
+    void _rebalance_internal(Sequence& sequence, const array<int, _MAX_HEIGHT>& path,
+                             const array<int, _MAX_HEIGHT>& slots, const int node_depth, const int level) {
         int node = path[node_depth];
         if (node_depth == 0) {
             int count = _internals[node].count;
@@ -468,7 +484,8 @@ private:
         _rebalance_internal(sequence, path, slots, node_depth - 1, level + 1);
     }
 
-    void _rebalance_leaf(Sequence &sequence, const array<int, _MAX_HEIGHT> &path, const array<int, _MAX_HEIGHT> &slots, const int depth, const int leaf) {
+    void _rebalance_leaf(Sequence& sequence, const array<int, _MAX_HEIGHT>& path,
+                         const array<int, _MAX_HEIGHT>& slots, const int depth, const int leaf) {
         if (depth == 0) {
             if (_leaves[leaf].count == 0) {
                 _release_leaf(leaf);
@@ -545,6 +562,25 @@ private:
         return result;
     }
 
+    int _ones_node(int node, int level, int take) const {
+        if (take == 0) return 0;
+        if (level == 0) return popcount(_leaves[node].bits & _mask(take));
+        const Internal& root = _internals[node];
+        if (take == root.child_size[root.count - 1]) return root.child_ones[root.count - 1];
+        int ans = 0;
+        while (level > 0) {
+            const Internal& n = _internals[node];
+            int pos = 0;
+            while (take > n.child_size[pos]) ++pos;
+            if (take == n.child_size[pos]) return ans + n.child_ones[pos];
+            ans += _ones_before(n, pos);
+            take -= _size_before(n, pos);
+            node = n.child[pos];
+            --level;
+        }
+        return ans + popcount(_leaves[node].bits & _mask(take));
+    }
+
     pair<Prefix, Prefix> _prefix_pair(const Sequence &sequence, int l, int r) const {
         if (l == r) {
             const Prefix result = _prefix_node(sequence.root, sequence.height, l);
@@ -579,6 +615,44 @@ private:
         left_result += _leaf_prefix(node, l);
         right_result += _leaf_prefix(node, r);
         return {left_result, right_result};
+    }
+
+    pair<int, int> _ones_pair(const Sequence& seq, int l, int r) const {
+        if (l == r) {
+            int one = _ones_node(seq.root, seq.height, l);
+            return {one, one};
+        }
+        if (seq.height == 0) {
+            const Leaf& leaf = _leaves[seq.root];
+            return {popcount(leaf.bits & _mask(l)), popcount(leaf.bits & _mask(r))};
+        }
+        int lo = 0;
+        int ro = 0;
+        int node = seq.root;
+        int level = seq.height;
+        while (level > 0) {
+            const Internal& n = _internals[node];
+            int lp = 0;
+            while (l > n.child_size[lp]) ++lp;
+            int rp = lp;
+            while (r > n.child_size[rp]) ++rp;
+            int ls = _size_before(n, lp);
+            int rs = _size_before(n, rp);
+            if (lp != rp) {
+                lo += _ones_before(n, lp) + _ones_node(n.child[lp], level - 1, l - ls);
+                ro += _ones_before(n, rp) + _ones_node(n.child[rp], level - 1, r - rs);
+                return {lo, ro};
+            }
+            int before = _ones_before(n, lp);
+            lo += before;
+            ro += before;
+            l -= ls;
+            r -= rs;
+            node = n.child[lp];
+            --level;
+        }
+        const Leaf& leaf = _leaves[node];
+        return {lo + popcount(leaf.bits & _mask(l)), ro + popcount(leaf.bits & _mask(r))};
     }
 
     int _branch_count(const Stats &stats, const bool bit) const { return bit ? stats.ones : stats.size - stats.ones; }
@@ -624,7 +698,8 @@ private:
     }
 
     template<class Pred>
-    bool _consume_pred(int node, const int level, int l, int r, const bool bit, W &aggregate, int &count, Pred &pred) const {
+    bool _consume_pred(int node, const int level, int l, int r, const bool bit, W& aggregate, int& count,
+                       Pred& pred) const {
         const Stats all = _stats(node, level);
         if (l == 0 && r == all.size) {
             W next = aggregate + _branch_sum(all, bit);
@@ -681,10 +756,27 @@ public:
         _internals.reserve(_internals.size() + total_size / (_LEAF_CAP * _BRANCH_MIN) + sequence_count / 32 + 1);
     }
 
-    Sequence build(const vector<uint8_t> &bits, const vector<int> &order, const vector<W> &weights, int start, int end) {
+    Sequence build(const vector<uint8_t>& bits, const vector<int>& order, const vector<W>& weights,
+                   int start, int end) {
         Sequence sequence;
         int n = end - start;
         if (n == 0) return sequence;
+
+        if (n <= _LEAF_CAP) {
+            int leaf = _make_leaf();
+            Leaf& node = _leaves[leaf];
+            for (int i = 0; i < n; ++i) {
+                bool bit = bits[start + i];
+                W weight = weights[order[start + i]];
+                node.weight[i] = weight;
+                node.bits |= static_cast<uint16_t>(bit) << i;
+                node.sum += weight;
+                if (bit) node.sum1 += weight;
+            }
+            node.count = n;
+            sequence.root = leaf;
+            return sequence;
+        }
 
         int leaf_count = (n + _LEAF_CAP - 1) / _LEAF_CAP;
         vector<int> nodes;
@@ -696,12 +788,15 @@ public:
             int leaf = _make_leaf();
             Leaf &node = _leaves[leaf];
             for (int j = 0; j < take; ++j) {
-                node.weight[j] = weights[order[index]];
-                node.bits |= static_cast<uint16_t>(bits[index]) << j;
+                bool bit = bits[index];
+                W weight = weights[order[index]];
+                node.weight[j] = weight;
+                node.bits |= static_cast<uint16_t>(bit) << j;
+                node.sum += weight;
+                if (bit) node.sum1 += weight;
                 ++index;
             }
             node.count = take;
-            _pull_leaf(leaf);
             nodes.emplace_back(leaf);
             remaining -= take;
         }
@@ -730,11 +825,15 @@ public:
         return sequence;
     }
 
-    int len(const Sequence &sequence) const { return sequence.root == 0 ? 0 : _stats(sequence.root, sequence.height).size; }
+    int len(const Sequence& sequence) const {
+        return sequence.root == 0 ? 0 : _stats(sequence.root, sequence.height).size;
+    }
 
     bool empty(const Sequence &sequence) const { return sequence.root == 0; }
 
-    W all_sum(const Sequence &sequence) const { return sequence.root == 0 ? W(0) : _stats(sequence.root, sequence.height).sum; }
+    W all_sum(const Sequence& sequence) const {
+        return sequence.root == 0 ? W(0) : _stats(sequence.root, sequence.height).sum;
+    }
 
     RangeData range_data(const Sequence &sequence, const int l, const int r) const {
         assert(sequence.root != 0);
@@ -743,6 +842,19 @@ public:
         W sum = right.sum - left.sum;
         W sum1 = right.sum1 - left.sum1;
         return {l - left.ones, r - right.ones, sum - sum1, sum1};
+    }
+
+    int rank0(const Sequence& seq, const int r) const {
+        assert(seq.root != 0);
+        assert(0 <= r && r <= len(seq));
+        return r - _ones_node(seq.root, seq.height, r);
+    }
+
+    pair<int, int> rank0_pair(const Sequence& seq, const int l, const int r) const {
+        assert(seq.root != 0);
+        assert(0 <= l && l <= r && r <= len(seq));
+        auto [lo, ro] = _ones_pair(seq, l, r);
+        return {l - lo, r - ro};
     }
 
     AccessData access(const Sequence &sequence, int k) const {
@@ -762,6 +874,40 @@ public:
         const Leaf &leaf = _leaves[node];
         rank1 += popcount(leaf.bits & _mask(k));
         return {_bit_at(leaf, k), rank1, leaf.weight[k]};
+    }
+
+    pair<bool, int> access_bit(const Sequence& seq, int k) const {
+        assert(0 <= k && k < len(seq));
+        int node = seq.root;
+        int level = seq.height;
+        int rank1 = 0;
+        while (level > 0) {
+            const Internal& n = _internals[node];
+            int pos = 0;
+            while (k >= n.child_size[pos]) ++pos;
+            rank1 += _ones_before(n, pos);
+            k -= _size_before(n, pos);
+            node = n.child[pos];
+            --level;
+        }
+        const Leaf& leaf = _leaves[node];
+        rank1 += popcount(leaf.bits & _mask(k));
+        return {_bit_at(leaf, k), rank1};
+    }
+
+    W access_weight(const Sequence& seq, int k) const {
+        assert(0 <= k && k < len(seq));
+        int node = seq.root;
+        int level = seq.height;
+        while (level > 0) {
+            const Internal& n = _internals[node];
+            int pos = 0;
+            while (k >= n.child_size[pos]) ++pos;
+            k -= _size_before(n, pos);
+            node = n.child[pos];
+            --level;
+        }
+        return _leaves[node].weight[k];
     }
 
     int insert(Sequence &sequence, int k, const bool bit, const W weight) {
@@ -872,8 +1018,42 @@ public:
         leaf.weight[k] = weight;
         leaf.sum += weight - old_weight;
         leaf.sum1 += (bit ? weight : W(0)) - (old_bit ? old_weight : W(0));
-        _add_path(path, slots, depth, {0, static_cast<int>(bit) - static_cast<int>(old_bit), weight - old_weight, (bit ? weight : W(0)) - (old_bit ? old_weight : W(0))});
+        _add_path(path, slots, depth,
+                  {0, static_cast<int>(bit) - static_cast<int>(old_bit), weight - old_weight,
+                   (bit ? weight : W(0)) - (old_bit ? old_weight : W(0))});
         return {old_bit, rank1, old_weight};
+    }
+
+    AccessData set_bit(Sequence& seq, int k, const bool bit) {
+        assert(0 <= k && k < len(seq));
+        array<int, _MAX_HEIGHT> path;
+        array<int, _MAX_HEIGHT> slots;
+        int depth = 0;
+        int rank1 = 0;
+        int node = seq.root;
+        int level = seq.height;
+        while (level > 0) {
+            const Internal& n = _internals[node];
+            int pos = 0;
+            while (k >= n.child_size[pos]) ++pos;
+            rank1 += _ones_before(n, pos);
+            k -= _size_before(n, pos);
+            path[depth] = node;
+            slots[depth++] = pos;
+            node = n.child[pos];
+            --level;
+        }
+
+        Leaf& leaf = _leaves[node];
+        rank1 += popcount(leaf.bits & _mask(k));
+        bool old = _bit_at(leaf, k);
+        W weight = leaf.weight[k];
+        if (old == bit) return {old, rank1, weight};
+        leaf.bits ^= static_cast<uint16_t>(1) << k;
+        W delta = bit ? weight : -weight;
+        leaf.sum1 += delta;
+        _add_path(path, slots, depth, {0, bit ? 1 : -1, W(0), delta});
+        return {old, rank1, weight};
     }
 
     AccessData add_weight(Sequence &sequence, int k, W delta) {
@@ -903,7 +1083,7 @@ public:
         leaf.weight[k] += delta;
         leaf.sum += delta;
         if (bit) leaf.sum1 += delta;
-        _add_path(path, slots, depth, {0, 0, delta, bit ? delta : W(0)});
+        _add_weight_path(path, slots, depth, delta, bit);
         return {bit, rank1, old_weight};
     }
 
@@ -936,10 +1116,47 @@ public:
         return -1;
     }
 
-    int select_pop(Sequence &sequence, const int k, const bool bit) {
-        int position = select(sequence, k, bit);
-        pop(sequence, position);
-        return position;
+    int select_pop(Sequence& seq, int k, const bool bit) {
+        assert(seq.root != 0);
+        const Stats root = _stats(seq.root, seq.height);
+        assert(0 <= k && k < _branch_count(root, bit));
+        array<int, _MAX_HEIGHT> path;
+        array<int, _MAX_HEIGHT> slots;
+        int depth = 0;
+        int node = seq.root;
+        int level = seq.height;
+        int off = 0;
+        while (level > 0) {
+            const Internal& n = _internals[node];
+            int pos = 0;
+            while (true) {
+                int cnt = bit ? n.child_ones[pos] : n.child_size[pos] - n.child_ones[pos];
+                if (k < cnt) break;
+                ++pos;
+            }
+            if (pos > 0) {
+                k -= bit ? n.child_ones[pos - 1] : n.child_size[pos - 1] - n.child_ones[pos - 1];
+            }
+            off += _size_before(n, pos);
+            path[depth] = node;
+            slots[depth++] = pos;
+            node = n.child[pos];
+            --level;
+        }
+
+        Leaf& leaf = _leaves[node];
+        int pos = 0;
+        while (_bit_at(leaf, pos) != bit || k-- > 0) ++pos;
+        int ans = off + pos;
+        W weight = leaf.weight[pos];
+        _erase_leaf(node, pos);
+        if ((depth == 0 && leaf.count > 0) || (depth > 0 && leaf.count >= _LEAF_MIN)) {
+            _add_path(path, slots, depth, {-1, -static_cast<int>(bit), -weight, bit ? -weight : W(0)});
+        } else {
+            _sync_path(path, slots, depth, node, 0);
+            _rebalance_leaf(seq, path, slots, depth, node);
+        }
+        return ans;
     }
 
     int min_count_sum_ge(const Sequence &sequence, const int l, const int r, const bool bit, W target) const {

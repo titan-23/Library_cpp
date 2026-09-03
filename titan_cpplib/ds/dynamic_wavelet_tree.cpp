@@ -47,14 +47,13 @@ private:
 
     size_t _estimated_node_count(int n) const {
         if (n == 0) return 1;
-        size_t limit = static_cast<size_t>(n) * 3;
         size_t ans = 0;
         size_t width = 1;
-        for (int depth = 0; depth < _log && ans < limit; ++depth) {
+        for (int depth = 0; depth < _log; ++depth) {
             ans += min(static_cast<size_t>(n), width);
             width = min(static_cast<size_t>(n), width * 2);
         }
-        return max<size_t>(1, min(ans, limit));
+        return max<size_t>(1, ans);
     }
 
     int _make_node() {
@@ -107,37 +106,36 @@ private:
         vector<uint8_t> bits(n);
         iota(order.begin(), order.end(), 0);
 
-        auto build = [&](auto &&build, int bit, int left, int right) -> int {
-            if (left == right || bit < 0) return _NIL;
+        auto build = [&](auto&& self, int bit, int l, int r, vector<int>& src, vector<int>& dst) -> int {
+            if (l == r || bit < 0) return _NIL;
 
             int zeros = 0;
-            for (int i = left; i < right; ++i) {
-                bool b = (a[order[i]] >> bit) & 1;
+            for (int i = l; i < r; ++i) {
+                bool b = (a[src[i]] >> bit) & 1;
                 bits[i] = b;
                 zeros += !b;
             }
 
-            int node = _make_node(bits, left, right);
-            int zero = left;
-            int one = left + zeros;
-            for (int i = left; i < right; ++i) {
+            int node = _make_node(bits, l, r);
+            int zero = l;
+            int one = l + zeros;
+            for (int i = l; i < r; ++i) {
                 if (bits[i]) {
-                    work[one++] = order[i];
+                    dst[one++] = src[i];
                 } else {
-                    work[zero++] = order[i];
+                    dst[zero++] = src[i];
                 }
             }
-            for (int i = left; i < right; ++i) order[i] = work[i];
 
-            int mid = left + zeros;
-            int child0 = build(build, bit - 1, left, mid);
-            int child1 = build(build, bit - 1, mid, right);
+            int mid = l + zeros;
+            int child0 = self(self, bit - 1, l, mid, dst, src);
+            int child1 = self(self, bit - 1, mid, r, dst, src);
             _nodes[node].child[0] = child0;
             _nodes[node].child[1] = child1;
             return node;
         };
 
-        _root = build(build, _log - 1, 0, n);
+        _root = build(build, _log - 1, 0, n, order, work);
     }
 
     int _range_freq_node(int node, int bit, int l, int r, const T x) const {
@@ -182,19 +180,22 @@ private:
 public:
     /// 各要素が `[0, sigma)` の `DynamicWaveletTree` を作成する / `O(1)`
     DynamicWaveletTree(const T sigma)
-        : _root(_NIL), _free(_NIL), _sigma(sigma), _log(sigma <= 1 ? 0 : bit_length((unsigned long long)(sigma - 1))), _size(0) {
+        : _root(_NIL), _free(_NIL), _sigma(sigma),
+          _log(sigma <= 1 ? 0 : bit_length((unsigned long long)(sigma - 1))), _size(0) {
         assert(sigma > 0);
         _root = _make_node();
     }
 
     /// 各要素が `[0, sigma)` の `DynamicWaveletTree` を作成する / `O(nlog(σ))`
     DynamicWaveletTree(const T sigma, const vector<T> &a)
-        : _root(_NIL), _free(_NIL), _sigma(sigma), _log(sigma <= 1 ? 0 : bit_length((unsigned long long)(sigma - 1))), _size(a.size()) {
+        : _root(_NIL), _free(_NIL), _sigma(sigma),
+          _log(sigma <= 1 ? 0 : bit_length((unsigned long long)(sigma - 1))), _size(a.size()) {
         assert(sigma > 0);
         _build(a);
     }
 
-    /// 最終的な要素数を見積もってNodeと根の動的ビット列の領域を予約する / 最悪 `O(nlog(σ))`
+    /// 最終的な要素数を見積もってNodeと根の動的ビット列の領域を予約する
+    /// 最悪 `O(nlog(σ))`
     void reserve(int expected_size) {
         assert(len() <= expected_size);
         _nodes.reserve(_estimated_node_count(expected_size));
@@ -340,8 +341,14 @@ public:
         for (int bit = _log - 1; bit >= 0; --bit) {
             if (node == _NIL) return 0;
             bool b = (x >> bit) & 1;
-            l = _nodes[node].v.rank(l, b);
-            r = _nodes[node].v.rank(r, b);
+            auto [l0, r0] = _nodes[node].v._rank0_pair(l, r);
+            if (b) {
+                l -= l0;
+                r -= r0;
+            } else {
+                l = l0;
+                r = r0;
+            }
             node = _nodes[node].child[b];
         }
         return r - l;
@@ -424,7 +431,8 @@ public:
         return kth_smallest(l, r, r - l - k - 1);
     }
 
-    /// 区間 `[l, r)` で頻度が高い値を最大 `k` 種類返す / 訪問Node数を `p` として `O(p(log(n)+log(p)))`
+    /// 区間 `[l, r)` で頻度が高い値を最大 `k` 種類返す
+    /// 訪問Node数を `p` として `O(p(log(n)+log(p)))`
     /// 例: `[1, 2, 1, 3, 1, 2]` で `topk(0, 6, 2)` は `{(1, 3), (2, 2)}`
     vector<pair<T, int>> topk(int l, int r, int k) const {
         assert(0 <= l && l <= r && r <= len());
@@ -444,7 +452,10 @@ public:
             int cnt0 = r0 - l0;
             int cnt1 = length - cnt0;
             if (cnt0 > 0) hq.emplace(cnt0, x, _nodes[node].child[0], bit - 1, l0, r0);
-            if (cnt1 > 0) hq.emplace(cnt1, x | (static_cast<T>(1) << bit), _nodes[node].child[1], bit - 1, ql - l0, qr - r0);
+            if (cnt1 > 0) {
+                hq.emplace(cnt1, x | (static_cast<T>(1) << bit), _nodes[node].child[1], bit - 1, ql - l0,
+                           qr - r0);
+            }
         }
         return ans;
     }
