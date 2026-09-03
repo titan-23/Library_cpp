@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <array>
 #include <bit>
-#include <cstdint>
 #include <limits>
 #include <stdexcept>
 #include <utility>
@@ -29,7 +28,7 @@ namespace titan23 {
  * 方向の順番は NE, NW, SW, SE である
  * 象限は境界を含むため、軸上の点やクエリと同じ座標の点は複数方向の答えになり得る
  *
- * 構築 O(n log^2(n))、一括追加 O(n log(n))
+ * 構築・一括追加 O(n log(n))
  * 追加・削除・検索 O(log^2(n))、メモリ O(n log(n))
  */
 template<typename T>
@@ -50,15 +49,15 @@ private:
         vector<array<int, 2>> seg, full;
         bool full_ready = false;
 
-        int prod(int off, int m, int left, int right, int k) const {
+        int prod(int off, int m, int l, int r, int k) const {
             int ans = INF;
-            left += m;
-            right += m;
-            while (left < right) {
-                if (left & 1) ans = min(ans, seg[off + left++][k]);
-                if (right & 1) ans = min(ans, seg[off + --right][k]);
-                left >>= 1;
-                right >>= 1;
+            l += m;
+            r += m;
+            while (l < r) {
+                if (l & 1) ans = min(ans, seg[off + l++][k]);
+                if (r & 1) ans = min(ans, seg[off + --r][k]);
+                l >>= 1;
+                r >>= 1;
             }
             return ans;
         }
@@ -66,26 +65,26 @@ private:
         array<int, 2> split_prod(int off, int m, int pos) const {
             array<int, 2> ans = {INF, INF};
             int node = 1;
-            int left = 0;
-            int right = m;
+            int l = 0;
+            int r = m;
             while (true) {
-                if (pos == left) {
+                if (pos == l) {
                     ans[0] = min(ans[0], seg[off + node][0]);
                     break;
                 }
-                if (pos == right) {
+                if (pos == r) {
                     ans[1] = min(ans[1], seg[off + node][1]);
                     break;
                 }
-                int mid = (left + right) >> 1;
+                int mid = (l + r) >> 1;
                 if (pos < mid) {
                     ans[0] = min(ans[0], seg[off + node * 2 + 1][0]);
                     node *= 2;
-                    right = mid;
+                    r = mid;
                 } else {
                     ans[1] = min(ans[1], seg[off + node * 2][1]);
                     node = node * 2 + 1;
-                    left = mid;
+                    l = mid;
                 }
             }
             return ans;
@@ -94,27 +93,27 @@ private:
     public:
         PrefixMin2D() = default;
 
-        void build(int size, const vector<pair<int, int>>& ps) {
+        template<class GetX>
+        void build(int size, const vector<array<int, 2>>& r, const vector<int>& yo, GetX get_x) {
             n = size;
-            vector<vector<pair<int, int>>> bucket(n + 1);
-            leaf_off.assign(ps.size() + 1, 0);
-            int psize = ps.size();
+            leaf_off.assign(r.size() + 1, 0);
+            int psize = r.size();
+            vector<int> len(n + 1, 0);
             for (int idx = 0; idx < psize; ++idx) {
-                auto [x, y] = ps[idx];
+                int x = get_x(idx);
                 int cnt = 0;
                 for (int i = x; i <= n; i += i & -i) {
-                    bucket[i].push_back({y, idx});
+                    ++len[i];
                     ++cnt;
                 }
-                leaf_off[idx + 1] = leaf_off[idx] + cnt;
+                leaf_off[idx + 1] = cnt;
             }
+            for (int i = 1; i <= psize; ++i) leaf_off[i] += leaf_off[i - 1];
 
             key_off.assign(n + 2, 0);
             seg_off.assign(n + 2, 0);
             for (int i = 1; i <= n; ++i) {
-                auto& v = bucket[i];
-                sort(v.begin(), v.end());
-                int m = v.size();
+                int m = len[i];
                 int cap = bit_ceil(static_cast<unsigned>(m));
                 if (cap > m + m / 8) cap = m;
                 key_off[i + 1] = key_off[i] + m;
@@ -123,13 +122,13 @@ private:
 
             keys.resize(key_off[n + 1]);
             leaf_pos.resize(leaf_off.back());
-            vector<int> next = leaf_off;
-            for (int i = 1; i <= n; ++i) {
-                int m = bucket[i].size();
-                for (int pos = 0; pos < m; ++pos) {
-                    auto [y, idx] = bucket[i][pos];
-                    keys[key_off[i] + pos] = y;
-                    leaf_pos[next[idx]++] = pos;
+            vector<int> next(n + 1, 0), leaf = leaf_off;
+            for (int idx : yo) {
+                int x = get_x(idx);
+                for (int i = x; i <= n; i += i & -i) {
+                    int pos = next[i]++;
+                    keys[key_off[i] + pos] = r[idx][1];
+                    leaf_pos[leaf[idx]++] = pos;
                 }
             }
             seg.assign(seg_off[n + 1], {INF, INF});
@@ -145,8 +144,10 @@ private:
                 int node = m + pos;
                 seg[off + node] = val;
                 for (node >>= 1; node > 0; node >>= 1) {
-                    seg[off + node][0] = min(seg[off + node * 2][0], seg[off + node * 2 + 1][0]);
-                    seg[off + node][1] = min(seg[off + node * 2][1], seg[off + node * 2 + 1][1]);
+                    int v0 = min(seg[off + node * 2][0], seg[off + node * 2 + 1][0]);
+                    int v1 = min(seg[off + node * 2][1], seg[off + node * 2 + 1][1]);
+                    if (m >= 1024 && seg[off + node][0] == v0 && seg[off + node][1] == v1) break;
+                    seg[off + node] = {v0, v1};
                 }
             }
         }
@@ -192,6 +193,12 @@ private:
         array<int, 2> prod(int x, int ylt, int yle) const {
             array<int, 2> ans = {INF, INF};
             for (int i = x; i > 0; i -= i & -i) {
+                int next = i - (i & -i);
+                if (next > 0) {
+                    int first = key_off[next];
+                    int last = key_off[next + 1];
+                    __builtin_prefetch(keys.data() + ((first + last) >> 1));
+                }
                 int koff = key_off[i];
                 int m = key_off[i + 1] - koff;
                 auto first = keys.begin() + koff;
@@ -218,6 +225,12 @@ private:
         array<int, 2> prod_full(int x, int ylt, int yle) const {
             array<int, 2> ans = {INF, INF};
             for (int i = x; i > 0; i -= i & -i) {
+                int next = i - (i & -i);
+                if (next > 0) {
+                    int first = key_off[next];
+                    int last = key_off[next + 1];
+                    __builtin_prefetch(keys.data() + ((first + last) >> 1));
+                }
                 int koff = key_off[i];
                 int m = key_off[i + 1] - koff;
                 auto first = keys.begin() + koff;
@@ -264,21 +277,22 @@ private:
         return ans;
     }
 
-    static T absolute(T value) {
-        return value < 0 ? -value : value;
-    }
-
-    T distance(int idx, T x, T y) const {
-        return absolute(points[idx].x - x) + absolute(points[idx].y - y);
-    }
-
     pair<int, T> nearest_pair(T x, T y) const {
         auto ids = nearest_four_idx(x, y);
         int ans = -1;
         T best = 0;
-        for (int idx : ids) {
+        T u = x + y;
+        T v = x - y;
+        for (int dir = 0; dir < DIRECTION_COUNT; ++dir) {
+            int idx = ids[dir];
             if (idx == -1) continue;
-            T dist = distance(idx, x, y);
+            const Point& p = points[idx];
+            T z = dir == NE || dir == SW ? p.x + p.y : p.x - p.y;
+            T dist;
+            if (dir == NE) dist = z - u;
+            else if (dir == NW) dist = v - z;
+            else if (dir == SW) dist = u - z;
+            else dist = z - v;
             if (ans == -1 || dist < best || (dist == best && idx < ans)) {
                 ans = idx;
                 best = dist;
@@ -348,12 +362,14 @@ private:
         }
         build_priority();
 
-        vector<pair<int, int>> rs(points.size());
+        int yn = ys.size();
+        vector<int> yo(n), off(yn + 1, 0);
+        for (int i = 0; i < n; ++i) ++off[rank[i][1]];
+        for (int i = 1; i <= yn; ++i) off[i] += off[i - 1];
+        for (int i = n - 1; i >= 0; --i) yo[--off[rank[i][1]]] = i;
+
         for (int side = 0; side < SIDE_COUNT; ++side) {
-            for (int i = 0; i < n; ++i) {
-                rs[i] = {x_rank(i, side), rank[i][1]};
-            }
-            trees[side].build(xs.size(), rs);
+            trees[side].build(xs.size(), rank, yo, [&](int idx) { return x_rank(idx, side); });
         }
         cnt.assign(points.size(), 0);
     }
