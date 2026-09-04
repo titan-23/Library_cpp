@@ -1,6 +1,6 @@
 # dycone.cpp インターフェース再設計
 
-対象は `titan_cpplib/ds/dycone.cpp` の `OfflineDynamicConnectivity`。実装は行わず、設計のみをまとめる。計算量の根拠は `review/dycone_complexity.md`、正当性・バグの指摘は `review/ds.md` を参照。
+対象は `titan_cpplib/graph/dycone.cpp` の `OfflineDynamicConnectivity`。実装は行わず、設計のみをまとめる。計算量の根拠は `review/dycone_complexity.md`、正当性・バグの指摘は `review/ds.md` を参照。
 
 ## 現状の問題点
 
@@ -100,7 +100,8 @@ dc.run([&] (int k) {
 - `inner_add_point` に find と同形の短絡（`sum[P[u]] -= sum[u]` を伴う付け替え）を入れる。計算量解析の隙間（add_point 偏重時の未圧縮経路）が閉じる。
 - `disconnect` の再帰は反復に書き換える。深さは期待 O(log n) だが最悪 O(n) になるため。
 - `review/ds.md` の dycone への指摘（[注意]・[軽微]）はこの機会に全て解消する。
-- テストを `test/dycone/` に追加する。`mk_test.py` でランダムケースを生成し、愚直解（毎回 BFS/DSU 再構築）と照合する。自己ループ・多重辺・存在辺の再追加を含める。
+- テストを `test/graph/dycone/` に追加する。`mk_test.py` でランダムケースを生成し、愚直解（毎回 BFS/DSU
+  再構築）と照合する。自己ループ・多重辺・存在辺の再追加を含める。
 
 ## 代替案と不採用理由
 

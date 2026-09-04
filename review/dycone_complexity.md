@@ -1,4 +1,4 @@
-# `titan_cpplib/ds/dycone.cpp` の計算量解析
+# `titan_cpplib/graph/dycone.cpp` の計算量解析
 
 対象は `OfflineDynamicConnectivity<T>` である。以下では、正しさの説明に必要な範囲でアルゴリズムも記述するが、主眼は実装されている各ループの計算量を証明することにある。
 
