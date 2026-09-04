@@ -22,12 +22,12 @@ private:
     vector<V> vals;
     int cap;
     int msk;
-    u64 xor_;
+    u64 salt;
     int size;
 
     constexpr u64 hash(u64 key) const {
         if constexpr (USE_HASH_FUNC) {
-            key ^= xor_;
+            key ^= salt;
             key = (key ^ (key >> 30)) * 0xbf58476d1ce4e5b9;
             key = (key ^ (key >> 27)) * 0x94d049bb133111eb;
             key = key ^ (key >> 31);
@@ -39,7 +39,7 @@ private:
         random_device rd;
         mt19937 gen(rd());
         uniform_int_distribution<u64> dis(0, UINT64_MAX);
-        xor_ = dis(gen);
+        salt = dis(gen);
     }
 
     void rebuild() {
@@ -89,7 +89,7 @@ public:
     pair<int, bool> get_pos(const u64 &key) const {
         u64 h = hash(key);
         uint8_t h2 = h & 0x7F;
-        int idx = (h >> 7) & msk;
+        int idx = (int)((h >> 7) & msk);
 
         __m128i match = _mm_set1_epi8(h2);
         __m128i empty_match = _mm_set1_epi8(EMPTY);
