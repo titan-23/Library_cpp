@@ -4,6 +4,35 @@
 
 ---
 
+## [big_int.cpp](./big_int.cpp)
+
+`class BigInt` — 符号付き多倍長整数。絶対値を基数 $10^8$ の little-endian 配列で保持し、符号を $-1,0,1$ で別に持つ。
+$10^8$ は最大桁数ではなく、配列1要素が10進8桁を表すという意味。ゼロは符号0へ正規化される。
+
+| API | 機能 |
+|---|---|
+| `BigInt(integer)` / `BigInt(string_view)` | 組み込み整数または符号付き10進文字列から構築 |
+| `to_string()` / `to_integral<T>()` | 10進文字列化 / 組み込み整数への変換 |
+| `sign()` / `is_zero()` / `is_one()` / `is_neg_one()` / `is_odd()` / `abs()` | 符号や値の判定、絶対値 |
+| `+ - * / %`、複合代入、`++ --` | 整数算術 |
+| `== != < <= > >=` | 比較 |
+| `divmod(a,b)` | 商と剰余を一度に計算 |
+| `pow(a,n)` / `gcd(a,b)` / `lcm(a,b)` | 累乗、最大公約数、最小公倍数 |
+| `operator<<` / `operator>>` | 10進入出力 |
+
+乗算はサイズと縦横比に応じて、係数をまとめて正規化する通常法、任意長Karatsuba法、ACLの2法NTT、
+非対称積の分割法を自動選択する。平方では通常法、Karatsuba法、NTTの各専用経路を使う。
+NTTでは各limbを基数 $10^4$ に分割し、2つの法による畳み込みをCRTで復元する。
+
+除算は逆数乗算による1 limb除算、1 limbの商に特化した除算、Knuth Algorithm D、Burnikel–Ziegler法を
+自動選択する。`gcd` は上位limbから複数回のEuclid操作をまとめるLehmer法を使う。
+
+除算はC++の符号付き整数と同じく商を0方向へ切り捨てる。常に `a == b*q + r`、`abs(r) < abs(b)` で、剰余は0または被除数 `a` と同符号。ゼロ除算は `domain_error`。
+
+`pow` の指数には組み込み整数と `BigInt` を指定でき、いずれも二分累乗法で計算する。負指数は `domain_error`、`pow(0, 0)` は1を返す。
+
+---
+
 ## [divisor.cpp](./divisor.cpp)
 
 約数・素因数分解まわりの自由関数群。
