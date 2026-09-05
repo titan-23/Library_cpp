@@ -27,6 +27,10 @@ NTTでは各limbを基数 $10^4$ に分割し、2つの法による畳み込み�
 除算は逆数乗算による1 limb除算、1 limbの商に特化した除算、Knuth Algorithm D、Burnikel–Ziegler法を
 自動選択する。`gcd` は上位limbから複数回のEuclid操作をまとめるLehmer法を使う。
 
+`gcd` はLehmer法で初期簡約した後、十分大きな値が残る場合にBoostの `cpp_int` へ変換して計算する。
+大きな共通因子は小さい商から復元し、基数変換の負担を抑える。依存はACLとBoost Multiprecision
+（いずれもヘッダのみで利用可能）。内部表現と10進入出力は基数 $10^8$ のまま。
+
 除算はC++の符号付き整数と同じく商を0方向へ切り捨てる。常に `a == b*q + r`、`abs(r) < abs(b)` で、剰余は0または被除数 `a` と同符号。ゼロ除算は `domain_error`。
 
 `pow` の指数には組み込み整数と `BigInt` を指定でき、いずれも二分累乗法で計算する。負指数は `domain_error`、`pow(0, 0)` は1を返す。

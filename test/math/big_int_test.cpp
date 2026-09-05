@@ -666,6 +666,64 @@ void test_number_theory_helpers() {
     assert(titan23::lcm(-a, factor) == a);
 }
 
+BigInt gcd_dec(BigInt a, BigInt b) {
+    a = a.abs();
+    b = b.abs();
+    while (!b.is_zero()) {
+        BigInt r = a % b;
+        a = move(b);
+        b = move(r);
+    }
+    return a;
+}
+
+void test_hybrid_gcd() {
+    for (int n : {15, 16, 17, 255, 256, 257, 511, 512, 513, 1024, 8192}) {
+        const BigInt g(all_nines(n));
+        assert(titan23::gcd(g, g) == g);
+        assert(titan23::gcd(-g, g) == g);
+        assert(titan23::gcd(g, 0) == g);
+        assert(titan23::gcd(0, -g) == g);
+        assert(titan23::gcd(g + 1, g) == BigInt(1));
+        assert(titan23::gcd(g * 123456789 + 1, g) == BigInt(1));
+        assert(titan23::gcd(g * 42, g * 17) == g);
+    }
+
+    mt19937_64 rng(0x231ec608dd71ULL);
+    for (int i = 0; i < 50; ++i) {
+        const int n = 1 + static_cast<int>(rng() % 2048);
+        const int m = i % 3 == 0 ? 1 + static_cast<int>(rng() % 64) : n;
+        BigInt a(random_integer_string(rng, n)), b(random_integer_string(rng, m));
+        const BigInt g = gcd_dec(a, b);
+        assert(titan23::gcd(a, b) == g);
+        assert(titan23::gcd(b, a) == g);
+        assert(a % g == BigInt(0));
+        assert(b % g == BigInt(0));
+    }
+
+    BigInt a = 0, b = 1;
+    for (int i = 1; i <= 3000; ++i) {
+        BigInt c = a + b;
+        a = move(b);
+        b = move(c);
+        if (i != 500 && i != 1500 && i != 3000) continue;
+        assert(titan23::gcd(a, b) == BigInt(1));
+        for (int n : {16, 128, 4096}) {
+            const BigInt g(all_nines(n));
+            const BigInt x = a * g, y = b * g;
+            assert(titan23::gcd(x, y) == g);
+            assert(titan23::gcd(-x, y) == g);
+            assert(titan23::gcd(x, -y) == g);
+            assert(titan23::gcd(-x, -y) == g);
+            assert(titan23::lcm(x, y) == a * b * g);
+        }
+    }
+    for (const char *s : {"18446744073709551615", "18446744073709551616", "18446744073709551617"}) {
+        const BigInt g(s);
+        assert(titan23::gcd(a * g, b * g) == g);
+    }
+}
+
 void test_errors() {
     BigInt value("12345678901234567890");
     BigInt zero(0);
@@ -758,6 +816,7 @@ int main() {
     test_large_algebraic_properties();
     test_division_boundaries_and_aliasing();
     test_number_theory_helpers();
+    test_hybrid_gcd();
     test_errors();
 #if TITAN23_TEST_HAS_BOOST_CPP_INT
     test_boost_differential();

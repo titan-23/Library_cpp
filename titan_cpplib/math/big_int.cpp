@@ -18,6 +18,8 @@
 #include <vector>
 
 #include <atcoder/convolution>
+#include <boost/multiprecision/cpp_int.hpp>
+#include <boost/multiprecision/integer.hpp>
 
 using namespace std;
 
@@ -244,6 +246,32 @@ private:
             r = cur - q * b;
         }
         return static_cast<u32>(r);
+    }
+
+    static boost::multiprecision::cpp_int to_cpp(const Digits &a) {
+        boost::multiprecision::cpp_int x = 0;
+        size_t i = a.size();
+        if ((i & 1) != 0) x = a[--i];
+        while (i != 0) {
+            i -= 2;
+            x *= u64(BASE) * BASE;
+            x += u64(a[i + 1]) * BASE + a[i];
+        }
+        return x;
+    }
+
+    [[gnu::noinline]] static BigInt gcd_cpp(const BigInt &a, const BigInt &b) {
+        using boost::multiprecision::cpp_int;
+        const cpp_int x = to_cpp(a.digits_);
+        const cpp_int y = to_cpp(b.digits_);
+        const cpp_int g = boost::multiprecision::gcd(x, y);
+        if (g <= numeric_limits<u64>::max()) return BigInt(g.convert_to<u64>());
+        // Convert the smaller quotient when the common factor is large.
+        if (boost::multiprecision::msb(g) > boost::multiprecision::msb(x) / 2) {
+            const cpp_int q = x / g;
+            return a / BigInt(q.str());
+        }
+        return BigInt(g.str());
     }
 
     static Digits lin_abs(const Digits &a, const Digits &b, i128 x, i128 y) {
@@ -1414,13 +1442,19 @@ inline BigInt pow(BigInt a, BigInt n) {
 inline BigInt gcd(BigInt a, BigInt b) {
     a = move(a).abs();
     b = move(b).abs();
+    size_t cnt = 0;
+    // Finish easy ratios before paying for the quadratic radix conversion.
+    const size_t lim = 4 + min(a.digits_.size(), b.digits_.size()) / 32;
     while (!b.is_zero()) {
-        if (a < b) swap(a, b);
+        const int cmp = BigInt::cmp_abs(a.digits_, b.digits_);
+        if (cmp < 0) swap(a, b);
+        if (cmp == 0) return a;
         if (b.is_zero()) break;
         if (b.digits_.size() == 1) {
             const BigInt::u32 r = BigInt::rem_small(a.digits_, b.digits_[0]);
             return BigInt(std::gcd(r, b.digits_[0]));
         }
+        if (++cnt > lim && b.digits_.size() >= 32) return BigInt::gcd_cpp(a, b);
         if (a.digits_.size() != b.digits_.size()) {
             a %= b;
             swap(a, b);
