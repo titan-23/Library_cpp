@@ -1,5 +1,21 @@
 # Wavelet Matrix 系データ構造の整理と実装状況
 
+## 実装の確認結果（2026-09-03）
+
+現行の `titan_cpplib/ds` 123件の一部として、ここに列挙されたWavelet Matrix・Wavelet Tree実装と関連テストを、旧本文を参照する前に再読した。実行はしていない。設計の整理は概ね有用だが、実装には次の未解決事項がある。
+
+- `dynamic_wavelet_matrix.cpp:180-201`: `l<r, k=0` の `topk` は空を返さず、kを負にして全種類を返し得る。深さを `char` にするため、`char` が符号なしの環境では非空区間の探索が葉へ到達する直前に深さ255となり、`_v[255]` を範囲外参照する。`_log=0` なら空区間でも同じである。`char` が符号付きの環境では、`_log=0` の空区間にも件数0の項目を返す。`:204-221` の `select` は位置をキー型Tにしており、`T=uint8_t` などの長い列で切り捨てる。`DynamicWaveletTree` と `DynamicWaveletTreeSum` にk=0の同じ不具合はない。
+- `wavelet_matrix.cpp:16-20,43,262-263` は既定コンストラクタで `sigma`、`log`、`n` を初期化せず、`wavelet_matrix_bit.cpp:17-20,49,52,273-274` は `sigma` と `n` を初期化しない。直後の `len()` や `get_sigma()` が不定値を読むため、有効な空構造にするか既定構築を禁止する。
+- `wavelet_matrix_bit.cpp:194-209`: `range_freq(..., upper)` の `upper` が負または表現ビット幅以上でも下位ビットだけを読み、誤った件数を返す。非負キーの契約なら `upper<=0` で0、`upper>=2^log` で区間長を返す必要がある。`:185-191` の公開 `sum` は先頭に無条件の `assert(false)` があり、`assert` 有効時は正当な呼出しも停止する。
+- `wavelet_matrix_bit.cpp:14,19,50` はテンプレート引数 `log` を制限せず、コンストラクタで `1ull << log` を計算する。`WaveletMatrix<uint64_t,64>` では型のビット数と同じ64だけ左へ移動して未定義動作になる。`0<=log && log<64` と `log<=numeric_limits<T>::digits` をコンパイル時に検査するか、64ビット全幅を別処理する必要がある。
+- `wavelet_matrix_sum.cpp:283-290`、`wavelet_matrix_fenwick.cpp:276-284`、`dynamic_wavelet_tree_sum.cpp:344-352` の補助関数は、`long long` の分子と分母を先に型 `W` へ変換する。`W=uint8_t, denominator=256` なら分母が0になる。より広い中間型で比を計算する。
+- `wavelet_matrix.cpp:45-50`、`dynamic_wavelet_matrix.cpp:54-56`、`wavelet_matrix_sum.cpp:298-315`、`wavelet_matrix_fenwick.cpp:291-309`、`dynamic_wavelet_tree_sum.cpp:356-376` は、`sigma` 指定コンストラクタで検査より先に `sigma-1` を計算し、減算結果が型の範囲外になる値で桁あふれする。前2実装には `sigma>0` の `assert` 自体もない。検査後にビット幅を求める。
+- `test/dwm/wavelet_matrix_sum_random.cpp:52-65` と `test/dwm/wavelet_matrix_fenwick_random.cpp:51-64` の `topk` の検査は、返却件数と頻度の非増加順を見ず、空の `vector` でも通る。まず `size()==min(k,D)` と順序を検査する。同じ頻度の値同士の順序は公開仕様にないため、列全体の一致を要求するなら先にその規則を定める。
+
+定数倍の改善では、次を優先する。(1) `dynamic_wavelet_matrix.cpp:120-129` の公開 `access` から、既存の `avl_tree_bit_vector.cpp:627-648` にある `_access_ans_rank1()` を使い、各段でAVL木を降りる回数を2回から1回へ減らす。(2) `topk` の探索 `:193-198` では `_rank0_pair(l,r)` で `l0/r0` を得て、`l-l0+mid`, `r-r0+mid` から `l1/r1` を導き、`rank1` の2回を省く。(3) `wavelet_matrix.cpp:22-39` と動的版 `:32-50` の0側・1側の一時 `vector` を、使い回す2組の作業領域へ変える。(4) `dynamic_wavelet_tree_sum.cpp:971-1001` でキーを復元するとき、`b_tree_bit_vector_sum.cpp:978-985` が作る不要な重み列を避け、ビット列だけを回収する。挙動を保つため、安定分割の順序は維持する。
+
+以下の旧本文は公開関数の構想として残すが、この追記にある不具合と現在の判定を優先する。
+
 ## 1. 目的
 
 この文書では、リポジトリに存在する Wavelet Matrix / Wavelet Tree 系の実装を整理し、次の点をまとめる。

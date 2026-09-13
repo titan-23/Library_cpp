@@ -1,5 +1,82 @@
 # `titan_cpplib/ds` 理論レビュー
 
+## 全ファイルの確認結果（2026-09-03）
+
+対象コミット `0859f40bb7e4f8f56478b227815cddc62a7753ea` の `.cpp` 122件と `range_set_design.md`、計123/123件を、以下の旧本文を参照する前に全文再読した。コンパイル、テスト、ベンチマークは実行していない。
+
+### 現在も利用停止を推奨するもの
+
+- `cuckoo_hash_table.cpp:4,30-42,94-99,123-128`: C++ではない構文、同じファイル内の `main`、壊れた `rehash` と `size` がある。
+- `multiset_sum_splay.cpp:203-215`: 未定義の `rep`、`Node`、`NodeId` と、`child` の型誤りにより `vector` を構築できない。
+- `dual_commutative_segment_tree.cpp:25,110-113`: 遅延値がFではなくTであり、`const` の公開関数から非 `const` の伝播処理を呼ぶ。
+- `partial_persistent_union_find.cpp:14,18-22`: 既定コンストラクタを持たない `PartialPersistentArray` を後から代入するため、構築できない。
+- 永続WB木群: `copy` や `set` の実体化不能、根の更新喪失、非可換演算に対する誤った反転、記憶領域初期化後の旧木走査が重なる。
+- 動的遅延セグメント木の2実装: `Node::lazy` を初期化しないまま `composition` を呼び、`print` は関数名 `id` を加算しようとする。
+
+### 旧本文へ追加する確定事項
+
+1. `lazy_wb_tree.cpp:396-402` の `stack<NodePtr> path={node}` は有効なコンストラクタ呼出しではなく、`set` を実体化できない。
+2. `persistent_lazy_wbtree.cpp:417-452`, `persistent_seg_wbtree.cpp:374-409` には、`copy` / `ma.copy`、`const` な複製処理、不正な `stack` 初期化、存在しない `emplace_back` の使用が混在する。
+3. `fenwick_tree_RAQ.cpp:60-61`, `fenwick_tree_RAQRSQ.cpp:88-89` の出力演算子は、単体で読み込んだ場合には存在しない `ostream << vector<T>` を要求する。
+4. `multiset_sum_qd.cpp:104-121` は存在しない値を `discard` しても総和を先に減らし、`remove` の副作用を `assert` の中に置くため、`NDEBUG` 指定時は何も削除しない。
+5. `binary_trie_multiset.cpp:65-75,211-212,382-408` は既定状態が不定である。集合版も含め、ビット幅外のXORと上限計算が公開関数間で一致しない。多重集合版 `binary_trie_multiset.cpp:66-75` と集合版 `binary_trie_set.cpp:76-80` の `(T)1<<bit` は、狭いTへの切捨てや符号ビットの移動も起こすため、十分広い符号なし型で検査する。
+6. `deletable_heap.cpp:47-52,113-118` は空の状態で削除指定した値を後から追加しても相殺し、将来の挿入を削除する。
+7. `lazy_rbst.cpp:87-113` は右を根にする併合で `op(right,left)` を保存する。`:55-61,224-231` の反転も子の交換だけで、非可換な集約値を反転しない。
+8. `segment_tree2D.cpp:55-94` は更新・照会の積順が逆転し、説明にない可換性を要求する。
+9. `lazysegutil.cpp:30-82` は最大値を「作用なし」の印に使うため、その値自体を代入できない。`lazy_segment_tree.cpp:114-142` は余剰葉へも作用し、番兵値の算術で桁あふれを起こす。
+10. `persistent_segment_tree.cpp:211-227`, `persistent_lazy_segment_tree.cpp:269-286` の `copy_from` はコピー元長を検査せず、異長木の形を壊す。
+11. `dynamic_segment_tree.cpp:51-53,84-87` と `dynamic_segment_tree_init.cpp:58-60,98-102` は、2の累乗への切上げ、ビット移動、中点計算が大きな上限で桁あふれし、論理上限も次の2の累乗まで広げてしまう。
+12. `wordsize_tree_set.cpp:44-50,79-85` は `WordsizeTreeSet(0)` の公開上限を1としながら保存領域を確保せず、`add(0)` が範囲外参照になる。
+13. `sparse_segment_tree2D.cpp:58-91,128-141` は `set` だけ座標検査がなく、負側を左端の葉、上限以上を右端の葉へ写す。
+14. `dycone.cpp:182-193`, `dycone_sum.cpp:240-253` は `run` 後の最終状態と問い合わせ列を残すため、2回目の `run` を初期状態から再生しない。総和版は更新も重複する。
+   また `dycone.cpp:128,207-209` と `dycone_sum.cpp:166,273-275` は既定コンストラクタで `group_count_` を初期化せず、直後の `group_count()` が不定値を読む。
+15. `imos.cpp:20-47` は差分列そのものを `build` で累積するため、再度の `build` または `build` 後の更新で、元とは異なる列になる。
+16. `area_of_union_of_rectangles.cpp:41-103` は型 `T` の座標を `int` へ狭める。空入力では `ZX.len()-1` の-1が巨大な `vector::size_type` へ変換され、通常は `vector` の構築に失敗する。これを回避しても、空の `nX.back()` は不正である。正の幅を持つ高さ0の矩形では事象の処理順が破綻する。圧縮後の `y` 添字が0なら区間が残り、それ以外なら追加前に削除され、他の矩形が覆わない部分の被覆数が負になる。その結果、`:25` では負値の左ビット移動も起こる。面積の積が値型の範囲に収まるかも検査しない。
+17. `dynamic_wavelet_matrix.cpp:180-201` は、`l<r, k=0` の `topk` が全種類を返し得る。深さを `char` へ入れるため、`char` が符号なしの環境では、非空区間の探索が葉へ到達する直前に深さ255となり `_v[255]` を範囲外参照する。`_log=0` なら空区間でも同じである。`char` が符号付きの環境では、`_log=0` の空区間にも件数0の項目を返す。`:204-221` の `select` は位置をキー型Tへ入れるため、長い列と狭いキー型の組合せで切り捨てる。
+18. `wavelet_matrix_bit.cpp:194-209` は、負の `upper` や表現ビット幅以上の `upper` を下位ビットだけで扱い、`range_freq` を誤る。非負キーの契約なら `upper<=0` で0、`upper>=2^log` で区間長を返す必要がある。`:185-191` の公開 `sum` は先頭に無条件の `assert(false)` があり、`assert` 有効時は全ての呼出しを停止する。
+19. `wavelet_matrix.cpp:45-50`、`dynamic_wavelet_matrix.cpp:54-56`、`wavelet_matrix_sum.cpp:298-315`、`wavelet_matrix_fenwick.cpp:291-309`、`dynamic_wavelet_tree_sum.cpp:356-376` は `sigma-1` を検査より先に計算し、減算結果が型の範囲外になる値で桁あふれする。前2実装には正値を要求する `assert` 自体もない。
+20. `offline_RUQ.cpp:15-52` はUnion-Findの添字に値型 `T` を使うため、`T=string` では実体化できず、狭い整数型では添字が折り返す。
+21. `partial_persistent_array.cpp:39-45` は `t<-1` のとき `upper_bound` の先頭より前を読む。Union-Find側との時刻の契約も一致しない。
+22. `std_multiset.cpp:31-54,98-105` は負の個数を渡すと、内部の要素数と頻度を逆向きに更新する。
+23. `static_set.cpp:126-131`, `std_set.cpp:97-103`, `std_multiset.cpp:135-141` は近傍距離を値型のまま減算し、整数の端点で桁あふれする。
+24. `dynamic_fenwick_tree2D.cpp:68,71-73,115-139` は公開寸法へさらに1を足し、点を扱う公開関数で元の終端座標を要素として受理する。`dynamic_fenwick_tree2D_RAQRSQ.cpp:82,85-98` も終端を1つ越す区間まで受理する。両実装の `h+1`, `w+1` は型の上限で桁あふれし、後者の `:208-215` は重み型 `W` との演算より先に `h*w` を計算する。旧版 `old_dynamic_fenwick_tree2D.cpp:19-40,44-52,71-80` は既定コンストラクタの寸法が不定で、終端点への `add` を何もせず終え、終端点への `get` は内部の `assert` と衝突する。
+25. 同じ2次元Fenwick木群 `dynamic_fenwick_tree2D.cpp:15-22,32-49,58-68,143-147,201-215` と `dynamic_fenwick_tree2D_RAQRSQ.cpp:29-36,46-63,72-82,102-106,219-233` は、静的な記憶領域を全ての個体で共有し、暗黙のコピーが寸法と根の番号を複製する。非空木のコピーは既存ノードを共有して更新が双方へ波及する。一方を `reset` すると共有ノードが空き一覧へ登録され、その後のノード再利用で他方も壊れる。さらに記憶領域のノード番号、次の番号、空き一覧まで座標型 `T` を使うため、狭い `T` ではノード数の増加で折り返すか桁あふれする。ノード番号の型を座標型から分離する必要がある。
+26. `linear_cum_sum.cpp:21-65` は `d=0` で `l%d`, `end/d`, `l/d` が整数ゼロ除算となり、表 `S[0]/Si[0]` も構築されない。`k=0` も空和を返さず要素を読み得るため、入口で0を返す必要がある。それ以外では `d>0,k>0,l>=0` が必要である。
+27. `dynamic_lazy_segment_tree_util.cpp:13-39` は負の更新値を左へビット移動し、未定義動作になる。30ビットへの詰込みも長さと和の桁を混ぜるため、構造体の別項目へ分ける。
+28. `icpc_lazy_rbst.cpp:17` の `trnd`、上記補助実装 `:13-44` の非 `inline` 自由関数・大域変数、`area_of_union_of_rectangles.cpp:16-35` のAOUFR自由関数5個は、複数の翻訳単位から読み込むと一意定義規則に違反する。補助実装の末尾には、例示用の木、座標、照会結果まで名前空間の変数として定義され、読み込むだけで動的初期化と不要な大域状態を持ち込む。
+29. `DynamicLazySegmentTree`、`DualSegmentTreeRUQ`、`DynamicFenwickTree2D`、`MultisetSum`、`WaveletMatrix` の各系列の別実装が、同じ名前空間で同名クラスを再定義する。
+30. `cumulative_sum2D.cpp:24-29` は入力配列の行数が `h` 未満、または参照する行の列数が `w` 未満なら範囲外参照し、容量の積を `int` で計算して桁あふれする。
+31. `wb_tree_seg.cpp:41-50` の `!weight_left()*DELTA >= ...` は演算子優先順位が誤り、不平衡を検出しない。
+32. 多数の公開型は、既定構築後に有効な空状態にならず、直後の公開関数が不定値を読むか、未構築の保存領域を参照する。
+   - 既定構築直後に、値を返す公開関数を呼ぶだけで問題が表面化するものは、`union_find.cpp:15,19,68-70`、`union_find_advance.cpp:17-23,81-83`、`weight_union_find.cpp:13-19,64-66`、`undoable_union_find.cpp:13-19,61-63`、`undoable_union_find_sum.cpp:14-21,90-92`、`cumulative_sum.cpp:15,19,49-50`、`bit_vector.cpp:15-20,102-104`、`sparse_table.cpp:16,21,62-63`、`sparse_table_min.cpp:18,22,59-60`、`disjoint_sparse_table.cpp:15,19,68-69`、`multiset_sum.cpp:41-43,191,273-334,428-430`、`multiset_sum_qd.cpp:22-26,57,133-172`、`static_RmQ.cpp:18-19,57,88-90` である。
+   - 空列として使うと、未初期化の寸法を読むか、未構築の保存領域を参照するものは、`fenwick_tree.cpp:14,23,101-105`、`segment_tree.cpp:15-20,73-75,133-138`、`merge_sort_tree.cpp:15-25,49-61`、`dual_segment_tree.cpp:20-24,111-120`、`dual_segment_tree_RUQ.cpp:16-20,68-82`、`dual_segment_tree_RUQ2.cpp:17-22,73-83`、`dual_commutative_segment_tree.cpp:24,53,135-143`、`wavelet_matrix.cpp:16-20,43,262-263`、`wavelet_matrix_bit.cpp:17-20,49,52,273-274`、`sortable_array.cpp:25,239,348-365`、`sortable_segment_tree.cpp:26-31,257,384-406`、`offline_RUQ2D.cpp:21-29,86,117-120`、`cumulative_sum2D.cpp:19-23,39-47`、`fenwick_tree2D.cpp:14-17,69-78`、`segment_tree2D.cpp:16-21,73-94`、`sparse_segment_tree2D.cpp:13-14,115,138-141`、`sparse_segment_tree2DFAST.cpp:15-16,70,104-116`、`dual_segment_tree2D_RUQ.cpp:18-29,117-145` である。
+   - 同種の問題は `linear_cum_sum.cpp:16-19,39,49-65`、`dynamic_segment_tree_init.cpp:21-23,64-70,96,105-106`、`static_range_mode_query.cpp:19-25,58,84-135` にもある。空構造として全メンバーを初期化するか、代入専用なら既定コンストラクタを削除して明記する。
+33. `wavelet_matrix_bit.cpp:14,19,50` はテンプレート引数 `log` を制限せず、コンストラクタで `1ull << log` を計算する。`WaveletMatrix<uint64_t,64>` では型のビット数と同じ64だけ左へ移動して未定義動作になる。`0<=log && log<64` と `log<=numeric_limits<T>::digits` をコンパイル時に検査するか、64ビット全幅を別処理する必要がある。
+
+このほか、`dual_segment_tree.cpp:26-43,117-120` はn指定コンストラクタの `init` を格納せず、`tovector` が論理長ではなく内部の2の累乗長を返す。`dual_segment_tree_RUQ2.cpp:28-35,41-52` は `vector` 入力のコンストラクタ後、最初の更新で時刻添字を1つ飛ばし、`stamp` を範囲外参照する。`offline_dynamic_connectivity.cpp:73-81,89-105` は存在しない辺の削除で末尾の反復子を読み、問い合わせ0件では長さ0の作業配列へ書く。
+
+`lazy_segment_tree.cpp:51-63` は `n=0` で `bit_length(-1)` が `int` のビット幅となり、`1 << ビット幅` という型幅以上のビット移動へ進む。`RangeSet` の隣接併合判定自体は `x±1` を使わないが、点からの構築・追加・削除 `range_set.cpp:92-94,127-129,171-173` の `x+1` と、範囲用の公開関数 `:40-55,100-123,132-167,187-191,439-443` の `r-l` などは型 `T` の中で先に評価され、どちらも整数の端点で桁あふれする。
+
+### `gomi` とリポジトリ直下のテスト
+
+`titan_cpplib/gomi/**` 6/6件も再読した。`gomi_link_cut_tree.cpp:234-257` は遅延値を `id` の関数ポインタと比較し、併合成功時に連結成分数を減らさない。永続遅延WB木2件には `copy` / `set` の実体化不能と根の更新喪失があり、永続配列・永続セグメント木群には空入力の参照外し、WB木の診断処理には `!` の優先順位誤りがある。実験用なら公開ライブラリから隔離する。
+
+直下の `test/**` 38件も静的に確認した。DS側ではDyConeのテスト・ベンチマーク4ファイルにある5つの読み込み先が旧名 `dy_cone*.cpp` のままで、コンパイルできない。`test/dwm/gen.py` は `10**18` までの値を作るが、読取り側は `int` である。`test/dset/mk_test.py` は100000件と宣言しながら命令3を出力せず、実際の件数が少なくなる。`test/sta_se/a.cpp:64` は1件少なく処理し、読み込んだ `StaticSet` を一度も試さない。`test/dic/main.cpp:156` は主な比較処理がコメントアウトされ、Wavelet Matrixの `topk` を検査する2つのテストは返却件数と順序を検査しない。
+
+`test/dwm/main.cpp:438-450` に埋め込まれたAVLビット列は、最上位ビットから格納しているのに局所添字をそのままビット移動へ使い、逆の位置へ値を設定する。同 `:855-859` の `DynamicBitVector` は設定時に順位の記録を更新しないが、現在の試験処理ではその型自体を使わない。`test/dset/main.cpp:46-51,109-139` に埋め込まれた `MultisetSum` も、既定状態が不定で、削除後の区画和を更新せず、範囲外の `operator[]` では戻り値がない。これらを直すまでテスト結果を品質の根拠にできない。
+
+`test/dycone/bench.cpp:26-41` と `bench_conn.cpp:27-41` は、`atoi` の失敗、`n<=0`、`q<0`、不正な動作種別を検査せず、ゼロによる剰余、巨大な領域確保、検証しないままの正常終了になり得る。`stress.cpp:29-35`, `stress_sum.cpp:30-36` の引数は反復数だけだが、0、不正文字列、負値を0回実行の正常終了として返すため、何も試していないのに成功扱いとなる。
+
+### 定数倍高速化
+
+- `segment_tree.cpp:37-42`、`dual_segment_tree.cpp:26-44`、`dual_segment_tree_RUQ.cpp:21-29`、`dual_segment_tree_RUQ2.cpp:23-29`、`merge_sort_tree.cpp:26-42`、`segment_tree2D.cpp:22-45` は、`bit_length(n)` から容量を作るため、`n` が2の累乗のとき余分な1段を持つ。`n=0` と上限を先に検査し、`max(1,n)` 以上で最小の2の累乗を `std::bit_ceil` 相当の処理で求めると、格納量は1次元で約半分、2次元で最大約1/4になる。`dual_segment_tree.cpp` は下記の `tovector` の返却長を先に正す必要があるが、それ以外の公開結果は変わらない。不利な点は、符号なし型での上限計算と `n=0` の処理を各実装でそろえて検証する手間が増えることである。
+- `dynamic_fenwick_tree2D.cpp:15-49,143-147,201-215` と `dynamic_fenwick_tree2D_RAQRSQ.cpp:29-63,102-106,219-233` は、所有関係を直した後も、既存の連続した `vector` と事前の容量確保を維持する。一括した固定長領域にすれば節点確保をさらに軽くできる可能性があり、計算結果は変わらない。ただし必要な最大節点数を見積もりにくく、過大確保による記憶量の増加や、領域不足時の処理が必要になるため、実測して選ぶ。
+- `dual_segment_tree.cpp:117-120` の `tovector` は内部容量全体ではなく先頭 `_n` 要素だけを返せば、余分な要素の複製を避けられる。これは現在の返却長も変えるため、先に公開仕様を正す必要がある。`dynamic_wavelet_tree_sum.cpp:971-1001` の `tovector` は、ビット列だけが必要なのに各節点で重み列も作るため、ビット列だけを取り出す処理へ分ければ結果を変えずに確保と複製を減らせる。
+
+### 現行実装と一致しない旧記述
+
+旧一覧の `deque.cpp` は現存せず、現存する `fixed_deque.cpp` が旧一覧から漏れていたため、「122件」は件数だけが一致する。旧本文にある `segutil` の単位元、`bit_length(0)`、`bit_length` 呼出しの曖昧性は現行で修正済みである。以下の旧本文は、上記の追加・訂正を優先し、履歴として参照する。
+
 レビュー日: 2026-08-12
 対象: `titan_cpplib/ds` 直下の `.cpp` 122ファイル（`range_set_design.md` は設計メモなので除外）
 

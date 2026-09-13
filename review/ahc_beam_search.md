@@ -1,5 +1,40 @@
 # titan_cpplib/ahc/beam_search レビュー
 
+## 全ファイルの確認結果（2026-09-03）
+
+現行版、親番号版、圧縮版、基数整列版、最適化版、`beam_result.cpp`、旧版、テスト、補助ツール、入力データまで再読した。旧本文は11件だけを対象とし、旧版やテストなどを明示的に除外していたため、今回の確認範囲を判断する根拠には使っていない。実行はしていない。
+
+### 現行版の確定事項
+
+- `beam_search_turn.cpp:695-701` の `seen` 自動容量 `beam_width*max_turn*2` は `int` で桁あふれする。最初から64ビットで計算し、上限を検査する。
+- `beam_search_turn.cpp:672-686,713-717` と最適化版 `:704-720,749-754` は、`max_turn+1` の桁あふれに加えて、目標ターンごとの巨大な添字配列と閾値配列を持つ。飛び飛びの目標ターンを許すなら、対応表または圧縮した添字へ変える。
+- 木と全候補領域が空でも、通常版 `:726-735,816-849` と最適化版 `:763-772,858-891` は `max_turn` まで空の反復を続け、`turns_done` を `max_turn` にする。空になった時点で `NoCandidates` を返す。
+- `beam_param.cpp:24-26,103-137` の候補領域、幅、ターン数の累積値は `int` で桁あふれする。`:154-200` はNaN、無限大、範囲外の `double` を検査前に `int` へ変換し、未定義動作になり得る。
+- `beam_search_compose.cpp:57-66,170-190` は世代内番号を無検査で24ビットへ詰め、`2^24` 以上で世代を表す部分まで壊す。
+- `naive_beam_search.cpp:175-188,209-247` だけは、終了候補と未完了候補が同じターンに出ても後続ターンを探索し、基本版とは異なる深さの解へ置き換え得る。
+- `beam_history.cpp:30-43` とターン指定2実装の同等箇所は、`Action` の文字列をJSON向けにエスケープしない。`state_info` はJSON断片を直接渡す契約なので、文字列のエスケープ対象ではない。
+- ビームサーチのクラスは `HashType` をテンプレート引数にするが、`candidates.cpp:20-25,62-67,103-108,211-216,255-260`、ターン指定通常版 `:138-142,181-186,254`、最適化版 `:162-166,211-216,285` などでハッシュ値を `uint64` へ変換し、`ds/hash_dict.cpp` のキーも64ビットである。128ビット値の上位だけが異なる状態を同一視する。64ビット限定を `static_assert` で示すか、辞書を全ビット対応にする。
+- `beam_search_state.cpp:129-132`, `beam_search_state_turn.cpp:133-136` は `history_file` を公開しながら、内部では常に `record_history=false` として実体化するため、ファイルを作らない。
+- `beam_history.cpp:30-33` はファイルを開けなかった後もJSON全体を整形する。先に出力先の状態を確認する。
+- ターン指定版の終了結果は、遠い目標ターンへ進んだ場合も通常版 `:742-755` と最適化版 `:779-792` で `turns_done=t+1` とする。論理上到達したターンと外側の反復回数を分ける必要がある。
+- ターン指定版の履歴は、通常版 `:779-793` と最適化版 `:816-830` で木の更新と現在ターンの候補領域解放より前に記録される。そのため、消費済みの親を次ターンの活動中ノードとして残す。
+
+履歴の仕様確認事項として、通常版 `beam_search_turn.cpp:364-369` と最適化版 `:410-415` は `try_op` 後に子の `HistoryNode` を作るが、`try_op` は `const` であり `State` へ遷移を適用しない。その場の `state_info` は親状態である。子状態を記録する仕様なら誤りであり、「遷移前の付加情報」を記録する仕様なら公開説明へ明記する。
+
+`how_to_use_beam_search.md:281-286` の「大きい `max_turn` でもメモリ増加はほぼない」という説明は、ターンごとの密な配列と矛盾する。記憶量がO(`max_turn`)であることを明記するか、飛び飛びのターンだけを保持する実装へ変える。`ahc/README.md:103-112` の排他的な読み込み一覧も基本版、合成版、ターン指定版だけを挙げ、同名クラスを定義する親番号版、圧縮版、ターン指定最適化版を漏らす。
+
+### 旧版・テスト・補助ツールの確定事項
+
+- `old/beam_search_recursion.cpp:59,64,154-161,181-189` は局所変数 `now_turn` が同名のメンバー変数を隠すため、メンバー側は初期値0のまま全ての `get_actions` へ渡る。再帰へ渡す局所式 `turn-now_turn` も常に0になる。一本道を圧縮した `cnt>0` の場合は深さが負になり、葉の展開へ到達しない。再利用したノードの子も `:210-214` で消去せず、`:178-179` で確保した `State` を解放せず、`:145-151` は `verbose=false` でも領域の大きさを出力する。
+- `old/beam_search.cpp:423-462`, `old/beam_fast_old.cpp:269-310` は候補が全滅した場合を `assert` だけで扱い、`NDEBUG` 指定時は空範囲や存在しない最良ノードを使う。再帰版も同様である。
+- 旧版の3実装は `clear_hash_every_turn=false` で同じオブジェクトの探索を繰り返すと、候補辞書に過去のハッシュ値が残り、2回目へ影響する。`old/beam_search_turn_old.cpp:256-272,302-318` は負または現在以下の `target_turn` を拒否せず、範囲外参照や進捗停止になる。
+- `test/ahc/beam_search_turn_differential.cpp:276-358,685-701` は128ビットのハッシュ値を切り捨てた誤った探索結果を期待値にする。本体修正と同時に、全ビットを使った結果へ直す。
+- `beam_search/test/a.cpp:73,301-303`, `a_radix.cpp:73,301-303`, `count_ab.cpp:88,320-322` は、既定構築した `Action` の方向文字などを初期化しないまま、ダミー経路または根の経路で読む。
+- `beam_search/test/ahc_settings.py:58-64` の `map(x / sum(W) for x in W)` は `TypeError` になる。有効な得点が0件の場合はゼロ除算も起こす。さらに `ahc064.cpp:457-464` は `argc` と `argv` を読まず、最適化側が付加する値を問題側へ反映しない。
+- `beam_search/test/beam_search_turn_microbench.cpp:314-336` は返却経路を破棄する前に計測対象を解除するため、その `Action` のデストラクタを回数へ含めない。
+
+以下の旧本文にある基本版・合成版の空候補時の未定義動作、通常版で `push_lazy` を使わない問題などは現行で修正済みである。現在の判定は上記を優先する。
+
 対象は以下の11ファイル。テスト実行はせず、コードを読んで精査した。
 old/、test/、ahclib_results、ビルド成果物は対象外。
 
@@ -39,14 +74,14 @@ old/、test/、ahclib_results、ビルド成果物は対象外。
 
 ## candidates.cpp
 
-- push の3経路(未満・同 hash 置換・worst 追い出し)、segtree の遅延構築(is_built)、hash マーカー(-1=削除済み、-2=前ターン survivor)のロジックを確認した。正しい。
+- `push` の3経路（幅未満・同じハッシュ値の置換・最悪候補の追い出し）、セグメント木の遅延構築（`is_built`）、ハッシュ表の印（-1=削除済み、-2=前ターンの生存候補）の処理を確認した。正しい。
 - 追い出し時の `func.set(hashidx[i], -1)` は既存キーへの set で rebuild が起きないため、先に取得した `get_pos(hash)` の位置は `inner_set` まで有効。確認済み。
 - **[軽微]** Candidates(非 Flat)の reset の `hashidx.size() < w` が符号なし比較で警告が出る。Flat 版はキャストしており不統一。
 - **[軽微] CandidatesFlat は現状どのエンジンからも使われていない**。beam_search_turn.cpp は内部に別実装の Candidates を持つ。残すなら用途をコメントに書く、使わないなら削除を検討。
 
 ## beam_param.cpp
 
-- recommend_width の active/empty 分離モデルは、導出コメントを含めて妥当。timestamp_meta の互換更新も一貫している。
+- `recommend_width` で活動中領域と空き領域を分ける方法は、導出コメントを含めて妥当。`timestamp_meta` の互換更新も一貫している。
 - **[軽微]** get_beam_width 内のローカル変数 `int beam_width` がメンバ `beam_width` を隠しており読みにくい。
 - **[軽微]** get_beam_width は `time_sum / beam_width_sum` を計算する。base 版では幅が常に1以上なので0除算は起きないが、防御はない。
 - base 版の動的幅が設定値を超えうる点、turn 版は上限になる点はドキュメントに明記されており仕様どおり。
@@ -58,7 +93,7 @@ old/、test/、ahclib_results、ビルド成果物は対象外。
 
 ## beam_history.cpp
 
-- **[注意] 空ファイル名でも書き込みを試みる**。`dump_history_json` は `ofstream ofs(filename)` の失敗を確認しない。record_history=true で history_file を省略(既定 "")すると、失敗ストリームへ全ノードの JSON 整形を行う無駄が生じる。beam_search_turn.cpp 内の同名関数は `if(!ofs) return;` があるので合わせるべき。
+- **[注意] 空ファイル名でも書き込みを試みる**。`dump_history_json` は `ofstream ofs(filename)` の失敗を確認しない。`record_history=true` で `history_file` を省略（既定 `""`）すると、失敗した出力先に対して全ノードのJSON整形を行う無駄が生じる。`beam_search_turn.cpp` 内の同名関数には `if(!ofs) return;` があるので合わせるべき。
 - **[軽微]** action_str と state_info を JSON エスケープせず埋め込む。`"` や `\` を含むと不正な JSON になる。
 
 ## naive_beam_search.cpp
@@ -76,7 +111,7 @@ old/、test/、ahclib_results、ビルド成果物は対象外。
 - get_next_beam で `Action action = act(node.aid)` と値コピーしているのは、enumerate 中の arena_put_reserve が action_pool を再確保しうるための正しい防御。参照にすると dangling になる。この理由は旧版にはコメントがあったが現行にはないので、書き戻すとよい。
 - 候補が空になった場合は部分解を静かに返す。ドキュメントの差分表に明記されており仕様どおり。
 - Candidates::reset の HashDict 事前確保はこのファイルだけ正しい(横断指摘参照)。
-- **[軽微]** record_history 時、aid が free_slots 経由で再利用されると aid_to_node_id が旧ノードを上書きし、親リンクが別ノードを指しうる。可視化ログのみの影響。
+- **[軽微]** `record_history=true` のとき、`aid` が `free_slots` 経由で再利用されると `aid_to_node_id` が旧ノードを上書きし、親リンクが別ノードを指しうる。可視化用の記録だけに影響する。
 - **[軽微]** seen_hash の登録は「ビームに採用されたときだけ」で、枝刈りとの整合は取れている。確認済み。
 
 ## beam_search_compose.cpp
