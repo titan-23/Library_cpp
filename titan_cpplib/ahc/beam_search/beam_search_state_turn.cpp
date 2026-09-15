@@ -9,7 +9,7 @@ using namespace std;
 // 木上のビームサーチライブラリ
 namespace beam_search {
 
-using ScoreType = long long;
+using ScoreType = double;
 using HashType = unsigned long long;
 const ScoreType INF = 1e18; // TODO -INFもできるように
 titan23::Random brnd;
@@ -99,7 +99,7 @@ public:
         turn = action.pre_turn;
     }
 
-    // TODO デバッグ用に現在の状態を出力する(ライブラリからは呼ばれない)
+    // デバッグ用に現在の状態を出力する(ライブラリからは呼ばれない)
     void print() const {
     }
 
