@@ -7,14 +7,16 @@
 | include（`titan_cpplib/graph/tree/` 以下） | クラス | 対象 |
 | --- | --- | --- |
 | `mo_tree_vertex.cpp` | `titan23::MoTreeVertex` | 両端点を含むパス上の頂点 |
+| `mo_tree_vertex_value.cpp` | `titan23::MoTreeVertexValue<T>` | パス上の頂点値 |
 | `mo_tree_edge.cpp` | `titan23::MoTreeEdge` | パス上の辺 |
 | `mo_tree_vertex_edge.cpp` | `titan23::MoTreeVertexEdge` | パス上の頂点と辺 |
 
-属性値は利用側の配列で保持し、コールバックには頂点番号・辺番号を渡す
+`MoTreeVertexValue` は頂点値を保持し、コールバックにも値を渡す
+ほかのクラスは頂点番号・辺番号を渡す
 
 ## 構築とクエリ登録
 
-3 クラスとも頂点数と根（省略時は 0）を渡し、辺を登録できる
+番号を渡す 3 クラスは頂点数と根（省略時は 0）を渡し、辺を登録できる
 
 ```cpp
 titan23::MoTreeVertex mo(n, root);
@@ -31,6 +33,10 @@ int i = mo.add_query(u, v);  // 登録順のクエリ番号
 隣接リストからの `mo(G, root)` も利用でき、Euler walk はコンストラクタで構築する
 `G` は各辺を両方向に含める
 この場合の辺番号は `u` の昇順に `G[u]` を走査し、`u < v` の辺を取った順
+
+番号を渡す 3 クラスは `vector<vector<pair<int, T>>>` の隣接リストも渡せる
+ペアの先頭を隣接頂点として使い、重みは読み取らない
+`MoTreeEdge` のコールバックには、この場合も辺番号を渡す
 
 頂点を扱う版は `run()` の最初に全クエリの LCA を計算する
 
@@ -81,6 +87,31 @@ mo.run(
 `0 <= lo[i] <= hi[i] <= n` とする
 各追加・削除は `O(1)`、回答は `O(sqrt(N))`
 出現回数 0 も数える場合、対象は `color_count` 個の色全体となる
+
+## 頂点値を直接渡す
+
+`MoTreeVertexValue` は構築時に頂点値をコピーする
+各 `run()` で Euler walk に値をコピーし、端点移動時の `color[v]` 参照を省く
+
+```cpp
+#include "titan_cpplib/graph/tree/mo_tree_vertex_value.cpp"
+
+titan23::MoTreeVertexValue<int> mo(G, color, root);
+for (auto [u, v] : queries) mo.add_query(u, v);
+
+vector<int> count(color_count, 0), ans(queries.size());
+int distinct = 0;
+mo.run(
+    [&] (int x) { if (count[x]++ == 0) ++distinct; },
+    [&] (int x) { if (--count[x] == 0) --distinct; },
+    [&] (int i) { ans[i] = distinct; }
+);
+```
+
+`mo(color, root)` で初期化して `add_edge(u, v)` で辺を登録することもできる
+頂点数は `color.size()` とし、`G` を渡す場合も頂点数を合わせる
+値が同じ頂点もそれぞれ追加・削除される
+値のコピーにかかる時間・空間は `O(N)`（値のコピーを `O(1)` とする）
 
 ## 辺属性
 

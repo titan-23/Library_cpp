@@ -31,6 +31,21 @@
 
 スコアは小さいほど良いものとして扱う。同じハッシュの状態は、スコアが最も小さい候補だけを残す。
 
+## Chokudai Search
+
+`chokudai_search/` は、各世代の未展開候補を保持して繰り返し探索する実装。
+既存ビームサーチと同じ `Action` / `State`、`BeamParam`、`BeamResult` を利用できる。
+
+- `chokudai_search.cpp`: 毎世代型。`ChokudaiSearch` が 1 操作で 1 世代進む状態を扱う。
+- `chokudai_search_turn.cpp`: 世代を飛ばす型。`ChokudaiSearchTurn` が `Action::target_turn` ごとに候補を管理する。
+- `chokudai_param.cpp`: 既存の `BeamParam` に巡回数上限を加える設定。
+- `chokudai_search_state.cpp`, `chokudai_search_state_turn.cpp`: 問題固有の `Action` と `State` を埋める雛形。
+- `how_to_use_chokudai_search.md`: 使用例、ビームサーチからの移行、設定、計算量とメモリの説明。
+
+`beam_width` は 1 巡回・各世代の展開数で、候補の保存数に上限はない。
+`time_limit` による打ち切りに加え、`ChokudaiParam::max_sweeps` で巡回数を指定できる。
+完成解を得た後も探索を続け、最良の完成解を返す。二つの実装は同時に include できる。
+
 ## 焼きなまし
 
 `sa/sa.cpp` が焼きなましの本体で、問題固有の処理は `State` に分離されている。

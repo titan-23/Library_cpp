@@ -9,7 +9,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 加算専用の平方分割 (`T{}` を零とする)
+/// @brief 加算専用の平方分割
 template<class T>
 class SqrtSegmentTreeSum {
 private:
@@ -22,24 +22,23 @@ public:
     SqrtSegmentTreeSum() : SqrtSegmentTreeSum(0) {}
 
     /// @brief 長さ n の零列で構築する / O(n)
-    SqrtSegmentTreeSum(int n) : n(n), bucket_size(1), total(T{}) {
-        assert(n >= 0);
+    SqrtSegmentTreeSum(int n) : n(n), bucket_size(1), total(0) {
         bucket_size = sqrt(n) + 1;
         const int bucket_cnt = n / bucket_size + (n % bucket_size != 0);
         a.resize(bucket_cnt);
-        data.assign(bucket_cnt, T{});
+        data.assign(bucket_cnt, 0);
         for (int k = 0; k < bucket_cnt; ++k) {
-            a[k].assign(min(bucket_size, n - k * bucket_size), T{});
+            a[k].assign(min(bucket_size, n - k * bucket_size), 0);
         }
     }
 
-    /// @brief 列 values から構築する / O(n)
-    SqrtSegmentTreeSum(const vector<T> &values)
-            : SqrtSegmentTreeSum(values.size()) {
+    /// @brief 列 A から構築する / O(n)
+    SqrtSegmentTreeSum(const vector<T> &A)
+            : SqrtSegmentTreeSum(A.size()) {
         int i = 0;
         for (int k = 0; k < (int)a.size(); ++k) {
             for (T &v : a[k]) {
-                v = values[i++];
+                v = A[i++];
                 data[k] += v;
             }
             total += data[k];
@@ -60,8 +59,11 @@ public:
     void set(int i, const T &v) {
         assert(0 <= i && i < n);
         const int k = i / bucket_size, j = i - k * bucket_size;
-        data[k] = data[k] - a[k][j] + v;
-        total = total - a[k][j] + v;
+        const T old = a[k][j];
+        data[k] -= old;
+        total -= old;
+        data[k] += v;
+        total += v;
         a[k][j] = v;
     }
 
@@ -77,11 +79,11 @@ public:
     /// @brief 区間 `[l, r)` の和を返す / O(√n)
     T prod(int l, int r) const {
         assert(0 <= l && l <= r && r <= n);
-        if (l == r) return T{};
+        if (l == r) return 0;
         const int k1 = l / bucket_size, k2 = r / bucket_size;
         l -= k1 * bucket_size;
         r -= k2 * bucket_size;
-        T sum{};
+        T sum = 0;
         if (k1 == k2) {
             for (int i = l; i < r; ++i) sum += a[k1][i];
         } else {

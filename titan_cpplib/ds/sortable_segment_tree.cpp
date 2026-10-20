@@ -319,7 +319,7 @@ public:
         fw = titan23::FenwickTree<int>(fw_init);
     }
 
-    /// @brief A[k] を返す / 償却 O(log^2 N)
+    /// @brief A[k] を返す / 償却 O(log N)
     T get(int k) {
         assert(0 <= k && k < n);
         make_kyokai(k);
@@ -329,7 +329,7 @@ public:
         return ptr->key;
     }
 
-    /// @brief A[k] を key に変更する / 償却 O(log^2 N)
+    /// @brief A[k] を key に変更する / 償却 O(log N)
     void set(int k, T key) {
         assert(0 <= k && k < n);
         make_kyokai(k);
@@ -372,7 +372,7 @@ public:
         fw.add(l, s);
     }
 
-    /// @brief 区間 [l, r) の総積を返す / 償却 O(log^2 N)
+    /// @brief 区間 [l, r) の総積を返す / 償却 O(log N)
     T prod(int l, int r) {
         assert(0 <= l && l <= r && r <= n);
         make_kyokai(l);

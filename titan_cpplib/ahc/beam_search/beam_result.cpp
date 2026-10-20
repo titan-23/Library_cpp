@@ -14,6 +14,8 @@ enum class BeamStatus {
     MaxTurnReached,
     NoCandidates,
     InvalidParameter,
+    TimeLimitReached,  // ChokudaiSearch: 完成解がないまま時間切れ
+    SweepLimitReached, // ChokudaiSearch: 完成解がないまま巡回回数の上限に到達
 };
 
 /// @brief ビームサーチの実行結果

@@ -24,8 +24,22 @@ private:
 protected:
     template<bool UseEdge, typename AV, typename DV, typename AE, typename DE, typename OUT>
     void run_impl(AV &add_vertex, DV &del_vertex, AE &add_edge, DE &del_edge, OUT &out) {
+        const vector<int> values;
+        run_impl<UseEdge, false>(values, add_vertex, del_vertex, add_edge, del_edge, out);
+    }
+
+    template<bool UseEdge, bool UseValue, typename T, typename AV, typename DV, typename AE, typename DE, typename OUT>
+    void run_impl(const vector<T> &values, AV &add_vertex, DV &del_vertex, AE &add_edge, DE &del_edge, OUT &out) {
         if (!built) build();
         if (query_count == 0) return;
+        const auto value_tour = [&] {
+            vector<pair<int, T>> result;
+            if constexpr (UseValue) {
+                result.reserve(tour.size());
+                for (int v : tour) result.emplace_back(v, values[v]);
+            }
+            return result;
+        }();
         vector<int> lcas;
         if constexpr (UseVertex) {
             vector<vector<int>> G(n);
@@ -39,21 +53,33 @@ protected:
         }
         vector<bool> contain(n, false);
         auto change = [&] (int i) {
-            const int v = tour[i];
+            const int v = UseValue ? value_tour[i].first : tour[i];
             if (contain[v]) {
-                if constexpr (UseVertex) del_vertex(v);
+                if constexpr (UseVertex) {
+                    if constexpr (UseValue) del_vertex(value_tour[i].second);
+                    else del_vertex(v);
+                }
                 if constexpr (UseEdge) del_edge(par_edge[v]);
             } else {
-                if constexpr (UseVertex) add_vertex(v);
+                if constexpr (UseVertex) {
+                    if constexpr (UseValue) add_vertex(value_tour[i].second);
+                    else add_vertex(v);
+                }
                 if constexpr (UseEdge) add_edge(par_edge[v]);
             }
             contain[v] = !contain[v];
         };
         auto answer = [&] (int i) {
             // パスから欠けている LCA の頂点だけを補う
-            if constexpr (UseVertex) add_vertex(lcas[i]);
+            if constexpr (UseVertex) {
+                if constexpr (UseValue) add_vertex(values[lcas[i]]);
+                else add_vertex(lcas[i]);
+            }
             out(i);
-            if constexpr (UseVertex) del_vertex(lcas[i]);
+            if constexpr (UseVertex) {
+                if constexpr (UseValue) del_vertex(values[lcas[i]]);
+                else del_vertex(lcas[i]);
+            }
         };
         mo.run_light(change, change, answer);
     }
@@ -67,6 +93,17 @@ public:
         for (int u = 0; u < n; ++u) {
             for (int v : G[u]) {
                 if (u < v) add_edge(u, v);
+            }
+        }
+        build();
+    }
+
+    /// @brief 辺属性付き無向木 G と根 root から構築
+    template<typename T>
+    MoTreeBase(const vector<vector<pair<int, T>>> &G, int root = 0) : MoTreeBase(G.size(), root) {
+        for (int u = 0; u < n; ++u) {
+            for (const auto &edge : G[u]) {
+                if (u < edge.first) add_edge(u, edge.first);
             }
         }
         build();
