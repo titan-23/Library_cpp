@@ -276,6 +276,63 @@ void test_large_sigma() {
     assert(tree.tovector() == expected);
 }
 
+template<class Value>
+void verify_singleton_suffix_queries(const Value sigma, const vector<Value> &a) {
+    const titan23::DynamicWaveletTree<Value> tree(sigma, a);
+    vector<Value> thresholds = {0, sigma - 1};
+    for (const Value x : a) {
+        thresholds.push_back(x);
+        if (x > 0) thresholds.push_back(x - 1);
+        if (x + 1 < sigma) thresholds.push_back(x + 1);
+    }
+    sort(thresholds.begin(), thresholds.end());
+    thresholds.erase(unique(thresholds.begin(), thresholds.end()), thresholds.end());
+
+    const int n = a.size();
+    for (int l = 0; l <= n; ++l) {
+        for (int r = l; r <= n; ++r) {
+            vector<Value> sorted(a.begin() + l, a.begin() + r);
+            sort(sorted.begin(), sorted.end());
+            vector<pair<Value, int>> frequent;
+            for (const Value x : sorted) {
+                if (!frequent.empty() && frequent.back().first == x) ++frequent.back().second;
+                else frequent.emplace_back(x, 1);
+            }
+            sort(frequent.begin(), frequent.end(), [](const auto &x, const auto &y) {
+                return x.second != y.second ? x.second > y.second : x.first > y.first;
+            });
+            for (int k = 0; k <= r - l + 1; ++k) {
+                const int take = min(k, static_cast<int>(frequent.size()));
+                const vector<pair<Value, int>> expected(frequent.begin(), frequent.begin() + take);
+                assert(tree.topk(l, r, k) == expected);
+            }
+            for (int k = 0; k < r - l; ++k) assert(tree.kth_smallest(l, r, k) == sorted[k]);
+            assert(tree.range_freq(l, r, sigma) == r - l);
+            for (const Value x : thresholds) {
+                const auto lower = lower_bound(sorted.begin(), sorted.end(), x);
+                const int less = lower - sorted.begin();
+                const int equal = upper_bound(sorted.begin(), sorted.end(), x) - lower;
+                const Value previous = less == 0 ? static_cast<Value>(-1) : sorted[less - 1];
+                const Value next = lower == sorted.end() ? static_cast<Value>(-1) : *lower;
+                assert(tree.rank(r, x) == count(a.begin(), a.begin() + r, x));
+                assert(tree.range_count(l, r, x) == equal);
+                assert(tree.range_freq(l, r, x) == less);
+                assert(tree.prev_value(l, r, x) == previous);
+                assert(tree.next_value(l, r, x) == next);
+            }
+        }
+    }
+}
+
+void test_singleton_suffix_queries() {
+    verify_singleton_suffix_queries<int>(1, {0, 0, 0});
+    verify_singleton_suffix_queries<int>(19, {18, 0, 4, 4, 1, 7, 8, 8, 16, 3, 18});
+    const uint64_t high = uint64_t(1) << 63;
+    verify_singleton_suffix_queries<uint64_t>(high + 65,
+        {high + 32, 0, 3, high, high + 1, (uint64_t(1) << 31) - 1,
+         uint64_t(1) << 31, (uint64_t(1) << 62) + 7, high + 63, 3, high});
+}
+
 } // namespace
 
 int main() {
@@ -284,6 +341,7 @@ int main() {
     }
     test_sigma_one();
     test_large_sigma();
+    test_singleton_suffix_queries();
     cout << "Dynamic wavelet random test: OK" << '\n';
     return 0;
 }

@@ -3,9 +3,9 @@
 # user settings --------------------------------------------------
 # `./titan_cpplib` がある絶対パス
 LIB_PATH = (
-    "/mnt/c/Users/titan/source/Library_cpp/",
-    "C:\\Users\\titan\\source\\Library_cpp\\",
-    "/home/titan/source/Library_cpp/",
+    "/mnt/c/Users/titan/src/Library_cpp/",
+    "C:\\Users\\titan\\src\\Library_cpp\\",
+    "/home/titan/src/Library_cpp/",
 )
 #  ---------------------------------------------------------------
 
@@ -50,9 +50,7 @@ class CppExpander:
             output_fie_path (str): 出力ファイル / `clip`のとき、クリップボードに貼り付ける
         """
         if not os.path.exists(input_file_path):
-            logger.critical(
-                to_red(f'input_file_path : "{input_file_path}" does not exist.')
-            )
+            logger.critical(to_red(f'input_file_path : "{input_file_path}" does not exist.'))
             logger.critical(to_red(f"FileNotFoundError"))
             exit(1)
         self.input_file_path: str = input_file_path
@@ -100,15 +98,11 @@ class CppExpander:
                         new_path = f"{lib_path}{target_file}"
                         if os.path.exists(new_path):
                             self.outputs.append(f"// {line}")
-                            logger.info(
-                                f"[include] \"{target_file.replace(lib_path, '')}\""
-                            )
+                            logger.info(f"[include] \"{target_file.replace(lib_path, '')}\"")
                             self._get_code(new_path)
                             break
                     else:
-                        logger.critical(
-                            f'File "{input_file_path}", line {input_line_num}'
-                        )
+                        logger.critical(f'File "{input_file_path}", line {input_line_num}')
                         error_line = line.rstrip()
                         error_underline = "^" + "~" * (len(error_line) - 1)
                         logger.critical(to_red(f"\t{error_line}"))

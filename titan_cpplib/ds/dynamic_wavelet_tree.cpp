@@ -102,21 +102,22 @@ private:
 
         int n = a.size();
         _nodes.reserve(_estimated_node_count(n));
-        vector<int> order(n), work(n);
+        // Partition values directly so each level reads contiguous memory.
+        vector<T> values(a), work(n);
         vector<uint8_t> bits(n);
-        iota(order.begin(), order.end(), 0);
 
-        auto build = [&](auto&& self, int bit, int l, int r, vector<int>& src, vector<int>& dst) -> int {
+        auto build = [&](auto&& self, int bit, int l, int r, vector<T>& src, vector<T>& dst) -> int {
             if (l == r || bit < 0) return _NIL;
 
             int zeros = 0;
             for (int i = l; i < r; ++i) {
-                bool b = (a[src[i]] >> bit) & 1;
+                bool b = (src[i] >> bit) & 1;
                 bits[i] = b;
                 zeros += !b;
             }
 
             int node = _make_node(bits, l, r);
+            if (bit == 0) return node;
             int zero = l;
             int one = l + zeros;
             for (int i = l; i < r; ++i) {
@@ -135,12 +136,41 @@ private:
             return node;
         };
 
-        _root = build(build, _log - 1, 0, n, order, work);
+        _root = build(build, _log - 1, 0, n, values, work);
+    }
+
+    // Once an interval is a singleton, only its position needs to be mapped.
+    T _access_node(int node, int bit, int k) const {
+        T result = 0;
+        for (; bit >= 0; --bit) {
+            auto [b, rank1] = _nodes[node].v._access_ans_rank1(k);
+            if (b) {
+                result |= (T)1 << bit;
+                k = rank1;
+            } else {
+                k -= rank1;
+            }
+            node = _nodes[node].child[b];
+        }
+        return result;
+    }
+
+    // Compare the remaining value bits, stopping at the first difference.
+    int _compare_node(int node, int bit, int k, const T x) const {
+        for (; bit >= 0; --bit) {
+            const auto [b, rank1] = _nodes[node].v._access_ans_rank1(k);
+            const bool target = (x >> bit) & 1;
+            if (b != target) return b ? 1 : -1;
+            k = b ? rank1 : k - rank1;
+            node = _nodes[node].child[b];
+        }
+        return 0;
     }
 
     int _range_freq_node(int node, int bit, int l, int r, const T x) const {
         int result = 0;
         while (node != _NIL && bit >= 0 && l < r) {
+            if (r - l == 1) return result + (_compare_node(node, bit, l, x) < 0);
             auto [l0, r0] = _nodes[node].v._rank0_pair(l, r);
             bool b = (x >> bit) & 1;
             if (b) {
@@ -159,6 +189,7 @@ private:
 
     T _extreme(int node, int bit, int l, int r, T value, const bool largest) const {
         while (bit >= 0) {
+            if (r - l == 1) return value | _access_node(node, bit, l);
             auto [l0, r0] = _nodes[node].v._rank0_pair(l, r);
             int count0 = r0 - l0;
             int count1 = (r - l) - count0;
@@ -325,9 +356,10 @@ public:
         assert(0 <= x && x < _sigma);
         int node = _root;
         for (int bit = _log - 1; bit >= 0; --bit) {
-            if (node == _NIL) return 0;
+            if (r == 0) return 0;
             bool b = (x >> bit) & 1;
-            r = _nodes[node].v.rank(r, b);
+            const int r1 = _nodes[node].v.rank1(r);
+            r = b ? r1 : r - r1;
             node = _nodes[node].child[b];
         }
         return r;
@@ -339,7 +371,8 @@ public:
         assert(0 <= x && x < _sigma);
         int node = _root;
         for (int bit = _log - 1; bit >= 0; --bit) {
-            if (node == _NIL) return 0;
+            if (l == r) return 0;
+            if (r - l == 1) return _compare_node(node, bit, l, x) == 0;
             bool b = (x >> bit) & 1;
             auto [l0, r0] = _nodes[node].v._rank0_pair(l, r);
             if (b) {
@@ -387,19 +420,7 @@ public:
     /// `k` 番目の要素を返す / `O(log(n)log(σ))`
     T access(int k) const {
         assert(0 <= k && k < len());
-        int node = _root;
-        T result = 0;
-        for (int bit = _log - 1; bit >= 0; --bit) {
-            auto [b, rank1] = _nodes[node].v._access_ans_rank1(k);
-            if (b) {
-                result |= (T)1 << bit;
-                k = rank1;
-            } else {
-                k -= rank1;
-            }
-            node = _nodes[node].child[b];
-        }
-        return result;
+        return _access_node(_root, _log - 1, k);
     }
 
     /// 区間 `[l, r)` で昇順 `k` 番目の値を返す / `O(log(n)log(σ))`
@@ -409,6 +430,7 @@ public:
         int node = _root;
         T result = 0;
         for (int bit = _log - 1; bit >= 0; --bit) {
+            if (r - l == 1) return result | _access_node(node, bit, l);
             auto [l0, r0] = _nodes[node].v._rank0_pair(l, r);
             int count0 = r0 - l0;
             bool b = count0 <= k;
@@ -443,7 +465,9 @@ public:
         while (!hq.empty() && k > 0) {
             auto [length, x, node, bit, ql, qr] = hq.top();
             hq.pop();
-            if (bit < 0) {
+            // Disjoint value prefixes preserve their order when a suffix is filled in.
+            if (bit < 0 || length == 1) {
+                if (bit >= 0) x |= _access_node(node, bit, ql);
                 ans.emplace_back(x, length);
                 --k;
                 continue;

@@ -9,6 +9,9 @@
 #include <memory>
 #include <utility>
 #include <vector>
+#if defined(__SSE2__) || (defined(__BMI2__) && defined(__x86_64__))
+#include <immintrin.h>
+#endif
 #include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
@@ -16,6 +19,8 @@ using namespace std;
 namespace titan23 {
 
 class BTreeBitVectorCore {
+    friend class BTreeBitVector;
+
 private:
     using uint128 = __uint128_t;
 
@@ -23,11 +28,13 @@ private:
     static constexpr int _SPLIT_W = 64;
     static constexpr int _LEAF_CAP = 8;
     static constexpr int _LEAF_MIN = _LEAF_CAP / 2;
-    static constexpr int _BRANCH = 12;
+    static constexpr int _BRANCH = 8;
+    static_assert(_BRANCH == 8, "SIMD prefix search expects eight children");
     static constexpr int _BRANCH_MIN = _BRANCH / 2;
     static constexpr int _MAX_HEIGHT = 16;
 
     struct Leaf {
+        // Logical order within each chunk is most-significant bit first.
         array<uint128, _LEAF_CAP> key;
         array<uint8_t, _LEAF_CAP> bit_len;
         array<uint8_t, _LEAF_CAP> key_total;
@@ -47,7 +54,8 @@ private:
         int total;
         int count;
 
-        Internal() : size(0), total(0), count(0) {}
+        // SIMD searches also load unused lanes, so initialize every prefix.
+        Internal() : child_size{}, child_total{}, size(0), total(0), count(0) {}
     };
 
     vector<Leaf> _leaves;
@@ -72,7 +80,7 @@ private:
         return (word >> (k & 63)) & 1;
     }
 
-    uint64_t _mask64(const int bit_len) const { return bit_len == 64 ? UINT64_MAX : bit_len == 0 ? 0 : (static_cast<uint64_t>(1) << bit_len) - 1; }
+    uint64_t _mask64(const int bit_len) const { return bit_len == 64 ? UINT64_MAX : (static_cast<uint64_t>(1) << bit_len) - 1; }
 
     uint128 _bit_insert(const uint128 value, const int lower_bit_len, const bool bit) const {
         const uint64_t low = value;
@@ -93,15 +101,21 @@ private:
         const uint64_t high = value >> 64;
         const int k = lower_bit_len - 1;
         if (k < 64) {
-            const uint64_t new_low = ((low & ~_mask64(k + 1)) >> 1) | (low & _mask64(k)) | ((high & 1) << 63);
+            const uint64_t mask = _mask64(k);
+            const uint64_t new_low = ((low >> 1) & ~mask) | (low & mask) | ((high & 1) << 63);
             return (static_cast<uint128>(high >> 1) << 64) | new_low;
         }
         const int high_k = k - 64;
-        const uint64_t new_high = ((high & ~_mask64(high_k + 1)) >> 1) | (high & _mask64(high_k));
+        const uint64_t mask = _mask64(high_k);
+        const uint64_t new_high = ((high >> 1) & ~mask) | (high & mask);
         return (static_cast<uint128>(new_high) << 64) | low;
     }
 
     int _make_leaf() {
+        if (_leaves.empty()) {
+            _leaves.reserve(2);
+            _leaves.emplace_back();
+        }
         if (_free_leaf_head != 0) {
             const int leaf = _free_leaf_head;
             _free_leaf_head = _leaves[leaf].next;
@@ -118,6 +132,10 @@ private:
     }
 
     int _make_internal() {
+        if (_internals.empty()) {
+            _internals.reserve(2);
+            _internals.emplace_back();
+        }
         if (_free_internal_head != 0) {
             const int node = _free_internal_head;
             _free_internal_head = _internals[node].child[0];
@@ -161,6 +179,56 @@ private:
     int _size_before(const Internal &node, const int pos) const { return pos == 0 ? 0 : node.child_size[pos - 1]; }
 
     int _total_before(const Internal &node, const int pos) const { return pos == 0 ? 0 : node.child_total[pos - 1]; }
+
+    // Find the first prefix > k. A live child always matches; unused lanes
+    // follow it and cannot change the result, even after node reuse.
+    int _find_size(const Internal &node, const int k) const {
+#if defined(__AVX2__)
+        const __m256i key = _mm256_set1_epi32(k);
+        const __m256i sizes = _mm256_loadu_si256(reinterpret_cast<const __m256i *>(node.child_size.data()));
+        const unsigned mask = _mm256_movemask_ps(_mm256_castsi256_ps(_mm256_cmpgt_epi32(sizes, key)));
+        assert(mask != 0);
+        return __builtin_ctz(mask);
+#elif defined(__SSE2__)
+        const __m128i key = _mm_set1_epi32(k);
+        for (int i = 0; i < _BRANCH; i += 4) {
+            const __m128i a = _mm_loadu_si128(reinterpret_cast<const __m128i *>(node.child_size.data() + i));
+            const unsigned mask = _mm_movemask_ps(_mm_castsi128_ps(_mm_cmpgt_epi32(a, key)));
+            if (mask) return i + __builtin_ctz(mask);
+        }
+        assert(false);
+        __builtin_unreachable();
+#else
+        int pos = 0;
+        while (k >= node.child_size[pos]) ++pos;
+        return pos;
+#endif
+    }
+
+    int _find_count(const Internal &node, const int k, const bool bit) const {
+#if defined(__AVX2__)
+        const __m256i key = _mm256_set1_epi32(k);
+        __m256i counts = _mm256_loadu_si256(reinterpret_cast<const __m256i *>(node.child_total.data()));
+        if (!bit) counts = _mm256_sub_epi32(_mm256_loadu_si256(reinterpret_cast<const __m256i *>(node.child_size.data())), counts);
+        const unsigned mask = _mm256_movemask_ps(_mm256_castsi256_ps(_mm256_cmpgt_epi32(counts, key)));
+        assert(mask != 0);
+        return __builtin_ctz(mask);
+#elif defined(__SSE2__)
+        const __m128i key = _mm_set1_epi32(k);
+        unsigned mask = 0;
+        for (int i = 0; i < _BRANCH; i += 4) {
+            __m128i a = _mm_loadu_si128(reinterpret_cast<const __m128i *>(node.child_total.data() + i));
+            if (!bit) a = _mm_sub_epi32(_mm_loadu_si128(reinterpret_cast<const __m128i *>(node.child_size.data() + i)), a);
+            mask |= _mm_movemask_ps(_mm_castsi128_ps(_mm_cmpgt_epi32(a, key))) << i;
+        }
+        assert(mask != 0);
+        return __builtin_ctz(mask);
+#else
+        int pos = 0;
+        while (k >= _count_prefix(node, pos, bit)) ++pos;
+        return pos;
+#endif
+    }
 
     int _count_prefix(const Internal &node, const int pos, const bool bit) const {
         return bit ? node.child_total[pos] : node.child_size[pos] - node.child_total[pos];
@@ -387,7 +455,6 @@ private:
             _set_child(parent, pos, left, child_level);
             if (_internals[parent].count < _BRANCH) {
                 _insert_child(parent, pos + 1, right, child_level);
-                _sync_path(path, slots, depth, parent, child_level + 1);
                 return;
             }
 
@@ -602,6 +669,9 @@ private:
         _rebalance_internal(path, slots, parent_depth, 1);
     }
 
+    // select-pop already updates ancestors while descending; positional pop
+    // learns the removed bit at the leaf and updates them here.
+    template<bool UpdateAncestors = true>
     void _pop_leaf_bit(const array<int, _MAX_HEIGHT> &path, const array<int, _MAX_HEIGHT> &slots, const int depth, const int leaf, const int chunk, const int k, const bool bit) {
         Leaf &node = _leaves[leaf];
         if (node.bit_len[chunk] == 1) {
@@ -620,10 +690,10 @@ private:
         }
 
         if ((depth == 0 && node.count > 0) || (depth > 0 && node.count >= _LEAF_MIN)) {
-            _add_path(path, slots, depth, -1, -bit);
+            if constexpr (UpdateAncestors) _add_path(path, slots, depth, -1, -bit);
             return;
         }
-        _sync_path(path, slots, depth, leaf, 0);
+        if constexpr (UpdateAncestors) _sync_path(path, slots, depth, leaf, 0);
         _rebalance_leaf(path, slots, depth, leaf);
     }
 
@@ -711,8 +781,7 @@ private:
         int result = 0;
         while (level > 0) {
             const Internal &n = _internals[node];
-            int pos = 0;
-            while (r > n.child_size[pos]) ++pos;
+            const int pos = _find_size(n, r - 1);
             if (r == n.child_size[pos]) return result + n.child_total[pos];
             result += _total_before(n, pos);
             r -= _size_before(n, pos);
@@ -739,10 +808,8 @@ private:
         int level = _height;
         while (level > 0) {
             const Internal &n = _internals[node];
-            int left_pos = 0;
-            while (l > n.child_size[left_pos]) ++left_pos;
-            int right_pos = left_pos;
-            while (r > n.child_size[right_pos]) ++right_pos;
+            const int left_pos = _find_size(n, l - 1);
+            const int right_pos = _find_size(n, r - 1);
             const int left_size = _size_before(n, left_pos);
             const int right_size = _size_before(n, right_pos);
             const int left_total = _total_before(n, left_pos);
@@ -762,24 +829,57 @@ private:
         return {left_result + _leaf_pref(node, l), right_result + _leaf_pref(node, r)};
     }
 
-    int _select64(uint64_t word, int bit_len, int k) const {
+    static int _select64(uint64_t word, const int bit_len, int k) {
+#if defined(__BMI2__) && defined(__x86_64__)
+        const int from_low = titan23::popcount(word) - k - 1;
+        return bit_len - 1 - titan23::countr_zero(_pdep_u64(uint64_t(1) << from_low, word));
+#else
+        static constexpr array<uint32_t, 256> positions = [] {
+            array<uint32_t, 256> table{};
+            for (int byte = 0; byte < 256; ++byte) {
+                int rank = 0;
+                for (int bit = 7; bit >= 0; --bit) {
+                    if ((byte >> bit) & 1) table[byte] |= uint32_t(bit) << (4 * rank++);
+                }
+            }
+            return table;
+        }();
         int offset = 0;
-        while (bit_len > 1) {
-            const int left_len = (bit_len + 1) / 2;
-            const int right_len = bit_len - left_len;
-            const uint64_t left = word >> right_len;
-            const int count = titan23::popcount(left);
+        if (word >> 32) {
+            const uint32_t high = word >> 32;
+            const int count = titan23::popcount(high);
             if (k < count) {
-                word = left;
-                bit_len = left_len;
+                word = high;
+                offset += 32;
             } else {
-                word &= _mask64(right_len);
                 k -= count;
-                offset += left_len;
-                bit_len = right_len;
+                word &= UINT32_MAX;
             }
         }
-        return offset;
+        if (word >> 16) {
+            const uint32_t high = word >> 16;
+            const int count = titan23::popcount(high);
+            if (k < count) {
+                word = high;
+                offset += 16;
+            } else {
+                k -= count;
+                word &= UINT16_MAX;
+            }
+        }
+        if (word >> 8) {
+            const uint32_t high = word >> 8;
+            const int count = titan23::popcount(high);
+            if (k < count) {
+                word = high;
+                offset += 8;
+            } else {
+                k -= count;
+                word &= UINT8_MAX;
+            }
+        }
+        return bit_len - 1 - offset - ((positions[word] >> (4 * k)) & 7);
+#endif
     }
 
     int _select_in_key(const uint128 key, const int bit_len, int k, const bool bit) const {
@@ -802,8 +902,7 @@ private:
         int offset = 0;
         while (level > 0) {
             const Internal &n = _internals[node];
-            int pos = 0;
-            while (k >= _count_prefix(n, pos, bit)) ++pos;
+            const int pos = _find_count(n, k, bit);
             if (pos > 0) k -= _count_prefix(n, pos - 1, bit);
             offset += _size_before(n, pos);
             node = n.child[pos];
@@ -822,15 +921,16 @@ private:
     }
 
 public:
-    BTreeBitVectorCore() : _leaves(1), _internals(1), _root(0), _first(0), _free_leaf_head(0), _free_internal_head(0), _height(0) {}
+    // Allocate each pool on first use; a single-leaf tree needs no internals.
+    BTreeBitVectorCore() : _root(0), _first(0), _free_leaf_head(0), _free_internal_head(0), _height(0) {}
 
     BTreeBitVectorCore(const vector<uint8_t> &a) : BTreeBitVectorCore() { _build(a, 0, a.size()); }
 
     BTreeBitVectorCore(const vector<uint8_t> &a, const int start, const int end) : BTreeBitVectorCore() { _build(a, start, end); }
 
     void clear() {
-        _leaves.resize(1);
-        _internals.resize(1);
+        _leaves.clear();
+        _internals.clear();
         _root = 0;
         _first = 0;
         _free_leaf_head = 0;
@@ -847,8 +947,8 @@ public:
             count = (count + _BRANCH_MIN - 1) / _BRANCH_MIN;
             internals += count;
         }
-        _leaves.reserve(_leaves.size() + leaves);
-        _internals.reserve(_internals.size() + internals);
+        _leaves.reserve(max<size_t>(1, _leaves.size()) + leaves);
+        if (internals > 0) _internals.reserve(max<size_t>(1, _internals.size()) + internals);
     }
 
     void insert(const int k, const bool bit) { _insert_and_rank1(k, bit); }
@@ -865,8 +965,7 @@ public:
 
         while (level > 0) {
             const Internal &n = _internals[node];
-            int pos = 0;
-            while (k >= n.child_size[pos]) ++pos;
+            const int pos = _find_size(n, k);
             k -= _size_before(n, pos);
             path[depth] = node;
             slots[depth++] = pos;
@@ -907,8 +1006,7 @@ public:
         int level = _height;
         while (level > 0) {
             const Internal &n = _internals[node];
-            int pos = 0;
-            while (k >= n.child_size[pos]) ++pos;
+            const int pos = _find_size(n, k);
             k -= _size_before(n, pos);
             node = n.child[pos];
             --level;
@@ -960,13 +1058,22 @@ public:
         int offset = 0;
 
         while (level > 0) {
-            const Internal &n = _internals[node];
-            int pos = 0;
-            while (k >= _count_prefix(n, pos, bit)) ++pos;
+            Internal &n = _internals[node];
+            const int pos = _find_count(n, k, bit);
             if (pos > 0) k -= _count_prefix(n, pos - 1, bit);
             offset += _size_before(n, pos);
             path[depth] = node;
             slots[depth++] = pos;
+            if (bit) {
+                for (int j = pos; j < n.count; ++j) {
+                    --n.child_size[j];
+                    --n.child_total[j];
+                }
+                --n.total;
+            } else {
+                for (int j = pos; j < n.count; ++j) --n.child_size[j];
+            }
+            --n.size;
             node = n.child[pos];
             --level;
         }
@@ -981,7 +1088,7 @@ public:
         }
         const int key_index = _select_in_key(leaf.key[chunk], leaf.bit_len[chunk], k, bit);
         const int result = offset + key_index;
-        _pop_leaf_bit(path, slots, depth, node, chunk, key_index, bit);
+        _pop_leaf_bit<false>(path, slots, depth, node, chunk, key_index, bit);
         return result;
     }
 
@@ -1003,13 +1110,22 @@ public:
         int level = _height;
 
         while (level > 0) {
-            const Internal &n = _internals[node];
-            int pos = 0;
-            while (pos + 1 < n.count && k > n.child_size[pos]) ++pos;
+            Internal &n = _internals[node];
+            const int pos = _find_size(n, k - 1);
             result += _total_before(n, pos);
             k -= _size_before(n, pos);
             path[depth] = node;
             slots[depth++] = pos;
+            if (bit) {
+                for (int j = pos; j < n.count; ++j) {
+                    ++n.child_size[j];
+                    ++n.child_total[j];
+                }
+                ++n.total;
+            } else {
+                for (int j = pos; j < n.count; ++j) ++n.child_size[j];
+            }
+            ++n.size;
             node = n.child[pos];
             --level;
         }
@@ -1028,14 +1144,12 @@ public:
             leaf.key_total[chunk] += bit;
             ++leaf.size;
             leaf.total += bit;
-            _add_path(path, slots, depth, 1, bit);
             return result;
         }
 
         const uint128 value = _bit_insert(leaf.key[chunk], _W - k, bit);
         if (leaf.count < _LEAF_CAP) {
             _split_full_chunk(node, chunk, value);
-            _add_path(path, slots, depth, 1, bit);
             return result;
         }
 
@@ -1061,8 +1175,7 @@ public:
 
         while (level > 0) {
             const Internal &n = _internals[node];
-            int pos = 0;
-            while (k >= n.child_size[pos]) ++pos;
+            const int pos = _find_size(n, k);
             result += _total_before(n, pos);
             k -= _size_before(n, pos);
             path[depth] = node;
@@ -1090,8 +1203,7 @@ public:
         int level = _height;
         while (level > 0) {
             const Internal &n = _internals[node];
-            int pos = 0;
-            while (k >= n.child_size[pos]) ++pos;
+            const int pos = _find_size(n, k);
             result += _total_before(n, pos);
             k -= _size_before(n, pos);
             node = n.child[pos];
@@ -1119,8 +1231,7 @@ public:
         int level = _height;
         while (level > 0) {
             const Internal &n = _internals[node];
-            int pos = 0;
-            while (k >= n.child_size[pos]) ++pos;
+            const int pos = _find_size(n, k);
             result += _total_before(n, pos);
             k -= _size_before(n, pos);
             path[depth] = node;
@@ -1170,9 +1281,13 @@ private:
     using uint128 = __uint128_t;
 
     static constexpr int _W = 127;
+    // Avoid repeated allocations when updates cross the small-mode capacity.
+    static constexpr int _DEMOTE_W = 96;
     static constexpr uint8_t _TREE_MODE = UINT8_MAX;
 
+    // The first logical bit is bit 0; Core chunks use the opposite orientation.
     struct Key {
+        // Inline order is least-significant bit first, simplifying rank/access.
         uint64_t low;
         uint64_t high;
     };
@@ -1197,6 +1312,21 @@ private:
         _data.key.high = key >> 64;
     }
 
+    static uint64_t _reverse64(uint64_t word) {
+        word = ((word >> 1) & UINT64_C(0x5555555555555555)) | ((word & UINT64_C(0x5555555555555555)) << 1);
+        word = ((word >> 2) & UINT64_C(0x3333333333333333)) | ((word & UINT64_C(0x3333333333333333)) << 2);
+        word = ((word >> 4) & UINT64_C(0x0f0f0f0f0f0f0f0f)) | ((word & UINT64_C(0x0f0f0f0f0f0f0f0f)) << 4);
+        return __builtin_bswap64(word);
+    }
+
+    // Convert between inline and leaf chunk order without unpacking the bits.
+    static uint128 _reverse_key(const uint128 key, const int bit_len) {
+        if (bit_len == 0) return 0;
+        const uint128 reversed = (static_cast<uint128>(_reverse64(static_cast<uint64_t>(key))) << 64)
+            | _reverse64(static_cast<uint64_t>(key >> 64));
+        return reversed >> (128 - bit_len);
+    }
+
     void _flip_bit(const int k) {
         if (k < 64) {
             _data.key.low ^= static_cast<uint64_t>(1) << k;
@@ -1206,12 +1336,13 @@ private:
     }
 
     int _prefix_total(const int take) const {
-        const uint64_t low = _data.key.low;
-        if (_bit_len <= 64) return titan23::popcount(low >> ((_bit_len - take) & 63)) * (take != 0);
-        const int high_len = _bit_len - 64;
-        const uint64_t high = _data.key.high;
-        if (take <= high_len) return titan23::popcount(high >> (high_len - take));
-        return titan23::popcount(high) + titan23::popcount(low >> (_bit_len - take));
+#if defined(__BMI2__) && defined(__x86_64__)
+        if (take <= 64) return titan23::popcount(_bzhi_u64(_data.key.low, take));
+        return _total - titan23::popcount(_data.key.high >> (take - 64));
+#else
+        if (take <= 64) return titan23::popcount(_data.key.low & _mask64(take));
+        return _total - titan23::popcount(_data.key.high >> (take - 64));
+#endif
     }
 
     bool _bit_at(const int k) const {
@@ -1219,7 +1350,7 @@ private:
         return (word >> (k & 63)) & 1;
     }
 
-    uint64_t _mask64(const int bit_len) const { return bit_len == 64 ? UINT64_MAX : bit_len == 0 ? 0 : (static_cast<uint64_t>(1) << bit_len) - 1; }
+    uint64_t _mask64(const int bit_len) const { return bit_len == 64 ? UINT64_MAX : (static_cast<uint64_t>(1) << bit_len) - 1; }
 
     uint128 _bit_insert(const uint128 value, const int lower_bit_len, const bool bit) const {
         const uint64_t low = value;
@@ -1240,35 +1371,41 @@ private:
         const uint64_t high = value >> 64;
         const int k = lower_bit_len - 1;
         if (k < 64) {
-            const uint64_t new_low = ((low & ~_mask64(k + 1)) >> 1) | (low & _mask64(k)) | ((high & 1) << 63);
+            const uint64_t mask = _mask64(k);
+            const uint64_t new_low = ((low >> 1) & ~mask) | (low & mask) | ((high & 1) << 63);
             return (static_cast<uint128>(high >> 1) << 64) | new_low;
         }
         const int high_k = k - 64;
-        const uint64_t new_high = ((high & ~_mask64(high_k + 1)) >> 1) | (high & _mask64(high_k));
+        const uint64_t mask = _mask64(high_k);
+        const uint64_t new_high = ((high >> 1) & ~mask) | (high & mask);
         return (static_cast<uint128>(new_high) << 64) | low;
     }
 
     int _select_in_key(const int k, const bool bit) const {
-        int left = 0;
-        int right = _bit_len;
-        while (right - left > 1) {
-            const int mid = (left + right) / 2;
-            const int ones = _prefix_total(mid);
-            const int count = bit ? ones : mid - ones;
-            if (count > k) {
-                right = mid;
-            } else {
-                left = mid;
-            }
+        const int low_len = min<int>(64, _bit_len);
+        const int high_len = max<int>(0, _bit_len - 64);
+        uint64_t low = _data.key.low;
+        uint64_t high = _data.key.high;
+        if (!bit) {
+            low ^= _mask64(low_len);
+            high ^= _mask64(high_len);
         }
-        return left;
+        const int low_count = titan23::popcount(low);
+#if defined(__BMI2__) && defined(__x86_64__)
+        if (k < low_count) return titan23::countr_zero(_pdep_u64(uint64_t(1) << k, low));
+        return 64 + titan23::countr_zero(_pdep_u64(uint64_t(1) << (k - low_count), high));
+#else
+        if (k < low_count) return low_len - 1 - BTreeBitVectorCore::_select64(low, low_len, low_count - k - 1);
+        const int high_count = titan23::popcount(high);
+        return 64 + high_len - 1 - BTreeBitVectorCore::_select64(high, high_len, high_count - (k - low_count) - 1);
+#endif
     }
 
     void _build_small(const vector<uint8_t> &a, const int start, const int end) {
         uint128 key = 0;
         _total = 0;
         _bit_len = end - start;
-        for (int i = start; i < end; ++i) {
+        for (int i = end - 1; i >= start; --i) {
             const bool bit = a[i] != 0;
             key = (key << 1) | bit;
             _total += bit;
@@ -1276,24 +1413,37 @@ private:
         _set_key(key);
     }
 
-    void _promote(const int capacity = 0) {
-        const int bit_len = _bit_len;
-        vector<uint8_t> a(_bit_len);
-        for (int i = _bit_len - 1, j = 0; i >= 0; --i, ++j) a[j] = _bit_at(i);
-        unique_ptr<BTreeBitVectorCore> tree = make_unique<BTreeBitVectorCore>(a);
-        if (capacity > bit_len) tree->reserve(capacity);
+    [[gnu::noinline]] void _promote(const int capacity = 0) {
+        unique_ptr<BTreeBitVectorCore> tree = make_unique<BTreeBitVectorCore>();
+        if (_bit_len > 0 || capacity > 0) tree->reserve(max(capacity, int(_bit_len)));
+        if (_bit_len > 0) {
+            const int leaf = tree->_make_leaf();
+            tree->_insert_leaf_chunk(leaf, 0, _reverse_key(_key(), _bit_len), _bit_len, _total);
+            tree->_root = leaf;
+            tree->_first = leaf;
+        }
         _data.tree = tree.release();
         _bit_len = _TREE_MODE;
         _total = 0;
     }
 
     void _try_demote() {
-        if (_data.tree->len() > _W) return;
-        const vector<uint8_t> a = _data.tree->tovector();
-        delete _data.tree;
-        _data.key = {0, 0};
-        _bit_len = 0;
-        _build_small(a, 0, a.size());
+        if (_data.tree->len() <= _DEMOTE_W) _demote();
+    }
+
+    [[gnu::noinline]] void _demote() {
+        BTreeBitVectorCore *tree = _data.tree;
+        const int bit_len = tree->len();
+        uint128 key = 0;
+        for (int leaf = tree->_first; leaf != 0; leaf = tree->_leaves[leaf].next) {
+            const auto &node = tree->_leaves[leaf];
+            for (int i = 0; i < node.count; ++i) key = (key << node.bit_len[i]) | node.key[i];
+        }
+        const int total = tree->_root == 0 ? 0 : tree->_node_total(tree->_root, tree->_height);
+        delete tree;
+        _set_key(_reverse_key(key, bit_len));
+        _bit_len = bit_len;
+        _total = total;
     }
 
 public:
@@ -1395,7 +1545,7 @@ public:
             return;
         }
         assert(0 <= k && k < _bit_len);
-        const int shift = _bit_len - k - 1;
+        const int shift = k;
         const bool old = _bit_at(shift);
         if (old == bit) return;
         _flip_bit(shift);
@@ -1405,14 +1555,14 @@ public:
     vector<uint8_t> tovector() const {
         if (_is_tree()) return _data.tree->tovector();
         vector<uint8_t> result(_bit_len);
-        for (int i = _bit_len - 1, j = 0; i >= 0; --i, ++j) result[j] = _bit_at(i);
+        for (int i = 0; i < _bit_len; ++i) result[i] = _bit_at(i);
         return result;
     }
 
     bool access(const int k) const {
         if (_is_tree()) return _data.tree->access(k);
         assert(0 <= k && k < _bit_len);
-        return _bit_at(_bit_len - k - 1);
+        return _bit_at(k);
     }
 
     int rank0(const int r) const {
@@ -1453,7 +1603,9 @@ public:
         if (!_is_tree()) {
             assert(0 <= k && k < (bit ? _total : _bit_len - _total));
             const int position = _select_in_key(k, bit);
-            _access_pop_and_rank1(position);
+            _set_key(_bit_pop(_key(), position + 1));
+            --_bit_len;
+            _total -= bit;
             return position;
         }
         const int result = _data.tree->_select_pop(k, bit);
@@ -1469,7 +1621,7 @@ public:
             return _data.tree->_insert_and_rank1(k, bit);
         }
         const int result = _prefix_total(k);
-        _set_key(_bit_insert(_key(), _bit_len - k, bit));
+        _set_key(_bit_insert(_key(), k, bit));
         ++_bit_len;
         _total += bit;
         return result;
@@ -1483,8 +1635,8 @@ public:
         }
         assert(0 <= k && k < _bit_len);
         const int result = _prefix_total(k);
-        const bool bit = _bit_at(_bit_len - k - 1);
-        _set_key(_bit_pop(_key(), _bit_len - k));
+        const bool bit = _bit_at(k);
+        _set_key(_bit_pop(_key(), k + 1));
         --_bit_len;
         _total -= bit;
         return (result << 1) | bit;
@@ -1493,14 +1645,14 @@ public:
     pair<bool, int> _access_ans_rank1(const int k) const {
         if (_is_tree()) return _data.tree->_access_ans_rank1(k);
         assert(0 <= k && k < _bit_len);
-        return {_bit_at(_bit_len - k - 1), _prefix_total(k)};
+        return {_bit_at(k), _prefix_total(k)};
     }
 
     pair<bool, int> _access_set_and_rank1(const int k, const bool bit) {
         if (_is_tree()) return _data.tree->_access_set_and_rank1(k, bit);
         assert(0 <= k && k < _bit_len);
         const int result = _prefix_total(k);
-        const int shift = _bit_len - k - 1;
+        const int shift = k;
         const bool old = _bit_at(shift);
         if (old != bit) {
             _flip_bit(shift);
