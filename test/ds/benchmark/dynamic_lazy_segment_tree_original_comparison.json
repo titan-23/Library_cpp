@@ -1,0 +1,843 @@
+{
+  "date": "2026-10-25",
+  "timezone": "Asia/Tokyo",
+  "cpu": "AMD Ryzen Threadripper 3990X 64-Core Processor",
+  "cpu_affinity": 4,
+  "compiler": "g++ (Ubuntu 12.3.0-1ubuntu1~22.04.3) 12.3.0",
+  "compiler_flags": [
+    "-std=c++17",
+    "-O3",
+    "-DNDEBUG",
+    "-Wall",
+    "-Wextra",
+    "-I."
+  ],
+  "workload": "250000 range additions by1..9 +250000 prod shuffled; each element starts as S{0,1}.",
+  "distributions": {
+    "wide": "Uniform positions in [0,n).",
+    "short": "Uniform start, length1..1024, clipped at n.",
+    "local": "Only the centered coordinate interval of width min(n,1000000)."
+  },
+  "configuration": {
+    "n": [
+      1000000000,
+      1000000000000000000
+    ],
+    "q": 500000,
+    "seed": 23,
+    "runs_per_condition": 5,
+    "reserve_nodes": 0,
+    "sum_bits": [
+      64,
+      128
+    ],
+    "sum_bits_by_n": {
+      "1000000000": [
+        64,
+        128
+      ],
+      "1000000000000000000": [
+        128
+      ]
+    },
+    "modes": [
+      "mixed"
+    ]
+  },
+  "measurement": "Fresh process/tree each run, serialized on CPU4; alternate original/current execution order each repeat, median of5. Q=500000, seed23, update/prod split1:1, no reservation, unchanged wide/short/local trace generators. Timed loop includes allocation and checksum; input generation, construction, verification, node counting and output excluded. No compilation/tests ran concurrently.",
+  "memory": "Process peak RSS captured after the timed mixed loop, before node-count traversal and independent reference verification. Includes the input trace, tree storage and allocation overhead.",
+  "source_sha256": {
+    "titan_cpplib/ds/dynamic_segment_tree.cpp": "1450f7da96f1a50695bc9b71bd35ff17d27617517d69fb1fa56cda77efdf8f45",
+    "titan_cpplib/ds/dynamic_segment_tree_init.cpp": "c5ef98fa14be06a695b7bdafe736cec85aa7c20eccf101453842468d9ddfb0b0",
+    "titan_cpplib/ds/dynamic_lazy_segment_tree.cpp": "5cbd732f42a7761c6300dfb922e3e66f1427429d7f3cf2bd16fcf16c74d3920e",
+    "titan_cpplib/ds/dynamic_segment_tree_util.cpp": "0bd5aa87b783bb9a61940e99cb179955ee1e21180327a4f71b93e2f28f851dc1",
+    "titan_cpplib/ds/dynamic_lazy_segment_tree_util.cpp": "72605ec0ce4ad1a7c5d856afe095a0a07380c0e12841a67e65c64161ed067de9",
+    "test/ds/dynamic_segment_tree_random.cpp": "46c5df280e3bebffd9b35a7478e99134ba3fde0a641b2a8a0b809cda2c2dcce4",
+    "test/ds/dynamic_segment_tree_generic_test.cpp": "0271c5d6cb704778ef87066e3b81d86fbdeb709ca170f90a574e51a836ab7ffe",
+    "test/ds/dynamic_segment_tree_util_test.cpp": "480f9160c67b400ef6f2156ce693b4450cbb53e7b83bd371d27c9fd9fb05660b",
+    "test/ds/dynamic_segment_tree_util_link.cpp": "ab59539d7f0ccabf46e97011e40a050a9681bf65157b858f0164519d783a3383",
+    "test/ds/benchmark/dynamic_lazy_segment_tree_benchmark.cpp": "005901ae6a6ea0ffd0cda98a4e48363fcf7a941f62cd9838d4ddfb5b965d50ac"
+  },
+  "baseline_revision": "ae0e71fc1bdfa9041c76b64156a857b7d6817703",
+  "variants": {
+    "original": "Original pointer-based implementation from pinned Git revision, with comparison corrections described below; not the intermediate uncompressed index-pool version.",
+    "current": "Workspace implementation also measured in the benchmark report; remeasured here in alternating order with the original."
+  },
+  "validation": "All21 conditions (210 processes) have identical checksums across original/current and5 repetitions. The first repetition of each variant/condition was independently checked after timing using the coordinate-compressed Fenwick reference. All source hashes remain unchanged from the previous benchmark report.",
+  "baseline_preparation_script": "test/ds/benchmark/prepare_dynamic_lazy_segment_tree_baseline.py",
+  "caveat": "The original code is not measured byte-for-byte: correctness/standalone fixes are applied and its internal domain is normalized from power-of-two rounding to [0,N). Algorithms, pointer-based node layout and allocation are retained. This is the same baseline preparation used in earlier reports.",
+  "summary": [
+    {
+      "n": 1000000000000000000,
+      "sum_bits": 128,
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "wide",
+      "variants": {
+        "original": {
+          "median_seconds": 4.015778,
+          "min_seconds": 3.99371,
+          "max_seconds": 4.035147,
+          "median_peak_rss_bytes": 5141168128,
+          "nodes": 40026885,
+          "checksum": 14038011541026436740
+        },
+        "current": {
+          "median_seconds": 0.578321,
+          "min_seconds": 0.57442,
+          "max_seconds": 0.589248,
+          "median_peak_rss_bytes": 74375168,
+          "nodes": 1000001,
+          "checksum": 14038011541026436740
+        }
+      },
+      "time_reduction_percent": 85.5987806098843,
+      "rss_reduction_percent": 98.55334106669386
+    },
+    {
+      "n": 1000000000000000000,
+      "sum_bits": 128,
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "short",
+      "variants": {
+        "original": {
+          "median_seconds": 2.320392,
+          "min_seconds": 2.314405,
+          "max_seconds": 2.326383,
+          "median_peak_rss_bytes": 3191865344,
+          "nodes": 24797947,
+          "checksum": 647013034547469249
+        },
+        "current": {
+          "median_seconds": 0.289475,
+          "min_seconds": 0.284685,
+          "max_seconds": 0.291038,
+          "median_peak_rss_bytes": 73756672,
+          "nodes": 1000001,
+          "checksum": 647013034547469249
+        }
+      },
+      "time_reduction_percent": 87.52473719957663,
+      "rss_reduction_percent": 97.68922983738501
+    },
+    {
+      "n": 1000000000000000000,
+      "sum_bits": 128,
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "local",
+      "variants": {
+        "original": {
+          "median_seconds": 0.909913,
+          "min_seconds": 0.909592,
+          "max_seconds": 0.921051,
+          "median_peak_rss_bytes": 184549376,
+          "nodes": 1299805,
+          "checksum": 16896605656640997076
+        },
+        "current": {
+          "median_seconds": 0.536678,
+          "min_seconds": 0.534803,
+          "max_seconds": 0.538271,
+          "median_peak_rss_bytes": 64589824,
+          "nodes": 786717,
+          "checksum": 16896605656640997076
+        }
+      },
+      "time_reduction_percent": 41.01875673828157,
+      "rss_reduction_percent": 65.00133167613636
+    },
+    {
+      "n": 1000000000,
+      "sum_bits": 128,
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "wide",
+      "variants": {
+        "original": {
+          "median_seconds": 1.570371,
+          "min_seconds": 1.564554,
+          "max_seconds": 1.585914,
+          "median_peak_rss_bytes": 1311768576,
+          "nodes": 10108609,
+          "checksum": 644777943339294806
+        },
+        "current": {
+          "median_seconds": 0.585516,
+          "min_seconds": 0.583461,
+          "max_seconds": 0.594926,
+          "median_peak_rss_bytes": 73756672,
+          "nodes": 999779,
+          "checksum": 644777943339294806
+        }
+      },
+      "time_reduction_percent": 62.71479796812345,
+      "rss_reduction_percent": 94.37731065147882
+    },
+    {
+      "n": 1000000000,
+      "sum_bits": 128,
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "short",
+      "variants": {
+        "original": {
+          "median_seconds": 1.141299,
+          "min_seconds": 1.135171,
+          "max_seconds": 1.152339,
+          "median_peak_rss_bytes": 1228931072,
+          "nodes": 9462541,
+          "checksum": 12206771386253771072
+        },
+        "current": {
+          "median_seconds": 0.300638,
+          "min_seconds": 0.298935,
+          "max_seconds": 0.301843,
+          "median_peak_rss_bytes": 73756672,
+          "nodes": 999747,
+          "checksum": 12206771386253771072
+        }
+      },
+      "time_reduction_percent": 73.65826133204358,
+      "rss_reduction_percent": 93.99830684726962
+    },
+    {
+      "n": 1000000000,
+      "sum_bits": 128,
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "local",
+      "variants": {
+        "original": {
+          "median_seconds": 0.708274,
+          "min_seconds": 0.706595,
+          "max_seconds": 0.718101,
+          "median_peak_rss_bytes": 182452224,
+          "nodes": 1285589,
+          "checksum": 16896605656640997076
+        },
+        "current": {
+          "median_seconds": 0.53924,
+          "min_seconds": 0.53802,
+          "max_seconds": 0.543537,
+          "median_peak_rss_bytes": 64589824,
+          "nodes": 786717,
+          "checksum": 16896605656640997076
+        }
+      },
+      "time_reduction_percent": 23.865622626271744,
+      "rss_reduction_percent": 64.59904813218391
+    },
+    {
+      "n": 1000000000,
+      "sum_bits": 64,
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "wide",
+      "variants": {
+        "original": {
+          "median_seconds": 1.27443,
+          "min_seconds": 1.273964,
+          "max_seconds": 1.28069,
+          "median_peak_rss_bytes": 826277888,
+          "nodes": 10108609,
+          "checksum": 3625988276424209857
+        },
+        "current": {
+          "median_seconds": 0.487863,
+          "min_seconds": 0.485308,
+          "max_seconds": 0.49278,
+          "median_peak_rss_bytes": 53673984,
+          "nodes": 999779,
+          "checksum": 3625988276424209857
+        }
+      },
+      "time_reduction_percent": 61.71912148960712,
+      "rss_reduction_percent": 93.50412436548223
+    },
+    {
+      "n": 1000000000,
+      "sum_bits": 64,
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "short",
+      "variants": {
+        "original": {
+          "median_seconds": 0.867555,
+          "min_seconds": 0.86647,
+          "max_seconds": 0.884494,
+          "median_peak_rss_bytes": 774897664,
+          "nodes": 9462541,
+          "checksum": 9124404489941496297
+        },
+        "current": {
+          "median_seconds": 0.233655,
+          "min_seconds": 0.231054,
+          "max_seconds": 0.236281,
+          "median_peak_rss_bytes": 53547008,
+          "nodes": 999747,
+          "checksum": 9124404489941496297
+        }
+      },
+      "time_reduction_percent": 73.06741359337448,
+      "rss_reduction_percent": 93.08979617726658
+    },
+    {
+      "n": 1000000000,
+      "sum_bits": 64,
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "local",
+      "variants": {
+        "original": {
+          "median_seconds": 0.660117,
+          "min_seconds": 0.655748,
+          "max_seconds": 0.663296,
+          "median_peak_rss_bytes": 120586240,
+          "nodes": 1285589,
+          "checksum": 12047719122944495502
+        },
+        "current": {
+          "median_seconds": 0.445761,
+          "min_seconds": 0.443077,
+          "max_seconds": 0.44743,
+          "median_peak_rss_bytes": 49631232,
+          "nodes": 786717,
+          "checksum": 12047719122944495502
+        }
+      },
+      "time_reduction_percent": 32.472425342780134,
+      "rss_reduction_percent": 58.84171195652175
+    }
+  ],
+  "first_repeat_commands": [
+    {
+      "variant": "original",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "wide",
+      "n": 1000000000000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-original-comparison-128",
+        "--n",
+        "1000000000000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "wide",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "wide",
+      "n": 1000000000000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-bench-sum128",
+        "--n",
+        "1000000000000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "wide",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "original",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "short",
+      "n": 1000000000000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-original-comparison-128",
+        "--n",
+        "1000000000000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "short",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "short",
+      "n": 1000000000000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-bench-sum128",
+        "--n",
+        "1000000000000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "short",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "original",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "local",
+      "n": 1000000000000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-original-comparison-128",
+        "--n",
+        "1000000000000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "local",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "local",
+      "n": 1000000000000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-bench-sum128",
+        "--n",
+        "1000000000000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "local",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "original",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "wide",
+      "n": 1000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-original-comparison-128",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "wide",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "wide",
+      "n": 1000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-bench-sum128",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "wide",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "original",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "short",
+      "n": 1000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-original-comparison-128",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "short",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "short",
+      "n": 1000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-bench-sum128",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "short",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "original",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "local",
+      "n": 1000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-original-comparison-128",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "local",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "local",
+      "n": 1000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-bench-sum128",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "local",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "original",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "wide",
+      "n": 1000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-original-comparison-64",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "wide",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "wide",
+      "n": 1000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-bench-sum64",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "wide",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "original",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "short",
+      "n": 1000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-original-comparison-64",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "short",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "short",
+      "n": 1000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-bench-sum64",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "short",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "original",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "local",
+      "n": 1000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-original-comparison-64",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "local",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "local",
+      "n": 1000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-bench-sum64",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "local",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    }
+  ],
+  "related_reports": [
+    "dynamic_lazy_segment_tree_benchmark.json",
+    "dynamic_lazy_segment_tree_before_navigation.json"
+  ],
+  "baseline_changes": [
+    "Initialize every node lazy action with id() before composition reads it.",
+    "Return e() for empty prod2 ranges; this benchmark uses prod().",
+    "Normalize both constructors to exactly [0,N) instead of rounding to a power of two.",
+    "Fix print loop increment and add point-get assertion; neither affects the timed workload.",
+    "Add node_count() traversal, called only after timing."
+  ],
+  "search_comparison": "The original pointer version has no max_right/min_left API, so no original boundary-search timing is available.",
+  "sum_comparison": "Use the same -DDLST_BENCH_WIDE_SUM binary for both N values. The64-bit N=10^9 run preserves earlier benchmark continuity. Sum and reference arithmetic are signed128 in the wide build; Index and lazy action remain signed64. Mixed query generation is unchanged; search limits use unbiased128-bit sampling. The128-bit checksum folds both halves, so compare checksums only within the same sum_bits condition.",
+  "baseline_source_sha256": {
+    "/tmp/dlst-original-comparison.hpp": "cae28cb2463bd9e5e6531741fcf633bc983656dcf7d05ac118c62533937589cb"
+  },
+  "build_commands": [
+    [
+      "python3",
+      "test/ds/benchmark/prepare_dynamic_lazy_segment_tree_baseline.py",
+      "/tmp/dlst-original-comparison.hpp"
+    ],
+    [
+      "g++",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-Wall",
+      "-Wextra",
+      "-I.",
+      "-DDLST_BENCH_BASELINE",
+      "-DDYNAMIC_LAZY_SEGMENT_TREE_HEADER=\"/tmp/dlst-original-comparison.hpp\"",
+      "test/ds/benchmark/dynamic_lazy_segment_tree_benchmark.cpp",
+      "-o",
+      "/tmp/dlst-original-comparison-64"
+    ],
+    [
+      "g++",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-Wall",
+      "-Wextra",
+      "-I.",
+      "-DDLST_BENCH_BASELINE",
+      "-DDLST_BENCH_WIDE_SUM",
+      "-DDYNAMIC_LAZY_SEGMENT_TREE_HEADER=\"/tmp/dlst-original-comparison.hpp\"",
+      "test/ds/benchmark/dynamic_lazy_segment_tree_benchmark.cpp",
+      "-o",
+      "/tmp/dlst-original-comparison-128"
+    ],
+    [
+      "g++",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-Wall",
+      "-Wextra",
+      "-I.",
+      "test/ds/benchmark/dynamic_lazy_segment_tree_benchmark.cpp",
+      "-o",
+      "/tmp/dlst-bench-sum64"
+    ],
+    [
+      "g++",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-Wall",
+      "-Wextra",
+      "-DDLST_BENCH_WIDE_SUM",
+      "-I.",
+      "test/ds/benchmark/dynamic_lazy_segment_tree_benchmark.cpp",
+      "-o",
+      "/tmp/dlst-bench-sum128"
+    ]
+  ]
+}

@@ -1,0 +1,1571 @@
+{
+  "date": "2026-10-25",
+  "timezone": "Asia/Tokyo",
+  "cpu": "AMD Ryzen Threadripper 3990X 64-Core Processor",
+  "cpu_affinity": 4,
+  "compiler": "g++ (Ubuntu 12.3.0-1ubuntu1~22.04.3) 12.3.0",
+  "compiler_flags": [
+    "-std=c++17",
+    "-O3",
+    "-DNDEBUG",
+    "-Wall",
+    "-Wextra",
+    "-I."
+  ],
+  "workload": "250000 range additions by1..9 +250000 prod shuffled; each element starts as S{0,1}.",
+  "distributions": {
+    "wide": "Uniform positions in [0,n).",
+    "short": "Uniform start, length1..1024, clipped at n.",
+    "local": "Only the centered coordinate interval of width min(n,1000000)."
+  },
+  "configuration": {
+    "n": [
+      1000000000,
+      1000000000000000000
+    ],
+    "q": 500000,
+    "seed": 23,
+    "runs_per_condition": 5,
+    "reserve_nodes": 0,
+    "sum_bits": [
+      64,
+      128
+    ],
+    "sum_bits_by_n": {
+      "1000000000": [
+        64,
+        128
+      ],
+      "1000000000000000000": [
+        128
+      ]
+    }
+  },
+  "measurement": "Fresh process/tree per run, serialized on CPU4; alternate before/current order each repeat; report medians of5. Timed loops include allocation and checksum, excluding trace generation, construction, reservation, verification and output. No compile/test/other benchmark ran concurrently.",
+  "memory": "Process peak RSS captured before independent reference verification, including input traces, tree storage and transient vector reallocation. Search also holds its preparation trace and probe trace; 128-bit search additionally holds a separate vector of 500000 128-bit thresholds.",
+  "variants": {
+    "before_storage": "Compressed Patricia implementation immediately before leaf/branch pool separation and explicit lazy search stack, rebuilt from session snapshots. Historical measurements remain in the before_storage report.",
+    "current": "Final workspace implementation, separate leaf/branch pools; ordinary tree allocation/join helpers kept out of line; lazy boundary search uses a compact stack with correct object lifetime."
+  },
+  "validation": "Every variant/condition independently verified once after timing; all5 repeat checksums and logical node counts agree. Ordinary uses a compressed Fenwick reference, lazy mixed uses two independent integral Fenwick trees, lazy search uses independently computed compressed prefix sums. Randomized/structural tests, generic owning and non-default-constructible value/action tests, exceptional predicate lifetime tests, 128-bit coordinate/aggregate tests and utility two-TU tests passed O2 warning builds and ASan+UBSan. Leak detection disabled due ptrace environment.",
+  "changes": [
+    "Separate leaf and branch pools, retaining logical node_count and reserve_nodes behavior; ordinary scalar leaves16B versus32B branches, lazy 64-bit sum/length leaves24B versus48B branches.",
+    "Keep ordinary allocation and join helpers out of line; retain recursive set after iterative set measured slower.",
+    "Replace lazy boundary start-path recursion with a bounded explicit stack; align raw storage and manage F lifetime without requiring a default constructor; reorder frames from32B to24B for int64 indices/actions.",
+    "Retain pow, mapping(F,S), the uniform-init constructor and const queries that do not grow nodes.",
+    "Preserve requested library style and remove prod2 and the obsolete array file.",
+    "Add N=10^9 and10^18 aggregate/coordinate regression tests, including sums and boundary limits exceeding LLONG_MAX."
+  ],
+  "tradeoffs": "Not a universal optimum. All3 existing distributions and every measured result are retained. The comparison here is paired remeasurement against the immediately preceding compressed implementation, not the original uncompressed pool; original pool comparisons remain in archived reports. Timing depends on compiler, CPU and workload. Lazy prefetch and allocation outlining did not consistently improve timing and were rejected.",
+  "source_sha256": {
+    "titan_cpplib/ds/dynamic_segment_tree.cpp": "1450f7da96f1a50695bc9b71bd35ff17d27617517d69fb1fa56cda77efdf8f45",
+    "titan_cpplib/ds/dynamic_segment_tree_init.cpp": "c5ef98fa14be06a695b7bdafe736cec85aa7c20eccf101453842468d9ddfb0b0",
+    "titan_cpplib/ds/dynamic_lazy_segment_tree.cpp": "5cbd732f42a7761c6300dfb922e3e66f1427429d7f3cf2bd16fcf16c74d3920e",
+    "titan_cpplib/ds/dynamic_segment_tree_util.cpp": "0bd5aa87b783bb9a61940e99cb179955ee1e21180327a4f71b93e2f28f851dc1",
+    "titan_cpplib/ds/dynamic_lazy_segment_tree_util.cpp": "72605ec0ce4ad1a7c5d856afe095a0a07380c0e12841a67e65c64161ed067de9",
+    "test/ds/dynamic_segment_tree_random.cpp": "46c5df280e3bebffd9b35a7478e99134ba3fde0a641b2a8a0b809cda2c2dcce4",
+    "test/ds/dynamic_segment_tree_generic_test.cpp": "0271c5d6cb704778ef87066e3b81d86fbdeb709ca170f90a574e51a836ab7ffe",
+    "test/ds/dynamic_segment_tree_util_test.cpp": "480f9160c67b400ef6f2156ce693b4450cbb53e7b83bd371d27c9fd9fb05660b",
+    "test/ds/dynamic_segment_tree_util_link.cpp": "ab59539d7f0ccabf46e97011e40a050a9681bf65157b858f0164519d783a3383",
+    "test/ds/benchmark/dynamic_lazy_segment_tree_benchmark.cpp": "005901ae6a6ea0ffd0cda98a4e48363fcf7a941f62cd9838d4ddfb5b965d50ac"
+  },
+  "previous_report": "dynamic_lazy_segment_tree_before_storage.json",
+  "summary": [
+    {
+      "n": 1000000000,
+      "sum_bits": 64,
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "wide",
+      "variants": {
+        "before_storage": {
+          "median_seconds": 0.541849,
+          "min_seconds": 0.540713,
+          "max_seconds": 0.544757,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 67969024,
+          "nodes": 999779,
+          "checksum": 3625988276424209857
+        },
+        "current": {
+          "median_seconds": 0.486028,
+          "min_seconds": 0.484432,
+          "max_seconds": 0.49065,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 53673984,
+          "nodes": 999779,
+          "checksum": 3625988276424209857
+        }
+      },
+      "time_reduction_vs_before_storage_percent": 10.301947590564897,
+      "rss_reduction_vs_before_storage_percent": 21.03169820417018
+    },
+    {
+      "n": 1000000000,
+      "sum_bits": 64,
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "short",
+      "variants": {
+        "before_storage": {
+          "median_seconds": 0.267641,
+          "min_seconds": 0.26748,
+          "max_seconds": 0.267975,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 67969024,
+          "nodes": 999747,
+          "checksum": 9124404489941496297
+        },
+        "current": {
+          "median_seconds": 0.231675,
+          "min_seconds": 0.230388,
+          "max_seconds": 0.232805,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 53673984,
+          "nodes": 999747,
+          "checksum": 9124404489941496297
+        }
+      },
+      "time_reduction_vs_before_storage_percent": 13.438150358128997,
+      "rss_reduction_vs_before_storage_percent": 21.03169820417018
+    },
+    {
+      "n": 1000000000,
+      "sum_bits": 64,
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "local",
+      "variants": {
+        "before_storage": {
+          "median_seconds": 0.500363,
+          "min_seconds": 0.49328,
+          "max_seconds": 0.523067,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 67969024,
+          "nodes": 786717,
+          "checksum": 12047719122944495502
+        },
+        "current": {
+          "median_seconds": 0.444297,
+          "min_seconds": 0.441139,
+          "max_seconds": 0.448593,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 49631232,
+          "nodes": 786717,
+          "checksum": 12047719122944495502
+        }
+      },
+      "time_reduction_vs_before_storage_percent": 11.205065122720903,
+      "rss_reduction_vs_before_storage_percent": 26.97963119199711
+    },
+    {
+      "n": 1000000000,
+      "sum_bits": 64,
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "wide",
+      "variants": {
+        "before_storage": {
+          "median_seconds": 0.543213,
+          "min_seconds": 0.53983,
+          "max_seconds": 0.54623,
+          "median_prepare_seconds": 0.373853,
+          "median_peak_rss_bytes": 73363456,
+          "nodes": 999779,
+          "checksum": 11557665176082376291
+        },
+        "current": {
+          "median_seconds": 0.480557,
+          "min_seconds": 0.476001,
+          "max_seconds": 0.490243,
+          "median_prepare_seconds": 0.326891,
+          "median_peak_rss_bytes": 61935616,
+          "nodes": 999779,
+          "checksum": 11557665176082376291
+        }
+      },
+      "time_reduction_vs_before_storage_percent": 11.534333677581344,
+      "rss_reduction_vs_before_storage_percent": 15.577019708558982
+    },
+    {
+      "n": 1000000000,
+      "sum_bits": 64,
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "short",
+      "variants": {
+        "before_storage": {
+          "median_seconds": 0.456438,
+          "min_seconds": 0.455286,
+          "max_seconds": 0.457001,
+          "median_prepare_seconds": 0.194253,
+          "median_peak_rss_bytes": 73363456,
+          "nodes": 999747,
+          "checksum": 11827301752468292874
+        },
+        "current": {
+          "median_seconds": 0.37039,
+          "min_seconds": 0.367274,
+          "max_seconds": 0.371509,
+          "median_prepare_seconds": 0.165767,
+          "median_peak_rss_bytes": 61935616,
+          "nodes": 999747,
+          "checksum": 11827301752468292874
+        }
+      },
+      "time_reduction_vs_before_storage_percent": 18.852067531625327,
+      "rss_reduction_vs_before_storage_percent": 15.577019708558982
+    },
+    {
+      "n": 1000000000,
+      "sum_bits": 64,
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "local",
+      "variants": {
+        "before_storage": {
+          "median_seconds": 0.469778,
+          "min_seconds": 0.465193,
+          "max_seconds": 0.472328,
+          "median_prepare_seconds": 0.347886,
+          "median_peak_rss_bytes": 63926272,
+          "nodes": 786717,
+          "checksum": 6786650517864119450
+        },
+        "current": {
+          "median_seconds": 0.407174,
+          "min_seconds": 0.404406,
+          "max_seconds": 0.408511,
+          "median_prepare_seconds": 0.301299,
+          "median_peak_rss_bytes": 54595584,
+          "nodes": 786717,
+          "checksum": 6786650517864119450
+        }
+      },
+      "time_reduction_vs_before_storage_percent": 13.326294547637396,
+      "rss_reduction_vs_before_storage_percent": 14.596014608829366
+    },
+    {
+      "n": 1000000000,
+      "sum_bits": 128,
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "wide",
+      "variants": {
+        "before_storage": {
+          "median_seconds": 0.633643,
+          "min_seconds": 0.632072,
+          "max_seconds": 0.6342,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 85553152,
+          "nodes": 999779,
+          "checksum": 644777943339294806
+        },
+        "current": {
+          "median_seconds": 0.5909,
+          "min_seconds": 0.59068,
+          "max_seconds": 0.593808,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 73756672,
+          "nodes": 999779,
+          "checksum": 644777943339294806
+        }
+      },
+      "time_reduction_vs_before_storage_percent": 6.745596495187344,
+      "rss_reduction_vs_before_storage_percent": 13.788480873270458
+    },
+    {
+      "n": 1000000000,
+      "sum_bits": 128,
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "short",
+      "variants": {
+        "before_storage": {
+          "median_seconds": 0.319611,
+          "min_seconds": 0.319197,
+          "max_seconds": 0.320597,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 85266432,
+          "nodes": 999747,
+          "checksum": 12206771386253771072
+        },
+        "current": {
+          "median_seconds": 0.30199,
+          "min_seconds": 0.30125,
+          "max_seconds": 0.302381,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 73756672,
+          "nodes": 999747,
+          "checksum": 12206771386253771072
+        }
+      },
+      "time_reduction_vs_before_storage_percent": 5.513264562233466,
+      "rss_reduction_vs_before_storage_percent": 13.498582888984966
+    },
+    {
+      "n": 1000000000,
+      "sum_bits": 128,
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "local",
+      "variants": {
+        "before_storage": {
+          "median_seconds": 0.579956,
+          "min_seconds": 0.578791,
+          "max_seconds": 0.584894,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 85266432,
+          "nodes": 786717,
+          "checksum": 16896605656640997076
+        },
+        "current": {
+          "median_seconds": 0.536267,
+          "min_seconds": 0.535341,
+          "max_seconds": 0.536832,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 64589824,
+          "nodes": 786717,
+          "checksum": 16896605656640997076
+        }
+      },
+      "time_reduction_vs_before_storage_percent": 7.533157687824588,
+      "rss_reduction_vs_before_storage_percent": 24.249411538646303
+    },
+    {
+      "n": 1000000000,
+      "sum_bits": 128,
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "wide",
+      "variants": {
+        "before_storage": {
+          "median_seconds": 0.659401,
+          "min_seconds": 0.658133,
+          "max_seconds": 0.660775,
+          "median_prepare_seconds": 0.435859,
+          "median_peak_rss_bytes": 97480704,
+          "nodes": 999779,
+          "checksum": 7922142609683235495
+        },
+        "current": {
+          "median_seconds": 0.560964,
+          "min_seconds": 0.556999,
+          "max_seconds": 0.56413,
+          "median_prepare_seconds": 0.406708,
+          "median_peak_rss_bytes": 90152960,
+          "nodes": 999779,
+          "checksum": 7922142609683235495
+        }
+      },
+      "time_reduction_vs_before_storage_percent": 14.928245483400849,
+      "rss_reduction_vs_before_storage_percent": 7.517122568175139
+    },
+    {
+      "n": 1000000000,
+      "sum_bits": 128,
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "short",
+      "variants": {
+        "before_storage": {
+          "median_seconds": 0.537388,
+          "min_seconds": 0.536977,
+          "max_seconds": 0.540944,
+          "median_prepare_seconds": 0.232664,
+          "median_peak_rss_bytes": 97480704,
+          "nodes": 999747,
+          "checksum": 13378860827821514654
+        },
+        "current": {
+          "median_seconds": 0.448475,
+          "min_seconds": 0.443914,
+          "max_seconds": 0.449369,
+          "median_prepare_seconds": 0.220684,
+          "median_peak_rss_bytes": 89489408,
+          "nodes": 999747,
+          "checksum": 13378860827821514654
+        }
+      },
+      "time_reduction_vs_before_storage_percent": 16.545401088226754,
+      "rss_reduction_vs_before_storage_percent": 8.197823437959572
+    },
+    {
+      "n": 1000000000,
+      "sum_bits": 128,
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "local",
+      "variants": {
+        "before_storage": {
+          "median_seconds": 0.576586,
+          "min_seconds": 0.574835,
+          "max_seconds": 0.578215,
+          "median_prepare_seconds": 0.400745,
+          "median_peak_rss_bytes": 84213760,
+          "nodes": 786717,
+          "checksum": 5952114119514531872
+        },
+        "current": {
+          "median_seconds": 0.481286,
+          "min_seconds": 0.481219,
+          "max_seconds": 0.484885,
+          "median_prepare_seconds": 0.370152,
+          "median_peak_rss_bytes": 77950976,
+          "nodes": 786717,
+          "checksum": 5952114119514531872
+        }
+      },
+      "time_reduction_vs_before_storage_percent": 16.528323615210926,
+      "rss_reduction_vs_before_storage_percent": 7.43677042801556
+    },
+    {
+      "n": 1000000000000000000,
+      "sum_bits": 128,
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "wide",
+      "variants": {
+        "before_storage": {
+          "median_seconds": 0.631431,
+          "min_seconds": 0.630014,
+          "max_seconds": 0.633022,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 85266432,
+          "nodes": 1000001,
+          "checksum": 14038011541026436740
+        },
+        "current": {
+          "median_seconds": 0.589409,
+          "min_seconds": 0.587899,
+          "max_seconds": 0.590466,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 73760768,
+          "nodes": 1000001,
+          "checksum": 14038011541026436740
+        }
+      },
+      "time_reduction_vs_before_storage_percent": 6.655042276986722,
+      "rss_reduction_vs_before_storage_percent": 13.493779122832306
+    },
+    {
+      "n": 1000000000000000000,
+      "sum_bits": 128,
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "short",
+      "variants": {
+        "before_storage": {
+          "median_seconds": 0.318221,
+          "min_seconds": 0.317659,
+          "max_seconds": 0.323632,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 85553152,
+          "nodes": 1000001,
+          "checksum": 647013034547469249
+        },
+        "current": {
+          "median_seconds": 0.292175,
+          "min_seconds": 0.291134,
+          "max_seconds": 0.293128,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 73756672,
+          "nodes": 1000001,
+          "checksum": 647013034547469249
+        }
+      },
+      "time_reduction_vs_before_storage_percent": 8.18487780504742,
+      "rss_reduction_vs_before_storage_percent": 13.788480873270458
+    },
+    {
+      "n": 1000000000000000000,
+      "sum_bits": 128,
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "local",
+      "variants": {
+        "before_storage": {
+          "median_seconds": 0.586084,
+          "min_seconds": 0.582517,
+          "max_seconds": 0.588958,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 85557248,
+          "nodes": 786717,
+          "checksum": 16896605656640997076
+        },
+        "current": {
+          "median_seconds": 0.536563,
+          "min_seconds": 0.534875,
+          "max_seconds": 0.542973,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 64589824,
+          "nodes": 786717,
+          "checksum": 16896605656640997076
+        }
+      },
+      "time_reduction_vs_before_storage_percent": 8.449471406829057,
+      "rss_reduction_vs_before_storage_percent": 24.50689391037917
+    },
+    {
+      "n": 1000000000000000000,
+      "sum_bits": 128,
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "wide",
+      "variants": {
+        "before_storage": {
+          "median_seconds": 0.688504,
+          "min_seconds": 0.687789,
+          "max_seconds": 0.690934,
+          "median_prepare_seconds": 0.432077,
+          "median_peak_rss_bytes": 97845248,
+          "nodes": 1000001,
+          "checksum": 1076035457959196759
+        },
+        "current": {
+          "median_seconds": 0.593616,
+          "min_seconds": 0.590411,
+          "max_seconds": 0.614669,
+          "median_prepare_seconds": 0.404468,
+          "median_peak_rss_bytes": 89485312,
+          "nodes": 1000001,
+          "checksum": 1076035457959196759
+        }
+      },
+      "time_reduction_vs_before_storage_percent": 13.781764521339014,
+      "rss_reduction_vs_before_storage_percent": 8.544038847957136
+    },
+    {
+      "n": 1000000000000000000,
+      "sum_bits": 128,
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "short",
+      "variants": {
+        "before_storage": {
+          "median_seconds": 0.543399,
+          "min_seconds": 0.541954,
+          "max_seconds": 0.54429,
+          "median_prepare_seconds": 0.2331,
+          "median_peak_rss_bytes": 97480704,
+          "nodes": 1000001,
+          "checksum": 924822265539427164
+        },
+        "current": {
+          "median_seconds": 0.437396,
+          "min_seconds": 0.434565,
+          "max_seconds": 0.439301,
+          "median_prepare_seconds": 0.212339,
+          "median_peak_rss_bytes": 90148864,
+          "nodes": 1000001,
+          "checksum": 924822265539427164
+        }
+      },
+      "time_reduction_vs_before_storage_percent": 19.50739695877246,
+      "rss_reduction_vs_before_storage_percent": 7.521324425396026
+    },
+    {
+      "n": 1000000000000000000,
+      "sum_bits": 128,
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "local",
+      "variants": {
+        "before_storage": {
+          "median_seconds": 0.575363,
+          "min_seconds": 0.570823,
+          "max_seconds": 0.579656,
+          "median_prepare_seconds": 0.4001,
+          "median_peak_rss_bytes": 83849216,
+          "nodes": 786717,
+          "checksum": 5384569056747472899
+        },
+        "current": {
+          "median_seconds": 0.482652,
+          "min_seconds": 0.479269,
+          "max_seconds": 0.484065,
+          "median_prepare_seconds": 0.369369,
+          "median_peak_rss_bytes": 77950976,
+          "nodes": 786717,
+          "checksum": 5384569056747472899
+        }
+      },
+      "time_reduction_vs_before_storage_percent": 16.11347966414245,
+      "rss_reduction_vs_before_storage_percent": 7.034341263250454
+    }
+  ],
+  "first_repeat_commands": [
+    {
+      "variant": "before_storage",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "wide",
+      "n": 1000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-storage-before-sum64",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "wide",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "wide",
+      "n": 1000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-bench-sum64",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "wide",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "before_storage",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "short",
+      "n": 1000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-storage-before-sum64",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "short",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "short",
+      "n": 1000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-bench-sum64",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "short",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "before_storage",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "local",
+      "n": 1000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-storage-before-sum64",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "local",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "local",
+      "n": 1000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-bench-sum64",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "local",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "before_storage",
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "wide",
+      "n": 1000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-storage-before-sum64",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "wide",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "wide",
+      "n": 1000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-bench-sum64",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "wide",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "before_storage",
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "short",
+      "n": 1000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-storage-before-sum64",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "short",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "short",
+      "n": 1000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-bench-sum64",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "short",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "before_storage",
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "local",
+      "n": 1000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-storage-before-sum64",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "local",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "local",
+      "n": 1000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-bench-sum64",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "local",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "before_storage",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "wide",
+      "n": 1000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-storage-before-sum128",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "wide",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "wide",
+      "n": 1000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-bench-sum128",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "wide",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "before_storage",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "short",
+      "n": 1000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-storage-before-sum128",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "short",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "short",
+      "n": 1000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-bench-sum128",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "short",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "before_storage",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "local",
+      "n": 1000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-storage-before-sum128",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "local",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "local",
+      "n": 1000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-bench-sum128",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "local",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "before_storage",
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "wide",
+      "n": 1000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-storage-before-sum128",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "wide",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "wide",
+      "n": 1000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-bench-sum128",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "wide",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "before_storage",
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "short",
+      "n": 1000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-storage-before-sum128",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "short",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "short",
+      "n": 1000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-bench-sum128",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "short",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "before_storage",
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "local",
+      "n": 1000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-storage-before-sum128",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "local",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "local",
+      "n": 1000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-bench-sum128",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "local",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "before_storage",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "wide",
+      "n": 1000000000000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-storage-before-sum128",
+        "--n",
+        "1000000000000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "wide",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "wide",
+      "n": 1000000000000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-bench-sum128",
+        "--n",
+        "1000000000000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "wide",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "before_storage",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "short",
+      "n": 1000000000000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-storage-before-sum128",
+        "--n",
+        "1000000000000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "short",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "short",
+      "n": 1000000000000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-bench-sum128",
+        "--n",
+        "1000000000000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "short",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "before_storage",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "local",
+      "n": 1000000000000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-storage-before-sum128",
+        "--n",
+        "1000000000000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "local",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "local",
+      "n": 1000000000000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-bench-sum128",
+        "--n",
+        "1000000000000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "local",
+        "--mode",
+        "mixed",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "before_storage",
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "wide",
+      "n": 1000000000000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-storage-before-sum128",
+        "--n",
+        "1000000000000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "wide",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "wide",
+      "n": 1000000000000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-bench-sum128",
+        "--n",
+        "1000000000000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "wide",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "before_storage",
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "short",
+      "n": 1000000000000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-storage-before-sum128",
+        "--n",
+        "1000000000000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "short",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "short",
+      "n": 1000000000000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-bench-sum128",
+        "--n",
+        "1000000000000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "short",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "before_storage",
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "local",
+      "n": 1000000000000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-storage-before-sum128",
+        "--n",
+        "1000000000000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "local",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "local",
+      "n": 1000000000000000000,
+      "sum_bits": 128,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-bench-sum128",
+        "--n",
+        "1000000000000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "local",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    }
+  ],
+  "sum_comparison": "Use the same -DDLST_BENCH_WIDE_SUM binary for both N values. The64-bit N=10^9 run preserves earlier benchmark continuity. Sum and reference arithmetic are signed128 in the wide build; Index and lazy action remain signed64. Mixed query generation is unchanged; search limits use unbiased128-bit sampling. The128-bit checksum folds both halves, so compare checksums only within the same sum_bits condition.",
+  "node_bytes_sum_length": {
+    "sum64": {
+      "before_storage": 48,
+      "current_leaf": 24,
+      "current_branch": 48
+    },
+    "sum128": {
+      "before_storage": 64,
+      "current_leaf": 48,
+      "current_branch": 64
+    }
+  },
+  "search": "250000 preparation additions, then250000 max_right plus250000 min_left. Preparation is reported separately and excluded from query time. Searches must not increase node_count.",
+  "build_commands": [
+    [
+      "g++",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-Wall",
+      "-Wextra",
+      "-I/tmp/dlst-before-pools",
+      "-I.",
+      "test/ds/benchmark/dynamic_lazy_segment_tree_benchmark.cpp",
+      "-o",
+      "/tmp/dlst-storage-before-sum64"
+    ],
+    [
+      "g++",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-Wall",
+      "-Wextra",
+      "-I.",
+      "test/ds/benchmark/dynamic_lazy_segment_tree_benchmark.cpp",
+      "-o",
+      "/tmp/dlst-bench-sum64"
+    ],
+    [
+      "g++",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-Wall",
+      "-Wextra",
+      "-DDLST_BENCH_WIDE_SUM",
+      "-I/tmp/dlst-before-pools",
+      "-I.",
+      "test/ds/benchmark/dynamic_lazy_segment_tree_benchmark.cpp",
+      "-o",
+      "/tmp/dlst-storage-before-sum128"
+    ],
+    [
+      "g++",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-Wall",
+      "-Wextra",
+      "-DDLST_BENCH_WIDE_SUM",
+      "-I.",
+      "test/ds/benchmark/dynamic_lazy_segment_tree_benchmark.cpp",
+      "-o",
+      "/tmp/dlst-bench-sum128"
+    ]
+  ],
+  "before_storage_source_sha256": {
+    "/tmp/dlst-before-pools/titan_cpplib/ds/dynamic_lazy_segment_tree.cpp": "010e30f355f8ed14cb771ce7ec4f34af845937a9e0c908c269621a82aacc8b63"
+  },
+  "original_comparison_report": "dynamic_lazy_segment_tree_original_comparison.json"
+}

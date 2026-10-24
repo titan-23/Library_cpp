@@ -1,0 +1,329 @@
+{
+  "date": "2026-10-25",
+  "timezone": "Asia/Tokyo",
+  "cpu": "AMD Ryzen Threadripper 3990X 64-Core Processor",
+  "cpu_affinity": 4,
+  "compiler": "g++ (Ubuntu 12.3.0-1ubuntu1~22.04.3) 12.3.0",
+  "compiler_flags": [
+    "-std=c++17",
+    "-O3",
+    "-DNDEBUG",
+    "-Wall",
+    "-Wextra"
+  ],
+  "configuration": {
+    "n": 1000000000,
+    "q": 500000,
+    "seed": 23,
+    "runs_per_condition": 5,
+    "reserve_nodes": 0
+  },
+  "measurement": "Fresh process/tree per run. Whole loop includes node allocation and checksum. Excludes generation, construction, verification, counting, output. Variant execution order alternates. Median of 5 runs.",
+  "memory": "Process peak RSS sampled before independent verification, includes input trace and transient pool reallocation.",
+  "variants": {
+    "pointer": "Pinned original ae0e71fc1bdfa9041c76b64156a857b7d6817703, with correctness fixes and untimed node counting; reproduced by companion prepare_*_baseline.py.",
+    "previous": "In-session snapshot of the preceding uncompressed index-pool implementation. Retimed on the identical trace; historical snapshots are not installed as alternate public implementations.",
+    "current": "Path-compressed Patricia implementation; fixed coordinate-bit hierarchy, no randomized balancing or offline coordinate compression."
+  },
+  "workload": "Exactly 250000 apply(add1..9) + 250000 prod shuffled. Per-element S{0,1}; same generator as previous report.",
+  "distributions": {
+    "wide": "Two uniform positions in [0,n), ordered and made half-open.",
+    "short": "Uniform start and length1..1024, clipped at n.",
+    "local": "Centered coordinate interval of width min(n,1000000)."
+  },
+  "validation": "All 3 variants have identical checksums per condition. First repeat of every condition checked against independent Fenwick reference. Random/structural and two-TU utility suites pass O2, ASan, UBSan with no warnings; LeakSanitizer disabled due ptrace environment.",
+  "tradeoffs": "Compression optimizes sparse large domains; local/dense workloads can be slower than the previous uncompressed pool. All cases are included, including regressions. Existing boundary-search benchmark is recorded separately.",
+  "implementation_notes": "Leaves represent uniform runs. B runs use exactly2B-1 nodes. Partial updates retain the original start, locally insert safe-prefix fragments, and globally insert at most2 remaining fragments. pow and ACL mapping(F,S) preserved. No node growth from queries or repeated endpoints.",
+  "source_sha256": {
+    "titan_cpplib/ds/dynamic_segment_tree.cpp": "1bf7d972d6fdf544b4d8c68c8a41d7e281fb8f927bdd1fe016460d74a5fd3395",
+    "titan_cpplib/ds/dynamic_segment_tree_init.cpp": "ddfa08842ceaa216f16bb69b93d26cb30419dbd4ab1809b5ea3fb6cf5e818f66",
+    "titan_cpplib/ds/dynamic_lazy_segment_tree.cpp": "52eb7db3c4256ab1620c3d939af7232a45ce25b471c2ea4675b45a5a71741e9c",
+    "titan_cpplib/ds/dynamic_lazy_segment_tree_array.cpp": "429cf6f0fb8bdb10e00dd9598f20511500332cfc4e47ba4c3877410c8eca8d4f",
+    "titan_cpplib/ds/dynamic_segment_tree_util.cpp": "eee184e01e436b1dfe2b8622b9fc57ab28962dc8681ba5720f5fdb4fc8392ee4",
+    "titan_cpplib/ds/dynamic_lazy_segment_tree_util.cpp": "80d342db3bb55c02db8ec46c96c6d34dc40e54a3f55ca6d72d9b1cc41cadba3e",
+    "test/ds/dynamic_segment_tree_random.cpp": "34dc61892bc485c1df429269b52d92236483218861b770376cd864737802ac47",
+    "test/ds/dynamic_segment_tree_util_test.cpp": "480f9160c67b400ef6f2156ce693b4450cbb53e7b83bd371d27c9fd9fb05660b",
+    "test/ds/dynamic_segment_tree_util_link.cpp": "ab59539d7f0ccabf46e97011e40a050a9681bf65157b858f0164519d783a3383",
+    "test/ds/benchmark/dynamic_lazy_segment_tree_benchmark.cpp": "88da8f632dda04ef65f6fa3f573df35cd88e1456343924226a84339f45a816ec"
+  },
+  "summary": [
+    {
+      "kind": "lazy",
+      "distribution": "wide",
+      "variants": {
+        "pointer": {
+          "median_seconds": 1.26239,
+          "median_peak_rss_bytes": 826277888,
+          "nodes": 10108609
+        },
+        "previous": {
+          "median_seconds": 1.072783,
+          "median_peak_rss_bytes": 555315200,
+          "nodes": 10108609
+        },
+        "current": {
+          "median_seconds": 0.707909,
+          "median_peak_rss_bytes": 67969024,
+          "nodes": 999779
+        }
+      },
+      "time_reduction_vs_previous_percent": 34.01191107614494,
+      "peak_rss_reduction_vs_previous_percent": 87.76028028766365,
+      "time_reduction_vs_pointer_percent": 43.92311409310909,
+      "search_median_seconds": 0.622961,
+      "search_prepare_median_seconds": 0.452032
+    },
+    {
+      "kind": "lazy",
+      "distribution": "short",
+      "variants": {
+        "pointer": {
+          "median_seconds": 0.863601,
+          "median_peak_rss_bytes": 774897664,
+          "nodes": 9462541
+        },
+        "previous": {
+          "median_seconds": 0.725129,
+          "median_peak_rss_bytes": 555315200,
+          "nodes": 9462541
+        },
+        "current": {
+          "median_seconds": 0.372922,
+          "median_peak_rss_bytes": 67969024,
+          "nodes": 999747
+        }
+      },
+      "time_reduction_vs_previous_percent": 48.57163346108072,
+      "peak_rss_reduction_vs_previous_percent": 87.76028028766365,
+      "time_reduction_vs_pointer_percent": 56.817789696862334,
+      "search_median_seconds": 0.497548,
+      "search_prepare_median_seconds": 0.274812
+    },
+    {
+      "kind": "lazy",
+      "distribution": "local",
+      "variants": {
+        "pointer": {
+          "median_seconds": 0.647957,
+          "median_peak_rss_bytes": 120586240,
+          "nodes": 1285589
+        },
+        "previous": {
+          "median_seconds": 0.474675,
+          "median_peak_rss_bytes": 85266432,
+          "nodes": 1285589
+        },
+        "current": {
+          "median_seconds": 0.639868,
+          "median_peak_rss_bytes": 67969024,
+          "nodes": 786717
+        }
+      },
+      "time_reduction_vs_previous_percent": -34.80128508979827,
+      "peak_rss_reduction_vs_previous_percent": 20.286304462698755,
+      "time_reduction_vs_pointer_percent": 1.2483853095189956,
+      "search_median_seconds": 0.528469,
+      "search_prepare_median_seconds": 0.417353
+    }
+  ],
+  "first_repeat_commands": [
+    {
+      "variant": "pointer",
+      "kind": "lazy",
+      "distribution": "wide",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dynamic_lazy_segment_tree_benchmark_baseline",
+        "--distribution",
+        "wide",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "previous",
+      "kind": "lazy",
+      "distribution": "wide",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-round1/benchmark",
+        "--distribution",
+        "wide",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "distribution": "wide",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-final-bench",
+        "--distribution",
+        "wide",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "pointer",
+      "kind": "lazy",
+      "distribution": "short",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dynamic_lazy_segment_tree_benchmark_baseline",
+        "--distribution",
+        "short",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "previous",
+      "kind": "lazy",
+      "distribution": "short",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-round1/benchmark",
+        "--distribution",
+        "short",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "distribution": "short",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-final-bench",
+        "--distribution",
+        "short",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "pointer",
+      "kind": "lazy",
+      "distribution": "local",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dynamic_lazy_segment_tree_benchmark_baseline",
+        "--distribution",
+        "local",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "previous",
+      "kind": "lazy",
+      "distribution": "local",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-round1/benchmark",
+        "--distribution",
+        "local",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "distribution": "local",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-final-bench",
+        "--distribution",
+        "local",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "distribution": "wide",
+      "mode": "search",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-final-bench",
+        "--distribution",
+        "wide",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "distribution": "short",
+      "mode": "search",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-final-bench",
+        "--distribution",
+        "short",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "distribution": "local",
+      "mode": "search",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-final-bench",
+        "--distribution",
+        "local",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    }
+  ],
+  "search": "250000 preparation updates (time reported separately), then250000 max_right +250000 min_left. Queries do not allocate nodes. First repeat checked using independent compressed prefix sums.",
+  "node_bytes_sum_length": {
+    "pointer": 72,
+    "previous": 32,
+    "current": 48
+  },
+  "previous_report": "dynamic_lazy_segment_tree_before_compression.json",
+  "rejected_candidates": [
+    "Separate boundary split+insert before update: extra root traversals.",
+    "Patricia split/join range isolation: slower on wide/local.",
+    "Cached split coordinate: extra8bytes per node without a consistent speed benefit."
+  ]
+}

@@ -1,0 +1,218 @@
+{
+  "date": "2026-10-25",
+  "timezone": "Asia/Tokyo",
+  "cpu": "AMD Ryzen Threadripper 3990X 64-Core Processor",
+  "cpu_affinity": 4,
+  "compiler": "g++ (Ubuntu 12.3.0-1ubuntu1~22.04.3) 12.3.0",
+  "compiler_flags": [
+    "-std=c++17",
+    "-O3",
+    "-DNDEBUG",
+    "-Wall",
+    "-Wextra",
+    "-I."
+  ],
+  "baseline_revision": "ae0e71fc1bdfa9041c76b64156a857b7d6817703",
+  "baseline_preparation": "prepare_dynamic_lazy_segment_tree_baseline.py initializes lazy, fixes empty prod2/print/get bounds, uses exact n, adds untimed node counting.",
+  "configuration": {
+    "n": 1000000000,
+    "q": 500000,
+    "seed": 23,
+    "init": 0,
+    "reserve_nodes": 0,
+    "runs_per_condition": 5,
+    "statistic": "median"
+  },
+  "mixed": "250000 range additions by 1..9 and 250000 range sums, shuffled. Same trace for both implementations. Fresh process/tree per run; alternating execution order.",
+  "search": "250000 preparation updates, then 250000 max_right and 250000 min_left. Preparation time is reported separately. Searches do not allocate nodes.",
+  "distributions": {
+    "wide": "Two uniform positions in [0,n), ordered and made half-open.",
+    "short": "Uniform start and random length 1..1024, clipped at n.",
+    "local": "Two uniform positions within centered interval of length min(n,1000000)."
+  },
+  "timing": "Whole query loop including node allocations and checksum accumulation; excludes generation, construction, optional reserve, verification, node counting and output.",
+  "memory": "Process peak RSS sampled before independent verification allocations; includes query storage and transient vector reallocations.",
+  "validation": "Each condition verified once outside timing against independent Fenwick-integral (mixed) or compressed-prefix (search) reference. All repeat checksums match. Randomized tests pass with O2 warnings and ASan/UBSan; leak detection disabled due ptrace environment.",
+  "node_size_sum_length_bytes": {
+    "baseline": 72,
+    "current": 32
+  },
+  "source_sha256": {
+    "titan_cpplib/ds/dynamic_segment_tree.cpp": "3ef6b5bd1a3d95994e3a2dede80360bc6d8b0a94d6618dfb617f2fd1cd9efdd5",
+    "titan_cpplib/ds/dynamic_segment_tree_init.cpp": "873dfa5064060966a0af1e2bed31d06ab479ade19427a9293f5b66c57597d1bc",
+    "titan_cpplib/ds/dynamic_lazy_segment_tree.cpp": "2902ddbcb7a552fe0b4aaf61343ff57fafb46bd1d79d69c1d590b7656983c32b",
+    "titan_cpplib/ds/dynamic_lazy_segment_tree_array.cpp": "429cf6f0fb8bdb10e00dd9598f20511500332cfc4e47ba4c3877410c8eca8d4f",
+    "test/ds/dynamic_segment_tree_random.cpp": "0a63f8688b659c39e96dafc610d5e8d4702723d3d202fadc9a8c5b6c679eac22",
+    "test/ds/benchmark/dynamic_lazy_segment_tree_benchmark.cpp": "88da8f632dda04ef65f6fa3f573df35cd88e1456343924226a84339f45a816ec",
+    "test/ds/benchmark/prepare_dynamic_lazy_segment_tree_baseline.py": "7c2fc5ecda6546e6362958da89e42813dae03360cd934b36e427046f16be3706"
+  },
+  "summary": [
+    {
+      "distribution": "wide",
+      "baseline_median_seconds": 1.271816,
+      "baseline_median_peak_rss_bytes": 826277888,
+      "current_median_seconds": 1.066534,
+      "current_median_peak_rss_bytes": 555016192,
+      "time_reduction_percent": 16.140856853507113,
+      "peak_rss_reduction_percent": 32.829354378172596,
+      "node_count": 10108609,
+      "search_median_seconds": 0.562786
+    },
+    {
+      "distribution": "short",
+      "baseline_median_seconds": 0.864844,
+      "baseline_median_peak_rss_bytes": 774897664,
+      "current_median_seconds": 0.728502,
+      "current_median_peak_rss_bytes": 555315200,
+      "time_reduction_percent": 15.764924078793396,
+      "peak_rss_reduction_percent": 28.33696295669824,
+      "node_count": 9462541,
+      "search_median_seconds": 0.440109
+    },
+    {
+      "distribution": "local",
+      "baseline_median_seconds": 0.654405,
+      "baseline_median_peak_rss_bytes": 120586240,
+      "current_median_seconds": 0.476324,
+      "current_median_peak_rss_bytes": 85553152,
+      "time_reduction_percent": 27.212658827484503,
+      "peak_rss_reduction_percent": 29.0523097826087,
+      "node_count": 1285589,
+      "search_median_seconds": 0.369546
+    }
+  ],
+  "run_commands": [
+    {
+      "implementation": "baseline",
+      "distribution": "wide",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dynamic_lazy_segment_tree_benchmark_baseline",
+        "--distribution",
+        "wide",
+        "--verify"
+      ]
+    },
+    {
+      "implementation": "current",
+      "distribution": "wide",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dynamic_lazy_segment_tree_benchmark_current",
+        "--distribution",
+        "wide",
+        "--verify"
+      ]
+    },
+    {
+      "implementation": "baseline",
+      "distribution": "short",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dynamic_lazy_segment_tree_benchmark_baseline",
+        "--distribution",
+        "short",
+        "--verify"
+      ]
+    },
+    {
+      "implementation": "current",
+      "distribution": "short",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dynamic_lazy_segment_tree_benchmark_current",
+        "--distribution",
+        "short",
+        "--verify"
+      ]
+    },
+    {
+      "implementation": "baseline",
+      "distribution": "local",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dynamic_lazy_segment_tree_benchmark_baseline",
+        "--distribution",
+        "local",
+        "--verify"
+      ]
+    },
+    {
+      "implementation": "current",
+      "distribution": "local",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dynamic_lazy_segment_tree_benchmark_current",
+        "--distribution",
+        "local",
+        "--verify"
+      ]
+    },
+    {
+      "implementation": "current",
+      "distribution": "wide",
+      "mode": "search",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dynamic_lazy_segment_tree_benchmark_current",
+        "--distribution",
+        "wide",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    },
+    {
+      "implementation": "current",
+      "distribution": "short",
+      "mode": "search",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dynamic_lazy_segment_tree_benchmark_current",
+        "--distribution",
+        "short",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    },
+    {
+      "implementation": "current",
+      "distribution": "local",
+      "mode": "search",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dynamic_lazy_segment_tree_benchmark_current",
+        "--distribution",
+        "local",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    }
+  ]
+}

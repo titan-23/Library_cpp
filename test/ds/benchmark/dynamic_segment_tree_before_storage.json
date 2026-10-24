@@ -1,0 +1,533 @@
+{
+  "date": "2026-10-25",
+  "timezone": "Asia/Tokyo",
+  "cpu": "AMD Ryzen Threadripper 3990X 64-Core Processor",
+  "cpu_affinity": 4,
+  "compiler": "g++ (Ubuntu 12.3.0-1ubuntu1~22.04.3) 12.3.0",
+  "compiler_flags": [
+    "-std=c++17",
+    "-O3",
+    "-DNDEBUG",
+    "-Wall",
+    "-Wextra",
+    "-I."
+  ],
+  "configuration": {
+    "n": 1000000000,
+    "q": 500000,
+    "seed": 23,
+    "runs_per_condition": 5,
+    "reserve_nodes": 0
+  },
+  "measurement": "Fresh process/tree per run; alternating variant execution order; medians of5. Whole operation loop timed including allocations/checksum, excluding input generation, construction, verification and output.",
+  "memory": "Process peak RSS captured before reference verification; includes input trace and transient vector reallocation.",
+  "variants": {
+    "uncompressed": "Initial uncompressed index-pool implementation, snapshotted earlier in this session.",
+    "compressed_before": "Patricia implementation before the current navigation/search tuning, snapshotted before changes.",
+    "current": "Final workspace implementation with cached split coordinates, iterative prod and (lazy) near-ancestor insertion/failed-subtree search descent."
+  },
+  "workload": "250000 set +250000 prod shuffled; plain initial0, Init initial3; values1..9.",
+  "distributions": {
+    "wide": "Uniform positions in [0,n).",
+    "short": "Uniform start, length1..1024, clipped at n.",
+    "local": "Only the centered coordinate interval of width min(n,1000000)."
+  },
+  "validation": "Every variant/condition verified once outside timing against an independent Fenwick reference. All repeat checksums agree across variants. Full randomized/structural and two-TU utility suites passed O2 warning builds and ASan+UBSan; leak detection disabled due ptrace environment.",
+  "changes": [
+    "Preserve pow and ACL-style mapping(F,S), existing uniform-init constructor and allocation-free queries.",
+    "Cache each branch split in the old minimum-coordinate slot; carry subtree minimum during navigation without increasing per-node size.",
+    "Replace prod recursion after the first fork with iterative prefix/suffix paths, preserving noncommutative ordering.",
+    "Use using namespace std, blank lines between methods and Japanese /// @brief descriptions/complexities without full stops.",
+    "Remove prod2 and dynamic_lazy_segment_tree_array.cpp as requested."
+  ],
+  "tradeoffs": "Not a universal optimum. All existing workloads are retained, including residual regressions versus the uncompressed pool. Search comparisons are now paired remeasurements of all3 variants rather than historical-only comparisons.",
+  "source_sha256": {
+    "titan_cpplib/ds/dynamic_segment_tree.cpp": "bff5ba7105f1a2456cc15a2b5aa8d0e2b01d715f12cf4b22be5b8109c6866764",
+    "titan_cpplib/ds/dynamic_segment_tree_init.cpp": "9de8eec0a4c82d2b02f32936f0239f840be4e8eeea4d50b0c73e1a2847bab645",
+    "titan_cpplib/ds/dynamic_lazy_segment_tree.cpp": "83b947172249aadfcc8937395e2ef51d8f39c75cec93c974331d676e86631895",
+    "titan_cpplib/ds/dynamic_segment_tree_util.cpp": "5c3c8ba62b24ebdd5047ac7df12ebed0a7de91a6bd7324f00392ca2ba3b84c8c",
+    "titan_cpplib/ds/dynamic_lazy_segment_tree_util.cpp": "b506d5ac5f59b18ed2542250027784256121b12e3428467c16ae5a008542011c",
+    "test/ds/dynamic_segment_tree_random.cpp": "46c5df280e3bebffd9b35a7478e99134ba3fde0a641b2a8a0b809cda2c2dcce4",
+    "test/ds/dynamic_segment_tree_util_test.cpp": "480f9160c67b400ef6f2156ce693b4450cbb53e7b83bd371d27c9fd9fb05660b",
+    "test/ds/dynamic_segment_tree_util_link.cpp": "ab59539d7f0ccabf46e97011e40a050a9681bf65157b858f0164519d783a3383",
+    "test/ds/benchmark/dynamic_segment_tree_benchmark.cpp": "b082b49509fd3f325056e0bc95fc491e18a8f6c6d0092d034aa40feb33402a6e"
+  },
+  "previous_report": "dynamic_segment_tree_before_navigation.json",
+  "summary": [
+    {
+      "kind": "plain",
+      "mode": "mixed",
+      "distribution": "wide",
+      "variants": {
+        "uncompressed": {
+          "median_seconds": 0.248215,
+          "median_peak_rss_bytes": 85549056,
+          "median_prepare_seconds": 0.0,
+          "nodes": 3276304
+        },
+        "compressed_before": {
+          "median_seconds": 0.168276,
+          "median_peak_rss_bytes": 34938880,
+          "median_prepare_seconds": 0.0,
+          "nodes": 499947
+        },
+        "current": {
+          "median_seconds": 0.142528,
+          "median_peak_rss_bytes": 35217408,
+          "median_prepare_seconds": 0.0,
+          "nodes": 499947
+        }
+      },
+      "time_reduction_vs_uncompressed_percent": 42.578812722841086,
+      "time_reduction_vs_compressed_before_percent": 15.301053031923761
+    },
+    {
+      "kind": "plain",
+      "mode": "mixed",
+      "distribution": "short",
+      "variants": {
+        "uncompressed": {
+          "median_seconds": 0.199005,
+          "median_peak_rss_bytes": 85549056,
+          "median_prepare_seconds": 0.0,
+          "nodes": 3276304
+        },
+        "compressed_before": {
+          "median_seconds": 0.12011,
+          "median_peak_rss_bytes": 35217408,
+          "median_prepare_seconds": 0.0,
+          "nodes": 499947
+        },
+        "current": {
+          "median_seconds": 0.114324,
+          "median_peak_rss_bytes": 35217408,
+          "median_prepare_seconds": 0.0,
+          "nodes": 499947
+        }
+      },
+      "time_reduction_vs_uncompressed_percent": 42.55219718097535,
+      "time_reduction_vs_compressed_before_percent": 4.817250853384403
+    },
+    {
+      "kind": "plain",
+      "mode": "mixed",
+      "distribution": "local",
+      "variants": {
+        "uncompressed": {
+          "median_seconds": 0.13786400000000001,
+          "median_peak_rss_bytes": 34942976,
+          "median_prepare_seconds": 0.0,
+          "nodes": 811244
+        },
+        "compressed_before": {
+          "median_seconds": 0.160477,
+          "median_peak_rss_bytes": 35217408,
+          "median_prepare_seconds": 0.0,
+          "nodes": 442369
+        },
+        "current": {
+          "median_seconds": 0.136212,
+          "median_peak_rss_bytes": 35217408,
+          "median_prepare_seconds": 0.0,
+          "nodes": 442369
+        }
+      },
+      "time_reduction_vs_uncompressed_percent": 1.1982823652295083,
+      "time_reduction_vs_compressed_before_percent": 15.12054686964488
+    },
+    {
+      "kind": "init",
+      "mode": "mixed",
+      "distribution": "wide",
+      "variants": {
+        "uncompressed": {
+          "median_seconds": 0.255286,
+          "median_peak_rss_bytes": 85266432,
+          "median_prepare_seconds": 0.0,
+          "nodes": 3276304
+        },
+        "compressed_before": {
+          "median_seconds": 0.166815,
+          "median_peak_rss_bytes": 34942976,
+          "median_prepare_seconds": 0.0,
+          "nodes": 499947
+        },
+        "current": {
+          "median_seconds": 0.145529,
+          "median_peak_rss_bytes": 35217408,
+          "median_prepare_seconds": 0.0,
+          "nodes": 499947
+        }
+      },
+      "time_reduction_vs_uncompressed_percent": 42.99374035395596,
+      "time_reduction_vs_compressed_before_percent": 12.760243383388781
+    },
+    {
+      "kind": "init",
+      "mode": "mixed",
+      "distribution": "short",
+      "variants": {
+        "uncompressed": {
+          "median_seconds": 0.198721,
+          "median_peak_rss_bytes": 85549056,
+          "median_prepare_seconds": 0.0,
+          "nodes": 3276304
+        },
+        "compressed_before": {
+          "median_seconds": 0.12125799999999999,
+          "median_peak_rss_bytes": 34942976,
+          "median_prepare_seconds": 0.0,
+          "nodes": 499947
+        },
+        "current": {
+          "median_seconds": 0.11311199999999999,
+          "median_peak_rss_bytes": 34942976,
+          "median_prepare_seconds": 0.0,
+          "nodes": 499947
+        }
+      },
+      "time_reduction_vs_uncompressed_percent": 43.07999657811706,
+      "time_reduction_vs_compressed_before_percent": 6.717907272097512
+    },
+    {
+      "kind": "init",
+      "mode": "mixed",
+      "distribution": "local",
+      "variants": {
+        "uncompressed": {
+          "median_seconds": 0.13783600000000001,
+          "median_peak_rss_bytes": 35217408,
+          "median_prepare_seconds": 0.0,
+          "nodes": 811244
+        },
+        "compressed_before": {
+          "median_seconds": 0.160325,
+          "median_peak_rss_bytes": 35221504,
+          "median_prepare_seconds": 0.0,
+          "nodes": 442369
+        },
+        "current": {
+          "median_seconds": 0.140504,
+          "median_peak_rss_bytes": 34942976,
+          "median_prepare_seconds": 0.0,
+          "nodes": 442369
+        }
+      },
+      "time_reduction_vs_uncompressed_percent": -1.935633651585933,
+      "time_reduction_vs_compressed_before_percent": 12.363012630594106
+    }
+  ],
+  "first_repeat_commands": [
+    {
+      "variant": "uncompressed",
+      "kind": "plain",
+      "mode": "mixed",
+      "distribution": "wide",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-pool-bench",
+        "--distribution",
+        "wide",
+        "--kind",
+        "plain",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "compressed_before",
+      "kind": "plain",
+      "mode": "mixed",
+      "distribution": "wide",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-patricia-bench",
+        "--distribution",
+        "wide",
+        "--kind",
+        "plain",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "plain",
+      "mode": "mixed",
+      "distribution": "wide",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-navigation-final",
+        "--distribution",
+        "wide",
+        "--kind",
+        "plain",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "uncompressed",
+      "kind": "plain",
+      "mode": "mixed",
+      "distribution": "short",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-pool-bench",
+        "--distribution",
+        "short",
+        "--kind",
+        "plain",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "compressed_before",
+      "kind": "plain",
+      "mode": "mixed",
+      "distribution": "short",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-patricia-bench",
+        "--distribution",
+        "short",
+        "--kind",
+        "plain",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "plain",
+      "mode": "mixed",
+      "distribution": "short",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-navigation-final",
+        "--distribution",
+        "short",
+        "--kind",
+        "plain",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "uncompressed",
+      "kind": "plain",
+      "mode": "mixed",
+      "distribution": "local",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-pool-bench",
+        "--distribution",
+        "local",
+        "--kind",
+        "plain",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "compressed_before",
+      "kind": "plain",
+      "mode": "mixed",
+      "distribution": "local",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-patricia-bench",
+        "--distribution",
+        "local",
+        "--kind",
+        "plain",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "plain",
+      "mode": "mixed",
+      "distribution": "local",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-navigation-final",
+        "--distribution",
+        "local",
+        "--kind",
+        "plain",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "uncompressed",
+      "kind": "init",
+      "mode": "mixed",
+      "distribution": "wide",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-pool-bench",
+        "--distribution",
+        "wide",
+        "--kind",
+        "init",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "compressed_before",
+      "kind": "init",
+      "mode": "mixed",
+      "distribution": "wide",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-patricia-bench",
+        "--distribution",
+        "wide",
+        "--kind",
+        "init",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "init",
+      "mode": "mixed",
+      "distribution": "wide",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-navigation-final",
+        "--distribution",
+        "wide",
+        "--kind",
+        "init",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "uncompressed",
+      "kind": "init",
+      "mode": "mixed",
+      "distribution": "short",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-pool-bench",
+        "--distribution",
+        "short",
+        "--kind",
+        "init",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "compressed_before",
+      "kind": "init",
+      "mode": "mixed",
+      "distribution": "short",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-patricia-bench",
+        "--distribution",
+        "short",
+        "--kind",
+        "init",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "init",
+      "mode": "mixed",
+      "distribution": "short",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-navigation-final",
+        "--distribution",
+        "short",
+        "--kind",
+        "init",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "uncompressed",
+      "kind": "init",
+      "mode": "mixed",
+      "distribution": "local",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-pool-bench",
+        "--distribution",
+        "local",
+        "--kind",
+        "init",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "compressed_before",
+      "kind": "init",
+      "mode": "mixed",
+      "distribution": "local",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-patricia-bench",
+        "--distribution",
+        "local",
+        "--kind",
+        "init",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "init",
+      "mode": "mixed",
+      "distribution": "local",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-navigation-final",
+        "--distribution",
+        "local",
+        "--kind",
+        "init",
+        "--verify"
+      ]
+    }
+  ],
+  "node_bytes_scalar_int64": {
+    "uncompressed": 16,
+    "compressed_before": 32,
+    "current": 32
+  }
+}

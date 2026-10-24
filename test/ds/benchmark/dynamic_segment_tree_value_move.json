@@ -1,0 +1,72 @@
+{
+  "date": "2026-10-25",
+  "change": "Consume the public set by-value argument exactly once at the updated leaf; move it into a new node or assign it into an existing leaf",
+  "configuration": {
+    "n": 257,
+    "set_count": 1000,
+    "seed": 87531,
+    "prod_every": 7,
+    "value_type": "Counted owns unique_ptr<long long>; alternating lvalue/rvalue set inputs"
+  },
+  "results": {
+    "plain": {
+      "checksum": 17590633332379524437,
+      "nodes": 507,
+      "before": {
+        "copy_constructions": 18874,
+        "copy_assignments": 746,
+        "moves": 1560,
+        "move_assignments": 8500
+      },
+      "after": {
+        "copy_constructions": 18620,
+        "copy_assignments": 0,
+        "moves": 1814,
+        "move_assignments": 9246
+      }
+    },
+    "init": {
+      "checksum": 1485194450172329102,
+      "nodes": 507,
+      "before": {
+        "copy_constructions": 31896,
+        "copy_assignments": 746,
+        "moves": 1560,
+        "move_assignments": 10873
+      },
+      "after": {
+        "copy_constructions": 31642,
+        "copy_assignments": 0,
+        "moves": 1814,
+        "move_assignments": 11619
+      }
+    }
+  },
+  "conclusion": "Each set eliminates one internal value copy:254 new-leaf copy constructions and746 overwrite copy assignments per tree. Checksums match and live owned objects return to0. No runtime speed claim is made for the owning-value diagnostic.",
+  "validation": "Common/generic O2 and owned-value ASan+UBSan passed the candidate. Final selected source without the redundant assignment-trait fallback passed O2-Werror generic and ASan+UBSan generic. All three scalar/ordinary supplemental benchmark executables have byte-identical .text before/after the final selected change.",
+  "diagnostic_note": "Count diagnostic used the candidate with an assignment-trait fallback; it chooses move for Counted. The final source removes that redundant fallback because existing aggregate assignment already requires assignment from an rvalue.",
+  "diagnostic_source": "#include <cassert>\n#include <cstdint>\n#include <iostream>\n#include <memory>\n#include <numeric>\n#include <random>\n#include <vector>\n#include \"titan_cpplib/ds/dynamic_segment_tree.cpp\"\n#include \"titan_cpplib/ds/dynamic_segment_tree_init.cpp\"\nusing namespace std;\nusing ll = long long;\nstruct Counted {\n    inline static uint64_t copies = 0, copy_assigns = 0, moves = 0, move_assigns = 0;\n    inline static int live = 0;\n    unique_ptr<ll> value;\n    Counted() = delete;\n    explicit Counted(ll x) : value(make_unique<ll>(x)) { ++live; }\n    Counted(const Counted& other) : value(make_unique<ll>(other.get())) { ++copies; ++live; }\n    Counted(Counted&& other) noexcept : value(move(other.value)) { ++moves; ++live; }\n    Counted& operator=(const Counted& other) {\n        value = make_unique<ll>(other.get());\n        ++copy_assigns;\n        return *this;\n    }\n    Counted& operator=(Counted&& other) noexcept {\n        value = move(other.value);\n        ++move_assigns;\n        return *this;\n    }\n    ~Counted() { --live; }\n    ll get() const { assert(value); return *value; }\n};\nCounted op(Counted a, Counted b) { return Counted(a.get()+b.get()); }\nCounted e() { return Counted(0); }\nCounted repeat(Counted a,ll n) { return Counted(a.get()*n); }\nusing Plain=titan23::DynamicSegmentTree<ll,Counted,op,e>;\nusing Initial=titan23::DynamicSegmentTreeInit<ll,Counted,op,e,repeat>;\n\ntemplate<class Tree>\nvoid exercise(Tree& tree,ll initial,const char* label) {\n    vector<ll> reference(257,initial);\n    mt19937 rng(87531);\n    Counted::copies=Counted::copy_assigns=Counted::moves=Counted::move_assigns=0;\n    uint64_t checksum=0;\n    for(int step=0;step<1000;++step) {\n        const int k=rng()%257;\n        const ll value=rng()%31;\n        Counted supplied(value);\n        if(step%2) tree.set(k,supplied);\n        else tree.set(k,Counted(value));\n        assert(supplied.get()==value);\n        reference[k]=value;\n        if(step%7==0) {\n            int l=rng()%258,r=rng()%258;\n            if(l>r) swap(l,r);\n            const ll actual=tree.prod(l,r).get();\n            const ll expected=accumulate(reference.begin()+l,reference.begin()+r,0LL);\n            assert(actual==expected);\n            checksum=(checksum*1000003)^uint64_t(actual);\n        }\n    }\n    const ll total=accumulate(reference.begin(),reference.end(),0LL);\n    assert(tree.all_prod().get()==total);\n    checksum=(checksum*1000003)^uint64_t(total);\n    cout<<label<<\" checksum=\"<<checksum<<\" copies=\"<<Counted::copies\n        <<\" copy_assigns=\"<<Counted::copy_assigns<<\" moves=\"<<Counted::moves\n        <<\" move_assigns=\"<<Counted::move_assigns<<\" nodes=\"<<tree.node_count()<<'\\n';\n}\nint main() {\n    {\n        Plain tree(257);\n        exercise(tree,0,\"plain\");\n    }\n    assert(Counted::live==0);\n    {\n        Initial tree(257,Counted(3));\n        exercise(tree,3,\"init\");\n    }\n    assert(Counted::live==0);\n}\n",
+  "diagnostic_source_sha256": "0a3838191b9f467da14fe77c21919fd85e9f5cf65c400f497a731a2f10ca9a39",
+  "before_source_sha256": {
+    "titan_cpplib/ds/dynamic_segment_tree.cpp": "939c05ab6d360225c5b85e1ecf23974091a8565c8a0a63238d75b867e0d05c2e",
+    "titan_cpplib/ds/dynamic_segment_tree_init.cpp": "44454a0a986c0f5d8db2daeb83352f093762b43ab4e8fa0df552a1d46e3c92c6"
+  },
+  "selected_source_sha256": {
+    "titan_cpplib/ds/dynamic_segment_tree.cpp": "08c7806e17edb3fdcb11d56f881df4e5196fe94079e5f1dc73eeaa78ebf73f79",
+    "titan_cpplib/ds/dynamic_segment_tree_init.cpp": "67ba91279558569aa20e8f2735c9e9cd04b98caa568d16a45af63ff398872d7d"
+  },
+  "text_sha256": {
+    "mixed": {
+      "before": "ed75e3d5daa941fee2be620d4d85e3706c432e285e357fb0dc0b0153f3c67e72",
+      "selected": "ed75e3d5daa941fee2be620d4d85e3706c432e285e357fb0dc0b0153f3c67e72"
+    },
+    "search": {
+      "before": "433f2cd373afb4a6a528d4c95780f7c87424ef655f6841ae8171d1e15e38b292",
+      "selected": "433f2cd373afb4a6a528d4c95780f7c87424ef655f6841ae8171d1e15e38b292"
+    },
+    "gcd_affine_max_sub_sum": {
+      "before": "4c38f72e201e7a1a1be79c824983f6073903188ed02d70a28624a940c86e5276",
+      "selected": "4c38f72e201e7a1a1be79c824983f6073903188ed02d70a28624a940c86e5276"
+    }
+  }
+}

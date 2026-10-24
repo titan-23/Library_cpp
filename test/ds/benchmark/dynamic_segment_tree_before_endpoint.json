@@ -1,0 +1,1052 @@
+{
+  "date": "2026-10-25",
+  "timezone": "Asia/Tokyo",
+  "cpu": "AMD Ryzen Threadripper 3990X 64-Core Processor",
+  "cpu_affinity": 4,
+  "compiler": "g++ (Ubuntu 12.3.0-1ubuntu1~22.04.3) 12.3.0",
+  "compiler_flags": [
+    "-std=c++17",
+    "-O3",
+    "-DNDEBUG",
+    "-Wall",
+    "-Wextra",
+    "-I."
+  ],
+  "workload": "250000 set +250000 prod shuffled; plain initial0, Init initial3; values1..9.",
+  "distributions": {
+    "wide": "Uniform positions in [0,n).",
+    "short": "Uniform start, length1..1024, clipped at n.",
+    "local": "Only the centered coordinate interval of width min(n,1000000)."
+  },
+  "configuration": {
+    "n": [
+      1000000000,
+      1000000000000000000
+    ],
+    "q": 500000,
+    "seed": 23,
+    "runs_per_condition": 5,
+    "reserve_nodes": 0,
+    "sum_bits": [
+      64
+    ]
+  },
+  "measurement": "Fresh process/tree per run, serialized on CPU4; alternate before/current order each repeat; report medians of5. Timed loops include allocation and checksum, excluding trace generation, construction, reservation, verification and output. No compile/test/other benchmark ran concurrently.",
+  "memory": "Process peak RSS captured before independent reference verification, including input traces, tree storage and transient vector reallocation. Search also holds its preparation trace and probe trace; 128-bit search additionally holds a separate vector of 500000 128-bit thresholds.",
+  "variants": {
+    "before_storage": "Compressed Patricia implementation immediately before leaf/branch pool separation and explicit lazy search stack, rebuilt from session snapshots. Historical measurements remain in the before_storage report.",
+    "current": "Final workspace implementation, separate leaf/branch pools; ordinary tree allocation/join helpers kept out of line; lazy boundary search uses a compact stack with correct object lifetime."
+  },
+  "validation": "Every variant/condition independently verified once after timing; all5 repeat checksums and logical node counts agree. Ordinary uses a compressed Fenwick reference, lazy mixed uses two independent integral Fenwick trees, lazy search uses independently computed compressed prefix sums. Randomized/structural tests, generic owning and non-default-constructible value/action tests, exceptional predicate lifetime tests, 128-bit coordinate/aggregate tests and utility two-TU tests passed O2 warning builds and ASan+UBSan. Leak detection disabled due ptrace environment.",
+  "changes": [
+    "Separate leaf and branch pools, retaining logical node_count and reserve_nodes behavior; ordinary scalar leaves16B versus32B branches, lazy 64-bit sum/length leaves24B versus48B branches.",
+    "Keep ordinary allocation and join helpers out of line; retain recursive set after iterative set measured slower.",
+    "Replace lazy boundary start-path recursion with a bounded explicit stack; align raw storage and manage F lifetime without requiring a default constructor; reorder frames from32B to24B for int64 indices/actions.",
+    "Retain pow, mapping(F,S), the uniform-init constructor and const queries that do not grow nodes.",
+    "Preserve requested library style and remove prod2 and the obsolete array file.",
+    "Add N=10^9 and10^18 aggregate/coordinate regression tests, including sums and boundary limits exceeding LLONG_MAX."
+  ],
+  "tradeoffs": "Not a universal optimum. All3 existing distributions and every measured result are retained. The comparison here is paired remeasurement against the immediately preceding compressed implementation, not the original uncompressed pool; original pool comparisons remain in archived reports. Timing depends on compiler, CPU and workload. Lazy prefetch and allocation outlining did not consistently improve timing and were rejected.",
+  "source_sha256": {
+    "titan_cpplib/ds/dynamic_segment_tree.cpp": "1450f7da96f1a50695bc9b71bd35ff17d27617517d69fb1fa56cda77efdf8f45",
+    "titan_cpplib/ds/dynamic_segment_tree_init.cpp": "c5ef98fa14be06a695b7bdafe736cec85aa7c20eccf101453842468d9ddfb0b0",
+    "titan_cpplib/ds/dynamic_lazy_segment_tree.cpp": "5cbd732f42a7761c6300dfb922e3e66f1427429d7f3cf2bd16fcf16c74d3920e",
+    "titan_cpplib/ds/dynamic_segment_tree_util.cpp": "0bd5aa87b783bb9a61940e99cb179955ee1e21180327a4f71b93e2f28f851dc1",
+    "titan_cpplib/ds/dynamic_lazy_segment_tree_util.cpp": "72605ec0ce4ad1a7c5d856afe095a0a07380c0e12841a67e65c64161ed067de9",
+    "test/ds/dynamic_segment_tree_random.cpp": "46c5df280e3bebffd9b35a7478e99134ba3fde0a641b2a8a0b809cda2c2dcce4",
+    "test/ds/dynamic_segment_tree_generic_test.cpp": "0271c5d6cb704778ef87066e3b81d86fbdeb709ca170f90a574e51a836ab7ffe",
+    "test/ds/dynamic_segment_tree_util_test.cpp": "480f9160c67b400ef6f2156ce693b4450cbb53e7b83bd371d27c9fd9fb05660b",
+    "test/ds/dynamic_segment_tree_util_link.cpp": "ab59539d7f0ccabf46e97011e40a050a9681bf65157b858f0164519d783a3383",
+    "test/ds/benchmark/dynamic_segment_tree_benchmark.cpp": "b082b49509fd3f325056e0bc95fc491e18a8f6c6d0092d034aa40feb33402a6e"
+  },
+  "previous_report": "dynamic_segment_tree_before_storage.json",
+  "summary": [
+    {
+      "n": 1000000000,
+      "sum_bits": 64,
+      "kind": "plain",
+      "mode": "mixed",
+      "distribution": "wide",
+      "variants": {
+        "before_storage": {
+          "median_seconds": 0.14068899999999998,
+          "min_seconds": 0.14053,
+          "max_seconds": 0.146807,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 35217408,
+          "nodes": 499947,
+          "checksum": 192732299594749419
+        },
+        "current": {
+          "median_seconds": 0.137103,
+          "min_seconds": 0.13328800000000002,
+          "max_seconds": 0.14318999999999998,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 30298112,
+          "nodes": 499947,
+          "checksum": 192732299594749419
+        }
+      },
+      "time_reduction_vs_before_storage_percent": 2.548884418824482,
+      "rss_reduction_vs_before_storage_percent": 13.968364735985118
+    },
+    {
+      "n": 1000000000,
+      "sum_bits": 64,
+      "kind": "plain",
+      "mode": "mixed",
+      "distribution": "short",
+      "variants": {
+        "before_storage": {
+          "median_seconds": 0.11893300000000001,
+          "min_seconds": 0.11648,
+          "max_seconds": 0.125422,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 35221504,
+          "nodes": 499947,
+          "checksum": 11322959189427611895
+        },
+        "current": {
+          "median_seconds": 0.11046500000000001,
+          "min_seconds": 0.108257,
+          "max_seconds": 0.11234000000000001,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 30068736,
+          "nodes": 499947,
+          "checksum": 11322959189427611895
+        }
+      },
+      "time_reduction_vs_before_storage_percent": 7.119975112037869,
+      "rss_reduction_vs_before_storage_percent": 14.62960809396442
+    },
+    {
+      "n": 1000000000,
+      "sum_bits": 64,
+      "kind": "plain",
+      "mode": "mixed",
+      "distribution": "local",
+      "variants": {
+        "before_storage": {
+          "median_seconds": 0.141392,
+          "min_seconds": 0.138181,
+          "max_seconds": 0.143582,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 35221504,
+          "nodes": 442369,
+          "checksum": 10539832400069698996
+        },
+        "current": {
+          "median_seconds": 0.136285,
+          "min_seconds": 0.13435,
+          "max_seconds": 0.137014,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 29020160,
+          "nodes": 442369,
+          "checksum": 10539832400069698996
+        }
+      },
+      "time_reduction_vs_before_storage_percent": 3.611944098676023,
+      "rss_reduction_vs_before_storage_percent": 17.60669845330852
+    },
+    {
+      "n": 1000000000,
+      "sum_bits": 64,
+      "kind": "init",
+      "mode": "mixed",
+      "distribution": "wide",
+      "variants": {
+        "before_storage": {
+          "median_seconds": 0.143266,
+          "min_seconds": 0.14257,
+          "max_seconds": 0.145318,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 34942976,
+          "nodes": 499947,
+          "checksum": 15723060093707090060
+        },
+        "current": {
+          "median_seconds": 0.139382,
+          "min_seconds": 0.138172,
+          "max_seconds": 0.139906,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 29782016,
+          "nodes": 499947,
+          "checksum": 15723060093707090060
+        }
+      },
+      "time_reduction_vs_before_storage_percent": 2.7110410006561225,
+      "rss_reduction_vs_before_storage_percent": 14.769663579885128
+    },
+    {
+      "n": 1000000000,
+      "sum_bits": 64,
+      "kind": "init",
+      "mode": "mixed",
+      "distribution": "short",
+      "variants": {
+        "before_storage": {
+          "median_seconds": 0.11215399999999999,
+          "min_seconds": 0.111768,
+          "max_seconds": 0.113119,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 34942976,
+          "nodes": 499947,
+          "checksum": 15869950182176628047
+        },
+        "current": {
+          "median_seconds": 0.10772,
+          "min_seconds": 0.106709,
+          "max_seconds": 0.10775,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 30298112,
+          "nodes": 499947,
+          "checksum": 15869950182176628047
+        }
+      },
+      "time_reduction_vs_before_storage_percent": 3.953492519214641,
+      "rss_reduction_vs_before_storage_percent": 13.29269722189661
+    },
+    {
+      "n": 1000000000,
+      "sum_bits": 64,
+      "kind": "init",
+      "mode": "mixed",
+      "distribution": "local",
+      "variants": {
+        "before_storage": {
+          "median_seconds": 0.140774,
+          "min_seconds": 0.14021199999999998,
+          "max_seconds": 0.141452,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 35217408,
+          "nodes": 442369,
+          "checksum": 17580318706030317449
+        },
+        "current": {
+          "median_seconds": 0.139358,
+          "min_seconds": 0.139161,
+          "max_seconds": 0.13983099999999998,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 28205056,
+          "nodes": 442369,
+          "checksum": 17580318706030317449
+        }
+      },
+      "time_reduction_vs_before_storage_percent": 1.0058675607711676,
+      "rss_reduction_vs_before_storage_percent": 19.911607350546635
+    },
+    {
+      "n": 1000000000000000000,
+      "sum_bits": 64,
+      "kind": "plain",
+      "mode": "mixed",
+      "distribution": "wide",
+      "variants": {
+        "before_storage": {
+          "median_seconds": 0.13971,
+          "min_seconds": 0.138881,
+          "max_seconds": 0.143257,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 34942976,
+          "nodes": 499999,
+          "checksum": 13000653715966110106
+        },
+        "current": {
+          "median_seconds": 0.13392500000000002,
+          "min_seconds": 0.132353,
+          "max_seconds": 0.135094,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 29782016,
+          "nodes": 499999,
+          "checksum": 13000653715966110106
+        }
+      },
+      "time_reduction_vs_before_storage_percent": 4.140720062987602,
+      "rss_reduction_vs_before_storage_percent": 14.769663579885128
+    },
+    {
+      "n": 1000000000000000000,
+      "sum_bits": 64,
+      "kind": "plain",
+      "mode": "mixed",
+      "distribution": "short",
+      "variants": {
+        "before_storage": {
+          "median_seconds": 0.112243,
+          "min_seconds": 0.111551,
+          "max_seconds": 0.112666,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 35217408,
+          "nodes": 499999,
+          "checksum": 5504198486915631581
+        },
+        "current": {
+          "median_seconds": 0.105313,
+          "min_seconds": 0.10518999999999999,
+          "max_seconds": 0.106112,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 30072832,
+          "nodes": 499999,
+          "checksum": 5504198486915631581
+        }
+      },
+      "time_reduction_vs_before_storage_percent": 6.1741043984925525,
+      "rss_reduction_vs_before_storage_percent": 14.608048383344963
+    },
+    {
+      "n": 1000000000000000000,
+      "sum_bits": 64,
+      "kind": "plain",
+      "mode": "mixed",
+      "distribution": "local",
+      "variants": {
+        "before_storage": {
+          "median_seconds": 0.136869,
+          "min_seconds": 0.13633199999999998,
+          "max_seconds": 0.13917400000000002,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 35217408,
+          "nodes": 442369,
+          "checksum": 10539832400069698996
+        },
+        "current": {
+          "median_seconds": 0.132789,
+          "min_seconds": 0.131962,
+          "max_seconds": 0.132929,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 29020160,
+          "nodes": 442369,
+          "checksum": 10539832400069698996
+        }
+      },
+      "time_reduction_vs_before_storage_percent": 2.980952589702568,
+      "rss_reduction_vs_before_storage_percent": 17.597115608281
+    },
+    {
+      "n": 1000000000000000000,
+      "sum_bits": 64,
+      "kind": "init",
+      "mode": "mixed",
+      "distribution": "wide",
+      "variants": {
+        "before_storage": {
+          "median_seconds": 0.141677,
+          "min_seconds": 0.141457,
+          "max_seconds": 0.142141,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 34942976,
+          "nodes": 499999,
+          "checksum": 3789724522885985478
+        },
+        "current": {
+          "median_seconds": 0.137441,
+          "min_seconds": 0.137167,
+          "max_seconds": 0.138534,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 30298112,
+          "nodes": 499999,
+          "checksum": 3789724522885985478
+        }
+      },
+      "time_reduction_vs_before_storage_percent": 2.9898995602673617,
+      "rss_reduction_vs_before_storage_percent": 13.29269722189661
+    },
+    {
+      "n": 1000000000000000000,
+      "sum_bits": 64,
+      "kind": "init",
+      "mode": "mixed",
+      "distribution": "short",
+      "variants": {
+        "before_storage": {
+          "median_seconds": 0.11161700000000001,
+          "min_seconds": 0.111066,
+          "max_seconds": 0.114008,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 34942976,
+          "nodes": 499999,
+          "checksum": 6494475644385018047
+        },
+        "current": {
+          "median_seconds": 0.106496,
+          "min_seconds": 0.106214,
+          "max_seconds": 0.108002,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 29782016,
+          "nodes": 499999,
+          "checksum": 6494475644385018047
+        }
+      },
+      "time_reduction_vs_before_storage_percent": 4.58801078688732,
+      "rss_reduction_vs_before_storage_percent": 14.769663579885128
+    },
+    {
+      "n": 1000000000000000000,
+      "sum_bits": 64,
+      "kind": "init",
+      "mode": "mixed",
+      "distribution": "local",
+      "variants": {
+        "before_storage": {
+          "median_seconds": 0.140869,
+          "min_seconds": 0.139905,
+          "max_seconds": 0.142363,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 34942976,
+          "nodes": 442369,
+          "checksum": 17580318706030317449
+        },
+        "current": {
+          "median_seconds": 0.139247,
+          "min_seconds": 0.138244,
+          "max_seconds": 0.139967,
+          "median_prepare_seconds": 0.0,
+          "median_peak_rss_bytes": 28729344,
+          "nodes": 442369,
+          "checksum": 17580318706030317449
+        }
+      },
+      "time_reduction_vs_before_storage_percent": 1.1514243729990215,
+      "rss_reduction_vs_before_storage_percent": 17.782206071972805
+    }
+  ],
+  "first_repeat_commands": [
+    {
+      "variant": "before_storage",
+      "kind": "plain",
+      "mode": "mixed",
+      "distribution": "wide",
+      "n": 1000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-pools-before-bench",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "wide",
+        "--kind",
+        "plain",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "plain",
+      "mode": "mixed",
+      "distribution": "wide",
+      "n": 1000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-storage-final-bench",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "wide",
+        "--kind",
+        "plain",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "before_storage",
+      "kind": "plain",
+      "mode": "mixed",
+      "distribution": "short",
+      "n": 1000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-pools-before-bench",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "short",
+        "--kind",
+        "plain",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "plain",
+      "mode": "mixed",
+      "distribution": "short",
+      "n": 1000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-storage-final-bench",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "short",
+        "--kind",
+        "plain",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "before_storage",
+      "kind": "plain",
+      "mode": "mixed",
+      "distribution": "local",
+      "n": 1000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-pools-before-bench",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "local",
+        "--kind",
+        "plain",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "plain",
+      "mode": "mixed",
+      "distribution": "local",
+      "n": 1000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-storage-final-bench",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "local",
+        "--kind",
+        "plain",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "before_storage",
+      "kind": "init",
+      "mode": "mixed",
+      "distribution": "wide",
+      "n": 1000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-pools-before-bench",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "wide",
+        "--kind",
+        "init",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "init",
+      "mode": "mixed",
+      "distribution": "wide",
+      "n": 1000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-storage-final-bench",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "wide",
+        "--kind",
+        "init",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "before_storage",
+      "kind": "init",
+      "mode": "mixed",
+      "distribution": "short",
+      "n": 1000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-pools-before-bench",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "short",
+        "--kind",
+        "init",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "init",
+      "mode": "mixed",
+      "distribution": "short",
+      "n": 1000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-storage-final-bench",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "short",
+        "--kind",
+        "init",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "before_storage",
+      "kind": "init",
+      "mode": "mixed",
+      "distribution": "local",
+      "n": 1000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-pools-before-bench",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "local",
+        "--kind",
+        "init",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "init",
+      "mode": "mixed",
+      "distribution": "local",
+      "n": 1000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-storage-final-bench",
+        "--n",
+        "1000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "local",
+        "--kind",
+        "init",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "before_storage",
+      "kind": "plain",
+      "mode": "mixed",
+      "distribution": "wide",
+      "n": 1000000000000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-pools-before-bench",
+        "--n",
+        "1000000000000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "wide",
+        "--kind",
+        "plain",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "plain",
+      "mode": "mixed",
+      "distribution": "wide",
+      "n": 1000000000000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-storage-final-bench",
+        "--n",
+        "1000000000000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "wide",
+        "--kind",
+        "plain",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "before_storage",
+      "kind": "plain",
+      "mode": "mixed",
+      "distribution": "short",
+      "n": 1000000000000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-pools-before-bench",
+        "--n",
+        "1000000000000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "short",
+        "--kind",
+        "plain",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "plain",
+      "mode": "mixed",
+      "distribution": "short",
+      "n": 1000000000000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-storage-final-bench",
+        "--n",
+        "1000000000000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "short",
+        "--kind",
+        "plain",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "before_storage",
+      "kind": "plain",
+      "mode": "mixed",
+      "distribution": "local",
+      "n": 1000000000000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-pools-before-bench",
+        "--n",
+        "1000000000000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "local",
+        "--kind",
+        "plain",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "plain",
+      "mode": "mixed",
+      "distribution": "local",
+      "n": 1000000000000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-storage-final-bench",
+        "--n",
+        "1000000000000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "local",
+        "--kind",
+        "plain",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "before_storage",
+      "kind": "init",
+      "mode": "mixed",
+      "distribution": "wide",
+      "n": 1000000000000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-pools-before-bench",
+        "--n",
+        "1000000000000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "wide",
+        "--kind",
+        "init",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "init",
+      "mode": "mixed",
+      "distribution": "wide",
+      "n": 1000000000000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-storage-final-bench",
+        "--n",
+        "1000000000000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "wide",
+        "--kind",
+        "init",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "before_storage",
+      "kind": "init",
+      "mode": "mixed",
+      "distribution": "short",
+      "n": 1000000000000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-pools-before-bench",
+        "--n",
+        "1000000000000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "short",
+        "--kind",
+        "init",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "init",
+      "mode": "mixed",
+      "distribution": "short",
+      "n": 1000000000000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-storage-final-bench",
+        "--n",
+        "1000000000000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "short",
+        "--kind",
+        "init",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "before_storage",
+      "kind": "init",
+      "mode": "mixed",
+      "distribution": "local",
+      "n": 1000000000000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-pools-before-bench",
+        "--n",
+        "1000000000000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "local",
+        "--kind",
+        "init",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "init",
+      "mode": "mixed",
+      "distribution": "local",
+      "n": 1000000000000000000,
+      "sum_bits": 64,
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-storage-final-bench",
+        "--n",
+        "1000000000000000000",
+        "--q",
+        "500000",
+        "--seed",
+        "23",
+        "--distribution",
+        "local",
+        "--kind",
+        "init",
+        "--verify"
+      ]
+    }
+  ],
+  "node_bytes_scalar_int64": {
+    "before_storage": 32,
+    "current_leaf": 16,
+    "current_branch": 32
+  },
+  "build_commands": [
+    [
+      "g++",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-Wall",
+      "-Wextra",
+      "-I/tmp/dst-before-split",
+      "-I.",
+      "test/ds/benchmark/dynamic_segment_tree_benchmark.cpp",
+      "-o",
+      "/tmp/dst-pools-before-bench"
+    ],
+    [
+      "g++",
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-Wall",
+      "-Wextra",
+      "-I.",
+      "test/ds/benchmark/dynamic_segment_tree_benchmark.cpp",
+      "-o",
+      "/tmp/dst-storage-final-bench"
+    ]
+  ],
+  "before_storage_source_sha256": {
+    "/tmp/dst-before-split/titan_cpplib/ds/dynamic_segment_tree.cpp": "9ce7faf6f3c45869a1b56a83983278919f3a5b9984338bc5026db822d1228d8d",
+    "/tmp/dst-before-split/titan_cpplib/ds/dynamic_segment_tree_init.cpp": "c56bb325e0c305a5aa495d74be070303df1e485706cc9875c2d556cef8be969e"
+  },
+  "original_comparison_report": "dynamic_segment_tree_original_comparison.json"
+}

@@ -1,0 +1,534 @@
+{
+  "date": "2026-10-25",
+  "timezone": "Asia/Tokyo",
+  "cpu": "AMD Ryzen Threadripper 3990X 64-Core Processor",
+  "cpu_affinity": 4,
+  "compiler": "g++ (Ubuntu 12.3.0-1ubuntu1~22.04.3) 12.3.0",
+  "compiler_flags": [
+    "-std=c++17",
+    "-O3",
+    "-DNDEBUG",
+    "-Wall",
+    "-Wextra",
+    "-I."
+  ],
+  "configuration": {
+    "n": 1000000000,
+    "q": 500000,
+    "seed": 23,
+    "runs_per_condition": 5,
+    "reserve_nodes": 0
+  },
+  "measurement": "Fresh process/tree per run; alternating variant execution order; medians of5. Whole operation loop timed including allocations/checksum, excluding input generation, construction, verification and output.",
+  "memory": "Process peak RSS captured before reference verification; includes input trace and transient vector reallocation.",
+  "variants": {
+    "uncompressed": "Initial uncompressed index-pool implementation, snapshotted earlier in this session.",
+    "compressed_before": "Patricia implementation before the current navigation/search tuning, snapshotted before changes.",
+    "current": "Final workspace implementation with cached split coordinates, iterative prod and (lazy) near-ancestor insertion/failed-subtree search descent."
+  },
+  "workload": "250000 range additions by1..9 +250000 prod shuffled; each element starts as S{0,1}.",
+  "distributions": {
+    "wide": "Uniform positions in [0,n).",
+    "short": "Uniform start, length1..1024, clipped at n.",
+    "local": "Only the centered coordinate interval of width min(n,1000000)."
+  },
+  "validation": "Every variant/condition verified once outside timing against an independent Fenwick reference. All repeat checksums agree across variants. Full randomized/structural and two-TU utility suites passed O2 warning builds and ASan+UBSan; leak detection disabled due ptrace environment.",
+  "changes": [
+    "Preserve pow and ACL-style mapping(F,S), existing uniform-init constructor and allocation-free queries.",
+    "Cache each branch split in the old minimum-coordinate slot; carry subtree minimum during navigation without increasing per-node size.",
+    "Replace prod recursion after the first fork with iterative prefix/suffix paths, preserving noncommutative ordering.",
+    "Use using namespace std, blank lines between methods and Japanese /// @brief descriptions/complexities without full stops.",
+    "Remove prod2 and dynamic_lazy_segment_tree_array.cpp as requested.",
+    "Insert pending boundary leaves at the nearest ancestor whose prefix contains them, carrying changed subtree minima back to parents.",
+    "After a complete subtree fails a boundary predicate, descend iteratively without repeating the already-failed test; hoist leaf mapping out of binary search."
+  ],
+  "tradeoffs": "Not a universal optimum. All existing workloads are retained, including residual regressions versus the uncompressed pool. Search comparisons are now paired remeasurements of all3 variants rather than historical-only comparisons.",
+  "source_sha256": {
+    "titan_cpplib/ds/dynamic_segment_tree.cpp": "bff5ba7105f1a2456cc15a2b5aa8d0e2b01d715f12cf4b22be5b8109c6866764",
+    "titan_cpplib/ds/dynamic_segment_tree_init.cpp": "9de8eec0a4c82d2b02f32936f0239f840be4e8eeea4d50b0c73e1a2847bab645",
+    "titan_cpplib/ds/dynamic_lazy_segment_tree.cpp": "83b947172249aadfcc8937395e2ef51d8f39c75cec93c974331d676e86631895",
+    "titan_cpplib/ds/dynamic_segment_tree_util.cpp": "5c3c8ba62b24ebdd5047ac7df12ebed0a7de91a6bd7324f00392ca2ba3b84c8c",
+    "titan_cpplib/ds/dynamic_lazy_segment_tree_util.cpp": "b506d5ac5f59b18ed2542250027784256121b12e3428467c16ae5a008542011c",
+    "test/ds/dynamic_segment_tree_random.cpp": "46c5df280e3bebffd9b35a7478e99134ba3fde0a641b2a8a0b809cda2c2dcce4",
+    "test/ds/dynamic_segment_tree_util_test.cpp": "480f9160c67b400ef6f2156ce693b4450cbb53e7b83bd371d27c9fd9fb05660b",
+    "test/ds/dynamic_segment_tree_util_link.cpp": "ab59539d7f0ccabf46e97011e40a050a9681bf65157b858f0164519d783a3383",
+    "test/ds/benchmark/dynamic_lazy_segment_tree_benchmark.cpp": "88da8f632dda04ef65f6fa3f573df35cd88e1456343924226a84339f45a816ec"
+  },
+  "previous_report": "dynamic_lazy_segment_tree_before_navigation.json",
+  "summary": [
+    {
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "wide",
+      "variants": {
+        "uncompressed": {
+          "median_seconds": 1.072383,
+          "median_peak_rss_bytes": 555315200,
+          "median_prepare_seconds": 0.0,
+          "nodes": 10108609
+        },
+        "compressed_before": {
+          "median_seconds": 0.699695,
+          "median_peak_rss_bytes": 67969024,
+          "median_prepare_seconds": 0.0,
+          "nodes": 999779
+        },
+        "current": {
+          "median_seconds": 0.543954,
+          "median_peak_rss_bytes": 67969024,
+          "median_prepare_seconds": 0.0,
+          "nodes": 999779
+        }
+      },
+      "time_reduction_vs_uncompressed_percent": 49.27614481020307,
+      "time_reduction_vs_compressed_before_percent": 22.25841259405883
+    },
+    {
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "short",
+      "variants": {
+        "uncompressed": {
+          "median_seconds": 0.73157,
+          "median_peak_rss_bytes": 555016192,
+          "median_prepare_seconds": 0.0,
+          "nodes": 9462541
+        },
+        "compressed_before": {
+          "median_seconds": 0.372413,
+          "median_peak_rss_bytes": 67969024,
+          "median_prepare_seconds": 0.0,
+          "nodes": 999747
+        },
+        "current": {
+          "median_seconds": 0.266279,
+          "median_peak_rss_bytes": 68780032,
+          "median_prepare_seconds": 0.0,
+          "nodes": 999747
+        }
+      },
+      "time_reduction_vs_uncompressed_percent": 63.601705920144354,
+      "time_reduction_vs_compressed_before_percent": 28.499005136770204
+    },
+    {
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "local",
+      "variants": {
+        "uncompressed": {
+          "median_seconds": 0.47643,
+          "median_peak_rss_bytes": 85266432,
+          "median_prepare_seconds": 0.0,
+          "nodes": 1285589
+        },
+        "compressed_before": {
+          "median_seconds": 0.644265,
+          "median_peak_rss_bytes": 67969024,
+          "median_prepare_seconds": 0.0,
+          "nodes": 786717
+        },
+        "current": {
+          "median_seconds": 0.502873,
+          "median_peak_rss_bytes": 67973120,
+          "median_prepare_seconds": 0.0,
+          "nodes": 786717
+        }
+      },
+      "time_reduction_vs_uncompressed_percent": -5.5502382301702236,
+      "time_reduction_vs_compressed_before_percent": 21.94624882618177
+    },
+    {
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "wide",
+      "variants": {
+        "uncompressed": {
+          "median_seconds": 0.560817,
+          "median_peak_rss_bytes": 547315712,
+          "median_prepare_seconds": 0.850138,
+          "nodes": 10108609
+        },
+        "compressed_before": {
+          "median_seconds": 0.618969,
+          "median_peak_rss_bytes": 73363456,
+          "median_prepare_seconds": 0.452717,
+          "nodes": 999779
+        },
+        "current": {
+          "median_seconds": 0.541166,
+          "median_peak_rss_bytes": 73363456,
+          "median_prepare_seconds": 0.372216,
+          "nodes": 999779
+        }
+      },
+      "time_reduction_vs_uncompressed_percent": 3.5039950643436235,
+      "time_reduction_vs_compressed_before_percent": 12.569773284284025
+    },
+    {
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "short",
+      "variants": {
+        "uncompressed": {
+          "median_seconds": 0.441172,
+          "median_peak_rss_bytes": 546627584,
+          "median_prepare_seconds": 0.642396,
+          "nodes": 9462541
+        },
+        "compressed_before": {
+          "median_seconds": 0.502803,
+          "median_peak_rss_bytes": 73363456,
+          "median_prepare_seconds": 0.274905,
+          "nodes": 999747
+        },
+        "current": {
+          "median_seconds": 0.460689,
+          "median_peak_rss_bytes": 73363456,
+          "median_prepare_seconds": 0.198138,
+          "nodes": 999747
+        }
+      },
+      "time_reduction_vs_uncompressed_percent": -4.423898162168038,
+      "time_reduction_vs_compressed_before_percent": 8.37584501285792
+    },
+    {
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "local",
+      "variants": {
+        "uncompressed": {
+          "median_seconds": 0.374881,
+          "median_peak_rss_bytes": 77553664,
+          "median_prepare_seconds": 0.314681,
+          "nodes": 1285589
+        },
+        "compressed_before": {
+          "median_seconds": 0.538298,
+          "median_peak_rss_bytes": 63926272,
+          "median_prepare_seconds": 0.419344,
+          "nodes": 786717
+        },
+        "current": {
+          "median_seconds": 0.468557,
+          "median_peak_rss_bytes": 63926272,
+          "median_prepare_seconds": 0.351724,
+          "nodes": 786717
+        }
+      },
+      "time_reduction_vs_uncompressed_percent": -24.988196254278016,
+      "time_reduction_vs_compressed_before_percent": 12.95583487213403
+    }
+  ],
+  "first_repeat_commands": [
+    {
+      "variant": "uncompressed",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "wide",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-round1/benchmark",
+        "--distribution",
+        "wide",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "compressed_before",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "wide",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-final-bench",
+        "--distribution",
+        "wide",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "wide",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-navigation-final",
+        "--distribution",
+        "wide",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "uncompressed",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "short",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-round1/benchmark",
+        "--distribution",
+        "short",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "compressed_before",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "short",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-final-bench",
+        "--distribution",
+        "short",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "short",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-navigation-final",
+        "--distribution",
+        "short",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "uncompressed",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "local",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-round1/benchmark",
+        "--distribution",
+        "local",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "compressed_before",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "local",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-final-bench",
+        "--distribution",
+        "local",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "mixed",
+      "distribution": "local",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-navigation-final",
+        "--distribution",
+        "local",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "uncompressed",
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "wide",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-round1/benchmark",
+        "--distribution",
+        "wide",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "compressed_before",
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "wide",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-final-bench",
+        "--distribution",
+        "wide",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "wide",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-navigation-final",
+        "--distribution",
+        "wide",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "uncompressed",
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "short",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-round1/benchmark",
+        "--distribution",
+        "short",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "compressed_before",
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "short",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-final-bench",
+        "--distribution",
+        "short",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "short",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-navigation-final",
+        "--distribution",
+        "short",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "uncompressed",
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "local",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-round1/benchmark",
+        "--distribution",
+        "local",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "compressed_before",
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "local",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-final-bench",
+        "--distribution",
+        "local",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "lazy",
+      "mode": "search",
+      "distribution": "local",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dlst-navigation-final",
+        "--distribution",
+        "local",
+        "--mode",
+        "search",
+        "--verify"
+      ]
+    }
+  ],
+  "node_bytes_sum_length": {
+    "uncompressed": 32,
+    "compressed_before": 48,
+    "current": 48
+  },
+  "search": "250000 preparation updates, then250000 max_right +250000 min_left. Preparation reported separately; query loop does not grow nodes. First repeat verified against independent compressed-prefix reference.",
+  "profiling_before_tuning": {
+    "tool": "perf record -F999 --call-graph dwarf; whole-process samples, not just timed loop",
+    "condition": "local mixed, same N/Q/seed",
+    "compressed_samples": 639,
+    "compressed_exclusive_sample_percent": {
+      "inner_update": 45.67,
+      "insert_run": 11.57,
+      "inner_prod": 23.64
+    },
+    "uncompressed_samples": 529,
+    "uncompressed_exclusive_sample_percent": {
+      "inner_apply": 47.22,
+      "inner_prod": 28.44
+    },
+    "interpretation": "Update and reinsertion were primary targets; inlined operations are attributed to callers and sampling is approximate. Kernel symbols were restricted, user-space symbols resolved."
+  }
+}

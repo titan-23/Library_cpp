@@ -1,0 +1,572 @@
+{
+  "date": "2026-10-25",
+  "timezone": "Asia/Tokyo",
+  "cpu": "AMD Ryzen Threadripper 3990X 64-Core Processor",
+  "cpu_affinity": 4,
+  "compiler": "g++ (Ubuntu 12.3.0-1ubuntu1~22.04.3) 12.3.0",
+  "compiler_flags": [
+    "-std=c++17",
+    "-O3",
+    "-DNDEBUG",
+    "-Wall",
+    "-Wextra"
+  ],
+  "configuration": {
+    "n": 1000000000,
+    "q": 500000,
+    "seed": 23,
+    "runs_per_condition": 5,
+    "reserve_nodes": 0
+  },
+  "measurement": "Fresh process/tree per run. Whole loop includes node allocation and checksum. Excludes generation, construction, verification, counting, output. Variant execution order alternates. Median of 5 runs.",
+  "memory": "Process peak RSS sampled before independent verification, includes input trace and transient pool reallocation.",
+  "variants": {
+    "pointer": "Pinned original ae0e71fc1bdfa9041c76b64156a857b7d6817703, with correctness fixes and untimed node counting; reproduced by companion prepare_*_baseline.py.",
+    "previous": "In-session snapshot of the preceding uncompressed index-pool implementation. Retimed on the identical trace; historical snapshots are not installed as alternate public implementations.",
+    "current": "Path-compressed Patricia implementation; fixed coordinate-bit hierarchy, no randomized balancing or offline coordinate compression."
+  },
+  "workload": "Exactly 250000 set + 250000 prod shuffled. plain initial0; Init initial3; values1..9.",
+  "distributions": {
+    "wide": "Two uniform positions in [0,n), ordered and made half-open.",
+    "short": "Uniform start and length1..1024, clipped at n.",
+    "local": "Centered coordinate interval of width min(n,1000000)."
+  },
+  "validation": "All 3 variants have identical checksums per condition. First repeat of every condition checked against independent Fenwick reference. Random/structural and two-TU utility suites pass O2, ASan, UBSan with no warnings; LeakSanitizer disabled due ptrace environment.",
+  "tradeoffs": "Compression optimizes sparse large domains; local/dense workloads can be slower than the previous uncompressed pool. All cases are included, including regressions. Existing boundary-search benchmark is recorded separately.",
+  "implementation_notes": "Each distinct modified position uses one leaf; K positions use exactly2K-1 nodes. Init aggregates untouched gaps using pow.",
+  "source_sha256": {
+    "titan_cpplib/ds/dynamic_segment_tree.cpp": "1bf7d972d6fdf544b4d8c68c8a41d7e281fb8f927bdd1fe016460d74a5fd3395",
+    "titan_cpplib/ds/dynamic_segment_tree_init.cpp": "ddfa08842ceaa216f16bb69b93d26cb30419dbd4ab1809b5ea3fb6cf5e818f66",
+    "titan_cpplib/ds/dynamic_lazy_segment_tree.cpp": "52eb7db3c4256ab1620c3d939af7232a45ce25b471c2ea4675b45a5a71741e9c",
+    "titan_cpplib/ds/dynamic_lazy_segment_tree_array.cpp": "429cf6f0fb8bdb10e00dd9598f20511500332cfc4e47ba4c3877410c8eca8d4f",
+    "titan_cpplib/ds/dynamic_segment_tree_util.cpp": "eee184e01e436b1dfe2b8622b9fc57ab28962dc8681ba5720f5fdb4fc8392ee4",
+    "titan_cpplib/ds/dynamic_lazy_segment_tree_util.cpp": "80d342db3bb55c02db8ec46c96c6d34dc40e54a3f55ca6d72d9b1cc41cadba3e",
+    "test/ds/dynamic_segment_tree_random.cpp": "34dc61892bc485c1df429269b52d92236483218861b770376cd864737802ac47",
+    "test/ds/dynamic_segment_tree_util_test.cpp": "480f9160c67b400ef6f2156ce693b4450cbb53e7b83bd371d27c9fd9fb05660b",
+    "test/ds/dynamic_segment_tree_util_link.cpp": "ab59539d7f0ccabf46e97011e40a050a9681bf65157b858f0164519d783a3383",
+    "test/ds/benchmark/dynamic_segment_tree_benchmark.cpp": "b082b49509fd3f325056e0bc95fc491e18a8f6c6d0092d034aa40feb33402a6e"
+  },
+  "summary": [
+    {
+      "kind": "plain",
+      "distribution": "wide",
+      "variants": {
+        "pointer": {
+          "median_seconds": 0.421376,
+          "median_peak_rss_bytes": 175112192,
+          "nodes": 3276304
+        },
+        "previous": {
+          "median_seconds": 0.253257,
+          "median_peak_rss_bytes": 85549056,
+          "nodes": 3276304
+        },
+        "current": {
+          "median_seconds": 0.16496799999999998,
+          "median_peak_rss_bytes": 34938880,
+          "nodes": 499947
+        }
+      },
+      "time_reduction_vs_previous_percent": 34.86142535053326,
+      "peak_rss_reduction_vs_previous_percent": 59.15924542755913,
+      "time_reduction_vs_pointer_percent": 60.85016707168896
+    },
+    {
+      "kind": "plain",
+      "distribution": "short",
+      "variants": {
+        "pointer": {
+          "median_seconds": 0.33272399999999996,
+          "median_peak_rss_bytes": 175112192,
+          "nodes": 3276304
+        },
+        "previous": {
+          "median_seconds": 0.198049,
+          "median_peak_rss_bytes": 85549056,
+          "nodes": 3276304
+        },
+        "current": {
+          "median_seconds": 0.120485,
+          "median_peak_rss_bytes": 35217408,
+          "nodes": 499947
+        }
+      },
+      "time_reduction_vs_previous_percent": 39.16404526152619,
+      "peak_rss_reduction_vs_previous_percent": 58.83366848606721,
+      "time_reduction_vs_pointer_percent": 63.78830502157944
+    },
+    {
+      "kind": "plain",
+      "distribution": "local",
+      "variants": {
+        "pointer": {
+          "median_seconds": 0.255702,
+          "median_peak_rss_bytes": 56623104,
+          "nodes": 811244
+        },
+        "previous": {
+          "median_seconds": 0.13367400000000002,
+          "median_peak_rss_bytes": 34942976,
+          "nodes": 811244
+        },
+        "current": {
+          "median_seconds": 0.15911699999999998,
+          "median_peak_rss_bytes": 35217408,
+          "nodes": 442369
+        }
+      },
+      "time_reduction_vs_previous_percent": -19.033619103191324,
+      "peak_rss_reduction_vs_previous_percent": -0.785370999882784,
+      "time_reduction_vs_pointer_percent": 37.77248515850482
+    },
+    {
+      "kind": "init",
+      "distribution": "wide",
+      "variants": {
+        "pointer": {
+          "median_seconds": 0.47610800000000003,
+          "median_peak_rss_bytes": 227540992,
+          "nodes": 3276304
+        },
+        "previous": {
+          "median_seconds": 0.24681999999999998,
+          "median_peak_rss_bytes": 85266432,
+          "nodes": 3276304
+        },
+        "current": {
+          "median_seconds": 0.161765,
+          "median_peak_rss_bytes": 35217408,
+          "nodes": 499947
+        }
+      },
+      "time_reduction_vs_previous_percent": 34.460335467142045,
+      "peak_rss_reduction_vs_previous_percent": 58.6972186193976,
+      "time_reduction_vs_pointer_percent": 66.02346526418377
+    },
+    {
+      "kind": "init",
+      "distribution": "short",
+      "variants": {
+        "pointer": {
+          "median_seconds": 0.37489100000000003,
+          "median_peak_rss_bytes": 227540992,
+          "nodes": 3276304
+        },
+        "previous": {
+          "median_seconds": 0.197691,
+          "median_peak_rss_bytes": 85553152,
+          "nodes": 3276304
+        },
+        "current": {
+          "median_seconds": 0.1207,
+          "median_peak_rss_bytes": 35217408,
+          "nodes": 499947
+        }
+      },
+      "time_reduction_vs_previous_percent": 38.94512142687325,
+      "peak_rss_reduction_vs_previous_percent": 58.835639392923824,
+      "time_reduction_vs_pointer_percent": 67.80397502207308
+    },
+    {
+      "kind": "init",
+      "distribution": "local",
+      "variants": {
+        "pointer": {
+          "median_seconds": 0.303955,
+          "median_peak_rss_bytes": 69206016,
+          "nodes": 811244
+        },
+        "previous": {
+          "median_seconds": 0.138837,
+          "median_peak_rss_bytes": 35221504,
+          "nodes": 811244
+        },
+        "current": {
+          "median_seconds": 0.162732,
+          "median_peak_rss_bytes": 35217408,
+          "nodes": 442369
+        }
+      },
+      "time_reduction_vs_previous_percent": -17.210829966075323,
+      "peak_rss_reduction_vs_previous_percent": 0.01162925921618374,
+      "time_reduction_vs_pointer_percent": 46.46181178134922
+    }
+  ],
+  "first_repeat_commands": [
+    {
+      "variant": "pointer",
+      "kind": "plain",
+      "distribution": "wide",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-pointer-bench",
+        "--distribution",
+        "wide",
+        "--kind",
+        "plain",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "previous",
+      "kind": "plain",
+      "distribution": "wide",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-pool-bench",
+        "--distribution",
+        "wide",
+        "--kind",
+        "plain",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "plain",
+      "distribution": "wide",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-patricia-bench",
+        "--distribution",
+        "wide",
+        "--kind",
+        "plain",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "pointer",
+      "kind": "plain",
+      "distribution": "short",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-pointer-bench",
+        "--distribution",
+        "short",
+        "--kind",
+        "plain",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "previous",
+      "kind": "plain",
+      "distribution": "short",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-pool-bench",
+        "--distribution",
+        "short",
+        "--kind",
+        "plain",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "plain",
+      "distribution": "short",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-patricia-bench",
+        "--distribution",
+        "short",
+        "--kind",
+        "plain",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "pointer",
+      "kind": "plain",
+      "distribution": "local",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-pointer-bench",
+        "--distribution",
+        "local",
+        "--kind",
+        "plain",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "previous",
+      "kind": "plain",
+      "distribution": "local",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-pool-bench",
+        "--distribution",
+        "local",
+        "--kind",
+        "plain",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "plain",
+      "distribution": "local",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-patricia-bench",
+        "--distribution",
+        "local",
+        "--kind",
+        "plain",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "pointer",
+      "kind": "init",
+      "distribution": "wide",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-pointer-bench",
+        "--distribution",
+        "wide",
+        "--kind",
+        "init",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "previous",
+      "kind": "init",
+      "distribution": "wide",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-pool-bench",
+        "--distribution",
+        "wide",
+        "--kind",
+        "init",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "init",
+      "distribution": "wide",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-patricia-bench",
+        "--distribution",
+        "wide",
+        "--kind",
+        "init",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "pointer",
+      "kind": "init",
+      "distribution": "short",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-pointer-bench",
+        "--distribution",
+        "short",
+        "--kind",
+        "init",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "previous",
+      "kind": "init",
+      "distribution": "short",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-pool-bench",
+        "--distribution",
+        "short",
+        "--kind",
+        "init",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "init",
+      "distribution": "short",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-patricia-bench",
+        "--distribution",
+        "short",
+        "--kind",
+        "init",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "pointer",
+      "kind": "init",
+      "distribution": "local",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-pointer-bench",
+        "--distribution",
+        "local",
+        "--kind",
+        "init",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "previous",
+      "kind": "init",
+      "distribution": "local",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-pool-bench",
+        "--distribution",
+        "local",
+        "--kind",
+        "init",
+        "--verify"
+      ]
+    },
+    {
+      "variant": "current",
+      "kind": "init",
+      "distribution": "local",
+      "mode": "mixed",
+      "command": [
+        "taskset",
+        "-c",
+        "4",
+        "/tmp/dst-patricia-bench",
+        "--distribution",
+        "local",
+        "--kind",
+        "init",
+        "--verify"
+      ]
+    }
+  ],
+  "baseline_preparation": {
+    "baseline_revision": "ae0e71fc1bdfa9041c76b64156a857b7d6817703",
+    "compiler": "g++ (Ubuntu 12.3.0-1ubuntu1~22.04.3) 12.3.0",
+    "compiler_flags": [
+      "-std=c++17",
+      "-O3",
+      "-DNDEBUG",
+      "-Wall",
+      "-Wextra"
+    ],
+    "conditions": {
+      "n": 1000000000,
+      "q": 500000,
+      "seed": 23,
+      "set_operations": 250000,
+      "prod_operations": 250000,
+      "kinds": [
+        "plain",
+        "init"
+      ],
+      "init_value": 3,
+      "distributions": [
+        "wide",
+        "short",
+        "local"
+      ]
+    },
+    "generator": "Set positions uniform globally (wide/short) or centered width 1e6 (local). Prod distributions match lazy benchmark. Generate exact half set/prod then shuffle. All variants receive identical traces for a condition.",
+    "baseline_corrections": [
+      "root domain exactly [0,n)",
+      "overflow-safe midpoint",
+      "standalone includes",
+      "untimed recursive node_count inspector"
+    ],
+    "baseline_prepare": "python3 test/ds/benchmark/prepare_dynamic_segment_tree_baseline.py /tmp/dst-pointer-baseline",
+    "compile_commands": {
+      "pointer": "g++ -std=c++17 -O3 -DNDEBUG -Wall -Wextra -I/tmp/dst-pointer-baseline -I. '-DDST_BENCH_IMPLEMENTATION=\"pointer\"' test/ds/benchmark/dynamic_segment_tree_benchmark.cpp -o /tmp/dst-pointer-bench",
+      "uncompressed_pool": "g++ -std=c++17 -O3 -DNDEBUG -Wall -Wextra -I/tmp/dst-before-patricia -I. '-DDST_BENCH_IMPLEMENTATION=\"uncompressed_pool\"' test/ds/benchmark/dynamic_segment_tree_benchmark.cpp -o /tmp/dst-pool-bench",
+      "patricia": "g++ -std=c++17 -O3 -DNDEBUG -Wall -Wextra -I. test/ds/benchmark/dynamic_segment_tree_benchmark.cpp -o /tmp/dst-patricia-bench"
+    },
+    "run_template": "/tmp/dst-{pointer|pool|patricia}-bench --n 1000000000 --q 500000 --seed 23 --kind {plain|init} --distribution {wide|short|local} --verify",
+    "source_sha256": {
+      "pointer": {
+        "/tmp/dst-pointer-baseline/titan_cpplib/ds/dynamic_segment_tree.cpp": "dbf1622c2e8d3820875f583ababee5a5333a97be61507d2d040e5f0749941ffa",
+        "/tmp/dst-pointer-baseline/titan_cpplib/ds/dynamic_segment_tree_init.cpp": "b34dfabd37019a7674706bfb98d91c52c149bf0cf2ea378e0a3f8b153951d5a7"
+      },
+      "uncompressed_pool": {
+        "/tmp/dst-before-patricia/titan_cpplib/ds/dynamic_segment_tree.cpp": "3ef6b5bd1a3d95994e3a2dede80360bc6d8b0a94d6618dfb617f2fd1cd9efdd5",
+        "/tmp/dst-before-patricia/titan_cpplib/ds/dynamic_segment_tree_init.cpp": "873dfa5064060966a0af1e2bed31d06ab479ade19427a9293f5b66c57597d1bc"
+      },
+      "patricia": {
+        "titan_cpplib/ds/dynamic_segment_tree.cpp": "1bf7d972d6fdf544b4d8c68c8a41d7e281fb8f927bdd1fe016460d74a5fd3395",
+        "titan_cpplib/ds/dynamic_segment_tree_init.cpp": "ddfa08842ceaa216f16bb69b93d26cb30419dbd4ab1809b5ea3fb6cf5e818f66"
+      }
+    },
+    "benchmark_sha256": "b082b49509fd3f325056e0bc95fc491e18a8f6c6d0092d034aa40feb33402a6e",
+    "binary_sha256": {
+      "pointer": "efeb876fe49e507459fc021a49923869a13942d895b698b5ac9b905b1686981a",
+      "pool": "e0513b540a19e2d9e7cc55719451a34a7d9027524ed576c3a8b25ab86b0c120a",
+      "patricia": "81d7ec5d7b156681f653b53749bfcc1764bda679afe01ac1ff8225c4915a9438"
+    },
+    "small_validation": "Q=2000 N=1e9 all6 conditions all3 implementations verified against independent Fenwick; checksums agree across implementations."
+  },
+  "node_bytes_scalar_int64": {
+    "pointer_plain": 40,
+    "pointer_init": 48,
+    "previous": 16,
+    "current": 32
+  }
+}
