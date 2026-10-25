@@ -1,0 +1,44 @@
+{
+  "label": "set-correctness-only",
+  "generator": "test/ds/benchmark/prepare_wbt_family_set_baselines.py",
+  "scope": "Only set() stack construction, stack insertion spelling, and persistent root-target linking.",
+  "notes": "Existing copies, duplicate path entries, updates and all other code are retained. Raw snapshots are unchanged.",
+  "files": {
+    "lazy_wb_tree.cpp": {
+      "source": "test/ds/benchmark/baseline/wbt_family/lazy_wb_tree.cpp",
+      "source_sha256": "7be94d4d33c4b1c73c8e339f6f3326ad8b80e552d500e63a17edad887de6523c",
+      "corrected": "test/ds/benchmark/baseline/wbt_family_corrected/lazy_wb_tree.cpp",
+      "corrected_sha256": "99dfee54f5d1c317776dae9c5e8cda571adea3dfd27449c56598ece17e585da2",
+      "replacements": [
+        {
+          "reason": "std::stack cannot be initialized from a single NodePtr initializer list.",
+          "old": "            stack<NodePtr> path = {node};",
+          "new": "            stack<NodePtr> path;\n            path.emplace(node);"
+        }
+      ]
+    },
+    "persistent_seg_wbtree.cpp": {
+      "source": "test/ds/benchmark/baseline/wbt_family/persistent_seg_wbtree.cpp",
+      "source_sha256": "5fdcd77af184f01c1243c00a3342838421d20b81184da45a280c2c05e023f5a1",
+      "corrected": "test/ds/benchmark/baseline/wbt_family_corrected/persistent_seg_wbtree.cpp",
+      "corrected_sha256": "b94b2956e8f6d0f2015b1202635559ad4ba6af49c994af9bb37e4152008c8ac4",
+      "replacements": [
+        {
+          "reason": "std::stack cannot be initialized from a single node index initializer list.",
+          "old": "        stack<SizeType> path = {node};",
+          "new": "        stack<SizeType> path;\n        path.emplace(node);"
+        },
+        {
+          "reason": "std::stack provides emplace(), not emplace_back().",
+          "old": "            path.emplace_back(node);",
+          "new": "            path.emplace(node);"
+        },
+        {
+          "reason": "Replacing the root must update the returned local root, not the null sentinel's child.",
+          "old": "                path.emplace(node);\n                if (d) ma.tree[pnode].left = node;\n                else ma.tree[pnode].right = node;",
+          "new": "                path.emplace(node);\n                if (!pnode) root = node;\n                else if (d) ma.tree[pnode].left = node;\n                else ma.tree[pnode].right = node;"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,145 @@
+{
+  "compiler": "g++ (Ubuntu 12.3.0-1ubuntu1~22.04.3) 12.3.0",
+  "flags": [
+    "-std=c++17",
+    "-O3",
+    "-DNDEBUG"
+  ],
+  "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+  "machine": "x86_64",
+  "cpu_model": "AMD Ryzen Threadripper 3990X 64-Core Processor",
+  "cpu_affinity": [
+    24
+  ],
+  "benchmark_sha256": "2146f10e81be6f38c6b55c4856e6bf45cbb77042c808197524d6a628384d9739",
+  "runner_sha256": "99fdd536b389b5548521c17938c8ab2925d1680b2c4738d3a6a140297e1e2830",
+  "baseline_label": "pointer-snapshot-include-redirect-only",
+  "baseline_notes": "Custom baseline supplied; see explicit label, source paths and hashes.",
+  "parameters": {
+    "n": 500000,
+    "q": 500000,
+    "seed": 23,
+    "mode": "latest",
+    "workload": "mixed",
+    "repeats": 1,
+    "verify": false,
+    "enable_set": false
+  },
+  "families": {
+    "wb_tree_seg": {
+      "kind": 2,
+      "headers": {
+        "baseline": "/home/titan/source/Library_cpp/test/ds/benchmark/baseline/wbt_family_pointer/isolated/wb_tree_seg.cpp",
+        "optimized": "/home/titan/source/Library_cpp/test/ds/benchmark/candidates/wbt_indexed_bitmap/wb_tree_seg_blocked.cpp"
+      },
+      "source_sha256": {
+        "baseline": "0670ca5c064f275881e770b83f7939ce55bf9d5b5947aa224b7b968602392f98",
+        "optimized": "3c776305b8e2a23ad42788f69a3416a2c5014f5b8165a7199b1d4912b333c7d9"
+      },
+      "quoted_dependency_sha256": {
+        "baseline": {
+          "test/ds/benchmark/baseline/wbt_family_pointer/isolated/_mutable_wbt_sequence.cpp": "d6f20f45195c9be98d5ae292450afa9193dd3df39dd74db89f1d0f3fdfe965ee",
+          "test/ds/benchmark/baseline/wbt_family_pointer/isolated/_wbt_node_pool.cpp": "7fe5068b28328715c6a6c93782b440b8d0e4f109965e2174dbdb62052b491f60",
+          "test/ds/benchmark/baseline/wbt_family_pointer/isolated/wb_tree_seg.cpp": "0670ca5c064f275881e770b83f7939ce55bf9d5b5947aa224b7b968602392f98",
+          "titan_cpplib/others/print.cpp": "fef9562838ad07fd9aafba8eab3b1fbd26b5a53082947b06ae47cce243bab374"
+        },
+        "optimized": {
+          "test/ds/benchmark/candidates/wbt_indexed_bitmap/_mutable_wbt_sequence_indexed.cpp": "3102c9a4103d27961a7988961c11387c30be61def7a033c8a782db646b13f23a",
+          "test/ds/benchmark/candidates/wbt_indexed_bitmap/_wbt_indexed_pool.cpp": "aa33caa6e67db9d6770a49365c9bfccf2c50696b8797a7dc21256d87ed557e14",
+          "test/ds/benchmark/candidates/wbt_indexed_bitmap/wb_tree_seg_blocked.cpp": "3c776305b8e2a23ad42788f69a3416a2c5014f5b8165a7199b1d4912b333c7d9",
+          "titan_cpplib/others/print.cpp": "fef9562838ad07fd9aafba8eab3b1fbd26b5a53082947b06ae47cce243bab374"
+        }
+      }
+    }
+  },
+  "runs": [
+    {
+      "variant": "baseline",
+      "family": "wb_tree_seg",
+      "mode": "latest",
+      "workload": "mixed",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 1,
+      "build_seconds": 0.018185925,
+      "query_seconds": 0.287481335,
+      "checksum": "9278275055943418909",
+      "validation_checksum": "6938501142373975227",
+      "nodes_after_build": -1,
+      "node_count": -1,
+      "allocated_capacity_bytes": -1,
+      "peak_rss_bytes": 53768192,
+      "verified": false,
+      "operations": {
+        "insert": 99791,
+        "pop": 99930,
+        "get": 100214,
+        "split_merge": 99838,
+        "prod": 100227,
+        "apply": 0,
+        "reverse": 0,
+        "set": 0
+      },
+      "repeat": 1,
+      "baseline_label": "pointer-snapshot-include-redirect-only"
+    },
+    {
+      "variant": "optimized",
+      "family": "wb_tree_seg",
+      "mode": "latest",
+      "workload": "mixed",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 1,
+      "build_seconds": 0.017503633,
+      "query_seconds": 0.335386837,
+      "checksum": "9278275055943418909",
+      "validation_checksum": "6938501142373975227",
+      "nodes_after_build": -1,
+      "node_count": -1,
+      "allocated_capacity_bytes": -1,
+      "peak_rss_bytes": 46428160,
+      "verified": false,
+      "operations": {
+        "insert": 99791,
+        "pop": 99930,
+        "get": 100214,
+        "split_merge": 99838,
+        "prod": 100227,
+        "apply": 0,
+        "reverse": 0,
+        "set": 0
+      },
+      "repeat": 1
+    }
+  ],
+  "summaries": [
+    {
+      "family": "wb_tree_seg",
+      "variant": "baseline",
+      "mode": "latest",
+      "workload": "mixed",
+      "successful_runs": 1,
+      "median_build_seconds": 0.018185925,
+      "median_query_seconds": 0.287481335,
+      "median_peak_rss_bytes": 53768192,
+      "median_allocated_capacity_bytes": null,
+      "median_node_count": null
+    },
+    {
+      "family": "wb_tree_seg",
+      "variant": "optimized",
+      "mode": "latest",
+      "workload": "mixed",
+      "successful_runs": 1,
+      "median_build_seconds": 0.017503633,
+      "median_query_seconds": 0.335386837,
+      "median_peak_rss_bytes": 46428160,
+      "median_allocated_capacity_bytes": null,
+      "median_node_count": null
+    }
+  ],
+  "ok": true
+}

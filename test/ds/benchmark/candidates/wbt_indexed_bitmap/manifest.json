@@ -1,0 +1,27 @@
+{
+  "_wbt_indexed_pool.cpp": {
+    "source_sha256": "aa33caa6e67db9d6770a49365c9bfccf2c50696b8797a7dc21256d87ed557e14",
+    "staged_sha256": "aa33caa6e67db9d6770a49365c9bfccf2c50696b8797a7dc21256d87ed557e14",
+    "change": "Same-directory helper includes only"
+  },
+  "_mutable_wbt_sequence_indexed.cpp": {
+    "source_sha256": "6465901f22717611d481d4f7ad120068095283c83cc033b152f6d516e281a885",
+    "staged_sha256": "3102c9a4103d27961a7988961c11387c30be61def7a033c8a782db646b13f23a",
+    "change": "Same-directory helper includes only"
+  },
+  "wb_tree_blocked.cpp": {
+    "source_sha256": "afc36ac5b3c7acb3963a5a54d5dba0e16fb3d534540b00264251921850ce3b04",
+    "staged_sha256": "ee69a3d51b2dafe09d4bc8720264d4b90c96c6af0f9ef43b29678cdb549ac905",
+    "change": "Same-directory helper includes only"
+  },
+  "wb_tree_seg_blocked.cpp": {
+    "source_sha256": "ddb093495d1ff1353b7c4b5bef2ad4142fe16076683c956c10bfd8f601ac1d13",
+    "staged_sha256": "3c776305b8e2a23ad42788f69a3416a2c5014f5b8165a7199b1d4912b333c7d9",
+    "change": "Same-directory helper includes only"
+  },
+  "lazy_wb_tree_blocked.cpp": {
+    "source_sha256": "562b8e55532e87e8ced3e42779c71591cc457dbbb5505584525280132fe29020",
+    "staged_sha256": "1c50abdb25232fea3a6b4d64186c77e5352de32f11a7fee261ba11d7badda80c",
+    "change": "Same-directory helper includes only"
+  }
+}

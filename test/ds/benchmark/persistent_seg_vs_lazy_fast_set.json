@@ -1,0 +1,264 @@
+{
+  "compiler": "g++ (Ubuntu 12.3.0-1ubuntu1~22.04.3) 12.3.0",
+  "flags": [
+    "-std=c++17",
+    "-O3",
+    "-DNDEBUG"
+  ],
+  "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+  "machine": "x86_64",
+  "cpu_model": "AMD Ryzen Threadripper 3990X 64-Core Processor",
+  "cpu_affinity": [
+    24
+  ],
+  "benchmark_sha256": "2146f10e81be6f38c6b55c4856e6bf45cbb77042c808197524d6a628384d9739",
+  "runner_sha256": "99fdd536b389b5548521c17938c8ab2925d1680b2c4738d3a6a140297e1e2830",
+  "baseline_label": "persistent-lazy-fast-common-operations",
+  "baseline_notes": "Custom baseline supplied; see explicit label, source paths and hashes.",
+  "parameters": {
+    "n": 500000,
+    "q": 500000,
+    "seed": 23,
+    "mode": "latest",
+    "workload": "set",
+    "repeats": 3,
+    "verify": false,
+    "enable_set": true
+  },
+  "families": {
+    "persistent_seg_wbtree": {
+      "kind": 5,
+      "headers": {
+        "baseline": "/home/titan/source/Library_cpp/test/ds/benchmark/persistent_lazy_fast_as_seg.cpp",
+        "optimized": "/home/titan/source/Library_cpp/titan_cpplib/ds/persistent_seg_wbtree.cpp"
+      },
+      "source_sha256": {
+        "baseline": "c3fdc77f8bee6938b8ec9d5cacbd905f24718b237c2828024e461e33e0051335",
+        "optimized": "715cc27d1162bc882a8356ce73e5353c00387963f68c408be4bec02652176b8e"
+      },
+      "quoted_dependency_sha256": {
+        "baseline": {
+          "test/ds/benchmark/persistent_lazy_fast_as_seg.cpp": "c3fdc77f8bee6938b8ec9d5cacbd905f24718b237c2828024e461e33e0051335",
+          "titan_cpplib/ds/persistent_lazy_wbtree_fast.cpp": "c7671b1d4975175c65a372b776e6b4002712a48a390c98e460d2dc3e71ce1e41",
+          "titan_cpplib/others/print.cpp": "fef9562838ad07fd9aafba8eab3b1fbd26b5a53082947b06ae47cce243bab374"
+        },
+        "optimized": {
+          "titan_cpplib/ds/persistent_seg_wbtree.cpp": "715cc27d1162bc882a8356ce73e5353c00387963f68c408be4bec02652176b8e",
+          "titan_cpplib/others/print.cpp": "fef9562838ad07fd9aafba8eab3b1fbd26b5a53082947b06ae47cce243bab374"
+        }
+      }
+    }
+  },
+  "runs": [
+    {
+      "variant": "baseline",
+      "family": "persistent_seg_wbtree",
+      "mode": "latest",
+      "workload": "set",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 500001,
+      "build_seconds": 0.020540481,
+      "query_seconds": 0.587615385,
+      "checksum": "15539711000306304774",
+      "validation_checksum": "9992638252604522627",
+      "nodes_after_build": 500000,
+      "node_count": 9475076,
+      "allocated_capacity_bytes": 608174080,
+      "peak_rss_bytes": 630484992,
+      "verified": false,
+      "operations": {
+        "insert": 0,
+        "pop": 0,
+        "get": 0,
+        "split_merge": 0,
+        "prod": 0,
+        "apply": 0,
+        "reverse": 0,
+        "set": 500000
+      },
+      "repeat": 1,
+      "baseline_label": "persistent-lazy-fast-common-operations"
+    },
+    {
+      "variant": "optimized",
+      "family": "persistent_seg_wbtree",
+      "mode": "latest",
+      "workload": "set",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 500001,
+      "build_seconds": 0.01862645,
+      "query_seconds": 0.57605832,
+      "checksum": "15539711000306304774",
+      "validation_checksum": "9992638252604522627",
+      "nodes_after_build": 500000,
+      "node_count": 9475076,
+      "allocated_capacity_bytes": 532152320,
+      "peak_rss_bytes": 554991616,
+      "verified": false,
+      "operations": {
+        "insert": 0,
+        "pop": 0,
+        "get": 0,
+        "split_merge": 0,
+        "prod": 0,
+        "apply": 0,
+        "reverse": 0,
+        "set": 500000
+      },
+      "repeat": 1
+    },
+    {
+      "variant": "optimized",
+      "family": "persistent_seg_wbtree",
+      "mode": "latest",
+      "workload": "set",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 500001,
+      "build_seconds": 0.018934082,
+      "query_seconds": 0.575915481,
+      "checksum": "15539711000306304774",
+      "validation_checksum": "9992638252604522627",
+      "nodes_after_build": 500000,
+      "node_count": 9475076,
+      "allocated_capacity_bytes": 532152320,
+      "peak_rss_bytes": 554987520,
+      "verified": false,
+      "operations": {
+        "insert": 0,
+        "pop": 0,
+        "get": 0,
+        "split_merge": 0,
+        "prod": 0,
+        "apply": 0,
+        "reverse": 0,
+        "set": 500000
+      },
+      "repeat": 2
+    },
+    {
+      "variant": "baseline",
+      "family": "persistent_seg_wbtree",
+      "mode": "latest",
+      "workload": "set",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 500001,
+      "build_seconds": 0.02069334,
+      "query_seconds": 0.590692559,
+      "checksum": "15539711000306304774",
+      "validation_checksum": "9992638252604522627",
+      "nodes_after_build": 500000,
+      "node_count": 9475076,
+      "allocated_capacity_bytes": 608174080,
+      "peak_rss_bytes": 630484992,
+      "verified": false,
+      "operations": {
+        "insert": 0,
+        "pop": 0,
+        "get": 0,
+        "split_merge": 0,
+        "prod": 0,
+        "apply": 0,
+        "reverse": 0,
+        "set": 500000
+      },
+      "repeat": 2,
+      "baseline_label": "persistent-lazy-fast-common-operations"
+    },
+    {
+      "variant": "baseline",
+      "family": "persistent_seg_wbtree",
+      "mode": "latest",
+      "workload": "set",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 500001,
+      "build_seconds": 0.02068283,
+      "query_seconds": 0.590400387,
+      "checksum": "15539711000306304774",
+      "validation_checksum": "9992638252604522627",
+      "nodes_after_build": 500000,
+      "node_count": 9475076,
+      "allocated_capacity_bytes": 608174080,
+      "peak_rss_bytes": 630489088,
+      "verified": false,
+      "operations": {
+        "insert": 0,
+        "pop": 0,
+        "get": 0,
+        "split_merge": 0,
+        "prod": 0,
+        "apply": 0,
+        "reverse": 0,
+        "set": 500000
+      },
+      "repeat": 3,
+      "baseline_label": "persistent-lazy-fast-common-operations"
+    },
+    {
+      "variant": "optimized",
+      "family": "persistent_seg_wbtree",
+      "mode": "latest",
+      "workload": "set",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 500001,
+      "build_seconds": 0.018759411,
+      "query_seconds": 0.573617456,
+      "checksum": "15539711000306304774",
+      "validation_checksum": "9992638252604522627",
+      "nodes_after_build": 500000,
+      "node_count": 9475076,
+      "allocated_capacity_bytes": 532152320,
+      "peak_rss_bytes": 554987520,
+      "verified": false,
+      "operations": {
+        "insert": 0,
+        "pop": 0,
+        "get": 0,
+        "split_merge": 0,
+        "prod": 0,
+        "apply": 0,
+        "reverse": 0,
+        "set": 500000
+      },
+      "repeat": 3
+    }
+  ],
+  "summaries": [
+    {
+      "family": "persistent_seg_wbtree",
+      "variant": "baseline",
+      "mode": "latest",
+      "workload": "set",
+      "successful_runs": 3,
+      "median_build_seconds": 0.02068283,
+      "median_query_seconds": 0.590400387,
+      "median_peak_rss_bytes": 630484992,
+      "median_allocated_capacity_bytes": 608174080,
+      "median_node_count": 9475076
+    },
+    {
+      "family": "persistent_seg_wbtree",
+      "variant": "optimized",
+      "mode": "latest",
+      "workload": "set",
+      "successful_runs": 3,
+      "median_build_seconds": 0.018759411,
+      "median_query_seconds": 0.575915481,
+      "median_peak_rss_bytes": 554987520,
+      "median_allocated_capacity_bytes": 532152320,
+      "median_node_count": 9475076
+    }
+  ],
+  "ok": true
+}

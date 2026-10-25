@@ -1,0 +1,263 @@
+{
+  "compiler": "g++ (Ubuntu 12.3.0-1ubuntu1~22.04.3) 12.3.0",
+  "flags": [
+    "-std=c++17",
+    "-O3",
+    "-DNDEBUG"
+  ],
+  "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+  "machine": "x86_64",
+  "cpu_model": "AMD Ryzen Threadripper 3990X 64-Core Processor",
+  "cpu_affinity": [
+    24
+  ],
+  "benchmark_sha256": "2146f10e81be6f38c6b55c4856e6bf45cbb77042c808197524d6a628384d9739",
+  "runner_sha256": "99fdd536b389b5548521c17938c8ab2925d1680b2c4738d3a6a140297e1e2830",
+  "baseline_label": "set-correctness-only",
+  "baseline_notes": "Exact correctness fixes recorded in set_baseline_manifest.json; duplicate copying/path updates retained",
+  "parameters": {
+    "n": 500000,
+    "q": 500000,
+    "seed": 23,
+    "mode": "both",
+    "workload": "set",
+    "repeats": 3,
+    "verify": false,
+    "enable_set": true
+  },
+  "families": {
+    "lazy_wb_tree": {
+      "kind": 3,
+      "headers": {
+        "baseline": "/home/titan/source/Library_cpp/test/ds/benchmark/baseline/wbt_family_corrected/lazy_wb_tree.cpp",
+        "optimized": "/home/titan/source/Library_cpp/titan_cpplib/ds/lazy_wb_tree.cpp"
+      },
+      "source_sha256": {
+        "baseline": "99dfee54f5d1c317776dae9c5e8cda571adea3dfd27449c56598ece17e585da2",
+        "optimized": "52d3f8092278d2751f9267da3c4eafe551c5c2706c2268e799b357518712a0d5"
+      },
+      "quoted_dependency_sha256": {
+        "baseline": {
+          "test/ds/benchmark/baseline/wbt_family_corrected/lazy_wb_tree.cpp": "99dfee54f5d1c317776dae9c5e8cda571adea3dfd27449c56598ece17e585da2",
+          "titan_cpplib/others/print.cpp": "fef9562838ad07fd9aafba8eab3b1fbd26b5a53082947b06ae47cce243bab374"
+        },
+        "optimized": {
+          "titan_cpplib/ds/_wbt_node_pool.cpp": "7fe5068b28328715c6a6c93782b440b8d0e4f109965e2174dbdb62052b491f60",
+          "titan_cpplib/ds/lazy_wb_tree.cpp": "52d3f8092278d2751f9267da3c4eafe551c5c2706c2268e799b357518712a0d5"
+        }
+      }
+    }
+  },
+  "runs": [
+    {
+      "variant": "baseline",
+      "family": "lazy_wb_tree",
+      "mode": "latest",
+      "workload": "set",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 1,
+      "build_seconds": 0.026886073,
+      "query_seconds": 0.239231142,
+      "checksum": "15539711000306304774",
+      "validation_checksum": "6875878197573516354",
+      "nodes_after_build": -1,
+      "node_count": -1,
+      "allocated_capacity_bytes": -1,
+      "peak_rss_bytes": 62152704,
+      "verified": false,
+      "operations": {
+        "insert": 0,
+        "pop": 0,
+        "get": 0,
+        "split_merge": 0,
+        "prod": 0,
+        "apply": 0,
+        "reverse": 0,
+        "set": 500000
+      },
+      "repeat": 1,
+      "baseline_label": "set-correctness-only"
+    },
+    {
+      "variant": "optimized",
+      "family": "lazy_wb_tree",
+      "mode": "latest",
+      "workload": "set",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 1,
+      "build_seconds": 0.021160726,
+      "query_seconds": 0.18869076,
+      "checksum": "15539711000306304774",
+      "validation_checksum": "6875878197573516354",
+      "nodes_after_build": -1,
+      "node_count": -1,
+      "allocated_capacity_bytes": -1,
+      "peak_rss_bytes": 62152704,
+      "verified": false,
+      "operations": {
+        "insert": 0,
+        "pop": 0,
+        "get": 0,
+        "split_merge": 0,
+        "prod": 0,
+        "apply": 0,
+        "reverse": 0,
+        "set": 500000
+      },
+      "repeat": 1
+    },
+    {
+      "variant": "optimized",
+      "family": "lazy_wb_tree",
+      "mode": "latest",
+      "workload": "set",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 1,
+      "build_seconds": 0.021129547,
+      "query_seconds": 0.189240541,
+      "checksum": "15539711000306304774",
+      "validation_checksum": "6875878197573516354",
+      "nodes_after_build": -1,
+      "node_count": -1,
+      "allocated_capacity_bytes": -1,
+      "peak_rss_bytes": 62152704,
+      "verified": false,
+      "operations": {
+        "insert": 0,
+        "pop": 0,
+        "get": 0,
+        "split_merge": 0,
+        "prod": 0,
+        "apply": 0,
+        "reverse": 0,
+        "set": 500000
+      },
+      "repeat": 2
+    },
+    {
+      "variant": "baseline",
+      "family": "lazy_wb_tree",
+      "mode": "latest",
+      "workload": "set",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 1,
+      "build_seconds": 0.026853671,
+      "query_seconds": 0.238817639,
+      "checksum": "15539711000306304774",
+      "validation_checksum": "6875878197573516354",
+      "nodes_after_build": -1,
+      "node_count": -1,
+      "allocated_capacity_bytes": -1,
+      "peak_rss_bytes": 62152704,
+      "verified": false,
+      "operations": {
+        "insert": 0,
+        "pop": 0,
+        "get": 0,
+        "split_merge": 0,
+        "prod": 0,
+        "apply": 0,
+        "reverse": 0,
+        "set": 500000
+      },
+      "repeat": 2,
+      "baseline_label": "set-correctness-only"
+    },
+    {
+      "variant": "baseline",
+      "family": "lazy_wb_tree",
+      "mode": "latest",
+      "workload": "set",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 1,
+      "build_seconds": 0.027758655,
+      "query_seconds": 0.237801363,
+      "checksum": "15539711000306304774",
+      "validation_checksum": "6875878197573516354",
+      "nodes_after_build": -1,
+      "node_count": -1,
+      "allocated_capacity_bytes": -1,
+      "peak_rss_bytes": 62152704,
+      "verified": false,
+      "operations": {
+        "insert": 0,
+        "pop": 0,
+        "get": 0,
+        "split_merge": 0,
+        "prod": 0,
+        "apply": 0,
+        "reverse": 0,
+        "set": 500000
+      },
+      "repeat": 3,
+      "baseline_label": "set-correctness-only"
+    },
+    {
+      "variant": "optimized",
+      "family": "lazy_wb_tree",
+      "mode": "latest",
+      "workload": "set",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 1,
+      "build_seconds": 0.021155777,
+      "query_seconds": 0.188261276,
+      "checksum": "15539711000306304774",
+      "validation_checksum": "6875878197573516354",
+      "nodes_after_build": -1,
+      "node_count": -1,
+      "allocated_capacity_bytes": -1,
+      "peak_rss_bytes": 62156800,
+      "verified": false,
+      "operations": {
+        "insert": 0,
+        "pop": 0,
+        "get": 0,
+        "split_merge": 0,
+        "prod": 0,
+        "apply": 0,
+        "reverse": 0,
+        "set": 500000
+      },
+      "repeat": 3
+    }
+  ],
+  "summaries": [
+    {
+      "family": "lazy_wb_tree",
+      "variant": "baseline",
+      "mode": "latest",
+      "workload": "set",
+      "successful_runs": 3,
+      "median_build_seconds": 0.026886073,
+      "median_query_seconds": 0.238817639,
+      "median_peak_rss_bytes": 62152704,
+      "median_allocated_capacity_bytes": null,
+      "median_node_count": null
+    },
+    {
+      "family": "lazy_wb_tree",
+      "variant": "optimized",
+      "mode": "latest",
+      "workload": "set",
+      "successful_runs": 3,
+      "median_build_seconds": 0.021155777,
+      "median_query_seconds": 0.18869076,
+      "median_peak_rss_bytes": 62152704,
+      "median_allocated_capacity_bytes": null,
+      "median_node_count": null
+    }
+  ],
+  "ok": true
+}

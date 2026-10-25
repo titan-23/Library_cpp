@@ -1,0 +1,737 @@
+{
+  "compiler": "g++ (Ubuntu 12.3.0-1ubuntu1~22.04.3) 12.3.0",
+  "flags": [
+    "-std=c++17",
+    "-O3",
+    "-DNDEBUG"
+  ],
+  "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+  "machine": "x86_64",
+  "cpu_model": "AMD Ryzen Threadripper 3990X 64-Core Processor",
+  "cpu_affinity": [
+    24
+  ],
+  "benchmark_sha256": "2146f10e81be6f38c6b55c4856e6bf45cbb77042c808197524d6a628384d9739",
+  "runner_sha256": "99fdd536b389b5548521c17938c8ab2925d1680b2c4738d3a6a140297e1e2830",
+  "baseline_label": "raw-snapshot",
+  "baseline_notes": "Exact saved source; no correctness or performance patches.",
+  "parameters": {
+    "n": 500000,
+    "q": 500000,
+    "seed": 23,
+    "mode": "both",
+    "workload": "mixed",
+    "repeats": 1,
+    "verify": false,
+    "enable_set": false
+  },
+  "families": {
+    "wb_tree": {
+      "kind": 1,
+      "headers": {
+        "baseline": "/home/titan/source/Library_cpp/test/ds/benchmark/baseline/wbt_family/wb_tree.cpp",
+        "optimized": "/home/titan/source/Library_cpp/titan_cpplib/ds/wb_tree.cpp"
+      },
+      "source_sha256": {
+        "baseline": "c512a3171d47560ce1a3339183860a08ed1fdca2f5842892512eef565fe71159",
+        "optimized": "4d138cc224dd4f109ba23c26e0f164d4ccad5404cb6b57789e265c9e2ae2255d"
+      },
+      "quoted_dependency_sha256": {
+        "baseline": {
+          "test/ds/benchmark/baseline/wbt_family/wb_tree.cpp": "c512a3171d47560ce1a3339183860a08ed1fdca2f5842892512eef565fe71159"
+        },
+        "optimized": {
+          "titan_cpplib/ds/_mutable_wbt_sequence.cpp": "7839d0eaa9cdb1ea19f3fe9dcef23ac01f4278b5da0eb8022237571f43a4e635",
+          "titan_cpplib/ds/_wbt_node_pool.cpp": "caae26506844785d22411a4535c90cea0253d627387d703c5c6246139814bd1d",
+          "titan_cpplib/ds/wb_tree.cpp": "4d138cc224dd4f109ba23c26e0f164d4ccad5404cb6b57789e265c9e2ae2255d"
+        }
+      }
+    },
+    "wb_tree_seg": {
+      "kind": 2,
+      "headers": {
+        "baseline": "/home/titan/source/Library_cpp/test/ds/benchmark/baseline/wbt_family/wb_tree_seg.cpp",
+        "optimized": "/home/titan/source/Library_cpp/titan_cpplib/ds/wb_tree_seg.cpp"
+      },
+      "source_sha256": {
+        "baseline": "f2613db23733638cb10421c1efda24d7afb539cbac057c19173962013ac71163",
+        "optimized": "daf219dce0af1b076b071a2a51ec72a17efc3d783a73a45ca1033b9cc8b80130"
+      },
+      "quoted_dependency_sha256": {
+        "baseline": {
+          "test/ds/benchmark/baseline/wbt_family/wb_tree_seg.cpp": "f2613db23733638cb10421c1efda24d7afb539cbac057c19173962013ac71163",
+          "titan_cpplib/others/print.cpp": "fef9562838ad07fd9aafba8eab3b1fbd26b5a53082947b06ae47cce243bab374"
+        },
+        "optimized": {
+          "titan_cpplib/ds/_mutable_wbt_sequence.cpp": "7839d0eaa9cdb1ea19f3fe9dcef23ac01f4278b5da0eb8022237571f43a4e635",
+          "titan_cpplib/ds/_wbt_node_pool.cpp": "caae26506844785d22411a4535c90cea0253d627387d703c5c6246139814bd1d",
+          "titan_cpplib/ds/wb_tree_seg.cpp": "daf219dce0af1b076b071a2a51ec72a17efc3d783a73a45ca1033b9cc8b80130",
+          "titan_cpplib/others/print.cpp": "fef9562838ad07fd9aafba8eab3b1fbd26b5a53082947b06ae47cce243bab374"
+        }
+      }
+    },
+    "lazy_wb_tree": {
+      "kind": 3,
+      "headers": {
+        "baseline": "/home/titan/source/Library_cpp/test/ds/benchmark/baseline/wbt_family/lazy_wb_tree.cpp",
+        "optimized": "/home/titan/source/Library_cpp/titan_cpplib/ds/lazy_wb_tree.cpp"
+      },
+      "source_sha256": {
+        "baseline": "7be94d4d33c4b1c73c8e339f6f3326ad8b80e552d500e63a17edad887de6523c",
+        "optimized": "1b0ef3b4fee48f56eeb274a4af53640189e69fd92e25562667df4352e40e4cfc"
+      },
+      "quoted_dependency_sha256": {
+        "baseline": {
+          "test/ds/benchmark/baseline/wbt_family/lazy_wb_tree.cpp": "7be94d4d33c4b1c73c8e339f6f3326ad8b80e552d500e63a17edad887de6523c",
+          "titan_cpplib/others/print.cpp": "fef9562838ad07fd9aafba8eab3b1fbd26b5a53082947b06ae47cce243bab374"
+        },
+        "optimized": {
+          "titan_cpplib/ds/_wbt_node_pool.cpp": "caae26506844785d22411a4535c90cea0253d627387d703c5c6246139814bd1d",
+          "titan_cpplib/ds/lazy_wb_tree.cpp": "1b0ef3b4fee48f56eeb274a4af53640189e69fd92e25562667df4352e40e4cfc"
+        }
+      }
+    },
+    "persistent_wbtree": {
+      "kind": 4,
+      "headers": {
+        "baseline": "/home/titan/source/Library_cpp/test/ds/benchmark/baseline/wbt_family/persistent_wbtree.cpp",
+        "optimized": "/home/titan/source/Library_cpp/titan_cpplib/ds/persistent_wbtree.cpp"
+      },
+      "source_sha256": {
+        "baseline": "fe411030ae140ddaeba3c8fe5b51f629ffceab6cd1ff2064c9bcecbc439bb9cc",
+        "optimized": "959d86a0934c63cc9acd82a1138ac4a3593fef66d159122a28eff3a18e7be45c"
+      },
+      "quoted_dependency_sha256": {
+        "baseline": {
+          "test/ds/benchmark/baseline/wbt_family/persistent_wbtree.cpp": "fe411030ae140ddaeba3c8fe5b51f629ffceab6cd1ff2064c9bcecbc439bb9cc",
+          "titan_cpplib/others/print.cpp": "fef9562838ad07fd9aafba8eab3b1fbd26b5a53082947b06ae47cce243bab374"
+        },
+        "optimized": {
+          "titan_cpplib/ds/persistent_wbtree.cpp": "959d86a0934c63cc9acd82a1138ac4a3593fef66d159122a28eff3a18e7be45c",
+          "titan_cpplib/others/print.cpp": "fef9562838ad07fd9aafba8eab3b1fbd26b5a53082947b06ae47cce243bab374"
+        }
+      }
+    },
+    "persistent_seg_wbtree": {
+      "kind": 5,
+      "headers": {
+        "baseline": "/home/titan/source/Library_cpp/test/ds/benchmark/baseline/wbt_family/persistent_seg_wbtree.cpp",
+        "optimized": "/home/titan/source/Library_cpp/titan_cpplib/ds/persistent_seg_wbtree.cpp"
+      },
+      "source_sha256": {
+        "baseline": "5fdcd77af184f01c1243c00a3342838421d20b81184da45a280c2c05e023f5a1",
+        "optimized": "89f08d682730767db47a6c84fa010420450284d4bc3f2ee4ce8049f5fe337362"
+      },
+      "quoted_dependency_sha256": {
+        "baseline": {
+          "test/ds/benchmark/baseline/wbt_family/persistent_seg_wbtree.cpp": "5fdcd77af184f01c1243c00a3342838421d20b81184da45a280c2c05e023f5a1",
+          "titan_cpplib/others/print.cpp": "fef9562838ad07fd9aafba8eab3b1fbd26b5a53082947b06ae47cce243bab374"
+        },
+        "optimized": {
+          "titan_cpplib/ds/persistent_seg_wbtree.cpp": "89f08d682730767db47a6c84fa010420450284d4bc3f2ee4ce8049f5fe337362",
+          "titan_cpplib/others/print.cpp": "fef9562838ad07fd9aafba8eab3b1fbd26b5a53082947b06ae47cce243bab374"
+        }
+      }
+    }
+  },
+  "runs": [
+    {
+      "variant": "baseline",
+      "family": "wb_tree",
+      "mode": "latest",
+      "workload": "mixed",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 1,
+      "build_seconds": 0.020381309,
+      "query_seconds": 0.385837544,
+      "checksum": "13669098834866020925",
+      "validation_checksum": "18187700739035608926",
+      "nodes_after_build": -1,
+      "node_count": -1,
+      "allocated_capacity_bytes": -1,
+      "peak_rss_bytes": 51671040,
+      "verified": false,
+      "operations": {
+        "insert": 124880,
+        "pop": 124469,
+        "get": 125572,
+        "split_merge": 125079,
+        "prod": 0,
+        "apply": 0,
+        "reverse": 0,
+        "set": 0
+      },
+      "repeat": 1,
+      "baseline_label": "raw-snapshot"
+    },
+    {
+      "variant": "optimized",
+      "family": "wb_tree",
+      "mode": "latest",
+      "workload": "mixed",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 1,
+      "build_seconds": 0.014275819,
+      "query_seconds": 0.238473859,
+      "checksum": "13669098834866020925",
+      "validation_checksum": "18187700739035608926",
+      "nodes_after_build": -1,
+      "node_count": -1,
+      "allocated_capacity_bytes": -1,
+      "peak_rss_bytes": 45375488,
+      "verified": false,
+      "operations": {
+        "insert": 124880,
+        "pop": 124469,
+        "get": 125572,
+        "split_merge": 125079,
+        "prod": 0,
+        "apply": 0,
+        "reverse": 0,
+        "set": 0
+      },
+      "repeat": 1
+    },
+    {
+      "variant": "baseline",
+      "family": "wb_tree_seg",
+      "mode": "latest",
+      "workload": "mixed",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 1,
+      "build_seconds": 0.024865497,
+      "query_seconds": 0.386010706,
+      "checksum": "9278275055943418909",
+      "validation_checksum": "6938501142373975227",
+      "nodes_after_build": -1,
+      "node_count": -1,
+      "allocated_capacity_bytes": -1,
+      "peak_rss_bytes": 60059648,
+      "verified": false,
+      "operations": {
+        "insert": 99791,
+        "pop": 99930,
+        "get": 100214,
+        "split_merge": 99838,
+        "prod": 100227,
+        "apply": 0,
+        "reverse": 0,
+        "set": 0
+      },
+      "repeat": 1,
+      "baseline_label": "raw-snapshot"
+    },
+    {
+      "variant": "optimized",
+      "family": "wb_tree_seg",
+      "mode": "latest",
+      "workload": "mixed",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 1,
+      "build_seconds": 0.018934777,
+      "query_seconds": 0.306584706,
+      "checksum": "9278275055943418909",
+      "validation_checksum": "6938501142373975227",
+      "nodes_after_build": -1,
+      "node_count": -1,
+      "allocated_capacity_bytes": -1,
+      "peak_rss_bytes": 53764096,
+      "verified": false,
+      "operations": {
+        "insert": 99791,
+        "pop": 99930,
+        "get": 100214,
+        "split_merge": 99838,
+        "prod": 100227,
+        "apply": 0,
+        "reverse": 0,
+        "set": 0
+      },
+      "repeat": 1
+    },
+    {
+      "variant": "baseline",
+      "family": "lazy_wb_tree",
+      "mode": "latest",
+      "workload": "mixed",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 1,
+      "build_seconds": 0.027697676,
+      "query_seconds": 0.700494707,
+      "checksum": "10073460383414517948",
+      "validation_checksum": "17465327651714110615",
+      "nodes_after_build": -1,
+      "node_count": -1,
+      "allocated_capacity_bytes": -1,
+      "peak_rss_bytes": 67395584,
+      "verified": false,
+      "operations": {
+        "insert": 71013,
+        "pop": 71304,
+        "get": 71541,
+        "split_merge": 71608,
+        "prod": 71697,
+        "apply": 71462,
+        "reverse": 71375,
+        "set": 0
+      },
+      "repeat": 1,
+      "baseline_label": "raw-snapshot"
+    },
+    {
+      "variant": "optimized",
+      "family": "lazy_wb_tree",
+      "mode": "latest",
+      "workload": "mixed",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 1,
+      "build_seconds": 0.021417756,
+      "query_seconds": 0.566987978,
+      "checksum": "10073460383414517948",
+      "validation_checksum": "17465327651714110615",
+      "nodes_after_build": -1,
+      "node_count": -1,
+      "allocated_capacity_bytes": -1,
+      "peak_rss_bytes": 62156800,
+      "verified": false,
+      "operations": {
+        "insert": 71013,
+        "pop": 71304,
+        "get": 71541,
+        "split_merge": 71608,
+        "prod": 71697,
+        "apply": 71462,
+        "reverse": 71375,
+        "set": 0
+      },
+      "repeat": 1
+    },
+    {
+      "variant": "baseline",
+      "family": "persistent_wbtree",
+      "mode": "latest",
+      "workload": "mixed",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 500001,
+      "build_seconds": 0.018458087,
+      "query_seconds": 1.470331734,
+      "checksum": "13669098834866020925",
+      "validation_checksum": "7821002430449867788",
+      "nodes_after_build": 500000,
+      "node_count": 19222407,
+      "allocated_capacity_bytes": 939524096,
+      "peak_rss_bytes": 764125184,
+      "verified": false,
+      "operations": {
+        "insert": 124880,
+        "pop": 124469,
+        "get": 125572,
+        "split_merge": 125079,
+        "prod": 0,
+        "apply": 0,
+        "reverse": 0,
+        "set": 0
+      },
+      "repeat": 1,
+      "baseline_label": "raw-snapshot"
+    },
+    {
+      "variant": "optimized",
+      "family": "persistent_wbtree",
+      "mode": "latest",
+      "workload": "mixed",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 500001,
+      "build_seconds": 0.013227339,
+      "query_seconds": 0.541762659,
+      "checksum": "13669098834866020925",
+      "validation_checksum": "7821002430449867788",
+      "nodes_after_build": 500000,
+      "node_count": 11075088,
+      "allocated_capacity_bytes": 354418688,
+      "peak_rss_bytes": 378830848,
+      "verified": false,
+      "operations": {
+        "insert": 124880,
+        "pop": 124469,
+        "get": 125572,
+        "split_merge": 125079,
+        "prod": 0,
+        "apply": 0,
+        "reverse": 0,
+        "set": 0
+      },
+      "repeat": 1
+    },
+    {
+      "variant": "baseline",
+      "family": "persistent_wbtree",
+      "mode": "history",
+      "workload": "mixed",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 500001,
+      "build_seconds": 0.018047542,
+      "query_seconds": 1.46214454,
+      "checksum": "9204412450851929994",
+      "validation_checksum": "13746321596660106080",
+      "nodes_after_build": 500000,
+      "node_count": 18345073,
+      "allocated_capacity_bytes": 939524096,
+      "peak_rss_bytes": 764166144,
+      "verified": false,
+      "operations": {
+        "insert": 124849,
+        "pop": 125187,
+        "get": 125134,
+        "split_merge": 124830,
+        "prod": 0,
+        "apply": 0,
+        "reverse": 0,
+        "set": 0
+      },
+      "repeat": 1,
+      "baseline_label": "raw-snapshot"
+    },
+    {
+      "variant": "optimized",
+      "family": "persistent_wbtree",
+      "mode": "history",
+      "workload": "mixed",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 500001,
+      "build_seconds": 0.013139553,
+      "query_seconds": 0.576849181,
+      "checksum": "9204412450851929994",
+      "validation_checksum": "13746321596660106080",
+      "nodes_after_build": 500000,
+      "node_count": 10601969,
+      "allocated_capacity_bytes": 339738624,
+      "peak_rss_bytes": 364150784,
+      "verified": false,
+      "operations": {
+        "insert": 124849,
+        "pop": 125187,
+        "get": 125134,
+        "split_merge": 124830,
+        "prod": 0,
+        "apply": 0,
+        "reverse": 0,
+        "set": 0
+      },
+      "repeat": 1
+    },
+    {
+      "variant": "baseline",
+      "family": "persistent_seg_wbtree",
+      "mode": "latest",
+      "workload": "mixed",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 500001,
+      "build_seconds": 0.030219429,
+      "query_seconds": 3.895553544,
+      "checksum": "15891940932464931594",
+      "validation_checksum": "14594628457770171006",
+      "nodes_after_build": 500000,
+      "node_count": 35900727,
+      "allocated_capacity_bytes": 3489660928,
+      "peak_rss_bytes": 3114008576,
+      "verified": false,
+      "operations": {
+        "insert": 82956,
+        "pop": 83266,
+        "get": 83478,
+        "split_merge": 83189,
+        "prod": 83436,
+        "apply": 0,
+        "reverse": 83675,
+        "set": 0
+      },
+      "repeat": 1,
+      "baseline_label": "raw-snapshot"
+    },
+    {
+      "variant": "optimized",
+      "family": "persistent_seg_wbtree",
+      "mode": "latest",
+      "workload": "mixed",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 500001,
+      "build_seconds": 0.019356234,
+      "query_seconds": 1.186883769,
+      "checksum": "15891940932464931594",
+      "validation_checksum": "14594628457770171006",
+      "nodes_after_build": 500000,
+      "node_count": 16424955,
+      "allocated_capacity_bytes": 921174016,
+      "peak_rss_bytes": 945057792,
+      "verified": false,
+      "operations": {
+        "insert": 82956,
+        "pop": 83266,
+        "get": 83478,
+        "split_merge": 83189,
+        "prod": 83436,
+        "apply": 0,
+        "reverse": 83675,
+        "set": 0
+      },
+      "repeat": 1
+    },
+    {
+      "variant": "baseline",
+      "family": "persistent_seg_wbtree",
+      "mode": "history",
+      "workload": "mixed",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 500001,
+      "build_seconds": 0.030094744,
+      "query_seconds": 2.846680714,
+      "checksum": "2929618870892984719",
+      "validation_checksum": "1492708749049386308",
+      "nodes_after_build": 500000,
+      "node_count": 27885800,
+      "allocated_capacity_bytes": 1744830464,
+      "peak_rss_bytes": 1570394112,
+      "verified": false,
+      "operations": {
+        "insert": 83338,
+        "pop": 82883,
+        "get": 83177,
+        "split_merge": 83760,
+        "prod": 83739,
+        "apply": 0,
+        "reverse": 83103,
+        "set": 0
+      },
+      "repeat": 1,
+      "baseline_label": "raw-snapshot"
+    },
+    {
+      "variant": "optimized",
+      "family": "persistent_seg_wbtree",
+      "mode": "history",
+      "workload": "mixed",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 500001,
+      "build_seconds": 0.019371603,
+      "query_seconds": 1.140474627,
+      "checksum": "2929618870892984719",
+      "validation_checksum": "1492708749049386308",
+      "nodes_after_build": 500000,
+      "node_count": 14205456,
+      "allocated_capacity_bytes": 796393472,
+      "peak_rss_bytes": 820281344,
+      "verified": false,
+      "operations": {
+        "insert": 83338,
+        "pop": 82883,
+        "get": 83177,
+        "split_merge": 83760,
+        "prod": 83739,
+        "apply": 0,
+        "reverse": 83103,
+        "set": 0
+      },
+      "repeat": 1
+    }
+  ],
+  "summaries": [
+    {
+      "family": "wb_tree",
+      "variant": "baseline",
+      "mode": "latest",
+      "workload": "mixed",
+      "successful_runs": 1,
+      "median_build_seconds": 0.020381309,
+      "median_query_seconds": 0.385837544,
+      "median_peak_rss_bytes": 51671040,
+      "median_allocated_capacity_bytes": null,
+      "median_node_count": null
+    },
+    {
+      "family": "wb_tree",
+      "variant": "optimized",
+      "mode": "latest",
+      "workload": "mixed",
+      "successful_runs": 1,
+      "median_build_seconds": 0.014275819,
+      "median_query_seconds": 0.238473859,
+      "median_peak_rss_bytes": 45375488,
+      "median_allocated_capacity_bytes": null,
+      "median_node_count": null
+    },
+    {
+      "family": "wb_tree_seg",
+      "variant": "baseline",
+      "mode": "latest",
+      "workload": "mixed",
+      "successful_runs": 1,
+      "median_build_seconds": 0.024865497,
+      "median_query_seconds": 0.386010706,
+      "median_peak_rss_bytes": 60059648,
+      "median_allocated_capacity_bytes": null,
+      "median_node_count": null
+    },
+    {
+      "family": "wb_tree_seg",
+      "variant": "optimized",
+      "mode": "latest",
+      "workload": "mixed",
+      "successful_runs": 1,
+      "median_build_seconds": 0.018934777,
+      "median_query_seconds": 0.306584706,
+      "median_peak_rss_bytes": 53764096,
+      "median_allocated_capacity_bytes": null,
+      "median_node_count": null
+    },
+    {
+      "family": "lazy_wb_tree",
+      "variant": "baseline",
+      "mode": "latest",
+      "workload": "mixed",
+      "successful_runs": 1,
+      "median_build_seconds": 0.027697676,
+      "median_query_seconds": 0.700494707,
+      "median_peak_rss_bytes": 67395584,
+      "median_allocated_capacity_bytes": null,
+      "median_node_count": null
+    },
+    {
+      "family": "lazy_wb_tree",
+      "variant": "optimized",
+      "mode": "latest",
+      "workload": "mixed",
+      "successful_runs": 1,
+      "median_build_seconds": 0.021417756,
+      "median_query_seconds": 0.566987978,
+      "median_peak_rss_bytes": 62156800,
+      "median_allocated_capacity_bytes": null,
+      "median_node_count": null
+    },
+    {
+      "family": "persistent_wbtree",
+      "variant": "baseline",
+      "mode": "latest",
+      "workload": "mixed",
+      "successful_runs": 1,
+      "median_build_seconds": 0.018458087,
+      "median_query_seconds": 1.470331734,
+      "median_peak_rss_bytes": 764125184,
+      "median_allocated_capacity_bytes": 939524096,
+      "median_node_count": 19222407
+    },
+    {
+      "family": "persistent_wbtree",
+      "variant": "optimized",
+      "mode": "latest",
+      "workload": "mixed",
+      "successful_runs": 1,
+      "median_build_seconds": 0.013227339,
+      "median_query_seconds": 0.541762659,
+      "median_peak_rss_bytes": 378830848,
+      "median_allocated_capacity_bytes": 354418688,
+      "median_node_count": 11075088
+    },
+    {
+      "family": "persistent_wbtree",
+      "variant": "baseline",
+      "mode": "history",
+      "workload": "mixed",
+      "successful_runs": 1,
+      "median_build_seconds": 0.018047542,
+      "median_query_seconds": 1.46214454,
+      "median_peak_rss_bytes": 764166144,
+      "median_allocated_capacity_bytes": 939524096,
+      "median_node_count": 18345073
+    },
+    {
+      "family": "persistent_wbtree",
+      "variant": "optimized",
+      "mode": "history",
+      "workload": "mixed",
+      "successful_runs": 1,
+      "median_build_seconds": 0.013139553,
+      "median_query_seconds": 0.576849181,
+      "median_peak_rss_bytes": 364150784,
+      "median_allocated_capacity_bytes": 339738624,
+      "median_node_count": 10601969
+    },
+    {
+      "family": "persistent_seg_wbtree",
+      "variant": "baseline",
+      "mode": "latest",
+      "workload": "mixed",
+      "successful_runs": 1,
+      "median_build_seconds": 0.030219429,
+      "median_query_seconds": 3.895553544,
+      "median_peak_rss_bytes": 3114008576,
+      "median_allocated_capacity_bytes": 3489660928,
+      "median_node_count": 35900727
+    },
+    {
+      "family": "persistent_seg_wbtree",
+      "variant": "optimized",
+      "mode": "latest",
+      "workload": "mixed",
+      "successful_runs": 1,
+      "median_build_seconds": 0.019356234,
+      "median_query_seconds": 1.186883769,
+      "median_peak_rss_bytes": 945057792,
+      "median_allocated_capacity_bytes": 921174016,
+      "median_node_count": 16424955
+    },
+    {
+      "family": "persistent_seg_wbtree",
+      "variant": "baseline",
+      "mode": "history",
+      "workload": "mixed",
+      "successful_runs": 1,
+      "median_build_seconds": 0.030094744,
+      "median_query_seconds": 2.846680714,
+      "median_peak_rss_bytes": 1570394112,
+      "median_allocated_capacity_bytes": 1744830464,
+      "median_node_count": 27885800
+    },
+    {
+      "family": "persistent_seg_wbtree",
+      "variant": "optimized",
+      "mode": "history",
+      "workload": "mixed",
+      "successful_runs": 1,
+      "median_build_seconds": 0.019371603,
+      "median_query_seconds": 1.140474627,
+      "median_peak_rss_bytes": 820281344,
+      "median_allocated_capacity_bytes": 796393472,
+      "median_node_count": 14205456
+    }
+  ],
+  "ok": true
+}

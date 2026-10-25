@@ -1,0 +1,6 @@
+{
+  "original_path": "titan_cpplib/ds/persistent_lazy_wbtree.cpp",
+  "snapshot_path": "test/ds/benchmark/baseline/persistent_lazy_wbtree_before_fast.cpp",
+  "sha256": "b8e7f1ce4030711532a8d65245aa76165a9ccad57f5f919b5ddb4ff7b1c844eb",
+  "purpose": "Exact pre-fast implementation retained for historical benchmark and accessor experiments after removing the superseded library file"
+}

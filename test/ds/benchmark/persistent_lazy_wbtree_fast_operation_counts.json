@@ -1,0 +1,107 @@
+{
+  "header": "titan_cpplib/ds/persistent_lazy_wbtree_fast.cpp",
+  "layout": "internal_key",
+  "seed": 20261025,
+  "slot_bytes": 64,
+  "source": "test/ds/benchmark/persistent_lazy_wbtree_operation_counts.cpp",
+  "compile": "c++ -std=c++17 -O2 -Wall -Wextra -I . test/ds/benchmark/persistent_lazy_wbtree_operation_counts.cpp",
+  "arguments": [
+    500000,
+    1000
+  ],
+  "workload": "Each measured operation starts from the same unmodified base tree. Verification runs after counters are captured.",
+  "results": [
+    {
+      "operation": "build",
+      "n": 500000,
+      "samples": 1,
+      "op_per_operation": 499999,
+      "mapping_per_operation": 0,
+      "composition_per_operation": 0,
+      "nodes_per_operation": 500000
+    },
+    {
+      "operation": "set",
+      "n": 500000,
+      "samples": 1000,
+      "op_per_operation": 34.869,
+      "mapping_per_operation": 0,
+      "composition_per_operation": 0,
+      "nodes_per_operation": 17.963
+    },
+    {
+      "operation": "get",
+      "n": 500000,
+      "samples": 1000,
+      "op_per_operation": 0,
+      "mapping_per_operation": 0,
+      "composition_per_operation": 0,
+      "nodes_per_operation": 0
+    },
+    {
+      "operation": "apply",
+      "n": 500000,
+      "samples": 1000,
+      "op_per_operation": 63.329,
+      "mapping_per_operation": 47.529,
+      "composition_per_operation": 15.829,
+      "nodes_per_operation": 47.537
+    },
+    {
+      "operation": "full_apply",
+      "n": 500000,
+      "samples": 1000,
+      "op_per_operation": 0,
+      "mapping_per_operation": 2,
+      "composition_per_operation": 1,
+      "nodes_per_operation": 1
+    },
+    {
+      "operation": "prod",
+      "n": 500000,
+      "samples": 1000,
+      "op_per_operation": 30.7,
+      "mapping_per_operation": 0,
+      "composition_per_operation": 0,
+      "nodes_per_operation": 0
+    },
+    {
+      "operation": "insert",
+      "n": 500000,
+      "samples": 1000,
+      "op_per_operation": 36.844,
+      "mapping_per_operation": 0,
+      "composition_per_operation": 0,
+      "nodes_per_operation": 19.946
+    },
+    {
+      "operation": "pop",
+      "n": 500000,
+      "samples": 1000,
+      "op_per_operation": 34.859,
+      "mapping_per_operation": 0,
+      "composition_per_operation": 0,
+      "nodes_per_operation": 17.956
+    },
+    {
+      "operation": "split_merge",
+      "n": 500000,
+      "samples": 1000,
+      "op_per_operation": 83.527,
+      "mapping_per_operation": 0,
+      "composition_per_operation": 0,
+      "nodes_per_operation": 42.203
+    },
+    {
+      "operation": "reverse",
+      "n": 500000,
+      "samples": 1000,
+      "op_per_operation": 157.915,
+      "mapping_per_operation": 0,
+      "composition_per_operation": 0,
+      "nodes_per_operation": 56.49
+    }
+  ],
+  "header_sha256": "bf9a8dcc7f1fe53ec84a8d054f4194e625da2188800ddfc8fe818a80c9497acf",
+  "benchmark_sha256": "a416535d69d9282a2c23e517ad4192c9521d729bb60980a584adba1bcbc729ff"
+}

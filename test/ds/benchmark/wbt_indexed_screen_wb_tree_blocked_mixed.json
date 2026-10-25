@@ -1,0 +1,143 @@
+{
+  "compiler": "g++ (Ubuntu 12.3.0-1ubuntu1~22.04.3) 12.3.0",
+  "flags": [
+    "-std=c++17",
+    "-O3",
+    "-DNDEBUG"
+  ],
+  "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+  "machine": "x86_64",
+  "cpu_model": "AMD Ryzen Threadripper 3990X 64-Core Processor",
+  "cpu_affinity": [
+    24
+  ],
+  "benchmark_sha256": "2146f10e81be6f38c6b55c4856e6bf45cbb77042c808197524d6a628384d9739",
+  "runner_sha256": "99fdd536b389b5548521c17938c8ab2925d1680b2c4738d3a6a140297e1e2830",
+  "baseline_label": "pointer-snapshot-include-redirect-only",
+  "baseline_notes": "Only helper include paths changed; see pointer_baseline_manifest.json",
+  "parameters": {
+    "n": 500000,
+    "q": 500000,
+    "seed": 23,
+    "mode": "latest",
+    "workload": "mixed",
+    "repeats": 1,
+    "verify": false,
+    "enable_set": false
+  },
+  "families": {
+    "wb_tree": {
+      "kind": 1,
+      "headers": {
+        "baseline": "/home/titan/source/Library_cpp/test/ds/benchmark/baseline/wbt_family_pointer/isolated/wb_tree.cpp",
+        "optimized": "/home/titan/source/Library_cpp/test/ds/benchmark/candidates/wbt_indexed/wb_tree_blocked.cpp"
+      },
+      "source_sha256": {
+        "baseline": "2169ee1a0e5d1aec1de5049524661b2418d9ed8fde80f079a447cdcac0df4461",
+        "optimized": "ee69a3d51b2dafe09d4bc8720264d4b90c96c6af0f9ef43b29678cdb549ac905"
+      },
+      "quoted_dependency_sha256": {
+        "baseline": {
+          "test/ds/benchmark/baseline/wbt_family_pointer/isolated/_mutable_wbt_sequence.cpp": "d6f20f45195c9be98d5ae292450afa9193dd3df39dd74db89f1d0f3fdfe965ee",
+          "test/ds/benchmark/baseline/wbt_family_pointer/isolated/_wbt_node_pool.cpp": "7fe5068b28328715c6a6c93782b440b8d0e4f109965e2174dbdb62052b491f60",
+          "test/ds/benchmark/baseline/wbt_family_pointer/isolated/wb_tree.cpp": "2169ee1a0e5d1aec1de5049524661b2418d9ed8fde80f079a447cdcac0df4461"
+        },
+        "optimized": {
+          "test/ds/benchmark/candidates/wbt_indexed/_mutable_wbt_sequence_indexed.cpp": "3102c9a4103d27961a7988961c11387c30be61def7a033c8a782db646b13f23a",
+          "test/ds/benchmark/candidates/wbt_indexed/_wbt_indexed_pool.cpp": "0feae18bb36468a869fdfc0b134c81c4c390d17b9e6bdc295a6bd000f05d13c7",
+          "test/ds/benchmark/candidates/wbt_indexed/wb_tree_blocked.cpp": "ee69a3d51b2dafe09d4bc8720264d4b90c96c6af0f9ef43b29678cdb549ac905"
+        }
+      }
+    }
+  },
+  "runs": [
+    {
+      "variant": "baseline",
+      "family": "wb_tree",
+      "mode": "latest",
+      "workload": "mixed",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 1,
+      "build_seconds": 0.014325725,
+      "query_seconds": 0.23068244,
+      "checksum": "13669098834866020925",
+      "validation_checksum": "18187700739035608926",
+      "nodes_after_build": -1,
+      "node_count": -1,
+      "allocated_capacity_bytes": -1,
+      "peak_rss_bytes": 45379584,
+      "verified": false,
+      "operations": {
+        "insert": 124880,
+        "pop": 124469,
+        "get": 125572,
+        "split_merge": 125079,
+        "prod": 0,
+        "apply": 0,
+        "reverse": 0,
+        "set": 0
+      },
+      "repeat": 1,
+      "baseline_label": "pointer-snapshot-include-redirect-only"
+    },
+    {
+      "variant": "optimized",
+      "family": "wb_tree",
+      "mode": "latest",
+      "workload": "mixed",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 1,
+      "build_seconds": 0.015189489,
+      "query_seconds": 0.276746618,
+      "checksum": "13669098834866020925",
+      "validation_checksum": "18187700739035608926",
+      "nodes_after_build": -1,
+      "node_count": -1,
+      "allocated_capacity_bytes": -1,
+      "peak_rss_bytes": 42233856,
+      "verified": false,
+      "operations": {
+        "insert": 124880,
+        "pop": 124469,
+        "get": 125572,
+        "split_merge": 125079,
+        "prod": 0,
+        "apply": 0,
+        "reverse": 0,
+        "set": 0
+      },
+      "repeat": 1
+    }
+  ],
+  "summaries": [
+    {
+      "family": "wb_tree",
+      "variant": "baseline",
+      "mode": "latest",
+      "workload": "mixed",
+      "successful_runs": 1,
+      "median_build_seconds": 0.014325725,
+      "median_query_seconds": 0.23068244,
+      "median_peak_rss_bytes": 45379584,
+      "median_allocated_capacity_bytes": null,
+      "median_node_count": null
+    },
+    {
+      "family": "wb_tree",
+      "variant": "optimized",
+      "mode": "latest",
+      "workload": "mixed",
+      "successful_runs": 1,
+      "median_build_seconds": 0.015189489,
+      "median_query_seconds": 0.276746618,
+      "median_peak_rss_bytes": 42233856,
+      "median_allocated_capacity_bytes": null,
+      "median_node_count": null
+    }
+  ],
+  "ok": true
+}

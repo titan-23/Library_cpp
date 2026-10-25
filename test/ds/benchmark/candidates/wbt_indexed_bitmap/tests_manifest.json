@@ -1,0 +1,22 @@
+{
+  "pool_lifetime_test.cpp": {
+    "source_sha256": "0bb2ee17f2028026c9b3f226cf06ca9a740cf3680dedcfa46351113b6045fa0b",
+    "staged_sha256": "249561f9953f0c1cacc0e1b2d6c716b3061da91c71ee537ad6edf739012a79cb",
+    "change": "Same-directory candidate includes and compile-command comment only"
+  },
+  "pool_reentrant_test.cpp": {
+    "source_sha256": "ed657835772b8b1dacd3b6d871f676579248be1ea7956da67b4b39e5a37543f2",
+    "staged_sha256": "812c2497eb62795a7f059ac18a02589303ce0a758d4116f6cd5a615af3bc4203",
+    "change": "Same-directory candidate includes and compile-command comment only"
+  },
+  "reference_stability_test.cpp": {
+    "source_sha256": "e004811144428ccfaa8919aa1a8e0ccb9aea927865622568ea2e6911f15e6335",
+    "staged_sha256": "f9881b97ea8c2d97df08c4fac427ace716fe52e580037eda777399a0d820711d",
+    "change": "Same-directory candidate includes and compile-command comment only"
+  },
+  "mutable_random_test.cpp": {
+    "source_sha256": "f7e5abab39e2676b2371fcc06dd1320097e115eff387bec9051df627244f4e7a",
+    "staged_sha256": "752af89f6e9b0b194ee820d60fd318e9c0cfc154e90c979f659e85d7c17e9f6d",
+    "change": "Same-directory candidate includes and compile-command comment only"
+  }
+}

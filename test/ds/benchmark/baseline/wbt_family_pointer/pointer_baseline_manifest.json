@@ -1,0 +1,75 @@
+{
+  "label": "pointer-snapshot-include-redirect-only",
+  "generator": "test/ds/benchmark/prepare_wbt_family_pointer_baselines.py",
+  "generator_sha256": "18e713c4843b3e5da714664614c0bddf23cc845672cf0c8c8f1afd93b97a227f",
+  "policy": "Raw snapshots are byte-exact and reused on later invocations; production changes are not imported.",
+  "scope": "Isolated copies rewrite only quoted local helper include paths to frozen sibling files.",
+  "runner_baseline_dir": "test/ds/benchmark/baseline/wbt_family_pointer/isolated",
+  "external_quoted_include_retained": "titan_cpplib/others/print.cpp",
+  "files": {
+    "wb_tree.cpp": {
+      "original_path": "titan_cpplib/ds/wb_tree.cpp",
+      "raw": "test/ds/benchmark/baseline/wbt_family_pointer/wb_tree.cpp",
+      "raw_sha256": "a71723ca4c0faf92cfdb665599f9fc74ac72f1c529f9b31cb0d73514f7dfbf6b",
+      "isolated": "test/ds/benchmark/baseline/wbt_family_pointer/isolated/wb_tree.cpp",
+      "isolated_sha256": "2169ee1a0e5d1aec1de5049524661b2418d9ed8fde80f079a447cdcac0df4461",
+      "include_rewrites": [
+        {
+          "old": "#include \"titan_cpplib/ds/_mutable_wbt_sequence.cpp\"",
+          "new": "#include \"_mutable_wbt_sequence.cpp\"",
+          "occurrences": 1
+        }
+      ]
+    },
+    "wb_tree_seg.cpp": {
+      "original_path": "titan_cpplib/ds/wb_tree_seg.cpp",
+      "raw": "test/ds/benchmark/baseline/wbt_family_pointer/wb_tree_seg.cpp",
+      "raw_sha256": "1d29630d37440d1bb3308ab6c60fc14acbe9c2e687a8a7d6e028d8e2dd198f68",
+      "isolated": "test/ds/benchmark/baseline/wbt_family_pointer/isolated/wb_tree_seg.cpp",
+      "isolated_sha256": "0670ca5c064f275881e770b83f7939ce55bf9d5b5947aa224b7b968602392f98",
+      "include_rewrites": [
+        {
+          "old": "#include \"titan_cpplib/ds/_mutable_wbt_sequence.cpp\"",
+          "new": "#include \"_mutable_wbt_sequence.cpp\"",
+          "occurrences": 1
+        }
+      ]
+    },
+    "lazy_wb_tree.cpp": {
+      "original_path": "titan_cpplib/ds/lazy_wb_tree.cpp",
+      "raw": "test/ds/benchmark/baseline/wbt_family_pointer/lazy_wb_tree.cpp",
+      "raw_sha256": "52d3f8092278d2751f9267da3c4eafe551c5c2706c2268e799b357518712a0d5",
+      "isolated": "test/ds/benchmark/baseline/wbt_family_pointer/isolated/lazy_wb_tree.cpp",
+      "isolated_sha256": "0ffe86e00fcd4f16959b8b6396e0f55af4a714a469eea2a1fa45645028040782",
+      "include_rewrites": [
+        {
+          "old": "#include \"titan_cpplib/ds/_wbt_node_pool.cpp\"",
+          "new": "#include \"_wbt_node_pool.cpp\"",
+          "occurrences": 1
+        }
+      ]
+    },
+    "_mutable_wbt_sequence.cpp": {
+      "original_path": "titan_cpplib/ds/_mutable_wbt_sequence.cpp",
+      "raw": "test/ds/benchmark/baseline/wbt_family_pointer/_mutable_wbt_sequence.cpp",
+      "raw_sha256": "ff3df0b0697975247a471498c6a7e4b905bac1331cc1d93f3528f11ca3e6039c",
+      "isolated": "test/ds/benchmark/baseline/wbt_family_pointer/isolated/_mutable_wbt_sequence.cpp",
+      "isolated_sha256": "d6f20f45195c9be98d5ae292450afa9193dd3df39dd74db89f1d0f3fdfe965ee",
+      "include_rewrites": [
+        {
+          "old": "#include \"titan_cpplib/ds/_wbt_node_pool.cpp\"",
+          "new": "#include \"_wbt_node_pool.cpp\"",
+          "occurrences": 1
+        }
+      ]
+    },
+    "_wbt_node_pool.cpp": {
+      "original_path": "titan_cpplib/ds/_wbt_node_pool.cpp",
+      "raw": "test/ds/benchmark/baseline/wbt_family_pointer/_wbt_node_pool.cpp",
+      "raw_sha256": "7fe5068b28328715c6a6c93782b440b8d0e4f109965e2174dbdb62052b491f60",
+      "isolated": "test/ds/benchmark/baseline/wbt_family_pointer/isolated/_wbt_node_pool.cpp",
+      "isolated_sha256": "7fe5068b28328715c6a6c93782b440b8d0e4f109965e2174dbdb62052b491f60",
+      "include_rewrites": []
+    }
+  }
+}

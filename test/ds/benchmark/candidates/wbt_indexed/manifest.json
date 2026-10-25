@@ -1,0 +1,50 @@
+{
+  "_wbt_indexed_pool.cpp": {
+    "source": "/tmp/wbt_indexed/_wbt_indexed_pool.cpp",
+    "source_sha256": "0feae18bb36468a869fdfc0b134c81c4c390d17b9e6bdc295a6bd000f05d13c7",
+    "staged_sha256": "0feae18bb36468a869fdfc0b134c81c4c390d17b9e6bdc295a6bd000f05d13c7",
+    "rewrite": "Absolute candidate helper includes replaced with same-directory relative includes"
+  },
+  "_mutable_wbt_sequence_indexed.cpp": {
+    "source": "/tmp/wbt_indexed/_mutable_wbt_sequence_indexed.cpp",
+    "source_sha256": "b59aecea4c6dd2a3631795bb2cfd7f39ee8f43bc396d06fb37f0167095ba34bb",
+    "staged_sha256": "3102c9a4103d27961a7988961c11387c30be61def7a033c8a782db646b13f23a",
+    "rewrite": "Absolute candidate helper includes replaced with same-directory relative includes"
+  },
+  "wb_tree_blocked.cpp": {
+    "source": "/tmp/wbt_indexed/wb_tree_blocked.cpp",
+    "source_sha256": "8652065b9889575c678b5bace64fee172011f2823c5c1bd84eedb1c2b9d79d05",
+    "staged_sha256": "ee69a3d51b2dafe09d4bc8720264d4b90c96c6af0f9ef43b29678cdb549ac905",
+    "rewrite": "Absolute candidate helper includes replaced with same-directory relative includes"
+  },
+  "wb_tree_vector.cpp": {
+    "source": "/tmp/wbt_indexed/wb_tree_vector.cpp",
+    "source_sha256": "87c170ae2119a8d672316b30a4db89c9ca5d821a833015eb90f9ef13ee5e608e",
+    "staged_sha256": "6be3687a0226bfce6efa0f31f88f60da94ad5b11c80568035a322218334d7fe5",
+    "rewrite": "Absolute candidate helper includes replaced with same-directory relative includes"
+  },
+  "wb_tree_seg_blocked.cpp": {
+    "source": "/tmp/wbt_indexed/wb_tree_seg_blocked.cpp",
+    "source_sha256": "791882755e051883bda3a97b52bc7147966f5ff2bb395fb6f9e78aa80916d8c4",
+    "staged_sha256": "3c776305b8e2a23ad42788f69a3416a2c5014f5b8165a7199b1d4912b333c7d9",
+    "rewrite": "Absolute candidate helper includes replaced with same-directory relative includes"
+  },
+  "wb_tree_seg_vector.cpp": {
+    "source": "/tmp/wbt_indexed/wb_tree_seg_vector.cpp",
+    "source_sha256": "c08b0c58b9b9bf9f39502b6cc2cf3a301d6d74a7974e0cb55ac70c46297101b4",
+    "staged_sha256": "4eed25d1c41740947d612af9b9790de9828f280e967c5c7e50764a65a3851123",
+    "rewrite": "Absolute candidate helper includes replaced with same-directory relative includes"
+  },
+  "lazy_wb_tree_blocked.cpp": {
+    "source": "/tmp/wbt_indexed/lazy_blocked.cpp",
+    "source_sha256": "f43f2fdc7a7156a7d7b81cdf5e3302a1ba1e38675b3118fcdf4dd4ccbf13d2b1",
+    "staged_sha256": "1c50abdb25232fea3a6b4d64186c77e5352de32f11a7fee261ba11d7badda80c",
+    "rewrite": "Absolute candidate helper includes replaced with same-directory relative includes"
+  },
+  "lazy_wb_tree_vector.cpp": {
+    "source": "/tmp/wbt_indexed/lazy_vector.cpp",
+    "source_sha256": "ad00a56d210e9ed73c05fa0ba15fe4d267350f8dd2c673524b9cbfd3d1ebee0b",
+    "staged_sha256": "7ba362c463cd47636c7c5ad5ba7cb3f242801ebda82998e63bb8735a770fb66a",
+    "rewrite": "Absolute candidate helper includes replaced with same-directory relative includes"
+  }
+}

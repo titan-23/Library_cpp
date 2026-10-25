@@ -1,0 +1,265 @@
+{
+  "compiler": "g++ (Ubuntu 12.3.0-1ubuntu1~22.04.3) 12.3.0",
+  "flags": [
+    "-std=c++17",
+    "-O3",
+    "-DNDEBUG"
+  ],
+  "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+  "machine": "x86_64",
+  "cpu_model": "AMD Ryzen Threadripper 3990X 64-Core Processor",
+  "cpu_affinity": [
+    24
+  ],
+  "benchmark_sha256": "2146f10e81be6f38c6b55c4856e6bf45cbb77042c808197524d6a628384d9739",
+  "runner_sha256": "99fdd536b389b5548521c17938c8ab2925d1680b2c4738d3a6a140297e1e2830",
+  "baseline_label": "raw-snapshot",
+  "baseline_notes": "Exact saved source; no correctness or performance patches.",
+  "parameters": {
+    "n": 500000,
+    "q": 500000,
+    "seed": 23,
+    "mode": "both",
+    "workload": "set",
+    "repeats": 3,
+    "verify": false,
+    "enable_set": true
+  },
+  "families": {
+    "wb_tree_seg": {
+      "kind": 2,
+      "headers": {
+        "baseline": "/home/titan/source/Library_cpp/test/ds/benchmark/baseline/wbt_family/wb_tree_seg.cpp",
+        "optimized": "/home/titan/source/Library_cpp/titan_cpplib/ds/wb_tree_seg.cpp"
+      },
+      "source_sha256": {
+        "baseline": "f2613db23733638cb10421c1efda24d7afb539cbac057c19173962013ac71163",
+        "optimized": "1d29630d37440d1bb3308ab6c60fc14acbe9c2e687a8a7d6e028d8e2dd198f68"
+      },
+      "quoted_dependency_sha256": {
+        "baseline": {
+          "test/ds/benchmark/baseline/wbt_family/wb_tree_seg.cpp": "f2613db23733638cb10421c1efda24d7afb539cbac057c19173962013ac71163",
+          "titan_cpplib/others/print.cpp": "fef9562838ad07fd9aafba8eab3b1fbd26b5a53082947b06ae47cce243bab374"
+        },
+        "optimized": {
+          "titan_cpplib/ds/_mutable_wbt_sequence.cpp": "ff3df0b0697975247a471498c6a7e4b905bac1331cc1d93f3528f11ca3e6039c",
+          "titan_cpplib/ds/_wbt_node_pool.cpp": "7fe5068b28328715c6a6c93782b440b8d0e4f109965e2174dbdb62052b491f60",
+          "titan_cpplib/ds/wb_tree_seg.cpp": "1d29630d37440d1bb3308ab6c60fc14acbe9c2e687a8a7d6e028d8e2dd198f68",
+          "titan_cpplib/others/print.cpp": "fef9562838ad07fd9aafba8eab3b1fbd26b5a53082947b06ae47cce243bab374"
+        }
+      }
+    }
+  },
+  "runs": [
+    {
+      "variant": "baseline",
+      "family": "wb_tree_seg",
+      "mode": "latest",
+      "workload": "set",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 1,
+      "build_seconds": 0.023826516,
+      "query_seconds": 0.187242029,
+      "checksum": "15539711000306304774",
+      "validation_checksum": "6875878197573516354",
+      "nodes_after_build": -1,
+      "node_count": -1,
+      "allocated_capacity_bytes": -1,
+      "peak_rss_bytes": 53768192,
+      "verified": false,
+      "operations": {
+        "insert": 0,
+        "pop": 0,
+        "get": 0,
+        "split_merge": 0,
+        "prod": 0,
+        "apply": 0,
+        "reverse": 0,
+        "set": 500000
+      },
+      "repeat": 1,
+      "baseline_label": "raw-snapshot"
+    },
+    {
+      "variant": "optimized",
+      "family": "wb_tree_seg",
+      "mode": "latest",
+      "workload": "set",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 1,
+      "build_seconds": 0.018197223,
+      "query_seconds": 0.149281116,
+      "checksum": "15539711000306304774",
+      "validation_checksum": "6875878197573516354",
+      "nodes_after_build": -1,
+      "node_count": -1,
+      "allocated_capacity_bytes": -1,
+      "peak_rss_bytes": 53764096,
+      "verified": false,
+      "operations": {
+        "insert": 0,
+        "pop": 0,
+        "get": 0,
+        "split_merge": 0,
+        "prod": 0,
+        "apply": 0,
+        "reverse": 0,
+        "set": 500000
+      },
+      "repeat": 1
+    },
+    {
+      "variant": "optimized",
+      "family": "wb_tree_seg",
+      "mode": "latest",
+      "workload": "set",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 1,
+      "build_seconds": 0.018361083,
+      "query_seconds": 0.14935738,
+      "checksum": "15539711000306304774",
+      "validation_checksum": "6875878197573516354",
+      "nodes_after_build": -1,
+      "node_count": -1,
+      "allocated_capacity_bytes": -1,
+      "peak_rss_bytes": 53768192,
+      "verified": false,
+      "operations": {
+        "insert": 0,
+        "pop": 0,
+        "get": 0,
+        "split_merge": 0,
+        "prod": 0,
+        "apply": 0,
+        "reverse": 0,
+        "set": 500000
+      },
+      "repeat": 2
+    },
+    {
+      "variant": "baseline",
+      "family": "wb_tree_seg",
+      "mode": "latest",
+      "workload": "set",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 1,
+      "build_seconds": 0.024306045,
+      "query_seconds": 0.18874721,
+      "checksum": "15539711000306304774",
+      "validation_checksum": "6875878197573516354",
+      "nodes_after_build": -1,
+      "node_count": -1,
+      "allocated_capacity_bytes": -1,
+      "peak_rss_bytes": 53764096,
+      "verified": false,
+      "operations": {
+        "insert": 0,
+        "pop": 0,
+        "get": 0,
+        "split_merge": 0,
+        "prod": 0,
+        "apply": 0,
+        "reverse": 0,
+        "set": 500000
+      },
+      "repeat": 2,
+      "baseline_label": "raw-snapshot"
+    },
+    {
+      "variant": "baseline",
+      "family": "wb_tree_seg",
+      "mode": "latest",
+      "workload": "set",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 1,
+      "build_seconds": 0.023856854,
+      "query_seconds": 0.187061276,
+      "checksum": "15539711000306304774",
+      "validation_checksum": "6875878197573516354",
+      "nodes_after_build": -1,
+      "node_count": -1,
+      "allocated_capacity_bytes": -1,
+      "peak_rss_bytes": 53768192,
+      "verified": false,
+      "operations": {
+        "insert": 0,
+        "pop": 0,
+        "get": 0,
+        "split_merge": 0,
+        "prod": 0,
+        "apply": 0,
+        "reverse": 0,
+        "set": 500000
+      },
+      "repeat": 3,
+      "baseline_label": "raw-snapshot"
+    },
+    {
+      "variant": "optimized",
+      "family": "wb_tree_seg",
+      "mode": "latest",
+      "workload": "set",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 1,
+      "build_seconds": 0.018278496,
+      "query_seconds": 0.149398839,
+      "checksum": "15539711000306304774",
+      "validation_checksum": "6875878197573516354",
+      "nodes_after_build": -1,
+      "node_count": -1,
+      "allocated_capacity_bytes": -1,
+      "peak_rss_bytes": 53764096,
+      "verified": false,
+      "operations": {
+        "insert": 0,
+        "pop": 0,
+        "get": 0,
+        "split_merge": 0,
+        "prod": 0,
+        "apply": 0,
+        "reverse": 0,
+        "set": 500000
+      },
+      "repeat": 3
+    }
+  ],
+  "summaries": [
+    {
+      "family": "wb_tree_seg",
+      "variant": "baseline",
+      "mode": "latest",
+      "workload": "set",
+      "successful_runs": 3,
+      "median_build_seconds": 0.023856854,
+      "median_query_seconds": 0.187242029,
+      "median_peak_rss_bytes": 53768192,
+      "median_allocated_capacity_bytes": null,
+      "median_node_count": null
+    },
+    {
+      "family": "wb_tree_seg",
+      "variant": "optimized",
+      "mode": "latest",
+      "workload": "set",
+      "successful_runs": 3,
+      "median_build_seconds": 0.018278496,
+      "median_query_seconds": 0.14935738,
+      "median_peak_rss_bytes": 53764096,
+      "median_allocated_capacity_bytes": null,
+      "median_node_count": null
+    }
+  ],
+  "ok": true
+}

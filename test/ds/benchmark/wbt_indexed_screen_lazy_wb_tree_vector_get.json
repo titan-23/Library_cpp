@@ -1,0 +1,141 @@
+{
+  "compiler": "g++ (Ubuntu 12.3.0-1ubuntu1~22.04.3) 12.3.0",
+  "flags": [
+    "-std=c++17",
+    "-O3",
+    "-DNDEBUG"
+  ],
+  "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+  "machine": "x86_64",
+  "cpu_model": "AMD Ryzen Threadripper 3990X 64-Core Processor",
+  "cpu_affinity": [
+    24
+  ],
+  "benchmark_sha256": "2146f10e81be6f38c6b55c4856e6bf45cbb77042c808197524d6a628384d9739",
+  "runner_sha256": "99fdd536b389b5548521c17938c8ab2925d1680b2c4738d3a6a140297e1e2830",
+  "baseline_label": "pointer-snapshot-include-redirect-only",
+  "baseline_notes": "Only helper include paths changed; see pointer_baseline_manifest.json",
+  "parameters": {
+    "n": 500000,
+    "q": 500000,
+    "seed": 23,
+    "mode": "latest",
+    "workload": "get",
+    "repeats": 1,
+    "verify": false,
+    "enable_set": false
+  },
+  "families": {
+    "lazy_wb_tree": {
+      "kind": 3,
+      "headers": {
+        "baseline": "/home/titan/source/Library_cpp/test/ds/benchmark/baseline/wbt_family_pointer/isolated/lazy_wb_tree.cpp",
+        "optimized": "/home/titan/source/Library_cpp/test/ds/benchmark/candidates/wbt_indexed/lazy_wb_tree_vector.cpp"
+      },
+      "source_sha256": {
+        "baseline": "0ffe86e00fcd4f16959b8b6396e0f55af4a714a469eea2a1fa45645028040782",
+        "optimized": "7ba362c463cd47636c7c5ad5ba7cb3f242801ebda82998e63bb8735a770fb66a"
+      },
+      "quoted_dependency_sha256": {
+        "baseline": {
+          "test/ds/benchmark/baseline/wbt_family_pointer/isolated/_wbt_node_pool.cpp": "7fe5068b28328715c6a6c93782b440b8d0e4f109965e2174dbdb62052b491f60",
+          "test/ds/benchmark/baseline/wbt_family_pointer/isolated/lazy_wb_tree.cpp": "0ffe86e00fcd4f16959b8b6396e0f55af4a714a469eea2a1fa45645028040782"
+        },
+        "optimized": {
+          "test/ds/benchmark/candidates/wbt_indexed/_wbt_indexed_pool.cpp": "0feae18bb36468a869fdfc0b134c81c4c390d17b9e6bdc295a6bd000f05d13c7",
+          "test/ds/benchmark/candidates/wbt_indexed/lazy_wb_tree_vector.cpp": "7ba362c463cd47636c7c5ad5ba7cb3f242801ebda82998e63bb8735a770fb66a"
+        }
+      }
+    }
+  },
+  "runs": [
+    {
+      "variant": "baseline",
+      "family": "lazy_wb_tree",
+      "mode": "latest",
+      "workload": "get",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 1,
+      "build_seconds": 0.021253148,
+      "query_seconds": 0.130686289,
+      "checksum": "1906816596322240131",
+      "validation_checksum": "8903245256719566071",
+      "nodes_after_build": -1,
+      "node_count": -1,
+      "allocated_capacity_bytes": -1,
+      "peak_rss_bytes": 62152704,
+      "verified": false,
+      "operations": {
+        "insert": 0,
+        "pop": 0,
+        "get": 500000,
+        "split_merge": 0,
+        "prod": 0,
+        "apply": 0,
+        "reverse": 0,
+        "set": 0
+      },
+      "repeat": 1,
+      "baseline_label": "pointer-snapshot-include-redirect-only"
+    },
+    {
+      "variant": "optimized",
+      "family": "lazy_wb_tree",
+      "mode": "latest",
+      "workload": "get",
+      "n": 500000,
+      "q": 500000,
+      "seed": 23,
+      "retained_versions": 1,
+      "build_seconds": 0.039724169,
+      "query_seconds": 0.132454205,
+      "checksum": "1906816596322240131",
+      "validation_checksum": "8903245256719566071",
+      "nodes_after_build": -1,
+      "node_count": -1,
+      "allocated_capacity_bytes": -1,
+      "peak_rss_bytes": 61542400,
+      "verified": false,
+      "operations": {
+        "insert": 0,
+        "pop": 0,
+        "get": 500000,
+        "split_merge": 0,
+        "prod": 0,
+        "apply": 0,
+        "reverse": 0,
+        "set": 0
+      },
+      "repeat": 1
+    }
+  ],
+  "summaries": [
+    {
+      "family": "lazy_wb_tree",
+      "variant": "baseline",
+      "mode": "latest",
+      "workload": "get",
+      "successful_runs": 1,
+      "median_build_seconds": 0.021253148,
+      "median_query_seconds": 0.130686289,
+      "median_peak_rss_bytes": 62152704,
+      "median_allocated_capacity_bytes": null,
+      "median_node_count": null
+    },
+    {
+      "family": "lazy_wb_tree",
+      "variant": "optimized",
+      "mode": "latest",
+      "workload": "get",
+      "successful_runs": 1,
+      "median_build_seconds": 0.039724169,
+      "median_query_seconds": 0.132454205,
+      "median_peak_rss_bytes": 61542400,
+      "median_allocated_capacity_bytes": null,
+      "median_node_count": null
+    }
+  ],
+  "ok": true
+}

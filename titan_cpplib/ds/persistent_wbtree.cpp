@@ -1,96 +1,285 @@
 /// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/ds/persistent_wbtree.cpp
 #pragma once
+#include <new>
+#include <type_traits>
+#include <utility>
 
 #include <iostream>
 #include <vector>
-#include <cmath>
 #include <cassert>
-#include <stack>
 #include <memory>
+#include <algorithm>
+#include <cstdint>
 #include "titan_cpplib/others/print.cpp"
 using namespace std;
 
 namespace titan23 {
 
-template <class T, typename SizeType=int>
+template <class T, typename SizeType = int>
 class PersistentWBTree {
 public:
     struct MemoryAllocator {
-
-        // #pragma pack(push, 1)
         struct Node {
-            SizeType left, right, size;
-            Node() {}
-            Node(SizeType l, SizeType r, SizeType s) : left(l), right(r), size(s) {}
+            SizeType left, right, size, left_size;
+
+            /// @brief メタデータをゼロ初期化する / O(1)
+            Node() : left(0), right(0), size(0), left_size(0) {}
+
+            /// @brief 子と部分木サイズを設定する / O(1)
+            Node(SizeType l, SizeType r, SizeType s) : left(l), right(r), size(s), left_size(0) {}
         };
-        // #pragma pack(pop)
+        template <class U, unsigned BlockBits>
+        class BlockVector {
+            static constexpr size_t block_size = size_t(1) << BlockBits;
+            static constexpr size_t block_mask = block_size - 1;
+            static constexpr size_t block_alignment = alignof(U) > 64 ? alignof(U) : 64;
+            static_assert(block_size <= size_t(-1) / sizeof(U), "block too large");
+            using Alloc = std::allocator<U>;
+            using Traits = std::allocator_traits<Alloc>;
+            Alloc allocator_;
+            std::vector<U*> blocks_;
+            size_t size_ = 0;
 
-        vector<Node> d;
-        vector<T> keys;
-        SizeType ptr;
-
-        MemoryAllocator() : ptr(1) {
-            d.resize(1);
-            d[0] = {0, 0, 0};
-            keys.resize(1);
-        }
-
-        SizeType new_node(const T key) {
-            if (d.size() > ptr) {
-                keys[ptr] = key;
-                d[ptr].left = 0;
-                d[ptr].right = 0;
-                d[ptr].size = 1;
-            } else {
-                keys.emplace_back(key);
-                d.emplace_back(0, 0, 1);
+            void add_block() {
+                U *block = static_cast<U*>(::operator new(sizeof(U) * block_size, std::align_val_t(block_alignment)));
+                try {
+                    blocks_.push_back(block);
+                } catch (...) {
+                    ::operator delete(block, std::align_val_t(block_alignment));
+                    throw;
+                }
             }
-            ptr++;
-            return ptr - 1;
+
+            void clear_storage() noexcept {
+                if constexpr (!std::is_trivially_destructible<U>::value) {
+                    for (size_t i = 0; i < size_; ++i) {
+                        Traits::destroy(allocator_, &(*this)[i]);
+                    }
+                }
+                for (U *block : blocks_) {
+                    ::operator delete(block, std::align_val_t(block_alignment));
+                }
+                blocks_.clear();
+                size_ = 0;
+            }
+
+        public:
+            /// @brief 空の領域を初期化する / O(1)
+            BlockVector() = default;
+
+            /// @brief コピー構築を禁止する
+            BlockVector(const BlockVector&) = delete;
+
+            /// @brief コピー代入を禁止する
+            BlockVector& operator=(const BlockVector&) = delete;
+
+            /// @brief 領域の所有権を移動する / O(1)
+            BlockVector(BlockVector&& other) noexcept
+                : blocks_(std::move(other.blocks_)), size_(std::exchange(other.size_, 0)) {
+                other.blocks_.clear();
+            }
+
+            /// @brief 現在の N 要素と M ブロックを破棄して移動代入する / O(N + M)
+            BlockVector& operator=(BlockVector&& other) noexcept {
+                if (this != &other) {
+                    clear_storage();
+                    blocks_ = std::move(other.blocks_);
+                    size_ = std::exchange(other.size_, 0);
+                    other.blocks_.clear();
+                }
+                return *this;
+            }
+
+            /// @brief 構築済みの N 要素と M ブロックを破棄する / O(N + M)
+            ~BlockVector() { clear_storage(); }
+
+            /// @brief i 番目の要素への参照を返す / O(1)
+            U& operator[](size_t i) noexcept {
+                return blocks_[i >> BlockBits][i & block_mask];
+            }
+
+            /// @brief i 番目の要素への定数参照を返す / O(1)
+            const U& operator[](size_t i) const noexcept {
+                return blocks_[i >> BlockBits][i & block_mask];
+            }
+
+            /// @brief 構築済み要素数を返す / O(1)
+            size_t size() const noexcept { return size_; }
+
+            /// @brief 確保済み容量を返す / O(1)
+            size_t capacity() const noexcept { return blocks_.size() * block_size; }
+
+            /// @brief N 要素分の容量を確保する / O(N)
+            void reserve(size_t n) {
+                const size_t required = n / block_size + (n % block_size != 0);
+                blocks_.reserve(required);
+                while (blocks_.size() < required) add_block();
+            }
+
+            /// @brief 末尾に要素を構築する / 償却 O(1)
+            template <class... Args>
+            U& emplace_back(Args&&... args) {
+                if (size_ == capacity()) add_block();
+                U *value = blocks_[size_ >> BlockBits] + (size_ & block_mask);
+                Traits::construct(allocator_, value, std::forward<Args>(args)...);
+                ++size_;
+                return *value;
+            }
+
+            /// @brief 末尾に要素をコピーする / 償却 O(1)
+            void push_back(const U& value) { emplace_back(value); }
+
+            /// @brief 末尾の要素を破棄する / O(1)
+            void pop_back() noexcept {
+                assert(size_ != 0);
+                --size_;
+                Traits::destroy(allocator_, &(*this)[size_]);
+            }
+        };
+
+        struct Slot {
+            Node tree;
+            T key;
+
+            /// @brief ノードを初期化する / O(1)
+            Slot(SizeType l, SizeType r, SizeType s, const T& value)
+                : tree(l, r, s), key(value) {}
+        };
+        using Pool = BlockVector<Slot, 16>;
+        Pool pool;
+
+        template<class U, U Slot::* Member>
+        struct View {
+            Pool *pool;
+
+            /// @brief i 番目の要素への参照を返す / O(1)
+            U& operator[](size_t i) noexcept { return (*pool)[i].*Member; }
+
+            /// @brief i 番目の要素への定数参照を返す / O(1)
+            const U& operator[](size_t i) const noexcept { return (*pool)[i].*Member; }
+
+            /// @brief 構築済み要素数を返す / O(1)
+            size_t size() const noexcept { return pool->size(); }
+
+            /// @brief 確保済み容量を返す / O(1)
+            size_t capacity() const noexcept { return pool->capacity(); }
+
+            /// @brief N 要素分の容量を確保する / O(N)
+            void reserve(size_t n) { pool->reserve(n); }
+        };
+        View<Node, &Slot::tree> d;
+        View<T, &Slot::key> keys;
+        size_t ptr, cap;
+
+        /// @brief 番兵を持つ領域を初期化する / O(1)
+        MemoryAllocator() : d{&pool}, keys{&pool}, ptr(1), cap(0) {
+            pool.emplace_back(0, 0, 0, T{});
+            cap = pool.capacity();
         }
 
+        /// @brief 領域の所有権を移動する / O(1)
+        MemoryAllocator(MemoryAllocator&& other) noexcept
+            : pool(std::move(other.pool)), d{&pool}, keys{&pool},
+              ptr(other.ptr), cap(other.cap) {}
+
+        /// @brief 現在の N 要素と M ブロックを破棄して移動代入する / O(N + M)
+        MemoryAllocator& operator=(MemoryAllocator&& other) noexcept {
+            if (this != &other) {
+                pool = std::move(other.pool);
+                ptr = other.ptr;
+                cap = other.cap;
+            }
+            return *this;
+        }
+
+        /// @brief ノードを複製して番号を返す / 償却 O(1)
         SizeType copy(SizeType node) {
-            SizeType v = new_node(keys[node]);
-            d[v].left = d[node].left;
-            d[v].right = d[node].right;
-            d[v].size = d[node].size;
-            return v;
+            if (!node) return 0;
+            if (pool.size() > ptr) {
+                pool[ptr] = pool[node];
+            } else {
+                try {
+                    pool.push_back(pool[node]);
+                } catch (...) {
+                    cap = pool.capacity();
+                    throw;
+                }
+                cap = pool.capacity();
+            }
+            return ptr++;
         }
 
-        void reserve(SizeType cap) {
-            keys.reserve(cap);
-            d.reserve(cap);
+        /// @brief 値 key を持つノードを作成する / 償却 O(1)
+        SizeType new_node(const T& key) {
+            if (pool.size() > ptr) {
+                pool[ptr].tree = {0, 0, 1};
+                pool[ptr].key = key;
+            } else {
+                try {
+                    pool.emplace_back(0, 0, 1, key);
+                } catch (...) {
+                    cap = pool.capacity();
+                    throw;
+                }
+                cap = pool.capacity();
+            }
+            return ptr++;
         }
 
-        void reset() {
-            ptr = 1;
+        /// @brief N ノード分の容量を確保する / O(N)
+        /// @note 容量はブロック単位で切り上げる
+        void reserve(SizeType n) {
+            try { pool.reserve(n); }
+            catch (...) { cap = pool.capacity(); throw; }
+            cap = pool.capacity();
         }
+
+        /// @brief 確保済み領域を再利用できる状態に戻す / O(1)
+        /// @note この領域を使う既存の木は無効になる
+        void reset() { ptr = 1; }
+
+        /// @brief 確保済み領域がほぼ埋まっているか判定する / O(1)
+        bool almost_full() const { return (double)ptr > max(1.0, cap * 0.99); }
+
+        /// @brief 確保済みノード領域のバイト数を返す / O(1)
+        size_t capacity_bytes() const { return pool.capacity() * sizeof(Slot); }
     };
 
     static MemoryAllocator ma;
 
 private:
-    using PTM = PersistentWBTree<T, SizeType>;
+    using PLTM = PersistentWBTree<T, SizeType>;
     static constexpr int DELTA = 3;
     static constexpr int GAMMA = 2;
     SizeType root;
 
-    inline SizeType weight_right(SizeType node) const { return ma.d[ma.d[node].right].size + 1; }
+    inline size_t weight_right(SizeType node) const {
+        return size_t(ma.pool[node].tree.size) - ma.pool[node].tree.left_size + (node == 0);
+    }
 
-    inline SizeType weight_left(SizeType node) const { return ma.d[ma.d[node].left].size + 1; }
+    inline size_t weight_left(SizeType node) const {
+        return size_t(ma.pool[node].tree.left_size) + 1;
+    }
 
-    inline SizeType weight(SizeType node) const { return ma.d[node].size + 1; }
+    inline size_t weight(SizeType node) const {
+        return size_t(ma.pool[node].tree.size) + 1;
+    }
 
     void update(SizeType node) {
-        ma.d[node].size = 1 + ma.d[ma.d[node].left].size + ma.d[ma.d[node].right].size;
+        ma.pool[node].tree.left_size = ma.pool[ma.pool[node].tree.left].tree.size;
+        ma.pool[node].tree.size = 1 + ma.pool[node].tree.left_size + ma.pool[ma.pool[node].tree.right].tree.size;
+    }
+
+    SizeType own(SizeType node, size_t first) {
+        return node && static_cast<size_t>(node) < first ? ma.copy(node) : node;
     }
 
     void _build(vector<T> const &a) {
         auto build = [&] (auto &&build, SizeType l, SizeType r) -> SizeType {
-            SizeType mid = (l + r) >> 1;
+            SizeType mid = l + (r - l) / 2;
             SizeType node = ma.new_node(a[mid]);
-            if (l != mid) ma.d[node].left = build(build, l, mid);
-            if (mid+1 != r) ma.d[node].right = build(build, mid+1, r);
+            if (l != mid) ma.pool[node].tree.left = build(build, l, mid);
+            if (mid+1 != r) ma.pool[node].tree.right = build(build, mid+1, r);
             update(node);
             return node;
         };
@@ -102,243 +291,341 @@ private:
     }
 
     SizeType _rotate_right(SizeType node) {
-        SizeType u = ma.copy(ma.d[node].left);
-        ma.d[node].left = ma.d[u].right;
-        ma.d[u].right = node;
+        SizeType u = ma.pool[node].tree.left;
+        ma.pool[node].tree.left = ma.pool[u].tree.right;
+        ma.pool[u].tree.right = node;
         update(node);
         update(u);
         return u;
     }
 
     SizeType _rotate_left(SizeType node) {
-        SizeType u = ma.copy(ma.d[node].right);
-        ma.d[node].right = ma.d[u].left;
-        ma.d[u].left = node;
+        SizeType u = ma.pool[node].tree.right;
+        ma.pool[node].tree.right = ma.pool[u].tree.left;
+        ma.pool[u].tree.left = node;
         update(node);
         update(u);
         return u;
     }
 
-    SizeType _balance_left(SizeType node) {
-        SizeType u = ma.d[node].right;
-        if (weight_left(u) >= weight_right(u) * GAMMA) {
-            ma.d[node].right = _rotate_right(u);
+    // node is owned; its children may still belong to old versions.
+    SizeType balance(SizeType node, size_t first) {
+        if (weight_left(node) * DELTA < weight_right(node)) {
+            SizeType u = own(ma.pool[node].tree.right, first);
+            ma.pool[node].tree.right = u;
+            if (weight_left(u) >= weight_right(u) * GAMMA) {
+                SizeType v = own(ma.pool[u].tree.left, first);
+                ma.pool[u].tree.left = v;
+                ma.pool[node].tree.right = _rotate_right(u);
+            }
+            return _rotate_left(node);
         }
-        u = _rotate_left(node);
-        return u;
+        if (weight_right(node) * DELTA < weight_left(node)) {
+            SizeType u = own(ma.pool[node].tree.left, first);
+            ma.pool[node].tree.left = u;
+            if (weight_right(u) >= weight_left(u) * GAMMA) {
+                SizeType v = own(ma.pool[u].tree.right, first);
+                ma.pool[u].tree.right = v;
+                ma.pool[node].tree.left = _rotate_left(u);
+            }
+            return _rotate_right(node);
+        }
+        return node;
     }
 
-    SizeType _balance_right(SizeType node) {
-        SizeType u = ma.d[node].left;
-        if (weight_right(u) >= weight_left(u) * GAMMA) {
-            ma.d[node].left = _rotate_left(u);
-        }
-        u = _rotate_right(node);
-        return u;
-    }
-
-    SizeType _merge_with_root(SizeType l, SizeType root, SizeType r) {
+    SizeType _merge_with_root(SizeType l, SizeType pivot, SizeType r, size_t first) {
         if (weight(r) * DELTA < weight(l)) {
-            l = ma.copy(l);
-            ma.d[l].right = _merge_with_root(ma.d[l].right, root, r);
+            l = own(l, first);
+            ma.pool[l].tree.right = _merge_with_root(ma.pool[l].tree.right, pivot, r, first);
             update(l);
-            if (weight(ma.d[l].left) * DELTA < weight(ma.d[l].right)) {
-                return _balance_left(l);
-            }
-            return l;
-        } else if (weight(l) * DELTA < weight(r)) {
-            r = ma.copy(r);
-            ma.d[r].left = _merge_with_root(l, root, ma.d[r].left);
+            return balance(l, first);
+        }
+        if (weight(l) * DELTA < weight(r)) {
+            r = own(r, first);
+            ma.pool[r].tree.left = _merge_with_root(l, pivot, ma.pool[r].tree.left, first);
             update(r);
-            if (weight(ma.d[r].right) * DELTA < weight(ma.d[r].left)) {
-                return _balance_right(r);
+            return balance(r, first);
+        }
+        pivot = own(pivot, first);
+        ma.pool[pivot].tree.left = l;
+        ma.pool[pivot].tree.right = r;
+        update(pivot);
+        return pivot;
+    }
+
+    // Internal helpers for insertion/deletion with one copied search path.
+    // The caller captures first = ma.ptr once for the entire public operation.
+    // own()/balance() follow the ownership-frontier contract.
+    // balance() is called after update() and may copy heavy children.
+    SizeType insert_node(SizeType node, SizeType k, const T &value, size_t first) {
+        if (!node) return ma.new_node(value);
+        node = own(node, first);
+        SizeType left_size = ma.pool[node].tree.left_size;
+        if (k <= left_size) {
+            ma.pool[node].tree.left = insert_node(ma.pool[node].tree.left, k, value, first);
+        } else {
+            ma.pool[node].tree.right = insert_node(ma.pool[node].tree.right, k-left_size-1, value, first);
+        }
+        update(node);
+        return balance(node, first);
+    }
+
+    // Remove an extreme value without allocating a detached singleton node.
+    // An old clean root at the endpoint can be omitted without copying it.
+    SizeType erase_extreme(SizeType node, T &value, bool rightmost, size_t first) {
+        const SizeType next = rightmost ? ma.pool[node].tree.right : ma.pool[node].tree.left;
+        if (!next) {
+            value = ma.pool[node].key;
+            return rightmost ? ma.pool[node].tree.left : ma.pool[node].tree.right;
+        }
+        node = own(node, first);
+        const SizeType child = erase_extreme(next, value, rightmost, first);
+        if (rightmost) ma.pool[node].tree.right = child;
+        else ma.pool[node].tree.left = child;
+        update(node);
+        return balance(node, first);
+    }
+
+    SizeType erase_node(SizeType node, SizeType k, T &value, size_t first) {
+        const SizeType left = ma.pool[node].tree.left, right = ma.pool[node].tree.right;
+        const SizeType left_size = ma.pool[node].tree.left_size;
+        if (k == left_size && (!left || !right)) {
+            value = ma.pool[node].key;
+            return left ? left : right;
+        }
+        node = own(node, first);
+        if (k < left_size) {
+            ma.pool[node].tree.left = erase_node(left, k, value, first);
+        } else if (k > left_size) {
+            ma.pool[node].tree.right = erase_node(right, k-left_size-1, value, first);
+        } else {
+            value = ma.pool[node].key;
+            T replacement;
+            if (left_size >= ma.pool[node].tree.size-left_size-1) {
+                ma.pool[node].tree.left = erase_extreme(left, replacement, true, first);
+            } else {
+                ma.pool[node].tree.right = erase_extreme(right, replacement, false, first);
             }
-            return r;
+            ma.pool[node].key = replacement;
         }
-        root = ma.copy(root);
-        ma.d[root].left = l;
-        ma.d[root].right = r;
-        update(root);
-        return root;
+        update(node);
+        return balance(node, first);
     }
 
-    pair<SizeType, SizeType> _pop_right(SizeType node) {
-        return _split_node(node, ma.d[node].size-1);
-    }
-
-    SizeType _merge_node(SizeType l, SizeType r) {
-        if ((!l) && (!r)) { return 0; }
-        if (!l) { return ma.copy(r); }
-        if (!r) { return ma.copy(l); }
-        l = ma.copy(l);
-        r = ma.copy(r);
-        auto [l_, root_] = _pop_right(l);
-        return _merge_with_root(l_, root_, r);
-    }
-
-    pair<SizeType, SizeType> _split_node(SizeType node, SizeType k) {
-        if (!node) { return {0, 0}; }
-        SizeType lch = ma.d[node].left, rch = ma.d[node].right;
-        SizeType tmp = lch ? k-ma.d[lch].size : k;
-        if (tmp == 0) {
-            return {lch, _merge_with_root(0, node, rch)};
-        } else if (tmp < 0) {
-            auto [l, r] = _split_node(lch, k);
-            return {l, _merge_with_root(r, node, rch)};
-        } else {
-            auto [l, r] = _split_node(rch, tmp-1);
-            return {_merge_with_root(lch, node, l), r};
+    // Merge can use this specialized extraction instead of split(size-1).
+    // It returns a consumed singleton pivot, ready for join().
+    pair<SizeType, SizeType> extract_right_node(SizeType node, size_t first) {
+        node = own(node, first);
+        if (!ma.pool[node].tree.right) {
+            SizeType rest = ma.pool[node].tree.left;
+            ma.pool[node].tree.left = 0;
+            update(node);
+            return {rest, node};
         }
+        auto result = extract_right_node(ma.pool[node].tree.right, first);
+        ma.pool[node].tree.right = result.first;
+        update(node);
+        return {balance(node, first), result.second};
     }
 
-    SizeType _split_node_left(SizeType node, SizeType k) {
-        if (!node) { return 0; }
-        SizeType lch = ma.d[node].left, rch = ma.d[node].right;
-        SizeType tmp = lch ? k-ma.d[lch].size : k;
-        if (tmp == 0) {
-            return lch;
-        } else if (tmp < 0) {
-            SizeType l = _split_node_left(lch, k);
-            return l;
-        } else {
-            SizeType l = _split_node_left(rch, tmp-1);
-            return _merge_with_root(lch, node, l);
+    pair<SizeType, SizeType> extract_left_node(SizeType node, size_t first) {
+        node = own(node, first);
+        if (!ma.pool[node].tree.left) {
+            SizeType rest = ma.pool[node].tree.right;
+            ma.pool[node].tree.right = 0;
+            update(node);
+            return {rest, node};
         }
+        auto result = extract_left_node(ma.pool[node].tree.left, first);
+        ma.pool[node].tree.left = result.first;
+        update(node);
+        return {balance(node, first), result.second};
     }
 
-    SizeType _split_node_right(SizeType node, SizeType k) {
-        if (!node) { return 0; }
-        SizeType lch = ma.d[node].left, rch = ma.d[node].right;
-        SizeType tmp = lch ? k-ma.d[lch].size : k;
-        if (tmp == 0) {
-            return _merge_with_root(0, node, rch);
-        } else if (tmp < 0) {
-            SizeType r = _split_node_right(lch, k);
-            return _merge_with_root(r, node, rch);
-        } else {
-            SizeType r = _split_node_right(rch, tmp-1);
-            return r;
+    SizeType _merge_node(SizeType l, SizeType r, size_t first) {
+        if (!l) return r;
+        if (!r) return l;
+        if (ma.pool[r].tree.size < ma.pool[l].tree.size) {
+            auto [rest, pivot] = extract_left_node(r, first);
+            return _merge_with_root(l, pivot, rest, first);
         }
+        auto [rest, pivot] = extract_right_node(l, first);
+        return _merge_with_root(rest, pivot, r, first);
     }
 
-    PTM _new(SizeType root) {
-        return PTM(root);
+    pair<SizeType, SizeType> _split_node(SizeType node, SizeType k, size_t first) {
+        if (!k) return {0, node};
+        if (k == ma.pool[node].tree.size) return {node, 0};
+        node = own(node, first);
+        SizeType lch = ma.pool[node].tree.left, rch = ma.pool[node].tree.right;
+        SizeType left_size = ma.pool[node].tree.left_size;
+        if (k <= left_size) {
+            auto [l, r] = _split_node(lch, k, first);
+            return {l, _merge_with_root(r, node, rch, first)};
+        }
+        auto [l, r] = _split_node(rch, k-left_size-1, first);
+        return {_merge_with_root(lch, node, l, first), r};
+    }
+
+    SizeType _split_node_left(SizeType node, SizeType k, size_t first) {
+        if (!k) return 0;
+        if (k == ma.pool[node].tree.size) return node;
+        node = own(node, first);
+        SizeType lch = ma.pool[node].tree.left, rch = ma.pool[node].tree.right;
+        SizeType left_size = ma.pool[node].tree.left_size;
+        if (k <= left_size) return _split_node_left(lch, k, first);
+        SizeType r = _split_node_left(rch, k-left_size-1, first);
+        return _merge_with_root(lch, node, r, first);
+    }
+
+    SizeType _split_node_right(SizeType node, SizeType k, size_t first) {
+        if (!k) return node;
+        if (k == ma.pool[node].tree.size) return 0;
+        node = own(node, first);
+        SizeType lch = ma.pool[node].tree.left, rch = ma.pool[node].tree.right;
+        SizeType left_size = ma.pool[node].tree.left_size;
+        if (k > left_size) return _split_node_right(rch, k-left_size-1, first);
+        SizeType l = _split_node_right(lch, k, first);
+        return _merge_with_root(l, node, rch, first);
+    }
+
+    static PLTM _new(SizeType root) {
+        return PLTM(root);
     }
 
     PersistentWBTree(SizeType root) : root(root) {}
 
   public:
+    /// @brief 空の列を作成する / O(1)
     PersistentWBTree() : root(0) {}
 
+    /// @brief 配列から木を構築する / O(N)
     PersistentWBTree(const vector<T> &a) { _build(a); }
 
-    PTM merge(PTM other) {
-        SizeType root = _merge_node(this->root, other.root);
+    /// @brief 末尾に other を連結した列を返す / O(log(N + M))
+    PLTM merge(PLTM other) {
+        SizeType root = _merge_node(this->root, other.root, ma.ptr);
         return _new(root);
     }
 
-    pair<PTM, PTM> split(SizeType k) {
-        auto [l, r] = _split_node(this->root, k);
+    /// @brief 先頭 k 要素と残りに分割した列を返す / O(log N)
+    pair<PLTM, PLTM> split(SizeType k) {
+        assert(0 <= k && k <= len());
+        if (k == 0) return {_new(0), _new(root)};
+        if (k == len()) return {_new(root), _new(0)};
+        auto [l, r] = _split_node(this->root, k, ma.ptr);
         return {_new(l), _new(r)};
     }
 
-    PTM split_left(SizeType k) {
-        SizeType l = _split_node_left(this->root, k);
+    /// @brief 先頭 k 要素からなる列を返す / O(log N)
+    PLTM split_left(SizeType k) {
+        assert(0 <= k && k <= len());
+        if (k == 0) return _new(0);
+        if (k == len()) return _new(root);
+        SizeType l = _split_node_left(this->root, k, ma.ptr);
         return _new(l);
     }
 
-    PTM split_right(SizeType k) {
-        SizeType r = _split_node_right(this->root, k);
+    /// @brief 先頭 k 要素を除いた列を返す / O(log N)
+    PLTM split_right(SizeType k) {
+        assert(0 <= k && k <= len());
+        if (k == 0) return _new(root);
+        if (k == len()) return _new(0);
+        SizeType r = _split_node_right(this->root, k, ma.ptr);
         return _new(r);
     }
 
-    PTM insert(SizeType k, T key) {
+    /// @brief 位置 k に key を挿入した列を返す / O(log N)
+    PLTM insert(SizeType k, T key) {
         assert(0 <= k && k <= len());
-        auto [s, t] = _split_node(root, k);
-        SizeType v = ma.new_node(key);
-        return _new(_merge_with_root(s, v, t));
+        const size_t first = ma.ptr;
+        return _new(insert_node(root, k, key, first));
     }
 
-    pair<PTM, T> pop(SizeType k) {
+    /// @brief 位置 k の要素を削除した列と削除値を返す / O(log N)
+    pair<PLTM, T> pop(SizeType k) {
         assert(0 <= k && k < len());
-        auto [s_, t] = _split_node(this->root, k+1);
-        auto [s, tmp] = _pop_right(s_);
-        SizeType root = _merge_node(s, t);
-        return {_new(root), ma.keys[tmp]};
+        const size_t first = ma.ptr;
+        T value;
+        SizeType result = erase_node(root, k, value, first);
+        return {_new(result), value};
     }
 
-    vector<T> tovector() {
-        SizeType node = root;
-        stack<SizeType> s;
-        vector<T> a;
-        a.reserve(len());
-        while (!s.empty() || node) {
-            if (node) {
-                s.emplace(node);
-                node = ma.d[node].left;
-            } else {
-                node = s.top(); s.pop();
-                a.emplace_back(ma.keys[node]);
-                node = ma.d[node].right;
-            }
-        }
-        return a;
+    /// @brief 列を vector に変換する / O(N)
+    vector<T> tovector() const {
+        vector<T> result;
+        result.reserve(len());
+        auto dfs = [&] (auto &&dfs, SizeType node) -> void {
+            if (!node) return;
+            const auto &slot = ma.pool[node];
+            if (slot.tree.left) dfs(dfs, slot.tree.left);
+            result.emplace_back(slot.key);
+            if (slot.tree.right) dfs(dfs, slot.tree.right);
+        };
+        dfs(dfs, root);
+        return result;
     }
 
-    PTM copy() const {
-        return _new(ma.copy(root));
+    /// @brief 同じ列を共有するコピーを返す / O(1)
+    PLTM copy() const {
+        return _new(root);
     }
 
+    /// @brief 位置 k の値を返す / O(log N)
     T get(SizeType k) const {
         assert(0 <= k && k < len());
         SizeType node = root;
-        while (1) {
-            SizeType t = ma.d[ma.d[node].left].size;
-            if (t == k) {
-                return ma.keys[node];
-            }
-            if (t < k) {
-                k -= t + 1;
-                node = ma.d[node].right;
-            } else {
-                node = ma.d[node].left;
-            }
+        while (true) {
+            const auto &slot = ma.pool[node];
+            const SizeType left_size = slot.tree.left_size;
+            if (k == left_size) return slot.key;
+            using Unsigned = typename std::make_unsigned<SizeType>::type;
+            const Unsigned mask = Unsigned(0) - Unsigned(k > left_size);
+            const Unsigned left = static_cast<Unsigned>(slot.tree.left);
+            const Unsigned right = static_cast<Unsigned>(slot.tree.right);
+            node = static_cast<SizeType>(left ^ ((left ^ right) & mask));
+            k -= static_cast<SizeType>(static_cast<Unsigned>(left_size + 1) & mask);
         }
     }
 
-    void print() {
+    /// @brief 列を出力する / O(N)
+    void print() const {
         vector<T> a = tovector();
         cout << "[";
-        for (int i = 0; i < (int)a.size()-1; ++i) {
-            cout << a[i] << ", ";
+        for (size_t i = 0; i < a.size(); ++i) {
+            if (i) cout << ", ";
+            cout << a[i];
         }
-        if (!a.empty()) cout << a.back();
         cout << "]" << endl;
     }
 
+    /// @brief 要素数を返す / O(1)
     SizeType len() const {
-        return ma.d[root].size;
+        return ma.pool[root].tree.size;
     }
 
-    static void reserve(SizeType cap) {
-        ma.reserve(cap);
-    }
-
-    friend ostream& operator<<(ostream& os, PTM &tree) {
+    /// @brief 列を出力する / O(N)
+    friend ostream& operator<<(ostream& os, const PersistentWBTree<T, SizeType> &tree) {
         vector<T> a = tree.tovector();
         os << "[";
-        for (int i = 0; i < (int)a.size()-1; ++i) {
-            os << a[i] << ", ";
+        for (size_t i = 0; i < a.size(); ++i) {
+            if (i) os << ", ";
+            os << a[i];
         }
-        if (!a.empty()) os << a.back();
         os << "]";
         return os;
     }
 
-    static void rebuild(PTM &tree) {
-        PTM::ma.reset();
+    /// @brief N ノード分の容量を確保する / O(N)
+    /// @note 容量はブロック単位で切り上げる
+    static void reserve(SizeType n) { ma.reserve(n); }
+
+    /// @brief 木を再構築して確保済み領域を再利用する / O(N)
+    /// @note 同じ領域を共有する他の木は無効になる
+    static void rebuild(PLTM &tree) {
         vector<T> a = tree.tovector();
-        tree = PTM(a);
+        PLTM::ma.reset();
+        tree = PLTM(a);
     }
 };
 

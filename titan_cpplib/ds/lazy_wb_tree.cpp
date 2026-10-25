@@ -1,501 +1,463 @@
 /// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/ds/lazy_wb_tree.cpp
 #pragma once
 
-#include <iostream>
-#include <vector>
-#include <stack>
+#include <algorithm>
 #include <cassert>
-#include "titan_cpplib/others/print.cpp"
+#include <iostream>
+#include <utility>
+#include <vector>
+#include "titan_cpplib/ds/_wbt_node_pool.cpp"
 using namespace std;
 
 namespace titan23 {
 
-    template <class T,
-                class F,
-                T (*op)(T, T),
-                T (*mapping)(F, T),
-                F (*composition)(F, F),
-                T (*e)(),
-                F (*id)()>
-    class LazyWBTree {
-      private:
-        class Node;
-        using NodePtr = Node*;
-        using MyLazyWBTree = LazyWBTree<T, F, op, mapping, composition, e, id>;
-        static constexpr int DELTA = 3;
-        static constexpr int GAMMA = 2;
+template <class T, class F,
+          T (*op)(T, T), T (*mapping)(F, T), F (*composition)(F, F),
+          T (*e)(), F (*id)()>
+class LazyWBTree {
+private:
+    class Node;
+    using NodePtr = Node*;
+    using MyLazyWBTree = LazyWBTree<T, F, op, mapping, composition, e, id>;
+    static constexpr int DELTA = 3;
+    static constexpr int GAMMA = 2;
 
-        class Node {
-          public:
-            NodePtr left;
-            NodePtr right;
-            T key, data;
-            F lazy;
-            bool rev;
-            int size;
-
-            Node(T key, F lazy) : left(nullptr), right(nullptr), key(key), data(key), lazy(lazy), rev(false), size(1) {}
-
-            int weight_right() const {
-                return right ? right->size + 1 : 1;
-            }
-
-            int weight_left() const {
-                return left ? left->size + 1 : 1;
-            }
-
-            void balance_check() const {
-                if (!weight_left()*DELTA >= weight_right()) {
-                    cerr << weight_left() << ", " << weight_right() << endl;
-                    cerr << "not weight_left()*DELTA >= weight_right()." << endl;
-                    assert(false);
-                }
-                if (!weight_right() * DELTA >= weight_left()) {
-                    cerr << weight_left() << ", " << weight_right() << endl;
-                    cerr << "not weight_right() * DELTA >= weight_left()." << endl;
-                    assert(false);
-                }
-            }
-
-            void update() {
-                size = 1;
-                data = key;
-                if (left) {
-                    size += left->size;
-                    data = op(left->data, key);
-                }
-                if (right) {
-                    size += right->size;
-                    data = op(data, right->data);
-                }
-            }
-
-            void propagate() {
-                if (rev) {
-                    swap(left, right);
-                    if (left) left->rev ^= 1;
-                    if (right) right->rev ^= 1;
-                    rev = 0;
-                }
-                if (lazy != id()) {
-                    if (left) {
-                        left->key = mapping(lazy, left->key);
-                        left->data = mapping(lazy, left->data);
-                        left->lazy = composition(lazy, left->lazy);
-                    }
-                    if (right) {
-                        right->key = mapping(lazy, right->key);
-                        right->data = mapping(lazy, right->data);
-                        right->lazy = composition(lazy, right->lazy);
-                    }
-                    lazy = id();
-                }
-            }
-
-            void print() const {
-                cout << "this : key=" << key << ", size=" << size << endl;
-                if (left)  cout << "to-left" << endl;
-                if (right) cout << "to-right" << endl;
-                cout << endl;
-                if (left)  left->print();
-                if (right) right->print();
-            }
-        };
-
-        void _build(vector<T> const &a) {
-            auto build = [&] (auto &&build, int l, int r) -> NodePtr {
-                int mid = (l + r) >> 1;
-                NodePtr node = new Node(a[mid], id());
-                if (l != mid) node->left = build(build, l, mid);
-                if (mid+1 != r) node->right = build(build, mid+1, r);
-                node->update();
-                return node;
-            };
-            if (a.empty()) {
-                this->root = nullptr;
-                return;
-            }
-            this->root = build(build, 0, (int)a.size());
-        }
-
-        NodePtr _rotate_right(NodePtr node) {
-            NodePtr u = node->left;
-            node->left = u->right;
-            u->right = node;
-            node->update();
-            u->update();
-            return u;
-        }
-
-        NodePtr _rotate_left(NodePtr node) {
-            NodePtr u = node->right;
-            node->right = u->left;
-            u->left = node;
-            node->update();
-            u->update();
-            return u;
-        }
-
-        NodePtr _balance_left(NodePtr node) {
-            NodePtr u = node->right;
-            u->propagate();
-            if (node->right->weight_left() >= node->right->weight_right() * GAMMA) {
-                u->left->propagate();
-                node->right = _rotate_right(u);
-            }
-            return _rotate_left(node);
-        }
-
-        NodePtr _balance_right(NodePtr node) {
-            NodePtr u = node->left;
-            u->propagate();
-            if (node->left->weight_right() >= node->left->weight_left() * GAMMA) {
-                u->right->propagate();
-                node->left = _rotate_left(u);
-            }
-            return _rotate_right(node);
-        }
-
-        int weight(NodePtr node) const {
-            return node ? node->size + 1 : 1;
-        }
-
-        NodePtr _merge_with_root(NodePtr l, NodePtr root, NodePtr r) {
-            if (weight(l) * DELTA < weight(r)) {
-                r->propagate();
-                r->left = _merge_with_root(l, root, r->left);
-                r->update();
-                if (weight(r->right) * DELTA < weight(r->left)) {
-                    return _balance_right(r);
-                }
-                return r;
-            } else if (weight(r) * DELTA < weight(l)) {
-                l->propagate();
-                l->right = _merge_with_root(l->right, root, r);
-                l->update();
-                if (weight(l->left) * DELTA < weight(l->right)) {
-                    return _balance_left(l);
-                }
-                return l;
-            }
-            root->left = l;
-            root->right = r;
-            root->update();
-            return root;
-        }
-
-        pair<NodePtr, NodePtr> _pop_right(NodePtr node) {
-            return _split_node(node, node->size-1);
-        }
-
-        NodePtr _merge_node(NodePtr l, NodePtr r) {
-            if ((!l) && (!r)) {return nullptr;}
-            if (!l) {return r;}
-            if (!r) {return l;}
-            auto [l_, root_] = _pop_right(l);
-            return _merge_with_root(l_, root_, r);
-        }
-
-        pair<NodePtr, NodePtr> _split_node(NodePtr node, int k) {
-            if (!node) return {nullptr, nullptr};
-            node->propagate();
-            int tmp = node->left ? k-node->left->size : k;
-            NodePtr nl = node->left;
-            NodePtr nr = node->right;
-            if (tmp == 0) {
-                return {nl, _merge_with_root(nullptr, node, nr)};
-            } else if (tmp < 0) {
-                auto [l, r] = _split_node(nl, k);
-                return {l, _merge_with_root(r, node, nr)};
-            } else {
-                auto [l, r] = _split_node(nr, tmp-1);
-                return {_merge_with_root(node->left, node, l), r};
-            }
-        }
-
-        LazyWBTree(NodePtr &root): root(root) {}
-
-        MyLazyWBTree _new(NodePtr root) const {
-            return MyLazyWBTree(root);
-        }
-
+    class Node {
     public:
-        NodePtr root;
+        NodePtr left, right;
+        T key, data;
+        F lazy;
+        bool rev;
+        int size, left_size;
 
-        LazyWBTree() : root(nullptr) {}
+        /// @brief 1要素のノードを初期化する / O(1)
+        Node(const T &value, const F &action)
+            : left(nullptr), right(nullptr), key(value), data(value), lazy(action),
+              rev(false), size(1), left_size(0) {}
 
-        LazyWBTree(vector<T> const &a) { _build(a); }
+        /// @brief 右の子の部分木サイズに1を加えた重みを返す / O(1)
+        int weight_right() const { return size - left_size; }
 
-        void merge(MyLazyWBTree &other) {
-            this->root = _merge_node(this->root, other.root);
+        /// @brief 左の子の部分木サイズに1を加えた重みを返す / O(1)
+        int weight_left() const { return left_size + 1; }
+
+        /// @brief このノードの左右の重みが平衡条件を満たすか検査する / O(1)
+        void balance_check() const {
+            assert(static_cast<long long>(weight_left()) * DELTA >= weight_right());
+            assert(static_cast<long long>(weight_right()) * DELTA >= weight_left());
         }
 
-        pair<MyLazyWBTree, MyLazyWBTree> split(const int k) {
-            auto [l, r] = _split_node(this->root, k);
-            return {_new(l), _new(r)};
+        /// @brief 子の情報から部分木サイズと総積を更新する / O(1)
+        void update() {
+            left_size = left ? left->size : 0;
+            size = left_size + 1 + (right ? right->size : 0);
+            data = left ? op(left->data, key) : key;
+            if (right) data = op(data, right->data);
         }
 
-        void all_apply(const F f) {
-            if (!this->root) return;
-            this->root->key = mapping(f, this->root->key);
-            this->root->data = mapping(f, this->root->data);
-            this->root->lazy = composition(f, this->root->lazy);
+        /// @brief この部分木に作用を適用し、遅延情報へ合成する / O(1)
+        void apply(const F &action) {
+            key = mapping(action, key);
+            data = mapping(action, data);
+            lazy = composition(action, lazy);
         }
 
-        void apply(const int l, const int r, const F f) {
-            assert(0 <= l && l <= r && r <= len());
-            if (l == r) return;
-            auto dfs = [&] (auto &&dfs, NodePtr node, int left, int right) -> void {
-                if (right <= l || r <= left) return;
-                node->propagate();
-                if (l <= left && right < r) {
-                    node->key = mapping(f, node->key);
-                    node->data = mapping(f, node->data);
-                    node->lazy = composition(f, node->lazy);
-                    return;
-                }
-                int lsize = node->left ? node->left->size : 0;
-                if (node->left) dfs(dfs, node->left, left, left+lsize);
-                if (l <= left+lsize && left+lsize < r) node->key = mapping(f, node->key);;
-                if (node->right) dfs(dfs, node->right, left+lsize+1, right);
-                node->update();
-            };
-            dfs(dfs, root, 0, len());
-        }
-
-        T all_prod() const {
-            return this->root ? this->root->data : e();
-        }
-
-        T prod(const int l, const int r) {
-            assert(0 <= l && l <= r && r <= len());
-            if (l == r) return e();
-            auto dfs = [&] (auto &&dfs, NodePtr node, int left, int right) -> T {
-                if (right <= l || r <= left) return e();
-                node->propagate();
-                if (l <= left && right < r) return node->data;
-                int lsize = node->left ? node->left->size : 0;
-                T res = e();
-                if (node->left) res = dfs(dfs, node->left, left, left+lsize);
-                if (l <= left+lsize && left+lsize < r) res = op(res, node->key);
-                if (node->right) res = op(res, dfs(dfs, node->right, left+lsize+1, right));
-                return res;
-            };
-            return dfs(dfs, root, 0, len());
-        }
-
-        void insert(int k, const T key) {
-            assert(0 <= k && k <= len());
-            auto [s, t] = _split_node(root, k);
-            NodePtr new_node = new Node(key, id());
-            this->root = _merge_with_root(s, new_node, t);
-        }
-
-        T pop(int k) {
-            assert(0 <= k && k < len());
-            stack<NodePtr> path;
-            stack<short> path_d;
-            NodePtr node = this->root;
-            T res;
-            int d = 0;
-            while (1) {
-                node->propagate();
-                int t = node->left? node->left->size: 0;
-                if (t == k) {
-                    res = node->key;
-                    break;
-                }
-                int d = (t < k)? 0: 1;
-                path.emplace(node);
-                path_d.emplace(d);
-                if (d) {
-                    node = node->left;
-                } else {
-                    k -= t + 1;
-                    node = node->right;
-                }
+        /// @brief 遅延作用と反転情報を子へ伝播する / O(1)
+        void propagate() {
+            if (rev) {
+                swap(left, right);
+                left_size = size - 1 - left_size;
+                if (left) left->rev ^= 1;
+                if (right) right->rev ^= 1;
+                rev = false;
             }
-            if (node->left && node->right) {
-                node->propagate();
-                NodePtr lmax = node->left;
-                path.emplace(node);
-                path_d.emplace(1);
-                lmax->propagate();
-                while (lmax->right) {
-                    path.emplace(lmax);
-                    path_d.emplace(0);
-                    lmax = lmax->right;
-                    lmax->propagate();
-                }
-                node->key = lmax->key;
-                node = lmax;
-            }
-            NodePtr cnode = (node->left) ? node->left : node->right;
-            if (!path.empty()) {
-                if (path_d.top()) path.top()->left = cnode;
-                else path.top()->right = cnode;
-            } else {
-                this->root = cnode;
-                return res;
-            }
-            while (!path.empty()) {
-                NodePtr new_node = nullptr;
-                node = path.top();
-                node->update();
-                path.pop();
-                path_d.pop();
-                if (weight(node->left) * DELTA < weight(node->right)) {
-                    new_node = _balance_left(node);
-                } else if (weight(node->right) * DELTA < weight(node->left)) {
-                    new_node = _balance_right(node);
-                }
-                if (new_node) {
-                    if (path.empty()) {
-                        this->root = new_node;
-                        break;
-                    }
-                    if (path_d.top()) {
-                        path.top()->left = new_node;
-                    } else {
-                        path.top()->right = new_node;
-                    }
-                }
-            }
-            return res;
-        }
-
-        void reverse(const int l, const int r) {
-            assert(0 <= l && l <= r && r <= len());
-            if (l == r) return;
-            auto [s_, t] = _split_node(root, r);
-            auto [u, s] = _split_node(s_, l);
-            s->rev ^= 1;
-            this->root = _merge_node(_merge_node(u, s), t);
-        }
-
-        vector<T> tovector() {
-            NodePtr node = root;
-            stack<NodePtr> s;
-            vector<T> a;
-            a.reserve(len());
-            while ((!s.empty()) || node) {
-                if (node) {
-                    node->propagate();
-                    s.emplace(node);
-                    node = node->left;
-                } else {
-                    node = s.top();
-                    s.pop();
-                    a.emplace_back(node->key);
-                    node = node->right;
-                }
-            }
-            return a;
-        }
-
-        void set(int k, T v) {
-            assert(0 <= k && k < len());
-            NodePtr node = root;
-            NodePtr root = node;
-            NodePtr pnode = nullptr;
-            int d = 0;
-            stack<NodePtr> path = {node};
-            while (1) {
-                node->propagate();
-                int t = node->left? node->left->size: 0;
-                if (t == k) {
-                    node->key = v;
-                    path.emplace(node);
-                    if (pnode) {
-                        if (d) pnode->left = node;
-                        else pnode->right = node;
-                    }
-                    while (!path.empty()) {
-                        path.top()->update();
-                        path.pop();
-                    }
-                    return;
-                }
-                pnode = node;
-                d = (t < k) ? 0 : 1;
-                if (d) {
-                    pnode->left = node = node->left;
-                } else {
-                    k -= t + 1;
-                    pnode->right = node = node->right;
-                }
-                path.emplace(node);
+            const F identity = id();
+            if (lazy != identity) {
+                if (left) left->apply(lazy);
+                if (right) right->apply(lazy);
+                lazy = identity;
             }
         }
 
-        T get(int k) {
-            assert(0 <= k && k < len());
-            NodePtr node = root;
-            while (1) {
-                node->propagate();
-                int t = node->left ? node->left->size : 0;
-                if (t == k) {
-                    return node->key;
-                }
-                if (t < k) {
-                    k -= t + 1;
-                    node = node->right;
-                } else {
-                    node = node->left;
-                }
-            }
-        }
-
-        void print() {
-            vector<T> a = tovector();
-            cout << "[";
-            for (int i = 0; i < (int)a.size()-1; ++i) {
-                cout << a[i] << ", ";
-            }
-            if (!a.empty()) cout << a.back();
-            cout << "]" << endl;
-        }
-
-        friend ostream& operator<<(ostream& os, LazyWBTree<T, F, op, mapping, composition, e, id> &tree) {
-            vector<T> a = tree.tovector();
-            os << "[";
-            for (int i = 0; i < (int)a.size()-1; ++i) {
-                os << a[i] << ", ";
-            }
-            if (!a.empty()) os << a.back();
-            os << "]";
-            return os;
-        }
-
-        int len() const {
-            return root ? root->size : 0;
-        }
-
-        void check() const {
-            auto rec = [&] (auto &&rec, NodePtr node) -> pair<int, int> {
-                int ls = 0, rs = 0;
-                int height = 0;
-                int h;
-                if (node->left) {
-                    pair<int, int> res = rec(rec, node->left);
-                    ls = res.first;
-                    h = res.second;
-                    height = max(height, h);
-                }
-                if (node->right) {
-                    pair<int, int> res = rec(rec, node->right);
-                    rs = res.first;
-                    h = res.second;
-                    height = max(height, h);
-                }
-                node->balance_check();
-                int s = ls + rs + 1;
-                assert(s == node->size);
-                return {s, height+1};
-            };
-            if (root == nullptr) return;
-            auto [_, h] = rec(rec, root);
-            cerr << PRINT_GREEN << "OK : height=" << h << PRINT_NONE << endl;
+        /// @brief このノード以下の構造を標準出力へ表示する / O(N)
+        void print() const {
+            cout << "this : key=" << key << ", size=" << size << endl;
+            if (left) cout << "to-left" << endl;
+            if (right) cout << "to-right" << endl;
+            cout << endl;
+            if (left) left->print();
+            if (right) right->print();
         }
     };
-} // namespace titan23
+
+    inline static detail::WBNodePool<Node> pool;
+
+    static int weight(NodePtr node) { return node ? node->size + 1 : 1; }
+
+    void _build(const vector<T> &values) {
+        auto build = [&](auto &&self, int l, int r) -> NodePtr {
+            const int mid = l + (r-l)/2;
+            NodePtr node = pool.emplace(values[mid], id());
+            if (l < mid) node->left = self(self, l, mid);
+            if (mid+1 < r) node->right = self(self, mid+1, r);
+            node->update();
+            return node;
+        };
+        root = values.empty() ? nullptr : build(build, 0, static_cast<int>(values.size()));
+    }
+
+    static NodePtr _rotate_right(NodePtr node) {
+        NodePtr pivot = node->left;
+        node->left = pivot->right;
+        pivot->right = node;
+        node->update();
+        pivot->update();
+        return pivot;
+    }
+
+    static NodePtr _rotate_left(NodePtr node) {
+        NodePtr pivot = node->right;
+        node->right = pivot->left;
+        pivot->left = node;
+        node->update();
+        pivot->update();
+        return pivot;
+    }
+
+    static NodePtr _balance_left(NodePtr node) {
+        NodePtr child = node->right;
+        child->propagate();
+        if (child->weight_left() >= static_cast<long long>(child->weight_right()) * GAMMA) {
+            child->left->propagate();
+            node->right = _rotate_right(child);
+        }
+        return _rotate_left(node);
+    }
+
+    static NodePtr _balance_right(NodePtr node) {
+        NodePtr child = node->left;
+        child->propagate();
+        if (child->weight_right() >= static_cast<long long>(child->weight_left()) * GAMMA) {
+            child->right->propagate();
+            node->left = _rotate_left(child);
+        }
+        return _rotate_right(node);
+    }
+
+    static NodePtr _balance(NodePtr node) {
+        if (static_cast<long long>(node->weight_left()) * DELTA < node->weight_right())
+            return _balance_left(node);
+        if (static_cast<long long>(node->weight_right()) * DELTA < node->weight_left())
+            return _balance_right(node);
+        return node;
+    }
+
+    static NodePtr _merge_with_root(NodePtr left, NodePtr pivot, NodePtr right) {
+        if (static_cast<long long>(weight(left)) > static_cast<long long>(weight(right)) * DELTA) {
+            left->propagate();
+            left->right = _merge_with_root(left->right, pivot, right);
+            left->update();
+            return _balance(left);
+        }
+        if (static_cast<long long>(weight(right)) > static_cast<long long>(weight(left)) * DELTA) {
+            right->propagate();
+            right->left = _merge_with_root(left, pivot, right->left);
+            right->update();
+            return _balance(right);
+        }
+        pivot->left = left;
+        pivot->right = right;
+        pivot->update();
+        return pivot;
+    }
+
+    template <bool Rightmost>
+    static pair<NodePtr, NodePtr> _extract_extreme(NodePtr node) {
+        node->propagate();
+        NodePtr next = Rightmost ? node->right : node->left;
+        if (!next) {
+            NodePtr rest = Rightmost ? node->left : node->right;
+            node->left = node->right = nullptr;
+            node->update();
+            return {rest, node};
+        }
+        auto result = _extract_extreme<Rightmost>(next);
+        if constexpr (Rightmost) node->right = result.first;
+        else node->left = result.first;
+        node->update();
+        return {_balance(node), result.second};
+    }
+
+    static NodePtr _merge_node(NodePtr left, NodePtr right) {
+        if (!left) return right;
+        if (!right) return left;
+        if (right->size < left->size) {
+            auto extracted = _extract_extreme<false>(right);
+            return _merge_with_root(left, extracted.second, extracted.first);
+        }
+        auto extracted = _extract_extreme<true>(left);
+        return _merge_with_root(extracted.first, extracted.second, right);
+    }
+
+    static pair<NodePtr, NodePtr> _split_node(NodePtr node, int k) {
+        if (!k) return {nullptr, node};
+        if (k == node->size) return {node, nullptr};
+        node->propagate();
+        NodePtr left = node->left, right = node->right;
+        const int left_size = node->left_size;
+        if (k <= left_size) {
+            auto parts = _split_node(left, k);
+            return {parts.first, _merge_with_root(parts.second, node, right)};
+        }
+        auto parts = _split_node(right, k-left_size-1);
+        return {_merge_with_root(left, node, parts.first), parts.second};
+    }
+
+    static NodePtr _insert_node(NodePtr node, int k, const T &value) {
+        if (!node) return pool.emplace(value, id());
+        node->propagate();
+        if (k <= node->left_size) node->left = _insert_node(node->left, k, value);
+        else node->right = _insert_node(node->right, k-node->left_size-1, value);
+        node->update();
+        return _balance(node);
+    }
+
+    template <bool Rightmost>
+    static NodePtr _erase_extreme(NodePtr node, T &value) {
+        node->propagate();
+        NodePtr next = Rightmost ? node->right : node->left;
+        if (!next) {
+            value = node->key;
+            NodePtr rest = Rightmost ? node->left : node->right;
+            pool.release(node);
+            return rest;
+        }
+        if constexpr (Rightmost) node->right = _erase_extreme<Rightmost>(next, value);
+        else node->left = _erase_extreme<Rightmost>(next, value);
+        node->update();
+        return _balance(node);
+    }
+
+    static NodePtr _erase_node(NodePtr node, int k, T &value) {
+        node->propagate();
+        const int left_size = node->left_size;
+        if (k < left_size) node->left = _erase_node(node->left, k, value);
+        else if (k > left_size) node->right = _erase_node(node->right, k-left_size-1, value);
+        else {
+            value = node->key;
+            if (!node->left || !node->right) {
+                NodePtr rest = node->left ? node->left : node->right;
+                pool.release(node);
+                return rest;
+            }
+            T replacement;
+            if (node->left_size >= node->size-node->left_size-1)
+                node->left = _erase_extreme<true>(node->left, replacement);
+            else node->right = _erase_extreme<false>(node->right, replacement);
+            node->key = std::move(replacement);
+        }
+        node->update();
+        return _balance(node);
+    }
+
+    static NodePtr _reverse_node(NodePtr node, int l, int r) {
+        if (r-l <= 1) return node;
+        if (!l && r == node->size) {
+            node->rev ^= 1;
+            return node;
+        }
+        node->propagate();
+        const int left_size = node->left_size;
+        if (r <= left_size) {
+            node->left = _reverse_node(node->left, l, r);
+            node->update();
+            return node;
+        }
+        if (l > left_size) {
+            node->right = _reverse_node(node->right, l-left_size-1, r-left_size-1);
+            node->update();
+            return node;
+        }
+        auto tail = _split_node(node, r);
+        auto head = _split_node(tail.first, l);
+        head.second->rev ^= 1;
+        return _merge_node(_merge_node(head.first, head.second), tail.second);
+    }
+
+    explicit LazyWBTree(NodePtr node) : root(node) {}
+
+    static MyLazyWBTree _new(NodePtr node) { return MyLazyWBTree(node); }
+
+public:
+    NodePtr root;
+
+    /// @brief 空の木を構築する / O(1)
+    LazyWBTree() : root(nullptr) {}
+
+    /// @brief valuesの要素を順番に格納した木を構築する / O(N)
+    LazyWBTree(const vector<T> &values) { _build(values); }
+
+    /// @brief otherを末尾へ破壊的に結合する / O(log N + log M)
+    /// @note 入力の木どうしでノードを共有しないこと
+    /// @note other.rootは残るが、otherを独立した木として再利用できない
+    void merge(MyLazyWBTree &other) { root = _merge_node(root, other.root); }
+
+    /// @brief 先頭k要素と残りに破壊的に分割する / O(log N)
+    /// @note 元のrootは消去しないが、分割前のハンドルは独立した木として再利用できない
+    pair<MyLazyWBTree, MyLazyWBTree> split(const int k) {
+        assert(0 <= k && k <= len());
+        auto result = _split_node(root, k);
+        return {_new(result.first), _new(result.second)};
+    }
+
+    /// @brief 全要素に作用actionを適用する / O(1)
+    void all_apply(const F action) {
+        if (root && action != id()) root->apply(action);
+    }
+
+    /// @brief 区間 [l, r) に作用actionを適用する / O(log N)
+    void apply(const int l, const int r, const F action) {
+        assert(0 <= l && l <= r && r <= len());
+        if (l == r || !(action != id())) return;
+        auto dfs = [&](auto &&self, NodePtr node, int l, int r) -> void {
+            if (!l && r == node->size) { node->apply(action); return; }
+            node->propagate();
+            const int left_size = node->left_size;
+            if (l < left_size) self(self, node->left, l, min(r, left_size));
+            if (l <= left_size && left_size < r) node->key = mapping(action, node->key);
+            if (r > left_size+1) self(self, node->right, l > left_size+1 ? l-left_size-1 : 0, r-left_size-1);
+            node->update();
+        };
+        dfs(dfs, root, l, r);
+    }
+
+    /// @brief 全要素の総積を返す / O(1)
+    /// @note 空の木ではe()を返す
+    T all_prod() const { return root ? root->data : e(); }
+
+    /// @brief 区間 [l, r) の総積を返す / O(log N)
+    /// @note 空区間ではe()を返す
+    T prod(const int l, const int r) {
+        assert(0 <= l && l <= r && r <= len());
+        if (l == r) return e();
+        const F identity = id();
+        auto dfs = [&](auto &&self, NodePtr node, int l, int r, F acc) -> T {
+            if (!l && r == node->size) return acc != identity ? mapping(acc, node->data) : node->data;
+            if (node->rev) {
+                const int old_l = l;
+                l = node->size-r;
+                r = node->size-old_l;
+            }
+            const int left_size = node->left_size;
+            F next = node->lazy != identity ? composition(acc, node->lazy) : acc;
+            if (r <= left_size) return self(self, node->left, l, r, next);
+            if (l > left_size) return self(self, node->right, l-left_size-1, r-left_size-1, next);
+            T result = acc != identity ? mapping(acc, node->key) : node->key;
+            if (l < left_size) result = op(self(self, node->left, l, left_size, next), result);
+            if (r > left_size+1) result = op(result, self(self, node->right, 0, r-left_size-1, next));
+            return result;
+        };
+        return dfs(dfs, root, l, r, identity);
+    }
+
+    /// @brief 位置kにvalueを挿入する / O(log N)
+    void insert(int k, const T value) {
+        assert(0 <= k && k <= len());
+        root = _insert_node(root, k, value);
+    }
+
+    /// @brief 位置kの要素を削除し、その値を返す / O(log N)
+    /// @note 削除されたノードへのポインタは無効になる
+    T pop(int k) {
+        assert(0 <= k && k < len());
+        T value;
+        root = _erase_node(root, k, value);
+        return value;
+    }
+
+    /// @brief 区間 [l, r) の要素順を反転する / O(log N)
+    /// @note 総積が反転で変わらない場合に利用できる
+    /// @note 木全体の反転はO(1)
+    void reverse(const int l, const int r) {
+        assert(0 <= l && l <= r && r <= len());
+        root = _reverse_node(root, l, r);
+    }
+
+    /// @brief 要素を現在の順番でvectorに格納して返す / O(N)
+    vector<T> tovector() {
+        vector<T> result;
+        result.reserve(len());
+        const F identity = id();
+        auto dfs = [&](auto &&self, NodePtr node, F acc, bool rev) -> void {
+            if (!node) return;
+            rev ^= node->rev;
+            F next = node->lazy != identity ? composition(acc, node->lazy) : acc;
+            self(self, rev ? node->right : node->left, next, rev);
+            result.emplace_back(acc != identity ? mapping(acc, node->key) : node->key);
+            self(self, rev ? node->left : node->right, next, rev);
+        };
+        dfs(dfs, root, identity, false);
+        return result;
+    }
+
+    /// @brief 位置kの要素をvalueに置き換える / O(log N)
+    void set(int k, T value) {
+        assert(0 <= k && k < len());
+        auto dfs = [&](auto &&self, NodePtr node, int k) -> void {
+            node->propagate();
+            const int left_size = node->left_size;
+            if (k == left_size) node->key = value;
+            else if (k < left_size) self(self, node->left, k);
+            else self(self, node->right, k-left_size-1);
+            node->update();
+        };
+        dfs(dfs, root, k);
+    }
+
+    /// @brief 位置kの要素を返す / O(log N)
+    T get(int k) {
+        assert(0 <= k && k < len());
+        const F identity = id();
+        F acc = identity;
+        NodePtr node = root;
+        while (true) {
+            if (node->rev) k = node->size-1-k;
+            const int left_size = node->left_size;
+            if (k == left_size) return acc != identity ? mapping(acc, node->key) : node->key;
+            if (node->lazy != identity) acc = composition(acc, node->lazy);
+            if (k < left_size) node = node->left;
+            else { k -= left_size+1; node = node->right; }
+        }
+    }
+
+    /// @brief 要素列を標準出力へ表示する / O(N)
+    void print() { cout << *this << endl; }
+
+    /// @brief 要素列を出力ストリームへ書き込む / O(N)
+    friend ostream& operator<<(ostream &out, LazyWBTree &tree) {
+        vector<T> values = tree.tovector();
+        out << '[';
+        for (size_t i = 0; i < values.size(); ++i) {
+            if (i) out << ", ";
+            out << values[i];
+        }
+        return out << ']';
+    }
+
+    /// @brief 要素数を返す / O(1)
+    int len() const { return root ? root->size : 0; }
+
+    /// @brief 部分木サイズ、キャッシュ、平衡条件をassertで検査する / O(N)
+    void check() const {
+        auto dfs = [&](auto &&self, NodePtr node) -> int {
+            if (!node) return 0;
+            const int left = self(self, node->left), right = self(self, node->right);
+            assert(node->left_size == left);
+            assert(node->size == left+right+1);
+            node->balance_check();
+            return node->size;
+        };
+        dfs(dfs, root);
+    }
+};
+}  // namespace titan23
