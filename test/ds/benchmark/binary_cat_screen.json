@@ -1,0 +1,155 @@
+{
+  "flags": [
+    "-std=c++17",
+    "-O3",
+    "-DNDEBUG"
+  ],
+  "cpu": 24,
+  "address_space_limit_mib": 1536,
+  "inputs": {
+    "uniform": {
+      "input_sha256": "93d712e1567bbc1c2e3c024c25d6302dfe444f2cb0632f2a9892d0e7e6a1e301",
+      "expected_sha256": "fb5dd9f687a240a5b705630c5c7c32480676f3b7e912fb55682a99c49ce29ac6",
+      "q": 500000
+    },
+    "recent": {
+      "input_sha256": "05b7e4349ff3cb2dead46ff9081b9db7167830bd9fc9f4cfe1605876a038c907",
+      "expected_sha256": "655bf383325adee4ea3ae0366ea9b7597f0e36b3df9bf46b88794d91a55ae5a3",
+      "q": 500000
+    },
+    "prepend": {
+      "input_sha256": "c06bfcae57398bb4de5ab00ae9b8ba477004c47fd4a578e9aeda6f025a6bf9ba",
+      "expected_sha256": "2dd7c1dae6f47296d82598c5bbd408c0831c5e4922554ed0dafafe1d9929cb89",
+      "q": 500000
+    }
+  },
+  "sources": {
+    "x": "45604795eb315701f1ff1abbb0c49a49ad966382f686aa3259e3b96e442d880a",
+    "y": "b89750b7bd8e7f43e95d87c504c115b722e1dfb52ba83a8aac088b572133b8f7",
+    "leaf_separate": "da295ec6ad258e1f718d6fcdad4754820bd8bd894880b6cb51d125164191d857",
+    "leaf": "da295ec6ad258e1f718d6fcdad4754820bd8bd894880b6cb51d125164191d857"
+  },
+  "leaf_header_sha256": "25dc851d94938d6bba03fcd238ccb368bdc20b6114d0cb7f9a785f91ca3c5259",
+  "runs": [
+    {
+      "workload": "uniform",
+      "variant": "x",
+      "repeat": 1,
+      "exit_code": 0,
+      "seconds": 0.75,
+      "peak_rss_mib": 271.0,
+      "correct": true,
+      "stderr_tail": ""
+    },
+    {
+      "workload": "uniform",
+      "variant": "y",
+      "repeat": 1,
+      "exit_code": 0,
+      "seconds": 0.42,
+      "peak_rss_mib": 125.0,
+      "correct": true,
+      "stderr_tail": "0\n70000\n80000\n90000\n100000\n110000\n120000\n130000\n140000\n150000\n160000\n170000\n180000\n190000\n200000\n210000\n220000\n230000\n240000\n250000\n260000\n270000\n280000\n290000\n300000\n310000\n320000\n330000\n340000\n350000\n360000\n370000\n380000\n390000\n400000\n410000\n420000\n430000\n440000\n450000\n460000\n470000\n480000\n490000\n"
+    },
+    {
+      "workload": "uniform",
+      "variant": "leaf_separate",
+      "repeat": 1,
+      "exit_code": 0,
+      "seconds": 0.23,
+      "peak_rss_mib": 26.0,
+      "correct": true,
+      "stderr_tail": "nodes=1052752 leaves=2 node_bytes=16\n"
+    },
+    {
+      "workload": "uniform",
+      "variant": "leaf",
+      "repeat": 1,
+      "exit_code": 0,
+      "seconds": 0.24,
+      "peak_rss_mib": 26.0,
+      "correct": true,
+      "stderr_tail": "nodes=1052752 leaves=2 node_bytes=16\n"
+    },
+    {
+      "workload": "recent",
+      "variant": "x",
+      "repeat": 1,
+      "exit_code": 134,
+      "seconds": 1.97,
+      "peak_rss_mib": 1531.0,
+      "correct": false,
+      "stderr_tail": "terminate called after throwing an instance of 'std::bad_alloc'\n  what():  std::bad_alloc\ntimeout: \u76e3\u8996\u3057\u3066\u3044\u308b\u30b3\u30de\u30f3\u30c9\u304c\u30b3\u30a2\u30c0\u30f3\u30d7\u3057\u307e\u3057\u305f\n"
+    },
+    {
+      "workload": "recent",
+      "variant": "y",
+      "repeat": 1,
+      "exit_code": 0,
+      "seconds": 0.47,
+      "peak_rss_mib": 72.0,
+      "correct": true,
+      "stderr_tail": "0\n70000\n80000\n90000\n100000\n110000\n120000\n130000\n140000\n150000\n160000\n170000\n180000\n190000\n200000\n210000\n220000\n230000\n240000\n250000\n260000\n270000\n280000\n290000\n300000\n310000\n320000\n330000\n340000\n350000\n360000\n370000\n380000\n390000\n400000\n410000\n420000\n430000\n440000\n450000\n460000\n470000\n480000\n490000\n"
+    },
+    {
+      "workload": "recent",
+      "variant": "leaf_separate",
+      "repeat": 1,
+      "exit_code": 0,
+      "seconds": 0.38,
+      "peak_rss_mib": 19.0,
+      "correct": true,
+      "stderr_tail": "nodes=534934 leaves=2 node_bytes=16\n"
+    },
+    {
+      "workload": "recent",
+      "variant": "leaf",
+      "repeat": 1,
+      "exit_code": 0,
+      "seconds": 0.37,
+      "peak_rss_mib": 11.0,
+      "correct": true,
+      "stderr_tail": "nodes=58193 leaves=2 node_bytes=16\n"
+    },
+    {
+      "workload": "prepend",
+      "variant": "x",
+      "repeat": 1,
+      "exit_code": 134,
+      "seconds": 1.61,
+      "peak_rss_mib": 1531.0,
+      "correct": false,
+      "stderr_tail": "terminate called after throwing an instance of 'std::bad_alloc'\n  what():  std::bad_alloc\ntimeout: \u76e3\u8996\u3057\u3066\u3044\u308b\u30b3\u30de\u30f3\u30c9\u304c\u30b3\u30a2\u30c0\u30f3\u30d7\u3057\u307e\u3057\u305f\n"
+    },
+    {
+      "workload": "prepend",
+      "variant": "y",
+      "repeat": 1,
+      "exit_code": 134,
+      "seconds": 1.2,
+      "peak_rss_mib": 1511.0,
+      "correct": false,
+      "stderr_tail": "0\n10000\n20000\n30000\n40000\n50000\n60000\n70000\n80000\n90000\n100000\n110000\n120000\n130000\n140000\nterminate called after throwing an instance of 'std::bad_alloc'\n  what():  std::bad_alloc\ntimeout: \u76e3\u8996\u3057\u3066\u3044\u308b\u30b3\u30de\u30f3\u30c9\u304c\u30b3\u30a2\u30c0\u30f3\u30d7\u3057\u307e\u3057\u305f\n"
+    },
+    {
+      "workload": "prepend",
+      "variant": "leaf_separate",
+      "repeat": 1,
+      "exit_code": 0,
+      "seconds": 1.34,
+      "peak_rss_mib": 893.0,
+      "correct": true,
+      "stderr_tail": "nodes=57612938 leaves=2 node_bytes=16\n"
+    },
+    {
+      "workload": "prepend",
+      "variant": "leaf",
+      "repeat": 1,
+      "exit_code": 0,
+      "seconds": 1.32,
+      "peak_rss_mib": 885.0,
+      "correct": true,
+      "stderr_tail": "nodes=57112997 leaves=2 node_bytes=16\n"
+    }
+  ]
+}

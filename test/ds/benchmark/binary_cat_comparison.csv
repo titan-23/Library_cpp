@@ -1,0 +1,13 @@
+workload,variant,complete_and_correct,repeats,seconds,peak_rss_mib
+uniform,x,True,3,0.73,271.0
+uniform,y,True,3,0.41,125.0
+uniform,leaf_separate,True,3,0.21,26.0
+uniform,leaf,True,3,0.21,26.0
+recent,x,False,1,,1531.0
+recent,y,True,3,0.47,72.0
+recent,leaf_separate,True,3,0.38,19.0
+recent,leaf,True,3,0.37,11.0
+prepend,x,False,1,,1531.0
+prepend,y,False,1,,1511.0
+prepend,leaf_separate,True,3,1.31,893.0
+prepend,leaf,True,3,1.29,885.0

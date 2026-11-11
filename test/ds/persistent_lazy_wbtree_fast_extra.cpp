@@ -94,6 +94,12 @@ const auto &stored_value(const Data &data) {
     return data.key;
 #endif
 }
+template<class Node, class Data>
+auto stored_reverse(const Node&, const Data& data, int) -> decltype(data.rev) { return data.rev; }
+
+template<class Node, class Data>
+auto stored_reverse(const Node& node, const Data&, long) -> decltype(node.rev) { return node.rev; }
+
 Snapshot snapshot() {
     Snapshot saved;
 #ifdef PLWBT_SEPARATE_LEAF_POOLS
@@ -131,7 +137,7 @@ void verify_unchanged(const Snapshot &saved) {
         assert(stored_value(data) == stored_value(records[i].data));
         assert(data.data == records[i].data.data);
         assert(!(data.lazy != records[i].data.lazy));
-        assert(data.rev == records[i].data.rev);
+        assert(stored_reverse(node, data, 0) == stored_reverse(records[i].node, records[i].data, 0));
     }
 }
 

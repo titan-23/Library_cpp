@@ -55,7 +55,10 @@ S e() { return {0, 0}; }
 S mapping(Value f, S x) { return {x.sum + f * x.count, x.count}; }
 Value composition(Value f, Value g) { return f + g; }
 Value id() { return 0; }
-using Tree = titan23::PersistentLazyWBTree<int, S, Value, op, mapping,
+#ifndef PERSISTENT_LAZY_WBTREE_SIZE_TYPE
+#define PERSISTENT_LAZY_WBTREE_SIZE_TYPE int
+#endif
+using Tree = titan23::PersistentLazyWBTree<PERSISTENT_LAZY_WBTREE_SIZE_TYPE, S, Value, op, mapping,
                                           composition, e, id>;
 
 template<class Allocator>

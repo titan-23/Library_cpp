@@ -41,6 +41,7 @@ import tempfile
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--n", type=int, default=500000)
+    parser.add_argument("--index-type", choices=("int", "long-long"), default="int")
     parser.add_argument("--q", type=int, default=500000)
     parser.add_argument("--seed", type=int, default=23)
     parser.add_argument("--mode", choices=("latest", "history", "both"), default="both")
@@ -83,6 +84,7 @@ def main():
                 cpu_model = line.partition(":")[2].strip()
                 break
     output = {
+        "index_type": args.index_type,
         "compiler": subprocess.check_output(compiler + ["--version"], text=True).splitlines()[0],
         "flags": flags,
         "platform": platform.platform(),
@@ -108,6 +110,7 @@ def main():
             binary = Path(build_dir) / name
             command = compiler + flags + [
                 "-I", str(root),
+                "-DPERSISTENT_LAZY_WBTREE_SIZE_TYPE=" + args.index_type.replace("-", " "),
                 f'-DPERSISTENT_LAZY_WBTREE_HEADER="{header}"',
                 f'-DPERSISTENT_LAZY_WBTREE_BENCH_LABEL="{name}"',
                 str(source), "-o", str(binary),
