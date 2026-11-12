@@ -12,10 +12,12 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include "titan_cpplib/ahc/clustering/cluster_size_range.cpp"
 #include "titan_cpplib/ahc/clustering/clustering_partition.cpp"
 #include "titan_cpplib/ahc/sa/sa.cpp"
 using namespace std;
 namespace titan23 {
+// Coordinates copied into a flat double array, shared read-only by SA states.
 class ClusteringSaProblem {
 public:
     template<class Point>
@@ -185,7 +187,8 @@ struct ClusteringSaResult {
     }
 };
 
-inline double clustering_cost_from_labels(const ClusteringSaProblem& problem, const vector<int>& labels, const vector<ClusteringSizeRange>& ranges) {
+// Validates labels against ranges and returns the sum of squared distances to the cluster means.
+inline double clustering_cost_from_labels(const ClusteringSaProblem& problem, const vector<int>& labels, const vector<ClusterSizeRange>& ranges) {
     check_clustering_size_ranges(problem.point_count(), ranges);
     if (ranges.size() > (size_t)numeric_limits<int>::max()) throw invalid_argument("clustering_cost_from_labels: ranges.size() must fit in int");
     int cluster_count = ranges.size();
@@ -214,6 +217,7 @@ inline double clustering_cost_from_labels(const ClusteringSaProblem& problem, co
     return total_cost;
 }
 
+// SA state for sa::sa_run. Proposals never modify the partition; advance() applies the pending move.
 class ClusteringSaState {
 public:
     using ScoreType = double;
@@ -235,7 +239,7 @@ public:
     bool is_valid = true;
     ScoreType score = 0;
 
-    ClusteringSaState(const ClusteringSaProblem& problem, vector<int> labels, vector<ClusteringSizeRange> ranges, ClusteringSaOptions options, uint32_t seed)
+    ClusteringSaState(const ClusteringSaProblem& problem, vector<int> labels, vector<ClusterSizeRange> ranges, ClusteringSaOptions options, uint32_t seed)
         : problem_(&problem), ranges_(move(ranges)), options_(move(options)), partition_(problem.point_count(), checked_cluster_count(ranges_), move(labels)), random_(seed) {
         resolve_options();
         check_options();
@@ -271,6 +275,7 @@ public:
         else if (type == clustering_swap) valid = propose_swap();
         else if (type == clustering_cycle) valid = propose_cycle();
         else {
+            // The three-cluster rebuild runs after two-cluster rebuilds keep returning the same labels.
             bool rebuild_three_due_to_stagnation = options_.rebuild_three_same_state_threshold > 0 && rebuild_two_same_state_streak_ >= options_.rebuild_three_same_state_threshold;
             bool rebuild_three_randomly = options_.rebuild_three_probability > 0 && random_unit() < options_.rebuild_three_probability;
             attempted_rebuild_three = partition_.cluster_count() >= 3 && (rebuild_three_due_to_stagnation || rebuild_three_randomly);
@@ -279,7 +284,7 @@ public:
                 increment_counter(statistics_.rebuild_three_attempts);
                 valid = propose_rebuild_three();
             } else {
-                valid = propose_rebuild();
+                valid = propose_rebuild_two();
             }
         }
         if (!valid || !isfinite(pending_delta_) || !isfinite(total_cost_ + pending_delta_)) {
@@ -341,13 +346,22 @@ public:
 private:
     static constexpr int NEARBY_INSERTION_LIMIT = 8;
 
+    // Orders (value, index) pairs by value, then by index, so that ties are deterministic.
+    struct LessValueIndex {
+        bool operator()(const pair<double, int>& a, const pair<double, int>& b) const {
+            if (a.first < b.first) return true;
+            if (b.first < a.first) return false;
+            return a.second < b.second;
+        }
+    };
+
     struct RelocateMove {
         int point = -1;
         int source = -1;
         int target = -1;
         double source_cost = 0;
         double target_cost = 0;
-    } relocate_move_;
+    };
 
     struct SwapMove {
         int point1 = -1;
@@ -356,8 +370,9 @@ private:
         int cluster2 = -1;
         double cluster1_cost = 0;
         double cluster2_cost = 0;
-    } swap_move_;
+    };
 
+    // point1 moves to cluster2, point2 to cluster3, and point3 to cluster1.
     struct CycleMove {
         int point1 = -1;
         int point2 = -1;
@@ -368,13 +383,15 @@ private:
         double cluster1_cost = 0;
         double cluster2_cost = 0;
         double cluster3_cost = 0;
-    } cycle_move_;
+    };
 
     const ClusteringSaProblem* problem_;
-    vector<ClusteringSizeRange> ranges_;
+    vector<ClusterSizeRange> ranges_;
     ClusteringSaOptions options_;
     ClusteringPartition partition_;
     Random random_;
+
+    // Exact aggregates of the current partition. Cluster c uses [c * dimension, (c + 1) * dimension).
     vector<double> coordinate_sums_;
     vector<double> squared_norm_sums_;
     vector<double> cluster_costs_;
@@ -382,6 +399,10 @@ private:
     double total_cost_ = 0;
     double score_scale_ = 1;
     double current_progress_ = 0;
+    bool can_relocate_ = false;
+    ClusteringSaStatistics statistics_;
+
+    // Candidate hints. They may be stale; deltas are always computed from the exact aggregates.
     int nearby_count_ = 0;
     vector<int> nearby_clusters_;
     vector<pair<double, int>> nearby_work_;
@@ -392,52 +413,46 @@ private:
     vector<double> point_cost_;
     int accepted_since_refresh_ = 0;
     bool candidates_dirty_ = false;
-    bool can_relocate_ = false;
-    ClusteringSaStatistics statistics_;
+
+    // The proposed move, applied by advance().
     int pending_type_ = -1;
     double pending_delta_ = 0;
-    int rebuild_cluster1_ = -1;
-    int rebuild_cluster2_ = -1;
-    double rebuild_cluster1_cost_ = 0;
-    double rebuild_cluster2_cost_ = 0;
-    double rebuild_cluster1_squared_norm_sum_ = 0;
-    double rebuild_cluster2_squared_norm_sum_ = 0;
+    RelocateMove relocate_move_;
+    SwapMove swap_move_;
+    CycleMove cycle_move_;
+
+    // Rebuild of two or three clusters. Slot i refers to rebuild_clusters_[i]; a two-cluster rebuild
+    // uses slots 0 and 1. Sums and centers use [i * dimension, (i + 1) * dimension).
+    int pending_rebuild_cluster_count_ = 0;
+    array<int, 3> rebuild_clusters_{};
+    array<int, 3> rebuild_sizes_{};
+    array<double, 3> rebuild_core_squared_norm_sums_{};
+    array<double, 3> rebuild_squared_norm_sums_{};
+    array<double, 3> rebuild_costs_{};
+    vector<double> rebuild_core_sums_;
+    vector<double> rebuild_sums_;
+    vector<double> rebuild_centers_;
     vector<int> pending_rebuild_points_;
     vector<int> pending_rebuild_labels_;
-    vector<double> pending_rebuild_sum1_;
-    vector<double> pending_rebuild_sum2_;
     vector<pair<double, int>> point_priority_work_;
     vector<double> rebuild_own_cost_work_;
     vector<int> rebuild_selected_generation_;
     int rebuild_generation_ = 0;
     vector<pair<double, int>> rebuild_order_;
-    vector<double> rebuild_sum1_;
-    vector<double> rebuild_sum2_;
-    vector<double> rebuild_core_sum1_;
-    vector<double> rebuild_core_sum2_;
-    vector<double> rebuild_center1_;
-    vector<double> rebuild_center2_;
     vector<int> apply_from1_;
     vector<int> apply_from2_;
-    int pending_rebuild_cluster_count_ = 0;
-    array<int, 3> rebuild_three_clusters_{};
-    array<int, 3> rebuild_three_sizes_{};
-    array<double, 3> rebuild_three_squared_norm_sums_{};
-    array<double, 3> rebuild_three_costs_{};
-    vector<double> pending_rebuild_three_sums_;
-    vector<double> rebuild_three_sums_;
-    vector<double> rebuild_three_core_sums_;
-    vector<double> rebuild_three_centers_;
     vector<double> rebuild_three_cost_matrix_;
     vector<double> rebuild_three_dp_current_;
     vector<double> rebuild_three_dp_next_;
     vector<int8_t> rebuild_three_predecessor_;
     int rebuild_two_same_state_streak_ = 0;
 
-    static int checked_cluster_count(const vector<ClusteringSizeRange>& ranges) {
+    static int checked_cluster_count(const vector<ClusterSizeRange>& ranges) {
         if (ranges.size() > (size_t)numeric_limits<int>::max()) throw invalid_argument("ClusteringSaState: ranges.size() must fit in int");
         return (int)ranges.size();
     }
+
+    // ---- Initialization ----
 
     void resolve_options() {
         if (options_.early_cluster_samples == -1) options_.early_cluster_samples = partition_.cluster_count() >= 50 ? 16 : 0;
@@ -527,7 +542,7 @@ private:
         if (nearby_count_ > 0 && nearby_count_ <= NEARBY_INSERTION_LIMIT) {
             nearby_work_.resize((size_t)cluster_count * nearby_count_);
             nearby_work_counts_.resize(cluster_count);
-        } else if (nearby_count_ > 8) {
+        } else if (nearby_count_ > NEARBY_INSERTION_LIMIT) {
             neighbor_work_.reserve(max(0, cluster_count - 1));
         }
         alternative_cluster_.resize(problem_->point_count(), -1);
@@ -541,22 +556,15 @@ private:
         pending_rebuild_points_.reserve(rebuild_capacity);
         pending_rebuild_labels_.reserve(rebuild_capacity);
         rebuild_order_.reserve(rebuild_limit);
-        rebuild_sum1_.resize(dimension);
-        rebuild_sum2_.resize(dimension);
-        rebuild_core_sum1_.resize(dimension);
-        rebuild_core_sum2_.resize(dimension);
-        rebuild_center1_.resize(dimension);
-        rebuild_center2_.resize(dimension);
-        pending_rebuild_sum1_.resize(dimension);
-        pending_rebuild_sum2_.resize(dimension);
+        rebuild_core_sums_.resize((size_t)3 * dimension);
+        rebuild_sums_.resize((size_t)3 * dimension);
+        rebuild_centers_.resize((size_t)3 * dimension);
         apply_from1_.reserve(rebuild_limit);
         apply_from2_.reserve(rebuild_limit);
-        pending_rebuild_three_sums_.resize((size_t)3 * dimension);
-        rebuild_three_sums_.resize((size_t)3 * dimension);
-        rebuild_three_core_sums_.resize((size_t)3 * dimension);
-        rebuild_three_centers_.resize((size_t)3 * dimension);
         rebuild_three_cost_matrix_.reserve((size_t)rebuild_three_limit * 3);
     }
+
+    // ---- Aggregates and costs ----
 
     double* sum_data(int cluster) { return coordinate_sums_.data() + (size_t)cluster * problem_->dimension(); }
     const double* sum_data(int cluster) const { return coordinate_sums_.data() + (size_t)cluster * problem_->dimension(); }
@@ -571,6 +579,7 @@ private:
         for (int axis = 0; axis < problem_->dimension(); ++axis) center[axis] = sum[axis] / count;
     }
 
+    // Sum of squared distances to the mean: squared_norm_sum - |sum|^2 / count.
     double calculate_cost_from_values(const double* sum, double squared_norm_sum, int count) const {
         if (count <= 0) throw logic_error("ClusteringSaState: cluster count must be positive");
         double center_term = 0;
@@ -584,22 +593,19 @@ private:
         return calculate_cost_from_values(sum_data(cluster), squared_norm_sums_[cluster], partition_.cluster_size(cluster));
     }
 
-    double calculate_changed_cost(int cluster, int count_change, int remove1, int remove2, int add1, int add2) const {
+    // Cost of cluster after removing point removed and adding point added (-1 for none).
+    double calculate_changed_cost(int cluster, int count_change, int removed, int added) const {
         int count = partition_.cluster_size(cluster) + count_change;
         if (count <= 0) throw logic_error("ClusteringSaState: changed cluster count must be positive");
         double squared_norm_sum = squared_norm_sums_[cluster];
-        if (remove1 != -1) squared_norm_sum -= problem_->squared_norm(remove1);
-        if (remove2 != -1) squared_norm_sum -= problem_->squared_norm(remove2);
-        if (add1 != -1) squared_norm_sum += problem_->squared_norm(add1);
-        if (add2 != -1) squared_norm_sum += problem_->squared_norm(add2);
+        if (removed != -1) squared_norm_sum -= problem_->squared_norm(removed);
+        if (added != -1) squared_norm_sum += problem_->squared_norm(added);
         const double* old_sum = sum_data(cluster);
         double center_term = 0;
         for (int axis = 0; axis < problem_->dimension(); ++axis) {
             double value = old_sum[axis];
-            if (remove1 != -1) value -= problem_->coordinate(remove1, axis);
-            if (remove2 != -1) value -= problem_->coordinate(remove2, axis);
-            if (add1 != -1) value += problem_->coordinate(add1, axis);
-            if (add2 != -1) value += problem_->coordinate(add2, axis);
+            if (removed != -1) value -= problem_->coordinate(removed, axis);
+            if (added != -1) value += problem_->coordinate(added, axis);
             center_term += value * value;
         }
         double cost = squared_norm_sum - center_term / count;
@@ -619,21 +625,21 @@ private:
         return distance;
     }
 
+    // ---- Candidate hints ----
+
+    // Recomputes the nearest clusters of every center and, for every point, the best other cluster among
+    // them and the gap to it.
     void refresh_candidates() {
         int point_count = problem_->point_count();
         int cluster_count = partition_.cluster_count();
+        LessValueIndex less;
         if (nearby_count_ > 0) {
-            auto less_neighbor = [](const pair<double, int>& a, const pair<double, int>& b) {
-                if (a.first < b.first) return true;
-                if (b.first < a.first) return false;
-                return a.second < b.second;
-            };
             if (nearby_count_ <= NEARBY_INSERTION_LIMIT) {
                 fill(nearby_work_counts_.begin(), nearby_work_counts_.end(), 0);
                 auto add_neighbor = [&](int cluster, pair<double, int> candidate) {
                     pair<double, int>* begin = nearby_work_.data() + (size_t)cluster * nearby_count_;
                     int& count = nearby_work_counts_[cluster];
-                    int position = lower_bound(begin, begin + count, candidate, less_neighbor) - begin;
+                    int position = lower_bound(begin, begin + count, candidate, less) - begin;
                     if (count < nearby_count_) {
                         move_backward(begin + position, begin + count, begin + count + 1);
                         begin[position] = candidate;
@@ -663,10 +669,9 @@ private:
                         neighbor_work_.emplace_back(squared_center_distance(cluster, other), other);
                     }
                     if (nearby_count_ < cluster_count - 1) {
-                        nth_element(neighbor_work_.begin(), neighbor_work_.begin() + nearby_count_,
-                                    neighbor_work_.end(), less_neighbor);
+                        nth_element(neighbor_work_.begin(), neighbor_work_.begin() + nearby_count_, neighbor_work_.end(), less);
                     }
-                    sort(neighbor_work_.begin(), neighbor_work_.begin() + nearby_count_, less_neighbor);
+                    sort(neighbor_work_.begin(), neighbor_work_.begin() + nearby_count_, less);
                     for (int index = 0; index < nearby_count_; ++index) {
                         nearby_clusters_[(size_t)cluster * nearby_count_ + index] = neighbor_work_[index].second;
                     }
@@ -695,6 +700,8 @@ private:
         candidates_dirty_ = false;
         increment_counter(statistics_.candidate_refreshes);
     }
+
+    // ---- Selection ----
 
     double random_unit() {
         return (double)(random_.rand_u64() >> 11) / 9007199254740992.0;
@@ -728,39 +735,45 @@ private:
         throw logic_error("ClusteringSaState: failed to select a move type");
     }
 
+    // Uniformly chooses one feasible cluster by reservoir sampling, or returns -1.
+    template <class Feasible>
+    int select_uniform_cluster(Feasible feasible) {
+        int selected = -1;
+        int feasible_count = 0;
+        for (int cluster = 0; cluster < partition_.cluster_count(); ++cluster) if (feasible(cluster)) {
+            ++feasible_count;
+            if (random_.randrange(feasible_count) == 0) selected = cluster;
+        }
+        return selected;
+    }
+
+    // Prefers the sampled cluster with the largest cost per point.
     int select_source_cluster(bool require_removal_space, bool uniform) {
         int cluster_count = partition_.cluster_count();
         auto feasible = [&](int cluster) {
             return !require_removal_space || partition_.cluster_size(cluster) > ranges_[cluster].lower;
         };
-        if (uniform) {
-            int selected = -1;
-            int feasible_count = 0;
-            for (int cluster = 0; cluster < cluster_count; ++cluster) if (feasible(cluster)) {
-                ++feasible_count;
-                if (random_.randrange(feasible_count) == 0) selected = cluster;
+        if (uniform) return select_uniform_cluster(feasible);
+        int configured_samples = current_progress_ < options_.middle_phase_start && options_.early_cluster_samples > 0 ? options_.early_cluster_samples : options_.cluster_samples;
+        int samples = min(configured_samples, cluster_count);
+        int best = -1;
+        double best_value = -numeric_limits<double>::infinity();
+        for (int attempt = 0; attempt < samples; ++attempt) {
+            int cluster = samples == cluster_count ? attempt : random_.randrange(cluster_count);
+            if (!feasible(cluster)) continue;
+            double value = cluster_costs_[cluster] / partition_.cluster_size(cluster);
+            if (best == -1 || best_value < value) {
+                best = cluster;
+                best_value = value;
             }
-            return selected;
-        } else {
-            int configured_samples = current_progress_ < options_.middle_phase_start && options_.early_cluster_samples > 0 ? options_.early_cluster_samples : options_.cluster_samples;
-            int samples = min(configured_samples, cluster_count);
-            int best = -1;
-            double best_value = -numeric_limits<double>::infinity();
-            for (int attempt = 0; attempt < samples; ++attempt) {
-                int cluster = samples == cluster_count ? attempt : random_.randrange(cluster_count);
-                if (!feasible(cluster)) continue;
-                double value = cluster_costs_[cluster] / partition_.cluster_size(cluster);
-                if (best == -1 || best_value < value) {
-                    best = cluster;
-                    best_value = value;
-                }
-            }
-            if (best != -1) return best;
         }
+        if (best != -1) return best;
         for (int cluster = 0; cluster < cluster_count; ++cluster) if (feasible(cluster)) return cluster;
         return -1;
     }
 
+    // With a target, prefers points that are relatively close to it. Otherwise prefers either a small
+    // assignment gap or a large current cost, chosen at random.
     int select_point(int cluster, int target_cluster, bool uniform) {
         const vector<int>& members = partition_.members(cluster);
         if (members.empty()) return -1;
@@ -783,21 +796,14 @@ private:
         return best;
     }
 
+    // Prefers the point's alternative cluster, then a nearby cluster of source, then any feasible cluster.
     int select_target_cluster(int source, int point, int forbidden, bool require_addition_space, bool uniform) {
         int cluster_count = partition_.cluster_count();
         auto feasible = [&](int cluster) {
             if (cluster == source || cluster == forbidden) return false;
             return !require_addition_space || partition_.cluster_size(cluster) < ranges_[cluster].upper;
         };
-        if (uniform) {
-            int selected = -1;
-            int feasible_count = 0;
-            for (int cluster = 0; cluster < cluster_count; ++cluster) if (feasible(cluster)) {
-                ++feasible_count;
-                if (random_.randrange(feasible_count) == 0) selected = cluster;
-            }
-            return selected;
-        }
+        if (uniform) return select_uniform_cluster(feasible);
         int alternative = alternative_cluster_[point];
         if (alternative != -1 && feasible(alternative)) return alternative;
         if (nearby_count_ > 0) {
@@ -816,16 +822,51 @@ private:
         return -1;
     }
 
+    // Chooses source, a point in source, and a target for that point.
+    bool select_cluster_pair(bool require_space, bool uniform, int& source, int& point, int& target) {
+        source = select_source_cluster(require_space, uniform);
+        if (source == -1) return false;
+        point = select_point(source, -1, uniform);
+        if (point == -1) return false;
+        target = select_target_cluster(source, point, -1, require_space, uniform);
+        return target != -1;
+    }
+
+    // Chooses three distinct clusters along point1 -> cluster2 and point2 -> cluster3.
+    bool select_cluster_triple(bool uniform, int& cluster1, int& point1, int& cluster2, int& point2, int& cluster3) {
+        if (!select_cluster_pair(false, uniform, cluster1, point1, cluster2)) return false;
+        point2 = select_point(cluster2, -1, uniform);
+        if (point2 == -1) return false;
+        cluster3 = select_target_cluster(cluster2, point2, cluster1, false, uniform);
+        return cluster3 != -1;
+    }
+
+    // Evaluates sampled members and keeps the first move with the smallest delta.
+    template <class Move, class Evaluate>
+    bool select_best_member(const vector<int>& members, int samples, Evaluate evaluate, Move& best_move, double& best_delta) {
+        bool found = false;
+        for (int attempt = 0; attempt < samples; ++attempt) {
+            int point = samples == (int)members.size() ? members[attempt] : members[random_.randrange(members.size())];
+            Move move;
+            double delta;
+            if (!evaluate(point, move, delta)) continue;
+            if (!found || delta < best_delta) {
+                found = true;
+                best_move = move;
+                best_delta = delta;
+            }
+        }
+        return found;
+    }
+
+    // ---- Small moves ----
+
     bool propose_relocate() {
         bool uniform = use_uniform_selection();
-        int source = select_source_cluster(true, uniform);
-        if (source == -1) return false;
-        int point = select_point(source, -1, uniform);
-        if (point == -1) return false;
-        int target = select_target_cluster(source, point, -1, true, uniform);
-        if (target == -1) return false;
-        double source_cost = calculate_changed_cost(source, -1, point, -1, -1, -1);
-        double target_cost = calculate_changed_cost(target, 1, -1, -1, point, -1);
+        int source, point, target;
+        if (!select_cluster_pair(true, uniform, source, point, target)) return false;
+        double source_cost = calculate_changed_cost(source, -1, point, -1);
+        double target_cost = calculate_changed_cost(target, 1, -1, point);
         relocate_move_ = {point, source, target, source_cost, target_cost};
         pending_type_ = clustering_relocate;
         pending_delta_ = source_cost + target_cost - cluster_costs_[source] - cluster_costs_[target];
@@ -836,8 +877,8 @@ private:
         int cluster1 = partition_.label(point1);
         int cluster2 = partition_.label(point2);
         if (cluster1 == cluster2) return false;
-        double cluster1_cost = calculate_changed_cost(cluster1, 0, point1, -1, point2, -1);
-        double cluster2_cost = calculate_changed_cost(cluster2, 0, point2, -1, point1, -1);
+        double cluster1_cost = calculate_changed_cost(cluster1, 0, point1, point2);
+        double cluster2_cost = calculate_changed_cost(cluster2, 0, point2, point1);
         delta = cluster1_cost + cluster2_cost - cluster_costs_[cluster1] - cluster_costs_[cluster2];
         move = {point1, point2, cluster1, cluster2, cluster1_cost, cluster2_cost};
         return isfinite(delta);
@@ -845,37 +886,17 @@ private:
 
     bool propose_swap() {
         bool uniform = use_uniform_selection();
-        int cluster1 = select_source_cluster(false, uniform);
-        if (cluster1 == -1) return false;
-        int point1 = select_point(cluster1, -1, uniform);
-        if (point1 == -1) return false;
-        int cluster2 = select_target_cluster(cluster1, point1, -1, false, uniform);
-        if (cluster2 == -1) return false;
+        int cluster1, point1, cluster2;
+        if (!select_cluster_pair(false, uniform, cluster1, point1, cluster2)) return false;
         if (uniform) {
             int point2 = select_point(cluster2, cluster1, true);
             if (point2 == -1) return false;
             if (!evaluate_swap(point1, point2, swap_move_, pending_delta_)) return false;
         } else {
             const vector<int>& members = partition_.members(cluster2);
-            if (members.empty()) return false;
-            bool found = false;
-            SwapMove best_move;
-            double best_delta = numeric_limits<double>::infinity();
             int samples = min(options_.swap_partner_samples, (int)members.size());
-            for (int attempt = 0; attempt < samples; ++attempt) {
-                int point2 = samples == (int)members.size() ? members[attempt] : members[random_.randrange(members.size())];
-                SwapMove move;
-                double delta;
-                if (!evaluate_swap(point1, point2, move, delta)) continue;
-                if (!found || delta < best_delta) {
-                    found = true;
-                    best_move = move;
-                    best_delta = delta;
-                }
-            }
-            if (!found) return false;
-            swap_move_ = best_move;
-            pending_delta_ = best_delta;
+            auto evaluate = [&](int point2, SwapMove& move, double& delta) { return evaluate_swap(point1, point2, move, delta); };
+            if (!select_best_member(members, samples, evaluate, swap_move_, pending_delta_)) return false;
         }
         pending_type_ = clustering_swap;
         return true;
@@ -886,9 +907,9 @@ private:
         int cluster2 = partition_.label(point2);
         int cluster3 = partition_.label(point3);
         if (cluster1 == cluster2 || cluster2 == cluster3 || cluster3 == cluster1) return false;
-        double cluster1_cost = calculate_changed_cost(cluster1, 0, point1, -1, point3, -1);
-        double cluster2_cost = calculate_changed_cost(cluster2, 0, point2, -1, point1, -1);
-        double cluster3_cost = calculate_changed_cost(cluster3, 0, point3, -1, point2, -1);
+        double cluster1_cost = calculate_changed_cost(cluster1, 0, point1, point3);
+        double cluster2_cost = calculate_changed_cost(cluster2, 0, point2, point1);
+        double cluster3_cost = calculate_changed_cost(cluster3, 0, point3, point2);
         delta = cluster1_cost + cluster2_cost + cluster3_cost - cluster_costs_[cluster1] - cluster_costs_[cluster2] - cluster_costs_[cluster3];
         move = {point1, point2, point3, cluster1, cluster2, cluster3, cluster1_cost, cluster2_cost, cluster3_cost};
         return isfinite(delta);
@@ -896,40 +917,29 @@ private:
 
     bool propose_cycle() {
         bool uniform = use_uniform_selection();
-        int cluster1 = select_source_cluster(false, uniform);
-        if (cluster1 == -1) return false;
-        int point1 = select_point(cluster1, -1, uniform);
-        if (point1 == -1) return false;
-        int cluster2 = select_target_cluster(cluster1, point1, -1, false, uniform);
-        if (cluster2 == -1) return false;
-        int point2 = select_point(cluster2, -1, uniform);
-        if (point2 == -1) return false;
-        int cluster3 = select_target_cluster(cluster2, point2, cluster1, false, uniform);
-        if (cluster3 == -1) return false;
+        int cluster1, point1, cluster2, point2, cluster3;
+        if (!select_cluster_triple(uniform, cluster1, point1, cluster2, point2, cluster3)) return false;
         const vector<int>& members = partition_.members(cluster3);
         if (members.empty()) return false;
-        bool found = false;
-        CycleMove best_move;
-        double best_delta = numeric_limits<double>::infinity();
         int samples = uniform ? 1 : min(options_.cycle_partner_samples, (int)members.size());
-        for (int attempt = 0; attempt < samples; ++attempt) {
-            int point3 = samples == (int)members.size() ? members[attempt] : members[random_.randrange(members.size())];
-            CycleMove move;
-            double delta;
-            if (!evaluate_cycle(point1, point2, point3, move, delta)) continue;
-            if (!found || delta < best_delta) {
-                found = true;
-                best_move = move;
-                best_delta = delta;
-            }
-        }
-        if (!found) return false;
-        cycle_move_ = best_move;
-        pending_delta_ = best_delta;
+        auto evaluate = [&](int point3, CycleMove& move, double& delta) { return evaluate_cycle(point1, point2, point3, move, delta); };
+        if (!select_best_member(members, samples, evaluate, cycle_move_, pending_delta_)) return false;
         pending_type_ = clustering_cycle;
         return true;
     }
 
+    // ---- Rebuilds ----
+
+    double* rebuild_sum_data(int slot) { return rebuild_sums_.data() + (size_t)slot * problem_->dimension(); }
+    double* rebuild_center_data(int slot) { return rebuild_centers_.data() + (size_t)slot * problem_->dimension(); }
+
+    int rebuild_slot(int cluster, int count) const {
+        for (int slot = 0; slot < count; ++slot) if (rebuild_clusters_[slot] == cluster) return slot;
+        return -1;
+    }
+
+    // Appends take points of cluster: half with the smallest margin to the other clusters, then the
+    // remaining points farthest from the current center.
     void select_rebuild_points(int cluster, int other1, int other2, int take) {
         const vector<int>& members = partition_.members(cluster);
         if (take >= (int)members.size()) {
@@ -941,15 +951,11 @@ private:
             rebuild_generation_ = 0;
         }
         ++rebuild_generation_;
-        auto less_point = [](const pair<double, int>& a, const pair<double, int>& b) {
-            if (a.first < b.first) return true;
-            if (b.first < a.first) return false;
-            return a.second < b.second;
-        };
+        LessValueIndex less;
         auto append_best = [&](int count) {
             if (count <= 0) return;
-            if (count < (int)point_priority_work_.size()) nth_element(point_priority_work_.begin(), point_priority_work_.begin() + count, point_priority_work_.end(), less_point);
-            sort(point_priority_work_.begin(), point_priority_work_.begin() + count, less_point);
+            if (count < (int)point_priority_work_.size()) nth_element(point_priority_work_.begin(), point_priority_work_.begin() + count, point_priority_work_.end(), less);
+            sort(point_priority_work_.begin(), point_priority_work_.begin() + count, less);
             for (int index = 0; index < count; ++index) {
                 int point = point_priority_work_[index].second;
                 pending_rebuild_points_.push_back(point);
@@ -981,11 +987,102 @@ private:
         rebuild_own_cost_work_.clear();
     }
 
-    void copy_point_to_center(int point, vector<double>& center) {
-        const double* coordinates = problem_->point_data(point);
-        copy(coordinates, coordinates + problem_->dimension(), center.begin());
+    // Index in pending_rebuild_points_ of the point farthest from pending_rebuild_points_[from].
+    int farthest_rebuild_point(int from) const {
+        int farthest = -1;
+        double farthest_distance = -1;
+        for (int index = 0; index < (int)pending_rebuild_points_.size(); ++index) if (index != from) {
+            double distance = problem_->squared_distance(pending_rebuild_points_[from], pending_rebuild_points_[index]);
+            if (farthest == -1 || farthest_distance < distance) {
+                farthest = index;
+                farthest_distance = distance;
+            }
+        }
+        return farthest;
     }
 
+    // A random selected point and the selected point farthest from it.
+    bool select_rebuild_seed_pair(int& first, int& second) {
+        first = random_.randrange((int)pending_rebuild_points_.size());
+        second = farthest_rebuild_point(first);
+        if (options_.refine_rebuild_seeds && second != -1) {
+            first = second;
+            second = farthest_rebuild_point(first);
+        }
+        return second != -1;
+    }
+
+    void set_rebuild_center(int slot, int point) {
+        const double* coordinates = problem_->point_data(point);
+        copy(coordinates, coordinates + problem_->dimension(), rebuild_center_data(slot));
+    }
+
+    // Aggregates of the rebuilt clusters without the selected points.
+    void prepare_rebuild_core(int count) {
+        int dimension = problem_->dimension();
+        for (int slot = 0; slot < count; ++slot) {
+            int cluster = rebuild_clusters_[slot];
+            copy(sum_data(cluster), sum_data(cluster) + dimension, rebuild_core_sums_.data() + (size_t)slot * dimension);
+            rebuild_core_squared_norm_sums_[slot] = squared_norm_sums_[cluster];
+        }
+        for (int point : pending_rebuild_points_) {
+            int slot = rebuild_slot(partition_.label(point), count);
+            if (slot == -1) throw logic_error("ClusteringSaState: selected a point outside the rebuilt clusters");
+            double* core_sum = rebuild_core_sums_.data() + (size_t)slot * dimension;
+            const double* coordinates = problem_->point_data(point);
+            for (int axis = 0; axis < dimension; ++axis) core_sum[axis] -= coordinates[axis];
+            rebuild_core_squared_norm_sums_[slot] -= problem_->squared_norm(point);
+        }
+    }
+
+    // Aggregates and centers after assigning the selected points by pending_rebuild_labels_.
+    void update_rebuild_aggregates(int count) {
+        int dimension = problem_->dimension();
+        copy(rebuild_core_sums_.begin(), rebuild_core_sums_.begin() + (size_t)count * dimension, rebuild_sums_.begin());
+        rebuild_squared_norm_sums_ = rebuild_core_squared_norm_sums_;
+        for (int index = 0; index < (int)pending_rebuild_points_.size(); ++index) {
+            int point = pending_rebuild_points_[index];
+            int slot = rebuild_slot(pending_rebuild_labels_[index], count);
+            double* sum = rebuild_sum_data(slot);
+            const double* coordinates = problem_->point_data(point);
+            for (int axis = 0; axis < dimension; ++axis) sum[axis] += coordinates[axis];
+            rebuild_squared_norm_sums_[slot] += problem_->squared_norm(point);
+        }
+        for (int slot = 0; slot < count; ++slot) {
+            const double* sum = rebuild_sum_data(slot);
+            double* center = rebuild_center_data(slot);
+            for (int axis = 0; axis < dimension; ++axis) center[axis] = sum[axis] / rebuild_sizes_[slot];
+        }
+    }
+
+    bool rebuild_changes_labels() const {
+        for (int index = 0; index < (int)pending_rebuild_points_.size(); ++index) {
+            if (partition_.label(pending_rebuild_points_[index]) != pending_rebuild_labels_[index]) return true;
+        }
+        return false;
+    }
+
+    void discard_rebuild() {
+        pending_rebuild_points_.clear();
+        pending_rebuild_labels_.clear();
+    }
+
+    bool finish_rebuild_proposal(int count) {
+        for (int slot = 0; slot < count; ++slot) {
+            rebuild_costs_[slot] = calculate_cost_from_values(rebuild_sum_data(slot), rebuild_squared_norm_sums_[slot], rebuild_sizes_[slot]);
+        }
+        if (count == 2) {
+            pending_delta_ = rebuild_costs_[0] + rebuild_costs_[1] - cluster_costs_[rebuild_clusters_[0]] - cluster_costs_[rebuild_clusters_[1]];
+        } else {
+            pending_delta_ = 0;
+            for (int slot = 0; slot < count; ++slot) pending_delta_ += rebuild_costs_[slot] - cluster_costs_[rebuild_clusters_[slot]];
+        }
+        pending_rebuild_cluster_count_ = count;
+        pending_type_ = clustering_rebuild;
+        return isfinite(pending_delta_);
+    }
+
+    // Distributes budget over three clusters in proportion to their sizes, at least one point each.
     array<int, 3> calculate_rebuild_three_takes(const array<int, 3>& sizes, int budget) const {
         array<int, 3> takes{1, 1, 1};
         int total_size = sizes[0] + sizes[1] + sizes[2];
@@ -1006,6 +1103,8 @@ private:
         return takes;
     }
 
+    // Optimal assignment of the selected points to the three temporary centers with takes[i] points
+    // going to slot i. DP over the counts of slots 0 and 1.
     bool assign_rebuild_three(const array<int, 3>& takes, bool compare_previous, bool& same_assignment) {
         int selected_count = pending_rebuild_points_.size();
         size_t width2 = (size_t)takes[1] + 1;
@@ -1016,9 +1115,8 @@ private:
         rebuild_three_cost_matrix_.resize((size_t)selected_count * 3);
         for (int point_index = 0; point_index < selected_count; ++point_index) {
             int point = pending_rebuild_points_[point_index];
-            for (int cluster_index = 0; cluster_index < 3; ++cluster_index) {
-                const double* center = rebuild_three_centers_.data() + (size_t)cluster_index * problem_->dimension();
-                rebuild_three_cost_matrix_[(size_t)point_index * 3 + cluster_index] = problem_->squared_distance_to_center(point, center);
+            for (int slot = 0; slot < 3; ++slot) {
+                rebuild_three_cost_matrix_[(size_t)point_index * 3 + slot] = problem_->squared_distance_to_center(point, rebuild_center_data(slot));
             }
         }
         double infinity = numeric_limits<double>::infinity();
@@ -1037,12 +1135,12 @@ private:
                     double base_cost = rebuild_three_dp_current_[source];
                     if (base_cost == infinity) continue;
                     int third_count = point_index - first_count - second_count;
-                    auto relax = [&](int cluster_index, int next_first, int next_second) {
+                    auto relax = [&](int slot, int next_first, int next_second) {
                         size_t destination = (size_t)next_first * width2 + next_second;
-                        double candidate = base_cost + rebuild_three_cost_matrix_[(size_t)point_index * 3 + cluster_index];
+                        double candidate = base_cost + rebuild_three_cost_matrix_[(size_t)point_index * 3 + slot];
                         if (candidate < rebuild_three_dp_next_[destination]) {
                             rebuild_three_dp_next_[destination] = candidate;
-                            rebuild_three_predecessor_[((size_t)point_index + 1) * state_count + destination] = (int8_t)cluster_index;
+                            rebuild_three_predecessor_[((size_t)point_index + 1) * state_count + destination] = (int8_t)slot;
                         }
                     };
                     if (first_count < takes[0]) relax(0, first_count + 1, second_count);
@@ -1060,149 +1158,24 @@ private:
         pending_rebuild_labels_.resize(selected_count);
         for (int point_index = selected_count; point_index > 0; --point_index) {
             size_t state = (size_t)first_count * width2 + second_count;
-            int cluster_index = rebuild_three_predecessor_[(size_t)point_index * state_count + state];
-            if (cluster_index < 0 || cluster_index >= 3) throw logic_error("ClusteringSaState: failed to restore a three-cluster assignment");
-            int label = rebuild_three_clusters_[cluster_index];
+            int slot = rebuild_three_predecessor_[(size_t)point_index * state_count + state];
+            if (slot < 0 || slot >= 3) throw logic_error("ClusteringSaState: failed to restore a three-cluster assignment");
+            int label = rebuild_clusters_[slot];
             if (same_assignment && pending_rebuild_labels_[point_index - 1] != label) same_assignment = false;
             pending_rebuild_labels_[point_index - 1] = label;
-            if (cluster_index == 0) --first_count;
-            else if (cluster_index == 1) --second_count;
+            if (slot == 0) --first_count;
+            else if (slot == 1) --second_count;
         }
         if (first_count != 0 || second_count != 0) throw logic_error("ClusteringSaState: invalid three-cluster assignment counts");
         return true;
     }
 
-    bool propose_rebuild_three() {
+    // Takes boundary and distant points from two clusters and splits them again around two new seeds,
+    // keeping both cluster sizes.
+    bool propose_rebuild_two() {
         bool uniform = use_uniform_selection();
-        int cluster1 = select_source_cluster(false, uniform);
-        if (cluster1 == -1) return false;
-        int point1 = select_point(cluster1, -1, uniform);
-        if (point1 == -1) return false;
-        int cluster2 = select_target_cluster(cluster1, point1, -1, false, uniform);
-        if (cluster2 == -1) return false;
-        int point2 = select_point(cluster2, -1, uniform);
-        if (point2 == -1) return false;
-        int cluster3 = select_target_cluster(cluster2, point2, cluster1, false, uniform);
-        if (cluster3 == -1) return false;
-        rebuild_three_clusters_ = {cluster1, cluster2, cluster3};
-        rebuild_three_sizes_ = {partition_.cluster_size(cluster1), partition_.cluster_size(cluster2), partition_.cluster_size(cluster3)};
-        int total_size = rebuild_three_sizes_[0] + rebuild_three_sizes_[1] + rebuild_three_sizes_[2];
-        int budget = min(options_.rebuild_three_point_limit, total_size);
-        if (budget < 3) return false;
-        array<int, 3> takes = calculate_rebuild_three_takes(rebuild_three_sizes_, budget);
-        pending_rebuild_points_.clear();
-        pending_rebuild_labels_.clear();
-        select_rebuild_points(cluster1, cluster2, cluster3, takes[0]);
-        select_rebuild_points(cluster2, cluster1, cluster3, takes[1]);
-        select_rebuild_points(cluster3, cluster1, cluster2, takes[2]);
-        int selected_count = pending_rebuild_points_.size();
-        if (selected_count != budget) throw logic_error("ClusteringSaState: selected an invalid number of points for a three-cluster rebuild");
-        array<int, 3> seed_indices{-1, -1, -1};
-        seed_indices[0] = random_.randrange(selected_count);
-        double farthest_distance = -1;
-        for (int index = 0; index < selected_count; ++index) if (index != seed_indices[0]) {
-            double distance = problem_->squared_distance(pending_rebuild_points_[seed_indices[0]], pending_rebuild_points_[index]);
-            if (seed_indices[1] == -1 || farthest_distance < distance) {
-                seed_indices[1] = index;
-                farthest_distance = distance;
-            }
-        }
-        if (options_.refine_rebuild_seeds && seed_indices[1] != -1) {
-            seed_indices[0] = seed_indices[1];
-            seed_indices[1] = -1;
-            farthest_distance = -1;
-            for (int index = 0; index < selected_count; ++index) if (index != seed_indices[0]) {
-                double distance = problem_->squared_distance(pending_rebuild_points_[seed_indices[0]], pending_rebuild_points_[index]);
-                if (seed_indices[1] == -1 || farthest_distance < distance) {
-                    seed_indices[1] = index;
-                    farthest_distance = distance;
-                }
-            }
-        }
-        double largest_nearest_distance = -1;
-        for (int index = 0; index < selected_count; ++index) if (index != seed_indices[0] && index != seed_indices[1]) {
-            double distance1 = problem_->squared_distance(pending_rebuild_points_[seed_indices[0]], pending_rebuild_points_[index]);
-            double distance2 = problem_->squared_distance(pending_rebuild_points_[seed_indices[1]], pending_rebuild_points_[index]);
-            double nearest_distance = min(distance1, distance2);
-            if (seed_indices[2] == -1 || largest_nearest_distance < nearest_distance) {
-                seed_indices[2] = index;
-                largest_nearest_distance = nearest_distance;
-            }
-        }
-        if (seed_indices[1] == -1 || seed_indices[2] == -1) return false;
-        int dimension = problem_->dimension();
-        for (int cluster_index = 0; cluster_index < 3; ++cluster_index) {
-            const double* coordinates = problem_->point_data(pending_rebuild_points_[seed_indices[cluster_index]]);
-            copy(coordinates, coordinates + dimension, rebuild_three_centers_.data() + (size_t)cluster_index * dimension);
-            copy(sum_data(rebuild_three_clusters_[cluster_index]), sum_data(rebuild_three_clusters_[cluster_index]) + dimension, rebuild_three_core_sums_.data() + (size_t)cluster_index * dimension);
-        }
-        array<double, 3> core_squared_norm_sums = {
-            squared_norm_sums_[cluster1], squared_norm_sums_[cluster2], squared_norm_sums_[cluster3]
-        };
-        for (int point : pending_rebuild_points_) {
-            int old_cluster = partition_.label(point);
-            int cluster_index = old_cluster == cluster1 ? 0 : old_cluster == cluster2 ? 1 : old_cluster == cluster3 ? 2 : -1;
-            if (cluster_index == -1) throw logic_error("ClusteringSaState: selected a point outside the rebuilt clusters");
-            double* core_sum = rebuild_three_core_sums_.data() + (size_t)cluster_index * dimension;
-            const double* coordinates = problem_->point_data(point);
-            for (int axis = 0; axis < dimension; ++axis) core_sum[axis] -= coordinates[axis];
-            core_squared_norm_sums[cluster_index] -= problem_->squared_norm(point);
-        }
-        array<double, 3> final_squared_norm_sums{};
-        for (int iteration = 0; iteration < options_.rebuild_iterations; ++iteration) {
-            bool same_assignment = false;
-            if (!assign_rebuild_three(takes, iteration > 0, same_assignment)) return false;
-            if (same_assignment) break;
-            rebuild_three_sums_ = rebuild_three_core_sums_;
-            final_squared_norm_sums = core_squared_norm_sums;
-            for (int index = 0; index < selected_count; ++index) {
-                int point = pending_rebuild_points_[index];
-                int label = pending_rebuild_labels_[index];
-                int cluster_index = label == cluster1 ? 0 : label == cluster2 ? 1 : 2;
-                double* sum = rebuild_three_sums_.data() + (size_t)cluster_index * dimension;
-                const double* coordinates = problem_->point_data(point);
-                for (int axis = 0; axis < dimension; ++axis) sum[axis] += coordinates[axis];
-                final_squared_norm_sums[cluster_index] += problem_->squared_norm(point);
-            }
-            for (int cluster_index = 0; cluster_index < 3; ++cluster_index) {
-                const double* sum = rebuild_three_sums_.data() + (size_t)cluster_index * dimension;
-                double* center = rebuild_three_centers_.data() + (size_t)cluster_index * dimension;
-                for (int axis = 0; axis < dimension; ++axis) center[axis] = sum[axis] / rebuild_three_sizes_[cluster_index];
-            }
-        }
-        bool changed_labels = false;
-        for (int index = 0; index < selected_count; ++index) if (partition_.label(pending_rebuild_points_[index]) != pending_rebuild_labels_[index]) {
-            changed_labels = true;
-            break;
-        }
-        if (!changed_labels) {
-            increment_counter(statistics_.rebuild_same_state);
-            increment_counter(statistics_.rebuild_three_same_state);
-            pending_rebuild_points_.clear();
-            pending_rebuild_labels_.clear();
-            return false;
-        }
-        pending_rebuild_three_sums_ = rebuild_three_sums_;
-        rebuild_three_squared_norm_sums_ = final_squared_norm_sums;
-        pending_delta_ = 0;
-        for (int cluster_index = 0; cluster_index < 3; ++cluster_index) {
-            const double* sum = pending_rebuild_three_sums_.data() + (size_t)cluster_index * dimension;
-            rebuild_three_costs_[cluster_index] = calculate_cost_from_values(sum, rebuild_three_squared_norm_sums_[cluster_index], rebuild_three_sizes_[cluster_index]);
-            pending_delta_ += rebuild_three_costs_[cluster_index] - cluster_costs_[rebuild_three_clusters_[cluster_index]];
-        }
-        pending_rebuild_cluster_count_ = 3;
-        pending_type_ = clustering_rebuild;
-        return isfinite(pending_delta_);
-    }
-
-    bool propose_rebuild() {
-        bool uniform = use_uniform_selection();
-        int cluster1 = select_source_cluster(false, uniform);
-        if (cluster1 == -1) return false;
-        int point = select_point(cluster1, -1, uniform);
-        if (point == -1) return false;
-        int cluster2 = select_target_cluster(cluster1, point, -1, false, uniform);
-        if (cluster2 == -1) return false;
+        int cluster1, point, cluster2;
+        if (!select_cluster_pair(false, uniform, cluster1, point, cluster2)) return false;
         int size1 = partition_.cluster_size(cluster1);
         int size2 = partition_.cluster_size(cluster2);
         int total_size = size1 + size2;
@@ -1226,71 +1199,34 @@ private:
             }
             if (take1 <= 0 || take1 > size1 || take2 <= 0 || take2 > size2) return false;
         }
-        pending_rebuild_points_.clear();
-        pending_rebuild_labels_.clear();
+        rebuild_clusters_ = {cluster1, cluster2, -1};
+        rebuild_sizes_ = {size1, size2, 0};
+        discard_rebuild();
         select_rebuild_points(cluster1, cluster2, -1, take1);
         select_rebuild_points(cluster2, cluster1, -1, take2);
         int selected_count = pending_rebuild_points_.size();
         if (selected_count < 2) return false;
-        int first_index = random_.randrange(selected_count);
-        int first_point = pending_rebuild_points_[first_index];
-        int second_point = -1;
-        double farthest_distance = -1;
-        for (int candidate : pending_rebuild_points_) {
-            if (candidate == first_point) continue;
-            double distance = problem_->squared_distance(first_point, candidate);
-            if (second_point == -1 || farthest_distance < distance) {
-                second_point = candidate;
-                farthest_distance = distance;
-            }
-        }
-        if (options_.refine_rebuild_seeds && second_point != -1) {
-            first_point = second_point;
-            second_point = -1;
-            farthest_distance = -1;
-            for (int candidate : pending_rebuild_points_) {
-                if (candidate == first_point) continue;
-                double distance = problem_->squared_distance(first_point, candidate);
-                if (second_point == -1 || farthest_distance < distance) {
-                    second_point = candidate;
-                    farthest_distance = distance;
-                }
-            }
-        }
-        if (second_point == -1) return false;
-        copy_point_to_center(first_point, rebuild_center1_);
-        copy_point_to_center(second_point, rebuild_center2_);
-        copy(sum_data(cluster1), sum_data(cluster1) + problem_->dimension(), rebuild_sum1_.begin());
-        copy(sum_data(cluster2), sum_data(cluster2) + problem_->dimension(), rebuild_sum2_.begin());
-        double core_squared_norm1 = squared_norm_sums_[cluster1];
-        double core_squared_norm2 = squared_norm_sums_[cluster2];
-        for (int selected : pending_rebuild_points_) {
-            int old_cluster = partition_.label(selected);
-            vector<double>& sum = old_cluster == cluster1 ? rebuild_sum1_ : rebuild_sum2_;
-            for (int axis = 0; axis < problem_->dimension(); ++axis) sum[axis] -= problem_->coordinate(selected, axis);
-            if (old_cluster == cluster1) {
-                core_squared_norm1 -= problem_->squared_norm(selected);
-            } else {
-                core_squared_norm2 -= problem_->squared_norm(selected);
-            }
-        }
-        rebuild_core_sum1_ = rebuild_sum1_;
-        rebuild_core_sum2_ = rebuild_sum2_;
+        int first, second;
+        if (!select_rebuild_seed_pair(first, second)) return false;
+        set_rebuild_center(0, pending_rebuild_points_[first]);
+        set_rebuild_center(1, pending_rebuild_points_[second]);
+        prepare_rebuild_core(2);
         pending_rebuild_labels_.resize(selected_count);
         rebuild_order_.resize(selected_count);
-        double final_squared_norm1 = 0;
-        double final_squared_norm2 = 0;
+        auto less_assignment = [&](const pair<double, int>& a, const pair<double, int>& b) {
+            if (a.first < b.first) return true;
+            if (b.first < a.first) return false;
+            return pending_rebuild_points_[a.second] < pending_rebuild_points_[b.second];
+        };
         for (int iteration = 0; iteration < options_.rebuild_iterations; ++iteration) {
+            // With fixed centers, the take1 points with the smallest cost difference go to cluster1.
+            const double* center1 = rebuild_center_data(0);
+            const double* center2 = rebuild_center_data(1);
             for (int index = 0; index < selected_count; ++index) {
                 int selected = pending_rebuild_points_[index];
-                double difference = problem_->squared_distance_to_center(selected, rebuild_center1_.data()) - problem_->squared_distance_to_center(selected, rebuild_center2_.data());
+                double difference = problem_->squared_distance_to_center(selected, center1) - problem_->squared_distance_to_center(selected, center2);
                 rebuild_order_[index] = {difference, index};
             }
-            auto less_assignment = [&](const pair<double, int>& a, const pair<double, int>& b) {
-                if (a.first < b.first) return true;
-                if (b.first < a.first) return false;
-                return pending_rebuild_points_[a.second] < pending_rebuild_points_[b.second];
-            };
             nth_element(rebuild_order_.begin(), rebuild_order_.begin() + take1, rebuild_order_.end(), less_assignment);
             bool same_assignment = iteration > 0;
             if (take1 <= take2) {
@@ -1305,50 +1241,71 @@ private:
             fill(pending_rebuild_labels_.begin(), pending_rebuild_labels_.end(), cluster2);
             for (int rank = 0; rank < take1; ++rank) pending_rebuild_labels_[rebuild_order_[rank].second] = cluster1;
             if (same_assignment) break;
-            rebuild_sum1_ = rebuild_core_sum1_;
-            rebuild_sum2_ = rebuild_core_sum2_;
-            final_squared_norm1 = core_squared_norm1;
-            final_squared_norm2 = core_squared_norm2;
-            for (int index = 0; index < selected_count; ++index) {
-                int selected = pending_rebuild_points_[index];
-                vector<double>& sum = pending_rebuild_labels_[index] == cluster1 ? rebuild_sum1_ : rebuild_sum2_;
-                for (int axis = 0; axis < problem_->dimension(); ++axis) sum[axis] += problem_->coordinate(selected, axis);
-                if (pending_rebuild_labels_[index] == cluster1) final_squared_norm1 += problem_->squared_norm(selected);
-                else final_squared_norm2 += problem_->squared_norm(selected);
-            }
-            for (int axis = 0; axis < problem_->dimension(); ++axis) {
-                rebuild_center1_[axis] = rebuild_sum1_[axis] / size1;
-                rebuild_center2_[axis] = rebuild_sum2_[axis] / size2;
-            }
+            update_rebuild_aggregates(2);
         }
-        bool changed_labels = false;
-        for (int index = 0; index < selected_count; ++index) if (partition_.label(pending_rebuild_points_[index]) != pending_rebuild_labels_[index]) {
-            changed_labels = true;
-            break;
-        }
-        if (!changed_labels) {
+        rebuild_order_.clear();
+        if (!rebuild_changes_labels()) {
             increment_counter(statistics_.rebuild_same_state);
             if (rebuild_two_same_state_streak_ < numeric_limits<int>::max()) ++rebuild_two_same_state_streak_;
-            pending_rebuild_points_.clear();
-            pending_rebuild_labels_.clear();
-            rebuild_order_.clear();
+            discard_rebuild();
             return false;
         }
-        rebuild_cluster1_ = cluster1;
-        rebuild_cluster2_ = cluster2;
         rebuild_two_same_state_streak_ = 0;
-        rebuild_cluster1_squared_norm_sum_ = final_squared_norm1;
-        rebuild_cluster2_squared_norm_sum_ = final_squared_norm2;
-        pending_rebuild_sum1_ = rebuild_sum1_;
-        pending_rebuild_sum2_ = rebuild_sum2_;
-        rebuild_cluster1_cost_ = calculate_cost_from_values(pending_rebuild_sum1_.data(), final_squared_norm1, size1);
-        rebuild_cluster2_cost_ = calculate_cost_from_values(pending_rebuild_sum2_.data(), final_squared_norm2, size2);
-        pending_delta_ = rebuild_cluster1_cost_ + rebuild_cluster2_cost_ - cluster_costs_[cluster1] - cluster_costs_[cluster2];
-        pending_rebuild_cluster_count_ = 2;
-        pending_type_ = clustering_rebuild;
-        rebuild_order_.clear();
-        return isfinite(pending_delta_);
+        return finish_rebuild_proposal(2);
     }
+
+    // Takes points from three clusters and reassigns them around three new seeds with the DP above,
+    // keeping all three cluster sizes.
+    bool propose_rebuild_three() {
+        bool uniform = use_uniform_selection();
+        int cluster1, point1, cluster2, point2, cluster3;
+        if (!select_cluster_triple(uniform, cluster1, point1, cluster2, point2, cluster3)) return false;
+        rebuild_clusters_ = {cluster1, cluster2, cluster3};
+        rebuild_sizes_ = {partition_.cluster_size(cluster1), partition_.cluster_size(cluster2), partition_.cluster_size(cluster3)};
+        int total_size = rebuild_sizes_[0] + rebuild_sizes_[1] + rebuild_sizes_[2];
+        int budget = min(options_.rebuild_three_point_limit, total_size);
+        if (budget < 3) return false;
+        array<int, 3> takes = calculate_rebuild_three_takes(rebuild_sizes_, budget);
+        discard_rebuild();
+        select_rebuild_points(cluster1, cluster2, cluster3, takes[0]);
+        select_rebuild_points(cluster2, cluster1, cluster3, takes[1]);
+        select_rebuild_points(cluster3, cluster1, cluster2, takes[2]);
+        int selected_count = pending_rebuild_points_.size();
+        if (selected_count != budget) throw logic_error("ClusteringSaState: selected an invalid number of points for a three-cluster rebuild");
+        int first, second;
+        if (!select_rebuild_seed_pair(first, second)) return false;
+        int third = -1;
+        double largest_nearest_distance = -1;
+        for (int index = 0; index < selected_count; ++index) if (index != first && index != second) {
+            double distance1 = problem_->squared_distance(pending_rebuild_points_[first], pending_rebuild_points_[index]);
+            double distance2 = problem_->squared_distance(pending_rebuild_points_[second], pending_rebuild_points_[index]);
+            double nearest_distance = min(distance1, distance2);
+            if (third == -1 || largest_nearest_distance < nearest_distance) {
+                third = index;
+                largest_nearest_distance = nearest_distance;
+            }
+        }
+        if (third == -1) return false;
+        set_rebuild_center(0, pending_rebuild_points_[first]);
+        set_rebuild_center(1, pending_rebuild_points_[second]);
+        set_rebuild_center(2, pending_rebuild_points_[third]);
+        prepare_rebuild_core(3);
+        for (int iteration = 0; iteration < options_.rebuild_iterations; ++iteration) {
+            bool same_assignment = false;
+            if (!assign_rebuild_three(takes, iteration > 0, same_assignment)) return false;
+            if (same_assignment) break;
+            update_rebuild_aggregates(3);
+        }
+        if (!rebuild_changes_labels()) {
+            increment_counter(statistics_.rebuild_same_state);
+            increment_counter(statistics_.rebuild_three_same_state);
+            discard_rebuild();
+            return false;
+        }
+        return finish_rebuild_proposal(3);
+    }
+
+    // ---- Applying moves ----
 
     void apply_point_delta_to_sum(int cluster, int point, double sign) {
         double* sum = sum_data(cluster);
@@ -1398,68 +1355,59 @@ private:
         update_center(cycle_move_.cluster3);
     }
 
-    void apply_rebuild_two() {
+    // Both cluster sizes are unchanged, so the moved points can be exchanged in pairs.
+    void apply_rebuild_two_labels() {
+        int cluster1 = rebuild_clusters_[0];
+        int cluster2 = rebuild_clusters_[1];
         apply_from1_.clear();
         apply_from2_.clear();
         for (int index = 0; index < (int)pending_rebuild_points_.size(); ++index) {
             int point = pending_rebuild_points_[index];
             int old_cluster = partition_.label(point);
             int new_cluster = pending_rebuild_labels_[index];
-            if (old_cluster == rebuild_cluster1_ && new_cluster == rebuild_cluster2_) apply_from1_.push_back(point);
-            else if (old_cluster == rebuild_cluster2_ && new_cluster == rebuild_cluster1_) apply_from2_.push_back(point);
+            if (old_cluster == cluster1 && new_cluster == cluster2) apply_from1_.push_back(point);
+            else if (old_cluster == cluster2 && new_cluster == cluster1) apply_from2_.push_back(point);
             else if (old_cluster != new_cluster) throw logic_error("ClusteringSaState::apply_rebuild: invalid rebuilt label");
         }
         if (apply_from1_.size() != apply_from2_.size()) throw logic_error("ClusteringSaState::apply_rebuild: rebuilt cluster sizes changed");
         for (int index = 0; index < (int)apply_from1_.size(); ++index) partition_.swap_points(apply_from1_[index], apply_from2_[index]);
-        copy(pending_rebuild_sum1_.begin(), pending_rebuild_sum1_.end(), sum_data(rebuild_cluster1_));
-        copy(pending_rebuild_sum2_.begin(), pending_rebuild_sum2_.end(), sum_data(rebuild_cluster2_));
-        squared_norm_sums_[rebuild_cluster1_] = rebuild_cluster1_squared_norm_sum_;
-        squared_norm_sums_[rebuild_cluster2_] = rebuild_cluster2_squared_norm_sum_;
-        cluster_costs_[rebuild_cluster1_] = rebuild_cluster1_cost_;
-        cluster_costs_[rebuild_cluster2_] = rebuild_cluster2_cost_;
-        total_cost_ += pending_delta_;
-        update_center(rebuild_cluster1_);
-        update_center(rebuild_cluster2_);
         apply_from1_.clear();
         apply_from2_.clear();
     }
 
-    void apply_rebuild_three() {
-        array<int, 3> old_sizes = {
-            partition_.cluster_size(rebuild_three_clusters_[0]),
-            partition_.cluster_size(rebuild_three_clusters_[1]),
-            partition_.cluster_size(rebuild_three_clusters_[2])
-        };
+    void apply_rebuild_three_labels() {
         for (int index = 0; index < (int)pending_rebuild_points_.size(); ++index) {
-            int point = pending_rebuild_points_[index];
             int new_cluster = pending_rebuild_labels_[index];
-            if (new_cluster != rebuild_three_clusters_[0] && new_cluster != rebuild_three_clusters_[1] && new_cluster != rebuild_three_clusters_[2]) throw logic_error("ClusteringSaState::apply_rebuild_three: invalid rebuilt label");
-            partition_.move_point(point, new_cluster);
+            if (rebuild_slot(new_cluster, 3) == -1) throw logic_error("ClusteringSaState::apply_rebuild_three: invalid rebuilt label");
+            partition_.move_point(pending_rebuild_points_[index], new_cluster);
         }
-        for (int cluster_index = 0; cluster_index < 3; ++cluster_index) {
-            int cluster = rebuild_three_clusters_[cluster_index];
-            if (partition_.cluster_size(cluster) != old_sizes[cluster_index]) throw logic_error("ClusteringSaState::apply_rebuild_three: rebuilt cluster sizes changed");
-            const double* sum = pending_rebuild_three_sums_.data() + (size_t)cluster_index * problem_->dimension();
-            copy(sum, sum + problem_->dimension(), sum_data(cluster));
-            squared_norm_sums_[cluster] = rebuild_three_squared_norm_sums_[cluster_index];
-            cluster_costs_[cluster] = rebuild_three_costs_[cluster_index];
-            update_center(cluster);
+        for (int slot = 0; slot < 3; ++slot) {
+            if (partition_.cluster_size(rebuild_clusters_[slot]) != rebuild_sizes_[slot]) throw logic_error("ClusteringSaState::apply_rebuild_three: rebuilt cluster sizes changed");
         }
-        total_cost_ += pending_delta_;
     }
 
     void apply_rebuild() {
-        if (pending_rebuild_cluster_count_ == 2) apply_rebuild_two();
-        else if (pending_rebuild_cluster_count_ == 3) apply_rebuild_three();
+        int count = pending_rebuild_cluster_count_;
+        if (count == 2) apply_rebuild_two_labels();
+        else if (count == 3) apply_rebuild_three_labels();
         else throw logic_error("ClusteringSaState::apply_rebuild: invalid cluster count");
+        int dimension = problem_->dimension();
+        for (int slot = 0; slot < count; ++slot) {
+            int cluster = rebuild_clusters_[slot];
+            const double* sum = rebuild_sum_data(slot);
+            copy(sum, sum + dimension, sum_data(cluster));
+            squared_norm_sums_[cluster] = rebuild_squared_norm_sums_[slot];
+            cluster_costs_[cluster] = rebuild_costs_[slot];
+            update_center(cluster);
+        }
+        total_cost_ += pending_delta_;
     }
 
     void clear_pending() {
         pending_type_ = -1;
         pending_delta_ = 0;
         pending_rebuild_cluster_count_ = 0;
-        pending_rebuild_points_.clear();
-        pending_rebuild_labels_.clear();
+        discard_rebuild();
     }
 
     static void increment_counter(int64_t& counter) {
@@ -1468,18 +1416,22 @@ private:
     }
 };
 
-inline ClusteringSaResult clustering_sa_from_labels(const ClusteringSaProblem& problem, const vector<int>& initial_labels, const vector<ClusteringSizeRange>& ranges, double time_limit_ms, ClusteringSaOptions options = {}, uint32_t seed = 23, bool verbose = false) {
+inline ClusteringSaResult clustering_sa_from_labels(const ClusteringSaProblem& problem, const vector<int>& initial_labels, const vector<ClusterSizeRange>& ranges, double time_limit_ms, ClusteringSaOptions options = {}, uint32_t seed = 23, bool verbose = false) {
+    if (!isfinite(time_limit_ms) || time_limit_ms < 0) throw invalid_argument("clustering_sa_from_labels: time_limit_ms must be finite and nonnegative");
     Timer timer;
     ClusteringSaState state(problem, initial_labels, ranges, move(options), seed);
-    double effective_time_limit = ranges.size() == 1 && isfinite(time_limit_ms) && time_limit_ms >= 0 ? 0 : time_limit_ms;
+    // A single cluster has nothing to change.
+    double effective_time_limit = ranges.size() == 1 ? 0 : time_limit_ms;
     double remaining_time = max(0.0, effective_time_limit - timer.elapsed());
     ClusteringSaResult result = sa::sa_run<ClusteringSaState>(remaining_time, state, verbose);
     state.finalize_result(result);
     return result;
 }
 
+// Spends about time_limit_ms * initialization_time_ratio creating initial labels with seeds seed, seed + 1,
+// ..., then runs the SA from the cheapest ones for the remaining time.
 template<class InitialLabelFactory>
-inline ClusteringSaResult clustering_sa_from_label_factory(const ClusteringSaProblem& problem, const vector<ClusteringSizeRange>& ranges, double time_limit_ms, double initialization_time_ratio, InitialLabelFactory initial_label_factory, ClusteringSaOptions options = {}, uint32_t seed = 23, bool verbose = false) {
+inline ClusteringSaResult clustering_sa_from_label_factory(const ClusteringSaProblem& problem, const vector<ClusterSizeRange>& ranges, double time_limit_ms, double initialization_time_ratio, InitialLabelFactory initial_label_factory, ClusteringSaOptions options = {}, uint32_t seed = 23, bool verbose = false) {
     using Labels = remove_cvref_t<invoke_result_t<InitialLabelFactory&, uint32_t>>;
     static_assert(is_same_v<Labels, vector<int>>, "clustering_sa_from_label_factory: initial_label_factory must return vector<int>");
     if (!isfinite(time_limit_ms) || time_limit_ms < 0) throw invalid_argument("clustering_sa_from_label_factory: time_limit_ms must be finite and nonnegative");

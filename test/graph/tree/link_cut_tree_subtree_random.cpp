@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cassert>
+#include <cstdint>
 #include <iostream>
 #include <numeric>
 #include <queue>
@@ -8,7 +9,11 @@
 #include <tuple>
 #include <vector>
 
+#ifdef LCTS_HEADER
+#include LCTS_HEADER
+#else
 #include "titan_cpplib/graph/tree/link_cut_tree_subtree.cpp"
+#endif
 
 using namespace std;
 
@@ -159,7 +164,103 @@ void verify(titan23::LinkCutTreeSubtree<long long, op, e, inv> &lct, const Naive
     }
 }
 
+struct Payload {
+    long long sum;
+    uint64_t bits;
+    bool operator==(const Payload &) const = default;
+};
+
+Payload payload_op(Payload a, Payload b) { return {a.sum + b.sum, a.bits ^ b.bits}; }
+Payload payload_e() { return {0, 0}; }
+Payload payload_inv(Payload a) { return {-a.sum, a.bits}; }
+
+// Interleave rerooting, topology changes and value changes. Unlike verify(), this
+// does not expose every pair between updates, so pending reversals accumulate.
+void test_mixed_group() {
+    using Tree = titan23::LinkCutTreeSubtree<Payload, payload_op, payload_e, payload_inv>;
+    for (unsigned seed : {17, 81, 2026, 998244353}) {
+        mt19937_64 rng(seed);
+        const int n = 128;
+        vector<Payload> values(n);
+        vector<long long> sums(n);
+        for (int v = 0; v < n; ++v) {
+            sums[v] = int(rng() % 201) - 100;
+            values[v] = {sums[v], rng()};
+        }
+        Tree tree(values);
+        NaiveForest naive(sums);
+        for (int v = 1; v < n; ++v) {
+            int p = seed % 2 ? v - 1 : int(rng() % v);
+            tree.link(v, p);
+            naive.link(v, p);
+        }
+        auto fold = [&](const vector<int> &vs) {
+            Payload result = payload_e();
+            for (int v : vs) result = payload_op(result, values[v]);
+            return result;
+        };
+        for (int step = 0; step < 12000; ++step) {
+            int u = int(rng() % n), v = int(rng() % n);
+            int kind = int(rng() % 9);
+            if (kind == 0) {
+                auto edges = naive.edges();
+                tie(u, v) = edges[rng() % edges.size()];
+                tree.split(u, v);
+                naive.cut(u, v);
+                auto a = naive.subtree(u, u), b = naive.subtree(v, v);
+                assert(!tree.same(u, v));
+                assert(tree.component_prod(u) == fold(a));
+                assert(tree.component_prod(v) == fold(b));
+                u = a[rng() % a.size()];
+                v = b[rng() % b.size()];
+                assert(tree.merge(u, v));
+                naive.link(u, v);
+            } else if (kind == 1) {
+                values[u] = {int(rng() % 2001) - 1000, rng()};
+                tree.set(u, values[u]);
+                assert(tree.get(u) == values[u]);
+            } else if (kind == 2) {
+                auto path = naive.path(u, v);
+                assert(tree.path_prod(u, v) == fold(path));
+                assert(tree.path_length(u, v) == int(path.size()));
+                int k = int(rng() % path.size());
+                assert(tree.path_kth_elm(u, v, k) == path[k]);
+            } else if (kind == 3) {
+                auto sub = naive.subtree(u, v);
+                assert(tree.subtree_prod(u, v) == fold(sub));
+                assert(tree.subtree_size(u, v) == int(sub.size()));
+            } else if (kind == 4) {
+                tree.evert(u);
+                assert(tree.root(v) == u);
+                int w = int(rng() % n);
+                assert(tree.lca(v, w) == naive.lca(u, v, w));
+            } else if (kind == 5) {
+                assert(!tree.merge(u, v));
+                // Even a failed merge reroots the component at u.
+                assert(tree.root(v) == u);
+            } else if (kind == 6) {
+                assert(tree.component_prod(u) == fold(naive.subtree(u, u)));
+                assert(tree.component_size(u) == n);
+            } else {
+                tree.evert(u);
+                tree.expose(v);
+            }
+            if (step % 997 == 0) {
+                Tree copy = tree;
+                Payload replacement = {123456, rng()};
+                copy.set(u, replacement);
+                assert(tree.get(u) == values[u]);
+                Payload total = fold(naive.subtree(u, u));
+                assert(tree.component_prod(u) == total);
+                assert(copy.component_prod(u) ==
+                       payload_op(total, payload_op(payload_inv(values[u]), replacement)));
+            }
+        }
+    }
+}
+
 int main() {
+    test_mixed_group();
     {
         titan23::LinkCutTreeSubtree<long long, op, e, inv> lct(1);
         assert(lct.get(0) == 0);

@@ -9,7 +9,10 @@
 #include <random>
 #include <string>
 #include <vector>
-#include "titan_cpplib/graph/online_dynamic_connectivity.cpp"
+#ifndef ODC_HEADER
+#define ODC_HEADER "titan_cpplib/graph/online_dynamic_connectivity.cpp"
+#endif
+#include ODC_HEADER
 using namespace std;
 
 using Clock = chrono::steady_clock;

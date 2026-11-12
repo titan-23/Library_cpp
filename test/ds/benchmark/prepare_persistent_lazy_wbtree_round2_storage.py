@@ -2,7 +2,7 @@
 """Generate isolated block-append fast paths without changing tree algorithms.
 
 python3 test/ds/benchmark/prepare_persistent_lazy_wbtree_round2_storage.py \
-    /tmp/wbt-round2-leaf --source titan_cpplib/ds/persistent_lazy_wbtree_leaf.cpp
+    /tmp/wbt-round2-leaf --source titan_cpplib/ds/persistent_lazy_wbtree.cpp
 
 append_cache keeps a pointer to the next raw slot, updating it only at block
 boundaries, on pop_back, and on moves. append_cache_lazy_cap additionally

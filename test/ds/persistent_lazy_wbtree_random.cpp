@@ -10,6 +10,9 @@
 
 #ifndef PERSISTENT_LAZY_WBTREE_HEADER
 #define PERSISTENT_LAZY_WBTREE_HEADER "titan_cpplib/ds/persistent_lazy_wbtree.cpp"
+#ifndef PLWBT_LEAF_LAYOUT
+#define PLWBT_LEAF_LAYOUT
+#endif
 #endif
 #include PERSISTENT_LAZY_WBTREE_HEADER
 

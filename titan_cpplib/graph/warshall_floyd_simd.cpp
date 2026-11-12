@@ -6,7 +6,9 @@
 #include <vector>
 #include <algorithm>
 #include <climits>
-#include <immintrin.h>
+#include <limits>
+#include <type_traits>
+#include "titan_cpplib/others/simd_int.cpp"
 
 using namespace std;
 
@@ -15,16 +17,28 @@ namespace titan23 {
 using ll = long long;
 
 /**
- * @brief AVX-512 を用いた Warshall-Floyd
+ * @brief SIMD を用いた Warshall-Floyd
+ * @details AVX-512 (F, VL) > AVX2 > 逐次 の順にコンパイル時に選ぶ。
+ *          T は 32 bit または 64 bit の符号付き整数。距離は [-INF, INF] に収め、INF は到達不能を表す。
+ *          負閉路を経由しない頂点対の最短距離は (-INF, INF) に収まる必要がある。
  */
+template<typename T = long long>
 class WarshallFloydSIMD {
+    static_assert(is_integral_v<T> && is_signed_v<T> && (sizeof(T) == 4 || sizeof(T) == 8),
+                  "WarshallFloydSIMD: T must be a 32-bit or 64-bit signed integer");
+    using Ops = SimdInt<T>;
+    using Vec = typename Ops::Vec;
+
+public:
+    // 3 値の和が T に収まる大きさ
+    static constexpr T INF = numeric_limits<T>::max() / 3;
+
 private:
     int n;
-    ll INF = LLONG_MAX / 3;
-    vector<ll> d;
+    vector<T> d;
     vector<int> neg_inf;
-    vector<ll> to_s;
-    vector<ll> from_t;
+    vector<T> to_s;
+    vector<T> from_t;
     vector<int> to_s_neg_inf;
     vector<int> from_t_neg_inf;
     bool neg_cycle;
@@ -33,10 +47,10 @@ public:
     WarshallFloydSIMD() : n(0), neg_cycle(false) {}
 
     /// @brief 時間 O(|V|^3), 空間 O(|V|^2)
-    WarshallFloydSIMD(const vector<vector<pair<int, ll>>> &G) :
+    WarshallFloydSIMD(const vector<vector<pair<int, T>>> &G) :
         n(G.size()), neg_cycle(false)
     {
-        n = (n + 7) & ~7;
+        n = (n + Ops::LANES - 1) / Ops::LANES * Ops::LANES;
         d.assign(n*n, INF);
         neg_inf.assign(n*n, 0);
         to_s.resize(n);
@@ -47,26 +61,26 @@ public:
         for (int v = 0; v < (int)G.size(); ++v) {
             d[v*n+v] = 0;
             for (const auto &[x, c]: G[v]) {
-                ll cost = c < -INF ? -INF : c;
+                T cost = c < -INF ? -INF : c;
                 d[v*n+x] = min(d[v*n+x], cost);
             }
         }
 
-        __m512i v_inf = _mm512_set1_epi64(INF);
-        __m512i v_ninf = _mm512_set1_epi64(-INF);
+        const Vec v_inf = Ops::set1(INF);
+        const Vec v_ninf = Ops::set1(-INF);
         for (int k = 0; k < n; ++k) {
             for (int i = 0; i < n; ++i) {
                 if (i == k || d[i*n+k] == INF) continue;
-                __m512i v_d_ik = _mm512_set1_epi64(d[i*n+k]);
-                for (int j = 0; j < n; j += 8) {
-                    __m512i v_d_ij = _mm512_loadu_si512((__m512i*)&d[i*n+j]);
-                    __m512i v_d_kj = _mm512_loadu_si512((__m512i*)&d[k*n+j]);
-                    __mmask8 finite = _mm512_cmpneq_epi64_mask(v_d_kj, v_inf);
-                    __m512i v_sum = _mm512_add_epi64(v_d_ik, v_d_kj);
-                    v_sum = _mm512_max_epi64(v_sum, v_ninf);
-                    __m512i v_min = _mm512_min_epi64(v_d_ij, v_sum);
-                    v_min = _mm512_mask_mov_epi64(v_d_ij, finite, v_min);
-                    _mm512_storeu_si512((__m512i*)&d[i*n+j], v_min);
+                Vec v_d_ik = Ops::set1(d[i*n+k]);
+                for (int j = 0; j < n; j += Ops::LANES) {
+                    Vec v_d_ij = Ops::loadu(&d[i*n+j]);
+                    Vec v_d_kj = Ops::loadu(&d[k*n+j]);
+                    auto finite = Ops::cmpneq(Ops::ALL, v_d_kj, v_inf);
+                    Vec v_sum = Ops::add(v_d_ik, v_d_kj);
+                    v_sum = Ops::max(v_sum, v_ninf);
+                    Vec v_min = Ops::min(v_d_ij, v_sum);
+                    v_min = Ops::blend(v_d_ij, finite, v_min);
+                    Ops::storeu(&d[i*n+j], v_min);
                 }
             }
         }
@@ -91,7 +105,7 @@ public:
     }
 
     /// @brief 重み `w` の有向辺 `(s, t)` を追加する / O(|V|^2)
-    void add_edge(int s, int t, ll w) {
+    void add_edge(int s, int t, T w) {
         if (w < -INF) w = -INF;
         int st = s*n+t;
         if (neg_inf[st] || w >= d[st]) return;
@@ -112,8 +126,8 @@ public:
         bool new_neg_cycle = neg_inf[ts] || (d[ts] != INF && d[ts] + w < 0);
         if (new_neg_cycle) neg_cycle = true;
 
-        __m512i v_inf = _mm512_set1_epi64(INF);
-        __m512i v_ninf = _mm512_set1_epi64(-INF);
+        const Vec v_inf = Ops::set1(INF);
+        const Vec v_ninf = Ops::set1(-INF);
         for (int i = 0; i < n; ++i) {
             if (!to_s_neg_inf[i] && to_s[i] == INF) continue;
 
@@ -134,16 +148,16 @@ public:
                 }
             }
 
-            __m512i v_isw = _mm512_set1_epi64(to_s[i]+w);
-            for (int j = 0; j < n; j += 8) {
-                __m512i v_d_ij = _mm512_loadu_si512((__m512i*)&d[i*n+j]);
-                __m512i v_from_t = _mm512_loadu_si512((__m512i*)&from_t[j]);
-                __mmask8 finite = _mm512_cmpneq_epi64_mask(v_from_t, v_inf);
-                __m512i v_new_d = _mm512_add_epi64(v_isw, v_from_t);
-                v_new_d = _mm512_max_epi64(v_new_d, v_ninf);
-                __m512i v_min = _mm512_min_epi64(v_d_ij, v_new_d);
-                v_min = _mm512_mask_mov_epi64(v_d_ij, finite, v_min);
-                _mm512_storeu_si512((__m512i*)&d[i*n+j], v_min);
+            Vec v_isw = Ops::set1(to_s[i]+w);
+            for (int j = 0; j < n; j += Ops::LANES) {
+                Vec v_d_ij = Ops::loadu(&d[i*n+j]);
+                Vec v_from_t = Ops::loadu(&from_t[j]);
+                auto finite = Ops::cmpneq(Ops::ALL, v_from_t, v_inf);
+                Vec v_new_d = Ops::add(v_isw, v_from_t);
+                v_new_d = Ops::max(v_new_d, v_ninf);
+                Vec v_min = Ops::min(v_d_ij, v_new_d);
+                v_min = Ops::blend(v_d_ij, finite, v_min);
+                Ops::storeu(&d[i*n+j], v_min);
             }
         }
     }
@@ -165,7 +179,7 @@ public:
     }
 
     /// @brief `is_neg_inf(s, t) == false` のときのみ有効 / O(1)
-    ll get_dist(int s, int t) const {
+    T get_dist(int s, int t) const {
         assert(!is_neg_inf(s, t));
         return d[s*n+t];
     }

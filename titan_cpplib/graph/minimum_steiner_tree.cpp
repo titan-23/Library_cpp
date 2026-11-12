@@ -1,187 +1,424 @@
 /// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/graph/minimum_steiner_tree.cpp
 #pragma once
-
-#include <vector>
 #include <algorithm>
+#include <cmath>
+#include <cstdint>
+#include <limits>
+#include <stdexcept>
+#include <type_traits>
 #include <utility>
-#include "titan_cpplib/graph/warshall_floyd_path.cpp"
+#include <vector>
+#include "titan_cpplib/alg/random.cpp"
+#include "titan_cpplib/ds/union_find.cpp"
 using namespace std;
-
-// MinimumSteinerTree
 namespace titan23 {
+enum class SteinerTreeMethod { cached_prim, incremental_prim, mehlhorn, mst_prune };
 
-/**
- * @brief 最小シュタイナー木など
- * @details プリム法を用いた近似解法の実装
- * 時間 O(|V|^3), 空間 O(|V|^2)
- */
-template<typename T>
+template <class T>
+struct SteinerTreeResult {
+    vector<pair<int, int>> edges;
+    T total_cost = T(0);
+    bool feasible = true;
+};
+
+// Nonnegative undirected graph, fixed for the lifetime of this object.
+// Parallel edges are reduced to their minimum weight in each direction.
+template <class T>
 class MinimumSteinerTree {
-private:
-    int n;
-    T INF;
-    titan23::WarshallFloydPath<T> dist_path;
+    static_assert(is_arithmetic_v<T> && !is_same_v<T, bool>);
+    struct Edge { int u, v; T weight; };
+    struct Arc { int to, edge; };
+    struct Cache { vector<T> dist; vector<int> parent_edge; };
+    struct Candidate { int terminal, closest; T distance; };
+    using Result = SteinerTreeResult<T>;
+    // One pending entry per vertex, including after a vertex is reopened.
+    // This bounds the incremental search frontier by O(n), unlike a lazy heap
+    // that retains obsolete entries across multiple path insertions.
+    class Heap {
+        const vector<T>& distance_;
+        vector<int> heap_, position_;
+        bool less(int a, int b) const {
+            return distance_[a] < distance_[b] || (distance_[a] == distance_[b] && a < b);
+        }
+        void exchange(int a, int b) {
+            swap(heap_[a], heap_[b]);
+            position_[heap_[a]] = a; position_[heap_[b]] = b;
+        }
+    public:
+        explicit Heap(const vector<T>& distance) : distance_(distance), position_(distance.size(), -1) { heap_.reserve(distance.size()); }
+        bool empty() const { return heap_.empty(); }
+        pair<T, int> top() const { return {distance_[heap_[0]], heap_[0]}; }
+        void emplace(T, int vertex) {
+            int pos = position_[vertex];
+            if (pos < 0) { pos = heap_.size(); position_[vertex] = pos; heap_.push_back(vertex); }
+            while (pos > 0) {
+                int parent = (pos - 1) / 2;
+                if (!less(heap_[pos], heap_[parent])) break;
+                exchange(pos, parent); pos = parent;
+            }
+        }
+        void pop() {
+            int last = int(heap_.size()) - 1;
+            exchange(0, last); position_[heap_.back()] = -1; heap_.pop_back();
+            for (size_t pos = 0; 2 * pos + 1 < heap_.size();) {
+                size_t child = 2 * pos + 1;
+                if (child + 1 < heap_.size() && less(heap_[child + 1], heap_[child])) ++child;
+                if (!less(heap_[child], heap_[pos])) break;
+                exchange(pos, child); pos = child;
+            }
+        }
+    };
+    int n_ = 0, cached_count_ = 0;
+    T inf_ = T(0);
+    vector<Edge> edges_;
+    vector<vector<Arc>> graph_;
+    vector<int> component_;
+    vector<Cache> cache_;
+    vector<uint32_t> terminal_mark_, tree_mark_, edge_mark_;
+    vector<Candidate> candidates_;
+    vector<int> chosen_edges_, path_, added_vertices_;
+    bool mst_ready_ = false;
+    vector<int> mst_parent_edge_, mst_order_, mst_counts_;
+    uint32_t generation_ = 0;
 
-    vector<int>  zp_is_terminal;
-    vector<int>  zp_in_tree;
-    vector<int>  zp_rem_t;
-    vector<T>    zp_min_d;
-    vector<int>  zp_closest;
-    vector<int>  zp_tree_nodes;
-    vector<int>  zp_deg;
-    vector<int>  zp_prune_deg;
-    vector<int>  zp_adj;
-    vector<int>  zp_leaves;
-    vector<int>  zp_deleted;
-    vector<char> zp_edge_exists;
+    static bool finite(T value) {
+        if constexpr (is_floating_point_v<T>) return isfinite(value);
+        return true;
+    }
+    T add_distance(T a, T b) const {
+        if (a >= inf_ || b >= inf_ || a >= inf_ - b) return inf_;
+        return a + b;
+    }
+    int other(int edge, int vertex) const { return edges_[edge].u ^ edges_[edge].v ^ vertex; }
+    bool in_tree(int vertex) const { return tree_mark_[vertex] == generation_; }
+    bool is_terminal(int vertex) const { return terminal_mark_[vertex] == generation_; }
+    vector<int> prepare(const vector<int>& terminals) {
+        if (++generation_ == 0) {
+            fill(terminal_mark_.begin(), terminal_mark_.end(), 0);
+            fill(tree_mark_.begin(), tree_mark_.end(), 0);
+            fill(edge_mark_.begin(), edge_mark_.end(), 0);
+            generation_ = 1;
+        }
+        vector<int> unique;
+        unique.reserve(min(terminals.size(), size_t(n_)));
+        for (int t : terminals) {
+            if (t < 0 || t >= n_) throw invalid_argument("steiner: terminal out of range");
+            if (!is_terminal(t)) { terminal_mark_[t] = generation_; unique.push_back(t); }
+        }
+        return unique;
+    }
+    bool connected(const vector<int>& terminals) const {
+        for (int t : terminals) if (component_[t] != component_[terminals[0]]) return false;
+        return true;
+    }
+    const Cache& distances(int source) {
+        Cache& row = cache_[source];
+        if (!row.dist.empty()) return row;
+        row.dist.assign(n_, inf_); row.parent_edge.assign(n_, -1);
+        Heap heap(row.dist); row.dist[source] = 0; heap.emplace(T(0), source);
+        while (!heap.empty()) {
+            auto [d, v] = heap.top(); heap.pop();
+            if (d != row.dist[v]) continue;
+            for (const auto& arc : graph_[v]) {
+                T next = add_distance(d, edges_[arc.edge].weight);
+                if (next < row.dist[arc.to]) {
+                    row.dist[arc.to] = next; row.parent_edge[arc.to] = arc.edge;
+                    heap.emplace(next, arc.to);
+                }
+            }
+        }
+        ++cached_count_;
+        return row;
+    }
+    Result finish(const vector<int>& ids) const {
+        Result result;
+        result.edges.reserve(ids.size());
+        for (int id : ids) {
+            const Edge& edge = edges_[id];
+            result.total_cost = add_distance(result.total_cost, edge.weight);
+            if (result.total_cost >= inf_) throw overflow_error("steiner: tree cost must be below INF");
+            result.edges.emplace_back(edge.u, edge.v);
+        }
+        return result;
+    }
+    void prepare_mst() {
+        if (mst_ready_) return;
+        vector<pair<T, int>> sorted;
+        sorted.reserve(edges_.size());
+        for (int id = 0; id < (int)edges_.size(); ++id) sorted.emplace_back(edges_[id].weight, id);
+        sort(sorted.begin(), sorted.end());
+        UnionFind components(n_);
+        vector<vector<Arc>> tree(n_);
+        for (auto [weight, id] : sorted) {
+            const auto& edge = edges_[id];
+            if (!components.unite(edge.u, edge.v)) continue;
+            tree[edge.u].push_back({edge.v, id}); tree[edge.v].push_back({edge.u, id});
+        }
+        mst_parent_edge_.assign(n_, -1);
+        mst_order_.clear(); mst_order_.reserve(n_);
+        for (int root = 0; root < n_; ++root) if (mst_parent_edge_[root] == -1) {
+            size_t begin = mst_order_.size();
+            mst_parent_edge_[root] = -2; mst_order_.push_back(root);
+            for (size_t i = begin; i < mst_order_.size(); ++i) {
+                int v = mst_order_[i];
+                for (auto arc : tree[v]) if (mst_parent_edge_[arc.to] == -1) {
+                    mst_parent_edge_[arc.to] = arc.edge; mst_order_.push_back(arc.to);
+                }
+            }
+        }
+        for (int& edge : mst_parent_edge_) if (edge == -2) edge = -1;
+        mst_counts_.assign(n_, 0);
+        mst_ready_ = true;
+    }
+    // Minimal subtree spanning the terminals in a fixed global minimum spanning
+    // forest. O(n+k) after preparation, but no constant Steiner approximation ratio.
+    Result mst_prune(const vector<int>& terminals) {
+        prepare_mst();
+        fill(mst_counts_.begin(), mst_counts_.end(), 0);
+        for (int t : terminals) mst_counts_[t] = 1;
+        vector<int> ids;
+        for (auto it = mst_order_.rbegin(); it != mst_order_.rend(); ++it) {
+            int v = *it, id = mst_parent_edge_[v];
+            if (id < 0) continue;
+            if (mst_counts_[v] > 0 && mst_counts_[v] < (int)terminals.size()) ids.push_back(id);
+            mst_counts_[other(id, v)] += mst_counts_[v];
+        }
+        return finish(ids);
+    }
+    // Terminal-to-vertex rows suffice by undirected symmetry. Only new tree
+    // vertices update remaining terminals. No n*n tree adjacency is needed.
+    Result cached_prim(const vector<int>& terminals, int root, T bound) {
+        auto& remaining = candidates_;
+        remaining.clear();
+        for (int t : terminals) if (t != root) remaining.push_back({t, root, distances(t).dist[root]});
+        tree_mark_[root] = generation_;
+        auto& ids = chosen_edges_;
+        auto& path = path_;
+        auto& vertices = added_vertices_;
+        ids.clear();
+        T total = 0;
+        while (!remaining.empty()) {
+            size_t selected = 0;
+            for (size_t i = 1; i < remaining.size(); ++i) if (remaining[i].distance < remaining[selected].distance) selected = i;
+            auto current = remaining[selected];
+            remaining[selected] = remaining.back();
+            remaining.pop_back();
+            if (in_tree(current.terminal)) continue;
+            if (current.distance >= inf_) throw overflow_error("steiner: shortest path must be below INF");
+            path.clear(); vertices.clear();
+            const auto& parent = cache_[current.terminal].parent_edge;
+            for (int v = current.closest; v != current.terminal;) {
+                int id = parent[v];
+                if (id < 0) throw logic_error("steiner: invalid cached path");
+                v = other(id, v);
+                // Zero-weight ties can touch the old tree again. Keep the
+                // suffix after the last intersection to avoid introducing cycles.
+                if (in_tree(v)) { path.clear(); vertices.clear(); }
+                else { path.push_back(id); vertices.push_back(v); }
+            }
+            for (int id : path) {
+                T next = add_distance(total, edges_[id].weight);
+                if (bound < inf_ && next >= bound) return {{}, T(0), false};
+                if (next >= inf_) throw overflow_error("steiner: tree cost must be below INF");
+                total = next; ids.push_back(id);
+            }
+            for (int v : vertices) tree_mark_[v] = generation_;
+            for (auto& candidate : remaining) {
+                const auto& dist = cache_[candidate.terminal].dist;
+                for (int v : vertices) if (dist[v] < candidate.distance) { candidate.distance = dist[v]; candidate.closest = v; }
+            }
+        }
+        return finish(ids);
+    }
+    Result incremental_prim(const vector<int>& terminals, int root) {
+        vector<T> dist(n_, inf_);
+        vector<int> parent(n_, -1), ids;
+        Heap heap(dist);
+        dist[root] = 0; tree_mark_[root] = generation_;
+        heap.emplace(T(0), root);
+        int remaining = int(terminals.size()) - 1;
+        while (remaining > 0 && !heap.empty()) {
+            auto [d, v] = heap.top(); heap.pop();
+            if (d != dist[v]) continue;
+            if (is_terminal(v) && !in_tree(v)) {
+                // New path vertices become zero-distance sources. Retain the
+                // old frontier and allow vertices to reopen after improvements.
+                for (int u = v; !in_tree(u);) {
+                    int id = parent[u];
+                    if (id < 0) throw logic_error("steiner: invalid incremental path");
+                    ids.push_back(id); tree_mark_[u] = generation_;
+                    if (is_terminal(u)) --remaining;
+                    dist[u] = 0; heap.emplace(T(0), u);
+                    u = other(id, u);
+                }
+                continue;
+            }
+            for (const auto& arc : graph_[v]) {
+                T next = add_distance(d, edges_[arc.edge].weight);
+                if (next < dist[arc.to]) {
+                    dist[arc.to] = next; parent[arc.to] = arc.edge;
+                    heap.emplace(next, arc.to);
+                }
+            }
+        }
+        if (remaining > 0) throw overflow_error("steiner: shortest path must be below INF");
+        return finish(ids);
+    }
+    Result mehlhorn(const vector<int>& terminals) {
+        vector<T> dist(n_, inf_);
+        vector<int> owner(n_, -1), parent(n_, -1);
+        Heap heap(dist);
+        for (int t : terminals) { dist[t] = 0; owner[t] = t; heap.emplace(T(0), t); }
+        while (!heap.empty()) {
+            auto [d, v] = heap.top(); heap.pop();
+            if (d != dist[v]) continue;
+            for (const auto& arc : graph_[v]) {
+                T next = add_distance(d, edges_[arc.edge].weight);
+                if (next < dist[arc.to]) {
+                    dist[arc.to] = next; owner[arc.to] = owner[v]; parent[arc.to] = arc.edge;
+                    heap.emplace(next, arc.to);
+                }
+            }
+        }
+        vector<pair<T, int>> boundary;
+        for (int id = 0; id < (int)edges_.size(); ++id) {
+            const Edge& edge = edges_[id];
+            if (owner[edge.u] < 0 || owner[edge.v] < 0 || owner[edge.u] == owner[edge.v]) continue;
+            T cost = add_distance(add_distance(dist[edge.u], edge.weight), dist[edge.v]);
+            if (cost < inf_) boundary.emplace_back(cost, id);
+        }
+        sort(boundary.begin(), boundary.end());
+        UnionFind components(n_);
+        vector<int> ids;
+        int remaining = int(terminals.size()) - 1;
+        for (auto [cost, id] : boundary) {
+            const Edge& edge = edges_[id];
+            if (!components.unite(owner[edge.u], owner[edge.v])) continue;
+            ids.push_back(id);
+            for (int endpoint : {edge.u, edge.v}) {
+                for (int v = endpoint; parent[v] >= 0 && !in_tree(v); v = other(parent[v], v)) {
+                    tree_mark_[v] = generation_; ids.push_back(parent[v]);
+                }
+            }
+            if (--remaining == 0) break;
+        }
+        if (remaining > 0) throw overflow_error("steiner: terminal connection cost must be below INF");
+        // Disjoint shortest-path trees joined by a region MST are acyclic.
+        // Only nonterminal-leaf pruning is necessary after expansion.
+        vector<int> degree(n_, 0), leaves;
+        for (int id : ids) { edge_mark_[id] = generation_; ++degree[edges_[id].u]; ++degree[edges_[id].v]; }
+        for (int v = 0; v < n_; ++v) if (degree[v] == 1 && !is_terminal(v)) leaves.push_back(v);
+        for (size_t head = 0; head < leaves.size(); ++head) {
+            int v = leaves[head];
+            if (degree[v] != 1) continue;
+            for (auto arc : graph_[v]) if (edge_mark_[arc.edge] == generation_) {
+                edge_mark_[arc.edge] = 0; --degree[v]; --degree[arc.to];
+                if (degree[arc.to] == 1 && !is_terminal(arc.to)) leaves.push_back(arc.to);
+                break;
+            }
+        }
+        ids.erase(remove_if(ids.begin(), ids.end(), [&](int id) { return edge_mark_[id] != generation_; }), ids.end());
+        return finish(ids);
+    }
+    static vector<pair<int, int>> require_feasible(Result result) {
+        if (!result.feasible) throw runtime_error("steiner: terminals are disconnected");
+        return move(result.edges);
+    }
 
 public:
-    MinimumSteinerTree() {}
-
-    MinimumSteinerTree(const vector<vector<pair<int, T>>> &G, const T INF) :
-            n((int)G.size()), INF(INF) {
-        dist_path = titan23::WarshallFloydPath<T>(G, INF);
-
-        zp_is_terminal.assign(n, 0);
-        zp_in_tree.assign(n, 0);
-        zp_rem_t.reserve(n);
-        zp_min_d.resize(n);
-        zp_closest.resize(n);
-        zp_tree_nodes.reserve(n);
-        zp_deg.assign(n, 0);
-        zp_prune_deg.assign(n, 0);
-        zp_adj.assign(n * n, 0);
-        zp_leaves.resize(n);
-        zp_deleted.assign(n, 0);
-        zp_edge_exists.assign(n * n, 0);
+    MinimumSteinerTree() = default;
+    MinimumSteinerTree(const vector<vector<pair<int, T>>>& graph, T inf) : inf_(inf) {
+        if (graph.size() > size_t(numeric_limits<int>::max())) throw invalid_argument("steiner: too many vertices");
+        if (!finite(inf) || inf <= 0) throw invalid_argument("steiner: INF must be positive and finite");
+        n_ = graph.size();
+        struct InputEdge { int u, v; T weight; bool reverse; };
+        vector<InputEdge> input;
+        for (int u = 0; u < n_; ++u) for (auto [v, weight] : graph[u]) {
+            if (v < 0 || v >= n_ || !finite(weight) || weight < 0 || weight >= inf_)
+                throw invalid_argument("steiner: invalid endpoint or weight");
+            if (u != v) input.push_back({min(u, v), max(u, v), weight, u > v});
+        }
+        sort(input.begin(), input.end(), [](const auto& a, const auto& b) { return pair(a.u, a.v) < pair(b.u, b.v); });
+        graph_.resize(n_); cache_.resize(n_);
+        UnionFind components(n_);
+        for (size_t begin = 0; begin < input.size();) {
+            size_t end = begin;
+            T weights[2] = {inf_, inf_};
+            while (end < input.size() && input[end].u == input[begin].u && input[end].v == input[begin].v) {
+                auto edge = input[end++]; weights[edge.reverse] = min(weights[edge.reverse], edge.weight);
+            }
+            if (weights[0] != weights[1]) throw invalid_argument("steiner: graph must be undirected with symmetric minimum weights");
+            if (edges_.size() >= size_t(numeric_limits<int>::max())) throw invalid_argument("steiner: too many edges");
+            int u = input[begin].u, v = input[begin].v, id = edges_.size();
+            edges_.push_back({u, v, weights[0]});
+            graph_[u].push_back({v, id}); graph_[v].push_back({u, id});
+            components.unite(u, v);
+            begin = end;
+        }
+        component_.resize(n_);
+        for (int v = 0; v < n_; ++v) component_[v] = components.root(v);
+        terminal_mark_.assign(n_, 0); tree_mark_.assign(n_, 0); edge_mark_.assign(edges_.size(), 0);
     }
 
-    // terminal を含むシュタイナー木の辺集合を返す
-    vector<pair<int, int>> build_prim(const vector<int>& terminal) {
-        if (terminal.size() <= 1) return {};
-        int t_sz = terminal.size();
-        for (int u : zp_tree_nodes) {
-            zp_in_tree[u] = 0;
-            zp_deleted[u] = 0;
-            for (int i = 0; i < zp_deg[u]; ++i) {
-                zp_edge_exists[u * n + zp_adj[u * n + i]] = 0;
-            }
-            zp_deg[u] = 0;
+    Result solve(const vector<int>& terminals, SteinerTreeMethod method = SteinerTreeMethod::cached_prim) {
+        auto unique = prepare(terminals);
+        if (unique.size() <= 1) return {};
+        if (!connected(unique)) return {{}, T(0), false};
+        if (unique.size() == size_t(n_)) return mst_prune(unique);
+        if (method == SteinerTreeMethod::cached_prim) return cached_prim(unique, terminals.back(), inf_);
+        if (method == SteinerTreeMethod::incremental_prim) return incremental_prim(unique, terminals.back());
+        if (method == SteinerTreeMethod::mehlhorn) return mehlhorn(unique);
+        if (method == SteinerTreeMethod::mst_prune) return mst_prune(unique);
+        throw invalid_argument("steiner: unknown method");
+    }
+    vector<pair<int, int>> build_prim(const vector<int>& terminals) { return require_feasible(solve(terminals)); }
+    vector<pair<int, int>> build_prim_dijkstra(const vector<int>& terminals) { return require_feasible(solve(terminals, SteinerTreeMethod::incremental_prim)); }
+    vector<pair<int, int>> build_mehlhorn(const vector<int>& terminals) { return require_feasible(solve(terminals, SteinerTreeMethod::mehlhorn)); }
+    vector<pair<int, int>> build_mst_prune(const vector<int>& terminals) { return require_feasible(solve(terminals, SteinerTreeMethod::mst_prune)); }
+
+    vector<pair<int, int>> build_prim_fullsearch(const vector<int>& terminals) {
+        auto unique = prepare(terminals);
+        if (unique.size() <= 1) return {};
+        if (!connected(unique)) throw runtime_error("steiner: terminals are disconnected");
+        if (unique.size() == size_t(n_)) return mst_prune(unique).edges;
+        Result best; best.total_cost = inf_;
+        for (int root : unique) {
+            prepare(unique);
+            auto candidate = cached_prim(unique, root, best.total_cost);
+            if (candidate.feasible && candidate.total_cost < best.total_cost) best = move(candidate);
+            if (best.total_cost == 0) break;
         }
-        zp_tree_nodes.clear();
-        zp_rem_t.clear();
-        for (int t : terminal) {
-            zp_is_terminal[t] = 1;
-            zp_rem_t.push_back(t);
-        }
-        int root = zp_rem_t.back();
-        zp_rem_t.pop_back();
-        zp_in_tree[root] = 1;
-        zp_tree_nodes.push_back(root);
-        zp_min_d.resize(zp_rem_t.size());
-        zp_closest.resize(zp_rem_t.size());
-        for (int i = 0; i < (int)zp_rem_t.size(); ++i) {
-            int t = zp_rem_t[i];
-            zp_min_d[i] = dist_path.get_dist(root, t);
-            zp_closest[i] = root;
-        }
-        while (!zp_rem_t.empty()) {
-            T best_dist = INF;
-            int best_idx = -1;
-            for (int i = 0; i < (int)zp_rem_t.size(); ++i) {
-                if (zp_min_d[i] < best_dist) {
-                    best_dist = zp_min_d[i];
-                    best_idx = i;
-                }
-            }
-            if (best_idx == -1) break;
-            int target_t = zp_rem_t[best_idx];
-            int start_v = zp_closest[best_idx];
-            const vector<int>& path = dist_path.get_path(start_v, target_t);
-            for (int i = 0; i + 1 < (int)path.size(); ++i) {
-                int u = path[i];
-                int v = path[i+1];
-                if (!zp_edge_exists[u * n + v]) {
-                    zp_edge_exists[u * n + v] = 1;
-                    zp_edge_exists[v * n + u] = 1;
-                    zp_adj[u * n + zp_deg[u]++] = v;
-                    zp_adj[v * n + zp_deg[v]++] = u;
-                }
-                if (!zp_in_tree[v]) {
-                    zp_in_tree[v] = 1;
-                    zp_tree_nodes.push_back(v);
-                    for (int j = 0; j < (int)zp_rem_t.size(); ++j) {
-                        T d = dist_path.get_dist(v, zp_rem_t[j]);
-                        if (d < zp_min_d[j]) {
-                            zp_min_d[j] = d;
-                            zp_closest[j] = v;
-                        }
-                    }
-                }
-            }
-            zp_rem_t[best_idx] = zp_rem_t.back();
-            zp_min_d[best_idx] = zp_min_d.back();
-            zp_closest[best_idx] = zp_closest.back();
-            zp_rem_t.pop_back();
-            zp_min_d.pop_back();
-            zp_closest.pop_back();
-        }
-        int head = 0, tail = 0;
-        for (int u : zp_tree_nodes) {
-            zp_prune_deg[u] = zp_deg[u];
-            if (zp_prune_deg[u] == 1 && !zp_is_terminal[u]) {
-                zp_leaves[tail++] = u;
-            }
-        }
-        while (head < tail) {
-            int u = zp_leaves[head++];
-            zp_deleted[u] = 1;
-            for (int i = 0; i < zp_deg[u]; ++i) {
-                int v = zp_adj[u * n + i];
-                if (!zp_deleted[v]) {
-                    zp_prune_deg[v]--;
-                    if (zp_prune_deg[v] == 1 && !zp_is_terminal[v]) {
-                        zp_leaves[tail++] = v;
-                    }
-                }
-            }
-        }
-        vector<pair<int, int>> final_edges;
-        for (int u : zp_tree_nodes) {
-            if (!zp_deleted[u]) {
-                for (int i = 0; i < zp_deg[u]; ++i) {
-                    int v = zp_adj[u * n + i];
-                    if (!zp_deleted[v] && u < v) {
-                        final_edges.emplace_back(u, v);
-                    }
-                }
-            }
-        }
-        for (int t : terminal) zp_is_terminal[t] = 0;
-        return final_edges;
+        return move(best.edges);
     }
 
-    // 始点を全探索し、最小コストのシュタイナー木(近似)の辺集合を返す
-    vector<pair<int, int>> build_prim_fullsearch(const vector<int> &terminal) {
-        if (terminal.size() <= 1) return {};
-        bool first = true;
-        T min_total_cost = 0;
-        vector<pair<int, int>> best_edges;
-        for (int s = 0; s < (int)terminal.size(); ++s) {
-            vector<int> now = terminal;
-            swap(now.back(), now[s]);
-            vector<pair<int, int>> edges = build_prim(now);
-            T cost = 0;
-            for (const auto& e : edges) {
-                cost += dist_path.get_dist(e.first, e.second);
-            }
-            if (first || cost < min_total_cost) {
-                min_total_cost = cost;
-                best_edges = move(edges);
-                first = false;
-            }
+    // Mehlhorn plus a bounded number of distinct growth roots. The first root
+    // is terminals.back(); additional roots are sampled reproducibly.
+    Result solve_best(const vector<int>& terminals, int starts = 8, uint32_t seed = 0,
+                      SteinerTreeMethod growth = SteinerTreeMethod::incremental_prim) {
+        if (starts < 0) throw invalid_argument("steiner: starts must be nonnegative");
+        if (growth != SteinerTreeMethod::cached_prim && growth != SteinerTreeMethod::incremental_prim)
+            throw invalid_argument("steiner: growth method must be a Prim variant");
+        auto unique = prepare(terminals);
+        auto best = solve(unique, SteinerTreeMethod::mehlhorn);
+        if (!best.feasible || unique.size() <= 1 || unique.size() == size_t(n_) || best.total_cost == 0) return best;
+        vector<int> roots = unique;
+        swap(roots[0], *find(roots.begin(), roots.end(), terminals.back()));
+        Random random(seed);
+        for (int i = 0; i < min(starts, int(roots.size())); ++i) {
+            if (i > 0) swap(roots[i], roots[random.randrange(i, roots.size())]);
+            prepare(unique);
+            auto candidate = growth == SteinerTreeMethod::cached_prim ? cached_prim(unique, roots[i], best.total_cost) : incremental_prim(unique, roots[i]);
+            if (candidate.feasible && candidate.total_cost < best.total_cost) best = move(candidate);
+            if (best.total_cost == 0) break;
         }
-        return best_edges;
+        return best;
+    }
+    int cached_source_count() const { return cached_count_; }
+    void clear_cache() {
+        for (auto& row : cache_) { vector<T>().swap(row.dist); vector<int>().swap(row.parent_edge); }
+        cached_count_ = 0;
+        mst_ready_ = false;
+        vector<int>().swap(mst_parent_edge_); vector<int>().swap(mst_order_); vector<int>().swap(mst_counts_);
     }
 };
-}  // namespace titan23
+}

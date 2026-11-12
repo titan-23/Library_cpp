@@ -1,6 +1,6 @@
 #include <random>
 #include <string>
-#include "titan_cpplib/ds/persistent_wbtree_leaf.cpp"
+#include "titan_cpplib/ds/persistent_wbtree.cpp"
 using namespace std;
 using Tree = titan23::PersistentWBTree<int, long long>;
 int main() {

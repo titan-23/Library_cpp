@@ -4,8 +4,10 @@
 #include <algorithm>
 #include <cassert>
 #include <climits>
-#include <immintrin.h>
+#include <limits>
+#include <type_traits>
 #include <vector>
+#include "titan_cpplib/others/simd_int.cpp"
 
 using namespace std;
 
@@ -16,20 +18,31 @@ using ll = long long;
 
 /**
  * @brief 非負辺専用の Warshall-Floyd
- * @details 構築時および `add_edge` で与える辺の重みは `0` 以上。
+ * @details AVX-512 (F, VL) > AVX2 > 逐次 の順にコンパイル時に選ぶ。
+ *          T は 32 bit または 64 bit の符号付き整数。構築時および `add_edge` で与える辺の重みは `0` 以上。
+ *          到達不能な頂点対の距離は INF で、最短距離は INF 未満に収まる必要がある。
  */
+template<typename T = long long>
 class WarshallFloydSIMDNonnegative {
+    static_assert(is_integral_v<T> && is_signed_v<T> && (sizeof(T) == 4 || sizeof(T) == 8),
+                  "WarshallFloydSIMDNonnegative: T must be a 32-bit or 64-bit signed integer");
+    using Ops = SimdInt<T>;
+    using Vec = typename Ops::Vec;
+
+public:
+    // 3 値の和が T に収まる大きさ
+    static constexpr T INF = numeric_limits<T>::max() / 3;
+
 private:
     int n;
-    ll INF = LLONG_MAX / 3;
-    vector<ll> d;
+    vector<T> d;
 
 public:
     WarshallFloydSIMDNonnegative() : n(0) {}
 
     /// @brief 時間 O(|V|^3), 空間 O(|V|^2)
-    WarshallFloydSIMDNonnegative(const vector<vector<pair<int, ll>>> &G) : n(G.size()) {
-        n = (n + 7) & ~7;
+    WarshallFloydSIMDNonnegative(const vector<vector<pair<int, T>>> &G) : n(G.size()) {
+        n = (n + Ops::LANES - 1) / Ops::LANES * Ops::LANES;
         d.assign(n*n, INF);
 
         for (int v = 0; v < (int)G.size(); ++v) {
@@ -43,38 +56,38 @@ public:
         for (int k = 0; k < n; ++k) {
             for (int i = 0; i < n; ++i) {
                 if (i == k || d[i*n+k] == INF) continue;
-                __m512i v_d_ik = _mm512_set1_epi64(d[i*n+k]);
-                for (int j = 0; j < n; j += 8) {
-                    __m512i v_d_ij = _mm512_loadu_si512((__m512i*)&d[i*n+j]);
-                    __m512i v_d_kj = _mm512_loadu_si512((__m512i*)&d[k*n+j]);
-                    __m512i v_sum = _mm512_add_epi64(v_d_ik, v_d_kj);
-                    __m512i v_min = _mm512_min_epi64(v_d_ij, v_sum);
-                    _mm512_storeu_si512((__m512i*)&d[i*n+j], v_min);
+                Vec v_d_ik = Ops::set1(d[i*n+k]);
+                for (int j = 0; j < n; j += Ops::LANES) {
+                    Vec v_d_ij = Ops::loadu(&d[i*n+j]);
+                    Vec v_d_kj = Ops::loadu(&d[k*n+j]);
+                    Vec v_sum = Ops::add(v_d_ik, v_d_kj);
+                    Vec v_min = Ops::min(v_d_ij, v_sum);
+                    Ops::storeu(&d[i*n+j], v_min);
                 }
             }
         }
     }
 
     /// @brief 重み `w` の有向辺 `(s, t)` を追加する / O(|V|^2)
-    void add_edge(int s, int t, ll w) {
+    void add_edge(int s, int t, T w) {
         assert(w >= 0);
         if (w >= d[s*n+t]) return;
         d[s*n+t] = w;
         for (int i = 0; i < n; ++i) {
             if (d[i*n+s] == INF) continue;
-            __m512i v_isw = _mm512_set1_epi64(d[i*n+s]+w);
-            for (int j = 0; j < n; j += 8) {
-                __m512i v_d_ij = _mm512_loadu_si512((__m512i*)&d[i*n+j]);
-                __m512i v_d_tj = _mm512_loadu_si512((__m512i*)&d[t*n+j]);
-                __m512i v_new_d = _mm512_add_epi64(v_isw, v_d_tj);
-                __m512i v_min = _mm512_min_epi64(v_d_ij, v_new_d);
-                _mm512_storeu_si512((__m512i*)&d[i*n+j], v_min);
+            Vec v_isw = Ops::set1(d[i*n+s]+w);
+            for (int j = 0; j < n; j += Ops::LANES) {
+                Vec v_d_ij = Ops::loadu(&d[i*n+j]);
+                Vec v_d_tj = Ops::loadu(&d[t*n+j]);
+                Vec v_new_d = Ops::add(v_isw, v_d_tj);
+                Vec v_min = Ops::min(v_d_ij, v_new_d);
+                Ops::storeu(&d[i*n+j], v_min);
             }
         }
     }
 
-    /// @brief O(1)
-    ll get_dist(int s, int t) const {
+    /// @brief 到達不能なら INF / O(1)
+    T get_dist(int s, int t) const {
         return d[s*n+t];
     }
 };

@@ -1,284 +1,353 @@
 /// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/graph/tree/lazy_link_cut_tree.cpp
 #pragma once
 
-#include <vector>
 #include <cassert>
+#include <utility>
+#include <vector>
 using namespace std;
 
-// LazyLinkCutTree
+// Dynamic forest: updates and queries are amortized O(log n).
+// Construction/copy and memory are O(n); these bounds assume O(1) value operations.
+// Individual operations are not guaranteed worst-case O(log n).
+// op/e form a monoid; mapping is a uniform monoid action.
+// composition(f, g) applies g first, then f. Noncommutative op is supported.
 namespace titan23 {
 
-template <class T,
-            T (*op)(T, T),
-            T (*e)(),
-            class F,
-            T (*mapping)(F, T),
-            F (*composition)(F, F),
-            F (*id)()>
+template <class T, T (*op)(T, T), T (*e)(),
+          class F, T (*mapping)(F, T), F (*composition)(F, F), F (*id)()>
 class LazyLinkCutTree {
 private:
-    struct Node;
-    using NodePtr = Node*;
-    vector<NodePtr> pool;
-
     struct Node {
-        int index, size, rev;
+        int l, r, p, sz;
+        bool rev;
+        bool has_lazy;
         T key, data, rdata;
         F lazy;
-        NodePtr left, right, par;
 
-        Node(const int index, const T key, const F lazy) :
-                index(index), size(1), rev(0),
-                key(key), data(key), rdata(key),
-                lazy(lazy),
-                left(nullptr), right(nullptr), par(nullptr) {
-        }
-
-        bool is_root() const {
-            return (!par) || (!(par->left == this || par->right == this));
-        }
+        Node(const T &v, int nil, int count = 1) :
+                l(nil), r(nil), p(nil), sz(count), rev(false), has_lazy(false),
+                key(v), data(v), rdata(v), lazy(id()) {}
     };
 
-    void _apply_rev(const NodePtr node) {
-        if (!node) return;
-        node->rev ^= 1;
+    int n;
+    vector<Node> pool;
+
+    bool _is_root(int v) const {
+        int p = pool[v].p;
+        return p == n || (pool[p].l != v && pool[p].r != v);
     }
 
-    void _apply_f(const NodePtr node, const F f) {
-        if (!node) return;
-        node->key = mapping(f, node->key);
-        node->data = mapping(f, node->data);
-        node->rdata = mapping(f, node->rdata);
-        node->lazy = composition(f, node->lazy);
+    void _toggle(int v) {
+        if (v == n) return;
+        swap(pool[v].l, pool[v].r);
+        swap(pool[v].data, pool[v].rdata);
+        pool[v].rev = !pool[v].rev;
     }
 
-    void _propagate(const NodePtr node) {
-        if (!node) return;
-        if (node->rev) {
-            swap(node->data, node->rdata);
-            swap(node->left, node->right);
-            _apply_rev(node->left);
-            _apply_rev(node->right);
-            node->rev = 0;
-        }
-        if (node->lazy != id()) {
-            _apply_f(node->left, node->lazy);
-            _apply_f(node->right, node->lazy);
-            node->lazy = id();
-        }
+    void _apply(int v, const F &f) {
+        if (v == n) return;
+        Node &x = pool[v];
+        x.key = mapping(f, x.key);
+        x.data = mapping(f, x.data);
+        x.rdata = mapping(f, x.rdata);
+        x.lazy = x.has_lazy ? composition(f, x.lazy) : f;
+        x.has_lazy = true;
     }
 
-    void _update(const NodePtr node) {
-        if (!node) return;
-        _propagate(node->left);
-        _propagate(node->right);
-        node->data = node->key;
-        node->rdata = node->key;
-        node->size = 1;
-        if (node->left) {
-            node->data = op(node->left->data, node->data);
-            node->rdata = op(node->rdata, node->left->rdata);
-            node->size += node->left->size;
+    void _push(int v) {
+        Node &x = pool[v];
+        if (x.rev) {
+            _toggle(x.l);
+            _toggle(x.r);
+            x.rev = false;
         }
-        if (node->right) {
-            node->data = op(node->data, node->right->data);
-            node->rdata = op(node->right->rdata, node->rdata);
-            node->size += node->right->size;
+        if (x.has_lazy) {
+            _apply(x.l, x.lazy);
+            _apply(x.r, x.lazy);
+            x.has_lazy = false;
         }
     }
 
-    void _rotate(const NodePtr node) {
-        const NodePtr pnode = node->par;
-        const NodePtr gnode = pnode->par;
-        _propagate(pnode);
-        _propagate(node);
-        if (gnode) {
-            if (gnode->left == pnode) {
-                gnode->left = node;
-            } else if (gnode->right == pnode) {
-                gnode->right = node;
-            }
+    void _pull(int v) {
+        Node &x = pool[v];
+        const Node &l = pool[x.l], &r = pool[x.r];
+        x.sz = 1 + l.sz + r.sz;
+        x.data = x.key;
+        x.rdata = x.key;
+        if (x.l != n) {
+            x.data = op(l.data, x.data);
+            x.rdata = op(x.rdata, l.rdata);
         }
-        node->par = gnode;
-        if (pnode->left == node) {
-            pnode->left = node->right;
-            if (node->right) node->right->par = pnode;
-            node->right = pnode;
+        if (x.r != n) {
+            x.data = op(x.data, r.data);
+            x.rdata = op(r.rdata, x.rdata);
+        }
+    }
+
+    // p is the root of its auxiliary tree; g is its path parent.
+    void _rotate_root(int v, int p, int g) {
+        Node &x = pool[v], &y = pool[p];
+        bool d = y.r == v;
+        int c = d ? x.l : x.r;
+        x.p = g;
+        if (d) {
+            y.r = c;
+            x.l = p;
         } else {
-            pnode->right = node->left;
-            if (node->left) node->left->par = pnode;
-            node->left = pnode;
+            y.l = c;
+            x.r = p;
         }
-        pnode->par = node;
-        _update(pnode);
-        _update(node);
+        if (c != n) pool[c].p = p;
+        y.p = v;
+        _pull(p);
     }
 
-    void _splay(const NodePtr node) {
-        while ((!node->is_root()) && (!node->par->is_root())) {
-            if ((node->par->par->left == node->par) == (node->par->left == node)) {
-                _rotate(node->par);
+    void _rotate2(int v, int p, int g) {
+        Node &x = pool[v], &y = pool[p], &z = pool[g];
+        int up = z.p;
+        if (up != n) {
+            if (pool[up].l == g) pool[up].l = v;
+            else if (pool[up].r == g) pool[up].r = v;
+        }
+        x.p = up;
+        bool a = y.r == v, b = z.r == p;
+        if (a == b) {
+            if (a) {
+                int c = y.l, d = x.l;
+                z.r = c;
+                if (c != n) pool[c].p = g;
+                y.r = d;
+                if (d != n) pool[d].p = p;
+                x.l = p;
+                y.l = g;
             } else {
-                _rotate(node);
+                int c = x.r, d = y.r;
+                y.l = c;
+                if (c != n) pool[c].p = p;
+                z.l = d;
+                if (d != n) pool[d].p = g;
+                x.r = p;
+                y.r = g;
             }
-            _rotate(node);
+            y.p = v;
+            z.p = p;
+            _pull(g);
+            _pull(p);
+        } else {
+            int c = x.l, d = x.r;
+            if (a) {
+                y.r = c;
+                if (c != n) pool[c].p = p;
+                z.l = d;
+                if (d != n) pool[d].p = g;
+                x.l = p;
+                x.r = g;
+            } else {
+                z.r = c;
+                if (c != n) pool[c].p = g;
+                y.l = d;
+                if (d != n) pool[d].p = p;
+                x.l = g;
+                x.r = p;
+            }
+            y.p = v;
+            z.p = v;
+            _pull(p);
+            _pull(g);
         }
-        if (!node->is_root()) _rotate(node);
-        _propagate(node);
     }
 
-    void _link(const NodePtr c, const NodePtr p) {
-        _expose(c);
+    // Push the affected nodes before changing their children. An unpushed
+    // action above g still covers the same set of vertices after these rotations.
+    // Uniform monoid actions preserve aggregates and commute with reversal.
+    // PULL_ROOT=false is only for callers that immediately rebuild v.
+    template<bool PULL_ROOT = true>
+    void _splay(int v) {
+        if (_is_root(v)) {
+            _push(v);
+            return;
+        }
+        do {
+            int p = pool[v].p;
+            int g = pool[p].p;
+            if (!_is_root(p)) {
+                _push(g);
+                _push(p);
+                _push(v);
+                _rotate2(v, p, g);
+            } else {
+                _push(p);
+                _push(v);
+                _rotate_root(v, p, g);
+                break;
+            }
+        } while (!_is_root(v));
+        if constexpr (PULL_ROOT) _pull(v);
+    }
+
+    int _expose(int v) {
+        int last = n;
+        for (int x = v; x != n; x = pool[x].p) {
+            _splay<false>(x);
+            pool[x].r = last;
+            if (last != n) pool[last].p = x;
+            _pull(x);
+            last = x;
+        }
+        _splay(v);
+        return last;
+    }
+
+public:
+    LazyLinkCutTree() : n(0) {
+        pool.emplace_back(e(), n, 0);
+    }
+
+    LazyLinkCutTree(int size) : n(size) {
+        assert(size >= 0);
+        pool.reserve(size + 1);
+        for (int i = 0; i < size; ++i) pool.emplace_back(e(), n);
+        pool.emplace_back(e(), n, 0);
+    }
+
+    LazyLinkCutTree(const vector<T> &a) : n(int(a.size())) {
+        pool.reserve(a.size() + 1);
+        for (const T &v : a) pool.emplace_back(v, n);
+        pool.emplace_back(e(), n, 0);
+    }
+
+    int expose(int v) {
+        assert(0 <= v && v < n);
+        return _expose(v);
+    }
+
+    // u, v (and root, if specified) must belong to the same component.
+    int lca(int u, int v, int root = -1) {
+        assert(0 <= u && u < n && 0 <= v && v < n);
+        if (root != -1) evert(root);
+        _expose(u);
+        return _expose(v);
+    }
+
+    // c must be a represented-tree root in a different component from p.
+    void link(int c, int p) {
+        assert(0 <= c && c < n && 0 <= p && p < n);
+        _splay(c);
+        assert(pool[c].l == n && pool[c].p == n);
         _expose(p);
-        c->par = p;
-        p->right = c;
-        _update(p);
+        pool[c].p = p;
+        pool[p].r = c;
+        _pull(p);
     }
 
-    void _cut(const NodePtr c) {
+    // c must not be a represented-tree root.
+    void cut(int c) {
+        assert(0 <= c && c < n);
         _expose(c);
-        c->left->par = nullptr;
-        c->left = nullptr;
-        _update(c);
+        int p = pool[c].l;
+        assert(p != n);
+        pool[c].l = n;
+        pool[p].p = n;
+        _pull(c);
     }
 
-    NodePtr _expose(const NodePtr node) {
-        NodePtr pre = node;
-        while (node->par) {
-            _splay(node);
-            node->right = nullptr;
-            _update(node);
-            if (!node->par) break;
-            pre = node->par;
-            _splay(node->par);
-            node->par->right = node;
-            _update(node->par);
-        }
-        node->right = nullptr;
-        _update(node);
-        return pre;
-    }
-
-    NodePtr _root(NodePtr v) {
+    int root(int v) {
+        assert(0 <= v && v < n);
         _expose(v);
-        _propagate(v);
-        while (v->left) {
-            v = v->left;
-            _propagate(v);
+        while (pool[v].l != n) {
+            v = pool[v].l;
+            _push(v);
         }
         _splay(v);
         return v;
     }
 
-    void _evert(NodePtr v) {
-        _expose(v);
-        _apply_rev(v);
-        _propagate(v);
-    }
-
-public:
-    LazyLinkCutTree() {}
-
-    LazyLinkCutTree(int n) {
-        pool.resize(n);
-        for (int i = 0; i < n; ++i) {
-            pool[i] = new Node(i, e(), id());
-        }
-    }
-
-    int expose(int v) {
-        return _expose(pool[v])->index;
-    }
-
-    int lca(int u, int v, int root=-1) {
-        if (root != -1) evert(root);
-        expose(u);
-        return expose(v);
-    }
-
-    void link(int c, int p) {
-        _link(pool[c], pool[p]);
-    }
-
-    void cut(int c) {
-        _cut(pool[c]);
-    }
-
-    int root(int v) {
-        return _root(pool[v])->index;
-    }
-
     bool same(int u, int v) {
-        return root(u) == root(v);
+        assert(0 <= u && u < n && 0 <= v && v < n);
+        if (u == v) return true;
+        _expose(u);
+        _expose(v);
+        return pool[u].p != n;
     }
 
     void evert(int v) {
-        _evert(pool[v]);
-    }
-
-    T path_prod(int u, int v) {
-        evert(u);
-        expose(v);
-        return pool[v]->data;
-    }
-
-    void path_apply(int u, int v, F f) {
-        evert(u);
-        expose(v);
-        _apply_f(pool[v], f);
-        _propagate(pool[v]);
+        assert(0 <= v && v < n);
+        _expose(v);
+        _toggle(v);
     }
 
     bool merge(int u, int v) {
-        if (same(u, v)) return false;
-        evert(u);
-        link(u, v);
+        assert(0 <= u && u < n && 0 <= v && v < n);
+        if (u == v) return false;
+        _expose(u);
+        _expose(v);
+        // A failed merge preserves the represented-tree root.
+        if (pool[u].p != n) return false;
+        // The components are disjoint, so exposing v left u exposed.
+        _toggle(u);
+        pool[u].p = v;
+        pool[v].r = u;
+        _pull(v);
         return true;
     }
 
+    // u and v must be adjacent.
     void split(int u, int v) {
         evert(u);
         cut(v);
     }
 
-    T get(int k) {
-        _splay(pool[k]);
-        return pool[k]->key;
+    // u and v must belong to the same component.
+    int path_length(int u, int v) {
+        evert(u);
+        expose(v);
+        return pool[v].sz;
     }
 
-    void set(int k, T v) {
-        NodePtr node = pool[k];
-        _splay(node);
-        node->key = v;
-        _update(node);
-    }
-
-    int path_length(int s, int t) {
-        evert(s);
-        expose(t);
-        NodePtr node = pool[t];
-        return node->size;
-    }
-
-    int path_kth_elm(int s, int t, int k) {
-        evert(s);
-        expose(t);
-        NodePtr node = pool[t];
-        if (node->size <= k) return -1;
+    int path_kth_elm(int u, int v, int k) {
+        evert(u);
+        expose(v);
+        if (k < 0 || pool[v].sz <= k) return -1;
+        int x = v;
         while (true) {
-            _propagate(node);
-            t = node->left? node->left->size: 0;
-            if (t == k) {
-                _splay(node);
-                return node->index;
+            _push(x);
+            int l = pool[x].l;
+            int sz = pool[l].sz;
+            if (k == sz) {
+                _splay(x);
+                return x;
             }
-            if (t > k) {
-                node = node->left;
-            } else {
-                node = node->right;
-                k -= t + 1;
+            if (k < sz) x = l;
+            else {
+                k -= sz + 1;
+                x = pool[x].r;
             }
         }
+    }
+
+    T path_prod(int u, int v) {
+        evert(u);
+        expose(v);
+        return pool[v].data;
+    }
+
+    T get(int v) {
+        assert(0 <= v && v < n);
+        _splay(v);
+        return pool[v].key;
+    }
+
+    void set(int v, T key) {
+        assert(0 <= v && v < n);
+        _splay<false>(v);
+        pool[v].key = key;
+        _pull(v);
+    }
+
+    void path_apply(int u, int v, F f) {
+        evert(u);
+        expose(v);
+        _apply(v, f);
     }
 };
 }  // namespace titan23

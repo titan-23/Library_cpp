@@ -1,0 +1,127 @@
+compiler,flags,version,n,q,shape,seed,workload,seconds,checksum
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,23,build,0.189332,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,23,get,0.002156,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,23,set,0.239134,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,23,expose,0.231895,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,23,root,0.239271,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,23,same,0.468199,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,23,evert,0.300878,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,23,lca,0.490682,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,23,lca(root),0.829647,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,23,path_prod,0.520890,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,23,subtree_prod,0.519618,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,23,component_prod,0.230340,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,23,path_length,0.512092,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,23,path_kth_elm,0.588443,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,23,subtree_size,0.564019,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,23,component_size,0.236082,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,23,cut + link,0.248562,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,23,split + merge,0.299294,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,23,merge(connected),0.547881,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,23,mixed_rewire,0.413521,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,23,rewire + rollback,0.472731,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,23,build,0.157869,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,23,get,0.002117,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,23,set,0.207171,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,23,expose,0.219273,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,23,root,0.214329,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,23,same,0.497028,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,23,evert,0.255362,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,23,lca,0.453534,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,23,lca(root),0.676575,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,23,path_prod,0.482261,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,23,subtree_prod,0.489373,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,23,component_prod,0.210984,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,23,path_length,0.481775,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,23,path_kth_elm,0.575905,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,23,subtree_size,0.502855,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,23,component_size,0.234494,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,23,cut + link,0.218811,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,23,split + merge,0.251880,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,23,merge(connected),0.499896,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,23,mixed_rewire,0.381737,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,23,rewire + rollback,0.399995,2220033890977138155
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,81,build,0.159390,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,81,get,0.002185,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,81,set,0.215353,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,81,expose,0.220839,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,81,root,0.217639,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,81,same,0.468761,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,81,evert,0.276060,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,81,lca,0.464076,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,81,lca(root),0.691424,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,81,path_prod,0.546133,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,81,subtree_prod,0.491013,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,81,component_prod,0.226902,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,81,path_length,0.494552,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,81,path_kth_elm,0.529829,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,81,subtree_size,0.499970,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,81,component_size,0.230365,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,81,cut + link,0.224499,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,81,split + merge,0.255386,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,81,merge(connected),0.509301,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,81,mixed_rewire,0.442656,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,81,rewire + rollback,0.488636,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,81,build,0.218652,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,81,get,0.002062,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,81,set,0.276408,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,81,expose,0.298854,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,81,root,0.282743,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,81,same,0.474068,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,81,evert,0.265180,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,81,lca,0.467035,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,81,lca(root),0.758462,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,81,path_prod,0.512274,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,81,subtree_prod,0.554492,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,81,component_prod,0.246811,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,81,path_length,0.529858,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,81,path_kth_elm,0.570590,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,81,subtree_size,0.545907,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,81,component_size,0.232550,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,81,cut + link,0.244432,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,81,split + merge,0.302668,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,81,merge(connected),0.542761,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,81,mixed_rewire,0.422995,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,81,rewire + rollback,0.520159,2222126500812733188
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,2026,build,0.182994,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,2026,get,0.002326,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,2026,set,0.237683,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,2026,expose,0.250663,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,2026,root,0.262419,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,2026,same,0.487039,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,2026,evert,0.273255,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,2026,lca,0.462121,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,2026,lca(root),0.771129,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,2026,path_prod,0.577842,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,2026,subtree_prod,0.553993,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,2026,component_prod,0.235482,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,2026,path_length,0.523699,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,2026,path_kth_elm,0.585434,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,2026,subtree_size,0.533400,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,2026,component_size,0.229890,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,2026,cut + link,0.250664,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,2026,split + merge,0.302086,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,2026,merge(connected),0.569517,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,2026,mixed_rewire,0.445820,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,before,500000,500000,random,2026,rewire + rollback,0.506865,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,2026,build,0.152585,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,2026,get,0.002435,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,2026,set,0.207757,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,2026,expose,0.215801,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,2026,root,0.214062,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,2026,same,0.459563,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,2026,evert,0.253830,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,2026,lca,0.429391,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,2026,lca(root),0.704225,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,2026,path_prod,0.538034,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,2026,subtree_prod,0.512352,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,2026,component_prod,0.235987,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,2026,path_length,0.476492,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,2026,path_kth_elm,0.549196,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,2026,subtree_size,0.487433,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,2026,component_size,0.215131,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,2026,cut + link,0.220960,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,2026,split + merge,0.253274,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,2026,merge(connected),0.509433,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,2026,mixed_rewire,0.408766,2234714746996991861
+g++ (Ubuntu 15.2.0-16ubuntu1) 15.2.0,-std=c++20 -O3 -DNDEBUG -march=native,after,500000,500000,random,2026,rewire + rollback,0.479955,2234714746996991861

@@ -7,7 +7,9 @@
 using namespace std;
 
 // LinkCutTreeSubtree
-// op と inv は可換群をなすこと
+// op と inv は可換群をなすこと（群演算を O(1) として、各操作は償却 O(log n)）。
+// get は O(1)、構築・オブジェクトのコピー・メモリは O(n)。
+// 単一操作の最悪時間の保証ではない。
 namespace titan23 {
 
 template <class T, T (*op)(T, T), T (*e)(), T (*inv)(T)>
@@ -16,12 +18,12 @@ private:
     struct Node {
         int l, r, p, sz, vsz, asz;
         bool rev;
-        int tmp;
-        T key, data, vir, all;
+        // sub includes key and all virtual children; data excludes virtual children.
+        T key, data, sub, all;
 
         Node(const T &v, int nil, int count = 1) :
-                l(nil), r(nil), p(nil), sz(count), vsz(0), asz(count), rev(false), tmp(nil),
-                key(v), data(v), vir(e()), all(v) {}
+                l(nil), r(nil), p(nil), sz(count), vsz(0), asz(count), rev(false),
+                key(v), data(v), sub(v), all(v) {}
     };
 
     int n;
@@ -51,33 +53,14 @@ private:
         x.sz = 1 + l.sz + r.sz;
         x.asz = 1 + x.vsz + l.asz + r.asz;
         x.data = op(l.data, op(x.key, r.data));
-        x.all = op(l.all, op(x.key, op(x.vir, r.all)));
+        x.all = op(l.all, op(x.sub, r.all));
     }
 
-    void _push_path(int v) {
-        int top = n;
-        for (int x = v;; x = pool[x].p) {
-            pool[x].tmp = top;
-            top = x;
-            if (_is_root(x)) break;
-        }
-        while (top != n) {
-            int x = top;
-            top = pool[x].tmp;
-            _push(x);
-        }
-    }
-
-    void _rotate(int v) {
-        int p = pool[v].p;
-        int g = pool[p].p;
+    // p is the root of its auxiliary tree; g is its path parent.
+    void _rotate_root(int v, int p, int g) {
         Node &x = pool[v], &y = pool[p];
         bool d = y.r == v;
         int c = d ? x.l : x.r;
-        if (!_is_root(p)) {
-            if (pool[g].l == p) pool[g].l = v;
-            else pool[g].r = v;
-        }
         x.p = g;
         if (d) {
             y.r = c;
@@ -91,23 +74,86 @@ private:
         _pull(p);
     }
 
+    void _rotate2(int v, int p, int g) {
+        Node &x = pool[v], &y = pool[p], &z = pool[g];
+        int up = z.p;
+        if (up != n) {
+            if (pool[up].l == g) pool[up].l = v;
+            else if (pool[up].r == g) pool[up].r = v;
+        }
+        x.p = up;
+        bool a = y.r == v, b = z.r == p;
+        if (a == b) {
+            if (a) {
+                int c = y.l, d = x.l;
+                z.r = c;
+                if (c != n) pool[c].p = g;
+                y.r = d;
+                if (d != n) pool[d].p = p;
+                x.l = p;
+                y.l = g;
+            } else {
+                int c = x.r, d = y.r;
+                y.l = c;
+                if (c != n) pool[c].p = p;
+                z.l = d;
+                if (d != n) pool[d].p = g;
+                x.r = p;
+                y.r = g;
+            }
+            y.p = v;
+            z.p = p;
+            _pull(g);
+            _pull(p);
+        } else {
+            int c = x.l, d = x.r;
+            if (a) {
+                y.r = c;
+                if (c != n) pool[c].p = p;
+                z.l = d;
+                if (d != n) pool[d].p = g;
+                x.l = p;
+                x.r = g;
+            } else {
+                z.r = c;
+                if (c != n) pool[c].p = g;
+                y.l = d;
+                if (d != n) pool[d].p = p;
+                x.l = g;
+                x.r = p;
+            }
+            y.p = v;
+            z.p = v;
+            _pull(p);
+            _pull(g);
+        }
+    }
+
+    // Only reversal is lazy. A pending reversal above g mirrors the whole
+    // rotated subtree, so pushing g, p, v locally is sufficient. This performs
+    // the usual zig/zig-zig/zig-zag steps without walking the ancestor path twice.
     template<bool PULL_ROOT = true>
     void _splay(int v) {
-        _push_path(v);
-        bool moved = false;
-        while (!_is_root(v)) {
-            if constexpr (PULL_ROOT) moved = true;
+        if (_is_root(v)) {
+            _push(v);
+            return;
+        }
+        do {
             int p = pool[v].p;
             int g = pool[p].p;
             if (!_is_root(p)) {
-                if ((pool[p].l == v) == (pool[g].l == p)) _rotate(p);
-                else _rotate(v);
+                _push(g);
+                _push(p);
+                _push(v);
+                _rotate2(v, p, g);
+            } else {
+                _push(p);
+                _push(v);
+                _rotate_root(v, p, g);
+                break;
             }
-            _rotate(v);
-        }
-        if constexpr (PULL_ROOT) {
-            if (moved) _pull(v);
-        }
+        } while (!_is_root(v));
+        if constexpr (PULL_ROOT) _pull(v);
     }
 
     int _expose(int v) {
@@ -116,11 +162,11 @@ private:
             _splay<false>(x);
             int r = pool[x].r;
             if (r != n) {
-                pool[x].vir = op(pool[x].vir, pool[r].all);
+                pool[x].sub = op(pool[x].sub, pool[r].all);
                 pool[x].vsz += pool[r].asz;
             }
             if (last != n) {
-                pool[x].vir = op(pool[x].vir, inv(pool[last].all));
+                pool[x].sub = op(pool[x].sub, inv(pool[last].all));
                 pool[x].vsz -= pool[last].asz;
                 pool[last].p = x;
             }
@@ -133,7 +179,9 @@ private:
     }
 
     void _link(int c, int p) {
-        _expose(c);
+        // c is a represented-tree root: splaying it already leaves no left child.
+        // Its preferred descendants may stay on the right when attaching to p.
+        _splay(c);
         _expose(p);
         pool[c].p = p;
         pool[p].r = c;
@@ -243,7 +291,7 @@ public:
         assert(0 <= root && root < n && 0 <= v && v < n);
         _evert(root);
         _expose(v);
-        return op(pool[v].key, pool[v].vir);
+        return pool[v].sub;
     }
 
     T component_prod(int v) {
@@ -255,8 +303,9 @@ public:
     bool merge(int u, int v) {
         assert(0 <= u && u < n && 0 <= v && v < n);
         _evert(u);
-        if (_root(v) == u) return false;
         _expose(v);
+        // After exposing v, u has a parent iff the distinct vertices are connected.
+        if (u == v || pool[u].p != n) return false;
         pool[u].p = v;
         pool[v].r = u;
         _pull(v);
@@ -278,6 +327,7 @@ public:
     void set(int v, T key) {
         assert(0 <= v && v < n);
         _expose(v);
+        pool[v].sub = pool[v].vsz ? op(pool[v].sub, op(inv(pool[v].key), key)) : key;
         pool[v].key = key;
         _pull(v);
     }

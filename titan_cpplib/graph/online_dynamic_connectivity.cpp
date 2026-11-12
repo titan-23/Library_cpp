@@ -5,6 +5,7 @@
 #include <cassert>
 #include <cstdint>
 #include <vector>
+#include <utility>
 using namespace std;
 
 namespace titan23 {
@@ -154,6 +155,17 @@ private:
             if (finish) pull(v);
         }
 
+        // Build a balanced sequence; recursion depth is O(log n), even for a path.
+        int build_tour(const vector<int>& tour, int l, int r, int parent) {
+            if (l == r) return 0;
+            int mid = (l + r) / 2, v = tour[mid];
+            nodes[v].p = parent;
+            nodes[v].l = build_tour(tour, l, mid, v);
+            nodes[v].r = build_tour(tour, mid + 1, r, v);
+            pull(v);
+            return v;
+        }
+
         int rightmost(int v) {
             assert(nodes[v].p == 0);
             while (nodes[v].r) v = nodes[v].r;
@@ -216,12 +228,21 @@ private:
             free_head = slot;
         }
 
-        void set_mark(int v, uint32_t mark, bool on) {
-            splay(v, false);
+        // Return the new root if a splay occurred, or zero if the root is unchanged.
+        // Stop propagation when the subtree aggregate is unchanged. A bounded
+        // walk followed by splay retains the amortized logarithmic bound.
+        int set_mark(int v, uint32_t mark, bool on) {
             uint32_t mask = mark << SIZE_BITS;
             if (on) nodes[v].meta |= mask;
             else nodes[v].meta &= ~mask;
-            pull(v);
+            for (int step = 0; step < 4; ++step) {
+                uint32_t before = nodes[v].meta & ALL_MASK;
+                pull(v);
+                if ((nodes[v].meta & ALL_MASK) == before || nodes[v].p == 0) return 0;
+                v = nodes[v].p;
+            }
+            splay(v);
+            return v;
         }
 
     public:
@@ -236,6 +257,51 @@ private:
             lower.reserve(r);
         }
 
+        // All vertices are still isolated here. Incidence flags are already set.
+        // Enumerate each tree iteratively, then build its Euler tour in linear time.
+        void build_initial(vector<Edge>& edges) {
+            assert(pair_count == 0);
+            int n = base - 1;
+            vector<int> first(n, -1), next, tour;
+            vector<pair<int, int>> stack;
+            next.reserve(2 * n);
+            tour.reserve(3 * n);
+            for (int id = 0; id < (int)edges.size(); ++id) {
+                Edge &e = edges[id];
+                if (e.state != TREE_EDGE) continue;
+                int slot = alloc_pair(id, -1, TREE_MARK);
+                e.copy = slot;
+                next.push_back(first[e.u]);
+                next.push_back(first[e.v]);
+                first[e.u] = 2 * slot;
+                first[e.v] = 2 * slot + 1;
+            }
+            for (int root = 0; root < n; ++root) {
+                if (first[root] == -2) continue;
+                tour.clear();
+                tour.push_back(root + 1);
+                stack.emplace_back(root, -1);
+                while (!stack.empty()) {
+                    auto [v, parent_arc] = stack.back();
+                    int arc = first[v];
+                    if (arc == -1) {
+                        first[v] = -2;
+                        stack.pop_back();
+                        if (parent_arc != -1) tour.push_back(base + (parent_arc ^ 1));
+                        continue;
+                    }
+                    first[v] = next[arc];
+                    if (parent_arc != -1 && arc == (parent_arc ^ 1)) continue;
+                    const Edge &e = edges[owner[arc >> 1]];
+                    int w = e.u ^ e.v ^ v;
+                    tour.push_back(base + arc);
+                    tour.push_back(w + 1);
+                    stack.emplace_back(w, arc);
+                }
+                build_tour(tour, 0, tour.size(), 0);
+            }
+        }
+
         void reserve_edges(int cap) {
             int r = min(base - 1, cap);
             nodes.reserve(base + r * 2);
@@ -247,6 +313,10 @@ private:
             if (u == v) return true;
             ++u;
             ++v;
+            // A singleton Euler tour is an isolated vertex in this forest.
+            // Avoid accessing the other, potentially much larger, tour.
+            if ((nodes[u].l | nodes[u].r | nodes[u].p) == 0 ||
+                (nodes[v].l | nodes[v].r | nodes[v].p) == 0) return false;
             splay(u);
             splay(v);
             return nodes[u].p != 0;
@@ -256,6 +326,8 @@ private:
             ++v;
             assert(nodes[root].p == 0);
             if (root == v) return true;
+            if ((nodes[root].l | nodes[root].r) == 0 ||
+                (nodes[v].l | nodes[v].r | nodes[v].p) == 0) return false;
             splay(v);
             return nodes[root].p != 0;
         }
@@ -283,7 +355,8 @@ private:
             return slot;
         }
 
-        bool cut(int slot) {
+        // Return the root of the smaller component, which reconnect can reuse.
+        int cut(int slot) {
             int uv = base + slot * 2, vu = uv + 1;
             splay(uv, false);
             int a = nodes[uv].l, b = nodes[uv].r;
@@ -295,20 +368,22 @@ private:
             int l = nodes[vu].l, r = nodes[vu].r;
             nodes[l].p = 0;
             nodes[r].p = 0;
-            bool u_small;
+            int small;
             if (in_b) {
-                u_small = node_size(r) + node_size(a) <= node_size(l);
-                merge(r, a);
+                bool u_small = node_size(r) + node_size(a) <= node_size(l);
+                int joined = merge(r, a);
+                small = u_small ? joined : l;
             } else {
-                u_small = node_size(r) <= node_size(b) + node_size(l);
-                merge(b, l);
+                bool u_small = node_size(r) <= node_size(b) + node_size(l);
+                int joined = merge(b, l);
+                small = u_small ? r : joined;
             }
             release_pair(slot);
-            return u_small;
+            return small;
         }
 
-        void set_adj(int v, bool on) {
-            set_mark(v + 1, ADJ_MARK, on);
+        int set_adj(int v, bool on) {
+            return set_mark(v + 1, ADJ_MARK, on);
         }
 
         void clear_tree(int node) {
@@ -354,6 +429,31 @@ private:
     vector<Edge> edges;
     vector<Forest> forests;
     vector<vector<int>> heads;
+    // Exact component cache until the first actual split. Non-tree deletions
+    // and successful replacement edges leave this partition unchanged.
+    vector<int> partition_parent;
+    bool partition_cache_valid = true;
+
+    int partition_root(int v) {
+        while (partition_parent[v] >= 0) {
+            int p = partition_parent[v];
+            if (partition_parent[p] >= 0) partition_parent[v] = partition_parent[p];
+            v = p;
+        }
+        return v;
+    }
+
+    // Called only on insertion. Update the cached partition when available.
+    bool merge_partition(int u, int v) {
+        if (groups == 1) return false;
+        if (!partition_cache_valid) return !forests[0].same(u, v);
+        u = partition_root(u); v = partition_root(v);
+        if (u == v) return false;
+        if (partition_parent[u] > partition_parent[v]) swap(u, v);
+        partition_parent[u] += partition_parent[v];
+        partition_parent[v] = u;
+        return true;
+    }
 
     static uint8_t to_level(int lev) {
         assert(0 <= lev && lev < 256);
@@ -383,16 +483,16 @@ private:
         if (h == -1) forests[lev].set_adj(v, true);
     }
 
-    bool erase_incidence(int id, int side, int lev) {
+    // Return the new forest root only if updating the flag moved it.
+    int erase_incidence(int id, int side, int lev) {
         Edge &e = edges[id];
         int v = endpoint(id, side), p = e.inc[side].prv, q = e.inc[side].nxt;
         if (p == -1) heads[lev][v] = q;
         else edges[p >> 1].inc[p & 1].nxt = q;
         if (q != -1) edges[q >> 1].inc[q & 1].prv = p;
         e.inc[side].prv = e.inc[side].nxt = -1;
-        bool empty = heads[lev][v] == -1;
-        if (empty) forests[lev].set_adj(v, false);
-        return empty;
+        if (heads[lev][v] == -1) return forests[lev].set_adj(v, false);
+        return 0;
     }
 
     void insert_non_tree(int id, int lev) {
@@ -403,9 +503,9 @@ private:
 
     int erase_non_tree(int id) {
         int lev = edges[id].lev;
-        bool a = erase_incidence(id, 0, lev);
-        bool b = erase_incidence(id, 1, lev);
-        return b ? edges[id].v : a ? edges[id].u : -1;
+        int a = erase_incidence(id, 0, lev);
+        int b = erase_incidence(id, 1, lev);
+        return b ? b : a;
     }
 
     int promote_non_tree(int id) {
@@ -415,10 +515,38 @@ private:
         return root;
     }
 
-    void reconnect(int u, int v, int top, uint32_t u_small) {
+    void use_replacement(int id, int lev) {
+        erase_non_tree(id);
+        Edge &e = edges[id];
+        e.state = TREE_EDGE;
+        e.lev = to_level(lev);
+        e.copy = -1;
+        for (int i = 0; i <= lev; ++i) {
+            e.copy = forests[i].link(e.u, e.v, id, i == lev, e.copy);
+        }
+        --groups;
+    }
+
+    void reconnect(int top, const int* small_roots) {
         for (int lev = top; lev >= 0; --lev) {
-            int s = (u_small >> lev & 1) ? u : v;
-            int rep = forests[lev].vertex_node(s);
+            int rep = small_roots[lev];
+            // Promotion is only needed before moving internal non-tree edges
+            // to the next level. With no incidence there is nothing to search;
+            // leaving tree levels unchanged preserves all size invariants.
+            int adjacent = forests[lev].find_mark(rep, Forest::ADJ);
+            if (adjacent == -1) continue;
+
+            // Try one candidate before promoting the smaller tree. A crossing
+            // edge can reconnect immediately. Limiting this probe to one keeps
+            // its extra cost O(log n) per level, even on adversarial inputs.
+            int probe_code = heads[lev][forests[lev].vertex_id(adjacent)];
+            int candidate = probe_code >> 1;
+            int other_vertex = endpoint(candidate, (probe_code & 1) ^ 1);
+            if (!forests[lev].same_from_root(adjacent, other_vertex)) {
+                use_replacement(candidate, lev);
+                return;
+            }
+            rep = forests[lev].vertex_node(other_vertex);
             bool upper_ready = (int)forests.size() > lev + 1;
             while (true) {
                 int node = forests[lev].find_mark(rep, Forest::TREE, false);
@@ -443,7 +571,6 @@ private:
                 int root = x;
                 while (code != -1) {
                     int id = code >> 1;
-                    Edge &e = edges[id];
                     int y = endpoint(id, (code & 1) ^ 1);
                     if (forests[lev].same_from_root(root, y)) {
                         root = forests[lev].vertex_node(y);
@@ -452,18 +579,11 @@ private:
                             upper_ready = true;
                         }
                         int next_root = promote_non_tree(id);
-                        if (next_root != -1) root = forests[lev].vertex_node(next_root);
+                        if (next_root) root = next_root;
                         code = heads[lev][vertex];
                         continue;
                     }
-                    erase_non_tree(id);
-                    e.state = TREE_EDGE;
-                    e.lev = to_level(lev);
-                    e.copy = -1;
-                    for (int i = 0; i <= lev; ++i) {
-                        e.copy = forests[i].link(e.u, e.v, id, i == lev, e.copy);
-                    }
-                    --groups;
+                    use_replacement(id, lev);
                     return;
                 }
                 rep = root;
@@ -481,17 +601,27 @@ private:
         edges.reserve(reserve_cap);
         forests.reserve(level_count);
         heads.reserve(level_count);
-        ensure_level(0);
+        partition_parent.assign(n, -1);
     }
 
 public:
     OnlineDynamicConnectivity() : OnlineDynamicConnectivity(0, 0, true) {}
 
-    // 頂点数 size の空グラフを作る / O(size)
+    // 頂点数 size の空グラフを作る / O(size)、動的木は必要時に構築
     explicit OnlineDynamicConnectivity(int size) : OnlineDynamicConnectivity(size, 0, true) {}
 
     // 頂点数 size の空グラフを作り cap 本分を予約する / O(size)
     OnlineDynamicConnectivity(int size, int cap) : OnlineDynamicConnectivity(size, cap, true) {}
+
+    // 動的木を一括構築する / 初回 O(n + 発行済みID数)、以後 O(1)
+    // 木の辺の初回削除時にも自動実行する。削除時の初期化を避けたい場合に呼ぶ。
+    void prepare_dynamic() {
+        if (!forests.empty()) return;
+        ensure_level(0);
+        for (int id = 0; id < issued; ++id)
+            if (edges[id].state == NON_TREE) insert_non_tree(id, 0);
+        forests[0].build_initial(edges);
+    }
 
     // 発行する辺 ID の個数を cap まで予約する
     void reserve_edges(int cap) {
@@ -515,21 +645,24 @@ public:
         ++active;
         if (u == v) {
             edges[id].state = LOOP;
-        } else if (groups != 1 && !forests[0].same(u, v)) {
+        } else if (merge_partition(u, v)) {
             edges[id].state = TREE_EDGE;
-            edges[id].copy = forests[0].link(u, v, id, true, -1);
+            if (!forests.empty()) edges[id].copy = forests[0].link(u, v, id, true, -1);
             --groups;
         } else {
             edges[id].state = NON_TREE;
-            insert_non_tree(id, 0);
+            if (!forests.empty()) insert_non_tree(id, 0);
         }
         return id;
     }
 
-    // 辺 ID を削除する / 償却 O(log^2 n)
+    // 辺 ID を削除する / 更新列全体での探索費用は償却 O(log^2 n)
+    // 未準備で木の辺を削除する場合は prepare_dynamic() の構築費用もかかる。
+    // 新しい階層の配列初期化 O(n) は別。単一操作の最悪時間の保証ではない。
     // 削除済みまたは範囲外なら false を返す
     bool erase_edge(int id) {
         if (id < 0 || id >= issued || edges[id].state == DEAD) return false;
+        if (forests.empty() && edges[id].state == TREE_EDGE) prepare_dynamic();
         Edge &e = edges[id];
         --active;
         if (e.state == LOOP) {
@@ -537,23 +670,25 @@ public:
             return true;
         }
         if (e.state == NON_TREE) {
-            erase_non_tree(id);
+            if (!forests.empty()) erase_non_tree(id);
             e.state = DEAD;
             return true;
         }
-        int u = e.u, v = e.v, top = e.lev;
+        int top = e.lev;
         int slot = e.copy;
-        uint32_t u_small = 0;
+        int small_roots[MAX_LEVELS];
         for (int lev = top; lev >= 0; --lev) {
             int down = forests[lev].lower_slot(slot);
-            if (forests[lev].cut(slot)) u_small |= 1U << lev;
+            small_roots[lev] = forests[lev].cut(slot);
             slot = down;
         }
         assert(slot == -1);
         e.state = DEAD;
         e.copy = -1;
+        int old_groups = groups;
         ++groups;
-        reconnect(u, v, top, u_small);
+        reconnect(top, small_roots);
+        if (groups != old_groups) partition_cache_valid = false;
         return true;
     }
 
@@ -562,6 +697,7 @@ public:
         assert(0 <= u && u < n && 0 <= v && v < n);
         if (u == v || groups == 1) return true;
         if (groups == n) return false;
+        if (partition_cache_valid) return partition_root(u) == partition_root(v);
         return forests[0].same(u, v);
     }
 
@@ -570,6 +706,7 @@ public:
         assert(0 <= v && v < n);
         if (groups == 1) return n;
         if (groups == n) return 1;
+        if (partition_cache_valid) return -partition_parent[partition_root(v)];
         return forests[0].size(v);
     }
 

@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <iostream>
 #ifndef PERSISTENT_LAZY_WBTREE_HEADER
-#define PERSISTENT_LAZY_WBTREE_HEADER "titan_cpplib/ds/persistent_lazy_wbtree_leaf.cpp"
+#define PERSISTENT_LAZY_WBTREE_HEADER "titan_cpplib/ds/persistent_lazy_wbtree.cpp"
 #endif
 #include PERSISTENT_LAZY_WBTREE_HEADER
 using namespace std;

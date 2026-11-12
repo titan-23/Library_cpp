@@ -146,6 +146,7 @@ void test_random(uint32_t seed) {
     int n = 1 + pick(32);
     int steps = 4000;
     titan23::OnlineDynamicConnectivity dc(n);
+    if (seed % 3 == 0) dc.prepare_dynamic();
     if (seed & 1) dc.reserve_edges(steps);
     NaiveGraph g(n);
     vector<int> active, pos(steps, -1);
@@ -165,6 +166,7 @@ void test_random(uint32_t seed) {
     };
 
     for (int step = 0; step < steps; ++step) {
+        if (step == steps / 3) dc.prepare_dynamic();
         if (step == steps / 2) dc.reserve_edges(steps + 100);
         int kind = pick(100);
         if (kind < 42 || active.empty()) {
@@ -262,9 +264,117 @@ void test_deep() {
     check_dsu(dc, g);
 }
 
+// First split a tree with no replacement candidates; then introduce cycles
+// and parallel edges and delete the old tree. Deferred work must stay valid
+// when incidences are added later, including after complete fragmentation.
+void test_split_then_add() {
+    constexpr int n = 96;
+    titan23::OnlineDynamicConnectivity dc(n);
+    NaiveGraph g(n);
+    mt19937 rng(20261112);
+    auto add = [&](int u, int v) {
+        int id = dc.add_edge(u, v);
+        assert(id == g.add_edge(u, v));
+        return id;
+    };
+    auto erase = [&](int id) { assert(dc.erase_edge(id) == g.erase_edge(id)); };
+    for (int round = 0; round < 4; ++round) {
+        vector<int> ids;
+        for (int v = 1; v < n; ++v) ids.push_back(add(v - 1, v));
+        erase(ids[n / 2 - 1]);
+        check_dsu(dc, g);
+        ids.push_back(add(0, n / 2 - 1));
+        ids.push_back(add(n / 2, n - 1));
+        ids.push_back(add(1, n - 2));
+        ids.push_back(add(1, n - 2));
+        ids.push_back(add(0, 0));
+        for (int i = 0; i < n; ++i) ids.push_back(add(rng() % n, rng() % n));
+        shuffle(ids.begin(), ids.end(), rng);
+        for (size_t i = 0; i < ids.size(); ++i) {
+            erase(ids[i]);
+            if (i % 11 == 0) check_dsu(dc, g);
+        }
+        check_dsu(dc, g);
+        assert(dc.group_count() == n && dc.edge_count() == 0);
+    }
+}
+
+void test_balanced_cuts() {
+    constexpr int n = 4096;
+    titan23::OnlineDynamicConnectivity dc(n, n);
+    NaiveGraph g(n);
+    for (int v = 1; v < n; ++v) {
+        assert(dc.add_edge(v - 1, v) == g.add_edge(v - 1, v));
+    }
+    vector<pair<int, int>> ranges{{0, n - 1}};
+    int removed = 0;
+    for (size_t i = 0; i < ranges.size(); ++i) {
+        auto [lo, hi] = ranges[i];
+        if (lo == hi) continue;
+        int mid = (lo + hi) / 2;
+        assert(dc.erase_edge(mid) == g.erase_edge(mid));
+        ++removed;
+        assert(dc.group_count() == removed + 1);
+        assert(dc.size(lo) == mid - lo + 1);
+        assert(dc.size(hi) == hi - mid);
+        if (removed % 257 == 0) check_dsu(dc, g);
+        ranges.emplace_back(lo, mid);
+        ranges.emplace_back(mid + 1, hi);
+    }
+    check_dsu(dc, g);
+}
+
+void test_deferred_build() {
+    titan23::OnlineDynamicConnectivity empty;
+    empty.prepare_dynamic();
+    empty.prepare_dynamic();
+    assert(empty.group_count() == 0 && !empty.erase_edge(0));
+    for (int mode = 0; mode < 3; ++mode) {
+        constexpr int n = 40;
+        titan23::OnlineDynamicConnectivity dc(n);
+        NaiveGraph g(n);
+        if (mode == 1) dc.prepare_dynamic();
+        auto add = [&](int u, int v) {
+            int id = dc.add_edge(u, v);
+            assert(id == g.add_edge(u, v));
+            return id;
+        };
+        auto erase = [&](int id) { assert(dc.erase_edge(id) == g.erase_edge(id)); };
+        vector<int> ids;
+        for (int offset : {0, 20}) for (int v = 0; v < 20; ++v)
+            ids.push_back(add(offset + v, offset + (v + 1) % 20));
+        int loop = add(3, 3), parallel = add(0, 1);
+        erase(loop); erase(parallel); // Before automatic preparation: ID gaps.
+        auto copy = dc;
+        assert(copy.erase_edge(ids[0]));
+        assert(dc.edge_active(ids[0]));
+        check_dsu(dc, g);
+        if (mode == 2) dc.prepare_dynamic();
+        // Tree-edge replacements preserve the partition cache.
+        for (int v = 0; v < 12; ++v) {
+            erase(ids[v]);
+            check_dsu(dc, g);
+            ids[v] = add(v, v + 1);
+        }
+        // A real split must invalidate it, even if a later insertion reconnects.
+        erase(ids[0]); erase(ids[1]);
+        check_dsu(dc, g);
+        assert(dc.size(1) == 1 && !dc.same(0, 1));
+        dc.prepare_dynamic();
+        add(0, 1); add(1, 2); add(0, 20);
+        check_all(dc, g);
+        dc.prepare_dynamic();
+        for (int id = 0; id < g.issued; ++id) erase(id);
+        check_dsu(dc, g);
+    }
+}
+
 int main() {
     test_small();
     for (uint32_t seed = 1; seed <= 24; ++seed) test_random(seed * 998244353U);
     test_path();
     test_deep();
+    test_split_then_add();
+    test_balanced_cuts();
+    test_deferred_build();
 }

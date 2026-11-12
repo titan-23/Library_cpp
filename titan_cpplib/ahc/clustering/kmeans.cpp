@@ -6,6 +6,7 @@
 #include <limits>
 #include <span>
 #include <stdexcept>
+#include <string>
 #include <type_traits>
 #include <utility>
 #include <vector>
@@ -89,6 +90,7 @@ void calculate_centers(const vector<Point>& points, int cluster_count, const vec
     }
 }
 
+// Assigns every point to its cheapest center. Ties keep the previous label, then the smaller index.
 template <class Point, class Center, class CostFn>
 void assign_nearest(const vector<Point>& points, const vector<Center>& centers, const vector<int>& old_labels, vector<int>& new_labels, vector<int>& counts, vector<remove_cvref_t<invoke_result_t<CostFn&, const Point&, const Center&>>>& assigned_cost, CostFn& cost) {
     using Cost = remove_cvref_t<invoke_result_t<CostFn&, const Point&, const Center&>>;
@@ -205,6 +207,21 @@ vector<Center> initialize_kmeans_pp(const vector<Point>& points, int cluster_cou
     }
     return centers;
 }
+
+// Runs run(options) with seeds options.seed, options.seed + 1, ... and keeps the first result with the
+// smallest total_cost.
+template <class Options, class RunFn>
+auto run_best_of(const char* name, int trials, const Options& options, RunFn run) {
+    if (trials <= 0) throw invalid_argument(string(name) + ": trials must be positive");
+    auto best = run(options);
+    for (int trial = 1; trial < trials; ++trial) {
+        Options current = options;
+        current.seed = options.seed + uint32_t(trial);
+        auto result = run(current);
+        if (result.total_cost < best.total_cost) best = move(result);
+    }
+    return best;
+}
 }
 
 template <class Point, class Center, class CostFn, class CenterFn>
@@ -222,15 +239,8 @@ auto kmeans(const vector<Point>& points, int cluster_count, CostFn cost, CenterF
 
 template <class Point, class CostFn, class CenterFn>
 auto kmeans_best_of(const vector<Point>& points, int cluster_count, int trials, CostFn cost, CenterFn center_of, KMeansOptions options = {}) {
-    if (trials <= 0) throw invalid_argument("kmeans_best_of: trials must be positive");
-    KMeansOptions current = options;
-    current.seed = options.seed;
-    auto best = kmeans(points, cluster_count, cost, center_of, current);
-    for (int trial = 1; trial < trials; ++trial) {
-        current.seed = options.seed + uint32_t(trial);
-        auto result = kmeans(points, cluster_count, cost, center_of, current);
-        if (result.total_cost < best.total_cost) best = move(result);
-    }
-    return best;
+    return kmeans_detail::run_best_of("kmeans_best_of", trials, options, [&](const KMeansOptions& current) {
+        return kmeans(points, cluster_count, cost, center_of, current);
+    });
 }
 }

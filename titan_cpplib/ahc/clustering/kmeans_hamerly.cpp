@@ -31,6 +31,27 @@ Distance lower_after_move(Distance value, Distance movement) {
     return nextafter(value - movement, Distance(0));
 }
 
+// Finds the nearest and second nearest centers, starting from a known distance to centers[start].
+// Ties keep start, then the smaller index.
+template <class Distance, class Point, class Center, class MetricFn>
+void nearest_two(const Point& point, const vector<Center>& centers, int start, Distance start_distance,
+                 int& best, Distance& best_distance, Distance& second_distance, MetricFn& metric) {
+    best = start;
+    best_distance = start_distance;
+    second_distance = numeric_limits<Distance>::infinity();
+    for (int j = 0; j < (int)centers.size(); ++j) {
+        if (j == start) continue;
+        Distance candidate = metric_value<Distance>(metric(point, centers[j]));
+        if (candidate < best_distance) {
+            second_distance = best_distance;
+            best_distance = candidate;
+            best = j;
+        } else if (candidate < second_distance) {
+            second_distance = candidate;
+        }
+    }
+}
+
 template <class Distance, class Point, class Center, class MetricFn>
 void assign_all_metric(const vector<Point>& points, const vector<Center>& centers, vector<int>& labels,
                        vector<int>& counts, vector<Distance>& upper, vector<Distance>& lower, MetricFn& metric) {
@@ -40,20 +61,10 @@ void assign_all_metric(const vector<Point>& points, const vector<Center>& center
     lower.resize(n);
     for (int i = 0; i < n; ++i) {
         int initial = labels[i] == -1 ? 0 : labels[i];
-        int best = initial;
-        Distance best_distance = metric_value<Distance>(metric(points[i], centers[initial]));
-        Distance second_distance = numeric_limits<Distance>::infinity();
-        for (int j = 0; j < cluster_count; ++j) {
-            if (j == initial) continue;
-            Distance candidate = metric_value<Distance>(metric(points[i], centers[j]));
-            if (candidate < best_distance) {
-                second_distance = best_distance;
-                best_distance = candidate;
-                best = j;
-            } else if (candidate < second_distance) {
-                second_distance = candidate;
-            }
-        }
+        int best;
+        Distance best_distance, second_distance;
+        nearest_two(points[i], centers, initial, metric_value<Distance>(metric(points[i], centers[initial])),
+                    best, best_distance, second_distance, metric);
         labels[i] = best;
         ++counts[best];
         upper[i] = best_distance;
@@ -80,7 +91,7 @@ template <class Distance, class Point, class Center, class MetricFn>
 bool assign_hamerly(const vector<Point>& points, const vector<Center>& centers, vector<int>& labels,
                     vector<int>& counts, vector<Distance>& upper, vector<Distance>& lower,
                     vector<Distance>& separation, MetricFn& metric) {
-    int n = points.size(), cluster_count = centers.size();
+    int n = points.size();
     calculate_separation<Distance>(centers, separation, metric);
     bool changed = false;
     for (int i = 0; i < n; ++i) {
@@ -89,20 +100,9 @@ bool assign_hamerly(const vector<Point>& points, const vector<Center>& centers, 
         if (upper[i] <= boundary) continue;
         upper[i] = metric_value<Distance>(metric(points[i], centers[assigned]));
         if (upper[i] <= boundary) continue;
-        int best = assigned;
-        Distance best_distance = upper[i];
-        Distance second_distance = numeric_limits<Distance>::infinity();
-        for (int j = 0; j < cluster_count; ++j) {
-            if (j == assigned) continue;
-            Distance candidate = metric_value<Distance>(metric(points[i], centers[j]));
-            if (candidate < best_distance) {
-                second_distance = best_distance;
-                best_distance = candidate;
-                best = j;
-            } else if (candidate < second_distance) {
-                second_distance = candidate;
-            }
-        }
+        int best;
+        Distance best_distance, second_distance;
+        nearest_two(points[i], centers, assigned, upper[i], best, best_distance, second_distance, metric);
         upper[i] = best_distance;
         lower[i] = second_distance;
         if (best != assigned) {
@@ -207,15 +207,8 @@ auto kmeans_hamerly(const vector<Point>& points, int cluster_count, CostFn cost,
 
 template <class Point, class CostFn, class MetricFn, class CenterFn>
 auto kmeans_hamerly_best_of(const vector<Point>& points, int cluster_count, int trials, CostFn cost, MetricFn metric, CenterFn center_of, KMeansOptions options = {}) {
-    if (trials <= 0) throw invalid_argument("kmeans_hamerly_best_of: trials must be positive");
-    KMeansOptions current = options;
-    current.seed = options.seed;
-    auto best = kmeans_hamerly(points, cluster_count, cost, metric, center_of, current);
-    for (int trial = 1; trial < trials; ++trial) {
-        current.seed = options.seed + uint32_t(trial);
-        auto result = kmeans_hamerly(points, cluster_count, cost, metric, center_of, current);
-        if (result.total_cost < best.total_cost) best = move(result);
-    }
-    return best;
+    return kmeans_detail::run_best_of("kmeans_hamerly_best_of", trials, options, [&](const KMeansOptions& current) {
+        return kmeans_hamerly(points, cluster_count, cost, metric, center_of, current);
+    });
 }
 }

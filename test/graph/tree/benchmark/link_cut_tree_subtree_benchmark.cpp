@@ -7,7 +7,11 @@
 #include <string>
 #include <vector>
 
+#ifdef LCTS_HEADER
+#include LCTS_HEADER
+#else
 #include "titan_cpplib/graph/tree/link_cut_tree_subtree.cpp"
+#endif
 
 using namespace std;
 using namespace titan23;
@@ -73,20 +77,20 @@ uint64_t run(const string &name, const LCT &base, const vector<Query> &qs, F &&f
     return sum;
 }
 
-int main() {
-    constexpr int N = LCTS_BENCH_N;
-    constexpr int Q = LCTS_BENCH_Q;
-    constexpr int SHAPE = LCTS_BENCH_SHAPE;
-    static_assert(N >= 2 && Q >= 1);
-    static_assert(0 <= SHAPE && SHAPE <= 3);
+int main(int argc, char **argv) {
+    const int N = argc > 1 ? stoi(argv[1]) : LCTS_BENCH_N;
+    const int Q = argc > 2 ? stoi(argv[2]) : LCTS_BENCH_Q;
+    const int SHAPE = argc > 3 ? stoi(argv[3]) : LCTS_BENCH_SHAPE;
+    const unsigned seed = argc > 4 ? stoul(argv[4]) : 23;
+    if (N < 2 || Q < 1 || SHAPE < 0 || SHAPE > 3) return 1;
 
-    mt19937 rng(23);
+    mt19937 rng(seed);
     vector<int> par(N, -1), dep(N);
     for (int v = 1; v < N; ++v) {
-        if constexpr (SHAPE == 0) par[v] = int(rng() % v);
-        if constexpr (SHAPE == 1) par[v] = v - 1;
-        if constexpr (SHAPE == 2) par[v] = 0;
-        if constexpr (SHAPE == 3) par[v] = (v - 1) / 2;
+        if (SHAPE == 0) par[v] = int(rng() % v);
+        if (SHAPE == 1) par[v] = v - 1;
+        if (SHAPE == 2) par[v] = 0;
+        if (SHAPE == 3) par[v] = (v - 1) / 2;
         dep[v] = dep[par[v]] + 1;
     }
 
@@ -136,7 +140,7 @@ int main() {
 
     cout << fixed << setprecision(6);
     constexpr const char *shape[] = {"random", "path", "star", "balanced"};
-    cout << "N=" << N << " Q=" << Q << " shape=" << shape[SHAPE] << " seed=23\n";
+    cout << "N=" << N << " Q=" << Q << " shape=" << shape[SHAPE] << " seed=" << seed << '\n';
     print_row("build", build, N, "vertex");
 
     uint64_t sum = 0;
@@ -149,7 +153,10 @@ int main() {
         return uint64_t(0);
     });
     sum += run("expose", base, qs, [](LCT &tr, const Query &q) {
-        return uint64_t(tr.expose(q.u));
+        tr.expose(q.u);
+        escape(tr);
+        // The return value depends on the previous preferred paths.
+        return uint64_t(0);
     });
     sum += run("root", base, qs, [](LCT &tr, const Query &q) {
         return uint64_t(tr.root(q.u));
@@ -201,6 +208,35 @@ int main() {
         escape(tr);
         return uint64_t(0);
     }, "pair");
+    sum += run("merge(connected)", base, qs, [](LCT &tr, const Query &q) {
+        return uint64_t(tr.merge(q.u, q.v));
+    });
+    int step = 0;
+    sum += run("mixed_rewire", base, qs, [&](LCT &tr, const Query &q) {
+        switch (step++ % 5) {
+            case 0:
+                // All parents have smaller IDs, so this cannot create a cycle.
+                tr.evert(0);
+                tr.cut(q.c);
+                tr.link(q.c, q.root % q.c);
+                return uint64_t(0);
+            case 1: return uint64_t(tr.subtree_prod(q.root, q.v));
+            case 2:
+                tr.set(q.u, q.x);
+                return uint64_t(0);
+            case 3: return uint64_t(tr.path_prod(q.u, q.v));
+            default: return uint64_t(tr.component_prod(q.u));
+        }
+    }, "iteration");
+    sum += run("rewire + rollback", base, qs, [](LCT &tr, const Query &q) {
+        tr.evert(0);
+        tr.cut(q.c);
+        tr.link(q.c, q.root % q.c);
+        uint64_t value = uint64_t(tr.subtree_prod(0, q.c));
+        tr.cut(q.c);
+        tr.link(q.c, q.p);
+        return value;
+    }, "iteration");
 
     cout << "checksum " << sum << '\n';
 }

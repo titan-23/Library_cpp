@@ -91,7 +91,7 @@
 - `pruner/hoeffding_pruner.cpp`: 同じ入力で得たスコア差を Hoeffding の不等式で判定する。
 - `pruner/wilcoxon_pruner.cpp`: 同じ入力で得たスコア差を Wilcoxon 符号順位検定で判定する。
 - `pruner/successive_halving_pruner.cpp`: 評価の途中で候補数を段階的に減らす。
-- `clustering/`: K-means、個数制約付きK-means、クラスタリングSA、階層型クラスタリング。選び方と文書一覧は `clustering/README.md` を参照。
+- `clustering/`: K-means、EMA更新を使うe-means、個数制約付きK-means、クラスタリングSA、階層型クラスタリング。選び方と文書一覧は `clustering/README.md` を参照。
 - `tsp/`: 対称TSPの状態、近傍、局所探索、誘導局所探索、複数巡回路。
 - `normal_distribution.cpp`: 正規分布の確率、密度、逆累積確率などの計算。
 - `mcmc.cpp`: 線形な正規分布モデルに特化した Gibbs sampler。

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #ifndef BINARY_CAT_HEADER
-#define BINARY_CAT_HEADER "titan_cpplib/ds/persistent_wbtree_leaf.cpp"
+#define BINARY_CAT_HEADER "titan_cpplib/ds/persistent_wbtree.cpp"
 #endif
 #include BINARY_CAT_HEADER
 using namespace std;

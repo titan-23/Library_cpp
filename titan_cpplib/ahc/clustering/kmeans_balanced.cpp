@@ -8,14 +8,10 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+#include "titan_cpplib/ahc/clustering/cluster_size_range.cpp"
 #include "titan_cpplib/ahc/clustering/kmeans.cpp"
 using namespace std;
 namespace titan23 {
-struct ClusterSizeRange {
-    int lower;
-    int upper;
-};
-
 template <class Center, class Cost>
 struct KMeansBalancedResult {
     vector<int> labels;
@@ -130,21 +126,23 @@ auto run_balanced(const vector<Point>& points, vector<Center> centers, const vec
     Cost best_cost = Cost(0);
     long long best_flow_cost = 0;
     bool has_best = false, best_converged = false;
+    // cost and flow_cost may order states differently, so keep the cheapest state seen so far.
+    auto save_best = [&](Cost current_cost, long long current_flow_cost, bool converged) {
+        best_labels = labels;
+        best_centers = centers;
+        best_counts = counts;
+        best_cost = move(current_cost);
+        best_flow_cost = current_flow_cost;
+        best_converged = converged;
+        has_best = true;
+    };
     int iterations = 0;
     while (iterations < max_iterations) {
         assign_balanced(points, centers, ranges, new_labels, counts, flow_cost);
         if (new_labels == labels) {
             Cost current_cost = calculate_total_cost(points, labels, centers, cost);
             long long current_flow_cost = calculate_total_flow_cost(points, labels, centers, flow_cost);
-            if (!has_best || !(best_cost < current_cost)) {
-                best_labels = labels;
-                best_centers = centers;
-                best_counts = counts;
-                best_cost = move(current_cost);
-                best_flow_cost = current_flow_cost;
-                best_converged = true;
-                has_best = true;
-            }
+            if (!has_best || !(best_cost < current_cost)) save_best(move(current_cost), current_flow_cost, true);
             break;
         }
         labels.swap(new_labels);
@@ -154,13 +152,7 @@ auto run_balanced(const vector<Point>& points, vector<Center> centers, const vec
         ++iterations;
         Cost current_cost = calculate_total_cost(points, labels, centers, cost);
         if (!has_best || current_cost < best_cost) {
-            best_labels = labels;
-            best_centers = centers;
-            best_counts = counts;
-            best_cost = move(current_cost);
-            best_flow_cost = calculate_total_flow_cost(points, labels, centers, flow_cost);
-            best_converged = false;
-            has_best = true;
+            save_best(move(current_cost), calculate_total_flow_cost(points, labels, centers, flow_cost), false);
         }
     }
     if (!has_best) throw logic_error("kmeans_balanced: no result was produced");
@@ -184,16 +176,9 @@ auto kmeans_balanced(const vector<Point>& points, const vector<ClusterSizeRange>
 
 template <class Point, class CostFn, class FlowCostFn, class CenterFn>
 auto kmeans_balanced_best_of(const vector<Point>& points, const vector<ClusterSizeRange>& ranges, int trials, CostFn cost, FlowCostFn flow_cost, CenterFn center_of, KMeansOptions options = {}) {
-    if (trials <= 0) throw invalid_argument("kmeans_balanced_best_of: trials must be positive");
-    KMeansOptions current = options;
-    current.seed = options.seed;
-    auto best = kmeans_balanced(points, ranges, cost, flow_cost, center_of, current);
-    for (int trial = 1; trial < trials; ++trial) {
-        current.seed = options.seed + uint32_t(trial);
-        auto result = kmeans_balanced(points, ranges, cost, flow_cost, center_of, current);
-        if (result.total_cost < best.total_cost) best = move(result);
-    }
-    return best;
+    return kmeans_detail::run_best_of("kmeans_balanced_best_of", trials, options, [&](const KMeansOptions& current) {
+        return kmeans_balanced(points, ranges, cost, flow_cost, center_of, current);
+    });
 }
 
 template <class Point, class Center, class CostFn, class FlowCostFn, class CenterFn>

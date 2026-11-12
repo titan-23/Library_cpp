@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstdint>
-#include "titan_cpplib/ds/persistent_lazy_wbtree_leaf.cpp"
+#include "titan_cpplib/ds/persistent_lazy_wbtree.cpp"
 
 namespace titan23::benchmark_detail {
 

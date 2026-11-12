@@ -1,4 +1,4 @@
-/// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/ds/persistent_lazy_wbtree.cpp
+/// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/gomi/prev_persistent_lazy_wbtree.cpp
 #pragma once
 
 #include <iostream>

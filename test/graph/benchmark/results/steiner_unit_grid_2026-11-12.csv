@@ -1,0 +1,5 @@
+k,queries,legacy_sum,cached_sum,incremental_sum,mehlhorn_sum,mst_prune_sum,fullsearch_sum,cached_wins,cached_losses
+5,200,3067,3067,3083,3169,5353,2996,0,0
+20,200,7037,7037,7118,7246,12992,6883,0,0
+50,200,11494,11494,11610,11661,17934,11313,0,0
+90,200,17811,17811,17811,17811,19591,17811,0,0

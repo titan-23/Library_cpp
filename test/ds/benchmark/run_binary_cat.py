@@ -46,7 +46,7 @@ def generate(q):
 def run(repeats):
  info=json.loads((WORK/'inputs.json').read_text())
  sources={'x':ROOT/'x.cpp','y':ROOT/'y.cpp','leaf_separate':ROOT/'test/ds/benchmark/binary_cat_wbtree.cpp','leaf':ROOT/'test/ds/benchmark/binary_cat_wbtree.cpp'}
- result={'compiler':subprocess.check_output(['g++','--version'],text=True).splitlines()[0],'seed':23,'runner_sha256':sha(Path(__file__)),'flags':['-std=c++17','-O3','-DNDEBUG'],'cpu':24,'address_space_limit_mib':1536,'inputs':info,'sources':{k:sha(v) for k,v in sources.items()},'leaf_header_sha256':sha(ROOT/'titan_cpplib/ds/persistent_wbtree_leaf.cpp'),'runs':[]}
+ result={'compiler':subprocess.check_output(['g++','--version'],text=True).splitlines()[0],'seed':23,'runner_sha256':sha(Path(__file__)),'flags':['-std=c++17','-O3','-DNDEBUG'],'cpu':24,'address_space_limit_mib':1536,'inputs':info,'sources':{k:sha(v) for k,v in sources.items()},'leaf_header_sha256':sha(ROOT/'titan_cpplib/ds/persistent_wbtree.cpp'),'runs':[]}
  for name,source in sources.items():
   cmd=['g++',*result['flags'],'-I',str(ROOT),str(source),'-o',str(WORK/name)]
   if name=='leaf_separate':cmd+=['-DBINARY_CAT_SEPARATE_PREFIX']

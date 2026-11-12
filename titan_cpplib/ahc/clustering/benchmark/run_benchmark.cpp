@@ -19,6 +19,7 @@
 #include <vector>
 #include "titan_cpplib/ahc/clustering/benchmark/clustering_benchmark.cpp"
 #include "titan_cpplib/ahc/clustering/clustering_sa.cpp"
+#include "titan_cpplib/ahc/clustering/emeans.cpp"
 #include "titan_cpplib/ahc/clustering/kmeans_balanced.cpp"
 #include "titan_cpplib/ahc/clustering/kmeans_hamerly.cpp"
 using namespace std;
@@ -130,15 +131,8 @@ string size_condition(const ClusteringBenchmarkCase& problem) {
     return "range";
 }
 
-vector<ClusterSizeRange> balanced_ranges(const ClusteringBenchmarkCase& problem) {
+vector<ClusterSizeRange> size_ranges(const ClusteringBenchmarkCase& problem) {
     vector<ClusterSizeRange> ranges;
-    ranges.reserve(problem.ranges.size());
-    for (auto [lower, upper] : problem.ranges) ranges.push_back({lower, upper});
-    return ranges;
-}
-
-vector<ClusteringSizeRange> sa_ranges(const ClusteringBenchmarkCase& problem) {
-    vector<ClusteringSizeRange> ranges;
     ranges.reserve(problem.ranges.size());
     for (auto [lower, upper] : problem.ranges) ranges.push_back({lower, upper});
     return ranges;
@@ -260,23 +254,37 @@ vector<int> repair_labels_to_ranges(const ClusteringBenchmarkCase& problem, cons
     return repaired;
 }
 
-Solution run_kmeans(const ClusteringBenchmarkCase& problem, uint32_t seed, int max_iterations, bool hamerly) {
-    KMeansOptions options{max_iterations, seed};
-    if (hamerly) {
-        auto result = kmeans_hamerly(problem.points, problem.cluster_count, SquaredDistance{}, EuclideanDistance{}, MeanCenter{}, options);
-        return {move(result.labels), result.total_cost, result.iterations, 1, result.converged};
+enum class KMeansKind {
+    lloyd,
+    hamerly,
+    emeans
+};
+
+Solution run_kmeans(const ClusteringBenchmarkCase& problem, uint32_t seed, int max_iterations, KMeansKind kind) {
+    auto solution = [](auto result) {
+        return Solution{move(result.labels), result.total_cost, result.iterations, 1, result.converged};
+    };
+    if (kind == KMeansKind::emeans) {
+        EMeansOptions options;
+        options.polish_iterations = max_iterations;
+        options.seed = seed;
+        return solution(emeans(problem.points, problem.cluster_count, options));
     }
-    auto result = kmeans(problem.points, problem.cluster_count, SquaredDistance{}, MeanCenter{}, options);
-    return {move(result.labels), result.total_cost, result.iterations, 1, result.converged};
+    KMeansOptions options{max_iterations, seed};
+    if (kind == KMeansKind::hamerly) return solution(kmeans_hamerly(problem.points, problem.cluster_count, SquaredDistance{}, EuclideanDistance{}, MeanCenter{}, options));
+    return solution(kmeans(problem.points, problem.cluster_count, SquaredDistance{}, MeanCenter{}, options));
 }
 
-Solution run_repeated_hamerly(const ClusteringBenchmarkCase& problem, uint32_t seed, int max_iterations, double time_limit_ms) {
+// Repeats run(seed), run(seed + 1), ... until time_limit_ms has elapsed and keeps the cheapest result.
+// The run in progress at the deadline is not interrupted.
+template <class RunFn>
+Solution run_repeated(uint32_t seed, double time_limit_ms, RunFn run) {
     Clock::time_point start = Clock::now();
     Solution best;
     best.reported_cost = numeric_limits<double>::infinity();
     int64_t trials = 0;
     do {
-        Solution result = run_kmeans(problem, seed + (uint32_t)trials, max_iterations, true);
+        Solution result = run(seed + (uint32_t)trials);
         ++trials;
         if (result.reported_cost < best.reported_cost) best = move(result);
     } while (elapsed_ms(start) < time_limit_ms);
@@ -291,25 +299,10 @@ Solution run_balanced(const ClusteringBenchmarkCase& problem, uint32_t seed, int
         return llround(value);
     };
     KMeansOptions options{max_iterations, seed};
-    auto result = kmeans_balanced(problem.points, balanced_ranges(problem), SquaredDistance{}, flow_cost, MeanCenter{}, options);
+    auto result = kmeans_balanced(problem.points, size_ranges(problem), SquaredDistance{}, flow_cost, MeanCenter{}, options);
     Solution solution{move(result.labels), result.total_cost, result.iterations, 1, result.converged};
     solution.flow_cost_scale = flow_cost_scale;
     return solution;
-}
-
-Solution run_repeated_balanced(const ClusteringBenchmarkCase& problem, uint32_t seed, int max_iterations, double time_limit_ms) {
-    Clock::time_point start = Clock::now();
-    double flow_cost_scale = choose_flow_cost_scale(problem);
-    Solution best;
-    best.reported_cost = numeric_limits<double>::infinity();
-    int64_t trials = 0;
-    do {
-        Solution result = run_balanced(problem, seed + (uint32_t)trials, max_iterations, flow_cost_scale);
-        ++trials;
-        if (result.reported_cost < best.reported_cost) best = move(result);
-    } while (elapsed_ms(start) < time_limit_ms);
-    best.trials = trials;
-    return best;
 }
 
 void set_move_weight(ClusteringNeighborhoodWeights& weights, int type, int value) {
@@ -319,43 +312,12 @@ void set_move_weight(ClusteringNeighborhoodWeights& weights, int type, int value
     else if (type == clustering_rebuild) weights.rebuild = value;
 }
 
+// sa_no_<move> disables one neighborhood; sa_no_rebuild_three keeps only two-cluster rebuilds.
 ClusteringSaOptions sa_options_for_method(const string& method) {
     ClusteringSaOptions options;
-    if (method == "sa_cluster_samples_8") {
-        options.cluster_samples = 8;
-        options.early_cluster_samples = 8;
-    } else if (method == "sa_cluster_samples_16") {
-        options.cluster_samples = 16;
-        options.early_cluster_samples = 16;
-    } else if (method == "sa_early_cluster_samples_8") {
-        options.early_cluster_samples = 8;
-    } else if (method == "sa_early_cluster_samples_16") {
-        options.early_cluster_samples = 16;
-    } else if (method == "sa_no_early_cluster_boost") {
-        options.early_cluster_samples = 0;
-    } else if (method == "sa_point_samples_16") {
-        options.point_samples = 16;
-    } else if (method == "sa_point_samples_32") {
-        options.point_samples = 32;
-    } else if (method == "sa_early_point_samples_16") {
-        options.early_point_samples = 16;
-    } else if (method == "sa_early_rebuild_40") {
-        options.early_weights.rebuild = 40;
-    } else if (method == "sa_early_rebuild_60") {
-        options.early_weights.rebuild = 60;
-    } else if (method == "sa_refined_rebuild_seeds") {
-        options.refine_rebuild_seeds = true;
-    } else if (method == "sa_rebuild_iterations_2") {
-        options.rebuild_iterations = 2;
-    } else if (method == "sa_rebuild_iterations_6") {
-        options.rebuild_iterations = 6;
-    } else if (method == "sa_no_rebuild_three") {
+    if (method == "sa_no_rebuild_three") {
         options.rebuild_three_probability = 0;
         options.rebuild_three_same_state_threshold = 0;
-    } else if (method == "sa_rebuild_three_24") {
-        options.rebuild_three_point_limit = 24;
-    } else if (method == "sa_rebuild_three_48") {
-        options.rebuild_three_point_limit = 48;
     }
     int disabled = -1;
     if (method == "sa_no_relocate") disabled = clustering_relocate;
@@ -370,30 +332,27 @@ ClusteringSaOptions sa_options_for_method(const string& method) {
     return options;
 }
 
+// Hamerly labels, repaired to the size ranges with a cheap greedy pass when they violate them.
+Solution run_hamerly_repaired(const ClusteringBenchmarkCase& problem, uint32_t seed, int max_iterations) {
+    KMeansOptions options{max_iterations, seed};
+    auto result = kmeans_hamerly(problem.points, problem.cluster_count, SquaredDistance{}, EuclideanDistance{}, MeanCenter{}, options);
+    Solution solution;
+    solution.labels = repair_labels_to_ranges(problem, result.labels, result.centers);
+    solution.reported_cost = clustering_benchmark_cost(problem, solution.labels);
+    solution.iterations = result.iterations;
+    solution.converged = result.converged;
+    return solution;
+}
+
+// SA from Hamerly labels (sa, sa_no_*) or from size-constrained K-means (sa_balanced). The time limit
+// includes building the initial labels.
 Solution run_sa(const ClusteringBenchmarkCase& problem, uint32_t seed, int max_iterations, double total_time_limit_ms, const string& method, bool balanced_start, double& initialization_ms, double& search_ms) {
     Clock::time_point total_start = Clock::now();
     double flow_cost_scale = balanced_start ? choose_flow_cost_scale(problem) : numeric_limits<double>::quiet_NaN();
     ClusteringSaProblem sa_problem(problem.points);
     Solution initial;
-    if (balanced_start) {
-        initial = run_balanced(problem, seed, max_iterations, flow_cost_scale);
-    } else {
-        double initialization_fraction = method == "sa_multi_initial_10" ? 0.10 : method == "sa_multi_initial_20" ? 0.20 : method == "sa_multi_initial_30" ? 0.30 : method == "sa_multi_initial_40" ? 0.40 : method == "sa_multi_initial_70" ? 0.70 : method == "sa_multi_initial_80" ? 0.80 : method == "sa_multi_initial_90" ? 0.90 : 0;
-        double initialization_limit = total_time_limit_ms * initialization_fraction;
-        int64_t trials = 0;
-        do {
-            KMeansOptions options{max_iterations, seed + (uint32_t)trials};
-            auto result = kmeans_hamerly(problem.points, problem.cluster_count, SquaredDistance{}, EuclideanDistance{}, MeanCenter{}, options);
-            Solution candidate;
-            candidate.labels = repair_labels_to_ranges(problem, result.labels, result.centers);
-            candidate.reported_cost = clustering_benchmark_cost(problem, candidate.labels);
-            candidate.iterations = result.iterations;
-            candidate.converged = result.converged;
-            ++trials;
-            if (initial.labels.empty() || candidate.reported_cost < initial.reported_cost) initial = move(candidate);
-        } while (initialization_fraction > 0 && elapsed_ms(total_start) < initialization_limit);
-        initial.trials = trials;
-    }
+    if (balanced_start) initial = run_balanced(problem, seed, max_iterations, flow_cost_scale);
+    else initial = run_hamerly_repaired(problem, seed, max_iterations);
     if (!isfinite(initial.reported_cost)) initial.reported_cost = clustering_benchmark_cost(problem, initial.labels);
     initial.initial_cost = initial.reported_cost;
     initialization_ms = elapsed_ms(total_start);
@@ -403,7 +362,7 @@ Solution run_sa(const ClusteringBenchmarkCase& problem, uint32_t seed, int max_i
         return initial;
     }
     Clock::time_point search_start = Clock::now();
-    auto result = clustering_sa_from_labels(sa_problem, initial.labels, sa_ranges(problem), remaining, sa_options_for_method(method), seed, false);
+    auto result = clustering_sa_from_labels(sa_problem, initial.labels, size_ranges(problem), remaining, sa_options_for_method(method), seed, false);
     search_ms = elapsed_ms(search_start);
     Solution solution;
     solution.labels = move(result.labels);
@@ -513,6 +472,8 @@ set<string> default_methods() {
         "kmeans",
         "hamerly",
         "hamerly_repeated",
+        "emeans",
+        "emeans_repeated",
         "hamerly_repaired",
         "balanced",
         "balanced_repeated",
@@ -526,34 +487,13 @@ set<string> default_methods() {
     };
 }
 
-set<string> known_methods() {
-    set<string> result = default_methods();
-    for (string method : {"sa_multi_initial_10", "sa_multi_initial_20", "sa_multi_initial_30", "sa_multi_initial_40", "sa_multi_initial_70", "sa_multi_initial_80", "sa_multi_initial_90"}) result.insert(move(method));
-    result.insert("sa_cluster_samples_8");
-    result.insert("sa_cluster_samples_16");
-    result.insert("sa_early_cluster_samples_8");
-    result.insert("sa_early_cluster_samples_16");
-    result.insert("sa_no_early_cluster_boost");
-    result.insert("sa_point_samples_16");
-    result.insert("sa_point_samples_32");
-    result.insert("sa_early_point_samples_16");
-    result.insert("sa_early_rebuild_40");
-    result.insert("sa_early_rebuild_60");
-    result.insert("sa_refined_rebuild_seeds");
-    result.insert("sa_rebuild_iterations_2");
-    result.insert("sa_rebuild_iterations_6");
-    result.insert("sa_rebuild_three_24");
-    result.insert("sa_rebuild_three_48");
-    return result;
-}
-
 set<string> parse_methods(const string& value) {
     set<string> result;
     stringstream input(value);
     string method;
     while (getline(input, method, ',')) if (!method.empty()) result.insert(method);
     if (result.empty()) throw invalid_argument("--methods must not be empty");
-    set<string> known = known_methods();
+    set<string> known = default_methods();
     for (const string& name : result) if (!known.count(name)) throw invalid_argument("unknown method: " + name);
     return result;
 }
@@ -616,7 +556,7 @@ BenchmarkOptions parse_arguments(int argc, char** argv) {
 }
 
 bool is_sa_method(const string& method) {
-    return method == "sa" || method == "sa_balanced" || method == "sa_no_relocate" || method == "sa_no_swap" || method == "sa_no_cycle" || method == "sa_no_rebuild" || method == "sa_no_rebuild_three" || method == "sa_multi_initial_10" || method == "sa_multi_initial_20" || method == "sa_multi_initial_30" || method == "sa_multi_initial_40" || method == "sa_multi_initial_70" || method == "sa_multi_initial_80" || method == "sa_multi_initial_90" || method == "sa_cluster_samples_8" || method == "sa_cluster_samples_16" || method == "sa_early_cluster_samples_8" || method == "sa_early_cluster_samples_16" || method == "sa_no_early_cluster_boost" || method == "sa_point_samples_16" || method == "sa_point_samples_32" || method == "sa_early_point_samples_16" || method == "sa_early_rebuild_40" || method == "sa_early_rebuild_60" || method == "sa_refined_rebuild_seeds" || method == "sa_rebuild_iterations_2" || method == "sa_rebuild_iterations_6" || method == "sa_rebuild_three_24" || method == "sa_rebuild_three_48";
+    return method == "sa" || method.starts_with("sa_");
 }
 
 void run_method(ostream& output, const BenchmarkOptions& options, const string& case_path, const ClusteringBenchmarkCase& problem, const string& method, int run) {
@@ -625,7 +565,7 @@ void run_method(ostream& output, const BenchmarkOptions& options, const string& 
     bool constrained = clustering_benchmark_has_size_constraints(problem);
     bool balanced_allowed = (long long)problem.points.size() * problem.cluster_count <= options.balanced_edge_limit;
     bool needs_balanced = method == "balanced" || method == "balanced_repeated" || method == "sa_balanced";
-    bool unconstrained_only = method == "kmeans" || method == "hamerly" || method == "hamerly_repeated";
+    bool unconstrained_only = method == "kmeans" || method == "hamerly" || method == "hamerly_repeated" || method == "emeans" || method == "emeans_repeated";
     if (unconstrained_only && constrained) {
         row.status = "skipped";
         row.message = "method does not enforce cluster size constraints";
@@ -653,31 +593,31 @@ void run_method(ostream& output, const BenchmarkOptions& options, const string& 
     Clock::time_point start = Clock::now();
     try {
         Solution solution;
-        if (method == "kmeans") {
-            row.limit_kind = "completion";
-            solution = run_kmeans(problem, seed, options.max_iterations, false);
-        } else if (method == "hamerly") {
-            row.limit_kind = "completion";
-            solution = run_kmeans(problem, seed, options.max_iterations, true);
-        } else if (method == "hamerly_repeated") {
+        auto repeated = [&](auto run) {
             row.limit_kind = "total_time";
             row.time_limit_ms = options.time_limit_ms;
-            solution = run_repeated_hamerly(problem, seed, options.max_iterations, options.time_limit_ms);
+            return run_repeated(seed, options.time_limit_ms, run);
+        };
+        auto repeated_kmeans = [&](KMeansKind kind) {
+            return repeated([&](uint32_t current_seed) { return run_kmeans(problem, current_seed, options.max_iterations, kind); });
+        };
+        if (method == "kmeans" || method == "hamerly" || method == "emeans") {
+            row.limit_kind = "completion";
+            KMeansKind kind = method == "kmeans" ? KMeansKind::lloyd : method == "hamerly" ? KMeansKind::hamerly : KMeansKind::emeans;
+            solution = run_kmeans(problem, seed, options.max_iterations, kind);
+        } else if (method == "hamerly_repeated") {
+            solution = repeated_kmeans(KMeansKind::hamerly);
+        } else if (method == "emeans_repeated") {
+            solution = repeated_kmeans(KMeansKind::emeans);
         } else if (method == "hamerly_repaired") {
             row.limit_kind = "completion";
-            KMeansOptions kmeans_options{options.max_iterations, seed};
-            auto initial = kmeans_hamerly(problem.points, problem.cluster_count, SquaredDistance{}, EuclideanDistance{}, MeanCenter{}, kmeans_options);
-            solution.labels = repair_labels_to_ranges(problem, initial.labels, initial.centers);
-            solution.reported_cost = clustering_benchmark_cost(problem, solution.labels);
-            solution.iterations = initial.iterations;
-            solution.converged = initial.converged;
+            solution = run_hamerly_repaired(problem, seed, options.max_iterations);
         } else if (method == "balanced") {
             row.limit_kind = "completion";
             solution = run_balanced(problem, seed, options.max_iterations, choose_flow_cost_scale(problem));
         } else if (method == "balanced_repeated") {
-            row.limit_kind = "total_time";
-            row.time_limit_ms = options.time_limit_ms;
-            solution = run_repeated_balanced(problem, seed, options.max_iterations, options.time_limit_ms);
+            double flow_cost_scale = choose_flow_cost_scale(problem);
+            solution = repeated([&](uint32_t current_seed) { return run_balanced(problem, current_seed, options.max_iterations, flow_cost_scale); });
         } else if (is_sa_method(method)) {
             row.limit_kind = "total_time";
             row.time_limit_ms = options.time_limit_ms;

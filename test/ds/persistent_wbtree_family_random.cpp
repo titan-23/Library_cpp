@@ -24,16 +24,15 @@ string concat_e() { return {}; }
 template<bool Seg, class Tree>
 const auto &node_at(size_t index) {
     if constexpr (Seg) return Tree::ma.tree[index];
-    else return Tree::ma.d[index];
-}
-template<bool Seg, class Tree>
-const auto &key_at(size_t index) {
-    if constexpr (Seg) return Tree::ma.data[index].data;
-    else return Tree::ma.keys[index];
+    else return Tree::ma.nodes[index];
 }
 template<bool Seg, class Tree, class T, class Op>
 void verify(const Tree &tree, const vector<T> &expected, Op op, const T &identity) {
     const size_t count = Tree::ma.ptr;
+    const size_t leaves = [&] {
+        if constexpr (Seg) return size_t(0);
+        else return Tree::ma.leaf_ptr;
+    }();
     assert(size_t(tree.len()) == expected.size());
     assert(tree.tovector() == expected);
     for (size_t i = 0; i < expected.size(); ++i) assert(tree.get(i) == expected[i]);
@@ -49,9 +48,10 @@ void verify(const Tree &tree, const vector<T> &expected, Op op, const T &identit
         T aggregate = identity;
         for (const T &value : expected) aggregate = op(aggregate, value);
         assert(tree.prod(0, expected.size()) == aggregate);
-        tree.check();
     }
+    tree.check();
     assert(Tree::ma.ptr == count);
+    if constexpr (!Seg) assert(Tree::ma.leaf_ptr == leaves);
 }
 
 template<bool Seg, bool Reversible, class Tree, class Maker, class Op>
@@ -66,32 +66,45 @@ void random_history(uint64_t seed, int initial_size, int rounds, Maker make, Op 
     struct Saved {
         size_t index;
         typename Tree::MemoryAllocator::Node node;
-        T key, aggregate;
-        int rev;
+        T aggregate;
+        int rev = 0;
     };
     vector<Saved> saved;
+    vector<pair<size_t, T>> saved_leaves;
     auto capture = [&] {
         saved.clear();
+        saved_leaves.clear();
         const size_t n = Tree::ma.ptr;
         for (int i = 0; i < 80; ++i) {
             const size_t index = i == 0 ? 0 : rng() % n;
-            Saved entry{index, node_at<Seg, Tree>(index), key_at<Seg, Tree>(index), T{}, 0};
+            Saved entry{index, node_at<Seg, Tree>(index), T{}};
             if constexpr (Seg) {
                 entry.aggregate = Tree::ma.data[index].data;
                 entry.rev = Tree::ma.tree[index].rev;
             }
             saved.push_back(std::move(entry));
         }
+        if constexpr (!Seg) {
+            for (int i = 0; i < 80 && Tree::ma.leaf_ptr; ++i) {
+                const size_t index = rng() % Tree::ma.leaf_ptr;
+                saved_leaves.emplace_back(index, Tree::ma.keys[index]);
+            }
+        }
     };
     auto unchanged = [&] {
         for (const Saved &old : saved) {
             const auto &node = node_at<Seg, Tree>(old.index);
             assert(node.left == old.node.left && node.right == old.node.right);
-            assert(node.size == old.node.size && node.left_size == old.node.left_size);
-            assert((key_at<Seg, Tree>(old.index) == old.key));
+            assert(node.left_size == old.node.left_size);
             if constexpr (Seg) {
+                assert(node.size == old.node.size);
                 assert(Tree::ma.data[old.index].data == old.aggregate);
                 assert(Tree::ma.tree[old.index].rev == old.rev);
+            }
+        }
+        if constexpr (!Seg) {
+            for (const auto &[index, value] : saved_leaves) {
+                assert(Tree::ma.keys[index] == value);
             }
         }
     };
@@ -209,7 +222,12 @@ void random_history(uint64_t seed, int initial_size, int rounds, Maker make, Op 
     const auto expected = versions.back().second;
     Tree::rebuild(rebuilt);
     verify<Seg>(rebuilt, expected, op, T{});
-    assert(Tree::ma.ptr == (Seg ? (expected.empty() ? 1 : 2 * expected.size()) : expected.size() + 1));
+    if constexpr (Seg) {
+        assert(Tree::ma.ptr == (expected.empty() ? 1 : 2 * expected.size()));
+    } else {
+        assert(Tree::ma.ptr == max(size_t(1), expected.size()));
+        assert(Tree::ma.leaf_ptr == expected.size());
+    }
 }
 
 struct alignas(64) Tracked {
@@ -232,8 +250,8 @@ struct alignas(64) Tracked {
 Tracked tracked_op(Tracked a, Tracked b) { return Tracked(a.text + b.text); }
 Tracked tracked_e() { return {}; }
 
-template<bool Seg, class Tree>
-void allocator_lifetime() {
+template<class Tree>
+void seg_allocator_lifetime() {
     const int before = Tracked::alive;
     {
         typename Tree::MemoryAllocator allocator;
@@ -266,8 +284,7 @@ void allocator_lifetime() {
             }
         }
         auto stored = [&](auto &a, size_t index) -> const Tracked& {
-            if constexpr (Seg) return a.data[index].data;
-            else return a.keys[index];
+            return a.data[index].data;
         };
         const Tracked *address = &stored(allocator, 1);
         assert(reinterpret_cast<uintptr_t>(address) % alignof(Tracked) == 0);
@@ -280,6 +297,49 @@ void allocator_lifetime() {
         for (int i = 0; i < 4099; ++i) {
             const int node = allocator.new_node(replacement);
             assert(node == i + 1 && stored(allocator, node) == replacement);
+        }
+    }
+    assert(Tracked::alive == before);
+}
+
+template<class Tree>
+void leaf_allocator_lifetime() {
+    const int before = Tracked::alive;
+    {
+        typename Tree::MemoryAllocator allocator;
+        allocator.reserve(17);
+        assert(Tracked::alive == before);
+        const Tracked value(string(80, 'a'));
+        for (int i = 0; i < 65535; ++i) {
+            allocator.leaf(value);
+            assert(allocator.leaf_ptr == size_t(i + 1));
+        }
+        // Check failures both inside a block and at the next block boundary.
+        for (int i = 0; i < 2; ++i) {
+            const size_t position = allocator.leaf_ptr, size = allocator.keys.size();
+            const int count = Tracked::alive;
+            Tracked::copies_until_throw = 0;
+            bool failed = false;
+            try { allocator.leaf(value); }
+            catch (const runtime_error &) { failed = true; }
+            Tracked::copies_until_throw = -1;
+            assert(failed && allocator.leaf_ptr == position && allocator.keys.size() == size);
+            assert(Tracked::alive == count);
+            allocator.leaf(value);
+            assert(allocator.leaf_ptr == position + 1);
+        }
+        const Tracked *address = &allocator.keys[0];
+        assert(reinterpret_cast<uintptr_t>(address) % alignof(Tracked) == 0);
+        auto moved = std::move(allocator);
+        assert(&moved.keys[0] == address && moved.keys[0] == value);
+        allocator = std::move(moved);
+        assert(&allocator.keys[0] == address);
+        allocator.reset();
+        assert(allocator.ptr == 1 && allocator.leaf_ptr == 0);
+        const Tracked replacement(string(97, 'z'));
+        for (int i = 0; i < 4099; ++i) {
+            allocator.leaf(replacement);
+            assert(allocator.leaf_ptr == size_t(i + 1) && allocator.keys[i] == replacement);
         }
     }
     assert(Tracked::alive == before);
@@ -353,7 +413,7 @@ int main() {
     }
     random_history<false, false, titan23::PersistentWBTree<ll, unsigned>>(81, 31, 600, number, sum_op);
     random_history<true, true, titan23::PersistentSegWBTree<unsigned, ll, sum_op, sum_e>>(83, 31, 600, number, sum_op);
-    allocator_lifetime<false, titan23::PersistentWBTree<Tracked>>();
-    allocator_lifetime<true, titan23::PersistentSegWBTree<int, Tracked, tracked_op, tracked_e>>();
+    leaf_allocator_lifetime<titan23::PersistentWBTree<Tracked>>();
+    seg_allocator_lifetime<titan23::PersistentSegWBTree<int, Tracked, tracked_op, tracked_e>>();
     cout << "persistent_wbtree_family: OK\n";
 }

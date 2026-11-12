@@ -1,5 +1,6 @@
 /// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/ahc/clustering/benchmark/generate_cases.cpp
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstdint>
 #include <filesystem>
@@ -164,6 +165,21 @@ ClusteringBenchmarkCase make_case(const CaseSpec& spec) {
     check_clustering_benchmark_case(problem);
     return problem;
 }
+
+// Uniform points without planted clusters, for unconstrained cases with small n or large k.
+ClusteringBenchmarkCase make_uniform_case(int point_count, int dimension, int cluster_count) {
+    uint32_t seed = uint32_t(point_count * 31 + dimension * 17 + cluster_count);
+    Random random(seed);
+    ClusteringBenchmarkCase problem;
+    problem.name = "uniform_" + to_string(point_count) + "_" + to_string(dimension) + "_" + to_string(cluster_count) + "_free";
+    problem.source = "titan uniform v1, seed=" + to_string(seed);
+    problem.cluster_count = cluster_count;
+    problem.ranges.assign(cluster_count, {1, point_count});
+    problem.points.assign(point_count, vector<double>(dimension));
+    for (auto& point : problem.points) for (double& value : point) value = random.random() * 1000;
+    check_clustering_benchmark_case(problem);
+    return problem;
+}
 }
 
 int main(int argc, char** argv) {
@@ -204,9 +220,13 @@ int main(int argc, char** argv) {
             {"elongated_8000_2_160_exact", 8000, 2, 160, Family::elongated, SizeCondition::exact, 1027},
             {"outliers_12000_8_240_exact", 12000, 8, 240, Family::outliers, SizeCondition::exact, 1028}
         };
-        for (const auto& spec : specs) {
-            ClusteringBenchmarkCase problem = make_case(spec);
-            filesystem::path path = output_directory / (spec.name + ".tcb");
+        vector<ClusteringBenchmarkCase> problems;
+        for (const auto& spec : specs) problems.push_back(make_case(spec));
+        for (auto [n, d, k] : {array{200, 2, 20}, array{10000, 2, 100}, array{5000, 2, 500}, array{5000, 16, 64}}) {
+            problems.push_back(make_uniform_case(n, d, k));
+        }
+        for (const auto& problem : problems) {
+            filesystem::path path = output_directory / (problem.name + ".tcb");
             write_clustering_benchmark_case(path.string(), problem);
             cout << path.string() << '\n';
         }

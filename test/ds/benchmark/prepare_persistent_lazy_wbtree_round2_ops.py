@@ -2,7 +2,7 @@
 """Generate leaf-tree updates that carry inherited actions and reversal.
 
 python3 test/ds/benchmark/prepare_persistent_lazy_wbtree_round2_ops.py \
-    --source titan_cpplib/ds/persistent_lazy_wbtree_leaf.cpp \
+    --source titan_cpplib/ds/persistent_lazy_wbtree.cpp \
     --output /tmp/wbt_round2_ops
 
 Writes isolated fused-set, fused-apply, and combined candidates. This script
