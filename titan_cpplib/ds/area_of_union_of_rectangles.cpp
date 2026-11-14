@@ -9,7 +9,7 @@ using namespace std;
 namespace titan23 {
 
 // 遅延セグメント木の演算。S は上位に被覆回数の最小値、下位 31 ビットにその最小値を取る x 方向の長さの和を持つ
-namespace AOUFR {
+namespace AUR {
 using S = long long;
 using F = int;
 const int bit = 31;
@@ -34,7 +34,7 @@ S e() {
 F id() {
     return 0;
 }
-} // namespace AOUFR
+} // namespace AUR
 
 /// @brief 長方形の和集合の面積を求める / 座標は int に収まり、x 座標の最大と最小の差は 2^31 未満とする
 template<typename T>
@@ -82,11 +82,11 @@ class AreaOfUnionOfRectangles {
         for (int i = 0; i < ZY.len(); ++i) {
             nY[i] = ZY.to_origin(i);
         }
-        vector<AOUFR::S> init(ZX.len()-1);
+        vector<AUR::S> init(ZX.len()-1);
         for (int i = 0; i < ZX.len()-1; ++i) {
             init[i] = nX[i+1] - nX[i];
         }
-        titan23::LazySegmentTree<AOUFR::S, AOUFR::op, AOUFR::e, AOUFR::F, AOUFR::mapping, AOUFR::composition, AOUFR::id> seg(init);
+        titan23::LazySegmentTree<AUR::S, AUR::op, AUR::e, AUR::F, AUR::mapping, AUR::composition, AUR::id> seg(init);
 
         T ans = 0;
         T s = nX.back() - nX[0];
@@ -96,7 +96,7 @@ class AreaOfUnionOfRectangles {
             }
 
             T p_all = seg.all_prod();
-            int p_val = p_all>>AOUFR::bit, p_cnt = p_all&AOUFR::msk;
+            int p_val = p_all>>AUR::bit, p_cnt = p_all&AUR::msk;
             T p = p_val == 0 ? s-p_cnt : s;
             ans += p * (nY[i+1]-nY[i]);
 
