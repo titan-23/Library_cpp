@@ -9,7 +9,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief LISの長さを求める
+/// @brief 最長増加部分列の長さを返す / strict が false なら広義増加 / O(n log n)
 template <typename T>
 int LIS(const vector<T>& a, bool strict=true) {
     if (a.empty()) return 0;
@@ -27,8 +27,7 @@ int LIS(const vector<T>& a, bool strict=true) {
     return sz;
 }
 
-/// @brief LISを復元する
-/// @return {idx, val}の列
+/// @brief 最長増加部分列を {添字, 値} の列で返す / strict が false なら広義増加 / O(n log n)
 template <typename T>
 vector<pair<int, T>> LIS_vec(const vector<T>& a, bool strict=true) {
     int n = a.size();

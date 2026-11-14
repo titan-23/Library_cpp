@@ -4,6 +4,7 @@
 #include <string>
 using namespace std;
 
+/// @brief s が回文かを返す / O(|s|)
 bool is_kaibun(const string &s) {
     for (int i = 0; i < s.size()/2; ++i) {
         if (s[i] != s[(int)s.size()-i-1]) return false;

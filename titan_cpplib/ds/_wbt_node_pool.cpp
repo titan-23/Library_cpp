@@ -9,6 +9,7 @@
 
 namespace titan23::detail {
 
+/// @brief 重み平衡木のノードを 2^BlockBits 個ずつのブロックで確保するメモリプール / 解放したスロットを再利用する
 template<class Node, unsigned BlockBits = 12>
 class WBNodePool {
     union Slot {
@@ -24,13 +25,13 @@ class WBNodePool {
     };
     static_assert(std::is_union<Slot>::value);
     static_assert(sizeof(Node) >= sizeof(Slot*));
+    // Node の直後の 1 バイトで、スロットにノードが構築済みかを表す
     static bool live(const Slot* slot) noexcept {
         return reinterpret_cast<const unsigned char*>(slot)[sizeof(Node)] != 0;
     }
 
     static void set_live(Slot* slot, bool value) noexcept {
-        // This byte belongs to the union's representation but lies beyond both
-        // active alternatives. Constructing Node/next cannot overwrite it.
+        // この 1 バイトは Node と next のどちらの領域よりも後ろにあり、それらを構築しても上書きされない
         reinterpret_cast<unsigned char*>(slot)[sizeof(Node)] = value;
     }
     static constexpr std::size_t block_size = std::size_t(1) << BlockBits;
@@ -107,8 +108,7 @@ public:
     /// @brief ノードを破棄してスロットを再利用可能にする / O(1)
     void release(Node* node) noexcept {
         assert(node);
-        // A union and its direct member are pointer-interconvertible even when
-        // Node itself is not a standard-layout class.
+        // union とその直接のメンバーはポインタ相互変換可能なので、node から Slot* に戻せる
         auto* slot = reinterpret_cast<Slot*>(node);
         assert(live(slot));
         node->~Node();

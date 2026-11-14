@@ -13,7 +13,7 @@ using namespace std;
 
 namespace flying_squirrel {
 
-/// @brief cand から導出した frontier と隣接葉 LCP で候補間の状態差分を復元するビームサーチ
+/// @brief 展開順を cand から求め、隣接する葉の LCP から候補間の状態差分を復元するビームサーチ
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
 class BeamSearchWithTree {
 private:
@@ -39,6 +39,7 @@ private:
     vector<vector<Action>> action_slab_pool;
     vector<vector<Slot>> parent_slab_pool;
 
+    /// @brief 生存候補 1 つを表す / Action は世代ブロック内の位置で持つ
     struct CandIdx {
         int parent_leaf;
         ScoreType score;
@@ -87,7 +88,7 @@ private:
         }
     }
 
-    /// @brief 親 slot を旧 cand から確定し、最終候補を世代別ブロックへ格納する
+    /// @brief 親のスロットを旧 cand から求め、最終候補を世代別ブロックへ格納する
     void finalize_generation(int depth) {
         int sz = candidates.size();
         if ((int)action_block.size() <= depth) action_block.resize(depth + 1);
@@ -125,14 +126,14 @@ private:
         }
     }
 
-    /// @brief root 直下の候補から最初の隣接葉 LCP を作る
+    /// @brief 根直下の候補から最初の隣接葉 LCP を作る
     void build_root_frontier() {
         int sz = (int)cand.size();
         adjacent_lcp.assign(max(0, sz - 1), 0);
         entry_lcp = 0;
     }
 
-    /// @brief sort 後の候補から次世代の隣接葉 LCP を構築する
+    /// @brief 整列後の候補から次世代の隣接葉 LCP を作る
     void build_next_frontier(int depth) {
         int old_size = (int)adjacent_lcp.size() + 1;
         int next_size = (int)cand.size();
@@ -164,7 +165,7 @@ private:
         }
     }
 
-    /// @brief 確定済み接頭辞と現在の trace から終了経路を作る
+    /// @brief 確定済みの接頭辞と現在の trace から終了経路を作る
     void build_best_path(int upto) {
         best_finished_path = result_prefix;
         for (int depth = freed_to + 1; depth <= upto; ++depth) {
@@ -172,7 +173,7 @@ private:
         }
     }
 
-    /// @brief 現在の State を root へ戻して返却経路を適用する
+    /// @brief 現在の State を根へ戻し、返却経路を適用した最終状態を構築する
     template<bool materialize_final_state>
     unique_ptr<State> build_final_state(State& state, const vector<Action>& result_actions, int current_depth) {
         if constexpr (materialize_final_state) {
@@ -198,6 +199,7 @@ private:
         /// @brief 現在の枝刈り閾値を返す
         inline ScoreType threshold() const { return bs.candidates.threshold(); }
 
+        /// @brief 受け取った Action を評価し、完成解なら最良解を更新し、そうでなければ候補に登録する
         inline void operator()(Action &a) {
             ++bs.explored_per_turn;
             ScoreType th = bs.candidates.threshold();
@@ -312,12 +314,8 @@ private:
     }
 
 public:
-    /// @brief ビームサーチを実行する
-    /// @tparam materialize_final_state 最終状態を構築する場合は true
-    /// @param param 探索ターン数とビーム幅の設定
-    /// @param verbose ログを出力する場合は true
-    /// @param history_file record_history が true のときに履歴を JSON で出力するファイル名
-    /// @return 探索結果
+    /// @brief ビームサーチを実行し、探索結果を返す / materialize_final_state が true なら最終状態も構築する
+    /// record_history が true のとき、履歴を JSON で history_file に書き出す
     template<bool materialize_final_state=true>
     Result search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
         if (param.max_turn <= 0 || param.beam_width <= 0) {

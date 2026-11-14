@@ -7,9 +7,9 @@
 #include <cassert>
 using namespace std;
 
-// UnionFind
 namespace titan23 {
 
+/// @brief 経路圧縮と要素数による併合を使う Union-Find
 class UnionFind {
 private:
     int n, group_numbers;
@@ -17,8 +17,10 @@ private:
 
 public:
     UnionFind() {}
+    /// @brief n 頂点で構築する / O(n)
     UnionFind(int n) : n(n), group_numbers(n), par(n, -1) {}
 
+    /// @brief x の根を返す / 償却 O(α(n))
     int root(int x) {
         int a = x, y;
         while (par[a] >= 0) a = par[a];
@@ -30,6 +32,7 @@ public:
         return a;
     }
 
+    /// @brief x と y の属する集合を併合し、併合したかを返す / 償却 O(α(n))
     bool unite(int x, int y) {
         x = root(x);
         y = root(y);
@@ -41,14 +44,17 @@ public:
         return true;
     }
 
+    /// @brief x の属する集合の要素数を返す / 償却 O(α(n))
     int size(const int x) {
         return -par[root(x)];
     }
 
+    /// @brief x と y が同じ集合に属するかを返す / 償却 O(α(n))
     bool same(const int x, const int y) {
         return root(x) == root(y);
     }
 
+    /// @brief すべての根を昇順に返す / O(n)
     vector<int> all_roots() const {
         vector<int> res;
         for (int i = 0; i < n; ++i) {
@@ -57,6 +63,7 @@ public:
         return res;
     }
 
+    /// @brief 根ごとに集合の要素を昇順に並べて返す / O(n log n)
     map<int, vector<int>> all_group_members() {
         map<int, vector<int>> res;
         for (int i = 0; i < n; ++i) {
@@ -65,10 +72,12 @@ public:
         return res;
     }
 
+    /// @brief 集合の個数を返す / O(1)
     int group_count() const {
         return group_numbers;
     }
 
+    /// @brief すべての頂点を別々の集合に戻す / O(n)
     void clear() {
         group_numbers = n;
         fill(par.begin(), par.end(), -1);

@@ -13,21 +13,23 @@
 #include "titan_cpplib/ahc/clustering/kmeans_hamerly.cpp"
 using namespace std;
 namespace titan23 {
-// EMA mini-batches from Bessa et al., https://arxiv.org/abs/2611.09501.
-// AHC defaults use K-means++ and finish with Hamerly, unlike the paper's recipe.
+/// @brief emeans の設定 / 既定値は原論文と異なり、K-means++ で初期化し Hamerly 法で仕上げる
+/// 参考: https://arxiv.org/abs/2611.09501
 struct EMeansOptions {
     int epochs = 3;
-    int batch_size = 0;               // 0: choose from n, k, dimension and epochs
-    double alpha0 = 0;               // 0: choose from n, k, batch size and epochs
-    double revival_threshold = -1;   // -1: 0 for d <= 2, otherwise 0.1
+    int batch_size = 0;               // 0 なら n, k, 次元, epochs から決める
+    double alpha0 = 0;               // 0 なら n, k, バッチの点数, epochs から決める
+    double revival_threshold = -1;   // -1 なら d <= 2 で 0、それ以外で 0.1
     bool kmeans_pp = true;
-    int warmup_iterations = 0;       // optional Hamerly pass before EMA
-    int polish_iterations = 100;     // 0: return the last epoch's partition
+    int warmup_iterations = 0;       // EMA の前に行う Hamerly 法の反復の上限。0 なら行わない
+    int polish_iterations = 100;     // 0 なら最後の周回の所属を返す
     uint32_t seed = 0;
 };
 
 namespace emeans_detail {
 struct SquaredDistance {
+    // K-means++ の初期化はこの印があると、同じ値を SIMD で求める
+    static constexpr bool euclidean_squared = true;
     template <class Point, class Center>
     double operator()(const Point& point, const Center& center) const {
         double result = 0;
@@ -40,6 +42,8 @@ struct SquaredDistance {
 };
 
 struct Metric {
+    // Hamerly 法はこの印があると、同じ値を SIMD で求める
+    static constexpr bool euclidean_metric = true;
     template <class Point, class Center>
     double operator()(const Point& point, const Center& center) const {
         return sqrt(SquaredDistance{}(point, center));
@@ -47,6 +51,8 @@ struct Metric {
 };
 
 struct Mean {
+    // 中心の計算はこの印があると、点を番号の順に 1 回だけ読んで同じ値を求める
+    static constexpr bool mean_center = true;
     template <class Point>
     vector<double> operator()(const vector<Point>& points, span<const int> members) const {
         vector<double> center(points[0].size());
@@ -81,7 +87,7 @@ inline double round_power_of_two(double value) {
 
 inline int batch_size(int n, int k, size_t dimension, const EMeansOptions& options) {
     if (options.batch_size > 0) return min(n, options.batch_size);
-    // Faiss's current low-dimensional recipe uses batches about eight times smaller.
+    // 低次元では Faiss の現行の設定に合わせ、バッチを約 8 分の 1 にする
     double coefficient = dimension <= 16 ? 0.00439175 : 0.035134;
     double batch = round_power_of_two(coefficient * pow(k, 0.134749) * pow(n, 0.876473) * pow(options.epochs, 0.813344));
     double cap = dimension <= 16 ? double(n / 2) : round_power_of_two(n / 2.0);
@@ -98,7 +104,7 @@ inline void revive(vector<vector<double>>& centers, vector<double>& mass, double
     vector<pair<double, int>> donors;
     donors.reserve(k - unused.size());
     for (int j = 0; j < k; ++j) if (mass[j] >= threshold && mass[j] > 0) {
-        // Weighted sampling without replacement, using independent Gumbel keys.
+        // 独立な Gumbel 鍵を使った重み付き非復元抽出
         double u = max(kmeans_detail::random_unit(random), numeric_limits<double>::min());
         donors.emplace_back(log(mass[j]) - log(-log(u)), j);
     }
@@ -141,6 +147,8 @@ KMeansResult<vector<double>, double> run(const vector<Point>& points, vector<vec
     vector<int> order(n), labels(n), counts(k);
     Random split_random(options.seed);
     SquaredDistance cost;
+    kmeans_detail::Columns columns;
+    vector<double> point_buffer;
     int step = 0;
     for (int epoch = 0; epoch < options.epochs; ++epoch) {
         iota(order.begin(), order.end(), 0);
@@ -150,13 +158,11 @@ KMeansResult<vector<double>, double> run(const vector<Point>& points, vector<vec
             int end = begin + min(batch, n - begin);
             fill(counts.begin(), counts.end(), 0);
             for (auto& row : sums) fill(row.begin(), row.end(), 0);
+            columns.assign(centers);
             for (int pos = begin; pos < end; ++pos) {
-                int i = order[pos], best = 0;
-                double best_cost = cost(points[i], centers[0]);
-                for (int j = 1; j < k; ++j) {
-                    double candidate = cost(points[i], centers[j]);
-                    if (candidate < best_cost) { best = j; best_cost = candidate; }
-                }
+                int i = order[pos];
+                kmeans_detail::load_point(points[i], d, point_buffer);
+                int best = kmeans_detail::nearest_squared(point_buffer.data(), columns).first;
                 labels[i] = best;
                 ++counts[best];
                 for (size_t axis = 0; axis < d; ++axis) sums[best][axis] += double(points[i][axis]);
@@ -177,8 +183,7 @@ KMeansResult<vector<double>, double> run(const vector<Point>& points, vector<vec
         }
     }
     iterations += step;
-    // Close the last epoch using its partition. Preserve the library's nonempty
-    // cluster invariant even when duplicates or revival left an empty cluster.
+    // 最後の周回の所属で中心を求め直す。重複点や再配置で空いたクラスタも埋める
     counts.assign(k, 0);
     for (int label : labels) ++counts[label];
     if (find(counts.begin(), counts.end(), 0) != counts.end()) {
@@ -187,9 +192,8 @@ KMeansResult<vector<double>, double> run(const vector<Point>& points, vector<vec
         kmeans_detail::repair_empty_clusters(labels, counts, assigned_cost);
     }
     vector<int> offsets, members, cursor;
-    kmeans_detail::build_members(labels, counts, offsets, members, cursor);
     Mean mean;
-    kmeans_detail::calculate_centers<Point, vector<double>>(points, k, offsets, members, centers, mean);
+    kmeans_detail::update_centers<Point, vector<double>>(points, labels, counts, offsets, members, cursor, centers, mean);
     ++iterations;
     if (options.polish_iterations > 0) {
         auto result = kmeans_hamerly_from_centers(points, centers, cost, Metric{}, mean, options.polish_iterations);
@@ -201,6 +205,7 @@ KMeansResult<vector<double>, double> run(const vector<Point>& points, vector<vec
 }
 }
 
+/// @brief 初期中心 initial_centers から e-means を行う / 中心は vector<double> で返す
 template <class Point, class Center>
 auto emeans_from_centers(const vector<Point>& points, const vector<Center>& initial_centers, EMeansOptions options = {}) {
     emeans_detail::check_input(points, initial_centers.size(), options);
@@ -218,6 +223,7 @@ auto emeans_from_centers(const vector<Point>& points, const vector<Center>& init
     return emeans_detail::run(points, move(centers), options);
 }
 
+/// @brief points を cluster_count 個のクラスタに分け、二乗距離の総和を小さくする / 1 <= cluster_count <= n
 template <class Point>
 auto emeans(const vector<Point>& points, int cluster_count, EMeansOptions options = {}) {
     emeans_detail::check_input(points, cluster_count, options);
@@ -239,6 +245,7 @@ auto emeans(const vector<Point>& points, int cluster_count, EMeansOptions option
     return emeans_detail::run(points, move(centers), options);
 }
 
+/// @brief 種 seed, seed + 1, ... で trials 回 emeans を行い、費用が最小の結果を返す
 template <class Point>
 auto emeans_best_of(const vector<Point>& points, int cluster_count, int trials, EMeansOptions options = {}) {
     return kmeans_detail::run_best_of("emeans_best_of", trials, options, [&](const EMeansOptions& current) {

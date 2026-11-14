@@ -9,15 +9,16 @@
 #include <memory>
 #include <utility>
 #include <vector>
-#if defined(__SSE2__) || (defined(__BMI2__) && defined(__x86_64__))
+#if defined(__BMI2__) && defined(__x86_64__)
 #include <immintrin.h>
 #endif
 #include "titan_cpplib/others/bit.cpp"
+#include "titan_cpplib/others/simd_int.cpp"
 using namespace std;
 
-// BTreeBitVector
 namespace titan23 {
 
+/// @brief BTreeBitVector の木表現 / 最大 127 bit の区画を B 木の葉に並べる
 class BTreeBitVectorCore {
     friend class BTreeBitVector;
 
@@ -29,12 +30,11 @@ private:
     static constexpr int _LEAF_CAP = 8;
     static constexpr int _LEAF_MIN = _LEAF_CAP / 2;
     static constexpr int _BRANCH = 8;
-    static_assert(_BRANCH == 8, "SIMD prefix search expects eight children");
-    static constexpr int _BRANCH_MIN = _BRANCH / 2;
+        static constexpr int _BRANCH_MIN = _BRANCH / 2;
     static constexpr int _MAX_HEIGHT = 16;
 
     struct Leaf {
-        // Logical order within each chunk is most-significant bit first.
+        // 各区画の中では上位 bit を論理上の先頭に置く
         array<uint128, _LEAF_CAP> key;
         array<uint8_t, _LEAF_CAP> bit_len;
         array<uint8_t, _LEAF_CAP> key_total;
@@ -54,7 +54,7 @@ private:
         int total;
         int count;
 
-        // SIMD searches also load unused lanes, so initialize every prefix.
+        // SIMD の探索は未使用の要素も読むので、累積値をすべて初期化する
         Internal() : child_size{}, child_total{}, size(0), total(0), count(0) {}
     };
 
@@ -180,54 +180,19 @@ private:
 
     int _total_before(const Internal &node, const int pos) const { return pos == 0 ? 0 : node.child_total[pos - 1]; }
 
-    // Find the first prefix > k. A live child always matches; unused lanes
-    // follow it and cannot change the result, even after node reuse.
+    // 累積の長さが k を超える最初の子を返す
     int _find_size(const Internal &node, const int k) const {
-#if defined(__AVX2__)
-        const __m256i key = _mm256_set1_epi32(k);
-        const __m256i sizes = _mm256_loadu_si256(reinterpret_cast<const __m256i *>(node.child_size.data()));
-        const unsigned mask = _mm256_movemask_ps(_mm256_castsi256_ps(_mm256_cmpgt_epi32(sizes, key)));
-        assert(mask != 0);
-        return __builtin_ctz(mask);
-#elif defined(__SSE2__)
-        const __m128i key = _mm_set1_epi32(k);
-        for (int i = 0; i < _BRANCH; i += 4) {
-            const __m128i a = _mm_loadu_si128(reinterpret_cast<const __m128i *>(node.child_size.data() + i));
-            const unsigned mask = _mm_movemask_ps(_mm_castsi128_ps(_mm_cmpgt_epi32(a, key)));
-            if (mask) return i + __builtin_ctz(mask);
-        }
-        assert(false);
-        __builtin_unreachable();
-#else
-        int pos = 0;
-        while (k >= node.child_size[pos]) ++pos;
+        const int pos = titan23::simd_find_first_greater_unchecked<_BRANCH>(node.child_size.data(), k);
+        assert(pos < node.count);
         return pos;
-#endif
     }
 
+    // bit の累積個数が k を超える最初の子を返す
     int _find_count(const Internal &node, const int k, const bool bit) const {
-#if defined(__AVX2__)
-        const __m256i key = _mm256_set1_epi32(k);
-        __m256i counts = _mm256_loadu_si256(reinterpret_cast<const __m256i *>(node.child_total.data()));
-        if (!bit) counts = _mm256_sub_epi32(_mm256_loadu_si256(reinterpret_cast<const __m256i *>(node.child_size.data())), counts);
-        const unsigned mask = _mm256_movemask_ps(_mm256_castsi256_ps(_mm256_cmpgt_epi32(counts, key)));
-        assert(mask != 0);
-        return __builtin_ctz(mask);
-#elif defined(__SSE2__)
-        const __m128i key = _mm_set1_epi32(k);
-        unsigned mask = 0;
-        for (int i = 0; i < _BRANCH; i += 4) {
-            __m128i a = _mm_loadu_si128(reinterpret_cast<const __m128i *>(node.child_total.data() + i));
-            if (!bit) a = _mm_sub_epi32(_mm_loadu_si128(reinterpret_cast<const __m128i *>(node.child_size.data() + i)), a);
-            mask |= _mm_movemask_ps(_mm_castsi128_ps(_mm_cmpgt_epi32(a, key))) << i;
-        }
-        assert(mask != 0);
-        return __builtin_ctz(mask);
-#else
-        int pos = 0;
-        while (k >= _count_prefix(node, pos, bit)) ++pos;
+        const int pos = bit ? titan23::simd_find_first_greater_unchecked<_BRANCH>(node.child_total.data(), k)
+                            : titan23::simd_find_first_greater_diff_unchecked<_BRANCH>(node.child_size.data(), node.child_total.data(), k);
+        assert(pos < node.count);
         return pos;
-#endif
     }
 
     int _count_prefix(const Internal &node, const int pos, const bool bit) const {
@@ -669,8 +634,7 @@ private:
         _rebalance_internal(path, slots, parent_depth, 1);
     }
 
-    // select-pop already updates ancestors while descending; positional pop
-    // learns the removed bit at the leaf and updates them here.
+    // UpdateAncestors が false のときは、呼び出し側が祖先を更新済みとする
     template<bool UpdateAncestors = true>
     void _pop_leaf_bit(const array<int, _MAX_HEIGHT> &path, const array<int, _MAX_HEIGHT> &slots, const int depth, const int leaf, const int chunk, const int k, const bool bit) {
         Leaf &node = _leaves[leaf];
@@ -830,7 +794,7 @@ private:
     }
 
     static int _select64(uint64_t word, const int bit_len, int k) {
-#if defined(__BMI2__) && defined(__x86_64__)
+#if defined(TITAN23_FAST_PDEP)
         const int from_low = titan23::popcount(word) - k - 1;
         return bit_len - 1 - titan23::countr_zero(_pdep_u64(uint64_t(1) << from_low, word));
 #else
@@ -921,13 +885,16 @@ private:
     }
 
 public:
-    // Allocate each pool on first use; a single-leaf tree needs no internals.
+    /// @brief 空のビット列を作る / 領域は初めて使うときに確保する
     BTreeBitVectorCore() : _root(0), _first(0), _free_leaf_head(0), _free_internal_head(0), _height(0) {}
 
+    /// @brief a から作る / 0 以外の値を 1 とみなす / O(n)
     BTreeBitVectorCore(const vector<uint8_t> &a) : BTreeBitVectorCore() { _build(a, 0, a.size()); }
 
+    /// @brief a[start, end) から作る / O(end - start)
     BTreeBitVectorCore(const vector<uint8_t> &a, const int start, const int end) : BTreeBitVectorCore() { _build(a, start, end); }
 
+    /// @brief 空にする
     void clear() {
         _leaves.clear();
         _internals.clear();
@@ -938,6 +905,7 @@ public:
         _height = 0;
     }
 
+    /// @brief 長さ n のビット列に要る節点の領域を予約する
     void reserve(const int n) {
         const int chunks = (n + _SPLIT_W - 1) / _SPLIT_W;
         const int leaves = max(1, (chunks + _LEAF_MIN - 1) / _LEAF_MIN);
@@ -951,10 +919,13 @@ public:
         if (internals > 0) _internals.reserve(max<size_t>(1, _internals.size()) + internals);
     }
 
+    /// @brief 位置 k に bit を挿入する / O(log n)
     void insert(const int k, const bool bit) { _insert_and_rank1(k, bit); }
 
+    /// @brief 位置 k の bit を削除して返す / O(log n)
     bool pop(const int k) { return _access_pop_and_rank1(k) & 1; }
 
+    /// @brief 位置 k を bit に変更する / O(log n)
     void set(int k, const bool bit) {
         assert(0 <= k && k < len());
         array<int, _MAX_HEIGHT> path;
@@ -986,6 +957,7 @@ public:
         _add_path(path, slots, depth, 0, delta);
     }
 
+    /// @brief 全体を 0 と 1 の列で返す / O(n)
     vector<uint8_t> tovector() const {
         vector<uint8_t> result(len());
         int index = 0;
@@ -1000,6 +972,7 @@ public:
         return result;
     }
 
+    /// @brief 位置 k の bit を返す / O(log n)
     bool access(int k) const {
         assert(0 <= k && k < len());
         int node = _root;
@@ -1017,36 +990,44 @@ public:
         return _bit_at(leaf.key[chunk], leaf.bit_len[chunk] - k - 1);
     }
 
+    /// @brief [0, r) の 0 の個数を返す / O(log n)
     int rank0(const int r) const {
         assert(0 <= r && r <= len());
         return r - _pref(r);
     }
 
+    /// @brief [0, r) の 1 の個数を返す / O(log n)
     int rank1(const int r) const {
         assert(0 <= r && r <= len());
         return _pref(r);
     }
 
+    /// @brief [0, r) の bit の個数を返す / O(log n)
     int rank(const int r, const bool bit) const { return bit ? rank1(r) : rank0(r); }
 
+    /// @brief {rank0(l), rank0(r)} を返す / O(log n)
     pair<int, int> _rank0_pair(const int l, const int r) const {
         assert(0 <= l && l <= r && r <= len());
         const auto [l1, r1] = _pref_pair(l, r);
         return {l - l1, r - r1};
     }
 
+    /// @brief k 番目の 0 の位置を返す / 0-indexed / O(log n)
     int select0(const int k) const {
         assert(0 <= k && k < len() - (_root == 0 ? 0 : _node_total(_root, _height)));
         return _select_position(k, false);
     }
 
+    /// @brief k 番目の 1 の位置を返す / 0-indexed / O(log n)
     int select1(const int k) const {
         assert(0 <= k && k < (_root == 0 ? 0 : _node_total(_root, _height)));
         return _select_position(k, true);
     }
 
+    /// @brief k 番目の bit の位置を返す / 0-indexed / O(log n)
     int select(const int k, const bool bit) const { return bit ? select1(k) : select0(k); }
 
+    /// @brief k 番目の bit を削除し、その位置を返す / 0-indexed / O(log n)
     int _select_pop(int k, const bool bit) {
         const int total = _root == 0 ? 0 : _node_total(_root, _height);
         assert(0 <= k && k < (bit ? total : len() - total));
@@ -1092,6 +1073,7 @@ public:
         return result;
     }
 
+    /// @brief 位置 k に bit を挿入し、rank1(k) を返す / O(log n)
     int _insert_and_rank1(int k, const bool bit) {
         assert(0 <= k && k <= len());
         if (_root == 0) {
@@ -1164,6 +1146,7 @@ public:
         return result;
     }
 
+    /// @brief 位置 k の bit を削除し、(rank1(k) << 1) | bit を返す / O(log n)
     int _access_pop_and_rank1(int k) {
         assert(0 <= k && k < len());
         array<int, _MAX_HEIGHT> path;
@@ -1196,6 +1179,7 @@ public:
         return (result << 1) | bit;
     }
 
+    /// @brief {access(k), rank1(k)} を返す / O(log n)
     pair<bool, int> _access_ans_rank1(int k) const {
         assert(0 <= k && k < len());
         int result = 0;
@@ -1221,6 +1205,7 @@ public:
         return {bit, result};
     }
 
+    /// @brief 位置 k を bit に変更し、{変更前の bit, rank1(k)} を返す / O(log n)
     pair<bool, int> _access_set_and_rank1(int k, const bool bit) {
         assert(0 <= k && k < len());
         array<int, _MAX_HEIGHT> path;
@@ -1259,6 +1244,7 @@ public:
         return {old, result};
     }
 
+    /// @brief 全体を標準出力に書く / O(n)
     void print() const {
         const vector<uint8_t> a = tovector();
         cout << "[";
@@ -1271,23 +1257,26 @@ public:
         cout << "]" << endl;
     }
 
+    /// @brief 空かを返す / O(1)
     bool empty() const { return _root == 0; }
 
+    /// @brief 長さを返す / O(1)
     int len() const { return _root == 0 ? 0 : _node_size(_root, _height); }
 };
 
+/// @brief 挿入と削除ができるビット列 / 短い列は木を作らない小表現で持つ
 class BTreeBitVector {
 private:
     using uint128 = __uint128_t;
 
     static constexpr int _W = 127;
-    // Avoid repeated allocations when updates cross the small-mode capacity.
+    // 木表現から戻す長さ。_W より小さくし、境界付近の更新で確保を繰り返さない
     static constexpr int _DEMOTE_W = 96;
     static constexpr uint8_t _TREE_MODE = UINT8_MAX;
 
-    // The first logical bit is bit 0; Core chunks use the opposite orientation.
+    // 論理上の先頭を bit 0 に置く。Core の区画とは向きが逆
     struct Key {
-        // Inline order is least-significant bit first, simplifying rank/access.
+        // 下位 bit から並べると rank と access が単純になる
         uint64_t low;
         uint64_t high;
     };
@@ -1319,7 +1308,7 @@ private:
         return __builtin_bswap64(word);
     }
 
-    // Convert between inline and leaf chunk order without unpacking the bits.
+    // 小表現と区画の bit 順を、bit を 1 個ずつ取り出さずに入れ替える
     static uint128 _reverse_key(const uint128 key, const int bit_len) {
         if (bit_len == 0) return 0;
         const uint128 reversed = (static_cast<uint128>(_reverse64(static_cast<uint64_t>(key))) << 64)
@@ -1391,7 +1380,7 @@ private:
             high ^= _mask64(high_len);
         }
         const int low_count = titan23::popcount(low);
-#if defined(__BMI2__) && defined(__x86_64__)
+#if defined(TITAN23_FAST_PDEP)
         if (k < low_count) return titan23::countr_zero(_pdep_u64(uint64_t(1) << k, low));
         return 64 + titan23::countr_zero(_pdep_u64(uint64_t(1) << (k - low_count), high));
 #else
@@ -1413,6 +1402,7 @@ private:
         _set_key(key);
     }
 
+    // 木表現へ移る
     [[gnu::noinline]] void _promote(const int capacity = 0) {
         unique_ptr<BTreeBitVectorCore> tree = make_unique<BTreeBitVectorCore>();
         if (_bit_len > 0 || capacity > 0) tree->reserve(max(capacity, int(_bit_len)));
@@ -1427,6 +1417,7 @@ private:
         _total = 0;
     }
 
+    // 長さが _DEMOTE_W 以下なら小表現へ戻す
     void _try_demote() {
         if (_data.tree->len() <= _DEMOTE_W) _demote();
     }
@@ -1447,8 +1438,10 @@ private:
     }
 
 public:
+    /// @brief 空のビット列を作る / O(1)
     BTreeBitVector() : _data(), _bit_len(0), _total(0) {}
 
+    /// @brief a から作る / 0 以外の値を 1 とみなす / O(n)
     BTreeBitVector(const vector<uint8_t> &a) : BTreeBitVector() {
         if (a.size() <= _W) {
             _build_small(a, 0, a.size());
@@ -1458,6 +1451,7 @@ public:
         }
     }
 
+    /// @brief a[start, end) から作る / O(end - start)
     BTreeBitVector(const vector<uint8_t> &a, const int start, const int end) : BTreeBitVector() {
         if (end - start <= _W) {
             _build_small(a, start, end);
@@ -1467,6 +1461,7 @@ public:
         }
     }
 
+    /// @brief other を複製する
     BTreeBitVector(const BTreeBitVector &other) : _data(), _bit_len(other._bit_len), _total(other._total) {
         if (other._is_tree()) {
             _data.tree = new BTreeBitVectorCore(*other._data.tree);
@@ -1475,6 +1470,7 @@ public:
         }
     }
 
+    /// @brief other から移す / O(1)
     BTreeBitVector(BTreeBitVector &&other) noexcept : _data(), _bit_len(other._bit_len), _total(other._total) {
         if (other._is_tree()) {
             _data.tree = other._data.tree;
@@ -1490,6 +1486,7 @@ public:
         if (_is_tree()) delete _data.tree;
     }
 
+    /// @brief other を複製して代入する
     BTreeBitVector &operator=(const BTreeBitVector &other) {
         if (this == &other) return *this;
         BTreeBitVectorCore *tree = other._is_tree() ? new BTreeBitVectorCore(*other._data.tree) : nullptr;
@@ -1504,6 +1501,7 @@ public:
         return *this;
     }
 
+    /// @brief other から移して代入する / O(1)
     BTreeBitVector &operator=(BTreeBitVector &&other) noexcept {
         if (this == &other) return *this;
         if (_is_tree()) delete _data.tree;
@@ -1520,6 +1518,7 @@ public:
         return *this;
     }
 
+    /// @brief 空にする / 木表現なら木を解放する
     void clear() {
         if (_is_tree()) delete _data.tree;
         _data.key = {0, 0};
@@ -1527,6 +1526,7 @@ public:
         _total = 0;
     }
 
+    /// @brief 長さ n のビット列に要る領域を予約する / n > 127 なら木表現へ移る
     void reserve(const int n) {
         if (_is_tree()) {
             _data.tree->reserve(n);
@@ -1535,10 +1535,13 @@ public:
         }
     }
 
+    /// @brief 位置 k に bit を挿入する / O(log n)
     void insert(const int k, const bool bit) { _insert_and_rank1(k, bit); }
 
+    /// @brief 位置 k の bit を削除して返す / O(log n)
     bool pop(const int k) { return _access_pop_and_rank1(k) & 1; }
 
+    /// @brief 位置 k を bit に変更する / O(log n)
     void set(const int k, const bool bit) {
         if (_is_tree()) {
             _data.tree->set(k, bit);
@@ -1552,6 +1555,7 @@ public:
         _total += bit ? 1 : -1;
     }
 
+    /// @brief 全体を 0 と 1 の列で返す / O(n)
     vector<uint8_t> tovector() const {
         if (_is_tree()) return _data.tree->tovector();
         vector<uint8_t> result(_bit_len);
@@ -1559,46 +1563,55 @@ public:
         return result;
     }
 
+    /// @brief 位置 k の bit を返す / O(log n)
     bool access(const int k) const {
         if (_is_tree()) return _data.tree->access(k);
         assert(0 <= k && k < _bit_len);
         return _bit_at(k);
     }
 
+    /// @brief [0, r) の 0 の個数を返す / O(log n)
     int rank0(const int r) const {
         if (_is_tree()) return _data.tree->rank0(r);
         assert(0 <= r && r <= _bit_len);
         return r - _prefix_total(r);
     }
 
+    /// @brief [0, r) の 1 の個数を返す / O(log n)
     int rank1(const int r) const {
         if (_is_tree()) return _data.tree->rank1(r);
         assert(0 <= r && r <= _bit_len);
         return _prefix_total(r);
     }
 
+    /// @brief [0, r) の bit の個数を返す / O(log n)
     int rank(const int r, const bool bit) const { return bit ? rank1(r) : rank0(r); }
 
+    /// @brief {rank0(l), rank0(r)} を返す / O(log n)
     pair<int, int> _rank0_pair(const int l, const int r) const {
         if (_is_tree()) return _data.tree->_rank0_pair(l, r);
         assert(0 <= l && l <= r && r <= _bit_len);
         return {l - _prefix_total(l), r - _prefix_total(r)};
     }
 
+    /// @brief k 番目の 0 の位置を返す / 0-indexed / O(log n)
     int select0(const int k) const {
         if (_is_tree()) return _data.tree->select0(k);
         assert(0 <= k && k < _bit_len - _total);
         return _select_in_key(k, false);
     }
 
+    /// @brief k 番目の 1 の位置を返す / 0-indexed / O(log n)
     int select1(const int k) const {
         if (_is_tree()) return _data.tree->select1(k);
         assert(0 <= k && k < _total);
         return _select_in_key(k, true);
     }
 
+    /// @brief k 番目の bit の位置を返す / 0-indexed / O(log n)
     int select(const int k, const bool bit) const { return bit ? select1(k) : select0(k); }
 
+    /// @brief k 番目の bit を削除し、その位置を返す / 0-indexed / O(log n)
     int _select_pop(const int k, const bool bit) {
         if (!_is_tree()) {
             assert(0 <= k && k < (bit ? _total : _bit_len - _total));
@@ -1613,6 +1626,7 @@ public:
         return result;
     }
 
+    /// @brief 位置 k に bit を挿入し、rank1(k) を返す / O(log n)
     int _insert_and_rank1(const int k, const bool bit) {
         if (_is_tree()) return _data.tree->_insert_and_rank1(k, bit);
         assert(0 <= k && k <= _bit_len);
@@ -1627,6 +1641,7 @@ public:
         return result;
     }
 
+    /// @brief 位置 k の bit を削除し、(rank1(k) << 1) | bit を返す / O(log n)
     int _access_pop_and_rank1(const int k) {
         if (_is_tree()) {
             const int result = _data.tree->_access_pop_and_rank1(k);
@@ -1642,12 +1657,14 @@ public:
         return (result << 1) | bit;
     }
 
+    /// @brief {access(k), rank1(k)} を返す / O(log n)
     pair<bool, int> _access_ans_rank1(const int k) const {
         if (_is_tree()) return _data.tree->_access_ans_rank1(k);
         assert(0 <= k && k < _bit_len);
         return {_bit_at(k), _prefix_total(k)};
     }
 
+    /// @brief 位置 k を bit に変更し、{変更前の bit, rank1(k)} を返す / O(log n)
     pair<bool, int> _access_set_and_rank1(const int k, const bool bit) {
         if (_is_tree()) return _data.tree->_access_set_and_rank1(k, bit);
         assert(0 <= k && k < _bit_len);
@@ -1661,6 +1678,7 @@ public:
         return {old, result};
     }
 
+    /// @brief 全体を標準出力に書く / O(n)
     void print() const {
         const vector<uint8_t> a = tovector();
         cout << "[";
@@ -1673,8 +1691,10 @@ public:
         cout << "]" << endl;
     }
 
+    /// @brief 空かを返す / O(1)
     bool empty() const { return _is_tree() ? _data.tree->empty() : _bit_len == 0; }
 
+    /// @brief 長さを返す / O(1)
     int len() const { return _is_tree() ? _data.tree->len() : _bit_len; }
 };
 

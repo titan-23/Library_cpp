@@ -9,6 +9,7 @@
 #include "titan_cpplib/ahc/tsp/tsp.cpp"
 using namespace std;
 namespace titan23 {
+/// @brief 位置 [left, right] を反転する 2-opt の手を作る / 状態は変えない / 無効な引数なら nullopt / O(1)
 template<class Cost>
 template<class EdgeCost>
 optional<TspTwoOptMove<Cost>> TspState<Cost>::make_two_opt(const TspProblem<EdgeCost>& problem, int left, int right) const {
@@ -29,6 +30,8 @@ optional<TspTwoOptMove<Cost>> TspState<Cost>::make_two_opt(const TspProblem<Edge
     return TspTwoOptMove<Cost>(problem_id_, this, revision_, left, right, move(delta));
 }
 
+/// @brief [first, first + length) を変更前の位置 after の直後へ移す Or-opt の手を作る / O(1)
+/// reversed なら区間を反転して移す。状態は変えない。無効な引数なら nullopt を返す
 template<class Cost>
 template<class EdgeCost>
 optional<TspOrOptMove<Cost>> TspState<Cost>::make_or_opt(const TspProblem<EdgeCost>& problem, int first, int length, int after, bool reversed) const {
@@ -76,6 +79,8 @@ optional<TspOrOptMove<Cost>> TspState<Cost>::make_or_opt(const TspProblem<EdgeCo
     return TspOrOptMove<Cost>(problem_id_, this, revision_, first, length, after, reversed, move(delta));
 }
 
+/// @brief 位置 cut1 < cut2 < cut3 < cut4 から始まる 4 辺を切る Double Bridge の手を作る / O(1)
+/// 状態は変えない。無効な引数なら nullopt を返す
 template<class Cost>
 template<class EdgeCost>
 optional<TspDoubleBridgeMove<Cost>> TspState<Cost>::make_double_bridge(const TspProblem<EdgeCost>& problem, int cut1, int cut2, int cut3, int cut4) const {
@@ -103,6 +108,8 @@ optional<TspDoubleBridgeMove<Cost>> TspState<Cost>::make_double_bridge(const Tsp
     return TspDoubleBridgeMove<Cost>(problem_id_, this, revision_, cut1, cut2, cut3, cut4, move(delta));
 }
 
+/// @brief 手 move を適用する / 2-opt は O(right - left)、Or-opt と Double Bridge は O(n)
+/// 別の状態から作った手や、状態の変更前に作った古い手を渡すと例外を投げる
 template<class Cost>
 template<class EdgeCost, class Move>
 void TspState<Cost>::apply(const TspProblem<EdgeCost>& problem, const Move& move) {

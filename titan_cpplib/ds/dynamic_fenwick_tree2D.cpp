@@ -8,8 +8,10 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 1点加算と矩形和を扱う動的2次元木 / ノードは必要な分だけ作る
 template<typename T, typename W>
 struct DynamicFenwickTree2D {
+    /// @brief ノードを配列で持ち、解放した番号を再利用する割り当て器
     template <typename V>
     struct MemoryAllocator {
         struct Node {
@@ -25,10 +27,12 @@ struct DynamicFenwickTree2D {
             d.assign(1, {0, 0, V()});
         }
 
+        /// @brief ノード cap 個分の領域を予約する
         void reserve(T cap) {
             d.reserve(cap);
         }
 
+        /// @brief 初期化したノードを確保して番号を返す / 償却 O(1)
         T new_node() {
             if (!unused.empty()) {
                 T u = unused.back();
@@ -44,10 +48,12 @@ struct DynamicFenwickTree2D {
             return ptr++;
         }
 
+        /// @brief ノード u を再利用できるように戻す / 償却 O(1)
         void deallocate(T u) {
             unused.push_back(u);
         }
 
+        /// @brief 全ノードを未使用に戻す / この割り当て器を使う木は全て無効になる
         void reset() {
             ptr = 1;
             d[0] = {0, 0, V()};
@@ -55,19 +61,19 @@ struct DynamicFenwickTree2D {
         }
     };
 
+    // ノード領域は同じテンプレート引数の全インスタンスで共有する
     static MemoryAllocator<T> out;
     static MemoryAllocator<W> in;
 
     T _h, _w;
     T root;
 
-    // デフォルトコンストラクタ / O(1)
     DynamicFenwickTree2D() : _h(0), _w(0), root(0) {}
 
-    // 縦 h、横 w の空間を管理する木を構築する / O(1)
+    /// @brief 縦 h、横 w の空間を管理する木を構築する / O(1)
     DynamicFenwickTree2D(T h, T w) : _h(h + 1), _w(w + 1), root(0) {}
 
-    // a[h][w] に x を加算する / O(logH logW)
+    /// @brief a[h][w] に x を加算する / O(logH logW)
     void add(T h, T w, W x) {
         assert(0 <= h && h < _h);
         assert(0 <= w && w < _w);
@@ -111,35 +117,35 @@ struct DynamicFenwickTree2D {
         }
     }
 
-    // a[h][w] を x に変更する / O(logH logW)
+    /// @brief a[h][w] を x に変更する / O(logH logW)
     void set(T h, T w, W x) {
         assert(0 <= h && h < _h);
         assert(0 <= w && w < _w);
         add(h, w, x - get(h, w));
     }
 
-    // 領域 [0, h) × [0, w) の要素の和を取得する / O(logH logW)
+    /// @brief 領域 [0, h) × [0, w) の要素の和を返す / O(logH logW)
     W sum(T h, T w) const {
         assert(0 <= h && h <= _h);
         assert(0 <= w && w <= _w);
         return outer_sum(root, 0, _h, 0, h, 0, w);
     }
 
-    // 領域 [h1, h2) × [w1, w2) の要素の和を取得する / O(logH logW)
+    /// @brief 領域 [h1, h2) × [w1, w2) の要素の和を返す / O(logH logW)
     W sum(T h1, T w1, T h2, T w2) const {
         assert(0 <= h1 && h1 <= h2 && h2 <= _h);
         assert(0 <= w1 && w1 <= w2 && w2 <= _w);
         return outer_sum(root, 0, _h, h1, h2, w1, w2);
     }
 
-    // a[h][w] の値を取得する / O(logH logW)
+    /// @brief a[h][w] の値を返す / O(logH logW)
     W get(T h, T w) const {
         assert(0 <= h && h < _h);
         assert(0 <= w && w < _w);
         return outer_sum(root, 0, _h, h, h + 1, w, w + 1);
     }
 
-    // 木が保持するノードを開放し、根を初期化する / O(K) ただしKは木のノード数
+    /// @brief 木が持つノードを解放し、根を初期化する / O(K)、K は木のノード数
     void reset() {
         if (root) {
             free_outer(root);

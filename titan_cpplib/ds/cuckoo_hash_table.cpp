@@ -15,6 +15,7 @@ raise NotImprementedError
 #include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
+/// @brief カッコウハッシュ法による u64 の集合 / 未完成 / 0 は空きを表すため挿入できない
 class CuckooHashTable {
   private:
     using u64 = unsigned long long;
@@ -87,10 +88,12 @@ class CuckooHashTable {
   public:
     CuckooHashTable() : T1(1, 0), T2(1, 0), msk(0), xor1(0), xor2(0), size(0), max_loop(1) {}
 
+    /// @brief key を含むか判定する / O(1)
     bool contains(const u64 key) const {
         return T1[h1(key)] == key || T2[h2(key)] == key;
     }
 
+    /// @brief key を挿入する / key != 0
     void insert(u64 key) {
         assert(key != NIL);
         size++;
@@ -98,6 +101,7 @@ class CuckooHashTable {
         innert_insert(key);
     }
 
+    /// @brief 全要素を削除する
     void clear() {
         fill(T1.begin(), T1.end(), NIL);
         fill(T2.begin(), T2.end(), NIL);

@@ -9,7 +9,7 @@ using namespace std;
 // SegmentTree2D
 namespace titan23 {
 
-// 2次元セグ木 / 空間 O(hw), 時間 O(log(h)log(w))
+/// @brief 2 次元セグメント木 / op は可換であること / 空間 O(hw)
 template <class T, T (*op)(T, T), T (*e)()>
 class SegmentTree2D {
 private:
@@ -19,12 +19,14 @@ private:
 
 public:
     SegmentTree2D() {}
+    /// @brief h × w で構築する / 初期値 e() / O(hw)
     SegmentTree2D(int h, int w) : h(h), w(w) {
         hs = 1<<bit_length(h);
         ws = 1<<bit_length(w);
         data.resize(hs*2, vector<T>(ws*2, e()));
     }
 
+    /// @brief 2 次元配列 a から構築する / O(hw)
     SegmentTree2D(const vector<vector<T>> a) {
         h = a.size();
         w = h ? a[0].size() : 0;
@@ -46,12 +48,12 @@ public:
         }
     }
 
-    // (y, x) / O(1)
+    /// @brief (y, x) の値を返す / O(1)
     T get(int y, int x) const {
         return data[y+hs][x+ws];
     }
 
-    // (y, x) <- v / O(log(h)log(w))
+    /// @brief (y, x) の値を v に変更する / O(log(h)log(w))
     void set(int y, int x, T v) {
         assert(0 <= y && y < h);
         assert(0 <= x && x < w);
@@ -69,7 +71,7 @@ public:
         }
     }
 
-    // [u, d) x [l, r) / O(log(h)log(w))
+    /// @brief [u, d) × [l, r) の総積を返す / O(log(h)log(w))
     T prod(int u, int d, int l, int r) const {
         assert(0 <= u && u <= d && d <= h);
         assert(0 <= l && l <= r && r <= w);

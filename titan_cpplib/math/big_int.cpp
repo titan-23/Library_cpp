@@ -25,6 +25,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 符号付きの多倍長整数 / 絶対値を 10^8 進で保持する
 class BigInt {
 private:
     using u32 = uint32_t;
@@ -49,6 +50,7 @@ private:
     static constexpr u64 NTT_INV = 554580198;
     static constexpr size_t NTT_MAX = size_t{1} << 23;
 
+    // digits_ は絶対値の各桁を下位から持ち、値が 0 なら空
     int sign_ = 0;
     Digits digits_;
 
@@ -104,7 +106,7 @@ private:
         return res;
     }
 
-    // Requires a >= b.
+    // a >= b が前提
     static Digits sub_abs(const Digits &a, const Digits &b) {
         assert(cmp_abs(a, b) >= 0);
         Digits res(a.size());
@@ -266,7 +268,7 @@ private:
         const cpp_int y = to_cpp(b.digits_);
         const cpp_int g = boost::multiprecision::gcd(x, y);
         if (g <= numeric_limits<u64>::max()) return BigInt(g.convert_to<u64>());
-        // Convert the smaller quotient when the common factor is large.
+        // g が大きいときは、g より小さい商 x / g を変換し、a をそれで割って g を得る
         if (boost::multiprecision::msb(g) > boost::multiprecision::msb(x) / 2) {
             const cpp_int q = x / g;
             return a / BigInt(q.str());
@@ -750,7 +752,7 @@ private:
         return res;
     }
 
-    // Returns hi * BASE^n + lo.
+    // hi * BASE^n + lo を返す
     static Digits concat(const Digits &hi, const Digits &lo, size_t n) {
         assert(lo.size() <= n);
         if (hi.empty()) return lo;
@@ -961,6 +963,7 @@ private:
     }
 
 public:
+    /// @brief 0 で構築する
     BigInt() noexcept = default;
     BigInt(const BigInt &) = default;
     BigInt &operator=(const BigInt &) = default;
@@ -979,9 +982,11 @@ public:
         return *this;
     }
 
+    /// @brief 整数型の値から構築する
     template <integral T>
     requires(!same_as<remove_cv_t<T>, bool>) BigInt(T x) { assign(x); }
 
+    /// @brief 10 進文字列から構築する / 先頭の + または - を許す / 不正な文字列なら invalid_argument を投げる
     explicit BigInt(string_view s) {
         if (s.empty()) throw invalid_argument("BigInt: empty string");
         size_t l = 0;
@@ -1007,6 +1012,7 @@ public:
         normalize();
     }
 
+    /// @brief 符号を -1, 0, 1 で返す
     [[nodiscard]] int sign() const noexcept { return sign_; }
     [[nodiscard]] bool is_zero() const noexcept { return sign_ == 0; }
     [[nodiscard]] bool is_one() const noexcept { return sign_ == 1 && digits_.size() == 1 && digits_[0] == 1; }
@@ -1014,6 +1020,7 @@ public:
     [[nodiscard]] bool is_odd() const noexcept { return sign_ != 0 && (digits_[0] & 1) != 0; }
     explicit operator bool() const noexcept { return sign_ != 0; }
 
+    /// @brief 絶対値を返す
     [[nodiscard]] BigInt abs() const & {
         BigInt res = *this;
         if (res.sign_ < 0) res.sign_ = 1;
@@ -1025,6 +1032,7 @@ public:
         return move(*this);
     }
 
+    /// @brief 10 進表記の文字列を返す
     [[nodiscard]] string to_string() const {
         if (sign_ == 0) return "0";
         static constexpr char ds[] = "0001020304050607080910111213141516171819"
@@ -1051,6 +1059,7 @@ public:
         return res;
     }
 
+    /// @brief 整数型 T に変換する / T の範囲外なら overflow_error を投げる
     template <integral T>
     requires(!same_as<remove_cv_t<T>, bool>) [[nodiscard]] remove_cv_t<T> to_integral() const {
         using V = remove_cv_t<T>;
@@ -1257,6 +1266,7 @@ public:
 
     friend ostream &operator<<(ostream &os, const BigInt &a) { return os << a.to_string(); }
 
+    /// @brief 空白区切りの 10 進文字列を読む / 不正な文字列なら failbit を立てる
     friend istream &operator>>(istream &is, BigInt &a) {
         string s;
         if (!(is >> s)) return is;
@@ -1391,6 +1401,7 @@ inline pair<BigInt::Digits, BigInt::Digits> BigInt::divmod_abs(const Digits &a, 
     return div_knuth(a, b);
 }
 
+/// @brief 商と余りの組を返す / 商は 0 方向に切り捨て、余りは a と同じ符号 / b == 0 なら domain_error を投げる
 inline pair<BigInt, BigInt> divmod(const BigInt &a, const BigInt &b) {
     if (b.sign_ == 0) throw domain_error("BigInt: division by zero");
     if (a.sign_ == 0) return {BigInt(), BigInt()};
@@ -1400,8 +1411,10 @@ inline pair<BigInt, BigInt> divmod(const BigInt &a, const BigInt &b) {
     return {move(q), move(r)};
 }
 
+/// @brief 絶対値を返す
 inline BigInt abs(const BigInt &a) { return a.abs(); }
 
+/// @brief a^n を返す / O(log n) 回の乗算
 template <unsigned_integral T>
 requires(!same_as<remove_cv_t<T>, bool>) inline BigInt pow(BigInt a, T n) {
     using U = make_unsigned_t<remove_cv_t<T>>;
@@ -1415,11 +1428,13 @@ requires(!same_as<remove_cv_t<T>, bool>) inline BigInt pow(BigInt a, T n) {
     return res;
 }
 
+/// @brief a^n を返す / n < 0 なら domain_error を投げる
 template <signed_integral T> inline BigInt pow(BigInt a, T n) {
     if (n < 0) throw domain_error("BigInt: negative exponent");
     return pow(move(a), static_cast<make_unsigned_t<remove_cv_t<T>>>(n));
 }
 
+/// @brief a^n を返す / n < 0 なら domain_error を投げる
 inline BigInt pow(BigInt a, BigInt n) {
     if (n.sign() < 0) throw domain_error("BigInt: negative exponent");
     if (n.is_zero()) return 1;
@@ -1439,11 +1454,12 @@ inline BigInt pow(BigInt a, BigInt n) {
     return res;
 }
 
+/// @brief 最大公約数を返す / 結果は非負
 inline BigInt gcd(BigInt a, BigInt b) {
     a = move(a).abs();
     b = move(b).abs();
     size_t cnt = 0;
-    // Finish easy ratios before paying for the quadratic radix conversion.
+    // 基数変換は 2 乗時間かかるので、少ない反復で済む比はここで処理する
     const size_t lim = 4 + min(a.digits_.size(), b.digits_.size()) / 32;
     while (!b.is_zero()) {
         const int cmp = BigInt::cmp_abs(a.digits_, b.digits_);
@@ -1491,6 +1507,7 @@ inline BigInt gcd(BigInt a, BigInt b) {
     return a;
 }
 
+/// @brief BigInt と整数型の最大公約数を返す
 template <class T, class U>
 requires((same_as<remove_cv_t<T>, BigInt> && integral<U> && !same_as<remove_cv_t<U>, bool>) ||
          (integral<T> && !same_as<remove_cv_t<T>, bool> && same_as<remove_cv_t<U>, BigInt>)) inline BigInt
@@ -1499,11 +1516,13 @@ requires((same_as<remove_cv_t<T>, BigInt> && integral<U> && !same_as<remove_cv_t
     return gcd(BigInt(a), move(b));
 }
 
+/// @brief 最小公倍数を返す / 結果は非負で、どちらかが 0 なら 0
 inline BigInt lcm(const BigInt &a, const BigInt &b) {
     if (a.is_zero() || b.is_zero()) return BigInt();
     return ((a / gcd(a, b)) * b).abs();
 }
 
+/// @brief BigInt と整数型の最小公倍数を返す
 template <class T, class U>
 requires((same_as<remove_cv_t<T>, BigInt> && integral<U> && !same_as<remove_cv_t<U>, bool>) ||
          (integral<T> && !same_as<remove_cv_t<T>, bool> && same_as<remove_cv_t<U>, BigInt>)) inline BigInt

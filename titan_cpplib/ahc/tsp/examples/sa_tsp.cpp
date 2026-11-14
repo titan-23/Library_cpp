@@ -18,7 +18,7 @@ int NEIBHORS;
 int K;
 vector<int> START_NODES;
 
-// minimize SA
+// 最小化の焼きなまし
 namespace sa {
 
 void sa_init() {
@@ -78,12 +78,12 @@ public:
     struct Changed {
         int TYPE_CNT = 7;
         int type;
-        // 遷移の対象となるルートとインデックス
+        // 遷移の対象の巡回路と位置
         int r1, r2;
         int u_idx, v_idx, w_idx;
         int L1, L2;
 
-        // 各ルートの距離の変化分
+        // 各巡回路の距離の変化量
         ll diff_d1, diff_d2;
         ScoreType diff;
         Changed() {}
@@ -126,7 +126,7 @@ public:
         local_id.resize(N);
         P.resize(N, vector<double>(N));
 
-        // 1. K-means にかける都市（デポ以外）の座標リストを作成
+        // 1. デポ以外の都市の座標を K-means 用に集める
         vector<ElmType> city_coords;
         vector<int> city_ids;
         vector<bool> is_depot(N, false);
@@ -141,23 +141,23 @@ public:
             }
         }
 
-        // 2. デポの座標を初期中心として設定
+        // 2. デポの座標を初期の中心にする
         vector<ElmType> init_centers;
         for (int sn : START_NODES) {
             init_centers.push_back(YX[sn]);
         }
 
-        // 3. K-means 実行
+        // 3. K-means を実行する
         auto kmeans_result = titan23::kmeans_from_centers(city_coords, init_centers, kmeans_dist, kmeans_mean, 20);
         const vector<int>& labels = kmeans_result.labels;
 
-        // 4. 各クラスタごとに都市を分類
+        // 4. 都市をクラスタごとに分ける
         vector<vector<int>> clusters(K);
         for (int i = 0; i < (int)labels.size(); ++i) {
             clusters[labels[i]].push_back(city_ids[i]);
         }
 
-        // 5. 各ルート内で貪欲法（Nearest Neighbor）を適用
+        // 5. 各巡回路を貪欲な最近傍法で作る
         score = 0;
         for (int k = 0; k < K; ++k) {
             int start_node = START_NODES[k];
@@ -167,7 +167,7 @@ public:
             vector<bool> visited(cluster_cities.size(), false);
             int current_node = start_node;
 
-            // 未訪問の都市がなくなるまで最も近い都市を選択
+            // 未訪問の都市がなくなるまで最も近い都市を選ぶ
             for (int i = 0; i < (int)cluster_cities.size(); ++i) {
                 int next_city_idx = -1;
                 ll min_d = LLONG_MAX;
@@ -188,7 +188,7 @@ public:
                 }
             }
 
-            // インデックスの更新とルート距離の計算
+            // 位置を更新し、巡回路の距離を求める
             ll d = 0;
             int sz = tours[k].size();
             for (int i = 0; i < sz; ++i) {
@@ -211,9 +211,9 @@ public:
         return max_d;
     }
 
-    // thresholdを超えたら必ずreject(同じなら遷移する)
-    // is_validをfalseにすると必ずrejectする
-    // progress:焼きなまし進行度 0.0~1.0 まで
+    // threshold を超えたら必ず棄却され、等しければ遷移する
+    // is_valid を false にすると必ず棄却される
+    // progress は焼きなましの進行度で 0.0 から 1.0
     void modify(const int64_t iter, const ScoreType threshold, const double progress) {
         if (N <= 3) {
             is_valid = false;
@@ -233,25 +233,25 @@ public:
                 prob_intra = 80;
             }
         }
-        // modify関数内での確率判定
+        // 近傍の種類を確率で選ぶ
         int rand_val = sarnd.randrange(100);
         if (rand_val < prob_intra) {
             int intra_rand = sarnd.randrange(100);
-            if (intra_rand < 50) changed.type = 0;       // Intra 2-opt
-            else if (intra_rand < 67) changed.type = 1;  // Intra Or-opt
-            else if (intra_rand < 92) changed.type = 2;  // Intra 反転Or-opt
-            else changed.type = 3;                       // Intra Double Bridge
+            if (intra_rand < 50) changed.type = 0;       // 巡回路内の 2-opt
+            else if (intra_rand < 67) changed.type = 1;  // 巡回路内の Or-opt
+            else if (intra_rand < 92) changed.type = 2;  // 巡回路内の反転 Or-opt
+            else changed.type = 3;                       // 巡回路内の Double Bridge
         } else {
             int inter_rand = sarnd.randrange(100);
-            if (inter_rand < 50) changed.type = 4;       // Inter Block Shift
-            else changed.type = 5;                       // Inter Block Swap
+            if (inter_rand < 50) changed.type = 4;       // 巡回路間の区間移動
+            else changed.type = 5;                       // 巡回路間の区間交換
         }
         if (iter%(int)(1e6) == 0) {
             changed.type = 6;
         }
 
         if (changed.type >= 0 && changed.type <= 3) {
-            // ====== Intra 近傍 (既存ロジックのmTSP移植) ======
+            // ====== 巡回路内の近傍。既存の処理を mTSP 向けに移植した ======
             int r1 = sarnd.randrange(K);
             auto& tr = tours[r1];
             int sz = tr.size();
@@ -259,20 +259,20 @@ public:
             changed.r1 = r1;
 
             if (changed.type == 0) { // 2-opt
-                int u_idx = sarnd.randrange(sz - 1) + 1; // 始点0を保護
+                int u_idx = sarnd.randrange(sz - 1) + 1; // 始点 0 を動かさない
                 int u_prev = u_idx - 1;
                 int cand = nearest_neighbors[tr[u_prev]][sarnd.randrange(NEIBHORS)];
 
                 if (pos_route[cand] != r1) { is_valid = false; return; }
                 int v_idx = pos_idx[cand];
-                if (v_idx == 0) { is_valid = false; return; } // 始点0を保護
+                if (v_idx == 0) { is_valid = false; return; } // 始点 0 を動かさない
 
                 if (u_idx == v_idx || v_idx == u_prev || v_idx == (u_idx - 2 + sz) % sz) {
                     is_valid = false; return;
                 }
                 int real_u = u_idx, real_v = v_idx;
                 if (u_idx > v_idx) { real_u = v_idx + 1; real_v = u_idx - 1; }
-                if (real_u <= 0) { is_valid = false; return; } // 始点0を保護
+                if (real_u <= 0) { is_valid = false; return; } // 始点 0 を動かさない
 
                 changed.u_idx = real_u; changed.v_idx = real_v;
                 int real_u_prev = real_u - 1, real_v_next = (real_v + 1) % sz;
@@ -285,15 +285,15 @@ public:
                 changed.diff = (old_d + changed.diff_d1) * (old_d + changed.diff_d1) - old_d * old_d;
                 score += changed.diff;
 
-            } else if (changed.type == 1 || changed.type == 2) { // Or-opt / 反転Or-opt
+            } else if (changed.type == 1 || changed.type == 2) { // Or-opt と反転 Or-opt
                 int L = (changed.type == 1) ? (sarnd.randrange(3) + 1) : (sarnd.randrange(2) + 2);
-                int u_idx = sarnd.randrange(sz - 1) + 1; // 始点0を保護
-                if (u_idx + L > sz) { is_valid = false; return; } // 配列末尾跨ぎを禁止
+                int u_idx = sarnd.randrange(sz - 1) + 1; // 始点 0 を動かさない
+                if (u_idx + L > sz) { is_valid = false; return; } // 配列の末尾をまたぐ区間は使わない
 
                 int target_node = (changed.type == 1) ? tr[u_idx] : tr[(u_idx + L - 1) % sz];
                 int cand = nearest_neighbors[target_node][sarnd.randrange(NEIBHORS)];
 
-                // ★candが別ルートにいる場合は棄却
+                // cand が別の巡回路にあれば棄却する
                 if (pos_route[cand] != r1) { is_valid = false; return; }
                 int v_idx = pos_idx[cand];
                 if (v_idx == 0 || (v_idx >= u_idx && v_idx < u_idx + L) || v_idx == u_idx - 1) {
@@ -346,7 +346,7 @@ public:
             }
 
         } else if (changed.type == 4) {
-            // ====== Inter 近傍: Block Shift ======
+            // ====== 巡回路間の近傍: 区間移動 ======
             int r1 = sarnd.randrange(K), r2 = sarnd.randrange(K);
             if (r1 == r2 || tours[r1].size() <= 1) { is_valid = false; return; }
             int sz1 = tours[r1].size(), sz2 = tours[r2].size();

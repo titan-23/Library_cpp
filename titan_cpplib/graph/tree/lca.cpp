@@ -8,13 +8,9 @@
 #include "titan_cpplib/ds/static_RmQ.cpp"
 using namespace std;
 
-// LCA
 namespace titan23 {
 
-/**
- * @brief 静的なグラフに対しLCAを求めるライブラリ
- * <O(n), O(1)>
- */
+/// @brief 静的な木の LCA を求める / 前計算 O(n)、クエリ O(1)
 class LCA {
 private:
     int n;
@@ -24,7 +20,7 @@ private:
 public:
     LCA() : n(0) {}
 
-    /// @brief 隣接リスト `G` 、根 `root` として前計算をする / `O(n)`
+    /// @brief 隣接リスト G と根 root から前計算する / O(n)
     LCA(const vector<vector<int>> &G, const int root) :
             n((int)G.size()), path(n), nodein(n, -1) {
         vector<int> par(n, -1);
@@ -51,7 +47,7 @@ public:
         st = titan23::StaticRmQ<int>(a, INT_MAX);
     }
 
-    /// @brief `u`, `v` の lca を求める / `O(1)`
+    /// @brief u と v の LCA を返す / O(1)
     int lca(const int u, const int v) const {
         if (u == v) return u;
         int l = nodein[u], r = nodein[v];
@@ -59,7 +55,7 @@ public:
         return path[st.prod(l, r)];
     }
 
-    /// @brief 頂点集合 `a` の lca を求める / `O(|a|)`
+    /// @brief 頂点集合 a の LCA を返す / a は空でないこと / O(|a|)
     int lca_mul(const vector<int> &a) const {
         assert(!a.empty());
         int l = n*2+1;

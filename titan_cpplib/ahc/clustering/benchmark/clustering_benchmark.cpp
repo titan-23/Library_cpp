@@ -13,11 +13,13 @@
 #include <vector>
 using namespace std;
 namespace titan23 {
+/// @brief クラスタの点数の範囲 / 両端を含む
 struct ClusteringBenchmarkRange {
     int lower;
     int upper;
 };
 
+/// @brief ベンチマークの問題 1 件 / 問題ファイルの形式は titan_clustering_benchmark_v1
 struct ClusteringBenchmarkCase {
     string name;
     string source;
@@ -29,6 +31,7 @@ struct ClusteringBenchmarkCase {
     vector<int> reference_labels;
 };
 
+/// @brief 名前、点、座標、個数範囲、最良既知費用、参照ラベルを検査する / 誤りがあれば invalid_argument を投げる / O(nd + k)
 inline void check_clustering_benchmark_case(const ClusteringBenchmarkCase& problem) {
     if (problem.name.empty()) throw invalid_argument("clustering benchmark: name must not be empty");
     if (problem.name.find_first_of("\r\n") != string::npos || problem.source.find_first_of("\r\n") != string::npos) throw invalid_argument("clustering benchmark: name and source must be one line");
@@ -83,6 +86,7 @@ inline void check_clustering_benchmark_case(const ClusteringBenchmarkCase& probl
     }
 }
 
+/// @brief path の問題ファイルを読み、検査して返す / 開けなければ runtime_error、形式が違えば invalid_argument を投げる / O(nd + k)
 inline ClusteringBenchmarkCase read_clustering_benchmark_case(const string& path) {
     ifstream input(path);
     if (!input) throw runtime_error("clustering benchmark: could not open " + path);
@@ -138,6 +142,7 @@ inline ClusteringBenchmarkCase read_clustering_benchmark_case(const string& path
     return problem;
 }
 
+/// @brief problem を検査し、titan_clustering_benchmark_v1 形式で path に書く / O(nd + k)
 inline void write_clustering_benchmark_case(const string& path, const ClusteringBenchmarkCase& problem) {
     check_clustering_benchmark_case(problem);
     ofstream output(path);
@@ -172,17 +177,20 @@ inline void write_clustering_benchmark_case(const string& path, const Clustering
     }
 }
 
+/// @brief 個数範囲に [1, n] 以外のものがあるかを返す / O(k)
 inline bool clustering_benchmark_has_size_constraints(const ClusteringBenchmarkCase& problem) {
     int point_count = problem.points.size();
     for (auto [lower, upper] : problem.ranges) if (lower != 1 || upper != point_count) return true;
     return false;
 }
 
+/// @brief すべての個数範囲で lower == upper かを返す / O(k)
 inline bool clustering_benchmark_has_exact_sizes(const ClusteringBenchmarkCase& problem) {
     for (auto [lower, upper] : problem.ranges) if (lower != upper) return false;
     return true;
 }
 
+/// @brief 各クラスタの点数を返す / [0, cluster_count) の外のラベルがあれば空の列を返す / O(n + k)
 inline vector<int> clustering_benchmark_cluster_sizes(const vector<int>& labels, int cluster_count) {
     if (cluster_count <= 0) return {};
     vector<int> sizes(cluster_count);
@@ -193,6 +201,7 @@ inline vector<int> clustering_benchmark_cluster_sizes(const vector<int>& labels,
     return sizes;
 }
 
+/// @brief labels の長さと各クラスタの点数が problem の条件を満たすかを返す / O(n + k)
 inline bool clustering_benchmark_valid_labels(const ClusteringBenchmarkCase& problem, const vector<int>& labels) {
     if (labels.size() != problem.points.size()) return false;
     vector<int> sizes = clustering_benchmark_cluster_sizes(labels, problem.cluster_count);
@@ -203,6 +212,7 @@ inline bool clustering_benchmark_valid_labels(const ClusteringBenchmarkCase& pro
     return true;
 }
 
+/// @brief 各クラスタの平均までの二乗距離の総和を返す / labels が条件を満たさないか double に収まらなければ無限大を返す / O(nd + kd)
 inline double clustering_benchmark_cost(const ClusteringBenchmarkCase& problem, const vector<int>& labels) {
     if (!clustering_benchmark_valid_labels(problem, labels)) return numeric_limits<double>::infinity();
     int dimension = problem.points[0].size();
@@ -228,6 +238,7 @@ inline double clustering_benchmark_cost(const ClusteringBenchmarkCase& problem, 
     return (double)cost;
 }
 
+/// @brief labels と reference_labels の調整ランド指数を返す / 空、長さが違う、負のラベルがあるときは NaN を返す / O(n log n)
 inline double clustering_benchmark_adjusted_rand_index(const vector<int>& labels, const vector<int>& reference_labels) {
     if (labels.empty() || labels.size() != reference_labels.size()) return numeric_limits<double>::quiet_NaN();
     for (int label : labels) if (label < 0) return numeric_limits<double>::quiet_NaN();

@@ -8,16 +8,16 @@
 #include <algorithm>
 using namespace std;
 
-// MultisetSum
 namespace titan23 {
 
+// 構築時のバケット数と、バケットを分割する大きさを決める比
 const int BUCKET_RATIO = 16;
 const int SPLIT_RATIO = 24;
 
+/// @brief 総和を求められる多重集合 / 平方分割で実装する
+/// 参考: https://github.com/tatyam-prime/SortedSet/blob/main/SortedMultiset.py
 template<typename T>
 class MultisetSum {
-    // ref: https://github.com/tatyam-prime/SortedSet/blob/main/SortedMultiset.py
-
 private:
     int n;
     T missing;
@@ -56,8 +56,10 @@ private:
 public:
     MultisetSum() : n(0), S(0) {}
 
+    /// @brief 空で構築する / 該当する要素がないとき le などは missing を返す
     MultisetSum(T missing) : n(0), missing(missing), S(0) {}
 
+    /// @brief 列 a の要素で構築する
     MultisetSum(vector<T> a, T missing=-1) : n(a.size()), missing(missing), S(0) {
         for (int i = 0; i < n; ++i) S += a[i];
         for (int i = 0; i < n-1; ++i) {
@@ -84,6 +86,7 @@ public:
         }
     }
 
+    /// @brief key を 1 個追加する
     void add(const T &key) {
         S += key;
         if (n == 0) {
@@ -101,6 +104,7 @@ public:
         }
     }
 
+    /// @brief key を 1 個削除し、削除できたかを返す / key がないときも総和から key を引く
     bool discard(const T &key) {
         S -= key;
         auto [i, pos] = get_pos(key);
@@ -117,10 +121,12 @@ public:
         return true;
     }
 
+    /// @brief key を 1 個削除する / key があることが前提
     void remove(const T &key) {
         assert(discard(key));
     }
 
+    /// @brief 昇順 k 番目の要素を返す / 0 <= k < len() が前提
     T operator[] (int k) const {
         for (const vector<T> &d : data) {
             if (k < d.size()) return d[k];
@@ -128,8 +134,10 @@ public:
         }
     }
 
+    /// @brief 全要素の総和を返す / O(1)
     T all_prod() const { return S; }
 
+    /// @brief key 未満で最大の要素を返す
     T lt(const T &key) const {
         for (auto it = this->data.rbegin(); it != this->data.rend(); ++it) {
             const vector<T> &d = *it;
@@ -141,6 +149,7 @@ public:
         return this->missing;
     }
 
+    /// @brief key 以下で最大の要素を返す
     T le(const T &key) const {
         for (auto it = this->data.rbegin(); it != this->data.rend(); ++it) {
             const vector<T> &d = *it;
@@ -152,6 +161,7 @@ public:
         return this->missing;
     }
 
+    /// @brief key より大きい最小の要素を返す
     T gt(const T &key) const {
         for (const vector<T> &d : this->data) {
             if (d.back() > key) {
@@ -162,6 +172,7 @@ public:
         return this->missing;
     }
 
+    /// @brief key 以上で最小の要素を返す
     T ge(const T &key) const {
         for (const vector<T> &d : this->data) {
             if (d.back() >= key) {
@@ -172,7 +183,7 @@ public:
         return this->missing;
     }
 
-    // x未満
+    /// @brief x 未満の要素数を返す
     int index(const T &x) const {
         int ans = 0;
         for (const vector<T> &d : this->data) {
@@ -182,6 +193,7 @@ public:
         return ans;
     }
 
+    /// @brief x 以下の要素数を返す
     int index_right(const T &x) const {
         int ans = 0;
         for (const vector<T> &d : this->data) {
@@ -191,16 +203,18 @@ public:
         return ans;
     }
 
+    /// @brief key の個数を返す
     int count(const T &key) const {
         return index_right(key) - index(key);
     }
 
+    /// @brief key があるかを返す
     bool contains(const T &key) const {
         auto [i, pos] = get_pos(key);
         return i < data.size() && pos < data[i].size() && data[i][pos] == key;
     }
 
-    // [l, r)の総和を返す
+    /// @brief 昇順に並べたときの [l, r) 番目の要素の総和を返す
     T sum(int l, int r) const {
         T sum = 0;
         int u = 0, v = 0;
@@ -221,7 +235,7 @@ public:
         return sum;
     }
 
-    // high未満
+    /// @brief high 未満の要素の総和を返す
     T sum(T high) const {
         if (data.empty() || high <= data.front().front()) return 0;
         if (data.back().back() < high) return S;
@@ -240,7 +254,7 @@ public:
         return sum;
     }
 
-    // 総和がw未満となるように先頭からとるとき、いくつとれるか？
+    /// @brief 小さい順に取るとき、総和が w 未満となる最大の個数を返す
     int count_by_sum_limit(T w) const {
         int ans = 0;
         for (int i = 0; i < data.size(); ++i) {
@@ -262,14 +276,17 @@ public:
         return ans;
     }
 
+    /// @brief 要素数を返す / O(1)
     int size() const {
         return n;
     }
 
+    /// @brief 要素数を返す / O(1)
     int len() const {
         return n;
     }
 
+    /// @brief 昇順に並べた vector を返す / O(n)
     vector<T> tovector() const {
         vector<T> a;
         a.reserve(n);

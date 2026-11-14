@@ -9,9 +9,11 @@ using namespace std;
 
 namespace titan23 {
 
+// n < 4759123141 では is_primell_A1、それ以外では is_primell_A2 を底に使う
 const vector<long long> is_primell_A1 = {2, 7, 61};
 const vector<long long> is_primell_A2 = {2, 325, 9375, 28178, 450775, 9780504, 1795265022};
 
+/// @brief n が素数かを決定的 Miller-Rabin 法で判定する
 bool is_primell(long long n) {
     if (n <= 1) return false;
     if (n == 2 || n == 7 || n == 61) return true;

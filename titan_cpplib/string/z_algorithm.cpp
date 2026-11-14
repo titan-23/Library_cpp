@@ -6,7 +6,7 @@
 using namespace std;
 
 namespace titan23 {
-// z[i]:= sとs[i:]の最長共通接頭辞の長さ
+/// @brief z[i] を s と s[i:] の最長共通接頭辞の長さとする配列 z を返す / O(n)
 vector<int> z_algorithm(const string &s) {
     int n = s.size();
     vector<int> z(n, 0);

@@ -10,13 +10,13 @@ using namespace std;
 
 namespace titan23 {
 
-/// Shared index for distance range queries on a static tree
-/// Construction is O(N log N)
+/// @brief 静的な木の距離範囲クエリで共有する添字表
 class ContourIndex {
 public:
     int n = 0;
     vector<int> path_off = {0}, path_dist, cpar, all_off = {0}, sub_off = {0};
 
+    /// @brief 木の隣接リスト G から構築する / O(N log N)
     void build(const vector<vector<int>> &G) {
         n = (int)G.size();
         if (n == 0) return;
@@ -167,6 +167,7 @@ public:
 
     ContourIndex() = default;
 
+    /// @brief 木の隣接リスト G から構築する / O(N log N)
     explicit ContourIndex(const vector<vector<int>> &G) {
         build(G);
     }

@@ -8,12 +8,9 @@
 #include "titan_cpplib/alg/random_mt.cpp"
 using namespace std;
 
-// RandomTree
 namespace titan23 {
 
-/**
- * @brief ランダムな木のジェネレータ
- */
+/// @brief 無作為な木を生成する
 class RandomTree {
 private:
     titan23::RandomMT random;
@@ -27,12 +24,14 @@ private:
     }
 
 public:
+    /// @brief 乱数の種を random_device から取って構築する
     RandomTree() {}
+    /// @brief 乱数の種 seed で構築する
     RandomTree(int seed) : random(seed) {}
 
-    /// ランダムな木の辺集合を返す / `O(nlogn)`
+    /// @brief n 頂点のラベル付き木を一様に選び、その辺集合を返す / O(n log n)
+    /// 参考: https://speakerdeck.com/tsutaj/beerbash-lt-230711?slide=27
     vector<pair<int, int>> gen_random(int n) {
-        // https://speakerdeck.com/tsutaj/beerbash-lt-230711?slide=27
         assert(n >= 0);
         vector<pair<int, int>> edges;
         if (n <= 1) {
@@ -72,9 +71,9 @@ public:
         return edges;
     }
 
-    /// ランダムな木(パスグラフ)の辺集合を返す / `O(nlogn)`
+    /// @brief n 頂点の無作為なパスグラフの辺集合を返す / O(n)
     vector<pair<int, int>> gen_path(int n) {
-        // ホントにランダム一様???
+        // 一様分布になるかは未確認
         assert(n >= 0);
         vector<pair<int, int>> edges;
         if (n <= 1) {

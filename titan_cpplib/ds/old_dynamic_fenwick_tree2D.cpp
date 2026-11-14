@@ -11,17 +11,19 @@ using namespace std;
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/hash_policy.hpp>
 
-// DynamicFenwickTree2D
 namespace titan23 {
 
+/// @brief 使う位置だけをハッシュ表で持つ 2 次元 Fenwick 木 / 添字は 0 始まり
 template<typename T, typename W>
 struct DynamicFenwickTree2D {
     int _h, _w;
     unordered_map<T, unordered_map<T, W>> _bit;
 
     DynamicFenwickTree2D() {}
+    /// @brief h 行 w 列で構築する / O(1)
     DynamicFenwickTree2D(T h, T w) : _h(h+1), _w(w+1) {}
 
+    /// @brief (h, w) に x を加算する
     void add(T h, T w, W x) {
         assert(0 <= h && h < _h);
         assert(0 <= w && w < _w);
@@ -41,12 +43,14 @@ struct DynamicFenwickTree2D {
         }
     }
 
+    /// @brief (h, w) の値を x にする
     void set(int h, int w, W x) {
         assert(0 <= h && h < _h);
         assert(0 <= w && w < _w);
         add(h, w, x - get(h, w));
     }
 
+    /// @brief [0, h) x [0, w) の和を返す
     W sum(T h, T w) const {
         assert(0 <= h && h < _h);
         assert(0 <= w && w < _w);
@@ -68,18 +72,21 @@ struct DynamicFenwickTree2D {
         return res;
     }
 
+    /// @brief [h1, h2) x [w1, w2) の和を返す
     W sum(T h1, T w1, T h2, T w2) const {
         assert(0 <= h1 && h1 <= h2 && h2 <= _h);
         assert(0 <= w1 && w1 <= w2 && w2 <= _w);
         return sum(h2, w2) - sum(h2, w1) - sum(h1, w2) + sum(h1, w1);
     }
 
+    /// @brief (h, w) の値を返す
     W get(T h, T w) {
         assert(0 <= h && h < _h);
         assert(0 <= w && w < _w);
         return sum(h, w, h+1, w+1);
     }
 
+    /// @brief 未実装で、何も出力しない
     void print() {
     }
 };

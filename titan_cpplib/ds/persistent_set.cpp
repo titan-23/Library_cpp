@@ -13,6 +13,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 重み平衡木による永続集合
 template <typename T>
 class PersistentSet {
   private:
@@ -222,21 +223,26 @@ class PersistentSet {
     PersistentSet(NodePtr root) : root(root) {}
 
   public:
+    /// @brief 空の集合を構築する / O(1)
     PersistentSet() : root(nullptr) {}
 
+    /// @brief 列 a の要素からなる集合を構築する / 重複は除く / O(n log n)
     PersistentSet(const vector<T> &a) { _build(a); }
 
+    /// @brief other の要素を合わせた集合を返す / this の全要素 < other の全要素が前提 / O(log n)
     PersistentSet<T> merge(PersistentSet<T> other) {
         NodePtr root = _merge_node(this->root, other.root);
         return _new(root);
     }
 
+    /// @brief 小さい方から k 要素と残りに分けて返す / O(log n)
     pair<PersistentSet<T>, PersistentSet<T>> split(int k) {
         assert(0 <= k && k <= len());
         auto [l, r] = _split_node_idx(this->root, k);
         return {_new(l), _new(r)};
     }
 
+    /// @brief key を追加した集合を返す / O(log n)
     PersistentSet<T> add(T key) {
         if (contains(key)) return _new(this->root->copy());
         auto [s, t] = _split_node_key(root, key);
@@ -244,6 +250,7 @@ class PersistentSet {
         return _new(_merge_with_root(s, new_node, t));
     }
 
+    /// @brief key を削除した集合を返す / key が無ければ変更しない / O(log n)
     PersistentSet<T> remove(T key) {
         if (!contains(key)) return _new(this->root ? this->root->copy() : nullptr);
         auto [s_, t] = _split_node_key(this->root, key);
@@ -253,6 +260,7 @@ class PersistentSet {
         return _new(root);
     }
 
+    /// @brief key を含むか判定する / O(log n)
     bool contains(T key) const {
         NodePtr node = root;
         while (node) {
@@ -262,6 +270,7 @@ class PersistentSet {
         return false;
     }
 
+    /// @brief 小さい方から k 番目の要素を返す / 0-indexed / O(log n)
     T get(int k) const {
         assert(0 <= k && k < len());
         NodePtr node = root;
@@ -278,6 +287,7 @@ class PersistentSet {
         }
     }
 
+    /// @brief key 未満の要素数を返す / O(log n)
     int index(const T &key) const {
         int k = 0;
         NodePtr node = root;
@@ -296,6 +306,7 @@ class PersistentSet {
         return k;
     }
 
+    /// @brief key 以下の要素数を返す / O(log n)
     int index_right(const T &key) const {
         int k = 0;
         NodePtr node = root;
@@ -314,6 +325,7 @@ class PersistentSet {
         return k;
     }
 
+    /// @brief 小さい方から k 番目の要素を削除した集合とその要素を返す / O(log n)
     pair<PersistentSet<T>, T> pop(int k) {
         assert(0 <= k && k < len());
         auto [s_, t] = _split_node_idx(this->root, k+1);
@@ -322,6 +334,7 @@ class PersistentSet {
         return {_new(root), tmp->key};
     }
 
+    /// @brief 全要素を昇順の配列にして返す / O(n)
     vector<T> tovector() const {
         NodePtr node = root;
         stack<NodePtr> s;
@@ -340,14 +353,17 @@ class PersistentSet {
         return a;
     }
 
+    /// @brief コピーを返す / O(1)
     PersistentSet<T> copy() const {
         return _new(this->root ? this->root->copy() : nullptr);
     }
 
+    /// @brief 要素数を返す / O(1)
     int len() const {
         return root ? root->size : 0;
     }
 
+    /// @brief 平衡条件と部分木サイズを検査する / O(n)
     void check() const {
         auto rec = [&] (auto &&rec, NodePtr node) -> pair<int, int> {
             int ls = 0, rs = 0;
@@ -375,6 +391,7 @@ class PersistentSet {
         cerr << PRINT_GREEN << "OK : height=" << h << PRINT_NONE << endl;
     }
 
+    /// @brief 全要素をストリームへ出力する / O(n)
     friend ostream& operator<<(ostream& os, const PersistentSet<T> &tree) {
         vector<T> a = tree.tovector();
         os << "{";

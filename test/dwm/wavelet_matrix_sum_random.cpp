@@ -98,6 +98,19 @@ void verify(const vector<Key> &keys, const vector<Weight> &weights, const int si
         int range_count = 0;
         for (int i = l; i < r; ++i) range_count += keys[i] == value;
         assert(matrix.range_count(l, r, value) == range_count);
+        assert(ordinary.range_count(l, r, value) == range_count);
+        if (rank > 0) {
+            // 先頭から j 番目の value の位置を、WaveletMatrix の select と比べる
+            const int j = rng() % rank;
+            int position = -1;
+            for (int i = 0, seen = 0; i < r; ++i) {
+                if (keys[i] == value && seen++ == j) {
+                    position = i;
+                    break;
+                }
+            }
+            assert(ordinary.select(j, value) == position);
+        }
 
         const Key upper = rng() % (sigma + 1);
         int count_lt = 0;
@@ -150,6 +163,8 @@ void verify(const vector<Key> &keys, const vector<Weight> &weights, const int si
         }
         assert(matrix.prev_value(l, r, upper) == previous);
         assert(matrix.next_value(l, r, lower) == (next == sigma ? -1 : next));
+        assert(ordinary.prev_value(l, r, upper) == previous);
+        assert(ordinary.next_value(l, r, lower) == (next == sigma ? -1 : next));
 
         vector<int> count(sigma);
         for (int i = l; i < r; ++i) ++count[keys[i]];

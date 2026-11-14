@@ -8,6 +8,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 根つき木で、各頂点を根とする部分木のハッシュ値を求める
 class HashedRootedTree {
 private:
     using u64 = unsigned long long;
@@ -31,6 +32,7 @@ private:
 public:
     using HashType = u64;
     HashedRootedTree() {}
+    /// @brief 根 root の木 G から求める / seed = -1 なら random_device で種を決める / 別の木と比べるときは同じ seed を使う / O(n)
     HashedRootedTree(vector<vector<int>> G, int root, int seed=-1) {
         int n = G.size();
         hs.resize(n, 1);
@@ -55,6 +57,7 @@ public:
         dfs(dfs, root, -1);
     }
 
+    /// @brief v を根とする部分木のハッシュ値を返す / O(1)
     HashType get(int v) const { return hs[v]; }
 };
 } // namespace titan23

@@ -15,7 +15,7 @@ using namespace std;
 
 namespace flying_squirrel {
 
-/// @brief 子が1つだけの親子の Action を合成して探索するビームサーチ
+/// @brief 子が 1 つだけの親の Action を子と合成して探索するビームサーチ / Action::compose が必要
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
 class BeamSearchWithTree {
 private:
@@ -33,7 +33,7 @@ private:
     vector<HistoryNode<ScoreType, HashType>> history;
     vector<TurnSnapshot> snapshots;
 
-    // 1ターン内の try_op 呼び出し回数
+    // 1 ターン内の try_op 呼び出し回数
     int explored_per_turn;
 
     /// @brief Action 合成の効果を測るための探索カウンタ
@@ -66,8 +66,7 @@ private:
         return gblock[(size_t)(id >> SLOT_BITS)][(size_t)(id & SLOT_MASK)];
     }
 
-    /// @brief 世代ブロック内で ghost となった Action を記録する
-    /// ghost のスロットにある Action は参照せず、apply_op と rollback の対象にも含めない
+    /// @brief 世代ブロック内で ghost となった Action の印 / ghost の Action は参照せず、apply_op と rollback もしない
     vector<vector<uint8_t>> gblock_ghost;
     vector<vector<uint8_t>> ghost_slab_pool;
     /// @brief 直前世代の葉に対応する ActionId を保持する
@@ -80,9 +79,7 @@ private:
         gblock_ghost[(size_t)(id >> SLOT_BITS)][(size_t)(id & SLOT_MASK)] = 1;
     }
 
-    /// @brief 子が1つだけの親 Action を子へ合成し、親を ghost にする
-    /// state に適用中の親は合成前に取り消し、合成に失敗した場合は再適用する
-    /// @pre cand は parent_leaf 順に整列済みであること
+    /// @brief 子が 1 つだけの親の Action を子へ合成し、親を ghost にする / cand は parent_leaf 順に整列済みであること
     void compose_pass(int turn, State& s) {
         int n = (int)cand.size();
         int i = 0;
@@ -98,6 +95,7 @@ private:
                     Action& parent_a = act(parent_aid);
                     Action& child_a = act(child_aid);
                     bool is_last = (parent_aid == last_applied);
+                    // state に適用中の親は合成前に取り消し、合成に失敗したら再適用する
                     if (is_last) {
                         s.rollback(parent_a);
                         ++cnt_compose_align;
@@ -126,6 +124,7 @@ private:
         }
     }
 
+    /// @brief 生存候補 1 つを表す / Action は世代ブロック内の位置で持つ
     struct CandIdx {
         int parent_leaf;
         ScoreType score;
@@ -150,8 +149,7 @@ private:
     vector<Action> result_prefix;     // 確定区間にある非 ghost の Action
     vector<vector<Action>> slab_pool; // 解放した世代ブロックの再利用プール
 
-    /// @brief 確定した接頭辞を退避し、参照されなくなった世代ブロックを再利用プールへ移す
-    /// @param L 次世代以降で参照される最小の深さ
+    /// @brief 確定した接頭辞を退避し、参照されなくなった世代ブロックを再利用プールへ移す / L は次世代以降で参照される最小の深さ
     void confirm_and_free(int L) {
         while (freed_to + 1 < L) {
             int d = freed_to + 1;
@@ -207,8 +205,7 @@ private:
         }
     }
 
-    /// @brief 探索状態をルートへ戻し、返却経路を適用した最終状態を構築する
-    /// ghost は状態に適用されていないため rollback しない
+    /// @brief 探索状態を根へ戻し、返却経路を適用した最終状態を構築する / ghost は適用されていないので戻さない
     template<bool materialize_final_state>
     unique_ptr<State> build_final_state(State& state, const vector<Action>& result_actions, int current_depth) {
         if constexpr (materialize_final_state) {
@@ -236,6 +233,7 @@ private:
         /// @brief 現在の枝刈り閾値を返す
         inline ScoreType threshold() const { return bs.candidates.threshold(); }
 
+        /// @brief 受け取った Action を評価し、完成解なら最良解を更新し、そうでなければ候補に登録する
         inline void operator()(Action &a) {
             ++bs.explored_per_turn;
             ScoreType th = bs.candidates.threshold();
@@ -322,9 +320,7 @@ private:
         snapshots.push_back({turn_label, vector<int>(survived.begin(), survived.end())});
     }
 
-    /// @brief 親葉までの差分経路を tour から深さ順に復元する
-    /// 未復元の浅い区間だけをコピーし、共有接頭辞を保持する
-    /// @param dst_base dst_base[d] を深さ d の書き込み先とする出力範囲
+    /// @brief 親葉までの差分経路を tour から復元し、深さ d の Action を dst_base[d] に書く / 未復元の浅い区間だけを写し、共有接頭辞は保つ
     template<class It>
     inline void copy_tour_path(int parent_leaf, int leaf_end, It dst_base) {
         int written_floor = INT_MAX; // 復元済み区間の最小深さ
@@ -344,12 +340,8 @@ private:
     }
 
 public:
-    /// @brief ビームサーチを実行する
-    /// @tparam materialize_final_state 最終状態を構築する場合は true
-    /// @param param 探索ターン数とビーム幅の設定
-    /// @param verbose ログを出力する場合は true
-    /// @param history_file record_history が true のときに履歴を JSON で出力するファイル名
-    /// @return 探索結果
+    /// @brief ビームサーチを実行し、探索結果を返す / materialize_final_state が true なら最終状態も構築する
+    /// record_history が true のとき、履歴を JSON で history_file に書き出す
     template<bool materialize_final_state=true>
     Result search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
         if (param.max_turn <= 0 || param.beam_width <= 0) {
@@ -450,7 +442,7 @@ public:
             explored_per_turn = 0;
 
             int li = leaf.size() - 1;
-            int gL = INT_MAX; // 全候補の LCA の深さ 世代ブロックの解放基準に使う
+            int gL = INT_MAX; // 全候補の LCA の深さ。世代ブロックを解放する基準に使う
             int dP_state = eff_depth.back();
 
             if (!cand.empty()) {

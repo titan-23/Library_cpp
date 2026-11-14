@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <climits>
 #include <cstddef>
 #include <cstdint>
 #include <iostream>
@@ -14,23 +15,18 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief [0,N)を管理する経路圧縮付き動的セグメント木
-/// clear後に更新した異なる位置がK個なら、ノード数は2K-1個でK=0なら0個
-/// 葉と分岐を別々のプールに保持し、葉には値だけを持たせて位置は探索時に持ち回る
-/// ノード番号は0が欠損、奇数が葉、正の偶数が分岐で、保持数の上限は2^32-1個
-/// Nは列の長さ、Mは保持ノード数、M_otherはコピー元またはムーブ元のノード数
-/// Tの演算・コピー・ムーブ・破棄、述語の評価はO(1)とする
-/// ノード追加を含む計算量は償却計算量で、問い合わせではノードを追加しない
+/// @brief [0,N)を管理する経路圧縮付き動的セグメント木 / ノード数の上限は2^32-1個
+/// Mは保持ノード数、M_otherはコピー元または移動元のノード数を表す
 template <class IndexType, class T, T (*op)(T, T), T (*e)()>
 class DynamicSegmentTree {
 private:
+    // ノード番号は0が欠損、奇数が葉、正の偶数が分岐
     using NodeIndex = uint32_t;
     static constexpr NodeIndex null_node = 0;
 
     struct Leaf {
         T data;
 
-        /// @brief 葉の値を初期化する / O(1)
         Leaf(T value) : data(move(value)) {}
     };
 
@@ -41,7 +37,6 @@ private:
         IndexType split, hi;
         T data;
 
-        /// @brief 分岐の子と区間情報を初期化する / O(1)
         Branch(IndexType split, IndexType hi, T value, NodeIndex left, NodeIndex right)
             : left(left), right(right), split(split), hi(hi), data(move(value)) {}
     };
@@ -52,45 +47,40 @@ private:
     NodeIndex root_ = null_node;
     IndexType root_min_ = 0;
 
-    /// @brief 番号が葉を表すか判定する / O(1)
     static bool is_leaf(NodeIndex node) { return (node & 1) != 0; }
 
-    /// @brief 分岐のプール内添字を求める / O(1)
+    // 分岐のプール内の添字
     static NodeIndex branch_index(NodeIndex node) { return (node >> 1) - 1; }
 
-    /// @brief 分岐の情報への参照を返す / O(1)
     Branch& branch_node(NodeIndex node) { return branches_[branch_index(node)]; }
 
-    /// @brief 分岐の情報への読み取り専用参照を返す / O(1)
     const Branch& branch_node(NodeIndex node) const { return branches_[branch_index(node)]; }
 
-    /// @brief ノードの集約値への参照を返す / O(1)
     T& node_data(NodeIndex node) {
         return is_leaf(node) ? leaves_[node >> 1].data : branch_node(node).data;
     }
 
-    /// @brief ノードの集約値への読み取り専用参照を返す / O(1)
     const T& node_data(NodeIndex node) const {
         return is_leaf(node) ? leaves_[node >> 1].data : branch_node(node).data;
     }
 
-    /// @brief ノードが持つ最大位置の次の位置を返す / O(1)
+    // ノードが持つ最大位置の次の位置
     IndexType node_hi(NodeIndex node, IndexType node_min) const {
         return is_leaf(node) ? node_min + 1 : branch_node(node).hi;
     }
 
-    /// @brief 右部分木の開始位置を返す / O(1)
+    // 右部分木の開始位置
     IndexType node_split(NodeIndex node) const {
         return branch_node(node).split;
     }
 
-    /// @brief 未登録区間の集約値として単位元を返す / O(1)
+    // 未登録区間の集約値として単位元を返す
     T initial_prod(IndexType length) const {
         (void)length;
         return e();
     }
 
-    /// @brief 最上位の1ビットだけが立った値を返す / O(1)
+    // 最上位の1ビットだけが立った値
     static IndexType highest_bit(IndexType value) {
         assert(value > 0);
         if constexpr (sizeof(IndexType) <= sizeof(unsigned long long)) {
@@ -104,7 +94,7 @@ private:
         }
     }
 
-    /// @brief 葉または分岐を対応するプールに追加する / 償却O(1)
+    // 葉または分岐を対応するプールに追加する
     [[gnu::noinline]]
     NodeIndex new_node(IndexType lo, IndexType hi, T value,
                        NodeIndex left = null_node, NodeIndex right = null_node) {
@@ -122,21 +112,21 @@ private:
         return (index + 1) << 1;
     }
 
-    /// @brief 左右の集約値を順に結合する / O(1)
+    // 左右の集約値を順に結合する
     T join_data(NodeIndex left, IndexType left_min, NodeIndex right, IndexType right_min) const {
         (void)left_min;
         (void)right_min;
         return op(node_data(left), node_data(right));
     }
 
-    /// @brief 2つの部分木を座標順に結ぶ分岐を追加する / 償却O(1)
+    // 2つの部分木を座標順に結ぶ分岐を追加する
     [[gnu::noinline]]
     NodeIndex join_nodes(NodeIndex a, IndexType a_min, NodeIndex b, IndexType b_min) {
         if (b_min < a_min) { swap(a, b); swap(a_min, b_min); }
         return new_node(b_min, node_hi(b, b_min), join_data(a, a_min, b, b_min), a, b);
     }
 
-    /// @brief 部分木の指定位置を更新し、必要な分岐を追加する / O(logN)
+    // 部分木の位置kを更新し、必要な分岐を追加する
     NodeIndex inner_set(NodeIndex node, IndexType node_min, IndexType k, T& value) {
         if (node == null_node) return new_node(k, k + 1, move(value));
         if (is_leaf(node)) {
@@ -165,7 +155,7 @@ private:
         return node;
     }
 
-    /// @brief 区間に含まれる部分木の集約値を返す / O(1)
+    // 区間に含まれる部分木の集約値
     T covered_prod(NodeIndex node, IndexType node_min, IndexType l, IndexType r) const {
         (void)node_min;
         (void)l;
@@ -173,7 +163,7 @@ private:
         return node_data(node);
     }
 
-    /// @brief 葉の座標を再読せず、前後の初期値を含む区間を集約する / O(1)
+    // 葉の座標を再読せず、前後の初期値を含む区間を集約する
     T leaf_prod(NodeIndex node, IndexType node_min, IndexType l, IndexType r) const {
         (void)node_min;
         (void)l;
@@ -181,46 +171,8 @@ private:
         return leaves_[node >> 1].data;
     }
 
-    /// @brief 部分木の先頭からr未満の範囲を集約する / O(logN)
-    T prefix_prod(NodeIndex node, IndexType node_min, IndexType r) const {
-        T acc = e();
-        while (true) {
-            if (r <= node_min) return acc;
-            if (is_leaf(node)) return op(acc, leaf_prod(node, node_min, node_min, r));
-            const Branch& b = branch_node(node);
-            if (b.hi <= r) return op(acc, covered_prod(node, node_min, node_min, r));
-            if (r <= b.split) node = b.left;
-            else {
-                acc = op(acc, node_data(b.left));
-                node_min = b.split;
-                node = b.right;
-            }
-        }
-    }
-
-    /// @brief l以上から部分木の末尾までを集約する / O(logN)
-    T suffix_prod(NodeIndex node, IndexType node_min, IndexType l) const {
-        T acc = e();
-        while (true) {
-            if (is_leaf(node)) {
-                if (node_min < l) return acc;
-                return op(leaf_prod(node, node_min, l, node_min + 1), acc);
-            }
-            const Branch& b = branch_node(node);
-            if (b.hi <= l) return acc;
-            if (l <= node_min) return op(covered_prod(node, node_min, l, b.hi), acc);
-            if (b.split <= l) {
-                node_min = b.split;
-                node = b.right;
-            } else {
-                acc = op(node_data(b.right), acc);
-                if (node_hi(b.left, node_min) <= l) return acc;
-                node = b.left;
-            }
-        }
-    }
-
-    /// @brief 部分木内の[l,r)を集約する / O(logN)
+    // 部分木内の[l,r)を集約する。呼び出し元に展開すると遅くなるため展開させない
+    [[gnu::noinline]]
     T inner_prod(NodeIndex node, IndexType node_min, IndexType l, IndexType r) const {
         while (true) {
             if (is_leaf(node)) {
@@ -230,57 +182,142 @@ private:
             const Branch& b = branch_node(node);
             if (r <= node_min || b.hi <= l) return initial_prod(r - l);
             if (l <= node_min && b.hi <= r) return covered_prod(node, node_min, l, r);
-            if (r <= b.split) node = b.left;
-            else if (b.split <= l) {
-                node_min = b.split;
-                node = b.right;
+            const IndexType split = b.split;
+            if ((l < split) & (split < r)) break;
+            // 子の選択を条件付き転送で書ける形にする
+            const bool right = split <= l;
+            node_min = right ? split : node_min;
+            node = right ? b.right : b.left;
+        }
+        const Branch& top = branch_node(node);
+        NodeIndex left = top.left, right = top.right;
+        IndexType left_min = node_min, right_min = top.split;
+        T left_acc = e(), right_acc = e();
+        bool left_done = false, right_done = false;
+        // 左端側と右端側の経路を同じループで下る
+        while (!(left_done & right_done)) {
+            // 左の子ではl以上を右から結合する
+            if (!left_done) {
+                if (is_leaf(left)) {
+                    if (l <= left_min) left_acc = op(leaf_prod(left, left_min, l, left_min + 1), left_acc);
+                    left_done = true;
+                } else {
+                    const Branch& b = branch_node(left);
+                    if (b.hi <= l) left_done = true;
+                    else if (l <= left_min) {
+                        left_acc = op(covered_prod(left, left_min, l, b.hi), left_acc);
+                        left_done = true;
+                    } else if (b.split <= l) {
+                        left_min = b.split;
+                        left = b.right;
+                    } else {
+                        left_acc = op(node_data(b.right), left_acc);
+                        left = b.left;
+                    }
+                }
+            }
+            // 右の子ではr未満を左から結合する
+            if (!right_done) {
+                if (is_leaf(right)) {
+                    right_acc = op(right_acc, leaf_prod(right, right_min, right_min, r));
+                    right_done = true;
+                } else {
+                    const Branch& b = branch_node(right);
+                    if (b.hi <= r) {
+                        right_acc = op(right_acc, covered_prod(right, right_min, right_min, r));
+                        right_done = true;
+                    } else if (r <= b.split) right = b.left;
+                    else {
+                        right_acc = op(right_acc, node_data(b.left));
+                        right_min = b.split;
+                        right = b.right;
+                    }
+                }
+            }
+        }
+        return op(left_acc, right_acc);
+    }
+
+    // 判定が失敗する部分木を下り、境界の位置を返す。Forwardなら左から、そうでなければ右から結合する
+    template <bool Forward, class Predicate>
+    IndexType descend_failed(NodeIndex node, IndexType node_min, Predicate& pred, T& acc) const {
+        while (!is_leaf(node)) {
+            const Branch& b = branch_node(node);
+            const NodeIndex first = Forward ? b.left : b.right, second = Forward ? b.right : b.left;
+            T candidate = Forward ? op(acc, node_data(first)) : op(node_data(first), acc);
+            if (pred(candidate)) {
+                acc = move(candidate);
+                if constexpr (Forward) node_min = b.split;
+                node = second;
             } else {
-                T left_value = suffix_prod(b.left, node_min, l);
-                return op(left_value, prefix_prod(b.right, b.split, r));
+                if constexpr (!Forward) node_min = b.split;
+                node = first;
             }
         }
+        return Forward ? node_min : node_min + 1;
     }
 
-    /// @brief 部分木を左から結合して右端の境界を探す / O(logN)
-    template <class Predicate>
-    bool inner_max_right(NodeIndex node, IndexType node_min, IndexType l, Predicate& pred,
-                         T& acc, IndexType& answer) const {
-        if (node_hi(node, node_min) <= l) return false;
-        if (l <= node_min) {
-            T candidate = op(acc, node_data(node));
-            if (pred(candidate)) {
-                acc = move(candidate);
-                return false;
-            }
+    // 境界を探す。Forwardならboundary以上を左から、そうでなければboundary未満を右から結合する
+    template <bool Forward, class Predicate>
+    IndexType scan_boundary(IndexType boundary, Predicate& pred) const {
+        T acc = e();
+        NodeIndex pending[sizeof(IndexType) * CHAR_BIT + 1];
+        IndexType pending_min[sizeof(IndexType) * CHAR_BIT + 1];
+        int count = 0;
+        NodeIndex node = root_;
+        IndexType node_min = root_min_;
+        bool has_first = false;  // 下りた先のnode全体が最初の候補か
+        while (true) {
             if (is_leaf(node)) {
-                answer = node_min;
-                return true;
+                has_first = Forward ? boundary <= node_min : node_min < boundary;
+                break;
+            }
+            const Branch& b = branch_node(node);
+            if constexpr (Forward) {
+                if (b.hi <= boundary) break;
+                if (boundary <= node_min) {
+                    has_first = true;
+                    break;
+                }
+                if (boundary < b.split) {
+                    pending[count] = b.right;
+                    pending_min[count] = b.split;
+                    ++count;
+                    node = b.left;
+                } else {
+                    node_min = b.split;
+                    node = b.right;
+                }
+            } else {
+                if (boundary <= node_min) break;
+                if (b.hi <= boundary) {
+                    has_first = true;
+                    break;
+                }
+                if (b.split < boundary) {
+                    pending[count] = b.left;
+                    pending_min[count] = node_min;
+                    ++count;
+                    node_min = b.split;
+                    node = b.right;
+                } else node = b.left;
             }
         }
-        const NodeIndex left = branch_node(node).left, right = branch_node(node).right;
-        if (inner_max_right(left, node_min, l, pred, acc, answer)) return true;
-        return inner_max_right(right, node_split(node), l, pred, acc, answer);
-    }
-
-    /// @brief 部分木を右から結合して左端の境界を探す / O(logN)
-    template <class Predicate>
-    bool inner_min_left(NodeIndex node, IndexType node_min, IndexType r, Predicate& pred,
-                        T& acc, IndexType& answer) const {
-        if (r <= node_min) return false;
-        if (node_hi(node, node_min) <= r) {
-            T candidate = op(node_data(node), acc);
-            if (pred(candidate)) {
-                acc = move(candidate);
-                return false;
-            }
-            if (is_leaf(node)) {
-                answer = node_hi(node, node_min);
-                return true;
-            }
+        if (!has_first) {
+            if (count == 0) return Forward ? n_ : 0;
+            --count;
+            node = pending[count];
+            node_min = pending_min[count];
         }
-        const NodeIndex left = branch_node(node).left, right = branch_node(node).right;
-        if (inner_min_left(right, node_split(node), r, pred, acc, answer)) return true;
-        return inner_min_left(left, node_min, r, pred, acc, answer);
+        while (true) {
+            T candidate = Forward ? op(acc, node_data(node)) : op(node_data(node), acc);
+            if (!pred(candidate)) return descend_failed<Forward>(node, node_min, pred, acc);
+            acc = move(candidate);
+            if (count == 0) return Forward ? n_ : 0;
+            --count;
+            node = pending[count];
+            node_min = pending_min[count];
+        }
     }
 
 public:
@@ -370,7 +407,7 @@ public:
         return e();
     }
 
-    /// @brief k番目の値をvalueに置き換える / O(logN)
+    /// @brief k番目の値をvalueに置き換える / 償却O(logN)
     void set(IndexType k, T value) {
         assert(0 <= k && k < n_);
         const bool empty = root_ == null_node;
@@ -383,12 +420,9 @@ public:
     template <class Predicate>
     IndexType max_right(IndexType l, Predicate&& pred) const {
         assert(0 <= l && l <= n_);
-        T acc = e();
-        assert(pred(acc));
-        if (l == n_) return n_;
-        IndexType answer = n_;
-        if (root_ != null_node) inner_max_right(root_, root_min_, l, pred, acc, answer);
-        return answer;
+        assert(pred(e()));
+        if (l == n_ || root_ == null_node) return n_;
+        return scan_boundary<true>(l, pred);
     }
 
     /// @brief pred(prod(l,r))が真となる最小のlを求める / O(logN)
@@ -396,12 +430,9 @@ public:
     template <class Predicate>
     IndexType min_left(IndexType r, Predicate&& pred) const {
         assert(0 <= r && r <= n_);
-        T acc = e();
-        assert(pred(acc));
-        if (r == 0) return 0;
-        IndexType answer = 0;
-        if (root_ != null_node) inner_min_left(root_, root_min_, r, pred, acc, answer);
-        return answer;
+        assert(pred(e()));
+        if (r == 0 || root_ == null_node) return 0;
+        return scan_boundary<false>(r, pred);
     }
 
     /// @brief 関数ポインタpredを使って右端の境界を探す / O(logN)

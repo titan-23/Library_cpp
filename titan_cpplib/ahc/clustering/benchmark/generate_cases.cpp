@@ -166,7 +166,7 @@ ClusteringBenchmarkCase make_case(const CaseSpec& spec) {
     return problem;
 }
 
-// Uniform points without planted clusters, for unconstrained cases with small n or large k.
+// クラスタを埋め込まず、一様分布の点で問題を作る。n が小さいか k が大きい個数自由の問題に使う
 ClusteringBenchmarkCase make_uniform_case(int point_count, int dimension, int cluster_count) {
     uint32_t seed = uint32_t(point_count * 31 + dimension * 17 + cluster_count);
     Random random(seed);

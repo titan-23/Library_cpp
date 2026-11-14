@@ -6,6 +6,7 @@
 using namespace std;
 
 namespace titan23 {
+/// @brief 1 文字ずつ末尾に追加して作る接尾辞オートマトン / 文字は 'a' から 26 種類
 struct SuffixAutomaton {
     struct Node {
         int len, link, to[26];
@@ -15,8 +16,10 @@ struct SuffixAutomaton {
     vector<Node> a;
     int last;
 
+    /// @brief 空文字列のオートマトンを作る
     SuffixAutomaton() : last(0) { a.emplace_back(); }
 
+    /// @brief 末尾に文字 c を追加する
     void add(char c) {
         int now = a.size();
         a.emplace_back();

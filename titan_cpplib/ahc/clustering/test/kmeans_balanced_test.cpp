@@ -1,5 +1,5 @@
 /// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/ahc/clustering/test/kmeans_balanced_test.cpp
-// Requires the AtCoder Library on the include path.
+// AtCoder Library を include パスに含めてコンパイルする
 #include <algorithm>
 #include <array>
 #include <cassert>
@@ -63,8 +63,7 @@ void verify_result(const vector<Point>& points, const vector<ClusterSizeRange>& 
     assert(abs(total_cost - result.total_cost) <= 1e-9 * max(1.0, total_cost));
     assert(total_flow_cost == result.total_flow_cost);
     if (!result.converged) return;
-    // A converged result is a minimum flow_cost assignment for its own centers, so no swap or feasible
-    // single move improves it.
+    // 収束した割り当ては自身の中心で flow_cost が最小なので、2 点の交換や制約を満たす 1 点の移動で良くならない
     for (int a = 0; a < n; ++a) for (int b = 0; b < n; ++b) {
         int la = result.labels[a], lb = result.labels[b];
         if (la == lb) continue;

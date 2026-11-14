@@ -11,6 +11,7 @@
 #include <vector>
 using namespace std;
 namespace titan23 {
+/// @brief クラスタ間の距離の定義
 enum class HierarchicalLinkage {
     single,
     complete,
@@ -18,6 +19,7 @@ enum class HierarchicalLinkage {
     ward
 };
 
+/// @brief 1 回の併合 / 点のノード番号は 0 から point_count - 1、i 番目の併合でできるノードは point_count + i
 struct HierarchicalMerge {
     int left;
     int right;
@@ -25,11 +27,13 @@ struct HierarchicalMerge {
     int size;
 };
 
+/// @brief 階層クラスタリングの結果 / merges は distance の昇順に並ぶ
 class HierarchicalClusteringResult {
 public:
     int point_count = 0;
     vector<HierarchicalMerge> merges;
 
+    /// @brief cluster_count 個のクラスタに分けたときの各点のラベルを返す / 1 <= cluster_count <= point_count
     vector<int> labels(int cluster_count) const {
         check_result();
         if (point_count == 0) {
@@ -40,6 +44,7 @@ public:
         return labels_after_merges(point_count - cluster_count);
     }
 
+    /// @brief 距離が maximum_distance 以下の併合だけを行ったときの各点のラベルを返す
     vector<int> labels_at_distance(long double maximum_distance) const {
         check_result();
         if (isnan(maximum_distance)) throw invalid_argument("HierarchicalClusteringResult::labels_at_distance: maximum_distance must not be NaN");
@@ -49,6 +54,7 @@ public:
         return labels_after_merges(merge_count);
     }
 
+    /// @brief cluster_count 個のクラスタに分けたときの各クラスタの点の番号を返す
     vector<vector<int>> clusters(int cluster_count) const {
         vector<int> point_labels = labels(cluster_count);
         vector<vector<int>> result((size_t)cluster_count);
@@ -151,6 +157,7 @@ struct RawMerge {
     long double distance;
 };
 
+// Lance-Williams の式で、a と b を併合したクラスタと c の距離を求める。ward は二乗距離で扱う
 inline long double updated_distance(HierarchicalLinkage linkage, long double distance_ac, long double distance_bc,
                                     long double distance_ab, int size_a, int size_b, int size_c) {
     if (linkage == HierarchicalLinkage::single) return min(distance_ac, distance_bc);
@@ -161,6 +168,7 @@ inline long double updated_distance(HierarchicalLinkage linkage, long double dis
     return max((long double)0, result);
 }
 
+// 併合を距離の昇順に並べ替え、ノードの番号を振り直す
 inline HierarchicalClusteringResult reorder_merges(int point_count, const vector<RawMerge>& raw_merges) {
     HierarchicalClusteringResult result;
     result.point_count = point_count;
@@ -191,6 +199,8 @@ inline HierarchicalClusteringResult reorder_merges(int point_count, const vector
 }
 }
 
+/// @brief 点の番号の組の距離 point_distance(i, j) から階層クラスタリングを行う / 時間 O(n^2)、空間 O(n^2)
+/// 距離は有限かつ非負とする。ward は距離がユークリッド距離であることを前提とする
 template <class PointDistance>
 HierarchicalClusteringResult hierarchical_clustering_by_index(
     int point_count, PointDistance point_distance, HierarchicalLinkage linkage = HierarchicalLinkage::average) {
@@ -219,8 +229,9 @@ HierarchicalClusteringResult hierarchical_clustering_by_index(
     raw_merges.reserve((size_t)point_count - 1);
     vector<int> chain;
     chain.reserve((size_t)point_count);
+    // 最近傍の連鎖法で、互いに最も近い 2 クラスタを順に併合する
     while ((int)active_clusters.size() > 1) {
-        // Each merge keeps the smaller slot, so cluster 0 remains active.
+        // 併合では番号の小さい枠を残すので、クラスタ 0 は常に残る
         if (chain.empty()) chain.push_back(0);
         int a = chain.back();
         int nearest = -1;
@@ -270,6 +281,7 @@ HierarchicalClusteringResult hierarchical_clustering_by_index(
     return hierarchical_clustering_internal::reorder_merges(point_count, raw_merges);
 }
 
+/// @brief 点の列 points と距離関数 point_distance(p, q) から階層クラスタリングを行う / 時間 O(n^2)、空間 O(n^2)
 template <class Point, class PointDistance>
 HierarchicalClusteringResult hierarchical_clustering(const vector<Point>& points, PointDistance point_distance, HierarchicalLinkage linkage = HierarchicalLinkage::average) {
     if (points.size() > (size_t)numeric_limits<int>::max()) throw invalid_argument("hierarchical_clustering: points.size() must fit in int");

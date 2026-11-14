@@ -10,6 +10,8 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 遅延作用と区間反転に対応する永続重み平衡木 / 0-indexed
+/// 全ての木が静的なノード領域 ma を共有する
 template <class SizeType, class T, class F,
         T (*op)(T, T),
         T (*mapping)(F, T),
@@ -18,6 +20,7 @@ template <class SizeType, class T, class F,
         F (*id)()>
 class PersistentLazyWBTree {
 public:
+    /// @brief 全ての木が共有するノード領域
     struct MemoeyAllocator {
         vector<SizeType> left, right, size;
         vector<T> keys, data;
@@ -35,6 +38,7 @@ public:
             rev.emplace_back(0);
         }
 
+        /// @brief ノードを複製して番号を返す
         SizeType copy(SizeType node) {
             SizeType idx = new_node(keys[node], lazy[node]);
             left[idx] = left[node];
@@ -45,6 +49,7 @@ public:
             return idx;
         }
 
+        /// @brief 値 key と作用 f を持つノードを作成して番号を返す
         SizeType new_node(const T key, const F f) {
             if (left.size() > ptr) {
                 left[ptr] = 0;
@@ -70,6 +75,7 @@ public:
             return ptr - 1;
         }
 
+        /// @brief n ノード分の容量を確保する
         void reserve(SizeType n) {
             left.reserve(n);
             right.reserve(n);
@@ -81,15 +87,19 @@ public:
             cap += n;
         }
 
+        /// @brief 確保済み領域を再利用できる状態に戻す / O(1)
+        /// この領域を使う既存の木は無効になる
         void reset() {
             ptr = 1;
         }
 
+        /// @brief 確保済み領域がほぼ埋まっているか判定する / O(1)
         bool almost_full() const {
             return (double)ptr > max(1.0, cap*0.99);
         }
     };
 
+    /// @brief 全ての木が共有するノード領域
     static MemoeyAllocator ma;
 
 private:
@@ -307,35 +317,43 @@ private:
     PersistentLazyWBTree(SizeType root) : root(root) {}
 
   public:
+    /// @brief 空の列を構築する / O(1)
     PersistentLazyWBTree() : root(0) {}
 
+    /// @brief 列 a から構築する / O(n)
     PersistentLazyWBTree(vector<T> &a) { _build(a); }
 
+    /// @brief 末尾に other を連結した列を返す
     PLTM merge(PLTM other) {
         SizeType root = _merge_node(this->root, other.root);
         return _new(root);
     }
 
+    /// @brief 先頭 k 要素と残りに分割して返す
     pair<PLTM, PLTM> split(SizeType k) {
         auto [l, r] = _split_node(this->root, k);
         return {_new(l), _new(r)};
     }
 
+    /// @brief 先頭 k 要素からなる列を返す
     PLTM split_left(SizeType k) {
         SizeType l = _split_node_left(this->root, k);
         return _new(l);
     }
 
+    /// @brief 先頭 k 要素を除いた列を返す
     PLTM split_right(SizeType k) {
         SizeType r = _split_node_right(this->root, k);
         return _new(r);
     }
 
+    /// @brief 区間 [l, r) からなる列を返す
     PLTM split_range(SizeType l, SizeType r) {
         assert(0 <= l && l <= r && r <= len());
         return split_left(r).split_right(l);
     }
 
+    /// @brief 区間 [l, r) に f を作用させた列を返す
     PLTM apply(SizeType l, SizeType r, F f) {
         assert(0 <= l && l <= r && r <= len());
         if (l == r) return _new(ma.copy(root));
@@ -357,6 +375,7 @@ private:
         return _new(dfs(dfs, root, 0, len()));
     }
 
+    /// @brief 区間 [l, r) の総積を返す
     T prod(SizeType l, SizeType r) {
         assert(0 <= l && l <= r && r <= len());
         if (l == r) return e();
@@ -374,6 +393,7 @@ private:
         return dfs(dfs, root, 0, len());
     }
 
+    /// @brief 位置 k に key を挿入した列を返す
     PLTM insert(SizeType k, T key) {
         assert(0 <= k && k <= len());
         auto [s, t] = _split_node(root, k);
@@ -381,6 +401,7 @@ private:
         return _new(_merge_with_root(s, new_node, t));
     }
 
+    /// @brief 位置 k の値を削除した列と削除値を返す
     pair<PLTM, T> pop(SizeType k) {
         assert(0 <= k && k < len());
         auto [s_, t] = _split_node(this->root, k+1);
@@ -390,6 +411,7 @@ private:
         return {_new(root), res};
     }
 
+    /// @brief 区間 [l, r) を反転した列を返す
     PLTM reverse(SizeType l, SizeType r) {
         assert(0 <= l && l <= r && r <= len());
         if (l >= r) return _new(ma.copy(root));
@@ -400,6 +422,7 @@ private:
         return _new(root);
     }
 
+    /// @brief 全要素を配列にして返す / O(n)
     vector<T> tovector() {
         SizeType node = root;
         stack<SizeType> s;
@@ -419,10 +442,12 @@ private:
         return a;
     }
 
+    /// @brief 根だけを複製した木を返す
     PLTM copy() const {
         return _new(copy(root));
     }
 
+    /// @brief 位置 k の値を v に変更した列を返す
     PLTM set(SizeType k, T v) {
         assert(0 <= k && k < len());
         SizeType node = ma.copy(root);
@@ -460,6 +485,7 @@ private:
         }
     }
 
+    /// @brief 位置 k の値を返す
     T get(SizeType k) {
         assert(0 <= k && k < len());
         SizeType node = root;
@@ -478,6 +504,7 @@ private:
         }
     }
 
+    /// @brief 全要素を標準出力に出力する / O(n)
     void print() {
         vector<T> a = tovector();
         cout << "[";
@@ -488,10 +515,12 @@ private:
         cout << "]" << endl;
     }
 
+    /// @brief 要素数を返す / O(1)
     SizeType len() const {
         return ma.size[root];
     }
 
+    /// @brief 部分木の大きさと平衡条件を検査する / O(n)
     void check() const {
         auto rec = [&] (auto &&rec, SizeType node) -> pair<SizeType, SizeType> {
             SizeType ls = 0, rs = 0;
@@ -529,6 +558,8 @@ private:
         return os;
     }
 
+    /// @brief 確保済み領域を初期化して tree を作り直す / O(n)
+    /// 同じ領域を共有する他の木は無効になる
     static void rebuild(PLTM &tree) {
         PLTM::ma.reset();
         vector<T> a = tree.tovector();

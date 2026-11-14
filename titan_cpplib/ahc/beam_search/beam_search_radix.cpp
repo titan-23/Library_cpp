@@ -11,7 +11,7 @@ using namespace std;
 
 namespace flying_squirrel {
 
-/// @brief Action を辺に持ち、単一子の経路を縮約するビームサーチ
+/// @brief Action を辺に持ち、子が 1 つの経路を縮約するビームサーチ / Action::compose が必要
 /// 根直下の辺は合成せず、確定した操作列として保持する
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF>
 class BeamSearchRadix {
@@ -20,6 +20,7 @@ private:
 
     static constexpr int NIL = -1;
 
+    /// @brief 探索木のノード / 子は first_child から兄弟の双方向リストでたどる
     struct Node {
         Action edge; // 親からの合成済み Action
         int parent;
@@ -40,7 +41,7 @@ private:
     vector<int> leaves, next_leaves;
     vector<Action> result_prefix; // 根側で確定した Action 列
     vector<Action> actions; // 従来形式の enumerate_actions 用
-    vector<int> visited_leaves; // このターンに展開した葉 候補の parent_leaf はこの添字
+    vector<int> visited_leaves; // このターンに展開した葉。候補の parent_leaf はこの添字
     vector<int> bucket_cnt, bucket_items;
     vector<int> stk; // DFS 用の (node << 1) | phase
     vector<int> porder;
@@ -90,9 +91,7 @@ private:
         nc.next_sibling = NIL;
     }
 
-    /// @brief root 以外の単一子内部ノードを縮約する
-    /// Action::compose が失敗した場合は木を変更しない
-    /// @pre v != root かつ pool[v].child_cnt == 1
+    /// @brief 子が 1 つの内部ノード v を子と縮約する / v != root かつ pool[v].child_cnt == 1 が前提 / 合成に失敗したら木を変えない
     void contract(int v) {
         int c = pool[v].first_child;
         if (!pool[v].edge.compose(pool[c].edge)) return;
@@ -109,7 +108,7 @@ private:
         free_node(v);
     }
 
-    /// @brief 子を失った葉から枯れ枝を刈り、単一子になった祖先を縮約する
+    /// @brief 子を失った葉から枯れ枝を刈り、子が 1 つになった祖先を縮約する
     void remove_dead(int v) {
         while (v != root && pool[v].child_cnt == 0) {
             int p = pool[v].parent;
@@ -139,8 +138,10 @@ private:
         int parent_ord; // 候補の parent_leaf に使う訪問順
         int turn;
 
+        /// @brief 現在の枝刈り閾値を返す
         inline ScoreType threshold() const { return bs.candidates.threshold(); }
 
+        /// @brief 受け取った Action を評価し、完成解なら最良解を更新し、そうでなければ候補に登録する
         inline void operator()(Action &a) {
             ++bs.explored_per_turn;
             auto [score, hash, finished] = st.try_op(a, bs.candidates.threshold());
@@ -173,8 +174,7 @@ private:
         }
     }
 
-    /// @brief 根から DFS し、枝刈りされなかった葉を展開する
-    /// 下り辺で apply_op、上り辺で rollback し、終了時は state を根に戻す
+    /// @brief 根から DFS し、枝刈りされなかった葉を展開する / 下りで apply_op、上りで rollback し、終了時は state が根に戻る
     void dfs_expand(State &state, int turn) {
         visited_leaves.clear();
         stk.clear();
@@ -206,10 +206,9 @@ private:
         }
     }
 
-    /// @brief 候補を接続し、枯れ枝の削除と縮約を行う
-    /// DFS の後で state が根にある状態で呼び出す
+    /// @brief 候補を木に接続し、枯れ枝の削除と縮約を行う / DFS の後、state が根にある状態で呼ぶ
     void surgery(State &state) {
-        // 候補を親ごとにバケット分けする
+        // 候補を親ごとに振り分ける
         int sz = candidates.size();
         int L = (int)visited_leaves.size();
         bucket_cnt.assign(L + 1, 0);
@@ -256,15 +255,14 @@ private:
             }
         }
 
-        // 枯れ枝を刈り、単一子の経路を縮約する
+        // 枯れ枝を刈り、子が 1 つの経路を縮約する
         for (int v : leaves) {
             if (v == root) continue;
             if (pool[v].child_cnt == 0) remove_dead(v);
             else if (pool[v].child_cnt == 1) contract(v);
         }
 
-        // 根直下が単一子の間はその辺を確定し、state と根を進める
-        // 以後辿らない辺のため Action は合成しない
+        // 根の子が 1 つの間はその辺を確定し、state と根を進める。以後たどらない辺なので合成しない
         while (pool[root].child_cnt == 1) {
             int c = pool[root].first_child;
             result_prefix.push_back(pool[c].edge);
@@ -279,8 +277,7 @@ private:
         if (monotone_skip) recompute_subtree_best();
     }
 
-    /// @brief 内部ノードのスコアを部分木の最小値に更新する
-    /// pre-order の逆順にたどり、子から親へ最小値を伝播させる
+    /// @brief 内部ノードのスコアを部分木の最小値に更新する / 行きがけ順の逆順にたどり、子から親へ最小値を伝える
     void recompute_subtree_best() {
         porder.clear();
         stk.clear();
@@ -318,15 +315,12 @@ private:
     }
 
 public:
-    /// @brief 子のスコアが親以上になる問題で、部分木の枝刈りを有効にする
-    /// スコアにこの単調性がない場合は解が劣化しうる
+    /// @brief 部分木単位の枝刈りを切り替える / 子のスコアが親以上になる問題で有効にする
+    /// スコアにこの単調性がない場合は解が悪くなりうる
     void set_monotone_skip(bool enable) { monotone_skip = enable; }
 
-    /// @brief ビームサーチを実行する
-    /// @tparam materialize_final_state 最終状態を構築するか
-    /// @param param ターン数やビーム幅などの設定
-    /// @param verbose ログを出力するか
-    /// @return 合成済み Action を含む探索結果
+    /// @brief ビームサーチを実行し、探索結果を返す / materialize_final_state が true なら最終状態も構築する
+    /// 返す操作列は合成済みの Action を含む
     template<bool materialize_final_state=true>
     Result search(BeamParam &param, const bool verbose=false) {
         if (param.max_turn <= 0 || param.beam_width <= 0) {

@@ -6,9 +6,9 @@
 #include <cassert>
 using namespace std;
 
-// MaxHeap
 namespace titan23 {
 
+/// @brief 最大値を取り出す二分ヒープ
 template<typename T>
 class MaxHeap {
 public:
@@ -49,31 +49,33 @@ private:
 
     public:
     MaxHeap() {}
+    /// @brief 列 a から構築する / O(n)
     MaxHeap(vector<T> a) : a(a) { _heapify(); }
 
-    /// ヒープを保たず追加する
+    /// @brief ヒープ条件を保たずに key を追加する / 償却 O(1)
     void __push_noheap(const T key) {
         a.emplace_back(key);
     }
 
-    /// ヒープ化する
+    /// @brief ヒープ化する / O(n)
     void __heapify() {
         for (int i = (int)a.size(); i >= 0; --i) {
             _down(i);
         }
     }
 
+    /// @brief 全要素を削除する
     void clear() {
         a.clear();
     }
 
-    /// 最大の要素を返す / `O(1)`
+    /// @brief 最大の要素を返す / O(1)
     T get_max() const {
         assert(!a.empty());
         return a[0];
     }
 
-    /// 最大の要素を削除して返す / `O(logn)`
+    /// @brief 最大の要素を削除して返す / O(log n)
     T pop_max() {
         assert(!a.empty());
         T res = a[0];
@@ -83,13 +85,13 @@ private:
         return res;
     }
 
-    /// `key` を追加する / `O(logn)`
+    /// @brief key を追加する / O(log n)
     void push(const T key) {
         a.emplace_back(key);
         _up(a.size() - 1);
     }
 
-    /// `push` して `pop` する / `O(logn)`
+    /// @brief key を追加してから最大の要素を削除して返す / O(log n)
     T pushpop_max(const T key) {
         if (a[0] <= key) return key;
         T res = a[0];
@@ -98,7 +100,7 @@ private:
         return res;
     }
 
-    /// 最大の要素を `pop` して返し、新たに `key` を挿入する。 `pop -> push` と同じ / `O(logn)`
+    /// @brief 最大の要素を削除して返し、key を追加する / pop してから push するのと同じ / O(log n)
     T replace_max(const T key) {
         T res = a[0];
         a[0] = key;
@@ -106,6 +108,7 @@ private:
         return res;
     }
 
+    /// @brief ヒープの配列をそのまま返す / O(n)
     vector<T> tolist() const {
         return a;
     }
@@ -114,12 +117,12 @@ private:
         return a.empty();
     }
 
-    /// 要素数を返す / `O(1)`
+    /// @brief 要素数を返す / O(1)
     int len() const {
         return (int)a.size();
     }
 
-    /// 表示する
+    /// @brief 要素を昇順に標準出力へ出力する / O(n log n)
     void print() const {
         vector<T> b = a;
         sort(b.begin(), b.end());

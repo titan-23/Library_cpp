@@ -11,80 +11,82 @@
 
 using namespace std;
 
-// RandomMT
 namespace titan23 {
 
+/// @brief mt19937 による擬似乱数生成器
 class RandomMT {
 private:
     mt19937 _mt;
 
 public:
+    /// @brief random_device の値で初期化する
     RandomMT() : _mt(random_device{}()) {}
 
+    /// @brief seed で初期化する
     RandomMT(unsigned int seed) : _mt(seed) {}
 
-    /// `[0.0, 1.0]` の乱数を返す(実数)
+    /// @brief [0.0, 1.0) の実数の乱数を返す
     double random() {
         uniform_real_distribution<double> dist(0.0, 1.0);
         return dist(_mt);
     }
 
-    /// `[0, end]` の乱数を返す
+    /// @brief [0, end] の整数の乱数を返す
     int randint(const int end) {
         assert(0 <= end);
         uniform_int_distribution<int> dist(0, end);
         return dist(_mt);
     }
 
-    /// `[begin, end]` の乱数を返す
+    /// @brief [begin, end] の整数の乱数を返す
     int randint(const int begin, const int end) {
         assert(begin <= end);
         uniform_int_distribution<int> dist(begin, end);
         return dist(_mt);
     }
 
-    /// `[begin, end]` の乱数を返す
+    /// @brief [begin, end] の 64 bit 整数の乱数を返す
     long long randll(const long long begin, const long long end) {
         assert(begin <= end);
         uniform_int_distribution<long long> dist(begin, end);
         return dist(_mt);
     }
 
-    /// `[0, end)` の乱数を返す
+    /// @brief [0, end) の整数の乱数を返す
     int randrange(const int end) {
         assert(0 < end);
         uniform_int_distribution<int> dist(0, end - 1);
         return dist(_mt);
     }
 
-    /// `[begin, end)` の乱数を返す
+    /// @brief [begin, end) の整数の乱数を返す
     int randrange(const int begin, const int end) {
         assert(begin < end);
         uniform_int_distribution<int> dist(begin, end - 1);
         return dist(_mt);
     }
 
-    /// `[0, u64_MAX]` の乱数を返す
+    /// @brief [0, u64_MAX] の乱数を返す
     unsigned long long rand_u64() {
         uniform_int_distribution<unsigned long long> dist;
         return dist(_mt);
     }
 
-    /// `[0, end)` の乱数を返す(整数, 64bit)
+    /// @brief [0, end) の 64 bit 整数の乱数を返す
     long long randrange_ll(const long long end) {
         assert(0 < end);
         uniform_int_distribution<long long> dist(0, end - 1);
         return dist(_mt);
     }
 
-    /// `[begin, end)` の乱数を返す(整数, 64bit)
+    /// @brief [begin, end) の 64 bit 整数の乱数を返す
     long long randrange_ll(const long long begin, const long long end) {
         assert(begin < end);
         uniform_int_distribution<long long> dist(begin, end - 1);
         return dist(_mt);
     }
 
-    /// `[0, end)` の異なる乱数を2つ返す
+    /// @brief [0, end) から相異なる 2 つの乱数を小さい順に返す
     pair<int, int> rand_pair(const int end) {
         assert(end >= 2);
         int u = randrange(end);
@@ -94,12 +96,13 @@ public:
         return {u, v};
     }
 
+    /// @brief [first, last) を無作為に並べ替える / O(n)
     template <class RandomIt>
     void shuffle(RandomIt first, RandomIt last) {
         std::shuffle(first, last, _mt);
     }
 
-    /// `[begin, end)` の異なる乱数を2つ返す
+    /// @brief [begin, end) から相異なる 2 つの乱数を小さい順に返す
     pair<int, int> rand_pair(const int begin, const int end) {
         assert(end - begin >= 2);
         const int len = end - begin;
@@ -110,7 +113,7 @@ public:
         return {u, v};
     }
 
-    /// Note `a`は非const。aの先頭cnt要素をa全体からのランダムな要素で置き換え、その部分ベクターを返す
+    /// @brief a から重複なしで cnt 個を無作為に選んで返す / 選んだ要素を a の先頭へ移すので a は書き換わる / O(cnt)
     vector<int> rand_vec(const int cnt, vector<int> &a) {
         int n = a.size();
         assert(cnt <= n);
@@ -121,20 +124,20 @@ public:
         return vector<int>(a.begin(), a.begin() + cnt);
     }
 
-    /// `[begin, end)` の乱数を返す(実数)
+    /// @brief [begin, end) の実数の乱数を返す
     double randdouble(const double begin, const double end) {
         assert(begin < end);
         uniform_real_distribution<double> dist(begin, end);
         return dist(_mt);
     }
 
-    /// `vector` をインプレースにシャッフルする / `O(n)`
+    /// @brief a をその場で無作為に並べ替える / O(n)
     template <typename T>
     void shuffle(vector<T> &a) {
         std::shuffle(a.begin(), a.end(), _mt);
     }
 
-    /// ベクターaから重複なしでk個の要素をランダムに選んで返す
+    /// @brief a から重複なしで k 個を無作為に選んで返す / O(n)
     template <typename T>
     vector<T> choices(const vector<T> &a, const int k) {
         int n = a.size();
@@ -152,14 +155,14 @@ public:
         return result;
     }
 
-    /// ベクターからランダムに1要素を返す
+    /// @brief a から無作為に 1 要素を選んで返す
     template <typename T>
     T choice(const vector<T> &a) {
         assert(!a.empty());
         return a[randrange(a.size())];
     }
 
-    /// 重み付きでベクターからランダムに1要素を返す(重みは非正規化)
+    /// @brief 重み w に従って a から 1 要素を選んで返す / w は正規化前の重みで、normal には false を渡す
     template <typename T>
     T choice(const vector<T> &a, const vector<int> &w, bool normal) {
         assert(normal == false);
@@ -178,7 +181,7 @@ public:
         return choice(a, cw);
     }
 
-    /// 重み付きでベクターからランダムに1要素を返す(wは累積確率分布)
+    /// @brief 累積確率分布 w に従って a から 1 要素を選んで返す / O(log n)
     template <typename T>
     T choice(const vector<T> &a, const vector<double> &w) {
         assert(!a.empty() && a.size() == w.size());

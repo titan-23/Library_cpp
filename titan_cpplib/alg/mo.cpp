@@ -8,14 +8,10 @@
 #include <algorithm>
 using namespace std;
 
-// Mo
 namespace titan23 {
 
-/**
- * @brief Mo's algorithm
- *
- * @ref https://take44444.github.io/Algorithm-Book/range/mo/main.html
- */
+/// @brief Mo's algorithm で区間クエリをまとめて処理する
+/// 参考: https://take44444.github.io/Algorithm-Book/range/mo/main.html
 class Mo {
 private:
     int n, q;
@@ -40,7 +36,7 @@ private:
 public:
     Mo() : n(0) {}
 
-    /// 長さ `n` の列に対する Mo's algorithm インスタンスを生成 / `O(1)`
+    /// @brief 長さ n の列で構築する / O(1)
     Mo(const int n) : n(n), q(0), max_n(1 << 25) {
         while (max_n <= n) {
             max_n <<= 1;
@@ -48,7 +44,7 @@ public:
         assert(n <= max_n);
     }
 
-    /// クエリ `[l, r)` を追加する / `O(1)`
+    /// @brief クエリ [l, r) を追加する / O(1)
     void add_query(const int l, const int r) {
         assert(0 <= l && l <= r && r <= n);
         _l.emplace_back(l);
@@ -56,8 +52,8 @@ public:
         ++q;
     }
 
-    /// 追加されたクエリを一括処理する / `O(n√q)`
-    /// F1 ~ F3: lambda関数
+    /// @brief 追加したクエリを一括処理する / O(n√q)
+    /// add(i), del(i) で要素 i を出し入れし、out(i) で i 番目のクエリに答える
     template<typename F1, typename F2, typename F3>
     void run_light(F1 &&add, F2 &&del, F3 &&out) {
         vector<int> qi(q);
@@ -80,8 +76,8 @@ public:
         }
     }
 
-    /// 追加されたクエリを一括処理する / `O(n√q)`
-    /// F1 ~ F5: lambda関数
+    /// @brief 追加したクエリを一括処理する / 左右の出し入れを別の関数で行う / O(n√q)
+    /// add_left(i), add_right(i), del_left(i), del_right(i) で要素 i を出し入れし、out(i) で i 番目のクエリに答える
     template<typename F1, typename F2, typename F3, typename F4, typename F5>
     void run(F1 &&add_left, F2 &&add_right, F3 &&del_left, F4 &&del_right, F5 &&out) {
         vector<int> qi(q);
@@ -104,14 +100,8 @@ public:
         }
     }
 
-    /// 追加されたクエリを一括処理する / `O(n√q)`
-    /// 現在見ている区間 `[nl, nr)` を各クエリ `[l, r)` に合わせて伸縮させる
-    ///
-    /// - `add_left(i, r)`  : `i` を左端に追加し、区間は `[i, r)` になる
-    /// - `add_right(l, i)` : `i` を右端に追加し、区間は `[l, i+1)` になる
-    /// - `del_left(i, r)`  : `i` を左端から削除し、区間は `[i+1, r)` になる
-    /// - `del_right(l, i)` : `i` を右端から削除し、区間は `[l, i)` になる
-    /// F1 ~ F5: lambda関数
+    /// @brief 追加したクエリを一括処理する / 各関数に動かさない側の端も渡す / O(n√q)
+    /// add_left(i, r), add_right(l, i), del_left(i, r), del_right(l, i), out(i) の形で呼ぶ
     template<typename F1, typename F2, typename F3, typename F4, typename F5>
     void run_range(F1 &&add_left, F2 &&add_right, F3 &&del_left, F4 &&del_right, F5 &&out) {
         vector<int> qi(q);

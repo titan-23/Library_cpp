@@ -8,7 +8,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// 最小全域木を求める / (idx, u, v) / O()
+/// @brief 辺 (u, v, w) の列 E から最小全域木を求め、重みの和と使った辺 (idx, u, v) の列を返す / O(m log m)
 template<typename T>
 pair<T, vector<tuple<int, int, int>>> minimum_spanning_tree(int n, const vector<tuple<int, int, T>> &E) {
     vector<tuple<T, int>> F(E.size());

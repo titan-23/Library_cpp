@@ -6,9 +6,9 @@
 #include <algorithm>
 using namespace std;
 
-// dijkstra_path
 namespace titan23 {
 
+/// @brief 始点 s からの最短距離と最短経路を求める
 template<typename T>
 struct dijkstra_path {
     int n;
@@ -17,6 +17,9 @@ struct dijkstra_path {
     vector<T> dist;
 
     dijkstra_path() {}
+
+    /// @brief s からの最短距離と経路を計算する / O(n + m log m)
+    /// @note G[v] は (行き先, 重み) の組を持つ。重みは非負に限る。到達できない頂点の距離は INF になる
     dijkstra_path(const vector<vector<pair<int, T>>> &G, int s, T INF) :
             n(G.size()), INF(INF), prev(n, -1), dist(n, INF) {
         dist[s] = 0;
@@ -36,8 +39,10 @@ struct dijkstra_path {
         }
     }
 
+    /// @brief s から t への最短距離を返す / 到達できなければ INF / O(1)
     T get_dist(int t) const { return dist[t]; }
 
+    /// @brief s から t への最短経路の頂点列を返す / 到達できなければ空 / O(n)
     vector<int> get_path(int t) const {
         vector<int> path;
         if (dist[t] == INF) { return path; }

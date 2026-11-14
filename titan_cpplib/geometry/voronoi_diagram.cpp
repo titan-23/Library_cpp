@@ -8,11 +8,13 @@
 #include "titan_cpplib/geometry/delaunay_triangulation.cpp"
 using namespace std;
 namespace titan23 {
+/// @brief ボロノイ領域の頂点
 struct VoronoiPoint {
     long double x;
     long double y;
 };
 
+/// @brief ボロノイ図を切り取る長方形 / 各値は有限で min_x < max_x かつ min_y < max_y
 struct VoronoiBounds {
     long double min_x;
     long double min_y;
@@ -20,6 +22,7 @@ struct VoronoiBounds {
     long double max_y;
 };
 
+/// @brief ボロノイ図の結果 / cells[i] は delaunay.points[i] の領域で、頂点は反時計回り
 struct VoronoiResult {
     DelaunayResult delaunay;
     VoronoiBounds bounds;
@@ -39,6 +42,7 @@ inline VoronoiPoint intersection(const VoronoiPoint& from, const VoronoiPoint& t
     return {from.x + (to.x - from.x) * ratio, from.y + (to.y - from.y) * ratio};
 }
 
+// 多角形を半平面 a x + b y <= c で切り取る
 inline void clip(vector<VoronoiPoint>& polygon, vector<VoronoiPoint>& work, long double a, long double b, long double c) {
     work.clear();
     if (polygon.empty()) return;
@@ -66,6 +70,7 @@ inline void check_bounds(const VoronoiBounds& bounds) {
 }
 }
 
+/// @brief 長方形 bounds で切り取ったボロノイ図を返す / 重複点は1点にまとめる / 平均 O(n log n)、最悪 O(n²)
 inline VoronoiResult voronoi_diagram(const vector<IntegerPoint>& input_points, VoronoiBounds bounds) {
     voronoi_internal::check_bounds(bounds);
     VoronoiResult result;
@@ -97,6 +102,7 @@ inline VoronoiResult voronoi_diagram(const vector<IntegerPoint>& input_points, V
     return result;
 }
 
+/// @brief 任意の点型から座標を取り出してボロノイ図を返す / 座標は int に収まる整数
 template <class Point, class GetX, class GetY>
 VoronoiResult voronoi_diagram(const vector<Point>& points, GetX get_x, GetY get_y, VoronoiBounds bounds) {
     using X = remove_cv_t<remove_reference_t<invoke_result_t<GetX&, const Point&>>>;

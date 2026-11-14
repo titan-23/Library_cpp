@@ -12,9 +12,7 @@ using namespace std;
 // Osa_k
 namespace titan23 {
 
-/// @brief 素因数分解, 約数列挙
-/// 前計算: <O(nloglogn), O(n)>
-/// クエリ: O(logn) 時間
+/// @brief 最小素因数の表を使って素因数分解と約数列挙をする
 class Osa_k {
 private:
     vector<int> min_factor;
@@ -22,8 +20,7 @@ private:
 public:
     Osa_k() : min_factor(0) {}
 
-    /// @brief <O(nloglogn), O(n)>
-    /// @param n 最大値
+    /// @brief 最大値 n までの最小素因数の表を作る / 時間 O(nloglogn)、空間 O(n)
     Osa_k(const int n) : min_factor(n+1) {
         for (int i = 0; i <= n; ++i) {
             min_factor[i] = i;
@@ -39,7 +36,7 @@ public:
         }
     }
 
-    /// @brief 素因数分解する / O(logn)
+    /// @brief n を素因数分解し、素因数を重複込みで昇順に返す / O(logn)
     vector<int> p_factorization(int n) const {
         vector<int> ret;
         while (n > 1) {
@@ -49,7 +46,7 @@ public:
         return ret;
     }
 
-    /// @brief 素因数分解する / O(logn)
+    /// @brief n を素因数分解し、素因数から指数への map を返す / O(logn)
     map<int, int> p_factorization_map(int n) const {
         map<int, int> ret;
         while (n > 1) {
@@ -59,8 +56,7 @@ public:
         return ret;
     }
 
-    /// @brief 約数列挙
-    /// O(logn + d(n)logd(n)) / d(n)はnの約数の個数
+    /// @brief n の約数を昇順で返す / O(logn + d(n)logd(n))、d(n) は n の約数の個数
     vector<int> get_divisors(int n) const {
         if (n == 1) {
             return {1};

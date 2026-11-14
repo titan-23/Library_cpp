@@ -10,9 +10,8 @@ using namespace std;
 
 namespace titan23 {
 
-// 静的な列に対する区間最頻値クエリ
-// <構築 O(n√n), 空間 O(n), クエリ O(√n)>
-// 参考: https://noshi91.hatenablog.com/entry/2020/10/26/140105
+/// @brief 静的な列の区間最頻値を返す / 空間 O(n)
+/// 参考: https://noshi91.hatenablog.com/entry/2020/10/26/140105
 template<typename T>
 class StaticRangeModeQuery {
 private:
@@ -25,6 +24,7 @@ private:
     vector<vector<int>> data;
     vector<vector<pair<int, int>>> bucket_data;
 
+    // bucket_data[i][j] に、ブロック i から j - 1 までの (頻度, 最頻値) を入れる
     void _calc_all_blocks() {
         vector<int> freqs(z.len(), 0);
         for (int i = 0; i < bucket_cnt; ++i) {
@@ -47,6 +47,7 @@ private:
         }
     }
 
+    // idx[x] に値 x の出現位置を入れ、inv_idx[i] に idx[a[i]] の中での i の添字を入れる
     void _calc_index() {
         for (int i = 0; i < a.size(); ++i) {
             inv_idx[i] = idx[a[i]].size();
@@ -56,6 +57,7 @@ private:
 
 public:
     StaticRangeModeQuery() {}
+    /// @brief 列 A から構築する / O(n√n)
     StaticRangeModeQuery(vector<T> A) {
         n = A.size();
         z = titan23::Zaatsu<T>(A);
@@ -81,8 +83,8 @@ public:
         _calc_index();
     }
 
+    /// @brief 区間 [l, r) の (最頻値, 頻度) を返す / l < r であること / O(√n)
     pair<T, int> mode(int l, int r) {
-        // (最頻値, 頻度) のタプル
         assert(0 <= l && l < r && r <= n);
         int L = l, R = r;
         int k1 = l / size;
@@ -106,7 +108,7 @@ public:
         } else {
             tie(freq, val) = bucket_data[k1 + 1][k2];
 
-            // left
+            // 左端のブロック
             for (int i = l; i < data[k1].size(); ++i) {
                 int x = data[k1][i];
                 int k = inv_idx[k1*size+i];
@@ -118,7 +120,7 @@ public:
                 }
             }
 
-            // right
+            // 右端のブロック
             for (int i = 0; i < r; ++i) {
                 int x = data[k2][i];
                 int k = inv_idx[k2 * size + i];

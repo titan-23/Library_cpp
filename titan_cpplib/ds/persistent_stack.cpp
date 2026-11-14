@@ -7,9 +7,9 @@
 #include "titan_cpplib/others/print.cpp"
 using namespace std;
 
-// PersistentStack
 namespace titan23 {
 
+/// @brief 永続スタック / ノードは解放しない
 template<typename T>
 class PersistentStack {
 private:
@@ -28,13 +28,16 @@ private:
     PersistentStack(NodePtr new_node) : node(new_node) {}
 
 public:
+    /// @brief 空のスタックを構築する / O(1)
     PersistentStack() : node(nullptr) {}
 
+    /// @brief 最後に積んだ値を返す / O(1)
     T top() const {
         assert(node);
         return node->key;
     }
 
+    /// @brief 最後に積んだ値を取り除いたスタックとその値を返す / O(1)
     pair<PersistentStack<T>, T> pop() const {
         assert(node);
         T res = node->key;
@@ -42,12 +45,14 @@ public:
         return {s, res};
     }
 
+    /// @brief コピーを返す / O(1)
     PersistentStack<T> copy() const {
         NodePtr new_node = node ? (new Node(node->key, node->prev)) : nullptr;
         PersistentStack<T> s(new_node);
         return s;
     }
 
+    /// @brief key を積んだスタックを返す / O(1)
     PersistentStack<T> push(const T &key) const {
         NodePtr new_node = new Node(key);
         new_node->prev = this->node;
@@ -55,6 +60,7 @@ public:
         return s;
     }
 
+    /// @brief 積んだ順に並べた配列を返す / O(n)
     vector<T> tovector() const {
         vector<T> a;
         NodePtr s = node;
@@ -66,6 +72,7 @@ public:
         return a;
     }
 
+    /// @brief 全要素をストリームへ出力する / O(n)
     friend ostream& operator<<(ostream& os, const PersistentStack<T> &s) {
         return os << s.tovector();
     }

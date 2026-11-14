@@ -14,6 +14,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 重み平衡木による永続多重集合 / 同じキーは 1 ノードに個数をまとめる
 template <typename T>
 class PersistentMultiset {
   private:
@@ -195,8 +196,7 @@ class PersistentMultiset {
         return _split_node_idx(node, node->size-1);
     }
 
-    // すべての l のキー <= すべての r のキー を前提に連結する。
-    // 境界のキーが等しいときは cnt を統合し、1キー1ノードを保つ。
+    // l の全キー <= r の全キーが前提。境界の等しいキーは cnt を足して 1 ノードにまとめる
     NodePtr _merge_node(NodePtr l, NodePtr r) {
         if ((!l) && (!r)) { return nullptr; }
         if (!l) { return r; }
@@ -211,7 +211,7 @@ class PersistentMultiset {
         return _merge_with_root(l_, root_, r);
     }
 
-    // node の最小キーのノードに cnt を加える。最小キー == 加算対象キーであることを前提とする。
+    // 最小キーのノードに cnt を加える。最小キーが加算対象のキーであることが前提
     NodePtr _add_leftmost(NodePtr node, int cnt) {
         node = node->copy();
         node->cnt_subtree += cnt;
@@ -236,7 +236,7 @@ class PersistentMultiset {
         }
     }
 
-    // ノード数 k で分割する。左に k ノード、右に残り。
+    // 左に k ノード、右に残りのノードを分ける
     pair<NodePtr, NodePtr> _split_node_idx(NodePtr &node, int k) {
         if (!node) {return {nullptr, nullptr};}
         int tmp = node->left ? k-node->left->size : k;
@@ -251,8 +251,7 @@ class PersistentMultiset {
         }
     }
 
-    // 要素数 k で分割する。左に小さい方から k 要素、右に残り。
-    // k が同一キーの多重度の途中に落ちるときはノードを分ける。
+    // 小さい方から k 要素を左に分ける。同じキーの途中で切るときはノードを 2 つに分ける
     pair<NodePtr, NodePtr> _split_node_cnt(NodePtr node, int k) {
         if (!node) { return {nullptr, nullptr}; }
         int left_cnt = node->left ? node->left->cnt_subtree : 0;
@@ -288,21 +287,26 @@ class PersistentMultiset {
     PersistentMultiset(NodePtr root) : root(root) {}
 
   public:
+    /// @brief 空の多重集合を構築する / O(1)
     PersistentMultiset() : root(nullptr) {}
 
+    /// @brief 列 a の要素からなる多重集合を構築する / O(n log n)
     PersistentMultiset(const vector<T> &a) { _build(a); }
 
+    /// @brief other の要素を合わせた多重集合を返す / this の全要素 <= other の全要素が前提 / O(log n)
     PersistentMultiset<T> merge(PersistentMultiset<T> other) {
         NodePtr root = _merge_node(this->root, other.root);
         return _new(root);
     }
 
+    /// @brief 小さい方から k 要素と残りに分けて返す / 多重度を数える / O(log n)
     pair<PersistentMultiset<T>, PersistentMultiset<T>> split(int k) {
         assert(0 <= k && k <= len());
         auto [l, r] = _split_node_cnt(this->root, k);
         return {_new(l), _new(r)};
     }
 
+    /// @brief key を cnt 個追加した多重集合を返す / cnt >= 1 / O(log n)
     PersistentMultiset<T> add(T key, int cnt = 1) {
         assert(cnt >= 1);
         NodePtr it = _find_node(key);
@@ -330,8 +334,8 @@ class PersistentMultiset {
         return _new(new_root);
     }
 
-    // key を cnt 個削除する。存在数以上を指定するとそのキーを丸ごと削除する。
-    // key が無いときは変更しない。
+    /// @brief key を cnt 個削除した多重集合を返す / cnt >= 1 / O(log n)
+    /// cnt が key の個数以上なら key をすべて削除する。key が無ければ変更しない
     PersistentMultiset<T> remove(T key, int cnt = 1) {
         assert(cnt >= 1);
         NodePtr it = _find_node(key);
@@ -364,16 +368,18 @@ class PersistentMultiset {
         return _new(new_root);
     }
 
+    /// @brief key を含むか判定する / O(log n)
     bool contains(const T &key) const {
         return _find_node(key) != nullptr;
     }
 
+    /// @brief key の個数を返す / O(log n)
     int count(const T &key) const {
         NodePtr it = _find_node(key);
         return it ? it->cnt : 0;
     }
 
-    // 小さい方から 0-indexed で k 番目の要素を返す。多重度を数える。
+    /// @brief 小さい方から k 番目の要素を返す / 0-indexed で多重度を数える / O(log n)
     T get(int k) const {
         assert(0 <= k && k < len());
         NodePtr node = root;
@@ -390,7 +396,7 @@ class PersistentMultiset {
         }
     }
 
-    // key 未満の要素数を返す。
+    /// @brief key 未満の要素数を返す / O(log n)
     int index(const T &key) const {
         int k = 0;
         NodePtr node = root;
@@ -409,7 +415,7 @@ class PersistentMultiset {
         return k;
     }
 
-    // key 以下の要素数を返す。
+    /// @brief key 以下の要素数を返す / O(log n)
     int index_right(const T &key) const {
         int k = 0;
         NodePtr node = root;
@@ -428,13 +434,14 @@ class PersistentMultiset {
         return k;
     }
 
-    // 小さい方から k 番目の要素を1つ取り出す。
+    /// @brief 小さい方から k 番目の要素を 1 つ削除した多重集合とその要素を返す / O(log n)
     pair<PersistentMultiset<T>, T> pop(int k) {
         assert(0 <= k && k < len());
         T key = get(k);
         return {remove(key), key};
     }
 
+    /// @brief 全要素を昇順の配列にして返す / O(n)
     vector<T> tovector() const {
         NodePtr node = root;
         stack<NodePtr> s;
@@ -453,15 +460,17 @@ class PersistentMultiset {
         return a;
     }
 
+    /// @brief コピーを返す / O(1)
     PersistentMultiset<T> copy() const {
         return _new(this->root ? this->root->copy() : nullptr);
     }
 
-    // 多重度を含む要素数。
+    /// @brief 多重度を含む要素数を返す / O(1)
     int len() const {
         return root ? root->cnt_subtree : 0;
     }
 
+    /// @brief 平衡条件と部分木の集計値を検査する / O(n)
     void check() const {
         auto rec = [&] (auto &&rec, NodePtr node) -> tuple<int, int, int> {
             int ls = 0, rs = 0, lc = 0, rc = 0;
@@ -489,6 +498,7 @@ class PersistentMultiset {
         cerr << PRINT_GREEN << "OK : height=" << h << PRINT_NONE << endl;
     }
 
+    /// @brief 全要素をストリームへ出力する / O(n)
     friend ostream& operator<<(ostream& os, const PersistentMultiset<T> &tree) {
         vector<T> a = tree.tovector();
         os << "{";

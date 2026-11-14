@@ -7,12 +7,9 @@
 #include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
-// DualCommutativeSegmentTree
 namespace titan23 {
 
-  /**
-   * @brief 作用が可換な双対セグ木
-   */
+  /// @brief 作用が可換な双対セグ木
   template <class T,
             class F,
             T (*mapping)(F, T),
@@ -52,10 +49,12 @@ namespace titan23 {
    public:
     DualCommutativeSegmentTree() {}
 
+    /// @brief 長さ n で構築する / 初期値 e() / O(n)
     DualCommutativeSegmentTree(const int n) {
       _build(n);
     }
 
+    /// @brief 列 a から構築する / O(n)
     DualCommutativeSegmentTree(const vector<T> &a) {
       int n = (int)a.size();
       _build(n);
@@ -64,10 +63,12 @@ namespace titan23 {
       }
     }
 
+    /// @brief a[k] に f を作用させる / O(1)
     void apply_point(int k, F f) {
       _data[k] = mapping(f, _data[k]);
     }
 
+    /// @brief 区間 [l, r) に f を作用させる / O(log n)
     void apply(int l, int r, const F f) {
       if (l == r || f == id()) return;
       l += _size;
@@ -97,22 +98,26 @@ namespace titan23 {
       }
     }
 
+    /// @brief 全要素に f を作用させる / O(1)
     void all_apply(F f) {
       _lazy[1] = composition(f, _lazy[1]);
     }
 
+    /// @brief 全ての遅延作用を葉まで伝播する / O(n)
     void all_propagate() {
       for (int i = 0;  i < _size; ++i) {
         _propagate(i);
       }
     }
 
+    /// @brief 全要素を列で返す / O(n)
     vector<T> tovector() const {
       all_propagate();
       vector<T> res = _data;
       return res;
     }
 
+    /// @brief a[k] を返す / 負の k は末尾から数える / O(log n)
     T get(int k) const {
       if (k < 0) k += _n;
       k += _size;
@@ -123,6 +128,7 @@ namespace titan23 {
       return mapping(lazy_f, _data[k-_size]);
     }
 
+    /// @brief a[k] を v に変更する / 負の k は末尾から数える / O(log n)
     void set(int k, T v) {
       if (k < 0) k += _n;
       k += _size;
@@ -132,6 +138,7 @@ namespace titan23 {
       _data[k-_size] = v;
     }
 
+    /// @brief 列を出力する / O(n log n)
     void print() {
       cout << '[';
       for (int i = 0; i < _n-1; ++i) {

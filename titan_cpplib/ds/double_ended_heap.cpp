@@ -9,6 +9,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 最小値と最大値を取り出せる両端ヒープ
 template<typename T>
 class DoubleEndedHeap {
 public:
@@ -95,19 +96,23 @@ private:
 public:
     DoubleEndedHeap() {}
 
+    /// @brief 列 v から構築する
     DoubleEndedHeap(const vector<T> &v) : a(v) {
         heapify();
     }
 
+    /// @brief 容量を cap 個分予約する
     void reserve(int cap) {
         a.reserve(cap);
     }
 
+    /// @brief key を挿入する / O(logN)
     void insert(const T& key) {
         a.push_back(key);
         up((int)a.size() - 1);
     }
 
+    /// @brief 最小値を削除して返す / O(logN)
     T pop_min() {
         if ((int)a.size() < 3) {
             T res = std::move(a.back());
@@ -122,6 +127,7 @@ public:
         return res;
     }
 
+    /// @brief 最大値を削除して返す / O(logN)
     T pop_max() {
         if ((int)a.size() < 2) {
             T res = std::move(a.back());
@@ -136,41 +142,49 @@ public:
         return res;
     }
 
+    /// @brief 最小値を返す / O(1)
     const T& get_min() const {
         return (int)a.size() < 2 ? a[0] : a[1];
     }
 
-    /// 最大の要素を pop して返し、新たに key を挿入する / O(logN)
+    /// @brief 最大値を削除して key を挿入する / O(logN)
     void replace_max(const T& key) {
         a[0] = key;
         int k = down(0);
         up(k);
     }
 
+    /// @brief 最小値への参照を返す / O(1)
     T& get_min() {
         return (int)a.size() < 2 ? a[0] : a[1];
     }
 
+    /// @brief 最大値を返す / O(1)
     const T& get_max() const {
         return a[0];
     }
 
+    /// @brief 最大値への参照を返す / O(1)
     T& get_max() {
         return a[0];
     }
 
+    /// @brief 全要素を削除する
     void clear() {
         a.clear();
     }
 
+    /// @brief 空か判定する / O(1)
     bool empty() const {
         return a.empty();
     }
 
+    /// @brief 要素数を返す / O(1)
     int size() const {
         return (int)a.size();
     }
 
+    /// @brief 全要素を昇順に並べた列を返す / O(NlogN)
     vector<T> tovector() const {
         vector<T> b = a;
         sort(b.begin(), b.end());

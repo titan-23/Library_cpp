@@ -11,6 +11,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief Euler tour で、木の頂点と辺の重みについて部分木の和、パスの和、LCA を扱う
 template<typename T>
 class EulerTour {
 private:
@@ -18,13 +19,13 @@ private:
     int bit, msk;
 
     vector<T> vertexcost;
-    vector<T> vcost1;  // for vertex subtree (+w at in, 0 at out)
-    vector<T> vcost2;  // for vertex path    (+w at in, -w at out)
-    vector<T> ecost1;  // for edge subtree
-    vector<T> ecost2;  // for edge path
-    vector<int> nodein, nodeout, depth, par;  // in/out tour, size 2n
-    vector<int> visit;     // touch tour for LCA, size 2n-1
-    vector<int> firstocc;  // first occurrence in visit
+    vector<T> vcost1;  // 頂点の部分木用。in に +w、out に 0
+    vector<T> vcost2;  // 頂点のパス用。in に +w、out に -w
+    vector<T> ecost1;  // 辺の部分木用
+    vector<T> ecost2;  // 辺のパス用
+    vector<int> nodein, nodeout, depth, par;  // in/out 巡回の位置。巡回の長さは 2n
+    vector<int> visit;     // LCA 用に訪れた頂点を並べた巡回。長さ 2n-1
+    vector<int> firstocc;  // visit での最初の出現位置
 
     titan23::FenwickTree<T> vcost_subtree;
     titan23::FenwickTree<T> vcost_path;
@@ -38,6 +39,7 @@ private:
 
 public:
 
+    /// @brief 重みつき隣接リスト G、根 root、頂点の重み vertexcost から構築する
     EulerTour(const vector<vector<pair<int, T>>> &G, int root, const vector<T> vertexcost) {
         n = G.size();
 
@@ -54,9 +56,9 @@ public:
         visit.assign(2*n-1, 0);
         firstocc.assign(n, -1);
 
-        // 1 回の DFS で in/out 巡回(コスト用, t)と touch 巡回(LCA 用, vt)を構築する
-        int t = -1;   // in/out index (size 2n)
-        int vt = -1;  // visit index  (size 2n-1)
+        // 1 回の DFS で、重み用の in/out 巡回 t と LCA 用の巡回 vt を作る
+        int t = -1;   // in/out 巡回の添字。長さ 2n
+        int vt = -1;  // visit の添字。長さ 2n-1
         depth[root] = 0;
         stack<pair<int, T>> st;
         st.push({~root, 0});
@@ -111,6 +113,7 @@ public:
         seg = titan23::SegmentTree<long long, op, e>(a);
     }
 
+    /// @brief u と v の LCA を返す / O(logN)
     int lca(int u, int v) {
         if (u == v) return u;
         int l = firstocc[u], r = firstocc[v];
@@ -119,6 +122,7 @@ public:
         return visit[ind];
     }
 
+    /// @brief a の全頂点の LCA を返す / a は空でないこと / O(|a| + logN)
     int lca_mul(const vector<int> &a) const {
         int l = 2*n, r = -1;
         for (const int e : a) {
@@ -129,34 +133,38 @@ public:
         return visit[ind];
     }
 
+    /// @brief v の部分木の頂点の重みの和を返す / O(logN)
     T subtree_vcost(int v) {
         return vcost_subtree.sum(nodein[v], nodeout[v]);
     }
 
+    /// @brief v の部分木に含まれる辺の重みの和を返す / O(logN)
     T subtree_ecost(int v) {
         return ecost_subtree.sum(nodein[v] + 1, nodeout[v]);
     }
 
-    // 頂点 v を含む
+    /// @brief 根から v までの頂点の重みの和を返す / v を含む / O(logN)
     T path_vcost(int v) {
         return vcost_path.pref(nodein[v] + 1);
     }
 
-    // 根から頂点 v までの辺
+    /// @brief 根から v までの辺の重みの和を返す / O(logN)
     T path_ecost(int v) {
         return ecost_path.pref(nodein[v] + 1);
     }
 
+    /// @brief u-v パス上の頂点の重みの和を返す / O(logN)
     T path_vcost(int u, int v) {
         int a = lca(u, v);
         return path_vcost(u) + path_vcost(v) - 2 * path_vcost(a) + vertexcost[a];
     }
 
+    /// @brief u-v パス上の辺の重みの和を返す / O(logN)
     T path_ecost(int u, int v) {
         return path_ecost(u) + path_ecost(v) - 2 * path_ecost(lca(u, v));
     }
 
-    // Add w to vertex v / O(logN)
+    /// @brief 頂点 v の重みに w を加える / O(logN)
     void add_vertex(int v, T w) {
         vcost_subtree.add(nodein[v], w);
         vcost_path.add(nodein[v], w);
@@ -164,20 +172,20 @@ public:
         vertexcost[v] += w;
     }
 
-    // Set w to vertex v / O(logN)
+    /// @brief 頂点 v の重みを w にする / O(logN)
     void set_vertex(int v, T w) {
         add_vertex(v, w - vertexcost[v]);
     }
 
-    // Add w to edge([u - v]) / O(logN)
+    /// @brief 辺 u-v の重みに w を加える / O(logN)
     void add_edge(int u, int v, T w) {
-        if (depth[u] < depth[v]) swap(u, v);  // u を深い側(子)にする
+        if (depth[u] < depth[v]) swap(u, v);  // u を深い側の子にする
         ecost_subtree.add(nodein[u], w);
         ecost_path.add(nodein[u], w);
         ecost_path.add(nodeout[u] - 1, -w);
     }
 
-    // Set w to edge([u - v]). / O(logN)
+    /// @brief 辺 u-v の重みを w にする / O(logN)
     void set_edge(int u, int v, T w) {
         add_edge(u, v, w - path_ecost(u, v));
     }

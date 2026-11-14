@@ -9,7 +9,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief Doubling
+/// @brief ダブリングで k 回遷移した先を求める
 class Doubling {
 private:
     int n, log;
@@ -17,8 +17,7 @@ private:
     vector<vector<int>> db;
 
 public:
-    /// @param LIM kth の最大値
-    /// @param A A[i]:= i からの遷移先
+    /// @brief A[i] を i からの遷移先として構築する / 遷移先がなければ -1 / k <= LIM まで扱う / O(n log LIM)
     Doubling(long long LIM, const vector<int> &A) : n(A.size()), log(bit_length(LIM)), lim(LIM) {
         db.resize(max(log, 1), vector<int>(n, -1));
         for (int k = 0; k < n; ++k) {
@@ -35,7 +34,7 @@ public:
         }
     }
 
-    /// @brief start から k 回遷移したときの位置
+    /// @brief start から k 回遷移した位置を返す / 途中で遷移先がなければ -1 / O(log LIM)
     int kth(int start, long long k) const {
         assert(0 <= start && start < n);
         assert(0 <= k && k <= lim);

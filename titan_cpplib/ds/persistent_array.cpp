@@ -9,12 +9,9 @@
 #include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
-// PersistentArray
 namespace titan23 {
 
-/**
- * @brief 永続配列
- */
+/// @brief 永続配列 / ノード領域は全インスタンスで共有する
 template<typename T>
 class PersistentArray {
 private:
@@ -103,12 +100,12 @@ private:
 public:
     PersistentArray() : root(0), n(0) {}
 
-    /// 配列 `a` をもとに構築する / `O(n)`
+    /// @brief 列 a から構築する / O(n)
     PersistentArray(vector<T> a) : n(a.size()) {
         _build(a);
     }
 
-    /// 複数の位置を一括変更した永続配列を返す
+    /// @brief indices の各 (位置, 値) で一括変更した永続配列を返す
     PersistentArray<T> multiset(vector<pair<int, T>> indices) const {
         if (indices.empty()) return copy();
         sort(indices.begin(), indices.end());
@@ -138,8 +135,8 @@ public:
         return _new(new_root);
     }
 
-    /// 複数の位置を一括変更した永続配列を返す
-    /// unique前提注意!
+    /// @brief indices の各位置を v に一括変更した永続配列を返す
+    /// indices の位置は相異なることが前提
     PersistentArray<T> multiset_uf(vector<int> indices, T v) const {
         if (indices.empty()) return copy();
         sort(indices.begin(), indices.end());
@@ -167,7 +164,7 @@ public:
         return _new(new_root);
     }
 
-    /// 位置 `k` を `v` に変更した永続配列を返す / `O(logn)` time, `O(logn)` space
+    /// @brief 位置 k を v に変更した永続配列を返す / 時間 O(log n)、領域 O(log n)
     PersistentArray<T> set(int k, T v) const{
         assert(0 <= k && k < n);
         assert(root);
@@ -191,7 +188,7 @@ public:
         return res;
     }
 
-    /// 位置 `k` の値を返す / `O(logn)` time, `O(1)` space
+    /// @brief 位置 k の値を返す / 時間 O(log n)、領域 O(1)
     T get(int k) const {
         assert(0 <= k && k < n);
         assert(root);
@@ -208,12 +205,12 @@ public:
         return ma.keys[node];
     }
 
-    /// 永続配列全体をコピーして返す / `O(1)` time, `O(1)` space
+    /// @brief 永続配列全体をコピーして返す / 時間 O(1)、領域 O(1)
     PersistentArray<T> copy() const {
         return _new(root ? ma.copy(root) : 0);
     }
 
-    /// `vector` にして返す / `O(n)`
+    /// @brief vector にして返す / O(n)
     vector<T> tovector() const {
         vector<T> a(n);
         vector<int> q = {root};
@@ -226,11 +223,12 @@ public:
         return a;
     }
 
-    /// 要素数を返す / `O(1)`
+    /// @brief 要素数を返す / O(1)
     int len() const {
         return n;
     }
 
+    /// @brief 配列を出力する
     void print() const {
         vector<T> a = tovector();
         cout << "[";

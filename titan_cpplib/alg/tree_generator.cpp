@@ -14,25 +14,24 @@
 #include "titan_cpplib/alg/random_mt.cpp"
 using namespace std;
 
+/// @brief TreeGenerator で生成する木の種類
 enum class TreeType {
-    // 基本的にはこれらのタイプ
-    Random,     // 一様ランダム
+    // 基本的にはこれらの種類を使う
+    Random,     // ラベル付き木から一様に選ぶ
     Line,       // 一直線の木
     AlmostLine, // 一直線の木+α
-    Uni,        // ウニグラフ(中心から √N 本のパスグラフが生えている)
-    Star,       // スターグラフ(中心から長さ 1 のパスグラフが生えている)
+    Uni,        // ウニグラフ。中心から √N 本のパスグラフが生えている
+    Star,       // スターグラフ。中心から長さ 1 のパスグラフが生えている
     Balanced,   // 完全二分木
 
-    Centipede,  // ムカデグラフ(一直線の木の各頂点に一つずつ頂点を接続する) centipedeはムカデの意、ググると画像が出るので注意 `centipede graph`ならよさそう
-    MultiUni,   // √N個のウニグラフをランダムにつなぐ
-    MultiStar,  // √N 個のスターグラフをランダムにつなぐ
+    Centipede,  // ムカデグラフ。一直線の木の各頂点に一つずつ頂点を接続する
+    MultiUni,   // √N 個のウニグラフを無作為につなぐ
+    MultiStar,  // √N 個のスターグラフを無作為につなぐ
     LongPathDecompositionKiller, // 長さ 1, 3, 5, 7, ... のパスをくっつけていくグラフ
     Lobster,    // ロブスター木(？)
 };
 
-/**
- * @brief 木のジェネレータ
- */
+/// @brief 種類を指定して木を生成する
 class TreeGenerator {
   private:
     titan23::RandomMT TreeRnd;
@@ -82,6 +81,7 @@ class TreeGenerator {
         return -1;
     }
 
+    // 頂点番号、辺の向き、辺の順番を無作為に入れ替える / fixed_point なら頂点 0 を動かさない
     void tree_shuffle(vector<pair<int, int>> &edges, const bool fixed_point=false) {
         int n = edges.size() + 1;
         vector<int> p(n);
@@ -105,6 +105,7 @@ class TreeGenerator {
         TreeRnd.shuffle(edges.begin(), edges.end());
     }
 
+    // u を根とする部分木の正準形を括弧列で返す
     string _encode_tree(int u, int p, const vector<vector<int>>& G) const {
         vector<string> ch;
         for (int v : G[u]) {
@@ -117,6 +118,7 @@ class TreeGenerator {
         return res;
     }
 
+    // 木の中心を根とした正準形を返す
     string _get_tree_hash(int n, const vector<pair<int, int>>& edges) const {
         if (n <= 1) return "()";
         vector<vector<int>> G(n);
@@ -157,11 +159,9 @@ class TreeGenerator {
         }
     }
 
-    /**
-     * @brief 一様ランダム
-     */
+    // ラベル付き木を一様に選ぶ
     void gen_random(const int N, vector<pair<int, int>> &edges) {
-        // https://speakerdeck.com/tsutaj/beerbash-lt-230711?slide=27
+        // 参考: https://speakerdeck.com/tsutaj/beerbash-lt-230711?slide=27
         if (N <= 1) return;
         if (N == 2) {
             if (TreeRnd.randint(0, 1) == 0) {
@@ -204,10 +204,7 @@ class TreeGenerator {
         assert(edges.size() == N-1);
     }
 
-    /**
-     * @brief ウニグラフ
-     * 中心から √N 本のパスグラフが生えている
-     */
+    // ウニグラフ。中心から d 本、既定では √N 本のパスグラフが生えている
     void gen_uni(const int N, vector<pair<int, int>> &edges, int d=-1) {
         if (N <= 1) return;
         if (d == -1) {
@@ -228,27 +225,19 @@ class TreeGenerator {
         }
     }
 
-    /**
-     * @brief スターグラフ
-     * 中心から長さ 1 のパスが生えている
-     */
+    // スターグラフ。中心から長さ 1 のパスが生えている
     void gen_star(const int N, vector<pair<int, int>> &edges) {
         gen_uni(N, edges, N-1);
     }
 
-    /**
-     * @brief パスグラフ
-     */
+    // パスグラフ
     void gen_line(const int N, vector<pair<int, int>> &edges) {
         for (int i = 0; i < N-1; ++i) {
             edges.emplace_back(i, i+1);
         }
     }
 
-    /**
-     * @brief パスグラフ+α
-     * 長さ N*9/10 のパスを作り、残りを適当にくっつける
-     */
+    // パスグラフ+α。長さ N*9/10 のパスを作り、残りの各頂点をそれより小さい番号の頂点へ無作為につなぐ
     void gen_almost_line(const int N, vector<pair<int, int>> &edges) {
         int length = max(1, N*9/10);
         for (int i = 0; i < length; ++i) {
@@ -261,10 +250,7 @@ class TreeGenerator {
         }
     }
 
-    /**
-     * @brief ウニつなぎ
-     * √N 個のウニを作り、ランダムにつなぐ
-     */
+    // ウニつなぎ。√N 個のウニを作り、無作為につなぐ
     void gen_multi_uni(const int N, vector<pair<int, int>> &edges, bool is_star=false) {
         const int uni_cnt = max(1, (int)sqrt(N));
         vector<vector<int>> each_uni(uni_cnt);
@@ -309,18 +295,12 @@ class TreeGenerator {
         }
     }
 
-    /**
-     * @brief スターつなぎ
-     * √N 個のスターを作り、ランダムにつなぐ
-     */
+    // スターつなぎ。√N 個のスターを作り、無作為につなぐ
     void gen_multi_star(const int N, vector<pair<int, int>> &edges) {
         return gen_multi_uni(N, edges, true);
     }
 
-    /**
-     * @brief ムカデグラフ
-     * (一直線の木の各頂点に一つずつ頂点を接続する)
-     */
+    // ムカデグラフ。一直線の木の各頂点に一つずつ頂点を接続する
     void gen_centipede(const int N, vector<pair<int, int>> &edges) {
         for (int i = 0; i < N-1; i += 2) {
             edges.emplace_back(i, i+1);
@@ -332,9 +312,7 @@ class TreeGenerator {
         }
     }
 
-    /**
-     * @brief 完全二分木
-     */
+    // 完全二分木
     void gen_balanced(const int N, vector<pair<int, int>> &edges) {
         for (int i = 1; i <= N; ++i) {
             if (i*2+0 <= N) edges.emplace_back(i-1, i*2+0-1);
@@ -342,10 +320,8 @@ class TreeGenerator {
         }
     }
 
-    /**
-     * @brief 長さ 1, 3, 5, 7, ... のパスをくっつけていく
-     * @ref https://github.com/yosupo06/library-checker-problems/blob/master/tree/vertex_set_path_composite/gen/long-path-decomposition_killer.cpp
-     */
+    // 長さ 1, 3, 5, 7, ... のパスをくっつけていく
+    // 参考: https://github.com/yosupo06/library-checker-problems/blob/master/tree/vertex_set_path_composite/gen/long-path-decomposition_killer.cpp
     void gen_long_path_decomposition_killer(const int N, vector<pair<int, int>> &edges) {
         vector<int> roots;
         int root = 0;
@@ -365,9 +341,10 @@ class TreeGenerator {
         }
     }
 
+    // ロブスター木
     void gen_lobster(const int N, vector<pair<int, int>> &edges) {
-        const int path_len = max(1, (int)sqrt(sqrt(N))); // 謎
-        const int D = max(1, (int)sqrt(sqrt(sqrt(N-path_len)))); // 謎
+        const int path_len = max(1, (int)sqrt(sqrt(N))); // 式の根拠は不明
+        const int D = max(1, (int)sqrt(sqrt(sqrt(N-path_len)))); // 式の根拠は不明
         vector<pair<int, int>> dia = {{0, 0}};
         for (int i = 0; i < path_len-1; ++i) {
             edges.emplace_back(i, i+1);
@@ -384,6 +361,7 @@ class TreeGenerator {
         }
     }
 
+    // edges が木をなすか調べる
     bool check(const vector<pair<int, int>> &edges) const {
         int n = edges.size() + 1;
         UnionFind uf(n);
@@ -395,20 +373,15 @@ class TreeGenerator {
     }
 
   public:
+    /// @brief 乱数の種を random_device から取って構築する
     TreeGenerator() {}
+    /// @brief 乱数の種 seed で構築する
     TreeGenerator(int seed) {
         TreeRnd = titan23::RandomMT(seed);
     }
 
-    /**
-     * @brief 所望の木を生成し、辺集合を返す
-     *
-     * @param tree_type 木のタイプ
-     * @param N 頂点数
-     * @param fixed_point 根や中心を固定するかどうか．する場合，頂点`0`がそれになる．
-     * @param seed `-1`のとき、seedは設定しない。それ以外のとき、seed値を設定する。
-     * @return vector<pair<int, int>> 辺集合。0-indexed.
-     */
+    /// @brief tree_type の木を N 頂点で生成し、辺集合を返す / 0-indexed
+    /// fixed_point なら根や中心を頂点 0 にする。seed が -1 でなければ乱数の種を設定し直す
     vector<pair<int, int>> generate(
         const TreeType tree_type,
         const int N,
@@ -459,15 +432,8 @@ class TreeGenerator {
         return edges;
     }
 
-    /**
-     * @brief 所望の木を生成し、辺集合を返す
-     *
-     * @param tree_type 木のタイプ
-     * @param N 頂点数
-     * @param fixed_point 根や中心を固定するかどうか．する場合，頂点`1`がそれになる．
-     * @param seed `-1`のとき、seedは設定しない。それ以外のとき、seed値を設定する。
-     * @return vector<pair<int, int>> 辺集合。**1-indexed**.
-     */
+    /// @brief tree_type の木を N 頂点で生成し、辺集合を返す / 1-indexed
+    /// fixed_point なら根や中心を頂点 1 にする。seed が -1 でなければ乱数の種を設定し直す
     vector<pair<int, int>> generate_1indexed(
         const TreeType tree_type,
         const int N,
@@ -487,12 +453,7 @@ class TreeGenerator {
         return edges;
     }
 
-    /**
-     * @brief N頂点のラベル付き木をすべて生成する(N^(N-2)通り)
-     * N <= 8 程度
-     * @param N 頂点数
-     * @return vector<vector<pair<int, int>>> 0-indexed の辺集合のリスト
-     */
+    /// @brief N 頂点のラベル付き木を N^(N-2) 通りすべて生成する / 0-indexed / N <= 8 程度
     vector<vector<pair<int, int>>> generate_all_labeled(int N) const {
         if (N <= 0) return {};
         if (N == 1) return {{}};
@@ -538,12 +499,7 @@ class TreeGenerator {
         return res;
     }
 
-    /**
-     * @brief N頂点のラベルなし木を生成する
-     * N <= 14 程度
-     * @param N 頂点数
-     * @return vector<vector<pair<int, int>>> 0-indexed の辺集合のリスト
-     */
+    /// @brief N 頂点のラベルなし木をすべて生成する / 0-indexed / N <= 14 程度
     vector<vector<pair<int, int>>> generate_all_unlabeled(int N) const {
         if (N <= 0) return {};
         if (N == 1) return {{}};
@@ -568,6 +524,7 @@ class TreeGenerator {
         return now_tree;
     }
 
+    /// @brief generate_all_labeled の結果を 1-indexed にして返す
     vector<vector<pair<int, int>>> generate_all_labeled_1indexed(int N) const {
         auto res = generate_all_labeled(N);
         for (auto &edges : res) {
@@ -578,6 +535,7 @@ class TreeGenerator {
         return res;
     }
 
+    /// @brief generate_all_unlabeled の結果を 1-indexed にして返す
     vector<vector<pair<int, int>>> generate_all_unlabeled_1indexed(int N) const {
         auto res = generate_all_unlabeled(N);
         for (auto &edges : res) {

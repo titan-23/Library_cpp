@@ -32,9 +32,8 @@ struct BeamResult {
     bool finished() const { return status == BeamStatus::Finished; }
 };
 
-/// @brief 必要な場合に未適用の操作を実行し、最終状態を生成する
-/// @param applied_prefix state に適用済みの先頭操作数
-/// @note materialize_final_state が true の場合、state は返却値へムーブされる
+/// @brief actions の未適用の部分を state に適用し、最終状態を返す / applied_prefix は適用済みの先頭の操作数
+/// materialize_final_state が false なら nullptr を返す。true なら state は返り値へムーブされる
 template<bool materialize_final_state, class State, class Action>
 unique_ptr<State> make_final_state(State &state, const vector<Action> &actions, int applied_prefix = 0) {
     if constexpr (materialize_final_state) {

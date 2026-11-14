@@ -15,10 +15,13 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 区間の総積と区間反転を扱う永続重み平衡木による列 / ノード領域 ma は全インスタンスで共有する
 template <class SizeType, class T, T (*op)(T, T), T (*e)()>
 class PersistentSegWBTree {
 public:
+    /// @brief ノード領域を管理する / 番号 0 は番兵
     struct MemoryAllocator {
+        /// @brief 子の番号と部分木サイズを持つ
         struct Node {
             SizeType left, right, size, left_size;
 
@@ -28,6 +31,7 @@ public:
             /// @brief 子と部分木サイズを設定する / O(1)
             Node(SizeType l, SizeType r, SizeType s) : left(l), right(r), size(s), left_size(0) {}
         };
+        /// @brief 値、部分木の総積、反転フラグを持つ
         struct Data {
             T key, data;
             int8_t rev;
@@ -39,6 +43,7 @@ public:
             Data(const T& k, const T& d, int8_t r)
                 : key(k), data(d), rev(r) {}
         };
+        /// @brief 2^BlockBits 要素のブロック単位で領域を確保する配列
         template <class U, unsigned BlockBits>
         class BlockVector {
             static constexpr size_t block_size = size_t(1) << BlockBits;
@@ -148,6 +153,7 @@ public:
             }
         };
 
+        /// @brief ノードの構造と値をまとめた要素
         struct Slot {
             Node tree;
             Data data;
@@ -160,6 +166,7 @@ public:
         using Pool = BlockVector<Slot, 16>;
         Pool pool;
 
+        /// @brief pool の各要素のメンバー Member を配列として扱う
         template<class U, U Slot::* Member>
         struct View {
             Pool *pool;
@@ -285,6 +292,7 @@ private:
         if (ma.pool[node].tree.right) ma.pool[node].data.data = op(ma.pool[node].data.data, ma.pool[ma.pool[node].tree.right].data.data);
     }
 
+    // 番号が first より小さいノードは古い版に属するので複製する
     SizeType own(SizeType node, size_t first) {
         return node && static_cast<size_t>(node) < first ? ma.copy(node) : node;
     }
@@ -350,7 +358,7 @@ private:
         return u;
     }
 
-    // node is owned and normalized. Children may still belong to old versions.
+    // node は所有済みで反転も解消済み。子は古い版に属することがある
     SizeType balance(SizeType node, size_t first) {
         if (weight_left(node) * DELTA < weight_right(node)) {
             SizeType u = own(ma.pool[node].tree.right, first);
@@ -401,10 +409,7 @@ private:
         return pivot;
     }
 
-    // Internal helpers for insertion/deletion with one copied search path.
-    // The caller captures first = ma.ptr once for the entire public operation.
-    // own()/propagate()/balance() follow the ownership-frontier contract.
-    // balance() is called after update() and may normalize/copy heavy children.
+    // 探索経路だけを複製して挿入する。first は公開操作の開始時の ma.ptr
     SizeType insert_node(SizeType node, SizeType k, const T &value, size_t first) {
         if (!node) return ma.new_node(value);
         node = own(node, first);
@@ -419,8 +424,7 @@ private:
         return balance(node, first);
     }
 
-    // Remove an extreme value without allocating a detached singleton node.
-    // An old clean root at the endpoint can be omitted without copying it.
+    // 端の要素を取り除き、その値を value に入れる
     SizeType erase_extreme(SizeType node, T &value, bool rightmost, size_t first) {
         SizeType next = rightmost ? ma.pool[node].tree.right : ma.pool[node].tree.left;
         if (!next && !ma.pool[node].data.rev) {
@@ -442,7 +446,7 @@ private:
     }
 
     SizeType erase_node(SizeType node, SizeType k, T &value, size_t first) {
-        // A leaf is unaffected by reversal and can be removed without copying.
+        // 葉は反転の影響を受けないので、複製せずに取り除ける
         if (ma.pool[node].tree.size == 1) {
             value = ma.pool[node].data.key;
             return 0;
@@ -459,8 +463,7 @@ private:
             value = ma.pool[node].data.key;
             if (!left) return right;
             if (!right) return left;
-            // Remove the replacement from the heavier side to avoid
-            // increasing the imbalance at this node.
+            // 偏りを広げないよう、重い側から代わりの要素を取り出す
             T replacement;
             if (left_size >= ma.pool[node].tree.size-left_size-1) {
                 ma.pool[node].tree.left = erase_extreme(left, replacement, true, first);
@@ -473,8 +476,7 @@ private:
         return balance(node, first);
     }
 
-    // Merge can use this specialized extraction instead of split(size-1).
-    // It returns a consumed, normalized singleton pivot, ready for join().
+    // 右端のノードを取り出し、{残り, 単一ノード} を返す
     pair<SizeType, SizeType> extract_right_node(SizeType node, size_t first) {
         node = own(node, first);
         propagate(node, first);

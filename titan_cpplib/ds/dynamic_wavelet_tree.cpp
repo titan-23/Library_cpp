@@ -19,11 +19,7 @@ using namespace std;
 // DynamicWaveletTree
 namespace titan23 {
 
-/**
- * @brief 動的ウェーブレット木
- *
- * @tparam T 値の型
- */
+/// @brief 動的ウェーブレット木
 template<typename T>
 class DynamicWaveletTree {
 private:
@@ -102,7 +98,7 @@ private:
 
         int n = a.size();
         _nodes.reserve(_estimated_node_count(n));
-        // Partition values directly so each level reads contiguous memory.
+        // 各段で連続したメモリを読むよう、値そのものを振り分ける
         vector<T> values(a), work(n);
         vector<uint8_t> bits(n);
 
@@ -139,7 +135,7 @@ private:
         _root = build(build, _log - 1, 0, n, values, work);
     }
 
-    // Once an interval is a singleton, only its position needs to be mapped.
+    // 区間が1要素になったら、位置だけを下の段へ写せば足りる
     T _access_node(int node, int bit, int k) const {
         T result = 0;
         for (; bit >= 0; --bit) {
@@ -155,7 +151,7 @@ private:
         return result;
     }
 
-    // Compare the remaining value bits, stopping at the first difference.
+    // 位置 k の値と x の残りの bit を比べ、最初に異なる bit で止める
     int _compare_node(int node, int bit, int k, const T x) const {
         for (; bit >= 0; --bit) {
             const auto [b, rank1] = _nodes[node].v._access_ans_rank1(k);
@@ -209,7 +205,7 @@ private:
     }
 
 public:
-    /// 各要素が [0, sigma) の DynamicWaveletTree を作成する / O(1)
+    /// @brief 各要素が [0, sigma) の空の DynamicWaveletTree を作成する / O(1)
     DynamicWaveletTree(const T sigma)
         : _root(_NIL), _free(_NIL), _sigma(sigma),
           _log(sigma <= 1 ? 0 : bit_length((unsigned long long)(sigma - 1))), _size(0) {
@@ -217,7 +213,7 @@ public:
         _root = _make_node();
     }
 
-    /// 各要素が [0, sigma) の DynamicWaveletTree を作成する / O(nlog(σ))
+    /// @brief 各要素が [0, sigma) の列 a から DynamicWaveletTree を作成する / O(nlog(σ))
     DynamicWaveletTree(const T sigma, const vector<T> &a)
         : _root(_NIL), _free(_NIL), _sigma(sigma),
           _log(sigma <= 1 ? 0 : bit_length((unsigned long long)(sigma - 1))), _size(a.size()) {
@@ -225,15 +221,14 @@ public:
         _build(a);
     }
 
-    /// 最終的な要素数を見積もってNodeと根の動的ビット列の領域を予約する
-    /// 最悪 O(nlog(σ))
+    /// @brief 最終的な要素数 expected_size からノードと根のビット列の領域を予約する / 最悪 O(nlog(σ))
     void reserve(int expected_size) {
         assert(len() <= expected_size);
         _nodes.reserve(_estimated_node_count(expected_size));
         if (_log > 0) _nodes[_root].v.reserve(expected_size);
     }
 
-    /// 位置 k に x を挿入する / O(log(n)log(σ))
+    /// @brief 位置 k に x を挿入する / O(log(n)log(σ))
     void insert(int k, const T x) {
         assert(0 <= k && k <= len());
         assert(0 <= x && x < _sigma);
@@ -253,7 +248,7 @@ public:
         ++_size;
     }
 
-    /// 位置 k の値を削除して返す / O(log(n)log(σ))
+    /// @brief 位置 k の値を削除して返す / O(log(n)log(σ))
     T pop(int k) {
         assert(0 <= k && k < len());
         array<int, _MAX_LOG> path;
@@ -285,7 +280,7 @@ public:
         return result;
     }
 
-    /// 位置 k の値を x に更新する / 共通prefixを除き O(log(n)log(σ))
+    /// @brief 位置 k の値を x に更新する / O(log(n)log(σ))
     void set(int k, const T x) {
         assert(0 <= k && k < len());
         assert(0 <= x && x < _sigma);
@@ -347,10 +342,10 @@ public:
         }
     }
 
-    /// 位置 k の値を x に更新する / 共通prefixを除き O(log(n)log(σ))
+    /// @brief 位置 k の値を x に更新する / O(log(n)log(σ))
     void set_key(int k, T x) { set(k, x); }
 
-    /// 区間 [0, r) の x の個数を返す / O(log(n)log(σ))
+    /// @brief 区間 [0, r) の x の個数を返す / O(log(n)log(σ))
     int rank(int r, const T x) const {
         assert(0 <= r && r <= len());
         assert(0 <= x && x < _sigma);
@@ -365,7 +360,7 @@ public:
         return r;
     }
 
-    /// 区間 [l, r) の x の個数を返す / O(log(n)log(σ))
+    /// @brief 区間 [l, r) の x の個数を返す / O(log(n)log(σ))
     int range_count(int l, int r, const T x) const {
         assert(0 <= l && l <= r && r <= len());
         assert(0 <= x && x < _sigma);
@@ -387,8 +382,7 @@ public:
         return r - l;
     }
 
-    /// 区間 [l, r) で値が [lower, upper) にある k 番目の位置を返す / O(log^2(n)log(σ))
-    /// 例: [5, 1, 4, 1, 9], [lower, upper) = [1, 5), k = 2 なら 3
+    /// @brief 区間 [l, r) で値が [lower, upper) にある k 番目の位置を返す / O(log^2(n)log(σ))
     int kth_index_in_value_range(const int l, const int r, const T lower, const T upper, const int k) const {
         assert(0 <= k && k < range_freq(l, r, lower, upper));
         int left = l;
@@ -404,26 +398,24 @@ public:
         return right - 1;
     }
 
-    /// 区間 [l, r) で値が [lower, upper) にある最初の位置を返す / O(log^2(n)log(σ))
-    /// 例: [5, 1, 4, 1, 9], [lower, upper) = [1, 5) なら 1
+    /// @brief 区間 [l, r) で値が [lower, upper) にある最初の位置を返す / なければ -1 / O(log^2(n)log(σ))
     int next_index_in_value_range(const int l, const int r, const T lower, const T upper) const {
         return range_freq(l, r, lower, upper) == 0 ? -1 : kth_index_in_value_range(l, r, lower, upper, 0);
     }
 
-    /// 区間 [l, r) で値が [lower, upper) にある最後の位置を返す / O(log^2(n)log(σ))
-    /// 例: [5, 1, 4, 1, 9], [lower, upper) = [1, 5) なら 3
+    /// @brief 区間 [l, r) で値が [lower, upper) にある最後の位置を返す / なければ -1 / O(log^2(n)log(σ))
     int prev_index_in_value_range(const int l, const int r, const T lower, const T upper) const {
         int count = range_freq(l, r, lower, upper);
         return count == 0 ? -1 : kth_index_in_value_range(l, r, lower, upper, count - 1);
     }
 
-    /// k 番目の要素を返す / O(log(n)log(σ))
+    /// @brief k 番目の要素を返す / O(log(n)log(σ))
     T access(int k) const {
         assert(0 <= k && k < len());
         return _access_node(_root, _log - 1, k);
     }
 
-    /// 区間 [l, r) で昇順 k 番目の値を返す / O(log(n)log(σ))
+    /// @brief 区間 [l, r) で昇順 k 番目の値を返す / O(log(n)log(σ))
     T kth_smallest(int l, int r, int k) const {
         assert(0 <= l && l <= r && r <= len());
         assert(0 <= k && k < r - l);
@@ -448,14 +440,12 @@ public:
         return result;
     }
 
-    /// 区間 [l, r) で降順 k 番目の値を返す / O(log(n)log(σ))
+    /// @brief 区間 [l, r) で降順 k 番目の値を返す / O(log(n)log(σ))
     T kth_largest(int l, int r, const int k) const {
         return kth_smallest(l, r, r - l - k - 1);
     }
 
-    /// 区間 [l, r) で頻度が高い値を最大 k 種類返す
-    /// 訪問Node数を p として O(p(log(n)+log(p)))
-    /// 例: [1, 2, 1, 3, 1, 2] で topk(0, 6, 2) は {(1, 3), (2, 2)}
+    /// @brief 区間 [l, r) で頻度が高い値を最大 k 種類、(値, 個数) の組で返す / O(p(log(n)+log(p)))、p は訪問ノード数
     vector<pair<T, int>> topk(int l, int r, int k) const {
         assert(0 <= l && l <= r && r <= len());
         vector<pair<T, int>> ans;
@@ -465,7 +455,7 @@ public:
         while (!hq.empty() && k > 0) {
             auto [length, x, node, bit, ql, qr] = hq.top();
             hq.pop();
-            // Disjoint value prefixes preserve their order when a suffix is filled in.
+            // 上位 bit が異なる値どうしは、残りの bit を埋めても大小が変わらない
             if (bit < 0 || length == 1) {
                 if (bit >= 0) x |= _access_node(node, bit, ql);
                 ans.emplace_back(x, length);
@@ -484,6 +474,7 @@ public:
         return ans;
     }
 
+    /// @brief 区間 [l, r) で過半数を占める値があれば {true, 値} を返す / O(log(n)log(σ))
     pair<bool, T> has_majority(int l, int r) const {
         assert(0 <= l && l < r && r <= len());
         int node = _root;
@@ -509,7 +500,7 @@ public:
         return {true, result};
     }
 
-    /// 区間 [l, r) で x 未満の要素の個数を返す / O(log(n)log(σ))
+    /// @brief 区間 [l, r) で x 未満の要素の個数を返す / O(log(n)log(σ))
     int range_freq(const int l, const int r, const T x) const {
         assert(0 <= l && l <= r && r <= len());
         if (x <= 0) return 0;
@@ -517,7 +508,7 @@ public:
         return _range_freq_node(_root, _log - 1, l, r, x);
     }
 
-    /// 区間 [l, r) で lower 以上 upper 未満の要素の個数を返す / O(log(n)log(σ))
+    /// @brief 区間 [l, r) で lower 以上 upper 未満の要素の個数を返す / O(log(n)log(σ))
     int range_freq(const int l, const int r, T lower, T upper) const {
         assert(0 <= l && l <= r && r <= len());
         if (lower >= upper || upper <= 0 || lower >= _sigma) return 0;
@@ -552,7 +543,7 @@ public:
         return 0;
     }
 
-    /// k 番目の x の位置を返す / O(log(n)log(σ))
+    /// @brief k 番目の x の位置を返す / O(log(n)log(σ))
     int select(int k, const T x) const {
         array<int, _MAX_LOG> path;
         int depth = 0;
@@ -568,14 +559,13 @@ public:
         return k;
     }
 
-    /// 区間 [l, r) にある k 番目の x の位置を返す / O(log(n)log(σ))
-    /// 例: [5, 1, 4, 1, 9] で range_select(1, 5, 1, 1) は 3
+    /// @brief 区間 [l, r) にある k 番目の x の位置を返す / O(log(n)log(σ))
     int range_select(int l, int r, int k, T x) const {
         assert(0 <= k && k < range_count(l, r, x));
         return select(rank(l, x) + k, x);
     }
 
-    /// k 番目の x の位置を返して削除する / O(log(n)log(σ))
+    /// @brief k 番目の x の位置を返して削除する / O(log(n)log(σ))
     int select_remove(int k, const T x) {
         array<int, _MAX_LOG> path;
         array<uint8_t, _MAX_LOG> directions;
@@ -599,7 +589,7 @@ public:
         return k;
     }
 
-    /// 区間 [l, r) で x 未満のうち最大の要素を返す
+    /// @brief 区間 [l, r) で x 未満のうち最大の要素を返す / なければ -1 / O(log(n)log(σ))
     T prev_value(int l, int r, const T x) const {
         if (l == r || x <= 0) return -1;
         if (x >= _sigma) return _extreme(_root, _log - 1, l, r, 0, true);
@@ -638,7 +628,7 @@ public:
         return _extreme(candidate, candidate_bit, candidate_l, candidate_r, candidate_value, true);
     }
 
-    /// 区間 [l, r) で x 以上のうち最小の要素を返す
+    /// @brief 区間 [l, r) で x 以上のうち最小の要素を返す / なければ -1 / O(log(n)log(σ))
     T next_value(int l, int r, const T x) const {
         if (l == r || x >= _sigma) return -1;
         if (x <= 0) return _extreme(_root, _log - 1, l, r, 0, false);
@@ -679,10 +669,10 @@ public:
         return _extreme(candidate, candidate_bit, candidate_l, candidate_r, candidate_value, false);
     }
 
-    /// 要素数を返す / O(1)
+    /// @brief 要素数を返す / O(1)
     int len() const { return _size; }
 
-    /// vector にして返す / O(nlog(σ))
+    /// @brief 値の列を vector で返す / O(nlog(σ))
     vector<T> tovector() const {
         vector<T> result(_size, 0);
         if (_size == 0 || _log == 0) return result;
@@ -720,7 +710,7 @@ public:
         return result;
     }
 
-    /// 表示する / O(nlog(σ))
+    /// @brief 値の列を表示する / O(nlog(σ))
     void print() const {
         const vector<T> a = tovector();
         cout << "[";

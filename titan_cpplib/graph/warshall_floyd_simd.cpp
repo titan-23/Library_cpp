@@ -16,21 +16,18 @@ namespace titan23 {
 
 using ll = long long;
 
-/**
- * @brief SIMD を用いた Warshall-Floyd
- * @details AVX-512 (F, VL) > AVX2 > 逐次 の順にコンパイル時に選ぶ。
- *          T は 32 bit または 64 bit の符号付き整数。距離は [-INF, INF] に収め、INF は到達不能を表す。
- *          負閉路を経由しない頂点対の最短距離は (-INF, INF) に収まる必要がある。
- */
+/// @brief SIMD を用いた Warshall-Floyd / T は 32 bit または 64 bit の符号付き整数 / INF は到達不能を表す
+/// 負閉路を経由しない頂点対の最短距離は (-INF, INF) に収まること
 template<typename T = long long>
 class WarshallFloydSIMD {
     static_assert(is_integral_v<T> && is_signed_v<T> && (sizeof(T) == 4 || sizeof(T) == 8),
                   "WarshallFloydSIMD: T must be a 32-bit or 64-bit signed integer");
     using Ops = SimdInt<T>;
     using Vec = typename Ops::Vec;
+    using Mask = typename Ops::Mask;
 
 public:
-    // 3 値の和が T に収まる大きさ
+    /// @brief 到達不能を表す値 / 3 値の和が T に収まる大きさ
     static constexpr T INF = numeric_limits<T>::max() / 3;
 
 private:
@@ -46,7 +43,7 @@ private:
 public:
     WarshallFloydSIMD() : n(0), neg_cycle(false) {}
 
-    /// @brief 時間 O(|V|^3), 空間 O(|V|^2)
+    /// @brief 隣接リスト G から全点対の最短距離を求める / 時間 O(|V|^3)、空間 O(|V|^2)
     WarshallFloydSIMD(const vector<vector<pair<int, T>>> &G) :
         n(G.size()), neg_cycle(false)
     {
@@ -92,19 +89,22 @@ public:
             }
         }
         neg_cycle = !negs.empty();
+        // n は LANES の倍数なので、どの読み書きも全要素を対象にできる
+        const auto v_one = Ops::int_set1(1);
         for (int k : negs) {
+            const T *row_k = d.data() + (size_t)k*n;
             for (int i = 0; i < n; ++i) {
                 if (d[i*n+k] == INF) continue;
-                for (int j = 0; j < n; ++j) {
-                    if (d[k*n+j] != INF) {
-                        neg_inf[i*n+j] = 1;
-                    }
+                int *neg_i = neg_inf.data() + (size_t)i*n;
+                for (int j = 0; j < n; j += Ops::LANES) {
+                    const Mask reach = Ops::cmpneq(Ops::ALL, Ops::loadu(row_k+j), v_inf);
+                    Ops::int_store(neg_i+j, reach, v_one);
                 }
             }
         }
     }
 
-    /// @brief 重み `w` の有向辺 `(s, t)` を追加する / O(|V|^2)
+    /// @brief 重み w の有向辺 (s, t) を追加して距離を更新する / O(|V|^2)
     void add_edge(int s, int t, T w) {
         if (w < -INF) w = -INF;
         int st = s*n+t;
@@ -128,23 +128,24 @@ public:
 
         const Vec v_inf = Ops::set1(INF);
         const Vec v_ninf = Ops::set1(-INF);
+        const auto v_one = Ops::int_set1(1);
         for (int i = 0; i < n; ++i) {
             if (!to_s_neg_inf[i] && to_s[i] == INF) continue;
+            int *neg_i = neg_inf.data() + (size_t)i*n;
 
             if (new_neg_cycle || to_s_neg_inf[i]) {
-                for (int j = 0; j < n; ++j) {
-                    if (from_t_neg_inf[j] || from_t[j] != INF) {
-                        neg_inf[i*n+j] = 1;
-                    }
+                // t から到達できる頂点すべてへの経路が負閉路を経由する
+                for (int j = 0; j < n; j += Ops::LANES) {
+                    const Mask from_neg = Ops::int_nonzero(Ops::ALL, from_t_neg_inf.data()+j);
+                    const Mask finite = Ops::cmpneq(Ops::ALL, Ops::loadu(from_t.data()+j), v_inf);
+                    Ops::int_store(neg_i+j, (Mask)(from_neg | finite), v_one);
                 }
                 continue;
             }
 
             if (from_t_has_neg_inf) {
-                for (int j = 0; j < n; ++j) {
-                    if (from_t_neg_inf[j]) {
-                        neg_inf[i*n+j] = 1;
-                    }
+                for (int j = 0; j < n; j += Ops::LANES) {
+                    Ops::int_store(neg_i+j, Ops::int_nonzero(Ops::ALL, from_t_neg_inf.data()+j), v_one);
                 }
             }
 
@@ -162,23 +163,23 @@ public:
         }
     }
 
-    /// @brief `s` から `t` に到達できるか / O(1)
+    /// @brief s から t に到達できるかを返す / O(1)
     bool reachable(int s, int t) const {
         int idx = s*n+t;
         return neg_inf[idx] || d[idx] != INF;
     }
 
-    /// @brief `s` から `t` への経路上に負閉路があるか / O(1)
+    /// @brief s から t への経路上に負閉路があるかを返す / O(1)
     bool is_neg_inf(int s, int t) const {
         return neg_inf[s*n+t];
     }
 
-    /// @brief 負閉路が存在するか / O(1)
+    /// @brief 負閉路が存在するかを返す / O(1)
     bool has_neg_cycle() const {
         return neg_cycle;
     }
 
-    /// @brief `is_neg_inf(s, t) == false` のときのみ有効 / O(1)
+    /// @brief s から t への最短距離を返す / is_neg_inf(s, t) == false のときに限る / 到達不能なら INF / O(1)
     T get_dist(int s, int t) const {
         assert(!is_neg_inf(s, t));
         return d[s*n+t];

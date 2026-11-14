@@ -13,34 +13,21 @@ using namespace std;
 
 namespace titan23 {
 
-/**
- * @brief 点を有効化・無効化できる2次元Manhattan最近傍探索
- *
- * コンストラクタには、将来追加する可能性がある点をすべて渡す
- * 点IDはコンストラクタへ渡したvectorのindexとする
- * `add(id)` で点を1個追加し、`remove(id)` で1個削除できる
- * 同じIDを複数個保持でき、個数が正なら検索対象になる
- * `add_all()` で個数0の全点を1個にできる
- * `nearest` で全体の最近傍を、
- * `nearest_four` で閉じた4象限それぞれの最近傍を取得できる
- * 同距離ではIDが小さい点を返し、該当する点がなければ `-1` を返す
- *
- * 方向の順番は NE, NW, SW, SE である
- * 象限は境界を含むため、軸上の点やクエリと同じ座標の点は複数方向の答えになり得る
- *
- * 構築・一括追加 O(n log(n))
- * 追加・削除・検索 O(log^2(n))、メモリ O(n log(n))
- */
+/// @brief 点を有効化・無効化できる2次元マンハッタン距離の最近傍探索 / メモリ O(n log(n))
+/// 追加しうる点はすべてコンストラクタで渡す / 点IDは渡した vector の添字 / 同距離ならIDが小さい点を返す
 template<typename T>
 class ManhattanNearest {
 public:
+    /// @brief 点の座標
     struct Point { T x, y; };
 
+    /// @brief nearest_four の方向 / 順に NE, NW, SW, SE
     enum Direction : int { NE = 0, NW = 1, SW = 2, SE = 3 };
 
     static constexpr int DIRECTION_COUNT = 4;
 
 private:
+    // x 方向の BIT の各節点に y 順のセグメント木を持ち、y 以上と y 以下の点の最小優先度を求める
     class PrefixMin2D {
     private:
         static constexpr int INF = numeric_limits<int>::max();
@@ -375,11 +362,13 @@ private:
     }
 
 public:
+    /// @brief 点を持たない状態で構築する
     ManhattanNearest() { build(); }
 
+    /// @brief 点列 ps で構築する / 全点の個数は0から始まる / O(n log(n))
     explicit ManhattanNearest(vector<Point> ps) : points(move(ps)) { build(); }
 
-    /// 事前登録した点を1個追加する
+    /// @brief 事前登録した点 id を1個追加する / 同じIDを複数個持てる / O(log^2(n))
     void add(int id) {
         int n = points.size();
         if (id < 0 || id >= n) {
@@ -393,7 +382,7 @@ public:
         if (used == n && cached) all = true;
     }
 
-    /// 個数0の全点を1個にする
+    /// @brief 個数0の全点を1個にする / O(n log(n))
     void add_all() {
         int n = points.size();
         trees[EAST].set_all(n, prio, NE, SE, [&](int idx) { return x_rank(idx, EAST); });
@@ -406,8 +395,7 @@ public:
         all = true;
     }
 
-    /// 追加済みの点を1個削除する
-    /// 個数0のIDを指定した場合は何もしない
+    /// @brief 追加済みの点 id を1個削除する / 個数0なら何もしない / O(log^2(n))
     void remove(int id) {
         int n = points.size();
         if (id < 0 || id >= n) {
@@ -422,20 +410,19 @@ public:
         trees[WEST].set(x_rank(id, WEST), id, -1, -1);
     }
 
-    /// 追加済みの全点からManhattan距離最小の点のIDを返す
-    /// 点がなければ -1
+    /// @brief 追加済みの全点からマンハッタン距離最小の点のIDを返す / 点がなければ -1 / O(log^2(n))
     int nearest(T x, T y) const {
         return nearest_pair(x, y).first;
     }
 
-    /// 追加済みの全点との最小Manhattan距離を返す
-    /// 点がなければ -1
+    /// @brief 追加済みの全点との最小マンハッタン距離を返す / 点がなければ -1 / O(log^2(n))
     T nearest_dist(T x, T y) const {
         auto res = nearest_pair(x, y);
         return res.first < 0 ? -1 : res.second;
     }
 
-    /// NE, NW, SW, SE の各閉象限でManhattan距離最小の点のIDを返す
+    /// @brief NE, NW, SW, SE の各閉象限でマンハッタン距離最小の点のIDを返す / 該当なしは -1 / O(log^2(n))
+    /// 象限は境界を含むので、軸上の点やクエリと同じ座標の点は複数方向の答えになりうる
     array<int, DIRECTION_COUNT> nearest_four(T x, T y) const {
         return nearest_four_idx(x, y);
     }

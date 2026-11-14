@@ -6,19 +6,17 @@
 #include <vector>
 using namespace std;
 
-// LinkCutTreeSubtree
-// op と inv は可換群をなすこと（群演算を O(1) として、各操作は償却 O(log n)）。
-// get は O(1)、構築・オブジェクトのコピー・メモリは O(n)。
-// 単一操作の最悪時間の保証ではない。
 namespace titan23 {
 
+/// @brief 部分木と連結成分の集約に対応した Link Cut Tree / 各操作は償却 O(log n)
+/// op と inv は可換群をなすこと
 template <class T, T (*op)(T, T), T (*e)(), T (*inv)(T)>
 class LinkCutTreeSubtree {
 private:
     struct Node {
         int l, r, p, sz, vsz, asz;
         bool rev;
-        // sub includes key and all virtual children; data excludes virtual children.
+        // sub は key と全ての仮想の子を含み、data は仮想の子を含まない
         T key, data, sub, all;
 
         Node(const T &v, int nil, int count = 1) :
@@ -56,7 +54,7 @@ private:
         x.all = op(l.all, op(x.sub, r.all));
     }
 
-    // p is the root of its auxiliary tree; g is its path parent.
+    // p は補助木の根で、g はそのパスの親
     void _rotate_root(int v, int p, int g) {
         Node &x = pool[v], &y = pool[p];
         bool d = y.r == v;
@@ -129,9 +127,7 @@ private:
         }
     }
 
-    // Only reversal is lazy. A pending reversal above g mirrors the whole
-    // rotated subtree, so pushing g, p, v locally is sufficient. This performs
-    // the usual zig/zig-zig/zig-zag steps without walking the ancestor path twice.
+    // 遅延するのは反転だけなので、g, p, v を push すれば足りる
     template<bool PULL_ROOT = true>
     void _splay(int v) {
         if (_is_root(v)) {
@@ -179,8 +175,7 @@ private:
     }
 
     void _link(int c, int p) {
-        // c is a represented-tree root: splaying it already leaves no left child.
-        // Its preferred descendants may stay on the right when attaching to p.
+        // c は表現木の根なので、splay すると左の子はない
         _splay(c);
         _expose(p);
         pool[c].p = p;
@@ -214,10 +209,12 @@ private:
     }
 
 public:
+    /// @brief 頂点数 0 で構築する
     LinkCutTreeSubtree() : n(0) {
         pool.emplace_back(e(), n, 0);
     }
 
+    /// @brief 頂点数 size で構築する / 各頂点の値は e() / O(n)
     LinkCutTreeSubtree(int size) : n(size) {
         assert(size >= 0);
         pool.reserve(size + 1);
@@ -225,19 +222,21 @@ public:
         pool.emplace_back(e(), n, 0);
     }
 
+    /// @brief 頂点 i の値を a[i] として構築する / O(n)
     LinkCutTreeSubtree(const vector<T> &a) : n(int(a.size())) {
         pool.reserve(a.size() + 1);
         for (const T &v : a) pool.emplace_back(v, n);
         pool.emplace_back(e(), n, 0);
     }
 
+    /// @brief 根から v へのパスを露出する / expose(u) の直後なら u と v の LCA を返す / 償却 O(log n)
     int expose(int v) {
         assert(0 <= v && v < n);
         return _expose(v);
     }
 
-    // u と v は同じ連結成分に属すること
-    // root を指定する場合は root も同じ連結成分に属すること
+    /// @brief u と v の LCA を返す / root を指定すると先に root を根にする / 償却 O(log n)
+    /// u と v は同じ連結成分に属すること / root を指定する場合は root も同じ連結成分に属すること
     int lca(int u, int v, int root = -1) {
         assert(0 <= u && u < n && 0 <= v && v < n);
         if (root != -1) {
@@ -248,23 +247,25 @@ public:
         return expose(v);
     }
 
-    // c は表現木の根で p とは異なる連結成分に属すること
+    /// @brief 根 c を p の子にする / c は表現木の根で p とは異なる連結成分に属すること / 償却 O(log n)
     void link(int c, int p) {
         assert(0 <= c && c < n && 0 <= p && p < n);
         _link(c, p);
     }
 
-    // c は表現木の根でないこと
+    /// @brief c と親の間の辺を切る / c は表現木の根でないこと / 償却 O(log n)
     void cut(int c) {
         assert(0 <= c && c < n);
         _cut(c);
     }
 
+    /// @brief v を含む木の根を返す / 償却 O(log n)
     int root(int v) {
         assert(0 <= v && v < n);
         return _root(v);
     }
 
+    /// @brief u と v が同じ連結成分にあるかを返す / 償却 O(log n)
     bool same(int u, int v) {
         assert(0 <= u && u < n && 0 <= v && v < n);
         if (u == v) return true;
@@ -273,12 +274,13 @@ public:
         return pool[u].p != n;
     }
 
+    /// @brief v を木の根にする / 償却 O(log n)
     void evert(int v) {
         assert(0 <= v && v < n);
         _evert(v);
     }
 
-    // u と v は同じ連結成分に属すること
+    /// @brief u から v へのパス上の値を op で集約して返す / u と v は同じ連結成分に属すること / 償却 O(log n)
     T path_prod(int u, int v) {
         assert(0 <= u && u < n && 0 <= v && v < n);
         _evert(u);
@@ -286,7 +288,7 @@ public:
         return pool[v].data;
     }
 
-    // root と v は同じ連結成分に属すること
+    /// @brief root を根としたときの v の部分木の値を op で集約して返す / root と v は同じ連結成分に属すること / 償却 O(log n)
     T subtree_prod(int root, int v) {
         assert(0 <= root && root < n && 0 <= v && v < n);
         _evert(root);
@@ -294,17 +296,19 @@ public:
         return pool[v].sub;
     }
 
+    /// @brief v を含む連結成分の値を op で集約して返す / 償却 O(log n)
     T component_prod(int v) {
         assert(0 <= v && v < n);
         _expose(v);
         return pool[v].all;
     }
 
+    /// @brief u と v が別の連結成分なら辺 (u, v) を張って true を返す / 同じ成分なら false / 償却 O(log n)
     bool merge(int u, int v) {
         assert(0 <= u && u < n && 0 <= v && v < n);
         _evert(u);
         _expose(v);
-        // After exposing v, u has a parent iff the distinct vertices are connected.
+        // v を露出した後、異なる 2 頂点が連結なときに限り u に親がある
         if (u == v || pool[u].p != n) return false;
         pool[u].p = v;
         pool[v].r = u;
@@ -312,18 +316,20 @@ public:
         return true;
     }
 
-    // u と v の間に辺があること
+    /// @brief u と v の間の辺を切る / u と v の間に辺があること / 償却 O(log n)
     void split(int u, int v) {
         assert(0 <= u && u < n && 0 <= v && v < n);
         _evert(u);
         _cut(v);
     }
 
+    /// @brief 頂点 v の値を返す / O(1)
     T get(int v) const {
         assert(0 <= v && v < n);
         return pool[v].key;
     }
 
+    /// @brief 頂点 v の値を key に変更する / 償却 O(log n)
     void set(int v, T key) {
         assert(0 <= v && v < n);
         _expose(v);
@@ -332,7 +338,7 @@ public:
         _pull(v);
     }
 
-    // u と v は同じ連結成分に属すること
+    /// @brief u から v へのパス上の頂点数を返す / u と v は同じ連結成分に属すること / 償却 O(log n)
     int path_length(int u, int v) {
         assert(0 <= u && u < n && 0 <= v && v < n);
         _evert(u);
@@ -340,7 +346,8 @@ public:
         return pool[v].sz;
     }
 
-    // u と v は同じ連結成分に属すること
+    /// @brief u から v へのパスで k 番目の頂点を返す / 0-indexed / 範囲外なら -1 / 償却 O(log n)
+    /// u と v は同じ連結成分に属すること
     int path_kth_elm(int u, int v, int k) {
         assert(0 <= u && u < n && 0 <= v && v < n);
         _evert(u);
@@ -364,6 +371,7 @@ public:
         }
     }
 
+    /// @brief root を根としたときの v の部分木の頂点数を返す / root と v は同じ連結成分に属すること / 償却 O(log n)
     int subtree_size(int root, int v) {
         assert(0 <= root && root < n && 0 <= v && v < n);
         _evert(root);
@@ -371,6 +379,7 @@ public:
         return 1 + pool[v].vsz;
     }
 
+    /// @brief v を含む連結成分の頂点数を返す / 償却 O(log n)
     int component_size(int v) {
         assert(0 <= v && v < n);
         _expose(v);

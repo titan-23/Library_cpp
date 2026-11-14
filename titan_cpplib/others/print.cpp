@@ -53,6 +53,7 @@ static const string PRINT_DIM    = "\033[2m";  // 薄字
 static const string PRINT_NONE   = "\033[m";   // 色を元に戻す
 static const string PRINT_BOLD = "\u001b[1m"; // 太字
 
+/// @brief s を関数名が示す色や書式の制御文字列で囲んで返す
 string to_red   (const string &s) { return PRINT_RED    + s + PRINT_NONE; }
 string to_green (const string &s) { return PRINT_GREEN  + s + PRINT_NONE; }
 string to_yellow(const string &s) { return PRINT_YELLOW + s + PRINT_NONE; }
@@ -60,6 +61,7 @@ string to_blue  (const string &s) { return PRINT_BLUE   + s + PRINT_NONE; }
 string to_dim   (const string &s) { return PRINT_DIM    + s + PRINT_NONE; }
 string to_bold  (const string &s) { return PRINT_BOLD   + s + PRINT_NONE; }
 
+/// @brief s の左を空白で埋めて幅 f にする
 string spacefill(const string s, const int f) {
     int n = s.size();
     string t;
@@ -68,10 +70,12 @@ string spacefill(const string s, const int f) {
     return t;
 }
 
+/// @brief x を to_string で文字列にし、左を空白で埋めて幅 f にする
 template<class T> string spacefill(const T &x, const int f) {
     return spacefill(to_string(x), f);
 }
 
+/// @brief s の左を 0 で埋めて幅 f にする
 string zfill(const string s, const int f) {
     int n = s.size();
     string t;
@@ -80,6 +84,7 @@ string zfill(const string s, const int f) {
     return t;
 }
 
+/// @brief s の 2 進表記を返す
 string bin(unsigned long long s) {
     if (s == 0) return "0";
     string t;
@@ -91,8 +96,10 @@ string bin(unsigned long long s) {
     return t;
 }
 
+// 現在の行番号を標準エラー出力に出す
 #define DEBUG_LINE() (cerr << "[LINE] : " << __LINE__ << endl)
 
+/// @brief __int128_t を 10 進表記の文字列にする
 string to_string_int128(__int128_t x) {
     if (x == 0) return "0";
     bool neg = false;
@@ -107,6 +114,7 @@ string to_string_int128(__int128_t x) {
     return s;
 }
 
+/// @brief __uint128_t を 10 進表記の文字列にする
 string to_string_uint128(__uint128_t x) {
     if (x == 0) return "0";
     string s;

@@ -1,197 +1,190 @@
 /// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/graph/hungarian.cpp
-// https://kopricky.github.io/code/NetworkFlow/hungarian.html
 #pragma once
 
-#include <vector>
-#include <utility>
-#include <limits>
 #include <algorithm>
 #include <cassert>
+#include <cstdint>
+#include <limits>
+#include <utility>
+#include <vector>
+#include "titan_cpplib/others/simd_int.cpp"
 using namespace std;
 
 namespace titan23 {
 
-/// @brief 最小費用割当 (ハンガリアン法) U>=V を要求し 全 V 列を相異なる行に割り当てて費用最小化する
-///        余った U-V 行は未割り当て alloc[i]=-1 になる
-///        禁止辺を numeric_limits の最大値で表すと桁あふれするので 有限費用の密行列を渡す
-template<typename T>
-class Hungarian {
-private:
-    const int U, V;
-    vector<vector<int> > graph;
-    vector<T> dual;
-    vector<int> alloc, rev_alloc, prev;
-    const vector<vector<T> >& cost;
-    int matching_size;
+namespace hungarian_detail {
 
-    T diff(const int i, const int j) {
-        return cost[i][j] - dual[i] - dual[U + j];
-    }
-    void init_feasible_dual() {
-        for (int i = 0; i < U; ++i) {
-            dual[i] = 0;
-            for (int j = 0; j < V; ++j) dual[U + j] = min(dual[U + j], cost[i][j]);
-        }
-    }
-    void construct_graph() {
-        for (int i = 0; i < U; ++i)
-            for (int j = 0; j < V; ++j)
-                graph[i][j] = (diff(i, j) == 0 && rev_alloc[j] != i);
-    }
-    bool find_augmenting_path(const int cur, const int prv, int &pos) {
-        prev[cur] = prv;
-        if (cur >= U) {
-            if (rev_alloc[cur - U] < 0) return true;
-            if (find_augmenting_path(rev_alloc[cur - U], cur, pos)) {
-                graph[rev_alloc[cur - U]][cur - U] = 1;
-                return true;
-            }
-        } else {
-            const int MX = (alloc[cur] < 0 && pos == U) ? U : V;
-            for (int i = 0; i < MX; ++i) {
-                if (graph[cur][i] && prev[U + i] < 0 && find_augmenting_path(U + i, cur, pos)) {
-                    graph[cur][i] = 0, alloc[cur] = i, rev_alloc[i] = cur;
-                    return true;
-                }
-            }
-            if (alloc[cur] < 0 && pos < U) {
-                graph[cur][pos] = 0, alloc[cur] = pos, rev_alloc[pos] = cur, prev[U + pos] = cur;
-                return ++pos, true;
-            }
-        }
-        return false;
-    }
-    void update_dual(const T delta) {
-        for (int i = 0; i < U; ++i) if (prev[i] >= 0) dual[i] += delta;
-        for (int i = U; i < U + V; ++i) if (prev[i] >= 0) dual[i] -= delta;
-    }
-    void maximum_matching(bool initial = false) {
-        int pos = initial ? V : U;
-        for (bool update = false;; update = false) {
-            fill(prev.begin(), prev.end(), -1);
-            for (int i = 0; i < U; ++i) {
-                if (alloc[i] < 0 && find_augmenting_path(i, 2 * U, pos)) {
-                    update = true, ++matching_size;
-                    break;
-                }
-            }
-            if (!update) break;
-        }
-    }
-    int dfs(const int cur, const int prv, vector<int> &new_ver) {
-        prev[cur] = prv;
-        if (cur >= U) {
-            if (rev_alloc[cur - U] < 0) return cur;
-            else return dfs(rev_alloc[cur - U], cur, new_ver);
-        } else {
-            new_ver.push_back(cur);
-            for (int i = 0; i < V; ++i) {
-                if (graph[cur][i] && prev[U + i] < 0) {
-                    const int res = dfs(U + i, cur, new_ver);
-                    if (res >= U) return res;
-                }
-            }
-        }
-        return -1;
-    }
-    int increase_matching(const vector<pair<int, int> > &vec, vector<int> &new_ver) {
-        for (const auto &e : vec) {
-            if (prev[e.first] < 0) {
-                const int res = dfs(e.first, e.second, new_ver);
-                if (res >= U) return res;
-            }
-        }
-        return -1;
-    }
-    void hint_increment(int cur) {
-        while (prev[cur] != 2 * U) {
-            if (cur >= U) graph[prev[cur]][cur - U] = 0, alloc[prev[cur]] = cur - U, rev_alloc[cur - U] = prev[cur];
-            else graph[cur][prev[cur] - U] = 1;
-            cur = prev[cur];
-        }
-    }
+template<class T>
+using Simd = SimdVec<T>;
 
-public:
-    /// @brief cost は U 行 V 列 U>=V が前提
-    Hungarian(const vector<vector<T> > &_cost)
-        : U((int)_cost.size()), V((int)_cost[0].size()), graph(U, vector<int>(U, 1)),
-          dual(U + V, numeric_limits<T>::max()), alloc(U, -1), rev_alloc(U, -1),
-          prev(2 * U), cost{_cost}, matching_size(0) {
-        assert(U >= V);
-    }
+template<class T>
+int padded(const int m) {
+    const int lanes = Simd<T>::LANES;
+    return (m + lanes - 1) / lanes * lanes;
+}
 
-    /// @brief {最小費用, alloc} を返す alloc[i] は行 i が担当する列 未割り当ては -1
-    pair<T, vector<int> > solve() {
-        init_feasible_dual(), construct_graph();
-        bool end = false;
-        maximum_matching(true);
-        while (matching_size < U) {
-            vector<pair<T, int> > cand(V, {numeric_limits<T>::max(), numeric_limits<int>::max()});
-            for (int i = 0; i < U; ++i) {
-                if (prev[i] < 0) continue;
-                for (int j = 0; j < V; ++j) {
-                    if (prev[U + j] >= 0) continue;
-                    cand[j] = min(cand[j], {diff(i, j), i});
+// 左の頂点 n 個を右の頂点 m 個 (n <= m) へ割り当てる最小費用の割当を返す
+// cost は左の頂点ごとに stride 個ずつ並べ、先頭の m 個を使う。stride は padded<T>(m)
+template<class T>
+vector<int> solve(const T *cost, const int n, const int m, const int stride) {
+    using S = Simd<T>;
+    using Idx = typename S::Idx;
+    const T INF = numeric_limits<T>::has_infinity ? numeric_limits<T>::infinity() : numeric_limits<T>::max();
+    // u, v はポテンシャル。key[j] は始点から右の頂点 j までの距離に、走査中の距離の累積を足した値
+    vector<T> u(n), v(stride, T(0)), key(stride, INF);
+    vector<Idx> way(stride, -1), active(stride, 0);
+    fill(active.begin(), active.begin() + m, Idx(-1));
+    vector<int> owner(m, -1), match(n, -1), free_cols;
+    vector<pair<int, T>> visited;
+    visited.reserve(m);
+    for (int l = 0; l < n; ++l) {
+        const T *row = cost + (size_t)l * stride;
+        int best = 0;
+        for (int r = 1; r < m; ++r) if (row[r] < row[best]) best = r;
+        u[l] = row[best];
+        for (int r = best; r < m; ++r) {
+            if (row[r] == row[best] && owner[r] == -1) {
+                owner[r] = l, match[l] = r;
+                break;
+            }
+        }
+    }
+    for (int r = 0; r < m; ++r) if (owner[r] == -1) free_cols.push_back(r);
+    for (int s = 0; s < n; ++s) {
+        if (match[s] != -1) continue;
+        T dist = 0;
+        int i0 = s, j1;
+        Idx j0 = -1;
+        while (true) {
+            const T *row = cost + (size_t)i0 * stride;
+            const T offset = dist - u[i0];
+            T best;
+            if constexpr (S::VECTORIZED) {
+                const auto off = S::set1(offset);
+                const auto from = S::iset1(j0), step = S::iset1(S::LANES);
+                auto best_val = S::set1(INF);
+                auto best_idx = S::iset1(-1), idx = S::iota();
+                for (int j = 0; j < stride; j += S::LANES) {
+                    const auto c = S::add(S::sub(S::loadu(row + j), S::loadu(v.data() + j)), off);
+                    auto k = S::loadu(key.data() + j);
+                    const auto upd = S::mask_and(S::lt(c, k), S::load_mask(active.data() + j));
+                    k = S::select(upd, c, k);
+                    S::storeu(key.data() + j, k);
+                    S::istoreu(way.data() + j, S::iselect(upd, from, S::iloadu(way.data() + j)));
+                    const auto better = S::lt(k, best_val);
+                    best_val = S::select(better, k, best_val);
+                    best_idx = S::iselect(better, idx, best_idx);
+                    idx = S::iadd(idx, step);
+                }
+                const auto [b, bj] = S::argmin(best_val, best_idx);
+                best = b, j1 = (int)bj;
+            } else {
+                best = INF, j1 = -1;
+                for (int j = 0; j < m; ++j) {
+                    if (!active[j]) continue;
+                    const T c = row[j] - v[j] + offset;
+                    if (c < key[j]) key[j] = c, way[j] = j0;
+                    if (key[j] < best) best = key[j], j1 = j;
                 }
             }
-            while (true) {
-                T delta = numeric_limits<T>::max();
-                for (int i = 0; i < V; ++i) {
-                    if (prev[U + i] >= 0) continue;
-                    delta = min(delta, cand[i].first);
-                }
-                update_dual(delta);
-                vector<pair<int, int> > vec;
-                vector<int> new_ver;
-                for (int i = 0; i < V; ++i) {
-                    if (prev[U + i] >= 0) continue;
-                    if ((cand[i].first -= delta) == 0) vec.emplace_back(U + i, cand[i].second);
-                }
-                int res = increase_matching(vec, new_ver);
-                if (res >= U) {
-                    hint_increment(res);
-                    if (++matching_size == U) end = true;
-                    else construct_graph();
-                    break;
-                } else {
-                    for (const int v : new_ver) {
-                        for (int i = 0; i < V; ++i) {
-                            if (prev[U + i] >= 0) continue;
-                            cand[i] = min(cand[i], {diff(v, i), v});
-                        }
+            dist = best;
+            // 同じ距離に空いている列があればそちらで終える。空いている列が多いときは探す手間の方が大きい
+            if (owner[j1] != -1 && (int)free_cols.size() * 4 <= m) {
+                for (const int j : free_cols) {
+                    if (key[j] == best) {
+                        j1 = j;
+                        break;
                     }
                 }
             }
-            if (!end) maximum_matching();
+            if (owner[j1] == -1) break;
+            visited.emplace_back(j1, best);
+            key[j1] = INF;
+            active[j1] = 0;
+            j0 = j1;
+            i0 = owner[j1];
         }
-        T total_cost = 0;
+        u[s] += dist;
+        for (const auto &[j, kj] : visited) {
+            const T d = dist - kj;
+            v[j] -= d;
+            u[owner[j]] += d;
+            active[j] = -1;
+        }
+        visited.clear();
+        fill(key.begin(), key.begin() + m, INF);
+        free_cols.erase(find(free_cols.begin(), free_cols.end(), j1));
+        for (int j = j1;;) {
+            const Idx jp = way[j];
+            const int l = jp < 0 ? s : owner[jp];
+            owner[j] = l;
+            match[l] = j;
+            if (jp < 0) break;
+            j = (int)jp;
+        }
+    }
+    return match;
+}
+
+}  // namespace hungarian_detail
+
+/// @brief ハンガリアン法による最小費用割当 / 費用は有限で、途中の加減算が T に収まること
+template<typename T>
+class Hungarian {
+private:
+    int U, V, stride;
+    bool transposed;
+    vector<T> cost;
+
+public:
+    /// @brief U 行 V 列の費用行列を写して持つ / U >= V であること / O(UV)
+    Hungarian(const vector<vector<T>> &cost_) : U((int)cost_.size()), V(U ? (int)cost_[0].size() : 0) {
+        assert(U >= V);
+        assert(all_of(cost_.begin(), cost_.end(), [&](const vector<T> &row) { return (int)row.size() == V; }));
+        transposed = U > V;
+        stride = hungarian_detail::padded<T>(transposed ? U : V);
+        cost.assign((size_t)(transposed ? V : U) * stride, T(0));
         for (int i = 0; i < U; ++i) {
-            if (alloc[i] < V) total_cost += cost[i][alloc[i]];
-            else alloc[i] = -1;
+            for (int j = 0; j < V; ++j) {
+                if (transposed) cost[(size_t)j * stride + i] = cost_[i][j];
+                else cost[(size_t)i * stride + j] = cost_[i][j];
+            }
         }
-        return make_pair(total_cost, alloc);
+    }
+
+    /// @brief 全 V 列を相異なる行に割り当てる最小費用と、各行が担当する列を返す / 担当のない行は -1 / O(V^2 U)
+    pair<T, vector<int>> solve() const {
+        vector<int> alloc(U, -1);
+        T total = 0;
+        if (V == 0) return {total, alloc};
+        if (transposed) {
+            const vector<int> rows = hungarian_detail::solve(cost.data(), V, U, stride);
+            for (int j = 0; j < V; ++j) {
+                alloc[rows[j]] = j;
+                total += cost[(size_t)j * stride + rows[j]];
+            }
+        } else {
+            alloc = hungarian_detail::solve(cost.data(), U, V, stride);
+            for (int i = 0; i < U; ++i) total += cost[(size_t)i * stride + alloc[i]];
+        }
+        return {total, alloc};
     }
 };
 
-/// @brief 行数と列数の大小を気にせず最小費用割当を解く
-///        小さい方の次元を全て割り当てる assign は行数ぶんの長さ 未割り当ては -1
+/// @brief 小さい方の次元を全て割り当てる最小費用と、各行が担当する列を返す / 担当のない行は -1 / n 行 m 列で O(min(n, m)^2 max(n, m))
 template<typename T>
-pair<T, vector<int> > min_cost_assignment(const vector<vector<T> > &cost) {
-    int n = (int)cost.size();
-    int m = n ? (int)cost[0].size() : 0;
-    if (n >= m) {
-        Hungarian<T> h(cost);
-        return h.solve();
-    }
-    vector<vector<T> > t(m, vector<T>(n));
-    for (int i = 0; i < n; ++i)
-        for (int j = 0; j < m; ++j) t[j][i] = cost[i][j];
-    Hungarian<T> h(t);
-    auto [c, alloc_t] = h.solve();
-    vector<int> assign(n, -1);
-    for (int j = 0; j < m; ++j)
-        if (alloc_t[j] != -1) assign[alloc_t[j]] = j;
-    return make_pair(c, assign);
+pair<T, vector<int>> min_cost_assignment(const vector<vector<T>> &cost) {
+    const int n = (int)cost.size();
+    const int m = n ? (int)cost[0].size() : 0;
+    if (n >= m) return Hungarian<T>(cost).solve();
+    assert(all_of(cost.begin(), cost.end(), [&](const vector<T> &row) { return (int)row.size() == m; }));
+    const int stride = hungarian_detail::padded<T>(m);
+    vector<T> flat((size_t)n * stride, T(0));
+    for (int i = 0; i < n; ++i) copy(cost[i].begin(), cost[i].end(), flat.begin() + (size_t)i * stride);
+    const vector<int> assign = hungarian_detail::solve(flat.data(), n, m, stride);
+    T total = 0;
+    for (int i = 0; i < n; ++i) total += cost[i][assign[i]];
+    return {total, assign};
 }
 
 }  // namespace titan23

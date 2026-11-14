@@ -8,12 +8,13 @@
 #include "titan_cpplib/ds/bbst_node.cpp"
 using namespace std;
 
-// MultisetSum
 namespace titan23 {
 
+/// @brief 総和を求められる多重集合 / AVL 木で実装する
 template<typename T>
 class MultisetSum {
 public:
+    // key を val 個持ち、data に部分木の総和、valsize に部分木の要素数を持つ
     class MultisetSumNode {
     public:
         using MultisetSumNodePtr = MultisetSumNode*;
@@ -189,11 +190,14 @@ public:
 
 public:
     MultisetSum() : root(nullptr) {}
+    /// @brief 空で構築する / 該当する要素がないとき le などは missing を返す
     MultisetSum(T missing) : missing(missing), root(nullptr) {}
+    /// @brief 列 a の要素で構築する / O(n log n)
     MultisetSum(const vector<T> &a, T missing=-1) : missing(missing) {
         this->root = build(a);
     }
 
+    /// @brief key を val 個追加する / O(log n)
     void add(const T &key, int val=1) {
         if (!root) {
             root = new MultisetSumNode(key, val);
@@ -220,6 +224,7 @@ public:
         _add_balance(pnode);
     }
 
+    /// @brief ノード node を木から取り除く / O(log n)
     void remove_iter(MultisetSumNodePtr node) {
         MultisetSumNodePtr pnode = node->par;
         if (node->left && node->right) {
@@ -247,6 +252,7 @@ public:
         }
     }
 
+    /// @brief key を最大 val 個削除し、key があったかを返す / O(log n)
     bool discard(const T &key, int val=1) {
         MultisetSumNodePtr node = find_key(key);
         if (!node) return false;
@@ -259,6 +265,7 @@ public:
         return true;
     }
 
+    /// @brief key を最大 val 個削除する / key があることが前提 / O(log n)
     void remove(const T &key, int val=1) {
         MultisetSumNodePtr node = find_key(key);
         assert(node);
@@ -270,6 +277,7 @@ public:
         }
     }
 
+    /// @brief key 以下で最大の要素を返す / O(log n)
     T le(const T &key) const {
         T res = missing;
         MultisetSumNodePtr node = root;
@@ -288,6 +296,7 @@ public:
         return res;
     }
 
+    /// @brief key 未満で最大の要素を返す / O(log n)
     T lt(const T &key) const {
         T res = missing;
         MultisetSumNodePtr node = root;
@@ -302,6 +311,7 @@ public:
         return res;
     }
 
+    /// @brief key 以上で最小の要素を返す / O(log n)
     T ge(const T &key) const {
         T res = missing;
         MultisetSumNodePtr node = root;
@@ -320,6 +330,7 @@ public:
         return res;
     }
 
+    /// @brief key より大きい最小の要素を返す / O(log n)
     T gt(const T &key) const {
         T res = missing;
         MultisetSumNodePtr node = root;
@@ -334,6 +345,7 @@ public:
         return res;
     }
 
+    /// @brief key 未満の要素数を返す / O(log n)
     int index(const T &key) const {
         int k = 0;
         MultisetSumNodePtr node = root;
@@ -352,6 +364,7 @@ public:
         return k;
     }
 
+    /// @brief key 以下の要素数を返す / O(log n)
     int index_right(const T &key) const {
         int k = 0;
         MultisetSumNodePtr node = root;
@@ -370,7 +383,7 @@ public:
         return k;
     }
 
-    // 総和がwを超えないように先頭からとるとき、いくつとれるか？
+    /// @brief 小さい順に取るとき、総和が w を超えない最大の個数を返す / O(log n)
     long long bisect_left_sum(T w) const {
         long long s = 0;
         MultisetSumNodePtr node = root;
@@ -406,7 +419,7 @@ public:
         return s;
     }
 
-    // high未満かな
+    /// @brief high 未満の要素の総和を返す / O(log n)
     T sum(T high) const {
         T s = 0;
         MultisetSumNodePtr node = root;
@@ -425,10 +438,12 @@ public:
         return s;
     }
 
+    /// @brief 全要素の総和を返す / 空でないことが前提 / O(1)
     T all_prod() const {
         return root->data;
     }
 
+    /// @brief 昇順 k 番目の要素を 1 個削除して返す / 0 <= k < len() が前提 / O(log n)
     T pop(int k=-1) {
         MultisetSumNodePtr node = find_kth(k);
         T key = node->key;
@@ -441,6 +456,7 @@ public:
         return key;
     }
 
+    /// @brief 昇順に並べた vector を返す / O(n)
     vector<T> tovector() const {
         vector<T> a;
         a.reserve(len());
@@ -462,18 +478,22 @@ public:
         return a;
     }
 
+    /// @brief key があるかを返す / O(log n)
     bool contains(T key) const {
         return find_key(key) != nullptr;
     }
 
+    /// @brief 昇順 k 番目の要素を返す / O(log n)
     T get(int k) const {
         return find_kth(k)->key;
     }
 
+    /// @brief 要素数を返す / O(1)
     int len() const {
         return root ? root->valsize : 0;
     }
 
+    /// @brief 要素を出力する
     void print() const {
         vector<T> a = tovector();
         int n = a.size();
@@ -485,6 +505,7 @@ public:
         cout << "}" << endl;
     }
 
+    /// @brief 木の不変条件を assert で検査する / デバッグ用
     void check() const {
         if (!root) {
         // cout << "height=0" << endl;

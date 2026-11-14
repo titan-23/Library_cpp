@@ -41,6 +41,7 @@ using ScoreType = int;
 using HashType = unsigned long long;
 const ScoreType INF = 1e9;
 
+/// @brief K 枚のマップで同時に動く方向 / is_moved は実際に動いたマップのビット集合
 struct Action {
     char dir = 'z';
     short is_moved = 0;
@@ -54,6 +55,7 @@ struct Action {
         return os;
     }
 
+    /// @brief 合成しない / 常に false を返す
     bool compose(Action &nxt) {
         return false;
     }
@@ -61,6 +63,7 @@ struct Action {
     string to_string() const { return ""; }
 };
 
+/// @brief K 枚のマップ上の位置と、各マスの訪問回数を持つ状態
 class State {
 private:
     titan23::Random srand;
@@ -85,12 +88,12 @@ private:
     }
 
 public:
-    HashType zhs[K][H][W]; // マップkの(h,w)にいるときのハッシュ値
+    HashType zhs[K][H][W]; // マップ k の (h, w) にいるときのハッシュ値
     pair<int, int> pos[K];
     int seen[K*H*W];
     vector<Action> actions_from_state[16];
 
-    // TODO Stateを初期化する
+    /// @brief State を初期化する
     void init() {
         score = 0;
         hash = 0;
@@ -123,10 +126,8 @@ public:
         score = 0;
     }
 
-    // TODO
-    /// `action` をしたときの評価値とハッシュ値を返す
-    /// ロールバックに必要な情報はすべてactionにメモしておく
-    /// threshold以上であれば計算しなくてよい
+    /// @brief action を適用したときの評価値とハッシュ値を返す
+    /// 戻すための情報はすべて action に記録する。threshold 以上なら計算を省いてよい
     tuple<ScoreType, HashType, bool> try_op(Action &action, const ScoreType threshold) const {
         action.is_moved = 0;
         ScoreType s = 0;
@@ -158,7 +159,7 @@ public:
         return {score + s, hash ^ hs, false};
     }
 
-    /// `action` をする
+    /// @brief action を適用する
     void apply_op(const Action &action) {
         rep(k, K) {
             auto [y, x] = pos[k];
@@ -183,7 +184,7 @@ public:
         }
     }
 
-    /// `action` を戻す (composed なら逆順)
+    /// @brief action を戻す
     void rollback(const Action &action) {
         rep(k, K) {
             auto [y, x] = pos[k];
@@ -211,8 +212,7 @@ public:
         }
     }
 
-    // TODO
-    /// 現状態から遷移可能な `Action` の `vector` を返す
+    /// @brief 現状態から遷移可能な Action を submit に渡す
     template<class Submit>
     void enumerate_actions(const int turn, const Action &last_action, Submit &&submit) const {
         int state = 0b1111;
@@ -234,12 +234,14 @@ public:
 
 flying_squirrel::BeamSearchWithTree<ScoreType, HashType, Action, State, INF, false> bs;
 
+/// @brief 最大ターン数、ビーム幅、制限時間などから BeamParam を返す
 flying_squirrel::BeamParam gen_param(int max_turn, int beam_width, double time_limit, bool is_adjusting=false, bool a=true) {
     return {max_turn, beam_width, time_limit, is_adjusting, a};
 }
 
 using Result = flying_squirrel::BeamResult<ScoreType, Action, State>;
 
+/// @brief bs で探索して結果を返す
 template<bool materialize_final_state=true>
 Result search(flying_squirrel::BeamParam &param, const bool verbose=false) {
     return bs.search<materialize_final_state>(param, verbose, "hist.json");
@@ -247,6 +249,7 @@ Result search(flying_squirrel::BeamParam &param, const bool verbose=false) {
 } // namespace beam_search
 
 
+/// @brief 選んだマップの番号と操作列を出力し、スコアを標準エラー出力に書く
 void print_ans(const vector<beam_search::Action> &ans) {
     for (int i = 0; i < K; ++i) {
         cout << ID[i] << ' ';
@@ -277,7 +280,7 @@ void print_ans(const vector<beam_search::Action> &ans) {
         return {ny, nx};
     };
 
-    // composed Action を primitive な dir 列に展開する。
+    // 合成された Action を 1 手ずつの dir 列に展開する
     vector<char> dirs;
     dirs.reserve(2500);
     for (const auto &a : ans) {

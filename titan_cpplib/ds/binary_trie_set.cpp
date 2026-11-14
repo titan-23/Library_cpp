@@ -9,6 +9,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 0 以上 2^bit 未満の整数の集合を二分トライで持つ / 全要素への xor を扱う
 template<typename T>
 class BinaryTrieSet {
 private:
@@ -73,16 +74,19 @@ private:
     }
 
 public:
+    /// @brief 0 以上 2^bit 未満の値を扱う空の集合を作る
     BinaryTrieSet(int bit) : bit(bit) {
         root = 1;
         lim = (T)1 << bit;
         xor_val = 0;
     }
 
+    /// @brief ノード n 個分の領域を予約する
     void reserve(const int n) {
         ma.reserve(n);
     }
 
+    /// @brief key を追加し、追加できたかを返す / O(bit)
     bool add(T key) {
         assert(0 <= key && key < lim);
         key ^= xor_val;
@@ -105,6 +109,7 @@ public:
         return true;
     }
 
+    /// @brief key を含むかを返す / O(bit)
     bool contains(const T key) const {
         return _find(key) != -1;
     }
@@ -124,6 +129,7 @@ public:
         }
     }
 
+    /// @brief key を削除し、削除できたかを返す / O(bit)
     bool discard(T key) {
         int node = _find(key);
         if (node == -1) return false;
@@ -131,6 +137,7 @@ public:
         return true;
     }
 
+    /// @brief 小さい方から k 番目の値を削除して返す / k は 0 から数え、負なら後ろから数える / O(bit)
     T pop(int k) {
         if (k < 0) k += len();
         assert(0 <= k && k < len());
@@ -152,20 +159,24 @@ public:
         return res;
     }
 
+    /// @brief 最小値を削除して返す / O(bit)
     T pop_min() {
         assert(!empty());
         return pop(0);
     }
 
+    /// @brief 最大値を削除して返す / O(bit)
     T pop_max() {
         assert(!empty());
         return pop(len()-1);
     }
 
+    /// @brief 全要素に x を xor する / O(1)
     void all_xor(T x) {
         xor_val ^= x;
     }
 
+    /// @brief 最小値を返す / O(bit)
     T get_min() const {
         T key = xor_val;
         T ans = 0;
@@ -184,6 +195,7 @@ public:
         return ans ^ xor_val;
     }
 
+    /// @brief 最大値を返す / O(bit)
     T get_max() const {
         T key = xor_val;
         T ans = 0;
@@ -202,6 +214,7 @@ public:
         return ans ^ xor_val;
     }
 
+    /// @brief key 未満の要素数を返す / O(bit)
     int index(T key) const {
         int k = 0;
         int node = root;
@@ -218,6 +231,7 @@ public:
         return k;
     }
 
+    /// @brief key 以下の要素数を返す / O(bit)
     int index_right(T key) const {
         int k = 0;
         int node = root;
@@ -235,13 +249,14 @@ public:
         return k;
     }
 
-    // [low, high)
+    /// @brief [low, high) に含まれる要素数を返す / O(bit)
     int count_range(T low, T high) const {
         int hi = high >= lim ? len() : index(high);
         int lo = low >= lim ? len() : index(low);
         return hi - lo;
     }
 
+    /// @brief 小さい方から k 番目の値を返す / k は 0 から数える / O(bit)
     T get(int k) const {
         assert(0 <= k && k < len());
         int node = root;
@@ -272,27 +287,32 @@ public:
         return res;
     }
 
+    /// @brief key より大きい最小の値を返す / 無ければ -1 / O(bit)
     T gt(T key) const {
         int i = index_right(key);
         return (i >= ma.tree[root].size ? (-1) : get(i));
     }
 
+    /// @brief key より小さい最大の値を返す / 無ければ -1 / O(bit)
     T lt(T key) const {
         int i = index(key) - 1;
         return (i < 0 ? -1 : get(i));
     }
 
+    /// @brief key 以上の最小の値を返す / 無ければ -1 / O(bit)
     T ge(T key) const {
         if (key == 0) return (!empty() ? get_min() : -1);
         int i = index_right(key - 1);
         return (i >= ma.tree[root].size ? -1 : get(i));
     }
 
+    /// @brief key 以下の最大の値を返す / 無ければ -1 / O(bit)
     T le(T key) const {
         int i = index_right(key) - 1;
         return (i < 0 ? -1 : get(i));
     }
 
+    /// @brief 全要素を昇順に並べて返す
     vector<T> tovector() const {
         vector<T> a;
         if (empty()) return a;
@@ -310,6 +330,7 @@ public:
         return a;
     }
 
+    /// @brief 空かを返す / O(1)
     bool empty() const {
         return ma.tree[root].size == 0;
     }
@@ -326,6 +347,7 @@ public:
         cout << "}" << endl;
     }
 
+    /// @brief 要素数を返す / O(1)
     int len() const {
         return ma.tree[root].size;
     }

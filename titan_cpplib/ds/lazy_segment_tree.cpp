@@ -7,9 +7,9 @@
 #include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
-// LazySegmentTree
 namespace titan23 {
 
+/// @brief 遅延伝播セグメント木 / 0-indexed
 template <class T, T (*op)(T, T), T (*e)(),
         class F, T (*mapping)(F, T), F (*composition)(F, F), F (*id)()>
 class LazySegmentTree {
@@ -48,6 +48,7 @@ private:
 
 public:
     LazySegmentTree() : n(0), log(0), size(0) {}
+    /// @brief 長さ n で構築する / 初期値 e() / O(n)
     LazySegmentTree(int n) {
         this->n = n;
         this->log = bit_length(n-1);
@@ -56,6 +57,7 @@ public:
         lazy.resize(this->size, id());
     }
 
+    /// @brief 列 a から構築する / O(n)
     LazySegmentTree(const vector<T> a) {
         this->n = a.size();
         this->log = bit_length(n-1);
@@ -70,6 +72,7 @@ public:
         lazy.resize(this->size, id());
     }
 
+    /// @brief a[k] に f を作用させる / O(log n)
     void apply_point(int k, F f) {
         k += size;
         for (int i = log; i > 0; --i) {
@@ -81,6 +84,7 @@ public:
         }
     }
 
+    /// @brief 区間 [l, r) に f を作用させる / O(log n)
     void apply(int l, int r, F f) {
         if (l == r || f == id()) return;
         l += size;
@@ -111,10 +115,12 @@ public:
         }
     }
 
+    /// @brief 全要素に f を作用させる / O(1)
     void all_apply(F f) {
         all_apply(1, f);
     }
 
+    /// @brief 区間 [l, r) の総積を返す / O(log n)
     T prod(int l, int r) {
         if (l == r) return e();
         l += size;
@@ -130,10 +136,12 @@ public:
         return op(lres, rres);
     }
 
+    /// @brief 全要素の総積を返す / O(1)
     T all_prod() const {
         return data[1];
     }
 
+    /// @brief a[k] を返す / O(log n)
     T get(int k) {
         k += size;
         for (int i = log; i > 0; --i) {
@@ -142,6 +150,7 @@ public:
         return data[k];
     }
 
+    /// @brief a[k] を v に変更する / O(log n)
     void set(int k, T v) {
         k += size;
         for (int i = log; i > 0; --i) {
@@ -153,6 +162,7 @@ public:
         }
     }
 
+    /// @brief f(prod(l, r)) が true となる最大の r を返す / f は単調で f(e()) = true が前提 / O(log n)
     template<typename Func>
     int max_right(int l, Func f) {
         assert(0 <= l && l <= n);
@@ -184,6 +194,7 @@ public:
         return n;
     }
 
+    /// @brief f(prod(l, r)) が true となる最小の l を返す / f は単調で f(e()) = true が前提 / O(log n)
     template<typename Func>
     int min_left(int r, Func f) {
         assert(0 <= r && r <= n);
@@ -215,6 +226,7 @@ public:
         return 0;
     }
 
+    /// @brief 列を vector で返す / O(n)
     vector<T> tovector() {
         for (int i = 1; i < size; ++i) {
             propagate(i);

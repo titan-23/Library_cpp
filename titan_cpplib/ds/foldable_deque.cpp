@@ -10,12 +10,14 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 両端の追加と削除、全要素の総積を扱う両端キュー
 template<class T, T (*op)(T, T), T (*e)()>
 class FoldableDeque {
 private:
     FoldableStack<T, op, e, true> front;
     FoldableStack<T, op, e, false> back;
 
+    // 全要素を前半と後半に分け、front と back に積み直す
     void rebuild() {
         vector<T> a;
         a.reserve(front.size() + back.size());
@@ -40,12 +42,14 @@ private:
 
 public:
     FoldableDeque() {}
+    /// @brief 列 a から構築する / O(n)
     FoldableDeque(const vector<T> &a) {
         for (const auto &v : a) {
             back.push(v);
         }
     }
 
+    /// @brief 要素を先頭から順に vector で返す / O(n)
     vector<T> tovector() const {
         vector<T> res;
         res.reserve(front.size() + back.size());
@@ -58,14 +62,17 @@ public:
         return res;
     }
 
+    /// @brief 末尾に v を追加する / 償却 O(1)
     void append(T v) {
         back.push(v);
     }
 
+    /// @brief 先頭に v を追加する / 償却 O(1)
     void appendleft(T v) {
         front.push(v);
     }
 
+    /// @brief 末尾の要素を削除して返す / 償却 O(1)
     T pop() {
         assert(!empty());
         if (back.empty()) rebuild();
@@ -80,6 +87,7 @@ public:
         }
     }
 
+    /// @brief 先頭の要素を削除して返す / 償却 O(1)
     T popleft() {
         assert(!empty());
         if (front.empty()) rebuild();
@@ -94,6 +102,7 @@ public:
         }
     }
 
+    /// @brief 全要素の総積を返す / O(1)
     T all_prod() const {
         return op(front.all_prod(), back.all_prod());
     }

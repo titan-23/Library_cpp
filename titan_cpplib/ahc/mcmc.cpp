@@ -6,12 +6,12 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief ベイズ線形回帰のためのギブスサンプラー
-/// 観測モデル: y_i ~ N(sum_k(A_{i,k} * X_k), obs_sigma_i^2)、事前分布: X_k ~ N(prior_mu_k, prior_sigma_k^2)
-/// report() の一回が「線形式 coeffs・X が y にほぼ等しい」一次方程式を一本足す。sigma が小さいほど強く信頼する。
-/// 観測は疎形式で保持し、nnz を全観測の非零係数の総数とする。
+/// @brief ベイズ線形回帰のギブスサンプラー
+/// 観測 y_i ~ N(sum_k(A_{i,k} * X_k), obs_sigma_i^2)、事前分布 X_k ~ N(prior_mu_k, prior_sigma_k^2) とする
+/// 計算量の N は観測数、nnz は全観測の非零係数の総数を表す
 class BayesianLinearGibbsSampler {
 public:
+    /// @brief 推定した各変数の事後平均と事後分散
     struct EstimationResult {
         vector<double> mean;
         vector<double> variance;
@@ -29,7 +29,7 @@ private:
     };
     vector<Observation> observations;
 
-    // 推定用の作業バッファ。再確保を避けるため呼び出し間で使い回す
+    // 推定用の作業領域。再確保を避けるため呼び出し間で使い回す
     mutable vector<double> inv_var, post_var, post_sd, errors, sum_X, sum_X2;
     mutable vector<vector<pair<int, double>>> var_obs;
 
@@ -38,7 +38,7 @@ private:
     mt19937 warm_gen;
     bool warm_inited = false;
 
-    // 反復で変化しない量（inv_var, var_obs, post_var, post_sd）を前計算する
+    // 反復で変わらない inv_var, var_obs, post_var, post_sd を前計算する
     void prepare_buffers() const {
         int N = observations.size();
         inv_var.assign(N, 0.0);
@@ -128,7 +128,7 @@ private:
     }
 
 public:
-    /// @brief 変数の数 K を指定して初期化する。初期の事前分布は全変数 N(0, 1) / O(K)
+    /// @brief 変数 K 個で初期化する / 事前分布は全変数 N(0, 1) / O(K)
     BayesianLinearGibbsSampler(int num_variables)
         : K(num_variables), prior_mu(K, 0.0), prior_var(K, 1.0) {}
 
@@ -140,10 +140,7 @@ public:
         prior_var[index] = sigma * sigma;
     }
 
-    /// @brief 観測値を疎形式で報告する / O(係数の個数)
-    /// @param y 観測された値
-    /// @param coeffs 非零の (変数index, 係数) の列
-    /// @param sigma 観測ノイズの標準偏差
+    /// @brief 非零の (変数index, 係数) の列 coeffs で観測値 y を疎形式で追加する / sigma は観測ノイズの標準偏差 / O(係数の個数)
     void report(double y, const vector<pair<int, double>> &coeffs, double sigma) {
         assert(sigma > 0.0);
         for (const auto &[k, c] : coeffs) {
@@ -152,10 +149,7 @@ public:
         observations.push_back({y, sigma * sigma, coeffs});
     }
 
-    /// @brief 観測値を密形式で報告する / O(K)
-    /// @param y 観測された値
-    /// @param coeffs 各変数に乗算される係数 (サイズはKであること)
-    /// @param sigma 観測ノイズの標準偏差
+    /// @brief 長さ K の係数列 coeffs で観測値 y を密形式で追加する / sigma は観測ノイズの標準偏差 / O(K)
     void report(double y, const vector<double> &coeffs, double sigma) {
         assert((int)coeffs.size() == K);
         vector<pair<int, double>> terms;
@@ -165,10 +159,7 @@ public:
         report(y, terms, sigma);
     }
 
-    /// @brief 事前分布から始めて推定する（バッチ用） / O(iterations * nnz + N + K)
-    /// @param iterations サンプリングの総反復回数。目安は 5000〜20000
-    /// @param burn_in 破棄する初期サンプルの数。iterations の 1〜2 割が目安 (iterations より小さいこと)
-    /// @param seed 乱数シード
+    /// @brief 事前分布から連鎖を始めて推定する / burn_in < iterations / O(iterations * (K + nnz) + N)
     EstimationResult estimate(int iterations, int burn_in = 1000, unsigned int seed = 42) const {
         assert(burn_in < iterations);
         vector<double> X = prior_mu;
@@ -176,12 +167,8 @@ public:
         return run_chain(X, gen, iterations, burn_in);
     }
 
-    /// @brief 直前の連鎖状態から継続して推定する（ターンごとの再推定用） / O(iterations * nnz + N + K)
-    /// 観測を追加してから呼ぶ。連鎖が前回の続きから始まるため burn_in を小さくでき、反復も少なくて済む。
-    /// 初回は事前分布から始める。連鎖を初期化するには reset_chain() を呼ぶ。
-    /// @param iterations サンプリングの総反復回数。ウォームスタートのため数百〜数千で足りることが多い
-    /// @param burn_in 破棄する初期サンプルの数 (iterations より小さいこと)
-    /// @param seed 初回のみ使う乱数シード
+    /// @brief 前回の連鎖状態から続けて推定する / burn_in < iterations / O(iterations * (K + nnz) + N)
+    /// 初回と reset_chain() の直後は事前分布から始め、そのときだけ seed を使う
     EstimationResult estimate_step(int iterations, int burn_in = 200, unsigned int seed = 42) {
         assert(burn_in < iterations);
         if (!warm_inited) {
@@ -192,7 +179,7 @@ public:
         return run_chain(warm_X, warm_gen, iterations, burn_in);
     }
 
-    /// @brief estimate_step() の連鎖状態を初期化する。次回呼び出しは事前分布から始まる / O(1)
+    /// @brief estimate_step() の連鎖を初期化し、次回は事前分布から始める / O(1)
     void reset_chain() {
         warm_inited = false;
     }

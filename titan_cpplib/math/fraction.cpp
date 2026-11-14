@@ -6,11 +6,13 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 分数 p/q を既約で q >= 0 の形に保つ
 template<typename T>
 class Fraction {
 public:
     T p, q;
 
+    /// @brief p/q で構築する / q == 0 のときは p の符号に応じて 1/0, -1/0, 0/0 にする
     Fraction(T p_ = 0, T q_ = 1) : p(p_), q(q_) {
         if (q == 0) {
             if (p > 0) { p = 1; q = 0; }
@@ -44,6 +46,7 @@ public:
     }
 
     Fraction operator-() const { return Fraction(-p, q); }
+    /// @brief 絶対値を返す
     Fraction abs() const { return Fraction(p < 0 ? -p : p, q); }
     Fraction operator+(const Fraction& other) const { return Fraction(p * other.q + other.p * q, q * other.q); }
     Fraction operator-(const Fraction& other) const { return Fraction(p * other.q - other.p * q, q * other.q); }
@@ -65,8 +68,11 @@ public:
         os << f.p << "/" << f.q;
         return os;
     }
+    /// @brief "p/q" 形式の文字列を返す
     string to_string() const { return std::to_string(p) + "/" + std::to_string(q); }
+    /// @brief 逆数を返す
     Fraction inv() const { return Fraction(q, p); }
+    /// @brief k 乗を返す / k < 0 なら逆数の -k 乗 / O(log |k|) 回の乗算
     Fraction pow(long long k) const {
         if (k < 0) return inv().pow(-k);
         Fraction res(1, 1), base = *this;
@@ -90,6 +96,7 @@ public:
     Fraction& operator-=(T v) { *this = *this - v; return *this; }
     Fraction& operator*=(T v) { *this = *this * v; return *this; }
     Fraction& operator/=(T v) { *this = *this / v; return *this; }
+    /// @brief p と q から作ったハッシュ値を返す
     size_t hash() const {
         std::hash<T> hasher;
         size_t seed = 0;

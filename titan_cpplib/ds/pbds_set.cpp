@@ -12,6 +12,7 @@ using namespace __gnu_pbds;
 
 namespace titan23 {
 
+/// @brief __gnu_pbds の順序付き木で実装した集合
 template<typename T>
 class PBDSSet {
 private:
@@ -21,7 +22,9 @@ private:
 
 public:
     PBDSSet() : missing() {}
+    /// @brief 空で構築する / 該当する要素がないとき le などは missing を返す
     PBDSSet(T missing) : missing(missing) {}
+    /// @brief 列 a の要素で構築する
     PBDSSet(const vector<T> &a, T missing) : tr(a.begin(), a.end()), missing(missing) {}
 
     /// @brief key がなければ追加し、追加できたかを返す / O(log N)
@@ -34,34 +37,34 @@ public:
         return tr.erase(key);
     }
 
-    /// @brief key を削除する 存在することが前提 / O(log N)
+    /// @brief key を削除する / key があることが前提 / O(log N)
     void remove(const T &key) {
         int erased = tr.erase(key);
         assert(erased > 0);
     }
 
-    /// @brief key 以下で最大 / O(log N)
+    /// @brief key 以下で最大の要素を返す / O(log N)
     T le(const T &key) const {
         int idx = index_right(key);
         if (idx == 0) return missing;
         return (*this)[idx - 1];
     }
 
-    /// @brief key 未満で最大 / O(log N)
+    /// @brief key 未満で最大の要素を返す / O(log N)
     T lt(const T &key) const {
         int idx = index(key);
         if (idx == 0) return missing;
         return (*this)[idx - 1];
     }
 
-    /// @brief key 以上で最小 / O(log N)
+    /// @brief key 以上で最小の要素を返す / O(log N)
     T ge(const T &key) const {
         int idx = index(key);
         if (idx == len()) return missing;
         return (*this)[idx];
     }
 
-    /// @brief key より大きくて最小 / O(log N)
+    /// @brief key より大きい最小の要素を返す / O(log N)
     T gt(const T &key) const {
         int idx = index_right(key);
         if (idx == len()) return missing;
@@ -82,17 +85,17 @@ public:
         return tr.order_of_key(key);
     }
 
-    /// @brief key の要素数を返す / O(log N)
+    /// @brief key の個数を返す / O(log N)
     int count(const T &key) const {
         return tr.find(key) != tr.end();
     }
 
-    /// @brief [low, high) の要素数を返す / O(log N)
+    /// @brief [low, high) にある要素数を返す / O(log N)
     int count_range(const T low, const T high) const {
         return index(high) - index(low);
     }
 
-    /// @brief 昇順 k 番目の要素を削除して返す / O(log N)
+    /// @brief 昇順 k 番目の要素を削除して返す / 負の k は末尾から数える / O(log N)
     T pop(int k = -1) {
         if (k < 0) k += len();
         assert(k >= 0 && k < len());
@@ -102,7 +105,7 @@ public:
         return key;
     }
 
-    /// @brief 昇順の vector にして返す / O(n)
+    /// @brief 昇順に並べた vector を返す / O(n)
     vector<T> tovector() const {
         vector<T> res;
         res.reserve(len());
@@ -112,7 +115,7 @@ public:
         return res;
     }
 
-    /// @brief key の存在判定 / O(log N)
+    /// @brief key があるかを返す / O(log N)
     bool contains(const T &key) const {
         return tr.find(key) != tr.end();
     }

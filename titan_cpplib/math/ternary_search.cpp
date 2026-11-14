@@ -9,7 +9,7 @@ namespace titan23 {
 
 /// @brief 区間 `[L, R]` で単峰な関数 `f` の極小値をとる点を黄金分割探索で求める
 template<class F>
-double golden_search(double L, double R, F f) { // 極小値
+double golden_search(double L, double R, F f) {
     const double C = 2-(1+sqrt(5))/2;
     double m1 = L + C * (R - L);
     double m2 = R - C * (R - L);

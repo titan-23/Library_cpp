@@ -10,6 +10,7 @@
 #include "titan_cpplib/ahc/tsp/tsp_guided_local_search.cpp"
 using namespace std;
 namespace titan23 {
+/// @brief tsp_edge_penalty_search の設定 / 上限は -1 で無効。時間と罰則周回数の少なくとも一方を有効にする
 struct TspEdgePenaltySearchOptions {
     int64_t max_penalty_rounds = -1;
     int64_t max_evaluated_moves = -1;
@@ -18,6 +19,7 @@ struct TspEdgePenaltySearchOptions {
     long double improved_penalty_ratio = 0.1L;
 };
 
+/// @brief tsp_edge_penalty_search の統計と止めた理由
 struct TspEdgePenaltySearchResult {
     int64_t evaluated_moves;
     int64_t applied_moves;
@@ -39,6 +41,7 @@ inline void check_options(const TspEdgePenaltySearchOptions& options) {
     }
 }
 
+// first_node を先頭とし direction の向きに辿った論理上の巡回路で、index 番目の点
 template<class Cost>
 int logical_node(const TspState<Cost>& state, int first_node, int direction, int index) {
     int n = state.size();
@@ -50,6 +53,7 @@ int logical_node(const TspState<Cost>& state, int first_node, int direction, int
     return state.order()[target];
 }
 
+// 論理上の巡回路での node の番号
 template<class Cost>
 int logical_index(const TspState<Cost>& state, int first_node, int direction, int node) {
     int n = state.size();
@@ -59,6 +63,7 @@ int logical_index(const TspState<Cost>& state, int first_node, int direction, in
     return position <= first ? first - position : n - (position - first);
 }
 
+// 隣り合う u と v を結ぶ辺の、order 上での始点の位置
 template<class Cost>
 int forward_edge_start(const TspState<Cost>& state, int u, int v) {
     int n = state.size();
@@ -69,6 +74,8 @@ int forward_edge_start(const TspState<Cost>& state, int u, int v) {
 }
 }
 
+/// @brief tsp2.py と同じ処理順で、辺に罰則を加えながら 2-opt で state を改善する / 終了時の state は見つけた最良の巡回路
+/// 1 周ごとに評価値が最大の辺の罰則を 1 増やし、その辺を外す 2-opt のうち罰則込みの費用が下がる最初の 1 つを適用する
 template<class EdgeCost>
 auto tsp_edge_penalty_search(
     const TspProblem<EdgeCost>& problem,

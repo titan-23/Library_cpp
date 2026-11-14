@@ -11,6 +11,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 静的な列の区間最小値を返す
 template<typename T>
 class StaticRmQ {
 private:
@@ -19,6 +20,7 @@ private:
     T INF;
     static constexpr const int W = 64;
     vector<T> bucket;
+    // bucket_bit[i * W + j] の bit p は、ブロック i の区間 [p, j] で位置 p の値が最小であることを表す
     vector<u64> bucket_bit;
     vector<T> sp_data;
     vector<int> offset;
@@ -55,6 +57,7 @@ private:
 
 public:
     StaticRmQ() {}
+    /// @brief 列 a から構築する / 空区間の prod は INF を返す
     StaticRmQ(const vector<T> &a, T INF) : n(a.size()), INF(INF) {
         if (n == 0) return;
         int bucket_cnt = (n + W - 1) / W;
@@ -84,7 +87,7 @@ public:
         build_sparse_table(init);
     }
 
-    // min a[l, r) / O(1)
+    /// @brief 区間 [l, r) の最小値を返す / 空区間は INF / O(1)
     T prod(int l, int r) const {
         assert(0 <= l && l <= r && r <= n);
         if (l == r) return INF;

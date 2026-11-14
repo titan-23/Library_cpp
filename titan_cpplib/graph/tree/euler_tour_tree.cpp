@@ -6,20 +6,9 @@
 #include <unordered_map>
 using namespace std;
 
-// EulerTourTree
 namespace titan23 {
 
-/**
- * @brief EulerTourTree(動的木)
- *
- * @tparam T
- * @tparam F
- * @tparam (*op)(T, T)
- * @tparam (*mapping)(F, T)
- * @tparam (*composition)(F, F)
- * @tparam (*e)()
- * @tparam (*id)()
- */
+/// @brief Euler Tour Tree による動的木 / 部分木への作用と部分木の和を扱う / 辺のノードも値 e() を持ち作用を受けるので、mapping(f, e()) は e() と同じに扱えること
 template <class T,
             T (*op)(T, T),
             T (*e)(),
@@ -220,16 +209,18 @@ class EulerTourTree {
     public:
     EulerTourTree() : n(0), group_numbers(0) {}
 
+    /// @brief 値が e() の孤立点 n 個で構築する / O(n)
     EulerTourTree(int n) : n(n), group_numbers(n) {
         vector<T> a(n, e());
         _init_build(a);
     }
 
+    /// @brief 値が a の孤立点で構築する / O(n)
     EulerTourTree(vector<T> a) : n((int)a.size()), group_numbers((int)a.size()) {
         _init_build(a);
     }
 
-    /// 隣接リストから構築する / `O(n)`
+    /// @brief 隣接リスト G から森を構築する / 辺を張る前に呼ぶ / O(n)
     void build(vector<vector<int>> &G) {
         vector<int> seen(n, 0);
         vector<long long> a;
@@ -277,7 +268,7 @@ class EulerTourTree {
         }
     }
 
-    /// 辺 `{u, v}` を追加する / `O(logn)`
+    /// @brief 辺 {u, v} を追加する / u と v は非連結であること / 償却 O(log n)
     void link(const int u, const int v) {
         reroot(u);
         reroot(v);
@@ -293,7 +284,7 @@ class EulerTourTree {
         --group_numbers;
     }
 
-    /// 辺 `{u, v}` を削除する / `O(logn)`
+    /// @brief 辺 {u, v} を削除する / 辺 {u, v} が存在すること / 償却 O(log n)
     void cut(const int u, const int v) {
         reroot(v);
         reroot(u);
@@ -310,14 +301,14 @@ class EulerTourTree {
         ++group_numbers;
     }
 
-    /// 辺 `{u, v}` がなければ追加する / `O(logn)`
+    /// @brief u と v が非連結なら辺 {u, v} を追加し、追加したかを返す / 償却 O(log n)
     bool merge(const int u, const int v) {
         if (same(u, v)) return false;
         link(u, v);
         return true;
     }
 
-    /// 辺 `{u, v}` があれば削除する / `O(logn)`
+    /// @brief 辺 {u, v} があれば削除し、削除したかを返す / 償却 O(log n)
     bool split(const int u, const int v) {
         if (ptr_edge.find((long long)u*n+v) == ptr_edge.end() || ptr_edge.find((long long)v*n+u) == ptr_edge.end()) {
             return false;
@@ -326,12 +317,12 @@ class EulerTourTree {
         return true;
     }
 
-    /// 代表元？ / `O(logn)`
+    /// @brief v を含む木の Euler tour の先頭ノードを返す / 償却 O(log n)
     NodePtr leader(const int v) {
         return _left_splay(ptr_vertex[v]);
     }
 
-    /// 根を `v` にする / `O(logn)`
+    /// @brief 根を v にする / 償却 O(log n)
     void reroot(const int v) {
         NodePtr node = ptr_vertex[v];
         auto[x, y] = _split_right(node);
@@ -339,7 +330,7 @@ class EulerTourTree {
         _splay(node);
     }
 
-    /// 連結判定 / `O(logn)`
+    /// @brief u と v が連結かを返す / 償却 O(log n)
     bool same(const int u, const int v) {
         NodePtr u_node = ptr_vertex[u];
         NodePtr v_node = ptr_vertex[v];
@@ -348,7 +339,7 @@ class EulerTourTree {
         return (u_node->par != nullptr || u_node == v_node);
     }
 
-    /// `v` を根とする部分木に `f` を作用、ただし `v` の親は `p(or -1)` / `O(logn)`
+    /// @brief v を根とする部分木に f を作用させる / v の親は p で、なければ -1 / 償却 O(log n)
     void subtree_apply(const int v, const int p, const F f) {
         NodePtr v_node = ptr_vertex[v];
         reroot(v);
@@ -372,7 +363,7 @@ class EulerTourTree {
         _merge(b, d);
     }
 
-    /// `v` を根とする部分木の総和、ただし `v` の親は `p(or -1)` / `O(logn)`
+    /// @brief v を根とする部分木の総和を返す / v の親は p で、なければ -1 / 償却 O(log n)
     T subtree_sum(const int v, const int p) {
         NodePtr v_node = ptr_vertex[v];
         reroot(v);
@@ -391,19 +382,19 @@ class EulerTourTree {
         return res;
     }
 
-    /// 連結成分の個数を返す / `(1)`
+    /// @brief 連結成分の個数を返す / O(1)
     int group_count() const {
         return group_numbers;
     }
 
-    /// `v` の値を取得 / `O(logn)`
+    /// @brief v の値を返す / 償却 O(log n)
     T get_vertex(const int v) {
         NodePtr node = ptr_vertex[v];
         _splay(node);
         return node->key;
     }
 
-    /// `v` の値を `val` に変更 / `O(logn)`
+    /// @brief v の値を val に変更する / 償却 O(log n)
     void set_vertex(const int v, const T val) {
         NodePtr node = ptr_vertex[v];
         _splay(node);

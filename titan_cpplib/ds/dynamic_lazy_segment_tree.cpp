@@ -16,24 +16,13 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 一様な区間の境界をPatricia木で管理する動的遅延セグメント木
-/// 管理範囲は[0,N)で、composition(f,g)はgの後にfを適用する作用
-/// pow(x,k)はxをk個結合した値を返し、pow(x,0)==e()を満たす
-/// Nは列の長さ、Mは保持ノード数、M_otherはコピー元またはムーブ元のノード数
-/// TとFの演算・コピー・ムーブ・破棄、pow、述語の評価はO(1)とする
-/// ノード追加を含む計算量は償却計算量で、区間数Bに対してノード数は2B-1個
-/// B=0ならノード数は0個で、同じ境界への更新と問い合わせはノードを追加しない
-/// 葉と分岐を別々のプールに保持し、葉には1要素の値と区間長だけを持たせる
-/// 分岐の右端は保存せず、下降時に親から持ち回る
-/// 型の整列条件に合わせて小さい分岐配置を選び、余白があれば分岐ビットを保持する
-/// ノード番号は0が欠損、奇数が葉、正の偶数が分岐で、右の子の最上位ビットが遅延フラグ
-/// 保持ノード数の上限は2^31-1個
-/// 探索スタックは添字型のビット幅だけ領域を確保し、生存する探索状態は最大O(logN)個
-/// Tの等値比較は不要で、値が等しくなった隣接区間は自動結合しない
+/// @brief 一様な区間の境界をPatricia木で管理する動的遅延セグメント木 / 管理範囲は[0,N) / 保持ノード数は2^31-1個まで
+/// composition(f,g)はgの後にfを適用する作用で、pow(x,k)はxをk個結合した値を返しpow(x,0)==e()を満たす
 template <class IndexType, class T, T (*op)(T, T), T (*e)(),
           class F, T (*mapping)(F, T), F (*composition)(F, F), F (*id)(),
           T (*pow)(T, IndexType)>
 class DynamicLazySegmentTree {
+    // ノード番号は0が欠損、奇数が葉、正の偶数が分岐で、右の子の最上位ビットを遅延フラグに使う
     using NodeId = uint32_t;
     static constexpr NodeId lazy_flag = NodeId(1) << 31;
     static constexpr NodeId none = 0;
@@ -162,8 +151,7 @@ class DynamicLazySegmentTree {
         return branches[(p >> 1) - 1];
     }
 
-    /// @brief Fが等値比較できる場合に恒等作用か判定する / O(1)
-    /// 等値比較できないFではfalseを返す
+    /// @brief Fが等値比較できれば恒等作用か判定し、できなければfalseを返す / O(1)
     static bool is_identity(const F& f) {
         if constexpr (HasEquality<F>::value) return bool(f == id());
         else return false;
@@ -257,8 +245,7 @@ class DynamicLazySegmentTree {
         }
     }
 
-    /// @brief 一様な区間を表す葉を部分木へ挿入する / O(logN)
-    /// 先頭に挿入した場合はnode_minも更新する
+    /// @brief 一様な区間を表す葉を部分木へ挿入し、先頭に入れたときはnode_minも更新する / O(logN)
     NodeId insert_run(NodeId p, IndexType& node_min, Pending added) {
         const IndexType key = added.key;
         if (is_leaf(p)) {
@@ -368,53 +355,9 @@ class DynamicLazySegmentTree {
         }
     }
 
-    /// @brief 部分木の先頭からr未満の範囲を集約する / O(logN)
-    T prefix_prod(NodeId p, IndexType node_min, IndexType node_hi, IndexType r, F carry, bool has_carry) const {
-        T acc = e();
-        while (true) {
-            if (is_leaf(p) || node_hi <= r) {
-                T part = is_leaf(p) ? pow(leaf(p).data, r - node_min) : branch(p).data;
-                if (has_carry) part = mapping(carry, part);
-                return op(acc, part);
-            }
-            carry_lazy(p, carry, has_carry);
-            if (r <= branch(p).split) {
-                node_hi = branch(p).split;
-                p = branch(p).left;
-            }
-            else {
-                T part = aggregate(branch(p).left);
-                if (has_carry) part = mapping(carry, part);
-                acc = op(acc, part);
-                node_min = branch(p).split;
-                p = branch(p).right();
-            }
-        }
-    }
-
-    /// @brief l以上から部分木の末尾までを集約する / O(logN)
-    T suffix_prod(NodeId p, IndexType node_min, IndexType l, F carry, bool has_carry) const {
-        T acc = e();
-        while (true) {
-            if (is_leaf(p) || l <= node_min) {
-                T part = is_leaf(p) ? pow(leaf(p).data, node_min + leaf(p).length - l) : branch(p).data;
-                if (has_carry) part = mapping(carry, part);
-                return op(part, acc);
-            }
-            carry_lazy(p, carry, has_carry);
-            if (branch(p).split <= l) {
-                node_min = branch(p).split;
-                p = branch(p).right();
-            } else {
-                T part = aggregate(branch(p).right());
-                if (has_carry) part = mapping(carry, part);
-                acc = op(part, acc);
-                p = branch(p).left;
-            }
-        }
-    }
-
     /// @brief 部分木内の[l,r)を遅延伝播せずに集約する / O(logN)
+    // 呼び出し元へ展開すると遅くなったため展開させない
+    [[gnu::noinline]]
     T inner_prod(NodeId p, IndexType node_min, IndexType node_hi, IndexType l, IndexType r, F carry, bool has_carry) const {
         while (true) {
             if (is_leaf(p) || (l <= node_min && node_hi <= r)) {
@@ -431,12 +374,61 @@ class DynamicLazySegmentTree {
                 node_min = mid;
                 p = branch(p).right();
             }
-            else {
-                T lv = suffix_prod(branch(p).left, node_min, l, carry, has_carry);
-                T rv = prefix_prod(branch(p).right(), mid, node_hi, r, move(carry), has_carry);
-                return op(lv, rv);
+            else break;
+        }
+        const Branch& top = branch(p);
+        NodeId left = top.left, right = top.right();
+        IndexType left_min = node_min, right_min = top.split, right_hi = node_hi;
+        F left_carry = carry, right_carry = move(carry);
+        bool left_has_carry = has_carry, right_has_carry = has_carry;
+        T left_acc = e(), right_acc = e();
+        bool left_done = false, right_done = false;
+        while (!(left_done & right_done)) {
+            // 左の子ではl以上を右から結合する
+            if (!left_done) {
+                if (is_leaf(left) || l <= left_min) {
+                    T part = is_leaf(left) ? pow(leaf(left).data, left_min + leaf(left).length - l) : branch(left).data;
+                    if (left_has_carry) part = mapping(left_carry, part);
+                    left_acc = op(part, left_acc);
+                    left_done = true;
+                } else {
+                    carry_lazy(left, left_carry, left_has_carry);
+                    const Branch& b = branch(left);
+                    if (b.split <= l) {
+                        left_min = b.split;
+                        left = b.right();
+                    } else {
+                        T part = aggregate(b.right());
+                        if (left_has_carry) part = mapping(left_carry, part);
+                        left_acc = op(part, left_acc);
+                        left = b.left;
+                    }
+                }
+            }
+            // 右の子ではr未満を左から結合する
+            if (!right_done) {
+                if (is_leaf(right) || right_hi <= r) {
+                    T part = is_leaf(right) ? pow(leaf(right).data, r - right_min) : branch(right).data;
+                    if (right_has_carry) part = mapping(right_carry, part);
+                    right_acc = op(right_acc, part);
+                    right_done = true;
+                } else {
+                    carry_lazy(right, right_carry, right_has_carry);
+                    const Branch& b = branch(right);
+                    if (r <= b.split) {
+                        right_hi = b.split;
+                        right = b.left;
+                    } else {
+                        T part = aggregate(b.left);
+                        if (right_has_carry) part = mapping(right_carry, part);
+                        right_acc = op(right_acc, part);
+                        right_min = b.split;
+                        right = b.right();
+                    }
+                }
             }
         }
+        return op(left_acc, right_acc);
     }
 
     /// @brief 一様な区間で判定を満たす長さを二分探索する / O(logN)
@@ -494,7 +486,7 @@ class DynamicLazySegmentTree {
         F carry;
     };
 
-    /// Pは保存している探索状態数で、Fの既定構築を要求せず必要な状態だけを構築する
+    // Fの既定構築を要求せず、必要な探索状態だけを構築するスタック
     class SearchStack {
         alignas(SearchFrame) unsigned char storage[sizeof(SearchFrame) * sizeof(IndexType) * CHAR_BIT];
         unsigned count = 0;
@@ -514,7 +506,7 @@ class DynamicLazySegmentTree {
         /// @brief 探索状態のコピー代入を禁止する
         SearchStack& operator=(const SearchStack&) = delete;
 
-        /// @brief 保存している探索状態を全て破棄する / O(P)
+        /// @brief 保存している探索状態を全て破棄する / O(P)、Pは保存している探索状態数
         ~SearchStack() {
             while (count != 0) entry(--count)->~SearchFrame();
         }
@@ -623,6 +615,9 @@ class DynamicLazySegmentTree {
     }
 
 public:
+    // 計算量のNは列の長さ、Mは保持ノード数、M_otherはコピー元またはムーブ元のノード数
+    // 計算量はTとFの演算とpowと述語をO(1)とした値で、ノード追加を含むものは償却計算量
+
     /// @brief 長さ0の木を構築する / O(1)
     DynamicLazySegmentTree() = default;
 

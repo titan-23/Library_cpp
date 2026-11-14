@@ -12,14 +12,14 @@ using namespace std;
 
 namespace titan23 {
 
-/// 点更新と区間の異なる値の個数に対応する
+/// @brief 一点更新に対応し、区間内の異なる値の個数を数える / 0-indexed
 /// 値の同一性は operator< で判定する
-/// 直前の同値要素の位置+1（なければ0）を管理し、区間内で prev <= l の個数を数える
 template<typename T>
 class PointUpdateRangeDistinctQuery {
 private:
     vector<T> a;
     map<T, std::set<int>> pos;
+    // wm[i] は a[i] と同じ値が直前に現れた位置 +1 で、無ければ 0
     DynamicWaveletTree<int> wm;
 
     static vector<int> build_prev(const vector<T> &a, map<T, std::set<int>> &pos) {
@@ -33,28 +33,30 @@ private:
     }
 
 public:
-    /// 空の列を構築する / O(1)
+    /// @brief 空の列を構築する / O(1)
     PointUpdateRangeDistinctQuery() : wm(1) {}
 
-    /// 列 a から構築する / O(n log n)
+    /// @brief 列 a から構築する / O(n log n)
     explicit PointUpdateRangeDistinctQuery(const vector<T> &a)
         : a(a), pos(), wm(max(1, static_cast<int>(a.size())), build_prev(a, pos)) {}
 
-    /// 区間 [l, r) の異なる値の個数を返す / O(log^2 n)
+    /// @brief 区間 [l, r) の異なる値の個数を返す / O(log^2 n)
     int count(const int l, const int r) const {
         assert(0 <= l && l <= r && r <= len());
+        // 区間内で wm[i] <= l となる個数が答え
         return wm.range_freq(l, r, l + 1);
     }
 
+    /// @brief count(l, r) と同じ / O(log^2 n)
     int range_distinct(const int l, const int r) const { return count(l, r); }
 
-    /// a[k] を返す / O(1)
+    /// @brief a[k] を返す / O(1)
     const T &access(const int k) const {
         assert(0 <= k && k < len());
         return a[k];
     }
 
-    /// a[k] を v に変更する / O(log^2 n)
+    /// @brief a[k] を v に変更する / O(log^2 n)
     void set(const int k, const T &v) {
         assert(0 <= k && k < len());
         const auto less = pos.key_comp();
@@ -81,10 +83,12 @@ public:
         a[k] = v;
     }
 
+    /// @brief 要素数を返す / O(1)
     int len() const { return a.size(); }
+    /// @brief 空か判定する / O(1)
     bool empty() const { return a.empty(); }
 
-    /// 列を vector にして返す / O(n)
+    /// @brief 列を配列にして返す / O(n)
     vector<T> tovector() const { return a; }
 };
 

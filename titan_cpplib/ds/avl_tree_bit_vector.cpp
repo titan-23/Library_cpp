@@ -11,9 +11,9 @@
 #include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
-// AVLTreeBitVector
 namespace titan23 {
 
+/// @brief AVL 木で管理する動的ビットベクトル / 各ノードに最大 127 ビットを詰める
 class AVLTreeBitVector {
 private:
     using uint128 = __uint128_t;
@@ -21,6 +21,7 @@ private:
     static constexpr int _W = 127;
     static constexpr int _MAX_HEIGHT = 64;
 
+    // key は bit_len ビットの列で、先頭の要素を最上位ビットに置く
     struct Node {
         uint128 key;
         int left;
@@ -37,9 +38,11 @@ private:
             : key(key), left(0), right(0), size(bit_len), total(key_total), bit_len(bit_len), key_total(key_total), height(1) {}
     };
 
+    // _nodes[0] は空の部分木を表す番兵
     vector<Node> _nodes;
     int _root;
 
+    // key の先頭 take ビットに含まれる 1 の個数を返す
     int _prefix_total(const uint128 key, const int bit_len, const int take) const {
         const uint64_t low = key;
         if (bit_len <= 64) return titan23::popcount(low >> ((bit_len - take) & 63)) * (take != 0);
@@ -58,6 +61,7 @@ private:
 
     uint64_t _mask64(const int bit_len) const { return bit_len == 64 ? UINT64_MAX : bit_len == 0 ? 0 : (static_cast<uint64_t>(1) << bit_len) - 1; }
 
+    // 下位 lower_bit_len ビットの上に bit を差し込む
     uint128 _bit_insert(const uint128 value, const int lower_bit_len, const bool bit) const {
         const uint64_t low = value;
         const uint64_t high = value >> 64;
@@ -72,6 +76,7 @@ private:
         return (static_cast<uint128>(new_high) << 64) | low;
     }
 
+    // 下位 lower_bit_len ビットのうち最上位のビットを取り除く
     uint128 _bit_pop(const uint128 value, const int lower_bit_len) const {
         const uint64_t low = value;
         const uint64_t high = value >> 64;
@@ -155,6 +160,7 @@ private:
         return node;
     }
 
+    // 根からの経路と進んだ向きを記録する
     void _push_path(array<int, _MAX_HEIGHT> &path, uint64_t &directions, int &depth, const int node, const bool go_right) const {
         assert(depth < _MAX_HEIGHT);
         path[depth] = node;
@@ -283,6 +289,7 @@ private:
         return left;
     }
 
+    // ノード内の k ビット目を削除する。ノードが空になれば直前のノードで置き換える
     void _pop_at_node(array<int, _MAX_HEIGHT> &path, uint64_t directions, int depth, const int node, const int k, const bool removed_bit) {
         Node &target = _nodes[node];
         if (target.bit_len > 1) {
@@ -316,29 +323,37 @@ private:
     }
 
 public:
+    /// @brief 空のビット列で構築する / O(1)
     AVLTreeBitVector() : _nodes(1), _root(0) {}
 
+    /// @brief 列 a から構築する / O(n)
     AVLTreeBitVector(const vector<uint8_t> &a) : _nodes(1), _root(0) {
         _build(a, 0, a.size());
     }
 
+    /// @brief a[start, end) から構築する / O(end - start)
     AVLTreeBitVector(const vector<uint8_t> &a, const int start, const int end) : _nodes(1), _root(0) {
         _build(a, start, end);
     }
 
+    /// @brief 全要素を削除する
     void clear() {
         _nodes.resize(1);
         _root = 0;
     }
 
+    /// @brief n ビット分のノード領域を予約する
     void reserve(const int n) {
         _nodes.reserve((n + _W - 1) / _W + 1);
     }
 
+    /// @brief 位置 k に bit を挿入する / O(log n)
     void insert(const int k, const bool bit) { _insert_and_rank1(k, bit); }
 
+    /// @brief 位置 k のビットを削除して返す / O(log n)
     bool pop(const int k) { return _access_pop_and_rank1(k) & 1; }
 
+    /// @brief 位置 k のビットを bit にする / O(log n)
     void set(int k, const bool bit) {
         assert(0 <= k && k < len());
         array<int, _MAX_HEIGHT> path;
@@ -374,6 +389,7 @@ public:
         }
     }
 
+    /// @brief ビット列を vector<uint8_t> で返す / O(n)
     vector<uint8_t> tovector() const {
         vector<uint8_t> result(len());
         if (_root == 0) return result;
@@ -398,6 +414,7 @@ public:
         return result;
     }
 
+    /// @brief 位置 k のビットを返す / O(log n)
     bool access(int k) const {
         assert(0 <= k && k < len());
         int node = _root;
@@ -418,23 +435,28 @@ public:
         }
     }
 
+    /// @brief [0, r) の 0 の個数を返す / O(log n)
     int rank0(const int r) const {
         assert(0 <= r && r <= len());
         return r - _pref(r);
     }
 
+    /// @brief [0, r) の 1 の個数を返す / O(log n)
     int rank1(const int r) const {
         assert(0 <= r && r <= len());
         return _pref(r);
     }
 
+    /// @brief [0, r) の bit の個数を返す / O(log n)
     int rank(const int r, const bool bit) const { return bit ? rank1(r) : rank0(r); }
 
+    /// @brief {rank0(l), rank0(r)} を返す / O(log n)
     pair<int, int> _rank0_pair(const int l, const int r) const {
         assert(0 <= l && l <= r && r <= len());
         return {l - _pref(l), r - _pref(r)};
     }
 
+    /// @brief k 番目の 0 の位置を返す / 0-indexed / O(log n)
     int select0(const int k) const {
         assert(0 <= k && k < len() - _total(_root));
         int node = _root;
@@ -456,6 +478,7 @@ public:
         }
     }
 
+    /// @brief k 番目の 1 の位置を返す / 0-indexed / O(log n)
     int select1(const int k) const {
         assert(0 <= k && k < _total(_root));
         int node = _root;
@@ -476,8 +499,10 @@ public:
         }
     }
 
+    /// @brief k 番目の bit の位置を返す / 0-indexed / O(log n)
     int select(const int k, const bool bit) const { return bit ? select1(k) : select0(k); }
 
+    /// @brief k 番目の bit を削除し、その位置を返す / 0-indexed / O(log n)
     int _select_pop(int k, const bool bit) {
         assert(0 <= k && k < (bit ? _total(_root) : len() - _total(_root)));
         array<int, _MAX_HEIGHT> path;
@@ -507,6 +532,7 @@ public:
         }
     }
 
+    /// @brief 位置 k に bit を挿入し、挿入前の rank1(k) を返す / O(log n)
     int _insert_and_rank1(int k, const bool bit) {
         assert(0 <= k && k <= len());
         if (_root == 0) {
@@ -590,6 +616,7 @@ public:
         return result;
     }
 
+    /// @brief 位置 k のビット b を削除し、(rank1(k) << 1) | b を返す / O(log n)
     int _access_pop_and_rank1(int k) {
         assert(0 <= k && k < len());
         array<int, _MAX_HEIGHT> path;
@@ -624,6 +651,7 @@ public:
         return (result << 1) | removed_bit;
     }
 
+    /// @brief {位置 k のビット, rank1(k)} を返す / O(log n)
     pair<bool, int> _access_ans_rank1(int k) const {
         assert(0 <= k && k < len());
         int node = _root;
@@ -648,6 +676,7 @@ public:
         }
     }
 
+    /// @brief 位置 k のビットを bit にし、{変更前のビット, rank1(k)} を返す / O(log n)
     pair<bool, int> _access_set_and_rank1(int k, const bool bit) {
         assert(0 <= k && k < len());
         array<int, _MAX_HEIGHT> path;
@@ -683,6 +712,7 @@ public:
         }
     }
 
+    /// @brief ビット列を標準出力に出す / O(n)
     void print() const {
         const vector<uint8_t> a = tovector();
         cout << "[";
@@ -695,8 +725,10 @@ public:
         cout << "]" << endl;
     }
 
+    /// @brief 空なら true を返す / O(1)
     bool empty() const { return _root == 0; }
 
+    /// @brief ビット数を返す / O(1)
     int len() const { return _size(_root); }
 };
 

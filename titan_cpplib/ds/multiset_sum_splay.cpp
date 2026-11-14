@@ -6,6 +6,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 総和を求められる多重集合 / スプレー木で実装し、ノード領域は全インスタンスで共有する
 template<typename T>
 class MultisetSumSplay {
 private:
@@ -169,7 +170,7 @@ private:
 
     MultisetSumSplay(int root) : root(root) {}
 
-    // leftのsize==k
+    // 左側の要素数が k になるように分割する
     pair<int, int> split_node_kth(int node, int k) {
         if (node == 0 || k <= 0) return make_pair(0, node);
         if (k >= ma.d[node].size) return make_pair(node, 0);
@@ -195,6 +196,7 @@ private:
 
 public:
     MultisetSumSplay() : root(0), S(0) {}
+    /// @brief 列 a から構築する / a は昇順であることが前提
     MultisetSumSplay(vector<T> a) : S(0) {
         if (a.empty()) {
             root = 0;
@@ -218,16 +220,19 @@ public:
         root = build(build, 0, a.size());
     }
 
+    /// @brief 先頭 k 個とそれ以外に分けた 2 つを返す / 自身は使えなくなり、返り値の all_prod は不定
     pair<MultisetSumSplay<T>, MultisetSumSplay<T>> split(int k) {
         auto [left, right] = split_node_kth(root, k);
         return {MultisetSumSplay(left), MultisetSumSplay(right)};
     }
 
+    /// @brief other を自身の後ろに連結する / other の要素が全て自身の要素以上であることが前提
     void merge(MultisetSumSplay<T> &other) {
         root = merge_node(root, other.root);
         other.root = nullptr;
     }
 
+    /// @brief node を根とする部分木の要素を出力する / デバッグ用
     void print_node(int node) {
         stack<int> st;
         vector<T> a;
@@ -250,7 +255,7 @@ public:
         cout << "]" << endl;
     }
 
-    /// vectorにしたときの区間[l, r)の和
+    /// @brief 昇順に並べたときの [l, r) 番目の要素の総和を返す / 償却 O(log n)
     T range_sum_at(int l, int r) {
         assert(0 <= l && l <= r && r <= len());
         int a, b, c;
@@ -263,6 +268,7 @@ public:
         return res;
     }
 
+    /// @brief key を 1 個削除し、削除できたかを返す / 償却 O(log n)
     bool discard(const T key) {
         if (root == 0) return false;
         root = find_splay(root, key);
@@ -274,6 +280,7 @@ public:
         return false;
     }
 
+    /// @brief key を 1 個削除する / key があることが前提 / 償却 O(log n)
     void remove(const T key) {
         S -= key;
         root = find_splay(root, key);
@@ -281,6 +288,7 @@ public:
         remove_root();
     }
 
+    /// @brief 昇順 k 番目の要素を削除して返す / 償却 O(log n)
     T pop(int k) {
         assert(0 <= k && k < len());
         root = kth_splay(root, k);
@@ -290,6 +298,7 @@ public:
         return res;
     }
 
+    /// @brief key を 1 個追加する / 償却 O(log n)
     void add(T key) {
         S += key;
         int node = ma.new_node(key);
@@ -313,20 +322,24 @@ public:
         root = node;
     }
 
+    /// @brief 全要素の総和を返す / O(1)
     T all_prod() const {
         return S;
     }
 
+    /// @brief 昇順 k 番目の要素を返す / 償却 O(log n)
     T get(int k) {
         assert(0 <= k && k < len());
         root = kth_splay(root, k);
         return ma.d[root].key;
     }
 
+    /// @brief 要素数を返す / O(1)
     int len() const {
         return ma.d[root].size;
     }
 
+    /// @brief 木の高さを返す / O(n)
     int get_height() const {
         auto rec = [&] (auto &&rec, int node) -> int {
             if (node == 0) return 0;
@@ -338,7 +351,7 @@ public:
         return rec(rec, root);
     }
 
-    // 総和がw未満となるように先頭からとるとき、いくつとれるか？
+    /// @brief 小さい順に取るとき、総和が w 未満となる最大の個数を返す / 償却 O(log n)
     int count_sumlim(T w) {
         int ans = 0;
         T now = 0;
@@ -357,7 +370,7 @@ public:
         return ans;
     }
 
-    // key未満の要素数を返す
+    /// @brief key 未満の要素数を返す / 償却 O(log n)
     int index(T key) {
         if (!root) return 0;
         int ans = 0;
@@ -375,7 +388,7 @@ public:
         return ans;
     }
 
-    // key以下の要素数を返す
+    /// @brief key 以下の要素数を返す / 償却 O(log n)
     int index_right(T key) {
         if (!root) return 0;
         int ans = 0;
@@ -393,21 +406,24 @@ public:
         return ans;
     }
 
-    // low以上high未満の要素数を返す
+    /// @brief low 以上 high 未満の要素数を返す / 償却 O(log n)
     int count_range(T low, T high) {
         assert(low <= high);
         return index(high) - index(low);
     }
 
+    /// @brief ノード cap 個分の領域を確保する
     void reserve(int cap) {
         ma.reserve(cap);
     }
 
+    /// @brief 全要素を削除する / 共有のノード領域を初期化するので、他のインスタンスも無効になる
     void clear() {
         ma.reset();
         root = 0;
     }
 
+    /// @brief 昇順に並べた vector を返す / O(n)
     vector<T> tovector() const {
         int node = root;
         stack<int> st;
@@ -427,6 +443,7 @@ public:
         return a;
     }
 
+    /// @brief 要素が昇順に並ぶことを assert で検査する / デバッグ用
     void test_sorted() const {
         vector<T> a = tovector();
         int n = a.size();
@@ -435,6 +452,7 @@ public:
         }
     }
 
+    /// @brief 親へのリンクの整合性を assert で検査する / デバッグ用
     void test() const {
         auto dfs = [&] (auto &&dfs, int node, int pnode) {
             if (node == 0) return;

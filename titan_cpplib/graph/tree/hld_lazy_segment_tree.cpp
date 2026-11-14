@@ -9,6 +9,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 遅延セグメント木を載せた HLD / op は非可換でもよい
 template <class T,
         T (*op)(T, T),
         T (*e)(),
@@ -24,11 +25,13 @@ private:
 public:
     HLDLazySegmentTree() {}
 
+    /// @brief hld の上に、全頂点の値を e() として構築する / O(N)
     HLDLazySegmentTree(titan23::HLD &hld) : hld(hld) {
         seg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(hld.n);
         rseg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(hld.n);
     }
 
+    /// @brief hld の上に、頂点 k の値を a[k] として構築する / O(N)
     HLDLazySegmentTree(titan23::HLD &hld, vector<T> a) : hld(hld) {
         vector<T> b = hld.build_list(a);
         seg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(b);
@@ -52,6 +55,7 @@ public:
         rseg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(b);
     }
 
+    /// @brief u から v へのパスの総積を返す / O(log^2 N)
     T path_prod(int u, int v) {
         T lres = e(), rres = e();
         while (hld.head[u] != hld.head[v]) {
@@ -71,6 +75,7 @@ public:
         return op(lres, rres);
     }
 
+    /// @brief u から v へのパス上の頂点に f を作用させる / O(log^2 N)
     void path_apply(int u, int v, F f) {
         while (hld.head[u] != hld.head[v]) {
             if (hld.dep[hld.head[u]] < hld.dep[hld.head[v]]) swap(u, v);
@@ -83,19 +88,23 @@ public:
         rseg.apply(hld.n - (hld.nodein[u]) - 1, hld.n - hld.nodein[v], f);
     }
 
+    /// @brief 頂点 k の値を返す / O(logN)
     T get(int k) {
         return seg.get(hld.nodein[k]);
     }
 
+    /// @brief 頂点 k の値を v に更新する / O(logN)
     void set(int k, T v) {
         seg.set(hld.nodein[k], v);
         rseg.set(hld.n - hld.nodein[k] - 1, v);
     }
 
+    /// @brief 頂点 v の部分木の総積を返す / O(logN)
     T subtree_prod(int v) {
         return seg.prod(hld.nodein[v], hld.nodeout[v]);
     }
 
+    /// @brief 頂点 v の部分木に f を作用させる / O(logN)
     void subtree_apply(int v, F f) {
         seg.apply(hld.nodein[v], hld.nodeout[v], f);
         rseg.apply(hld.n - hld.nodeout[v], hld.n - hld.nodein[v], f);

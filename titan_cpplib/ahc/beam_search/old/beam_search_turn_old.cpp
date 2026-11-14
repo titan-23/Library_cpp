@@ -12,6 +12,8 @@ using namespace std;
 
 namespace flying_squirrel {
 
+/// @brief 操作ごとに遷移先のターンを持つ、木上のビームサーチの旧実装
+/// Action はメンバ target_turn を持つ必要がある
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=true>
 class BeamSearchWithTree {
 private:
@@ -34,10 +36,9 @@ private:
         Action action;
         ActionIDType action_id;
         int target_turn;
-        // PRE_ORDER 専用: 部分木中の leaf の target_turn の最小値。
-        // get_next_beam で「現ターンに該当する leaf が無い部分木」を一気にスキップするのに使う。
+        // PRE_ORDER でのみ使う。部分木の葉の target_turn の最小値
         int subtree_min_turn;
-        // PRE_ORDER 専用: 対応する POST_ORDER の次の index (排他)。スキップ時のジャンプ先。
+        // PRE_ORDER でのみ使う。対応する POST_ORDER の次の添字
         int subtree_end;
 
         TreeNode(int d, Action a, ActionIDType id, int target)
@@ -149,7 +150,7 @@ private:
             auto dat = func.get_pos(hash);
             int idx = func.inner_get(dat, -1);
             if (idx == -2) {
-                // 過去ターンで採用済みのハッシュ → 即 drop
+                // 過去のターンで採用済みのハッシュなので捨てる
                 return false;
             }
             if (idx != -1) {
@@ -198,7 +199,7 @@ private:
             if (clear_hash) {
                 func.clear();
             } else {
-                // 現ビームに居る hash を archived(-2) にマークしてターン跨ぎで dedup する
+                // 現ビームの hash に -2 を記録し、ターンをまたいで重複を除く
                 for (int i = 0; i < entry; ++i) {
                     func.set(hashidx[i], -2);
                 }
@@ -336,7 +337,7 @@ private:
                 }
                 ++i;
             } else if (dir_or_leaf_id == PRE_ORDER) {
-                // 部分木中の leaf がすべて future-turn なら、state を進めずに POST_ORDER の次までジャンプする
+                // 部分木の葉がすべて先のターンなら、state を進めずに POST_ORDER の次へ飛ぶ
                 if (tree[i].subtree_min_turn > turn) {
                     i = tree[i].subtree_end;
                     continue;
@@ -376,9 +377,7 @@ private:
             }
         }
 
-        // pre_stack: nxt_tree に積んだ未クローズ PRE_ORDER の index 列。
-        // POST_ORDER をクローズする時に対応 PRE_ORDER の subtree_end / subtree_min_turn を埋め、
-        // さらに親 PRE_ORDER に min を伝播する。
+        // pre_stack は nxt_tree 内でまだ閉じていない PRE_ORDER の添字を持つ
         vector<int> pre_stack;
         auto note_leaf_target = [&](int t_turn) {
             if (!pre_stack.empty() && t_turn < nxt_tree[pre_stack.back()].subtree_min_turn) {
@@ -440,7 +439,7 @@ private:
                     pre_dir = nxt_tree.back().dir_or_leaf_id;
                 }
                 if (pre_dir == PRE_ORDER && nxt_tree.back().action_id == tree[i].action_id) {
-                    // 空のサブツリー: PRE_ORDER を取り消し、POST_ORDER も emit しない
+                    // 部分木が空なので PRE_ORDER を取り消し、POST_ORDER も積まない
                     nxt_tree.pop_back();
                     pre_stack.pop_back();
                 } else {
@@ -539,6 +538,7 @@ private:
     }
 
 public:
+    /// @brief 探索して操作列を返す
     vector<Action> search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
         init_bs(param);
         if (verbose) {

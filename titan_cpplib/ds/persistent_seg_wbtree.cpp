@@ -16,10 +16,14 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 区間積と区間反転に対応する永続重み平衡木 / 0-indexed
+/// 全インスタンスが静的なノード領域 ma を共有する
 template <class SizeType, class T, T (*op)(T, T), T (*e)()>
 class PersistentSegWBTree {
 public:
+    /// @brief 全ての木が共有するノード領域
     struct MemoryAllocator {
+        /// @brief 子の番号、反転フラグ、部分木サイズを持つ
         struct Node {
             using Unsigned = typename std::make_unsigned<SizeType>::type;
             Unsigned left : std::numeric_limits<SizeType>::digits;
@@ -33,6 +37,7 @@ public:
             Node(SizeType l, SizeType r, SizeType s)
                 : left(l), rev(0), right(r), size(s), left_size(0) {}
         };
+        /// @brief 部分木の総積を持つ
         struct Data {
             T data;
 
@@ -42,6 +47,7 @@ public:
             /// @brief 値または総積を設定する / O(1)
             Data(const T& value) : data(value) {}
         };
+        /// @brief 2^BlockBits 要素ずつのブロックで領域を確保する可変長配列
         template <class U, unsigned BlockBits>
         class BlockVector {
             static constexpr size_t block_size = size_t(1) << BlockBits;
@@ -123,7 +129,7 @@ public:
             /// @brief 確保済み容量を返す / O(1)
             size_t capacity() const noexcept { return blocks_.size() * block_size; }
 
-            /// @brief N 要素分の容量を確保する / O(N)
+            /// @brief n 要素分の容量を確保する / O(n)
             void reserve(size_t n) {
                 const size_t required = n / block_size + (n % block_size != 0);
                 blocks_.reserve(required);
@@ -151,6 +157,7 @@ public:
             }
         };
 
+        /// @brief 1 ノード分の Node と Data
         struct Slot {
             Node tree;
             Data data;
@@ -162,6 +169,7 @@ public:
         using Pool = BlockVector<Slot, 16>;
         Pool pool;
 
+        /// @brief pool の各 Slot の Member を配列として参照する
         template<class U, U Slot::* Member>
         struct View {
             Pool *pool;
@@ -178,7 +186,7 @@ public:
             /// @brief 確保済み容量を返す / O(1)
             size_t capacity() const noexcept { return pool->capacity(); }
 
-            /// @brief N 要素分の容量を確保する / O(N)
+            /// @brief n 要素分の容量を確保する / O(n)
             void reserve(size_t n) { pool->reserve(n); }
         };
         View<Node, &Slot::tree> tree;
@@ -240,7 +248,7 @@ public:
             return ptr++;
         }
 
-        /// @brief N ノード分の容量を確保する / O(N)
+        /// @brief n ノード分の容量を確保する / O(n)
         /// @note 容量はブロック単位で切り上げる
         void reserve(SizeType n) {
             try { pool.reserve(n); }
@@ -259,6 +267,7 @@ public:
         size_t capacity_bytes() const { return pool.capacity() * sizeof(Slot); }
     };
 
+    /// @brief 全インスタンスが共有するノード領域
     static MemoryAllocator ma;
 
 private:

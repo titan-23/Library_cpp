@@ -6,6 +6,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief ax^2 + bx + c = 0 の実数解を昇順で返す / 重解は 1 個で返し、|a| < eps なら一次方程式として解く
 vector<long double> solve_quadratic_equation(long double a, long double b, long double c, const long double eps = 1e-9) {
     if (fabs(a) < eps) {
         if (fabs(b) < eps) return {};  
@@ -15,6 +16,7 @@ vector<long double> solve_quadratic_equation(long double a, long double b, long 
     if (D < -eps) return {};                 
     if (D < eps) return {-b / (2 * a)};      
     long double sq = sqrt(D);
+    // 桁落ちを避けるため、b と √D を同じ符号で足して q を作る
     long double q = -0.5 * (b + (b >= 0 ? sq : -sq));
     long double x1 = q / a;   
     long double x2 = c / q;   

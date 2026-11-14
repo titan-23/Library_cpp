@@ -8,6 +8,7 @@ using namespace std;
 
 namespace titan23 {
 
+// 遅延セグメント木の演算。S は上位に被覆回数の最小値、下位 31 ビットにその最小値を取る x 方向の長さの和を持つ
 namespace AOUFR {
 using S = long long;
 using F = int;
@@ -35,6 +36,7 @@ F id() {
 }
 } // namespace AOUFR
 
+/// @brief 長方形の和集合の面積を求める / 座標は int に収まり、x 座標の最大と最小の差は 2^31 未満とする
 template<typename T>
 class AreaOfUnionOfRectangles {
   private:
@@ -44,12 +46,14 @@ class AreaOfUnionOfRectangles {
 
   public:
     AreaOfUnionOfRectangles() : n(0) {}
+    /// @brief 長方形 n 個分の領域を確保して構築する
     AreaOfUnionOfRectangles(int n) : n(n) {
         ldru.reserve(n);
         X.reserve(2*n);
         Y.reserve(2*n);
     }
 
+    /// @brief 左下 (l, d)、右上 (r, u) の長方形を追加する / 償却 O(1)
     void add_rectangle(T l, T d, T r, T u) {
         ldru.emplace_back(l, d, r, u);
         X.emplace_back(l);
@@ -58,6 +62,7 @@ class AreaOfUnionOfRectangles {
         Y.emplace_back(u);
     }
 
+    /// @brief 追加した長方形の和集合の面積を返す / O(n log n)
     T get_sum() {
         titan23::Zaatsu<int> ZX(X), ZY(Y);
         vector<vector<pair<int, int>>> left(ZY.len()), right(ZY.len());

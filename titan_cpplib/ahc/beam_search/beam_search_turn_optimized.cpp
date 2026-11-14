@@ -21,7 +21,7 @@ class BeamSearchWithTree {
 private:
     using Result = BeamResult<ScoreType, Action, State>;
 
-    // kind_end == 0: leaf, -1: POST, -2: 構築中 PRE, 正: 確定済み PRE の subtree_end
+    // kind_end は 0 なら葉、-1 なら POST、-2 なら構築中の PRE、正なら確定済み PRE の subtree_end
     static constexpr int LEAF_NODE = 0;
     static constexpr int POST_ORDER = -1;
     static constexpr int OPEN_PRE_ORDER = -2;
@@ -36,6 +36,7 @@ private:
     ActionId best_finished_par_aid;
     Action best_finished_action;
 
+    /// @brief 探索木の巡回列の要素
     struct TreeNode {
         int kind_end;
         ActionId aid; // 同じ辺の PRE_ORDER、POST_ORDER、葉で共有する ID
@@ -43,7 +44,7 @@ private:
         TreeNode(int kind, ActionId a, int target) : kind_end(kind), aid(a), target_turn(target) {}
     };
 
-    /// @brief target_turn 別候補プール内に保持する最小限の情報
+    /// @brief target_turn ごとの候補プールに保持する最小限の情報
     struct PoolEntry {
         ScoreType score;
         ActionId aid;
@@ -51,17 +52,19 @@ private:
         PoolEntry(ScoreType s, ActionId a) : score(s), aid(a) {}
     };
 
+    /// @brief 親番号を持つ BeamCandidate の基底
     struct CandidateParent {
         int par = 0;
         void set_parent(int value) { par = value; }
         int parent() const { return par; }
     };
+    /// @brief 親番号を持たない BeamCandidate の基底
     struct EmptyCandidateParent {
         void set_parent(int) {}
         int parent() const { return 0; }
     };
 
-    /// @brief 現在のメタターンで一度採用された候補。通常は親番号を範囲境界へ分離する
+    /// @brief 現在のメタターンで一度採用された候補 / 通常は親番号を持たず、範囲の境界で親を表す
     struct BeamCandidate : conditional_t<SORT_CANDIDATES_BY_SCORE, CandidateParent,
                                          EmptyCandidateParent> {
         using ParentBase = conditional_t<SORT_CANDIDATES_BY_SCORE, CandidateParent,
@@ -102,6 +105,7 @@ private:
         free_slots.push_back(slot);
     }
 
+    /// @brief record_history 用の履歴ノード
     struct HistoryNode {
         int node_id;
         int parent_id;
@@ -112,6 +116,7 @@ private:
         string state_info;
         int status;
     };
+    /// @brief record_history 用の、ターンごとの生存ノード一覧
     struct TurnSnapshot {
         int turn;
         vector<int> active_node_ids;
@@ -159,6 +164,7 @@ private:
         ofs << "  ]\n}\n";
     }
 
+    /// @brief 1 つの遷移先ターンの候補を、ハッシュの重複を除いてビーム幅まで保持する
     class Candidates {
     private:
         using T = pair<ScoreType, int>;
@@ -191,6 +197,7 @@ private:
         }
 
     public:
+        /// @brief push の結果 / 棄却時は slot=-1、置換時は evicted_aid に旧 ActionId が入る
         struct PushResult {
             int slot;
             ActionId evicted_aid;
@@ -199,6 +206,7 @@ private:
         vector<PoolEntry> next_beam;
 
         Candidates() {}
+        /// @brief ビーム幅 w で構築する
         explicit Candidates(int w) : hash_to_idx(w * 8) { reset(w); }
 
         int size() const { return entry; }
@@ -206,13 +214,11 @@ private:
 
         ScoreType threshold() const { return entry < beam_width ? INF : seg[1].first; }
 
-        /// @brief ActionId を確保する前に採否と格納位置を決める
-        /// @return 棄却時は slot=-1。置換時は evicted_aid に旧 ActionId を返す
+        /// @brief ActionId を確保する前に採否と格納位置を決める / 棄却時は slot=-1、置換時は evicted_aid に旧 ActionId を返す
         PushResult push(ScoreType score, HashType hash) {
             auto pos = hash_to_idx.get_pos(hash);
             int idx = hash_to_idx.inner_get(pos, -1);
-            // 置換済みのキーは辞書に残す。現在のスロットの hash と一致するときだけ
-            // 生存中の同一候補なので、旧キーを -1 に更新するための再探索を省ける。
+            // 置換済みの旧キーは辞書に残るので、スロットの hash と一致するときだけ生存中の候補とみなす
             if (idx != -1 && uint64_t(hashidx[idx]) != uint64_t(hash)) idx = -1;
             if (idx != -1) { // 同じハッシュはスコアが改善する場合だけ置き換える
                 if (score < next_beam[idx].score) {
@@ -247,10 +253,12 @@ private:
             return {i, old_aid};
         }
 
+        /// @brief slot の候補に ActionId を設定する
         void set_aid(int slot, ActionId aid) {
             next_beam[slot].aid = aid;
         }
 
+        /// @brief ビーム幅を w にして、候補とハッシュを空にする
         void reset(int w) {
             beam_width = w;
             s = 1;
@@ -271,7 +279,7 @@ private:
     };
 
     vector<Candidates> cands_pool;
-    vector<int> turn_to_pool_idx; // target_turn から cands_pool への添字 -1 は未確保
+    vector<int> turn_to_pool_idx; // target_turn から cands_pool への添字。-1 は未確保
     vector<int> free_pool_indices;
     vector<ScoreType> thresholds; // 各ターンで受理できるスコアの上限
     struct PreFrame {
@@ -280,8 +288,8 @@ private:
     };
     vector<PreFrame> pre_stack; // PRE_ORDER の添字と生存する直下要素の最小ターン
 
-    /// @brief clear_hash_every_turn が false のとき、ハッシュごとの最良候補を全ターンで共有する
-    /// より早いターンへの候補か、同じターンでスコアを改善する候補だけを通す
+    // clear_hash_every_turn が false のとき全ターンで共有する、ハッシュごとの最良候補
+    // より早いターンへの候補か、同じターンでスコアを改善する候補だけを通す
     titan23::HashDict<pair<ScoreType, int>, false> seen_hash;
     bool use_global_seen;
 
@@ -337,8 +345,7 @@ private:
     vector<int> candidate_group_ends; // 展開した親ごとの new_candidates 終端
 
     /// @brief 候補を評価し、完成解を更新するか、未完了の候補を遷移先ターンのプールに登録する
-    // State::try_op と候補登録を呼出箇所ごとに複製すると命令キャッシュを圧迫する。
-    // 候補列挙が支配的なケースでは、hot section に一つだけ置く方が速い。
+    // 命令キャッシュの圧迫を避けるため、インライン展開せず hot section に一つだけ置く
 #ifdef __clang__
     [[gnu::hot, gnu::noinline]]
 #else
@@ -463,7 +470,7 @@ private:
                 if (node.target_turn == turn) {
                     const int par = expanded_leaf_count;
                     ++expanded_leaf_count;
-                    // enumerate_actions 中に action_pool が再確保され得るため、親 Action は退避する。
+                    // enumerate_actions 中に action_pool が再確保され得るため、親 Action は退避する
                     Action action = act(node.aid);
                     state.apply_op(action);
                     Submitter submit{*this, state, par, node.aid, turn};
@@ -740,12 +747,8 @@ private:
     }
 
 public:
-    /// @brief 複数ターン先への遷移を含むビームサーチを実行する
-    /// @tparam materialize_final_state 最終状態を構築するか
-    /// @param param ターン数やビーム幅などの設定
-    /// @param verbose ログを出力するか
-    /// @param history_file record_history が true のときに履歴を JSON で出力するファイル名
-    /// @return 探索結果
+    /// @brief 複数ターン先への遷移を含むビームサーチを実行し、探索結果を返す
+    /// materialize_final_state が true なら最終状態も構築する。record_history が true なら history_file に履歴を JSON で書き出す
     template<bool materialize_final_state=true>
     Result search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
         if (param.max_turn <= 0 || param.beam_width <= 0) {

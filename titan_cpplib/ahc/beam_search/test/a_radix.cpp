@@ -39,6 +39,7 @@ HashType zhs[10][10][101]; // zhs[i][j][k]:=(i,j)にkがあるときのハッシ
 int revB[101];
 HashType GOAL_HASH;
 
+/// @brief ハッシュ用の乱数表と、各値の目標位置を列優先で数えた表 revB を作る
 void beam_init() {
     rep(i, N) rep(j, N) rep(k, N*N+1) {
         zhs[i][j][k] = brnd.rand_u64();
@@ -49,11 +50,7 @@ void beam_init() {
     revB[0] = 0;
 }
 
-// メモリ量は少ない方がよく、score,hash のメモは無くしたい
-// compose 対応: chain に「2 ステップ目以降」を格納する。各 step は rollback の
-// 中間状態復元用に pre_* をキャッシュ済み。primary (d, pre_*, nxt_*) は
-// (chain 空のとき)1 ステップ、(chain あり)先頭ステップを表す。nxt_* は
-// 常に "composed 全体を適用したあとの状態" を表す。
+/// @brief 合成した Action の 2 手目以降の 1 手 / 途中の状態に戻すための pre_* を持つ
 struct ChainStep {
     char d;
     ScoreType pre_score;
@@ -62,6 +59,8 @@ struct ChainStep {
     int pre_inv_lr;
 };
 
+/// @brief 空きマスを 1 方向に動かす操作 / 合成すると 2 手目以降を chain に持つ
+/// nxt_* は合成した手をすべて適用した後の状態を表す
 struct Action {
     char d;
     ScoreType pre_score, nxt_score;
@@ -78,6 +77,7 @@ struct Action {
         return os;
     }
 
+    /// @brief nxt をこの操作の後ろに合成する
     bool compose(Action &nxt) {
         chain.reserve(chain.size() + 1 + nxt.chain.size());
         ChainStep s;
@@ -102,6 +102,7 @@ struct Action {
     }
 };
 
+/// @brief N×N のスライドパズルの盤面を持つ状態
 class State {
 private:
     ScoreType score;
@@ -155,6 +156,7 @@ private:
     }
 
 public:
+    /// @brief 入力の盤面 A で初期化する
     void init() {
         this->score = 0;
         this->hash = 0;
@@ -183,9 +185,8 @@ public:
         score += inv_dist;
     }
 
-    /// ロールバックに必要な情報はすべてactionにメモしておく
-    /// threshold以上であれば計算しなくてよい
-    /// INFを返すと無条件で採用しない
+    /// @brief action を適用した後の評価値、ハッシュ値、完成したかを返す
+    /// 戻すための情報はすべて action に記録する。threshold 以上なら計算を省いてよく、INF を返すと採用されない
     tuple<ScoreType, HashType, bool> try_op(Action &action, const ScoreType threshold) const {
         action.pre_score = score;
         action.pre_hash = hash;
@@ -256,6 +257,7 @@ public:
         return {nxt_score, nxt_hash, nxt_hash == GOAL_HASH};
     }
 
+    /// @brief 空きマスを d の向きに 1 マス動かす
     void swap_one_forward(char d) {
         int py = y, px = x;
         if (d == 'D') ++y;
@@ -265,6 +267,7 @@ public:
         swap(F[y][x], F[py][px]);
     }
 
+    /// @brief 空きマスを d と逆の向きに 1 マス動かす
     void swap_one_back(char d) {
         int py = y, px = x;
         if (d == 'D') --y;
@@ -274,6 +277,7 @@ public:
         swap(F[y][x], F[py][px]);
     }
 
+    /// @brief action を適用する
     void apply_op(const Action &action) {
         swap_one_forward(action.d);
         for (auto &cs : action.chain) swap_one_forward(cs.d);
@@ -283,6 +287,7 @@ public:
         hash = action.nxt_hash;
     }
 
+    /// @brief action を戻す。合成された手は逆順に戻す
     void rollback(const Action &action) {
         for (auto it = action.chain.rbegin(); it != action.chain.rend(); ++it) {
             swap_one_back(it->d);
@@ -294,12 +299,10 @@ public:
         hash = action.pre_hash;
     }
 
-    /// 新方式: enumerate_actions / try_op 一体化 sink。
-    /// 生成した action を submit に渡すと try_op + 判定 + push まで行う。中間 vector を作らない。
-    /// submit.threshold() でライブ worst を取得でき早期枝刈りに使えるが、ここでは try_op 側に任せる。
+    /// @brief 遷移可能な action を submit に渡す。submit が try_op と候補への追加を行う
     template<class Submit>
     void enumerate_actions(const int turn, const Action &last_action, Submit &&submit) const {
-        // composed last_action の場合、最後に踏んだ primitive 方向は chain.back().d
+        // 合成された last_action では、最後の 1 手の方向が chain.back().d にある
         char last_d = last_action.chain.empty() ? last_action.d : last_action.chain.back().d;
         auto rev = [&] () -> char {
             if (turn == 0) return 'Z';
@@ -359,27 +362,20 @@ public:
     }
 };
 
-/// @brief BeamParamを返す
-/// @param max_turn 最大探索ターン
-/// @param beam_width ビーム幅
-/// @return BeamParam
+/// @brief 最大ターン数とビーム幅から BeamParam を返す
 flying_squirrel::BeamParam gen_param(int max_turn, int beam_width) {
     return {max_turn, beam_width, -1};
 }
 
-/// @brief BeamParamを返す
-/// @param max_turn 最大探索ターン
-/// @param beam_width ビーム幅
-/// @param time_limit 制限時間
-/// @param is_adjusting 制限時間に合わせるかどうか
-/// @param clear_hash_every_turn ハッシュ辞書を毎ターンclearするかどうか
-/// @return
+/// @brief 最大ターン数、ビーム幅、制限時間などから BeamParam を返す
+/// is_adjusting は制限時間に合わせて幅を調整するか、clear_hash_every_turn はハッシュ辞書を毎ターン消すかを指定する
 flying_squirrel::BeamParam gen_param(int max_turn, int beam_width, double time_limit, bool is_adjusting=false, bool clear_hash_every_turn=true) {
     return {max_turn, beam_width, time_limit, is_adjusting, clear_hash_every_turn};
 }
 
 using Result = flying_squirrel::BeamResult<ScoreType, Action, State>;
 
+/// @brief param で探索して結果を返す
 template<bool materialize_final_state=true>
 Result search(flying_squirrel::BeamParam &param, const bool verbose=false, const string& history_file = "") {
     (void)history_file;

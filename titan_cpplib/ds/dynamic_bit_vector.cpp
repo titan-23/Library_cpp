@@ -4,9 +4,9 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// DynamicBitVector
 namespace titan23 {
 
+/// @brief 挿入と削除ができるビットベクトル / 長さ BUCKET_MAX 以下のバケットに分けて持つ
 class DynamicBitVector {
 private:
     static const int BUCKET_MAX = 1000;
@@ -53,10 +53,12 @@ private:
 
 public:
     DynamicBitVector() : _size(0), tot_one(0) {}
+    /// @brief 0/1 の列 a から構築する
         DynamicBitVector(const vector<uint8_t> &a) : _size(a.size()), tot_one(0) {
         build(a);
     }
 
+    /// @brief k 番目に key を挿入する
     void insert(int k, bool key) {
         assert(0 <= k && k <= len());
         if (data.empty()) {
@@ -89,12 +91,14 @@ public:
         tot_one += key;
     }
 
+    /// @brief k 番目の値を返す
     bool access(int k) const {
         assert(0 <= k && k < len());
         auto [bucket_pos, bit_pos] = get_bucket(k);
         return data[bucket_pos][bit_pos];
     }
 
+    /// @brief k 番目を削除して返す
     bool pop(int k) {
         assert(0 <= k && k < len());
         auto [bucket_pos, bit_pos] = get_bucket(k);
@@ -110,17 +114,20 @@ public:
         return res;
     }
 
+    /// @brief k 番目を v に変更する
     void set(int k, bool v) {
         assert(0 <= k && k < len());
         auto [bucket_pos, bit_pos] = get_bucket(k);
         data[bucket_pos][bit_pos] = v;
     }
 
+    /// @brief 区間 [0, r) の 0 の個数を返す
     int rank0(int r) const {
         assert(0 <= r && r <= len());
         return r - rank1(r);
     }
 
+    /// @brief 区間 [0, r) の 1 の個数を返す
     int rank1(int r) const {
         assert(0 <= r && r <= len());
         int s = 0;
@@ -139,11 +146,13 @@ public:
         assert(false);
     }
 
+    /// @brief 区間 [0, r) の key の個数を返す
     int rank(int r, bool key) const {
         assert(0 <= r && r <= len());
         return key ? rank1(r) : rank0(r);
     }
 
+    /// @brief k 番目の 0 の位置を返す / k は 0 始まり
     int select0(int k) const {
         int s = 0;
         for (int i = 0; i < data.size(); ++i) {
@@ -161,6 +170,7 @@ public:
         assert(false);
     }
 
+    /// @brief k 番目の 1 の位置を返す / k は 0 始まり
     int select1(int k) const {
         int s = 0;
         for (int i = 0; i < data.size(); ++i) {
@@ -177,10 +187,12 @@ public:
         assert(false);
     }
 
+    /// @brief k 番目の key の位置を返す / k は 0 始まり
     int select(int k, bool key) const {
         return key ? select1(k) : select0(k);
     }
 
+    /// @brief k 番目に key を挿入し、挿入前の rank1(k) を返す
     int _insert_and_rank1(int k, bool key) {
         int s = 0;
         int bucket_pos = -1, bit_pos = -1;
@@ -246,6 +258,7 @@ public:
         return s;
     }
 
+    /// @brief k 番目を削除し、rank1(k) << 1 | 削除した値 を返す
     int _access_pop_and_rank1(int k) {
         int prek = k;
         int s = 0;
@@ -276,6 +289,7 @@ public:
         return s << 1 | res;
     }
 
+    /// @brief {access(k), rank1(k)} を返す
     pair<bool, int> _access_ans_rank1(int k) const {
         assert(0 <= k && k < len());
         int s = 0;
@@ -293,6 +307,7 @@ public:
         assert(false);
     }
 
+    /// @brief 全要素を列で返す
     vector<uint8_t> tovector() const {
         vector<uint8_t> a(len());
         int ptr = 0;
@@ -302,6 +317,7 @@ public:
         return a;
     }
 
+    /// @brief 列を出力する
     void print() const {
         vector<uint8_t> a = tovector();
         int n = (int)a.size();

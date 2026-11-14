@@ -13,6 +13,7 @@ using namespace std;
 // SparseTableMin
 namespace titan23 {
 
+/// @brief int の静的な列の区間最小値を O(1) で返す
 struct SparseTableMin {
 private:
     int n;
@@ -20,6 +21,7 @@ private:
 
 public:
     SparseTableMin() {}
+    /// @brief 列 a から構築する / O(n log n)
     SparseTableMin(vector<int> &a) : n((int)a.size()) {
         if (n == 0) return;
         int log = bit_length(n) - 1;
@@ -44,6 +46,7 @@ public:
         }
     }
 
+    /// @brief 区間 [l, r) の最小値を返す / 空区間は INT_MAX / O(1)
     int prod(const int l, const int r) const {
         assert(0 <= l && l <= r && r <= n);
         if (l == r) return INT_MAX;
@@ -51,15 +54,18 @@ public:
         return min(data[offset[u]+l], data[offset[u]+r-(1<<u)]);
     }
 
+    /// @brief a[k] を返す / O(1)
     int get(const int k) const {
         assert(0 <= k && k < n);
         return data[k];
     }
 
+    /// @brief 列の長さを返す / O(1)
     int len() const {
         return n;
     }
 
+    /// @brief 列を標準出力に出す / O(n)
     void print() const {
         cout << '[';
         for (int i = 0; i < n-1; ++i) {

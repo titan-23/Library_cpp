@@ -13,20 +13,9 @@ namespace dynamic_lazy_segment_tree {
 
 // 第1テンプレート引数は値の型で、添字と長さの型は既定でlong long
 // 和を扱う木には、値が0でも1要素分の長さを含む初期値を渡す
-//   LazySegAddSum<long long> sums(1000000000LL, {0, 1});
-//   sums.apply(10, 20, -3); auto result = sums.prod(0, 100); // {-30, 100}
-//   LazySegSetMin<long long> minima(1000000000LL, 0);
-//   minima.apply(10, 20, Assign<long long>::set(-5));
-//   LazySegAffineSum<long long> affine(100, {2, 1});
-//   affine.apply(0, 10, {3, 4}); // xを3*x+4に変換
-//   LazySegSetAddStats<long long> stats(100, {2, 2, 2, 1});
-//   stats.apply(10, 20, SetAdd<long long>::set(5));
-//   LazySegAddAPSum<long long> ap(100, {0, 0, 1});
-//   ap.apply(l, r, {x - d*l, d}); // 初項x、公差dを加算
-//   auto total = ap.prod(l, r).eval(l); // APSum.sumは実際の区間和ではない
-// mapping(F,S)はACLと同じ形式
-// 各型の四則演算・比較・コピーはO(1)とし、和や長さを含む計算結果をその型の範囲に収める
+// 和や長さを含む計算結果は各型の範囲に収める
 
+/// @brief 区間の和と長さ
 template <class T, class Index = long long>
 struct Sum {
     T sum;
@@ -70,7 +59,7 @@ template <class T> T comp_add(T f, T g) { return f + g; }
 /// @brief 値を変更しない加算作用を返す / O(1)
 template <class T> T id_add() { return T(0); }
 
-// 有効フラグを別に持ち、numeric_limits<T>::max()/lowest()を含む全ての値を代入可能にする
+/// @brief 代入作用 / 有効フラグを別に持ち、numeric_limits<T>::max()/lowest()を含む全ての値を代入できる
 template <class T>
 struct Assign {
     T value{};
@@ -121,6 +110,7 @@ template <class T> T e_max() { return numeric_limits<T>::lowest(); }
 /// @brief 同じ値をn個結合した最大値を返す / O(1)
 template <class T, class Index> T pow_max(T a, Index n) { return n == 0 ? e_max<T>() : a; }
 
+/// @brief xをa*x+bに変換する作用
 template <class T>
 struct Affine {
     T a, b;
@@ -146,6 +136,7 @@ template <class T> Affine<T> comp_affine(Affine<T> f, Affine<T> g) {
 /// @brief 値を変更しないアフィン変換を返す / O(1)
 template <class T> Affine<T> id_affine() { return {T(1), T(0)}; }
 
+/// @brief 区間の和・最小値・最大値と長さ
 template <class T, class Index = long long>
 struct Stats {
     T sum, mn, mx;
@@ -179,6 +170,7 @@ Stats<T, Index> pow_stats(Stats<T, Index> s, Index n) {
     return {s.sum * T(n), s.mn, s.mx, s.len * n};
 }
 
+/// @brief 代入と加算を合成した作用
 template <class T>
 struct SetAdd {
     bool has_set;
@@ -220,12 +212,9 @@ SetAdd<T> comp_set_add(SetAdd<T> f, SetAdd<T> g) {
 /// @brief 値を変更しない代入・加算作用を返す / O(1)
 template <class T> SetAdd<T> id_set_add() { return {false, T(0), T(0)}; }
 
-// 始点をoriginとしたときの和をsum+slope*originで表す
-// 実際の和だけでなく、sum・slopeと途中の積もTの範囲に収める
-// dense版のS_AP.valと異なり、prod(l,r).eval(l)、get(i).eval(i)で実際の値を得る
-// all_prod().eval(0)は全体の和で、初期値vには{v,0,1}を渡す
-// 点代入もset(i,{v,0,1})のように1要素の長さを渡す
-// max_right(l,pred)ではs.eval(l)、min_left(r,pred)ではs.eval(r-s.len)を判定する
+/// @brief 始点をoriginとしたときの区間和をsum+slope*originで表す値 / sum・slopeと途中の積もTの範囲に収める
+/// 実際の値はprod(l,r).eval(l)やget(i).eval(i)で得る / 初期値や点代入の値vは{v,0,1}で渡す
+/// max_right(l,pred)のpredはs.eval(l)で、min_left(r,pred)のpredはs.eval(r-s.len)で判定する
 template <class T, class Index = long long>
 struct APSum {
     T sum, slope;
@@ -243,7 +232,7 @@ struct APSum {
     bool operator!=(const APSum& other) const { return !(*this == other); }
 };
 
-// a+b*iを加算し、iは[0,N)での絶対添字を表す
+/// @brief 各要素iにa+b*iを加算する作用 / iは[0,N)での絶対添字
 template <class T>
 struct APAdd {
     T a, b;
@@ -292,66 +281,79 @@ template <class T> APAdd<T> comp_ap_add(APAdd<T> f, APAdd<T> g) { return {f.a + 
 /// @brief 値を変更しない等差数列加算作用を返す / O(1)
 template <class T> APAdd<T> id_ap_add() { return {T(0), T(0)}; }
 
+/// @brief 区間加算と区間最小値
 template <class T, class Index = long long>
 using LazySegAddMin = DynamicLazySegmentTree<
     Index, T, op_min<T>, e_min<T>,
     T, map_add<T>, comp_add<T>, id_add<T>, pow_min<T, Index>>;
 
+/// @brief 区間加算と区間最大値
 template <class T, class Index = long long>
 using LazySegAddMax = DynamicLazySegmentTree<
     Index, T, op_max<T>, e_max<T>,
     T, map_add<T>, comp_add<T>, id_add<T>, pow_max<T, Index>>;
 
+/// @brief 区間加算と区間和
 template <class T, class Index = long long>
 using LazySegAddSum = DynamicLazySegmentTree<
     Index, Sum<T, Index>, op_sum<T, Index>, e_sum<T, Index>,
     T, map_add_sum<T, Index>, comp_add<T>, id_add<T>, pow_sum<T, Index>>;
 
+/// @brief 区間代入と区間和
 template <class T, class Index = long long>
 using LazySegSetSum = DynamicLazySegmentTree<
     Index, Sum<T, Index>, op_sum<T, Index>, e_sum<T, Index>,
     Assign<T>, map_set_sum<T, Index>, comp_set<T>, id_set<T>, pow_sum<T, Index>>;
 
+/// @brief 区間代入と区間最小値
 template <class T, class Index = long long>
 using LazySegSetMin = DynamicLazySegmentTree<
     Index, T, op_min<T>, e_min<T>,
     Assign<T>, map_set<T>, comp_set<T>, id_set<T>, pow_min<T, Index>>;
 
+/// @brief 区間代入と区間最大値
 template <class T, class Index = long long>
 using LazySegSetMax = DynamicLazySegmentTree<
     Index, T, op_max<T>, e_max<T>,
     Assign<T>, map_set<T>, comp_set<T>, id_set<T>, pow_max<T, Index>>;
 
+/// @brief 区間アフィン変換と区間和
 template <class T, class Index = long long>
 using LazySegAffineSum = DynamicLazySegmentTree<
     Index, Sum<T, Index>, op_sum<T, Index>, e_sum<T, Index>,
     Affine<T>, map_affine_sum<T, Index>, comp_affine<T>, id_affine<T>, pow_sum<T, Index>>;
 
+/// @brief 区間代入・区間加算と、区間の和・最小値・最大値
 template <class T, class Index = long long>
 using LazySegSetAddStats = DynamicLazySegmentTree<
     Index, Stats<T, Index>, op_stats<T, Index>, e_stats<T, Index>,
     SetAdd<T>, map_set_add_stats<T, Index>, comp_set_add<T>, id_set_add<T>, pow_stats<T, Index>>;
 
+/// @brief 各要素をfとの最小値に更新する作用と区間最小値
 template <class T, class Index = long long>
 using LazySegChminMin = DynamicLazySegmentTree<
     Index, T, op_min<T>, e_min<T>,
     T, op_min<T>, op_min<T>, e_min<T>, pow_min<T, Index>>;
 
+/// @brief 各要素をfとの最小値に更新する作用と区間最大値
 template <class T, class Index = long long>
 using LazySegChminMax = DynamicLazySegmentTree<
     Index, T, op_max<T>, e_max<T>,
     T, op_min<T>, op_min<T>, e_min<T>, pow_max<T, Index>>;
 
+/// @brief 各要素をfとの最大値に更新する作用と区間最小値
 template <class T, class Index = long long>
 using LazySegChmaxMin = DynamicLazySegmentTree<
     Index, T, op_min<T>, e_min<T>,
     T, op_max<T>, op_max<T>, e_max<T>, pow_min<T, Index>>;
 
+/// @brief 各要素をfとの最大値に更新する作用と区間最大値
 template <class T, class Index = long long>
 using LazySegChmaxMax = DynamicLazySegmentTree<
     Index, T, op_max<T>, e_max<T>,
     T, op_max<T>, op_max<T>, e_max<T>, pow_max<T, Index>>;
 
+/// @brief 区間への等差数列加算と区間和 / 値はAPSumで持つ
 template <class T, class Index = long long>
 using LazySegAddAPSum = DynamicLazySegmentTree<
     Index, APSum<T, Index>, op_ap_sum<T, Index>, e_ap_sum<T, Index>,

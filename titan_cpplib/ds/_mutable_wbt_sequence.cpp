@@ -8,6 +8,7 @@
 
 namespace titan23::detail {
 
+/// @brief Aggregate が true のときだけ集約値 data を持つノードの基底
 template<class T, bool Aggregate> struct WBAggregate {
     /// @brief 集約値を持たない補助オブジェクトを構築する / O(1)
     explicit WBAggregate(const T&) {}
@@ -20,10 +21,12 @@ template<class T> struct WBAggregate<T, true> {
     explicit WBAggregate(const T& value) : data(value) {}
 };
 
+/// @brief 重み平衡木で列を管理する基底クラス / Op を与えると各部分木の集約値を持つ
 template<class T, T (*Op)(T, T) = nullptr, T (*E)() = nullptr>
 class MutableWBSequence {
 protected:
     static constexpr bool aggregate = Op != nullptr;
+    // 片側の重みが反対側の DELTA 倍を超えたら回転する。子の内側の重みが外側の GAMMA 倍以上なら二重回転にする
     static constexpr int DELTA = 3, GAMMA = 2;
     struct Node : WBAggregate<T, aggregate> {
         T key;
@@ -46,10 +49,10 @@ protected:
         /// @brief 子の情報から部分木サイズと集約値を再計算する / O(1)
         void _update() { update(); }
 
-        /// @brief 左部分木の重み（要素数 + 1）を返す / O(1)
+        /// @brief 左部分木の要素数 + 1 を重みとして返す / O(1)
         int weight_left() const { return left_size + 1; }
 
-        /// @brief 右部分木の重み（要素数 + 1）を返す / O(1)
+        /// @brief 右部分木の要素数 + 1 を重みとして返す / O(1)
         int weight_right() const { return size - left_size; }
 
         /// @brief 左部分木の重みが占める割合を返す / O(1)

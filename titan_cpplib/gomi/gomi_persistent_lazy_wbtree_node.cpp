@@ -10,6 +10,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 遅延作用と区間反転に対応する永続重み平衡木 / 0-indexed / ノードは shared_ptr で持つ
 template <class T,
             class F,
             T (*op)(T, T),
@@ -241,20 +242,25 @@ class PersistentLazyWBTree {
     PersistentLazyWBTree(NodePtr root) : root(root) {}
 
   public:
+    /// @brief 空の列を構築する / O(1)
     PersistentLazyWBTree() : root(nullptr) {}
 
+    /// @brief 列 a から構築する / O(n)
     PersistentLazyWBTree(vector<T> &a) { _build(a); }
 
+    /// @brief 末尾に other を連結した列を返す
     MyPersistentLazyWBTree merge(MyPersistentLazyWBTree other) {
         NodePtr root = _merge_node(this->root, other.root);
         return _new(root);
     }
 
+    /// @brief 先頭 k 要素と残りに分割して返す
     pair<MyPersistentLazyWBTree, MyPersistentLazyWBTree> split(int k) {
         auto [l, r] = _split_node(this->root, k);
         return {_new(l), _new(r)};
     }
 
+    /// @brief 区間 [l, r) に f を作用させた列を返す
     MyPersistentLazyWBTree apply(int l, int r, F f) {
         if (l >= r) return _new(this->root ? root->copy() : nullptr);
         auto dfs = [&] (auto &&dfs, NodePtr node, int left, int right) -> NodePtr {
@@ -277,6 +283,7 @@ class PersistentLazyWBTree {
         return _new(dfs(dfs, root, 0, len()));
     }
 
+    /// @brief 区間 [l, r) の総積を返す
     T prod(int l, int r) {
         assert(0 <= l && l <= r && r <= len());
         if (l == r) return e();
@@ -294,6 +301,7 @@ class PersistentLazyWBTree {
         return dfs(dfs, root, 0, len());
     }
 
+    /// @brief 位置 k に key を挿入した列を返す
     MyPersistentLazyWBTree insert(int k, T key) {
         assert(0 <= k && k <= len());
         auto [s, t] = _split_node(root, k);
@@ -301,6 +309,7 @@ class PersistentLazyWBTree {
         return _new(_merge_with_root(s, new_node, t));
     }
 
+    /// @brief 位置 k の値を削除した列と削除値を返す
     pair<MyPersistentLazyWBTree, T> pop(int k) {
         assert(0 <= k && k < len());
         auto [s_, t] = _split_node(this->root, k+1);
@@ -309,6 +318,7 @@ class PersistentLazyWBTree {
         return {_new(root), tmp->key};
     }
 
+    /// @brief 区間 [l, r) を反転した列を返す
     MyPersistentLazyWBTree reverse(int l, int r) {
         assert(0 <= l && l <= r && r <= len());
         if (l >= r) return _new(root ? root->copy() : nullptr);
@@ -319,6 +329,7 @@ class PersistentLazyWBTree {
         return _new(root);
     }
 
+    /// @brief 全要素を配列にして返す / O(n)
     vector<T> tovector() {
         NodePtr node = root;
         stack<NodePtr> s;
@@ -338,10 +349,12 @@ class PersistentLazyWBTree {
         return a;
     }
 
+    /// @brief 根だけを複製した木を返す / O(1)
     MyPersistentLazyWBTree copy() const {
         return _new(root ? root->copy() : nullptr);
     }
 
+    /// @brief 位置 k の値を v に変更した列を返す
     MyPersistentLazyWBTree set(int k, T v) {
         assert(0 <= k && k < len());
         NodePtr node = root->copy();
@@ -379,6 +392,7 @@ class PersistentLazyWBTree {
         }
     }
 
+    /// @brief 位置 k の値を返す
     T get(int k) {
         assert(0 <= k && k < len());
         NodePtr node = root;
@@ -397,6 +411,7 @@ class PersistentLazyWBTree {
         }
     }
 
+    /// @brief 全要素を標準出力に出力する / O(n)
     void print() {
         vector<T> a = tovector();
         cout << "[";
@@ -407,10 +422,12 @@ class PersistentLazyWBTree {
         cout << "]" << endl;
     }
 
+    /// @brief 要素数を返す / O(1)
     int len() const {
         return root ? root->size : 0;
     }
 
+    /// @brief 部分木の大きさと平衡条件を検査し、木の高さを標準エラー出力に出す / O(n)
     void check() const {
         auto rec = [&] (auto &&rec, NodePtr node) -> pair<int, int> {
             int ls = 0, rs = 0;

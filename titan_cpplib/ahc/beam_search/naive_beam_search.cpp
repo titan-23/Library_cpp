@@ -13,19 +13,20 @@ using namespace std;
 namespace flying_squirrel {
 
 /// @brief 状態をノードごとに複製する単純なビームサーチ
-/// @note State は init(), try_op(), apply_op(), enumerate_actions() を実装する必要がある
-/// @tparam INF 無効なスコアを表す値で、-INF も表現できる必要がある
+/// State は init(), try_op(), apply_op(), enumerate_actions() を実装する。INF は無効なスコアを表し、-INF も表現できる必要がある
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
 class NaiveBeamSearch {
 private:
     using Result = BeamResult<ScoreType, Action, State>;
 
+    /// @brief 次ターンの候補
     struct BeamCandidate {
         int par_idx;
         ScoreType score;
         Action action;
     };
 
+    /// @brief ハッシュの重複を除き、上位候補をビーム幅まで保持する
     class Candidates {
     private:
         using T = pair<ScoreType, int>;
@@ -90,6 +91,8 @@ private:
             return true;
         }
 
+        /// @brief 次ターンに向けて候補を初期化する
+        /// clear_hash が false のとき、hash_window_turns ターンごとにハッシュを破棄する。0 なら破棄しない
         void reset(int turn, int w, bool clear_hash, int hash_window_turns = 0) {
             beam_width = w;
             while (s < w) {
@@ -118,6 +121,7 @@ private:
             entry = 0;
         }
 
+        /// @brief スコアが最小の候補を返す
         BeamCandidate get_best() {
             return *min_element(next_beam.begin(), next_beam.begin() + entry,
                                 [] (const BeamCandidate &left, const BeamCandidate &right) {
@@ -126,11 +130,13 @@ private:
         }
     } candidates;
 
+    /// @brief 行動列の復元に使う履歴ノード
     struct HistoryNode {
         int parent_id;
         Action action;
     };
 
+    /// @brief ビーム内の状態
     struct Node {
         State state;
         ScoreType score;
@@ -189,7 +195,7 @@ private:
     };
 
 public:
-    /// @brief 指定した設定でビームサーチを実行する
+    /// @brief 指定した設定でビームサーチを実行し、探索結果を返す
     template<bool materialize_final_state=true>
     Result search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
         if (param.max_turn <= 0 || param.beam_width <= 0) {

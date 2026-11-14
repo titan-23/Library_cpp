@@ -11,6 +11,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 1 文字ずつ更新できる括弧列で、区間が正しい括弧列かを判定する
 class Brackets {
 private:
     struct S { int sum, min; };
@@ -25,6 +26,8 @@ private:
 
 public:
     Brackets() : n(0) {}
+
+    /// @brief '(' と ')' だけからなる文字列 s から構築する / O(N)
     Brackets(const string &s) : n(s.size()), s(s) {
         vector<S> a(n);
         for (int i = 0; i < n; ++i) {

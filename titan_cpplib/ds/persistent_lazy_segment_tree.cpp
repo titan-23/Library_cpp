@@ -10,6 +10,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 永続遅延セグメント木 / ノード領域は全インスタンスで共有する
 template <class T, class F,
         T (*op)(T, T),
         T (*mapping)(F, T),
@@ -20,6 +21,7 @@ class PersistentLazySegmentTree {
 public:
     static FastStack<int> path;
 
+    /// @brief 全インスタンスで共有するノード領域
     struct MemoryAllocator {
 
         // #pragma pack(push, 1)
@@ -47,6 +49,7 @@ public:
             data.emplace_back(e(), id());
         }
 
+        /// @brief node を複製し、新しいノードの番号を返す
         int copy(int node) {
             int idx = new_node(data[node].data, data[node].lazy);
             tree[idx].left = tree[node].left;
@@ -54,6 +57,7 @@ public:
             return idx;
         }
 
+        /// @brief 新しいノードを作り、その番号を返す
         int new_node(const T key, const F f) {
             if (tree.size() > ptr) {
                 tree[ptr] = {0, 0};
@@ -69,16 +73,19 @@ public:
             return ptr - 1;
         }
 
+        /// @brief ノード n 個分の領域を確保する
         void reserve(int n) {
             tree.reserve(n);
             data.reserve(n);
             cap += n;
         }
 
+        /// @brief 全ノードを解放する / それまでの木は全て無効になる
         void reset() {
             ptr = 1;
         }
 
+        /// @brief 使ったノード数が容量の 99% を超えたかを返す
         bool almost_full() const {
             return (double)ptr > max(1.0, cap*0.99);
         }
@@ -140,8 +147,10 @@ private:
 
   public:
     PersistentLazySegmentTree() : root(0), _len(0) {}
+    /// @brief 列 a から構築する / O(n)
     PersistentLazySegmentTree(const vector<T> &a) { _build(a); }
 
+    /// @brief 区間 [l, r) に f を作用させた木を返す / O(log n)
     PLSEG apply(int l, int r, F f) {
         assert(0 <= l && l <= r && r <= len());
         if (l == r) return PLSEG(ma.copy(root), len());
@@ -162,6 +171,7 @@ private:
         return PLSEG(dfs(dfs, root, 0, len()), len());
     }
 
+    /// @brief 区間 [l, r) の総積を返す / O(log n)
     T prod(int l, int r) {
         assert(0 <= l && l <= r && r <= len());
         if (l == r) return e();
@@ -182,6 +192,7 @@ private:
         return dfs(dfs, root, 0, len());
     }
 
+    /// @brief vector にして返す / O(n)
     vector<T> tovector() {
         if (len() == 0) return {};
         vector<T> a(len());
@@ -199,10 +210,12 @@ private:
         return a;
     }
 
+    /// @brief 木をコピーして返す / O(1)
     PLSEG copy() {
         return PLSEG(ma.copy(root), len());
     }
 
+    /// @brief 位置 k を v に変更した木を返す / O(log n)
     PLSEG set(int k, T v) {
         assert(0 <= k && k < len());
         propagate(root);
@@ -238,6 +251,7 @@ private:
         return PLSEG(new_root, len());
     }
 
+    /// @brief 位置 k の値を返す / O(log n)
     T get(int k) {
         assert(0 <= k && k < len());
         int node = root;
@@ -256,6 +270,7 @@ private:
         return ma.data[node].data;
     }
 
+    /// @brief 列を出力する
     void print() {
         vector<T> a = tovector();
         cout << "[";
@@ -266,7 +281,7 @@ private:
         cout << "]" << endl;
     }
 
-    // fromの[l, r)を自身の[l, r)にコピーしたものを返す(自身は不変)
+    /// @brief 自身の [l, r) を from の [l, r) で置き換えた木を返す / 自身は変えない
     PLSEG copy_from(PLSEG &from, int l, int r) {
         assert(0 <= l && l <= r && r <= len());
         auto dfs = [&] (auto &&dfs, int fr, int to, int left, int right) -> int {
@@ -276,7 +291,7 @@ private:
             if (right <= l || r <= left) { return to; }
             if (l <= left && right <= r) { return fr; }
             int mid = (left + right) / 2;
-            // data[node].dataはこの後updateする / .lazyは伝播済み
+            // data はこの後の update で求め直す。lazy は伝播済み
             ma.tree[to].left = dfs(dfs, ma.tree[fr].left, ma.tree[to].left, left, mid);
             ma.tree[to].right = dfs(dfs, ma.tree[fr].right, ma.tree[to].right, mid, right);
             update(to);
@@ -286,6 +301,7 @@ private:
         return PLSEG(new_root, len());
     }
 
+    /// @brief 列の長さを返す / O(1)
     int len() const {
         return _len;
     }
@@ -301,6 +317,7 @@ private:
         return os;
     }
 
+    /// @brief ノード領域を初期化し、tree だけを作り直す / tree 以外の木は無効になる
     static void rebuild(PLSEG &tree) {
         PLSEG::ma.reset();
         vector<T> a = tree.tovector();

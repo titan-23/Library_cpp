@@ -1,6 +1,5 @@
 /// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/gomi/gomi_pseg.cpp
-// gomi
-// becase of not 葉木
+// 不採用の実装。葉木ではないため
 #include <iostream>
 #include <vector>
 #include "titan_cpplib/others/print.cpp"
@@ -9,11 +8,15 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 永続セグメント木 / 0-indexed
+/// 全ての木が静的なノード領域 ma を共有する
 template<class T, T (*op)(T, T), T (*e)()>
 class PersistentSegmentTree {
 public:
+    /// @brief set が根からの経路を積む作業用スタック
     static FastStack<int> path;
 
+    /// @brief 全ての木が共有するノード領域
     struct MemoeyAllocator {
 
         // #pragma pack(push, 1)
@@ -41,6 +44,7 @@ public:
             data.emplace_back(T{}, T{});
         }
 
+        /// @brief ノードを複製して番号を返す
         int copy(int node) {
             int idx = new_node(data[node].key);
             tree[idx] = {tree[node].left, tree[node].right};
@@ -48,6 +52,7 @@ public:
             return idx;
         }
 
+        /// @brief 値 key を持つノードを作成して番号を返す
         int new_node(const T key) {
             if (tree.size() > ptr) {
                 tree[ptr] = {0, 0};
@@ -63,21 +68,26 @@ public:
             return ptr - 1;
         }
 
+        /// @brief n ノード分の容量を確保する
         void reserve(int n) {
             tree.reserve(n);
             data.reserve(n);
             cap += n;
         }
 
+        /// @brief 確保済み領域を再利用できる状態に戻す / O(1)
+        /// この領域を使う既存の木は無効になる
         void reset() {
             ptr = 1;
         }
 
+        /// @brief 確保済み領域がほぼ埋まっているか判定する / O(1)
         bool almost_full() const {
             return (double)ptr > max(1.0, cap*0.99);
         }
     };
 
+    /// @brief 全ての木が共有するノード領域
     static MemoeyAllocator ma;
 
 private:
@@ -111,10 +121,13 @@ private:
     PersistentSegmentTree(int root, int l) : root(root), _len(l) {}
 
   public:
+    /// @brief 空の列を構築する / O(1)
     PersistentSegmentTree() : root(0), _len(0) {}
 
+    /// @brief 列 a から構築する / O(n)
     PersistentSegmentTree(vector<T> &a) { _build(a); }
 
+    /// @brief 区間 [l, r) の総積を返す
     T prod(int l, int r) {
         assert(0 <= l && l <= r && r <= len());
         if (l == r) return e();
@@ -131,6 +144,7 @@ private:
         return dfs(dfs, root, 0, len());
     }
 
+    /// @brief 全要素を配列にして返す / O(n)
     vector<T> tovector() {
         int node = root;
         stack<int> s;
@@ -149,10 +163,12 @@ private:
         return a;
     }
 
+    /// @brief 根だけを複製した木を返す / O(1)
     PSEG copy() {
         return PSEG(ma.copy(root), len());
     }
 
+    /// @brief a[k] を v に変更した木を返す
     PSEG set(int k, T v) {
         assert(0 <= k && k < len());
         int new_root = ma.copy(root);
@@ -194,6 +210,7 @@ private:
         return PSEG(new_root, len());
     }
 
+    /// @brief a[k] を返す
     T get(int k) {
         assert(0 <= k && k < len());
         int node = root;
@@ -213,6 +230,7 @@ private:
         }
     }
 
+    /// @brief 全要素を標準出力に出力する / O(n)
     void print() {
         vector<T> a = tovector();
         cout << "[";
@@ -223,7 +241,7 @@ private:
         cout << "]" << endl;
     }
 
-    // fromの[l, r)を自身の[l, r)にコピーしたものを返す(自身は不変)
+    /// @brief from の [l, r) を自身の [l, r) に写した木を返す / 自身は変更しない
     PSEG copy_from(PSEG &from, int l, int r) {
         assert(0 <= l && l <= r && r <= len());
         auto dfs = [&] (auto &&dfs, int fr, int to, int left, int right) -> int {
@@ -234,7 +252,7 @@ private:
             int mid = (left + right) / 2;
             ma.tree[to].left = dfs(dfs, ma.tree[fr].left,  ma.tree[to].left,  left, mid);
             if (l <= mid && mid < r) {
-                // data,sizeはこの後updateする
+                // data と size は後の update で直す
                 ma.data[to].key = ma.data[fr].key;
             }
             ma.tree[to].right = dfs(dfs, ma.tree[fr].right, ma.tree[to].right, mid+1, right);
@@ -245,6 +263,7 @@ private:
         return PSEG(new_root, len());
     }
 
+    /// @brief 要素数を返す / O(1)
     int len() const {
         return _len;
     }
@@ -260,6 +279,8 @@ private:
         return os;
     }
 
+    /// @brief 確保済み領域を初期化して tree を作り直す / O(n)
+    /// 同じ領域を共有する他の木は無効になる
     static void rebuild(PSEG &tree) {
         PSEG::ma.reset();
         vector<T> a = tree.tovector();

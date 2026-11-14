@@ -14,10 +14,10 @@ using namespace std;
 /// 木上のビームサーチライブラリ
 namespace flying_squirrel {
 
+/// @brief 探索木を行きがけと帰りがけの列で持つ木構造ビームサーチの旧実装
+/// 参考: https://eijirou-kyopro.hatenablog.com/entry/2024/02/01/115639
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
 class BeamSearchWithTree {
-    // ref: https://eijirou-kyopro.hatenablog.com/entry/2024/02/01/115639
-
 private:
     static constexpr const int PRE_ORDER = -1;
     static constexpr const int POST_ORDER = -2;
@@ -33,6 +33,7 @@ private:
     int best_finished_par;
     Action best_finished_action;
 
+    /// @brief 探索木の巡回列の要素
     struct TreeNode {
         int dir_or_leaf_id;
         Action action;
@@ -41,6 +42,7 @@ private:
         TreeNode(int d, Action a, ActionIDType id) : dir_or_leaf_id(d), action(move(a)), action_id(id) {}
     };
 
+    /// @brief 次のビームの候補
     struct BeamCandidate {
         int par;
         ScoreType score;
@@ -51,10 +53,7 @@ private:
         BeamCandidate(int p, ScoreType s, Action a, ActionIDType id) : par(p), score(s), action(move(a)), action_id(id) {}
     };
 
-    // ビームサーチの過程を表す木
-    // <dir or id, action, action_id>
-    // dir or id := 葉のとき、leaf_id
-    //              そうでないとき、行きがけなら-1、帰りがけなら-2
+    // 探索木の巡回列。dir_or_leaf_id は葉なら leaf_id、行きがけなら -1、帰りがけなら -2
     vector<TreeNode> tree, nxt_tree;
     int last_fixed_node_id;
 
@@ -62,6 +61,7 @@ private:
     vector<HistoryNode<ScoreType, HashType>> history;
     int node_id_counter;
 
+    /// @brief ハッシュの重複を除き、上位候補をビーム幅まで保持する
     class Candidates {
     private:
         using T = pair<ScoreType, int>;
@@ -88,10 +88,10 @@ private:
 
         int size() const { return entry; }
 
-        /// @brief 現在のworstを返す / これ以上なら意味ない
+        /// @brief 保持中で最悪のスコアを返す / これ以上のスコアは採用されない。ビーム幅に達するまでは INF
         ScoreType threshold() const { return entry < beam_width ? INF : seg[1].first; }
 
-        /// 追加できたらtrueを返す
+        /// @brief 候補を追加し、採用されたら true を返す
         bool push(
             ScoreType score, HashType hash,
             int par, Action action, ActionIDType action_id
@@ -127,6 +127,7 @@ private:
             return true;
         }
 
+        /// @brief 次ターンに向けて候補を初期化する / clear_hash が false なら前ターンの生存候補を予約済みとして残す
         void reset(int turn, int w, bool clear_hash) {
             beam_width = w;
             while (s < w) {
@@ -153,6 +154,7 @@ private:
             entry = 0;
         }
 
+        /// @brief スコアが最小の候補を返す
         BeamCandidate get_best() {
             return *min_element(next_beam.begin(), next_beam.begin() + entry, [] (const BeamCandidate &left, const BeamCandidate &right) {
                 return left.score < right.score;
@@ -162,14 +164,7 @@ private:
 
     vector<Action> actions;
 
-    /**
-     * @brief 次のビームを求める
-     *
-     * @param state 探索を進める State
-     * @param turn  search ループのグローバルターン番号（履歴記録に使う）
-     * @param depth 探索木の局所深さ。一本道圧縮後は 0 になり、turn != depth となり得る。
-     *              depth == 0 のときは tree を辿らず state から直接展開する。
-     */
+    // 次のビーム候補を求める。depth == 0 なら tree を辿らず state から直接展開する
     void get_next_beam(State &state, const int turn, const int depth) {
         if (depth == 0) {
             actions.clear();
@@ -243,7 +238,7 @@ private:
         }
     }
 
-    /// 不要なNodeを削除し、木を更新する
+    // 不要なノードを削除して木を更新し、一本道として確定したターン数を返す
     int update_tree(State& state, const int turn) {
         nxt_tree.clear();
         if (turn == 0) {
@@ -260,7 +255,7 @@ private:
         int apply_only_turn = 0;
         while (true) {
             const auto &[dir_or_leaf_id, action, action_id] = tree[i];
-            // 行きがけかつ帰りがけのaction_idが一致しているなら、一本道なので行くだけ
+            // 先頭の行きがけと末尾の帰りがけで action_id が一致すれば一本道なので、適用して確定する
             if (dir_or_leaf_id == PRE_ORDER && action_id == tree.back().action_id) {
                 ++i;
                 result.emplace_back(action);
@@ -366,13 +361,7 @@ private:
     }
 
 public:
-    /**
-     * @brief ビームサーチをする
-     *
-     * @param param ターン数、ビーム幅を指定するパラメータ構造体
-     * @param verbose ログ出力するかどうか
-     * @return vector<Action>
-     */
+    /// @brief ビームサーチを実行し、行動列を返す
     vector<Action> search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
         init_bs(param);
         if (verbose) {
@@ -394,7 +383,7 @@ public:
             if (found_finished) {
                 turns_done = turn + 1;
                 if (best_finished_par != PRE_ORDER) {
-                    // best_finished_par の葉まで木を DFS で辿り、PRE_ORDER のアクションを順に積む
+                    // best_finished_par の葉まで木を DFS で辿り、PRE_ORDER の action を順に積む
                     for (const auto &[dir_or_leaf_id, action, _] : tree) {
                         if (dir_or_leaf_id >= 0) {
                             if (best_finished_par == dir_or_leaf_id) {

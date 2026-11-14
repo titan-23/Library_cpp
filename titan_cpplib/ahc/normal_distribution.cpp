@@ -8,6 +8,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 正規分布の確率計算をまとめた静的関数群
 class NormalDist {
 private:
     static constexpr const double PI = 3.14159265358979323846;
@@ -38,11 +39,12 @@ private:
     }
 
 public:
-    /// 正規分布 N(mu, sigma) において、x 以下となる確率を返す
+    /// @brief 正規分布 N(mu, sigma) で x 以下となる確率を返す / O(1)
     static double cdf(double x, double mu, double sigma) {
         return 0.5 * (1 + erf((x - mu) / (sigma * sqrt2)));
     }
 
+    /// @brief 標準正規分布で x 以下となる確率を近似して返す / O(1)
     static double cdf_approx(double x) {
         double sgn = (x < 0) ? -1.0 : 1.0;
         x = fabs(x) / sqrt(2.0);
@@ -51,24 +53,24 @@ public:
         return 0.5 * (1.0 + sgn * y);
     }
 
-    /// 正規分布 N(mu, sigma) において、x 以下となる確率を返す
+    /// @brief 正規分布 N(mu, sigma) で x 以下となる確率を近似して返す / O(1)
     static double cdf_approx(double x, double mu, double sigma) {
         return cdf_approx((x - mu) / sigma);
     }
 
-    /// 正規分布 N(mu, sigma) における x の確率密度を返す
+    /// @brief 正規分布 N(mu, sigma) における x の確率密度を返す / O(1)
     static double pdf(double x, double mu, double sigma) {
         double coeff = 1.0 / (sigma * sqrt(2.0 * PI));
         double exponent = -0.5 * pow((x - mu) / sigma, 2);
         return coeff * exp(exponent);
     }
 
-    /// 正規分布 N(mu, sigma) における x の対数確率密度を返す
+    /// @brief 正規分布 N(mu, sigma) における x の対数確率密度を返す / O(1)
     static double log_pdf(double x, double mu, double sigma) {
         return -0.5 * log(2.0 * PI) - log(sigma) - 0.5 * pow((x - mu) / sigma, 2);
     }
 
-    /// 正規分布 N(mu, sigma) に対して、観測した値が区間 [l, r] に含まれる確率を返す
+    /// @brief 正規分布 N(mu, sigma) に従う値が区間 [l, r] に入る確率を返す / O(1)
     static double probability_in_range(double l, double r, double mu, double sigma) {
         assert(l <= r);
         double res = cdf(r, mu, sigma) - cdf(l, mu, sigma);
@@ -76,13 +78,13 @@ public:
         return res;
     }
 
-    /// 正規分布 N(mu, sigma) における累積確率 p に対応する x を返す
+    /// @brief 正規分布 N(mu, sigma) で累積確率 p に対応する x を近似して返す / O(1)
     static double inverse_cdf(double p, double mu, double sigma) {
         assert(0 <= p && p <= 1.0);
         return mu + sigma * sqrt2 * erfinv_approx(2.0 * p - 1.0);
     }
 
-    /// ベイズ更新：事前分布 N(mu_prior, sigma_prior) と観測データ (obs_val) および観測ノイズ N(0, sigma_obs) から事後分布の平均と標準偏差を返す
+    /// @brief 事前分布 N(mu_prior, sigma_prior) を観測値 obs_val でベイズ更新し、事後分布の平均と標準偏差を返す / 観測ノイズは N(0, sigma_obs) / O(1)
     static pair<double, double> update_posterior(double mu_prior, double sigma_prior, double obs_val, double sigma_obs) {
         if (sigma_prior < EPSILON) return {mu_prior, sigma_prior};
         if (sigma_obs < EPSILON) return {obs_val, 0.0};
@@ -96,7 +98,7 @@ public:
         return {mu_post, sqrt(var_post)};
     }
 
-    /// 2つの正規分布 P=N(mu1, sigma1) と Q=N(mu2, sigma2) 間のKLダイバージェンス D_KL(P || Q) を返す
+    /// @brief 2 つの正規分布 P=N(mu1, sigma1), Q=N(mu2, sigma2) の KL 情報量 D_KL(P || Q) を返す / O(1)
     static double KL(double mu1, double sigma1, double mu2, double sigma2) {
         assert(sigma1 > 0.0 && sigma2 > 0.0);
         double var1 = sigma1 * sigma1;

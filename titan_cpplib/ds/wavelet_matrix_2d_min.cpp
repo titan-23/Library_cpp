@@ -16,16 +16,7 @@ using namespace std;
 
 namespace titan23 {
 
-/**
- * @brief オフライン2次元点集合の最小値・最大値
- *
- * 同じ座標へ複数回登録した点は別々の点として扱う。
- * 同値の場合、先に登録した点を `range_argmin` / `range_argmax` が返す。
- * 各重みは `minus_inf < weight < inf` を満たすことを前提とする。
- *
- * @tparam T 座標の型
- * @tparam W 重みの型
- */
+/// @brief オフラインの 2 次元点集合で、長方形内の重みの最小値と最大値を求める / 重みは minus_inf < weight < inf が前提
 template<typename T, typename W>
 class WaveletMatrix2DMin {
 private:
@@ -107,32 +98,36 @@ private:
     }
 
 public:
+    /// @brief 空の集合を作る / inf と minus_inf は W の最大値と最小値
     WaveletMatrix2DMin() : WaveletMatrix2DMin(numeric_limits<W>::max(), numeric_limits<W>::lowest()) {}
 
+    /// @brief 重みの上限 inf を指定して空の集合を作る / minus_inf は W の最小値
     explicit WaveletMatrix2DMin(W inf) : WaveletMatrix2DMin(inf, numeric_limits<W>::lowest()) {}
 
+    /// @brief 重みの上限 inf と下限 minus_inf を指定して空の集合を作る
     WaveletMatrix2DMin(W inf, W minus_inf) : _inf(inf), _minus_inf(minus_inf), _log(0), _n(0), _built(false) {}
 
+    /// @brief 点 (x, y, weight) の列から構築する / O(nlog^2(n))
     WaveletMatrix2DMin(const vector<tuple<T, T, W>> &points, W inf = numeric_limits<W>::max(), W minus_inf = numeric_limits<W>::lowest())
         : WaveletMatrix2DMin(inf, minus_inf) {
         _points = points;
         build();
     }
 
-    /// 登録予定の点数を予約する / `O(1)`
+    /// @brief 登録予定の点数を予約する / O(1)
     void reserve(int capacity) {
         assert(!_built);
         _points.reserve(capacity);
     }
 
-    /// 点 `(x, y)` へ重み `weight` を登録する / ならし `O(1)`
+    /// @brief 点 (x, y) に重み weight を登録する / 同じ座標への登録は別の点になる / build 前に呼ぶ / ならし O(1)
     void add_point(T x, T y, W weight) {
         assert(!_built);
         assert(_minus_inf < weight && weight < _inf);
         _points.emplace_back(x, y, weight);
     }
 
-    /// 登録した点から構築する / `O(nlog^2(n))`
+    /// @brief 登録した点から構築する / O(nlog^2(n))
     void build() {
         _n = _points.size();
         vector<int> order(_n);
@@ -172,17 +167,8 @@ public:
         for (int bit = _log - 1; bit >= 0; --bit) {
             _min[bit] = StaticRmQ<MinItem>(mn, min_inf);
             _max[bit] = StaticRmQ<MaxItem>(mx, max_inf);
-            _v[bit] = BitVector(_n);
-            int zeros = 0;
-            for (int i = 0; i < _n; ++i) {
-                bool f = (a[i] >> bit) & 1;
-                if (f) {
-                    _v[bit].set(i);
-                } else {
-                    ++zeros;
-                }
-            }
-            _v[bit].build();
+            _v[bit] = BitVector(_n, [&](const int i) { return (a[i] >> bit) & 1; });
+            const int zeros = _v[bit].rank0(_n);
             _mid[bit] = zeros;
 
             int zero = 0;
@@ -203,15 +189,14 @@ public:
         _built = true;
     }
 
-    /// 長方形 `[x1, x2) × [y1, y2)` にある重みの最小値を返す / `O(log(n))`
+    /// @brief 長方形 [x1, x2) × [y1, y2) にある重みの最小値を返す / 点がなければ inf / O(log(n))
     W range_min(T x1, T x2, T y1, T y2) const {
         auto [l, r] = _x_range(x1, x2);
         auto [lower, upper] = _query_range(y1, y2);
         return _range_query(l, r, lower, upper, _min, _leaf_min, MinItem{_inf, -1}).value;
     }
 
-    /// 長方形内で最小の `(weight, x, y)` を返す / `O(log(n))`
-    /// 例: `[(0, 1, 7), (2, 3, 4)]` の全体では `(4, 2, 3)`
+    /// @brief 長方形内で重みが最小の点の (weight, x, y) を返す / 同値なら先に登録した点 / 点があることが前提 / O(log(n))
     tuple<W, T, T> range_argmin(T x1, T x2, T y1, T y2) const {
         auto [l, r] = _x_range(x1, x2);
         auto [lower, upper] = _query_range(y1, y2);
@@ -221,15 +206,14 @@ public:
         return {weight, x, y};
     }
 
-    /// 長方形 `[x1, x2) × [y1, y2)` にある重みの最大値を返す / `O(log(n))`
+    /// @brief 長方形 [x1, x2) × [y1, y2) にある重みの最大値を返す / 点がなければ minus_inf / O(log(n))
     W range_max(T x1, T x2, T y1, T y2) const {
         auto [l, r] = _x_range(x1, x2);
         auto [lower, upper] = _query_range(y1, y2);
         return _range_query(l, r, lower, upper, _max, _leaf_max, MaxItem{_minus_inf, -1}).value;
     }
 
-    /// 長方形内で最大の `(weight, x, y)` を返す / `O(log(n))`
-    /// 例: `[(0, 1, 7), (2, 3, 4)]` の全体では `(7, 0, 1)`
+    /// @brief 長方形内で重みが最大の点の (weight, x, y) を返す / 同値なら先に登録した点 / 点があることが前提 / O(log(n))
     tuple<W, T, T> range_argmax(T x1, T x2, T y1, T y2) const {
         auto [l, r] = _x_range(x1, x2);
         auto [lower, upper] = _query_range(y1, y2);
@@ -239,7 +223,7 @@ public:
         return {weight, x, y};
     }
 
-    /// 登録点数を返す / `O(1)`
+    /// @brief 登録点数を返す / O(1)
     int len() const { return _n; }
 };
 

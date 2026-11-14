@@ -1,112 +1,148 @@
 /// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/ds/hash_set.cpp
 #pragma once
 
-#include <vector>
-#include <random>
+#include <algorithm>
 #include <cassert>
-#include "titan_cpplib/others/bit.cpp"
+#include <random>
+#include <vector>
+#include "titan_cpplib/others/simd_int.cpp"
 
 using namespace std;
 
-// HashSet
 namespace titan23 {
 
+/// @brief 64 bit 整数の集合 / 要素の削除はできない
 class HashSet {
 private:
     using u64 = unsigned long long;
-    static constexpr const int M = 2;
-    vector<u64> exist;
-    vector<u64> keys;
-    int msk, xor_;
+    static constexpr int WINDOW = 4;  // contains で一度に比べる鍵の数
+    static constexpr int PAD = 64;    // 表の末尾の余白
+
+    vector<u64> keys;  // 長さ cap + PAD。[limit, cap + PAD) は常に 0
+    u64 msk;  // cap - 1
+    int cap, limit;
     int size;
+    u64 salt;
+    bool has_zero;
 
-    // static constexpr const u64 K = 0x517cc1b727220a95;
-    // constexpr int hash(const u64 &key) const {
-    //     return (((((key>>32)&msk) ^ (key&msk) ^ xor_)) * HashSet::K) & msk;
-    // }
-
-    constexpr int hash(const u64 &key) const {
-        u64 h = key ^ xor_;
-        h = (h ^ (h >> 30)) * 0xbf58476d1ce4e5b9;
-        h = (h ^ (h >> 27)) * 0x94d049bb133111eb;
-        h = h ^ (h >> 31);
-        return h & msk;
+    // オブジェクトごとに異なる salt を返す。random_device はスレッドごとに 1 回だけ使う
+    static u64 new_salt() {
+        static thread_local u64 state = [] {
+            random_device rd;
+            return (u64(rd()) << 32) ^ rd();
+        }();
+        u64 z = (state += 0x9e3779b97f4a7c15ULL);
+        z = (z ^ (z >> 30)) * 0xbf58476d1ce4e5b9ULL;
+        z = (z ^ (z >> 27)) * 0x94d049bb133111ebULL;
+        return z ^ (z >> 31);
     }
 
-    pair<int, bool> get_pos(const u64 &key) const {
-        int h = hash(key);
+    // 128 bit の積の上位と下位を xor する。積を変数に置くと GCC 12 で遅くなるので、上位と下位を別の式で求める
+    u64 home(const u64 key) const {
+        constexpr u64 K = 0x9e3779b97f4a7c15ULL;
+        const u64 x = key ^ salt;
+        const u64 hi = (u64)(((__uint128_t)x * K) >> 64);
+        return ((x * K) ^ hi) & msk;
+    }
+
+    void alloc(const int c) {
+        cap = c;
+        msk = c - 1;
+        limit = c + PAD - WINDOW;
+        keys.assign(c + PAD, 0);
+    }
+
+    // 再構築では呼び出し元の挿入を小さく保つため、インライン展開させない
+    __attribute__((noinline)) void rebuild() {
+        const vector<u64> old = move(keys);
+        int c = cap;
         while (true) {
-            if (!(exist[h>>6]>>(h&63)&1)) return {h, false};
-            if (keys[h] == key) return {h, true};
-            h = (h + 1) & msk;
-        }
-    }
-
-    void rebuild() {
-        vector<u64> old_exist = exist;
-        vector<u64> old_keys = keys;
-        exist.resize(HashSet::M*old_exist.size()+1);
-        fill(exist.begin(), exist.end(), 0);
-        keys.resize(HashSet::M*old_keys.size());
-        size = 0;
-        msk = (1<<bit_length(keys.size()-1))-1;
-        random_device rd;
-        mt19937 gen(rd());
-        uniform_int_distribution<int> dis(0, msk);
-        xor_ = dis(gen);
-        for (int i = 0; i < (int)old_keys.size(); ++i) {
-            if (old_exist[i>>6]>>(i&63)&1) {
-                insert(old_keys[i]);
+            assert(c <= (1 << 29));
+            c *= 2;
+            alloc(c);
+            bool ok = true;
+            for (const u64 key : old) {
+                if (key == 0) continue;
+                u64 p = home(key);
+                while (keys[p] != 0) ++p;
+                if (p >= (u64)limit) {  // 余白を使い切った。容量を増やしてやり直す
+                    ok = false;
+                    break;
+                }
+                keys[p] = key;
             }
+            if (ok) return;
         }
     }
 
 public:
-    HashSet() : exist(1, 0), keys(1), msk(0), xor_(0), size(0) {}
-
-    HashSet(const int n) {
-        int s = 1<<bit_length(n);
-        s *= HashSet::M;
-        assert(s > 0);
-        exist.resize((s>>6)+1, 0);
-        keys.resize(s);
-        msk = (1<<bit_length(keys.size()-1))-1;
-        random_device rd;
-        mt19937 gen(rd());
-        uniform_int_distribution<int> dis(0, msk);
-        xor_ = dis(gen);
+    HashSet() : salt(new_salt()), has_zero(false) {
+        alloc(16);
         size = 0;
     }
 
-    bool contains(const u64 key) const {
-        return get_pos(key).second;
+    /// @brief n 要素まで再構築せずに持てる集合を作る
+    HashSet(const int n) : salt(new_salt()), has_zero(false) {
+        assert(0 <= n && n <= (1 << 28));
+        int c = 16;
+        while (c < 2 * n) c *= 2;
+        alloc(c);
+        size = 0;
     }
 
+    /// @brief key があるかを返す / 期待 O(1)
+    // SSE2 だけの環境の -O2 ではインライン展開されないので強制する
+    __attribute__((always_inline)) bool contains(const u64 key) const {
+        if (key == 0) return has_zero;
+        const u64 *p = keys.data() + home(key);
+        if constexpr (simd_equal_bits_vectorized_v<u64>) {
+            // 窓に鍵があれば、窓に空きがあっても見つかったとしてよい
+            while (true) {
+                if (simd_equal_bits<WINDOW>(p, key)) return true;
+                if (simd_equal_bits<WINDOW>(p, u64(0))) return false;
+                p += WINDOW;
+            }
+        } else {
+            for (; *p != 0; ++p) {
+                if (*p == key) return true;
+            }
+            return false;
+        }
+    }
+
+    /// @brief key を追加する / 期待 O(1)
     void insert(const u64 key) {
-        const auto [pos, is_exist] = get_pos(key);
-        if (is_exist) return;
-        exist[pos>>6] |= 1ull<<(pos&63);
-        keys[pos] = key;
-        ++size;
-        if (HashSet::M*size > keys.size()) rebuild();
+        contains_insert(key);
     }
 
-    /// keyがすでにあればtrue, なければ挿入してfalse / `O(1)`
+    /// @brief key があれば true を返す / 無ければ挿入して false を返す / 期待 O(1)
     bool contains_insert(const u64 key) {
-        const auto [pos, is_exist] = get_pos(key);
-        if (is_exist) return true;
-        exist[pos>>6] |= 1ull<<(pos&63);
-        keys[pos] = key;
+        if (key == 0) {
+            if (has_zero) return true;
+            has_zero = true;
+            ++size;
+            return false;
+        }
+        u64 p = home(key);
+        while (true) {
+            const u64 k = keys[p];
+            if (k == key) return true;
+            if (k == 0) break;
+            ++p;
+        }
+        // [limit, cap + PAD) は空なので p <= limit。p == limit なら余白を使い切ったので作り直す
+        keys[p] = key;
         ++size;
-        if (HashSet::M*size > keys.size()) rebuild();
+        if (size * 2 > cap || p >= (u64)limit) rebuild();
         return false;
     }
 
-    /// 全ての要素を削除する / `O(n/w)`
+    /// @brief 全要素を削除する / O(容量)
     void clear() {
         if (empty()) return;
-        this->size = 0;
-        fill(exist.begin(), exist.end(), 0);
+        size = 0;
+        has_zero = false;
+        fill(keys.begin(), keys.begin() + limit, 0);
     }
 
     bool empty() const {
@@ -117,4 +153,4 @@ public:
         return size;
     }
 };
-} // namespaced titan23
+} // namespace titan23

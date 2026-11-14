@@ -8,7 +8,7 @@ using namespace std;
 
 namespace flying_squirrel::chokudai_detail {
 
-/// @brief 世代別の未展開候補を保持し、各巡回で上位 beam_width 個を展開する
+/// @brief 世代ごとに未展開の候補を持ち、各巡回で各世代の上位 beam_width 個を展開する
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF,
          bool variable_turn, bool record_history>
 class Search {
@@ -353,13 +353,13 @@ class Search {
     }
 
 public:
-    /// @brief 既存ビームサーチと同じ設定・状態・返却型で実行する
+    /// @brief BeamParam で探索する / State と返り値の型はビームサーチと同じで、巡回回数は無制限
     template<bool materialize_final_state=true>
     Result search(BeamParam& param, bool verbose=false, const string& history_file="") {
         return run<materialize_final_state>(param, -1, verbose, history_file);
     }
 
-    /// @brief 巡回回数を制限して実行する
+    /// @brief 巡回回数を param.max_sweeps 回までに制限して探索する
     template<bool materialize_final_state=true>
     Result search(ChokudaiParam& param, bool verbose=false, const string& history_file="") {
         return run<materialize_final_state>(param, param.max_sweeps, verbose, history_file);

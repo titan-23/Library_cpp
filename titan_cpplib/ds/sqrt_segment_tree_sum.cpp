@@ -21,7 +21,7 @@ private:
 public:
     SqrtSegmentTreeSum() : SqrtSegmentTreeSum(0) {}
 
-    /// @brief 長さ n の零列で構築する / O(n)
+    /// @brief 長さ n で構築する / 初期値 0 / O(n)
     SqrtSegmentTreeSum(int n) : n(n), bucket_size(1), total(0) {
         bucket_size = sqrt(n) + 1;
         const int bucket_cnt = n / bucket_size + (n % bucket_size != 0);
@@ -48,14 +48,14 @@ public:
     /// @brief 列の長さを返す / O(1)
     int size() const { return n; }
 
-    /// @brief `a[i]` を返す / O(1)
+    /// @brief a[i] を返す / O(1)
     T get(int i) const {
         assert(0 <= i && i < n);
         const int k = i / bucket_size;
         return a[k][i - k * bucket_size];
     }
 
-    /// @brief `a[i]` を `v` に変更する / O(1)
+    /// @brief a[i] を v に変更する / O(1)
     void set(int i, const T &v) {
         assert(0 <= i && i < n);
         const int k = i / bucket_size, j = i - k * bucket_size;
@@ -67,7 +67,7 @@ public:
         a[k][j] = v;
     }
 
-    /// @brief `a[i]` に `v` を加算する / O(1)
+    /// @brief a[i] に v を加算する / O(1)
     void add(int i, const T &v) {
         assert(0 <= i && i < n);
         const int k = i / bucket_size;
@@ -76,7 +76,7 @@ public:
         total += v;
     }
 
-    /// @brief 区間 `[l, r)` の和を返す / O(√n)
+    /// @brief 区間 [l, r) の和を返す / O(√n)
     T prod(int l, int r) const {
         assert(0 <= l && l <= r && r <= n);
         if (l == r) return 0;

@@ -17,6 +17,7 @@ private:
     PersistentUnionFind(PType p) : n(p.len()), par(p) {}
 
 public:
+    /// @brief 要素数 0 で構築する / O(1)
     PersistentUnionFind() : n(0) {}
 
     /// @brief 要素数 n で初期化する / O(n)

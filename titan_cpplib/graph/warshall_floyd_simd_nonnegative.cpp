@@ -11,17 +11,12 @@
 
 using namespace std;
 
-// WarshallFloydSIMDNonnegative
 namespace titan23 {
 
 using ll = long long;
 
-/**
- * @brief 非負辺専用の Warshall-Floyd
- * @details AVX-512 (F, VL) > AVX2 > 逐次 の順にコンパイル時に選ぶ。
- *          T は 32 bit または 64 bit の符号付き整数。構築時および `add_edge` で与える辺の重みは `0` 以上。
- *          到達不能な頂点対の距離は INF で、最短距離は INF 未満に収まる必要がある。
- */
+/// @brief SIMD を用いた非負辺専用の Warshall-Floyd / T は 32 bit または 64 bit の符号付き整数
+/// 構築時と add_edge で与える辺の重みは 0 以上 / 最短距離は INF 未満に収まること
 template<typename T = long long>
 class WarshallFloydSIMDNonnegative {
     static_assert(is_integral_v<T> && is_signed_v<T> && (sizeof(T) == 4 || sizeof(T) == 8),
@@ -30,7 +25,7 @@ class WarshallFloydSIMDNonnegative {
     using Vec = typename Ops::Vec;
 
 public:
-    // 3 値の和が T に収まる大きさ
+    /// @brief 到達不能を表す値 / 3 値の和が T に収まる大きさ
     static constexpr T INF = numeric_limits<T>::max() / 3;
 
 private:
@@ -40,7 +35,7 @@ private:
 public:
     WarshallFloydSIMDNonnegative() : n(0) {}
 
-    /// @brief 時間 O(|V|^3), 空間 O(|V|^2)
+    /// @brief 隣接リスト G から全点対の最短距離を求める / 時間 O(|V|^3)、空間 O(|V|^2)
     WarshallFloydSIMDNonnegative(const vector<vector<pair<int, T>>> &G) : n(G.size()) {
         n = (n + Ops::LANES - 1) / Ops::LANES * Ops::LANES;
         d.assign(n*n, INF);
@@ -68,7 +63,7 @@ public:
         }
     }
 
-    /// @brief 重み `w` の有向辺 `(s, t)` を追加する / O(|V|^2)
+    /// @brief 重み w の有向辺 (s, t) を追加して距離を更新する / O(|V|^2)
     void add_edge(int s, int t, T w) {
         assert(w >= 0);
         if (w >= d[s*n+t]) return;
@@ -86,7 +81,7 @@ public:
         }
     }
 
-    /// @brief 到達不能なら INF / O(1)
+    /// @brief s から t への最短距離を返す / 到達不能なら INF / O(1)
     T get_dist(int s, int t) const {
         return d[s*n+t];
     }

@@ -6,12 +6,9 @@
 #include <cassert>
 using namespace std;
 
-// Zaatsu
 namespace titan23 {
 
-/**
- * @brief 座標圧縮管理クラス
- */
+/// @brief 座標圧縮を行う
 template<typename T>
 class Zaatsu {
 private:
@@ -22,18 +19,18 @@ private:
 public:
     Zaatsu() : n(0), built(true) {}
 
-    /// @brief `used_items` からなる集合を管理するインスタンスを生成
+    /// @brief used_items から構築する / O(n log n)
     Zaatsu(const vector<T> &used_items) : a(used_items) {
         build();
     }
 
-    /// @brief `v` を追加する
+    /// @brief v を追加する / 他の操作の前に build() が必要
     void add(const T &v) {
         a.push_back(v);
         built = false;
     }
 
-    /// @brief 構築する
+    /// @brief 重複を除いて整列する / O(n log n)
     void build() {
         sort(a.begin(), a.end());
         a.erase(unique(a.begin(), a.end()), a.end());
@@ -53,13 +50,13 @@ public:
         return n;
     }
 
-    /// @brief `v` を座標圧縮する
+    /// @brief v を座標圧縮した値を返す / O(log n)
     int to_zaatsu(const T &v) const {
         assert(built);
         return lower_bound(a.begin(), a.end(), v) - a.begin();
     }
 
-    /// @brief 座標圧縮された要素 `x` を戻す
+    /// @brief 座標圧縮した値 x を元の値に戻す / O(1)
     T to_origin(const int &x) const {
         assert(built);
         assert(0 <= x && x < n);

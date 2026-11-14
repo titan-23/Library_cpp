@@ -3,10 +3,10 @@
 #pragma GCC optimize("O3")
 #pragma GCC optimize("unroll-loops")
 
-// a.cpp ベースの走査回数計測ハーネス
+// a.cpp をもとに、走査の回数を数える計測用プログラム
 // エンジンをマクロで切り替え、State 側のカウンタで
-// apply/rollback の呼び出し回数と原始 swap 回数を数える
-//   -DENGINE_PLAIN   : tour エンジン + compose 無効 (普通の差分更新型 相当)
+// apply/rollback の呼び出し回数と 1 手ごとの swap の回数を数える
+//   -DENGINE_PLAIN   : tour エンジン + compose 無効 (普通の差分更新型と同じ)
 //   -DENGINE_COMPOSE : tour エンジン + compose (beam_search_compose.cpp)
 //   -DENGINE_RADIX   : 圧縮辺木 (beam_search_radix.cpp)
 
@@ -38,12 +38,11 @@ void input() {
     }
 }
 
-// ---- State 側計測カウンタ --------------------------------------------------
-// エンジンに依存しない実仕事量の指標
-//   g_tryop          : try_op 呼び出し回数
-//   g_apply_calls    : apply_op 呼び出し回数 (合成 action は 1 回と数える)
-//   g_rollback_calls : rollback 呼び出し回数
-//   g_swap_fwd/back  : 原始 swap 回数 (合成 action は構成数だけ数える)
+// State 側の計測カウンタ。エンジンによらない実際の仕事量を表す
+//   g_tryop          : try_op の呼び出し回数
+//   g_apply_calls    : apply_op の呼び出し回数。合成 action は 1 回と数える
+//   g_rollback_calls : rollback の呼び出し回数
+//   g_swap_fwd/back  : 1 手ごとの swap の回数。合成 action は構成する手の数だけ数える
 long long g_tryop = 0;
 long long g_apply_calls = 0, g_rollback_calls = 0;
 long long g_swap_fwd = 0, g_swap_back = 0;
@@ -59,6 +58,7 @@ HashType zhs[10][10][101]; // zhs[i][j][k]:=(i,j)にkがあるときのハッシ
 int revB[101];
 HashType GOAL_HASH;
 
+/// @brief ハッシュ用の乱数表と、各値の目標位置を列優先で数えた表 revB を作る
 void beam_init() {
     rep(i, N) rep(j, N) rep(k, N*N+1) {
         zhs[i][j][k] = brnd.rand_u64();
@@ -69,6 +69,7 @@ void beam_init() {
     revB[0] = 0;
 }
 
+/// @brief 合成した Action の 2 手目以降の 1 手 / 途中の状態に戻すための pre_* を持つ
 struct ChainStep {
     char d;
     ScoreType pre_score;
@@ -77,6 +78,8 @@ struct ChainStep {
     int pre_inv_lr;
 };
 
+/// @brief 空きマスを 1 方向に動かす操作 / 合成すると 2 手目以降を chain に持つ
+/// nxt_* は合成した手をすべて適用した後の状態を表す
 struct Action {
     char d;
     ScoreType pre_score, nxt_score;
@@ -93,10 +96,11 @@ struct Action {
         return os;
     }
 
+    /// @brief nxt をこの操作の後ろに合成する / ENGINE_PLAIN では合成せず false を返す
     bool compose(Action &nxt) {
 #ifdef ENGINE_PLAIN
         (void)nxt;
-        return false;  // 合成無効 = 普通の差分更新型
+        return false;  // 合成しない。普通の差分更新型と同じ
 #else
         chain.reserve(chain.size() + 1 + nxt.chain.size());
         ChainStep s;
@@ -122,6 +126,7 @@ struct Action {
     }
 };
 
+/// @brief N×N のスライドパズルの盤面を持つ状態
 class State {
 private:
     ScoreType score;
@@ -175,6 +180,7 @@ private:
     }
 
 public:
+    /// @brief 入力の盤面 A で初期化する
     void init() {
         this->score = 0;
         this->hash = 0;
@@ -203,6 +209,8 @@ public:
         score += inv_dist;
     }
 
+    /// @brief action を適用した後の評価値、ハッシュ値、完成したかを返す
+    /// 戻すための情報はすべて action に記録する。threshold 以上と分かった時点で INF を返す
     tuple<ScoreType, HashType, bool> try_op(Action &action, const ScoreType threshold) const {
         ++g_tryop;
         action.pre_score = score;
@@ -274,6 +282,7 @@ public:
         return {nxt_score, nxt_hash, nxt_hash == GOAL_HASH};
     }
 
+    /// @brief 空きマスを d の向きに 1 マス動かす
     void swap_one_forward(char d) {
         ++g_swap_fwd;
         int py = y, px = x;
@@ -284,6 +293,7 @@ public:
         swap(F[y][x], F[py][px]);
     }
 
+    /// @brief 空きマスを d と逆の向きに 1 マス動かす
     void swap_one_back(char d) {
         ++g_swap_back;
         int py = y, px = x;
@@ -294,6 +304,7 @@ public:
         swap(F[y][x], F[py][px]);
     }
 
+    /// @brief action を適用する
     void apply_op(const Action &action) {
         ++g_apply_calls;
         swap_one_forward(action.d);
@@ -304,6 +315,7 @@ public:
         hash = action.nxt_hash;
     }
 
+    /// @brief action を戻す。合成された手は逆順に戻す
     void rollback(const Action &action) {
         ++g_rollback_calls;
         for (auto it = action.chain.rbegin(); it != action.chain.rend(); ++it) {
@@ -316,9 +328,10 @@ public:
         hash = action.pre_hash;
     }
 
+    /// @brief 遷移可能な action を submit に渡す
     template<class Submit>
     void enumerate_actions(const int turn, const Action &last_action, Submit &&submit) const {
-        // composed last_action の場合、最後に踏んだ primitive 方向は chain.back().d
+        // 合成された last_action では、最後の 1 手の方向が chain.back().d にある
         char last_d = last_action.chain.empty() ? last_action.d : last_action.chain.back().d;
         auto rev = [&] () -> char {
             if (turn == 0) return 'Z';
@@ -352,16 +365,19 @@ public:
     }
 };
 
+/// @brief 最大ターン数とビーム幅から BeamParam を返す
 flying_squirrel::BeamParam gen_param(int max_turn, int beam_width) {
     return {max_turn, beam_width, -1};
 }
 
+/// @brief 最大ターン数、ビーム幅、制限時間などから BeamParam を返す
 flying_squirrel::BeamParam gen_param(int max_turn, int beam_width, double time_limit, bool is_adjusting=false, bool clear_hash_every_turn=true) {
     return {max_turn, beam_width, time_limit, is_adjusting, clear_hash_every_turn};
 }
 
 using Result = flying_squirrel::BeamResult<ScoreType, Action, State>;
 
+/// @brief param で探索して結果を返す
 template<bool materialize_final_state=true>
 Result search(flying_squirrel::BeamParam &param, const bool verbose=false) {
 #if defined(ENGINE_RADIX)
@@ -375,6 +391,7 @@ Result search(flying_squirrel::BeamParam &param, const bool verbose=false) {
 } // namespace beam_search
 
 
+/// @brief マクロで選んだエンジンの名前を返す
 const char* engine_name() {
 #if defined(ENGINE_RADIX)
     return "radix";

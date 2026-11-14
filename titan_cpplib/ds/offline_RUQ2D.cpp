@@ -7,7 +7,7 @@ using namespace std;
 
 namespace titan23 {
 
-// 2次元 offline RUQ
+/// @brief 2 次元の矩形代入を全て記録してから、まとめて処理する
 template<typename T>
 class OfflineRUQ2D {
 private:
@@ -29,6 +29,7 @@ private:
     int now;
     vector<vector<int>> buf;
 
+    // x 以上で、今の節点の処理でまだ値を決めていない最小の列を返す。ver で毎回の初期化を省く
     int find(int x) {
         while (true) {
             int p = (ver[x] == now) ? nxt[x] : x;
@@ -53,6 +54,7 @@ private:
         }
     }
 
+    // セグメント木を根から下り、各列を覆う最後のクエリ番号を mx に持つ
     void dfs(int node, const vector<int> &acc, int depth, vector<vector<T>> &ans) {
         if (off[node] == off[node+1]) {
             if (node >= sz) {
@@ -85,7 +87,9 @@ private:
 public:
     OfflineRUQ2D() : h(0), w(0) {}
 
+    /// @brief h 行 w 列、全要素 init で構築する
     OfflineRUQ2D(int h, int w, T init) : h(h), w(w), init(init) {
+        // 短い方の辺をセグメント木の軸にする
         swp = h > w;
         n = swp ? w : h;
         m = swp ? h : w;
@@ -93,12 +97,13 @@ public:
         while (sz < n) sz <<= 1;
     }
 
+    /// @brief クエリ q 個分の領域を確保する
     void reserve(int q) {
         qs.reserve(q);
         vals.reserve(q);
     }
 
-    // [u, d) x [l, r) <- v / O(log(min(h, w)))
+    /// @brief 矩形 [u, d) x [l, r) を v にする操作を記録する / O(1)
     void apply(int u, int d, int l, int r, T v) {
         assert(0 <= u && u <= d && d <= h);
         assert(0 <= l && l <= r && r <= w);
@@ -113,7 +118,7 @@ public:
         vals.push_back(v);
     }
 
-    // クエリをまとめて実行する / O(hw α + q log(min(h,w)) α)
+    /// @brief 記録した操作をまとめて適用し、h 行 w 列の結果を返す / O(hw α + q log(min(h,w)) α)
     vector<vector<T>> tovector() {
         vector<vector<T>> ans(h, vector<T>(w, init));
         if (n == 0 || m == 0 || qs.empty()) return ans;

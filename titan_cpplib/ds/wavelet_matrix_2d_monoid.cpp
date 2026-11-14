@@ -14,17 +14,7 @@ using namespace std;
 
 namespace titan23 {
 
-/**
- * @brief オフライン2次元点集合の可換モノイド積
- *
- * 長方形内の点には自然な一次元順序がないため、`op` は可換であることを前提とする。
- * 同じ座標へ複数回登録した点は別々の点として集約する。
- *
- * @tparam T 座標の型
- * @tparam S モノイドの型
- * @tparam op 二項演算
- * @tparam e 単位元
- */
+/// @brief オフラインの 2 次元点集合で、長方形内の点の値のモノイド積を求める / op は可換であることが前提
 template<typename T, typename S, S (*op)(S, S), S (*e)()>
 class WaveletMatrix2DMonoid {
 private:
@@ -74,26 +64,28 @@ private:
     }
 
 public:
+    /// @brief 空の集合を作る
     WaveletMatrix2DMonoid() : _log(0), _n(0), _built(false) {}
 
+    /// @brief 点 (x, y, value) の列から構築する / O(nlog(n))
     explicit WaveletMatrix2DMonoid(const vector<tuple<T, T, S>> &points) : WaveletMatrix2DMonoid() {
         _points = points;
         build();
     }
 
-    /// 登録予定の点数を予約する / `O(1)`
+    /// @brief 登録予定の点数を予約する / O(1)
     void reserve(int capacity) {
         assert(!_built);
         _points.reserve(capacity);
     }
 
-    /// 点 `(x, y)` へ値 `value` を登録する / ならし `O(1)`
+    /// @brief 点 (x, y) に値 value を登録する / 同じ座標への登録は別の点として集約する / build 前に呼ぶ / ならし O(1)
     void add_point(T x, T y, S value) {
         assert(!_built);
         _points.emplace_back(x, y, value);
     }
 
-    /// 登録した点から構築する / `O(nlog(n))`
+    /// @brief 登録した点から構築する / O(nlog(n))
     void build() {
         vector<tuple<T, T, S>> a = _points;
         stable_sort(a.begin(), a.end(), [](const auto &x, const auto &y) { return get<0>(x) < get<0>(y); });
@@ -128,17 +120,8 @@ public:
         vector<S> ndata(_n);
         for (int bit = _log - 1; bit >= 0; --bit) {
             _seg.emplace_back(data);
-            _v[bit] = BitVector(_n);
-            int zeros = 0;
-            for (int i = 0; i < _n; ++i) {
-                bool b = (y[i] >> bit) & 1;
-                if (b) {
-                    _v[bit].set(i);
-                } else {
-                    ++zeros;
-                }
-            }
-            _v[bit].build();
+            _v[bit] = BitVector(_n, [&](const int i) { return (y[i] >> bit) & 1; });
+            const int zeros = _v[bit].rank0(_n);
             _mid[bit] = zeros;
 
             int zero = 0;
@@ -157,14 +140,13 @@ public:
         _built = true;
     }
 
-    /// `x` が `[x1, x2)` にある点のモノイド積を返す / `O(log(n))`
+    /// @brief x が [x1, x2) にある点のモノイド積を返す / O(log(n))
     S range_prod(T x1, T x2) const {
         auto [l, r] = _x_range(x1, x2);
         return _original.prod(l, r);
     }
 
-    /// 長方形 `[x1, x2) × [y1, y2)` にある点のモノイド積を返す / `O(log^2(n))`
-    /// 例: `op = max` なら、長方形内に登録した値の最大値を返す
+    /// @brief 長方形 [x1, x2) × [y1, y2) にある点のモノイド積を返す / O(log^2(n))
     S range_prod(T x1, T x2, T y1, T y2) const {
         if (y1 >= y2) return e();
         auto [l, r] = _x_range(x1, x2);
@@ -173,7 +155,7 @@ public:
         return _range_prod(l, r, lower, upper);
     }
 
-    /// 登録点数を返す / `O(1)`
+    /// @brief 登録点数を返す / O(1)
     int len() const { return _n; }
 };
 

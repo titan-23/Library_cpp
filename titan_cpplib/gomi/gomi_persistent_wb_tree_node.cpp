@@ -10,6 +10,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 永続重み平衡木による列 / 0-indexed / ノードは shared_ptr で持つ
 template <class T, typename SizeType=int>
 class PersistentWBTree {
   private:
@@ -208,36 +209,44 @@ class PersistentWBTree {
     }
 
   public:
+    /// @brief 空の列を構築する / O(1)
     PersistentWBTree() : root(nullptr) {}
 
+    /// @brief 列 a から構築する / O(n)
     PersistentWBTree(vector<T> &a) { _build(a); }
 
+    /// @brief 根 root を持つ木を作る / O(1)
     PersistentWBTree(NodePtr root) : root(root) {}
 
     MyPersistentWBTree _new(NodePtr root) {
         return MyPersistentWBTree(root);
     }
 
+    /// @brief 末尾に other を連結した列を返す
     MyPersistentWBTree merge(MyPersistentWBTree other) {
         NodePtr root = _merge_node(this->root, other.root);
         return _new(root);
     }
 
+    /// @brief 先頭 k 要素と残りに分割して返す
     pair<MyPersistentWBTree, MyPersistentWBTree> split(SizeType k) {
         auto [l, r] = _split_node(this->root, k);
         return {_new(l), _new(r)};
     }
 
+    /// @brief 先頭 k 要素からなる列を返す
     MyPersistentWBTree split_left(SizeType k) {
         auto l = _split_node_left(this->root, k);
         return _new(l);
     }
 
+    /// @brief 先頭 k 要素を除いた列を返す
     MyPersistentWBTree split_right(SizeType k) {
         auto r = _split_node_right(this->root, k);
         return _new(r);
     }
 
+    /// @brief 位置 k に key を挿入した列を返す
     MyPersistentWBTree insert(SizeType k, T key) {
         assert(0 <= k && k <= len());
         auto [s, t] = _split_node(root, k);
@@ -246,6 +255,7 @@ class PersistentWBTree {
         return _new(_merge_with_root(s, new_node, t));
     }
 
+    /// @brief 位置 k の値を削除した列と削除値を返す
     pair<MyPersistentWBTree, T> pop(SizeType k) {
         assert(0 <= k && k < len());
         auto [s_, t] = _split_node(this->root, k+1);
@@ -254,6 +264,7 @@ class PersistentWBTree {
         return {_new(root), tmp->key};
     }
 
+    /// @brief 全要素を配列にして返す / O(n)
     vector<T> tovector() {
         NodePtr node = root;
         stack<NodePtr> s;
@@ -272,10 +283,12 @@ class PersistentWBTree {
         return a;
     }
 
+    /// @brief 根だけを複製した木を返す / O(1)
     MyPersistentWBTree copy() {
         return _new(root ? root->copy() : nullptr);
     }
 
+    /// @brief 位置 k の値を返す
     T get(SizeType k) {
         assert(0 <= k && k < len());
         NodePtr node = root;
@@ -293,6 +306,7 @@ class PersistentWBTree {
         }
     }
 
+    /// @brief 全要素を標準出力に出力する / O(n)
     void print() {
         vector<T> a = tovector();
         cout << "[";
@@ -303,10 +317,12 @@ class PersistentWBTree {
         cout << "]" << endl;
     }
 
+    /// @brief 要素数を返す / O(1)
     SizeType len() const {
         return root ? root->size : 0;
     }
 
+    /// @brief 部分木の大きさと平衡条件を検査し、木の高さを標準エラー出力に出す / O(n)
     void check() const {
         auto rec = [&] (auto &&rec, NodePtr node) -> pair<SizeType, int> {
             SizeType ls = 0, rs = 0;

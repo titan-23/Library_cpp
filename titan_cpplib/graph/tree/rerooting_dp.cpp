@@ -7,6 +7,8 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 全方位木 DP で、各頂点を根としたときの DP 値を返す / O(n)
+/// G[v] は (隣接頂点, 辺の値) の列 / merge, apply_vertex, apply_edge, e の意味は末尾のコメントを参照
 template<typename E,
         typename T, T (*merge)(T, T),
         T (*apply_vertex)(T, int),

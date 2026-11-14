@@ -10,10 +10,8 @@ using namespace std;
 
 namespace titan23 {
 
-/// 空間O(n), 時間O(nlogσ)
-/// ref: https://math314.hateblo.jp/entry/2016/12/19/005919
-/// ref: https://mojashi.hatenablog.com/entry/2017/07/17/155520
-/// ref: https://arxiv.org/abs/1506.04862
+/// @brief 回文木 (eertree) / 空間O(n), 時間O(nlogσ)
+/// 参考: https://math314.hateblo.jp/entry/2016/12/19/005919
 class EerTree {
 private:
     int last_idx, n;
@@ -22,7 +20,7 @@ private:
     vector<map<char, int>> child;
     // vector<array<int, 26>> child;
     vector<int> par, len, suffix_link, count, start, suffix_link_dep;
-    vector<int> suff; // suff[i]:= s[:i+1]の最大回文接尾辞に対応する頂点番号(s[i]を含んで終わる)
+    vector<int> suff; // suff[i]:= s[:i+1]の最長回文接尾辞の頂点番号
 
     int new_node() {
         int idx = suffix_link.size();
@@ -53,6 +51,7 @@ private:
     }
 
 public:
+    /// @brief 空文字列の回文木を作る / O(1)
     EerTree() : n(0), all_count(0) {
         int idx0 = new_node();
         int idx1 = new_node();
@@ -62,12 +61,12 @@ public:
         suffix_link[idx1] = idx0;
         suffix_link_dep[idx0] = 0;
         suffix_link_dep[idx1] = 0;
-        par[idx0] = 0; // self
+        par[idx0] = 0; // 自身を指す
         par[idx1] = 0;
         last_idx = idx1;
     }
 
-    // 領域確保 / O(n)
+    /// @brief 長さ n の文字列の分だけ領域を確保する / O(n)
     void reserve(int n) {
         child.reserve(n+2);
         suffix_link.reserve(n+2);
@@ -78,7 +77,7 @@ public:
         suffix_link_dep.reserve(n+2);
     }
 
-    // 文字cを追加 / 償却O(1)のはず?
+    /// @brief 末尾に文字 c を追加する
     void add(char c) {
         s += c;
         int now = get_upper(last_idx, c);
@@ -113,27 +112,27 @@ public:
         n++;
     }
 
-    // 回文idxに対応するsの区間[l, r) / O(1)
+    /// @brief 頂点番号 idx の回文が s に最初に現れる区間 [l, r) を返す / O(1)
     pair<int, int> get_range_from_idx(int idx) {
         return {start[idx], start[idx]+len[idx]};
     }
 
-    // s[i]で終わる回文の中で最長のもののidx
+    /// @brief s[i] で終わる最長の回文の頂点番号を返す / O(1)
     int get_suff(int i) const {
         return suff[i];
     }
 
-    // s[i]で終わる回文の中で最長のものの長さ
+    /// @brief s[i] で終わる最長の回文の長さを返す / O(1)
     int get_max_length_suffix(int i) {
         return len[suff[i]];
     }
 
-    // s[i]を末尾に持つ空でない回文の個数 / O(1)
+    /// @brief s[i] で終わる空でない回文の個数を返す / O(1)
     int count_suffix_palindromes(int i) {
         return suffix_link_dep[suff[i]];
     }
 
-    // s[i]を末尾に持つ空でない回文のidx全列挙 / O(?)
+    /// @brief s[i] で終わる空でない回文の頂点番号をすべて返す
     vector<int> enumerate_suffix(int i) {
         vector<int> res(count_suffix_palindromes(i));
         int k = 0;
@@ -145,17 +144,17 @@ public:
         return res;
     }
 
-    // 空でないすべての回文の個数 / O(1)
+    /// @brief 空でない回文の出現の総数を返す / O(1)
     long long count_all_palindromes() const {
         return all_count;
     }
 
-    // 相異なる空でない回文の総数 / O(1)
+    /// @brief 相異なる空でない回文の個数を返す / O(1)
     int count_unique_palindromes() const {
         return (int)child.size() - 2;
     }
 
-    // 回文のidxと頻度配列 / O(?)
+    /// @brief 回文番号ごとの出現回数を返す / 回文番号は頂点番号から 2 を引いた値
     vector<int> get_freq() const {
         vector<int> cnt((int)count.size()-2, 0);
         for (int i = (int)child.size()-1; i >= 2; --i) {
@@ -165,18 +164,19 @@ public:
         return cnt;
     }
 
-    // 回文のidxが文字列s[l,r)で登場する / O(1)
+    /// @brief 回文番号 idx の回文が s に最初に現れる区間 [l, r) を返す / O(1)
     pair<int, int> idx_to_range(int idx) const {
         idx += 2;
         return {start[idx], start[idx]+len[idx]};
     }
 
-    // 回文のidxから文字列tへの変換 / O(|t|)
+    /// @brief 回文番号 idx の回文 t を返す / O(|t|)
     string idx_to_string(int idx) const {
         idx += 2;
         return s.substr(start[idx], len[idx]);
     }
 
+    /// @brief 木の構造と各回文の出現回数を出力する
     void print() const {
         vector<pair<int, int>> res((int)child.size()-2);
 

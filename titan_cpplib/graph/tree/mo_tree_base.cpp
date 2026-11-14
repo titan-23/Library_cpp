@@ -10,7 +10,7 @@ using namespace std;
 
 namespace titan23 {
 
-// 木上の Mo の共通実装
+/// @brief 木上の Mo の共通実装 / UseVertex が true なら頂点を扱う
 template<bool UseVertex>
 class MoTreeBase {
 private:
@@ -85,10 +85,10 @@ protected:
     }
 
 public:
-    /// @brief n 頂点、根 root で初期化
+    /// @brief 頂点数 n、根 root で初期化する
     MoTreeBase(int n, int root = 0) : n(n), root(root), graph(n), mo(0) {}
 
-    /// @brief 無向木 G と根 root から構築
+    /// @brief 無向木 G と根 root から構築する
     MoTreeBase(const vector<vector<int>> &G, int root = 0) : MoTreeBase(G.size(), root) {
         for (int u = 0; u < n; ++u) {
             for (int v : G[u]) {
@@ -98,7 +98,7 @@ public:
         build();
     }
 
-    /// @brief 辺属性付き無向木 G と根 root から構築
+    /// @brief 辺に値を持つ無向木 G と根 root から構築する
     template<typename T>
     MoTreeBase(const vector<vector<pair<int, T>>> &G, int root = 0) : MoTreeBase(G.size(), root) {
         for (int u = 0; u < n; ++u) {
@@ -109,7 +109,7 @@ public:
         build();
     }
 
-    /// @brief 無向辺を追加し、登録順の辺番号を返す / O(1)
+    /// @brief 無向辺を追加し、登録順の辺番号を返す / add_query と run より前に呼ぶこと / O(1)
     int add_edge(int u, int v) {
         assert(!built);
         graph[u].emplace_back(v, edge_count);

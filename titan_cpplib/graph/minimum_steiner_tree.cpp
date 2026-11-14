@@ -12,8 +12,10 @@
 #include "titan_cpplib/ds/union_find.cpp"
 using namespace std;
 namespace titan23 {
+/// @brief シュタイナー木を作る方式
 enum class SteinerTreeMethod { cached_prim, incremental_prim, mehlhorn, mst_prune };
 
+/// @brief 木の辺 (u, v)、総費用、端点が連結だったかを持つ
 template <class T>
 struct SteinerTreeResult {
     vector<pair<int, int>> edges;
@@ -21,8 +23,7 @@ struct SteinerTreeResult {
     bool feasible = true;
 };
 
-// Nonnegative undirected graph, fixed for the lifetime of this object.
-// Parallel edges are reduced to their minimum weight in each direction.
+/// @brief 端点を全て含む木を近似的に求める / 非負重みの無向グラフで、構築後は変えない
 template <class T>
 class MinimumSteinerTree {
     static_assert(is_arithmetic_v<T> && !is_same_v<T, bool>);
@@ -31,9 +32,7 @@ class MinimumSteinerTree {
     struct Cache { vector<T> dist; vector<int> parent_edge; };
     struct Candidate { int terminal, closest; T distance; };
     using Result = SteinerTreeResult<T>;
-    // One pending entry per vertex, including after a vertex is reopened.
-    // This bounds the incremental search frontier by O(n), unlike a lazy heap
-    // that retains obsolete entries across multiple path insertions.
+    // 頂点ごとに要素を 1 個だけ持つ二分ヒープ。要素数は n 以下に収まる
     class Heap {
         const vector<T>& distance_;
         vector<int> heap_, position_;
@@ -170,8 +169,7 @@ class MinimumSteinerTree {
         mst_counts_.assign(n_, 0);
         mst_ready_ = true;
     }
-    // Minimal subtree spanning the terminals in a fixed global minimum spanning
-    // forest. O(n+k) after preparation, but no constant Steiner approximation ratio.
+    // 全体の最小全域森の中で端点を結ぶ最小の部分木を返す / 準備後 O(n+k) / 定数近似の保証はない
     Result mst_prune(const vector<int>& terminals) {
         prepare_mst();
         fill(mst_counts_.begin(), mst_counts_.end(), 0);
@@ -185,8 +183,7 @@ class MinimumSteinerTree {
         }
         return finish(ids);
     }
-    // Terminal-to-vertex rows suffice by undirected symmetry. Only new tree
-    // vertices update remaining terminals. No n*n tree adjacency is needed.
+    // 端点ごとの最短路表を使い、木に最も近い端点を順に加える
     Result cached_prim(const vector<int>& terminals, int root, T bound) {
         auto& remaining = candidates_;
         remaining.clear();
@@ -211,8 +208,7 @@ class MinimumSteinerTree {
                 int id = parent[v];
                 if (id < 0) throw logic_error("steiner: invalid cached path");
                 v = other(id, v);
-                // Zero-weight ties can touch the old tree again. Keep the
-                // suffix after the last intersection to avoid introducing cycles.
+                // 閉路を作らないよう、木と最後に交わった点より後ろだけ残す
                 if (in_tree(v)) { path.clear(); vertices.clear(); }
                 else { path.push_back(id); vertices.push_back(v); }
             }
@@ -241,8 +237,7 @@ class MinimumSteinerTree {
             auto [d, v] = heap.top(); heap.pop();
             if (d != dist[v]) continue;
             if (is_terminal(v) && !in_tree(v)) {
-                // New path vertices become zero-distance sources. Retain the
-                // old frontier and allow vertices to reopen after improvements.
+                // 経路上の頂点を距離 0 の始点として加え、探索を続ける
                 for (int u = v; !in_tree(u);) {
                     int id = parent[u];
                     if (id < 0) throw logic_error("steiner: invalid incremental path");
@@ -303,8 +298,7 @@ class MinimumSteinerTree {
             if (--remaining == 0) break;
         }
         if (remaining > 0) throw overflow_error("steiner: terminal connection cost must be below INF");
-        // Disjoint shortest-path trees joined by a region MST are acyclic.
-        // Only nonterminal-leaf pruning is necessary after expansion.
+        // 展開後に閉路はないので、端点でない葉を刈るだけでよい
         vector<int> degree(n_, 0), leaves;
         for (int id : ids) { edge_mark_[id] = generation_; ++degree[edges_[id].u]; ++degree[edges_[id].v]; }
         for (int v = 0; v < n_; ++v) if (degree[v] == 1 && !is_terminal(v)) leaves.push_back(v);
@@ -327,6 +321,7 @@ class MinimumSteinerTree {
 
 public:
     MinimumSteinerTree() = default;
+    /// @brief 隣接リスト graph から構築する / 重みは 0 以上 inf 未満で、各辺を両向きに同じ最小重みで与える
     MinimumSteinerTree(const vector<vector<pair<int, T>>>& graph, T inf) : inf_(inf) {
         if (graph.size() > size_t(numeric_limits<int>::max())) throw invalid_argument("steiner: too many vertices");
         if (!finite(inf) || inf <= 0) throw invalid_argument("steiner: INF must be positive and finite");
@@ -360,6 +355,7 @@ public:
         terminal_mark_.assign(n_, 0); tree_mark_.assign(n_, 0); edge_mark_.assign(edges_.size(), 0);
     }
 
+    /// @brief terminals を結ぶ木を method で求める / 端点が非連結なら feasible = false
     Result solve(const vector<int>& terminals, SteinerTreeMethod method = SteinerTreeMethod::cached_prim) {
         auto unique = prepare(terminals);
         if (unique.size() <= 1) return {};
@@ -371,11 +367,16 @@ public:
         if (method == SteinerTreeMethod::mst_prune) return mst_prune(unique);
         throw invalid_argument("steiner: unknown method");
     }
+    /// @brief cached_prim で求めた木の辺を返す / 端点が非連結なら runtime_error
     vector<pair<int, int>> build_prim(const vector<int>& terminals) { return require_feasible(solve(terminals)); }
+    /// @brief incremental_prim で求めた木の辺を返す / 端点が非連結なら runtime_error
     vector<pair<int, int>> build_prim_dijkstra(const vector<int>& terminals) { return require_feasible(solve(terminals, SteinerTreeMethod::incremental_prim)); }
+    /// @brief mehlhorn で求めた木の辺を返す / 端点が非連結なら runtime_error
     vector<pair<int, int>> build_mehlhorn(const vector<int>& terminals) { return require_feasible(solve(terminals, SteinerTreeMethod::mehlhorn)); }
+    /// @brief mst_prune で求めた木の辺を返す / 端点が非連結なら runtime_error
     vector<pair<int, int>> build_mst_prune(const vector<int>& terminals) { return require_feasible(solve(terminals, SteinerTreeMethod::mst_prune)); }
 
+    /// @brief 全ての端点を根に cached_prim を試し、最良の木の辺を返す / 端点が非連結なら runtime_error
     vector<pair<int, int>> build_prim_fullsearch(const vector<int>& terminals) {
         auto unique = prepare(terminals);
         if (unique.size() <= 1) return {};
@@ -391,8 +392,7 @@ public:
         return move(best.edges);
     }
 
-    // Mehlhorn plus a bounded number of distinct growth roots. The first root
-    // is terminals.back(); additional roots are sampled reproducibly.
+    /// @brief mehlhorn の解と、最大 starts 個の根から growth で育てた解のうち最良を返す / growth は Prim の 2 方式のどちらか / 最初の根は terminals.back()
     Result solve_best(const vector<int>& terminals, int starts = 8, uint32_t seed = 0,
                       SteinerTreeMethod growth = SteinerTreeMethod::incremental_prim) {
         if (starts < 0) throw invalid_argument("steiner: starts must be nonnegative");
@@ -413,7 +413,9 @@ public:
         }
         return best;
     }
+    /// @brief 最短路表を作った始点の数を返す
     int cached_source_count() const { return cached_count_; }
+    /// @brief 最短路表と最小全域森を捨てる
     void clear_cache() {
         for (auto& row : cache_) { vector<T>().swap(row.dist); vector<int>().swap(row.parent_edge); }
         cached_count_ = 0;

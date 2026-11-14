@@ -11,6 +11,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief HLD を用いて根付き木の LCA や距離を求める / T は辺の重みの型
 template<typename T = int>
 class RootedTree {
 public:
@@ -22,7 +23,7 @@ public:
 
     RootedTree() {}
 
-    /// @brief 重みなし隣接リストと根から構築する。全辺の重みを1とみなす / O(N)
+    /// @brief 重みなし隣接リストと根から構築する / 辺の重みはすべて 1 / O(N)
     RootedTree(const vector<vector<int>> &_G, const int root) : n(_G.size()), root(root) {
         vector<vector<pair<int, T>>> F(n);
         for (int v = 0; v < n; ++v) {
@@ -63,7 +64,7 @@ public:
         head    = H.head;
         hld     = H.hld;
 
-        { // dep_weight
+        { // 根からの重み付き深さ dep_weight を BFS で求める
             dep_weight.resize(n, -1);
             dep_weight[root] = 0;
             queue<int> todo;
@@ -97,7 +98,7 @@ public:
         }
     }
 
-    /// @brief v の k 個上の祖先を返す。存在しなければ -1 / O(logN)
+    /// @brief v の k 個上の祖先を返す / 存在しなければ -1 / O(logN)
     int la(int v, int k) const {
         if (k < 0 || dep[v] < k) return -1;
         while (1) {
@@ -111,7 +112,7 @@ public:
         }
     }
 
-    /// @brief s から t へ、k 個進んだ頂点を返す / O(logn)
+    /// @brief s から t へ k 個進んだ頂点を返す / 範囲外なら -1 / O(logN)
     int path_kth_elm(int s, int t, int k) const {
         int l = lca(s, t);
         int d = dep[s] + dep[t] - 2 * dep[l];
@@ -123,22 +124,22 @@ public:
         }
     }
 
-    /// @brief Return True if (a is on path(u - v)) else False. / O(logN)
+    /// @brief a が u-v パス上にあるかを返す / O(logN)
     bool is_on_path(int u, int v, int a) const {
         return dist(u, a) + dist(a, v) == dist(u, v);
     }
 
-    /// @brief vは t の祖先か？ / O(1)
+    /// @brief v が t の祖先かを返す / v == t なら true / O(1)
     bool is_ancestor(int v, int t) const {
         return nodein[v] <= nodein[t] && nodeout[t] <= nodeout[v];
     }
 
-    /// @brief vは t の子孫か？ / O(1)
+    /// @brief v が t の子孫かを返す / v == t なら true / O(1)
     bool is_descendant(int v, int t) const {
         return nodein[t] <= nodein[v] && nodeout[v] <= nodeout[t];
     }
 
-    /// @brief P の頂点をすべて通るパスが存在するか？ / O(|P|+logN)
+    /// @brief P の頂点をすべて通るパスが存在するかを返す / O(|P|+logN)
     bool is_passable_path(const vector<int> &P) const {
         int k = P.size();
         vector<bool> seen(k, false);
@@ -173,8 +174,7 @@ public:
         return true;
     }
 
-    /// @brief 直径を返す
-    /// @return {直径, {端点u, 端点v}}
+    /// @brief 直径と両端点を {直径, {u, v}} の形で返す / 辺の重みは非負であること / O(N)
     pair<T, pair<int, int>> get_diameter() const {
         if (G.empty()) return {0, {-1, -1}};
         vector<T> dist(n, -1);
@@ -213,7 +213,7 @@ public:
         return {max_d, {u, v}};
     }
 
-    /// @brief 直径をなすパスを端点から端点まで順に返す
+    /// @brief 直径をなすパスを端点から端点まで順に返す / 辺の重みは非負であること / O(N)
     vector<int> get_diameter_path() const {
         if (G.empty()) return {};
         vector<T> dist(n, -1);
@@ -265,7 +265,7 @@ public:
         return path;
     }
 
-    /// @brief デバッグ用
+    /// @brief デバッグ用に木の形を標準エラー出力に表示する
     void debug() {
         auto dfs = [&] (auto &&dfs, int v, int p, const string &pref, bool is_last) -> void {
             cerr << pref;
@@ -295,4 +295,4 @@ public:
         cerr << "---------------------------\n";
     }
 };
-} // nsmaepace titan23
+} // namespace titan23

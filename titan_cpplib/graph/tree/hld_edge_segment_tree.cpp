@@ -8,7 +8,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief セグ木搭載HLD（辺属性）/ 非可換に対応
+/// @brief セグメント木を載せた HLD で、辺に値を持つ / op は非可換でもよい
 template<class T, T (*op)(T, T), T (*e)()>
 class HLDEdgeSegmentTree {
 private:
@@ -16,9 +16,10 @@ private:
     titan23::SegmentTree<T, op, e> seg, rseg;
 
 public:
+    /// @brief hld の上に、全ての辺の値を e() として構築する / O(N)
     HLDEdgeSegmentTree(const titan23::HLD &hld) : hld(hld), seg(hld.n), rseg(hld.n) {}
 
-    /// @brief a[k] を辺 (k, par[k]) の値とみなして構築する。a[root] は使われない / O(N)
+    /// @brief a[k] を辺 (k, par[k]) の値として構築する / a[root] は使わない / O(N)
     HLDEdgeSegmentTree(const titan23::HLD &hld, const vector<T> &a) : hld(hld) {
         vector<T> b = hld.build_list(a);
         this->seg = titan23::SegmentTree<T, op, e>(b);
@@ -26,8 +27,7 @@ public:
         this->rseg = titan23::SegmentTree<T, op, e>(b);
     }
 
-    /// @brief 重み付き隣接リスト G と根から構築する
-    /// 各辺の重みを深い側の頂点に持たせる / O(N)
+    /// @brief 重み付き隣接リスト G と根から構築する / 各辺の重みは深い側の頂点に持たせる / O(N)
     HLDEdgeSegmentTree(const vector<vector<pair<int, T>>> &G, const int root) {
         int n = G.size();
         vector<vector<int>> g(n);
@@ -49,7 +49,7 @@ public:
         this->rseg = titan23::SegmentTree<T, op, e>(b);
     }
 
-    /// @brief u から v へのパス上の辺の総積を返す / O(logN)
+    /// @brief u から v へのパス上の辺の総積を返す / O(log^2 N)
     T path_prod(int u, int v) const {
         T lres = e(), rres = e();
         while (hld.head[u] != hld.head[v]) {
@@ -80,7 +80,7 @@ public:
         rseg.set(hld.n - hld.nodein[k] - 1, v);
     }
 
-    /// @brief 辺 (u, v) の値を x に更新する。u, v は親子であること / O(logN)
+    /// @brief 辺 (u, v) の値を x に更新する / u, v は親子であること / O(logN)
     void set_edge(const int u, const int v, const T x) {
         set(hld.dep[u] > hld.dep[v] ? u : v, x);
     }

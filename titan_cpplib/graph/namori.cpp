@@ -14,8 +14,7 @@ namespace titan23 {
 
 using u64 = unsigned long long;
 
-// なもりグラフ(連結, N=M)
-// G は無向グラフの隣接リスト。各辺を両端の両方に入れる(自己ループは同じ頂点に2回)
+/// @brief なもりグラフをサイクルと、サイクル上の各頂点を根とする木に分ける / 連結で N = M の無向グラフを扱う
 class Namori {
 private:
     int n;
@@ -46,7 +45,7 @@ private:
 public:
     Namori() : n(0) {}
 
-    // 連結でない、辺数が頂点数と異なる、隣接リストが両方向でないなどの場合は invalid_argument を投げる / O(n)
+    /// @brief 隣接リスト G から分解する / 各辺は両端に入れ、自己ループは同じ頂点に 2 回入れる / 条件を満たさなければ invalid_argument / O(n)
     Namori(const vector<vector<int>> &G) : n(G.size()), G(G) {
         if (n == 0) throw invalid_argument("Namori: graph must not be empty");
         vector<int> deg(n, 0);
@@ -120,7 +119,7 @@ public:
         if ((int)cycle.size() != cycle_cnt) throw invalid_argument("Namori: graph must have exactly one cycle");
     }
 
-    // グラフの同型判定用ハッシュ値を返す。2つのグラフを比べるときは同じ seed を使う / O(n)
+    /// @brief 同型判定用のハッシュ値を返す / 比べる 2 つのグラフには同じ seed を使う / O(n)
     u64 get_hash(int seed) const {
         mt19937_64 rnd(seed);
         uniform_int_distribution<u64> dist(47, MOD-1);
@@ -128,8 +127,7 @@ public:
         for (u64 &r : R) r = dist(rnd);
         u64 base = uniform_int_distribution<u64>(414123123, 1000000000)(rnd);
 
-        // サイクル上の各頂点を根とする木のハッシュ
-        // hs[v] = prod_{子 x} (R[height[x]] + hs[x]), height は葉が 1
+        // 木のハッシュ hs[v] = prod_{子 x} (R[height[x]] + hs[x]) を求める。height は葉が 1
         vector<u64> hs(n, 1);
         vector<int> height(n, 1), parent(n, -1), order;
         order.reserve(n);
@@ -151,8 +149,7 @@ public:
             }
         }
 
-        // 木のハッシュをサイクル順に並べた数列 H をロリハする
-        // rotate,reverseをして得られるロリハのうち最小のものをグラフのハッシュとする
+        // 木のハッシュをサイクル順に並べた列 H の、回転と反転のうち最小のローリングハッシュを返す
         int c = cycle.size();
         vector<u64> H(2*c);
         for (int i = 0; i < c; ++i) H[i] = H[i+c] = hs[cycle[i]];
@@ -164,7 +161,7 @@ public:
             // acc[i] = sum_{j<i} (H[j]+1) base^(i-1-j)
             for (int i = 0; i < 2*c; ++i) acc[i+1] = mod(mul(acc[i], base) + H[i] + 1);
             for (int i = 0; i < c; ++i) {
-                // H[i, i+c) のロリハ
+                // H[i, i+c) のローリングハッシュ
                 res = min(res, mod(acc[i+c] + MOD - mul(acc[i], pow_c)));
             }
             reverse(H.begin(), H.end());

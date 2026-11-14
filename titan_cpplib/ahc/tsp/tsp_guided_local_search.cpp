@@ -12,6 +12,7 @@
 #include "titan_cpplib/ahc/tsp/tsp_local_search.cpp"
 using namespace std;
 namespace titan23 {
+/// @brief 探索を止めた理由
 enum class TspSearchStopReason {
     completed,
     time_limit,
@@ -19,6 +20,7 @@ enum class TspSearchStopReason {
     penalty_round_limit,
 };
 
+/// @brief tsp_guided_local_search の設定 / 上限は -1 で無効。時間と罰則周回数の少なくとも一方を有効にする
 struct TspGuidedLocalSearchOptions {
     int64_t max_penalty_rounds = -1;
     int64_t max_evaluated_moves = -1;
@@ -27,6 +29,7 @@ struct TspGuidedLocalSearchOptions {
     long double penalty_ratio = 0.3L;
 };
 
+/// @brief tsp_guided_local_search の統計と止めた理由
 struct TspGuidedLocalSearchResult {
     int64_t evaluated_moves;
     int64_t applied_moves;
@@ -83,6 +86,7 @@ inline bool adjacent_edges(int edge1, int edge2, int n) {
     return (edge1 + 1) % n == edge2 || (edge2 + 1) % n == edge1;
 }
 
+// 2-opt で外す 2 辺と加える 2 辺の罰則を含めた費用差
 template<class EdgeCost, class Cost>
 long double penalized_delta(
     const TspProblem<EdgeCost>&,
@@ -104,6 +108,7 @@ long double penalized_delta(
     return (long double)true_delta + lambda * (added - removed);
 }
 
+// 罰則付き費用で改善する 2-opt を見つけしだい適用し、候補内の局所最適まで進める
 template<class EdgeCost, class Cost, class AppliedFn>
 TspSearchStopReason descend(
     const TspProblem<EdgeCost>& problem,
@@ -164,6 +169,7 @@ TspSearchStopReason descend(
 }
 }
 
+/// @brief 誘導局所探索で state を改善する / 終了時の state は、探索中に見つけた真の費用が最小の巡回路
 template<class EdgeCost>
 auto tsp_guided_local_search(
     const TspProblem<EdgeCost>& problem,

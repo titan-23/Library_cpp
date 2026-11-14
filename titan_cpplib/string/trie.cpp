@@ -9,6 +9,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 文字列の多重集合を持つトライ木 / 文字は B から SIGMA 種類
 template <char B='a', int SIGMA=26>
 class Trie {
 private:
@@ -31,31 +32,32 @@ private:
     }
 
 public:
+    /// @brief 空のトライ木を作る
     Trie() {
         root = new_node();
     }
 
-    /// @brief ルートノードのIDを取得する
+    /// @brief 根の頂点番号を返す / O(1)
     int get_root() const {
         return root;
     }
 
-    /// @brief 指定したノードと文字インデックスから子ノードのIDを取得する
+    /// @brief 頂点 v から文字番号 idx で進んだ子の頂点番号を返す / なければ -1 / O(1)
     int get_child(int v, int idx) const {
         return a[v].child[idx];
     }
 
-    /// @brief ノードのcountを取得する
+    /// @brief 頂点 v の文字列を真の接頭辞に持つ文字列の個数を返す / O(1)
     int get_count(int v) const {
         return a[v].count;
     }
 
-    /// @brief ノードのstop_countを取得する
+    /// @brief 頂点 v で終わる文字列の個数を返す / O(1)
     int get_stop_count(int v) const {
         return a[v].stop_count;
     }
 
-    /// @brief sを追加する
+    /// @brief s を 1 つ追加する / O(|s|)
     void add(const string &s) {
         int v = root;
         for (char c : s) {
@@ -69,7 +71,7 @@ public:
         a[v].stop_count++;
     }
 
-    /// @brief prefの接頭辞の中で最長の文字列の長さを返す
+    /// @brief pref の接頭辞のうち、木の中でたどれる最長のものの長さを返す / O(|pref|)
     int s_prefix(const string &pref) const {
         int v = root;
         for (int i = 0; i < pref.size(); ++i) {
@@ -82,7 +84,7 @@ public:
         return pref.size();
     }
 
-    /// @brief sがあれば一つ削除する / O(|s|)
+    /// @brief s があれば 1 つ削除する / O(|s|)
     void erase(const string &s) {
         if (!contains(s)) return;
         int v = root;
@@ -104,7 +106,7 @@ public:
         }
     }
 
-    /// @brief prefを接頭辞に持つすべての文字列を削除し、削除した文字列の個数を返す / O(|pref|)
+    /// @brief pref を接頭辞に持つ文字列をすべて削除し、削除した個数を返す / O(|pref|)
     int erase_prefix(const string &pref) {
         int v = root;
         for (char c : pref) {
@@ -133,7 +135,7 @@ public:
         return remove_cnt;
     }
 
-    /// @brief prefを接頭辞に持つ文字列があるかどうか / O(|pref|)
+    /// @brief pref を接頭辞に持つ文字列があるかを返す / O(|pref|)
     bool contains_prefix(const string &pref) const {
         int v = root;
         for (char c : pref) {
@@ -144,7 +146,7 @@ public:
         return true;
     }
 
-    /// @brief sの接頭辞になり得る文字列が存在しているか / O(|s|)
+    /// @brief s の接頭辞になっている文字列があるかを返す / O(|s|)
     bool contains_prefix_inv(const string &s) const {
         int v = root;
         for (char c : s) {
@@ -157,8 +159,7 @@ public:
         return false;
     }
 
-    /// @brief sを接頭辞に持つ文字列がいくつあるか
-    /// @return a[i]:= s[:i]スタートの文字列がいくつあるか
+    /// @brief 各 i (0 <= i <= |s|) について s[:i] を接頭辞に持つ文字列の個数を返す / O(|s|)
     vector<int> count_prefix(const string &s) const {
         int v = root;
         int n = s.size();
@@ -173,7 +174,7 @@ public:
         return ans;
     }
 
-    /// @brief sがいくつ含まれているか
+    /// @brief s の個数を返す / O(|s|)
     int count(const string &s) const {
         int v = root;
         for (char c : s) {
@@ -184,6 +185,7 @@ public:
         return a[v].stop_count;
     }
 
+    /// @brief 文字列を辞書順に並べて返す / unique なら重複を除く
     vector<string> tovector(bool unique=false) const {
         vector<string> res;
         string s;
@@ -212,14 +214,17 @@ public:
         return res;
     }
 
+    /// @brief 空でない文字列の個数を返す / O(1)
     int size() const {
         return a[root].count;
     }
 
+    /// @brief s を含むかを返す / O(|s|)
     bool contains(const string &s) const {
         return count(s) > 0;
     }
 
+    /// @brief 木の形を出力する
     void print() const {
         auto dfs = [&] (auto &&dfs, int v, const string &indent) -> void {
             int child_count = 0;

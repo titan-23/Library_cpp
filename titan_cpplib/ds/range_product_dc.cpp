@@ -8,7 +8,8 @@ using namespace std;
 
 namespace titan23 {
 
-// https://maspypy.com/分割統治による静的列の区間積クエリ
+/// @brief 静的な列の区間積クエリをまとめて受け取り、分割統治で答える
+/// 参考: https://maspypy.com/分割統治による静的列の区間積クエリ
 template<class T, T (*op)(T, T), T (*e)()>
 class RangeProductDC {
 private:
@@ -17,12 +18,15 @@ private:
 
 public:
     RangeProductDC() {}
+    /// @brief 列 a から構築する / O(n)
     RangeProductDC(vector<T> a) : a(a) {}
 
+    /// @brief 区間 [l, r) の積を求めるクエリを追加する
     void add_query(int l, int r) {
         query.emplace_back(query.size(), l, r);
     }
 
+    /// @brief 追加した順にクエリの答えを返す / O((n + q) log n)
     vector<T> solve() {
         vector<T> dp(a.size()+1, e());
         vector<T> ans(query.size(), e());

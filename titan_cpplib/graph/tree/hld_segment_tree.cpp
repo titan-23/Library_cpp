@@ -8,13 +8,7 @@ using namespace std;
 
 namespace titan23 {
 
-/**
- * @brief セグ木搭載HLD / 非可換に対応
- *
- * @tparam T
- * @tparam (*op)(T, T)
- * @tparam (*e)()
- */
+/// @brief セグメント木を載せた HLD / op は非可換でもよい
 template <class T, T (*op)(T, T), T (*e)()>
 class HLDSegmentTree {
 private:
@@ -22,8 +16,10 @@ private:
     titan23::SegmentTree<T, op, e> seg, rseg;
 
 public:
+    /// @brief hld の上に、全頂点の値を e() として構築する / O(N)
     HLDSegmentTree(const titan23::HLD &hld) : hld(hld), seg(hld.n), rseg(hld.n) {}
 
+    /// @brief hld の上に、頂点 k の値を a[k] として構築する / O(N)
     HLDSegmentTree(const titan23::HLD &hld, const vector<T> &a) : hld(hld) {
         vector<T> b = hld.build_list(a);
         this->seg = titan23::SegmentTree<T, op, e>(b);
@@ -47,7 +43,7 @@ public:
         this->rseg = titan23::SegmentTree<T, op, e>(b);
     }
 
-    /// @brief u から v へのパスの総積を返す / O(logN)
+    /// @brief u から v へのパスの総積を返す / O(log^2 N)
     T path_prod(int u, int v) const {
         T lres = e(), rres = e();
         while (hld.head[u] != hld.head[v]) {

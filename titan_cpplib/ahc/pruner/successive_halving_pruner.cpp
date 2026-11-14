@@ -8,6 +8,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 平均スコアが下位の候補を段階的に削る逐次半減法の枝刈り器
 template<typename ScoreType=double>
 class SuccessiveHalvingPruner {
 private:
@@ -21,10 +22,8 @@ private:
     vector<bool> is_active;
 
 public:
-    /// @brief コンストラクタ
-    /// @param initial_candidates 初期候補の総数
-    /// @param is_maximize 最大化問題の場合はtrue、最小化問題の場合はfalse
-    /// @param eta ラウンドごとの削減率（デフォルト2: 毎回半分に枝刈り）
+    /// @brief 候補数 initial_candidates で構築する / is_maximize の既定は最大化
+    /// eta はラウンドごとの削減率で、既定の 2 では毎回半分に枝刈りする
     SuccessiveHalvingPruner(int initial_candidates, bool is_maximize=true, int eta=2)
         : initial_candidates(initial_candidates), is_maximize(is_maximize), eta(eta) {
 
@@ -35,25 +34,20 @@ public:
         is_active.assign(initial_candidates, true);
     }
 
-    /// @brief 候補の評価スコアを報告します
-    /// @param id 候補のID (0 ~ initial_candidates-1)
-    /// @param score 評価関数の結果スコア
+    /// @brief 候補 id の評価スコア score を報告する / id は [0, initial_candidates)、枝刈り済みの候補は無視する
     void report(int id, ScoreType score) {
         if (!is_active[id]) return;
         sum_scores[id] += score;
         eval_counts[id]++;
     }
 
-    /// @brief 現在の生存者を指定された割合(eta)で枝刈りします
-    /// @return 枝刈り後の生存者IDリスト
+    /// @brief 生存者を 1/eta に枝刈りし、生存者の id の一覧を返す / 少なくとも 1 個は残す
     const vector<int>& prune() {
         int next_size = max(1, (int)survivors.size() / eta);
         return prune_to(next_size);
     }
 
-    /// @brief 生存者が指定数になるまで下位を枝刈りします
-    /// @param keep_count 残す候補の数
-    /// @return 枝刈り後の生存者IDリスト
+    /// @brief 生存者が keep_count 個になるまで下位を枝刈りし、生存者の id の一覧を返す
     const vector<int>& prune_to(int keep_count) {
         if (keep_count >= (int)survivors.size()) return survivors;
         auto comp = [&] (int a, int b) {
@@ -70,17 +64,17 @@ public:
         return survivors;
     }
 
-    /// @brief 現在の生存者IDリストを取得します
+    /// @brief 現在の生存者の id の一覧を返す
     const vector<int>& get_survivors() const {
         return survivors;
     }
 
-    /// @brief 指定した候補が生き残っているかを判定します
+    /// @brief 候補 id が生き残っているかを返す
     bool is_surviving(int id) const {
         return is_active[id];
     }
 
-    /// @brief 状態をリセットし、別の探索で再利用可能にします
+    /// @brief 状態を初期化し、別の探索で再利用できるようにする
     void clear() {
         fill(sum_scores.begin(), sum_scores.end(), 0);
         fill(eval_counts.begin(), eval_counts.end(), 0);

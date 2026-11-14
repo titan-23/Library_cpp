@@ -10,8 +10,7 @@ using namespace std;
 
 namespace titan23 {
 
-// Holm-de Lichtenberg-Thorup の fully dynamic connectivity
-// add_edge が返す辺 ID ごとに多重辺を区別する
+/// @brief Holm-de Lichtenberg-Thorup の方法で、辺の追加と削除を受けながら連結性を答える / 多重辺は辺 ID ごとに区別する
 class OnlineDynamicConnectivity {
 private:
     static constexpr int MAX_LEVELS = 24;
@@ -155,7 +154,7 @@ private:
             if (finish) pull(v);
         }
 
-        // Build a balanced sequence; recursion depth is O(log n), even for a path.
+        // tour の列から平衡な木を作る。パスでも再帰の深さは O(log n)
         int build_tour(const vector<int>& tour, int l, int r, int parent) {
             if (l == r) return 0;
             int mid = (l + r) / 2, v = tour[mid];
@@ -228,9 +227,7 @@ private:
             free_head = slot;
         }
 
-        // Return the new root if a splay occurred, or zero if the root is unchanged.
-        // Stop propagation when the subtree aggregate is unchanged. A bounded
-        // walk followed by splay retains the amortized logarithmic bound.
+        // splay したら新しい根を、根が変わらなければ 0 を返す
         int set_mark(int v, uint32_t mark, bool on) {
             uint32_t mask = mark << SIZE_BITS;
             if (on) nodes[v].meta |= mask;
@@ -257,8 +254,7 @@ private:
             lower.reserve(r);
         }
 
-        // All vertices are still isolated here. Incidence flags are already set.
-        // Enumerate each tree iteratively, then build its Euler tour in linear time.
+        // 全頂点が孤立した状態から、木ごとに Euler tour を線形時間で作る
         void build_initial(vector<Edge>& edges) {
             assert(pair_count == 0);
             int n = base - 1;
@@ -313,8 +309,7 @@ private:
             if (u == v) return true;
             ++u;
             ++v;
-            // A singleton Euler tour is an isolated vertex in this forest.
-            // Avoid accessing the other, potentially much larger, tour.
+            // 孤立点なら、大きいかもしれない相手側の tour に触れずに返す
             if ((nodes[u].l | nodes[u].r | nodes[u].p) == 0 ||
                 (nodes[v].l | nodes[v].r | nodes[v].p) == 0) return false;
             splay(u);
@@ -355,7 +350,7 @@ private:
             return slot;
         }
 
-        // Return the root of the smaller component, which reconnect can reuse.
+        // 小さい方の成分の根を返す。reconnect で再利用する
         int cut(int slot) {
             int uv = base + slot * 2, vu = uv + 1;
             splay(uv, false);
@@ -429,8 +424,7 @@ private:
     vector<Edge> edges;
     vector<Forest> forests;
     vector<vector<int>> heads;
-    // Exact component cache until the first actual split. Non-tree deletions
-    // and successful replacement edges leave this partition unchanged.
+    // 成分が初めて実際に分かれるまで使う、連結成分の写し
     vector<int> partition_parent;
     bool partition_cache_valid = true;
 
@@ -443,7 +437,7 @@ private:
         return v;
     }
 
-    // Called only on insertion. Update the cached partition when available.
+    // 辺の追加時だけ呼ぶ。写しが有効なら更新する
     bool merge_partition(int u, int v) {
         if (groups == 1) return false;
         if (!partition_cache_valid) return !forests[0].same(u, v);
@@ -483,7 +477,7 @@ private:
         if (h == -1) forests[lev].set_adj(v, true);
     }
 
-    // Return the new forest root only if updating the flag moved it.
+    // 印の更新で森の根が動いたときだけ新しい根を返す
     int erase_incidence(int id, int side, int lev) {
         Edge &e = edges[id];
         int v = endpoint(id, side), p = e.inc[side].prv, q = e.inc[side].nxt;
@@ -530,15 +524,11 @@ private:
     void reconnect(int top, const int* small_roots) {
         for (int lev = top; lev >= 0; --lev) {
             int rep = small_roots[lev];
-            // Promotion is only needed before moving internal non-tree edges
-            // to the next level. With no incidence there is nothing to search;
-            // leaving tree levels unchanged preserves all size invariants.
+            // 木でない辺が接していなければ、この階層は飛ばす
             int adjacent = forests[lev].find_mark(rep, Forest::ADJ);
             if (adjacent == -1) continue;
 
-            // Try one candidate before promoting the smaller tree. A crossing
-            // edge can reconnect immediately. Limiting this probe to one keeps
-            // its extra cost O(log n) per level, even on adversarial inputs.
+            // 小さい木を昇格する前に候補を 1 本だけ試す
             int probe_code = heads[lev][forests[lev].vertex_id(adjacent)];
             int candidate = probe_code >> 1;
             int other_vertex = endpoint(candidate, (probe_code & 1) ^ 1);
@@ -607,14 +597,13 @@ private:
 public:
     OnlineDynamicConnectivity() : OnlineDynamicConnectivity(0, 0, true) {}
 
-    // 頂点数 size の空グラフを作る / O(size)、動的木は必要時に構築
+    /// @brief 頂点数 size の空グラフを作る / 動的木は必要になってから作る / O(size)
     explicit OnlineDynamicConnectivity(int size) : OnlineDynamicConnectivity(size, 0, true) {}
 
-    // 頂点数 size の空グラフを作り cap 本分を予約する / O(size)
+    /// @brief 頂点数 size の空グラフを作り、辺 ID cap 個分を予約する / O(size)
     OnlineDynamicConnectivity(int size, int cap) : OnlineDynamicConnectivity(size, cap, true) {}
 
-    // 動的木を一括構築する / 初回 O(n + 発行済みID数)、以後 O(1)
-    // 木の辺の初回削除時にも自動実行する。削除時の初期化を避けたい場合に呼ぶ。
+    /// @brief 動的木をまとめて作る / 木の辺を初めて削除するときにも自動で呼ぶ / 初回 O(n + 発行済み ID 数)、以後 O(1)
     void prepare_dynamic() {
         if (!forests.empty()) return;
         ensure_level(0);
@@ -623,7 +612,7 @@ public:
         forests[0].build_initial(edges);
     }
 
-    // 発行する辺 ID の個数を cap まで予約する
+    /// @brief 発行する辺 ID の個数を cap まで予約する / cap は発行済み ID 数以上
     void reserve_edges(int cap) {
         assert(cap >= issued);
         reserve_cap = max(reserve_cap, cap);
@@ -631,7 +620,7 @@ public:
         for (Forest &f : forests) f.reserve_edges(reserve_cap);
     }
 
-    // 辺を追加して新しい辺 ID を返す / 償却 O(log n)
+    /// @brief 辺 {u, v} を加えて新しい辺 ID を返す / 償却 O(log n)
     int add_edge(int u, int v) {
         assert(0 <= u && u < n && 0 <= v && v < n);
         int id = issued++;
@@ -656,10 +645,7 @@ public:
         return id;
     }
 
-    // 辺 ID を削除する / 更新列全体での探索費用は償却 O(log^2 n)
-    // 未準備で木の辺を削除する場合は prepare_dynamic() の構築費用もかかる。
-    // 新しい階層の配列初期化 O(n) は別。単一操作の最悪時間の保証ではない。
-    // 削除済みまたは範囲外なら false を返す
+    /// @brief 辺 ID を削除する / 削除済みまたは範囲外なら false / 更新列全体で償却 O(log^2 n)
     bool erase_edge(int id) {
         if (id < 0 || id >= issued || edges[id].state == DEAD) return false;
         if (forests.empty() && edges[id].state == TREE_EDGE) prepare_dynamic();
@@ -692,7 +678,7 @@ public:
         return true;
     }
 
-    // u と v が連結なら true を返す / 償却 O(log n)
+    /// @brief u と v が連結なら true を返す / 償却 O(log n)
     bool same(int u, int v) {
         assert(0 <= u && u < n && 0 <= v && v < n);
         if (u == v || groups == 1) return true;
@@ -701,7 +687,7 @@ public:
         return forests[0].same(u, v);
     }
 
-    // v の連結成分の頂点数を返す / 償却 O(log n)
+    /// @brief v の連結成分の頂点数を返す / 償却 O(log n)
     int size(int v) {
         assert(0 <= v && v < n);
         if (groups == 1) return n;
@@ -710,22 +696,22 @@ public:
         return forests[0].size(v);
     }
 
-    // 連結成分数を返す / O(1)
+    /// @brief 連結成分数を返す / O(1)
     int group_count() const {
         return groups;
     }
 
-    // 有効な辺数を返す / O(1)
+    /// @brief 有効な辺数を返す / O(1)
     int edge_count() const {
         return active;
     }
 
-    // 発行済みの辺 ID 数を返す / O(1)
+    /// @brief 発行済みの辺 ID 数を返す / O(1)
     int edge_id_count() const {
         return issued;
     }
 
-    // 辺 ID が有効なら true を返す / O(1)
+    /// @brief 辺 ID が有効なら true を返す / O(1)
     bool edge_active(int id) const {
         return 0 <= id && id < issued && edges[id].state != DEAD;
     }

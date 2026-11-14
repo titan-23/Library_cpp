@@ -9,12 +9,13 @@
 #include "titan_cpplib/ds/bbst_node.cpp"
 using namespace std;
 
-// AVLTreeSet
 namespace titan23 {
 
+/// @brief AVL 木による集合
 template<typename T>
 class AVLTreeSet {
 public:
+    /// @brief 木の節点 / size は部分木の要素数
     class AVLTreeSetNode {
     public:
         using AVLTreeSetNodePtr = AVLTreeSetNode*;
@@ -26,10 +27,12 @@ public:
         AVLTreeSetNode() : size(0), height(0), par(nullptr), left(nullptr), right(nullptr) {}
         AVLTreeSetNode(const T &key) : key(key), size(1), height(1), par(nullptr), left(nullptr), right(nullptr) {}
 
+        /// @brief 左の高さから右の高さを引いた値を返す / O(1)
         constexpr char balance() const {
             return (left ? left->height : 0) - (right ? right->height : 0);
         }
 
+        /// @brief 子から size と height を計算し直す / O(1)
         constexpr void update() {
             size = 1 + (left ? left->size : 0) + (right ? right->size : 0);
             height = 1 + max((left ? left->height : 0), (right ? right->height : 0));
@@ -37,10 +40,12 @@ public:
     };
 
 private:
+    // 該当する要素がないときに返す値
     T missing;
     using AVLTreeSetNodePtr = AVLTreeSetNode*;
     AVLTreeSetNodePtr root;
 
+    // 削除の後、node から根へ向かって平衡を直す
     constexpr void _remove_balance(AVLTreeSetNodePtr node) {
         while (node) {
             AVLTreeSetNodePtr new_node = nullptr;
@@ -75,6 +80,7 @@ private:
         }
     }
 
+    // 挿入の後、node から根へ向かって平衡を直す
     constexpr void _add_balance(AVLTreeSetNodePtr node) {
         AVLTreeSetNodePtr new_node = nullptr;
         while (node) {
@@ -111,12 +117,16 @@ private:
     }
 
     public:
+    /// @brief 空の集合を作る / missing は -1
     AVLTreeSet() : missing(-1), root(nullptr) {}
+    /// @brief 空の集合を作る / 該当する要素がない探索は missing を返す
     AVLTreeSet(T missing) : missing(missing), root(nullptr) {}
+    /// @brief a の要素から作る / 重複は除く / O(n log n)
     AVLTreeSet(const vector<T> &a, T missing) : missing(missing) {
         this->root = build(a);
     }
 
+    /// @brief a から木を作り根を返す / 重複は除く / O(n log n)
     AVLTreeSetNodePtr build(vector<T> a) {
         auto _build = [&] (auto &&_build, int l, int r) -> AVLTreeSetNodePtr {
             int mid = (l + r) / 2;
@@ -149,6 +159,7 @@ private:
         return _build(_build, 0, a.size());
     }
 
+    /// @brief key を追加する / すでにあれば false を返す / O(log n)
     bool add(const T &key) {
         if (!root) {
             root = new AVLTreeSetNode(key);
@@ -172,6 +183,7 @@ private:
         return true;
     }
 
+    /// @brief 節点 node を削除する / O(log n)
     void remove_iter(AVLTreeSetNodePtr node) {
         AVLTreeSetNodePtr pnode = node->par;
         if (node->left && node->right) {
@@ -200,6 +212,7 @@ private:
         }
     }
 
+    /// @brief key を削除する / なければ false を返す / O(log n)
     bool discard(const T &key) {
         AVLTreeSetNodePtr node = find_key(key);
         if (!node) return false;
@@ -207,12 +220,14 @@ private:
         return true;
     }
 
+    /// @brief key を削除する / key がある必要がある / O(log n)
     void remove(const T &key) {
         AVLTreeSetNodePtr node = find_key(key);
         assert(node);
         remove_iter(node);
     }
 
+    /// @brief key 以下で最大の要素を返す / なければ missing / O(log n)
     T le(const T &key) const {
         T res = missing;
         AVLTreeSetNodePtr node = root;
@@ -231,6 +246,7 @@ private:
         return res;
     }
 
+    /// @brief key 未満で最大の要素を返す / なければ missing / O(log n)
     T lt(const T &key) const {
         T res = missing;
         AVLTreeSetNodePtr node = root;
@@ -245,6 +261,7 @@ private:
         return res;
     }
 
+    /// @brief key 以上で最小の要素を返す / なければ missing / O(log n)
     T ge(const T &key) const {
         T res = missing;
         AVLTreeSetNodePtr node = root;
@@ -263,6 +280,7 @@ private:
         return res;
     }
 
+    /// @brief key を超える最小の要素を返す / なければ missing / O(log n)
     T gt(const T &key) const {
         T res = missing;
         AVLTreeSetNodePtr node = root;
@@ -277,6 +295,7 @@ private:
         return res;
     }
 
+    /// @brief key 未満の要素数を返す / O(log n)
     int index(const T &key) const {
         int k = 0;
         AVLTreeSetNodePtr node = root;
@@ -295,6 +314,7 @@ private:
         return k;
     }
 
+    /// @brief key 以下の要素数を返す / O(log n)
     int index_right(const T &key) const {
         int k = 0;
         AVLTreeSetNodePtr node = root;
@@ -313,11 +333,12 @@ private:
         return k;
     }
 
-    // [l, r)
+    /// @brief l 以上 r 未満の要素数を返す / O(log n)
     int range_count(T l, T r) const {
         return index(r) - index(l);
     }
 
+    /// @brief key の節点を返す / なければ nullptr / O(log n)
     AVLTreeSetNodePtr find_key(const T &key) const {
         AVLTreeSetNodePtr node = root;
         while (node) {
@@ -327,6 +348,7 @@ private:
         return nullptr;
     }
 
+    /// @brief 小さい方から k 番目の節点を返す / 0-indexed / O(log n)
     AVLTreeSetNodePtr find_kth(int k) const {
         AVLTreeSetNodePtr node = root;
         while (true) {
@@ -341,6 +363,7 @@ private:
         }
     }
 
+    /// @brief 小さい方から k 番目の要素を削除して返す / 0-indexed / O(log n)
     T pop(int k) {
         assert(0 <= k && k < len());
         AVLTreeSetNodePtr node = find_kth(k);
@@ -349,6 +372,7 @@ private:
         return key;
     }
 
+    /// @brief 全要素を昇順に並べた列を返す / O(n)
     vector<T> tovector() const {
         vector<T> a;
         a.reserve(len());
@@ -368,10 +392,12 @@ private:
         return a;
     }
 
+    /// @brief key を含むかを返す / O(log n)
     bool contains(T key) const {
         return find_key(key) != nullptr;
     }
 
+    /// @brief 小さい方から k 番目の要素を返す / 0-indexed / O(log n)
     T get(int k) const {
         assert(0 <= k && k < len());
         AVLTreeSetNodePtr node = root;
@@ -387,10 +413,12 @@ private:
         }
     }
 
+    /// @brief 要素数を返す / O(1)
     int len() const {
         return root ? root->size : 0;
     }
 
+    /// @brief 木の不変条件を assert で調べ、結果を標準出力に書く / デバッグ用
     void check() const {
         if (!root) {
             cout << "height=0" << endl;;
@@ -427,6 +455,7 @@ private:
         cout << "check ok." << endl;
     }
 
+    /// @brief 全要素を {a, b, ...} の形で出力する / O(n)
     friend ostream& operator<<(ostream& os, const titan23::AVLTreeSet<T>& s) {
         vector<T> a = s.tovector();
         int n = a.size();

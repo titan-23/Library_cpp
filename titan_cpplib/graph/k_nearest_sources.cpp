@@ -11,10 +11,7 @@ using namespace std;
 
 namespace titan23 {
 
-/**
- * @brief 多始点から各頂点への、相異なる始点による近い方K個の距離と始点
- *        O(K(N+M)log(KN))
- */
+/// @brief 多始点から各頂点への、相異なる始点のうち近い方 K 個の距離と始点を求める
 template<typename T>
 class KNearestSources {
 private:
@@ -43,6 +40,7 @@ public:
     vector<pair<T, int>> dist;
 
     KNearestSources() {}
+    /// @brief 隣接リスト G と始点の列 S から求める / 重みは 0 以上 / 届かない距離は INF / O(K(N+M)(K + log(KN)))
     KNearestSources(const vector<vector<pair<int, T>>> &G, const vector<int> &S, int K, T INF) :
             n(G.size()), K(K), INF(INF), dist(n*K, {INF, -1}) {
         using P = tuple<T, int, int>;
@@ -89,7 +87,7 @@ public:
         }
     }
 
-    // v に届いた相異なる始点の数(0以上K以下)
+    /// @brief v に届いた相異なる始点の数を返す / 0 以上 K 以下 / O(K)
     int count(int v) const {
         int c = 0;
         for (int i = 0; i < K; ++i) {
@@ -98,13 +96,13 @@ public:
         return c;
     }
 
-    // v への k 番目(0-indexed)の距離 / 無ければ INF
+    /// @brief v への k 番目の距離を返す / 0-indexed / なければ INF / O(1)
     T get_dist(int v, int k) const {
         assert(0 <= k && k < K);
         return dist[v*K+k].first;
     }
 
-    // v への k 番目(0-indexed)の始点番号 / 無ければ -1
+    /// @brief v への k 番目の始点番号を返す / 0-indexed / なければ -1 / O(1)
     int get_source(int v, int k) const {
         assert(0 <= k && k < K);
         return dist[v*K+k].second;

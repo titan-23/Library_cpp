@@ -11,6 +11,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 遅延伝播と区間反転を持つ重み平衡木 / 0-indexed
 template <class T, class F,
           T (*op)(T, T), T (*mapping)(F, T), F (*composition)(F, F),
           T (*e)(), F (*id)()>
@@ -19,8 +20,8 @@ private:
     class Node;
     using NodePtr = Node*;
     using MyLazyWBTree = LazyWBTree<T, F, op, mapping, composition, e, id>;
-    static constexpr int DELTA = 3;
-    static constexpr int GAMMA = 2;
+    static constexpr int DELTA = 3;  // 左右の重みの比の上限
+    static constexpr int GAMMA = 2;  // 二重回転にするかを決める比
 
     class Node {
     public:
@@ -30,15 +31,15 @@ private:
         bool rev;
         int size, left_size;
 
-        /// @brief 1要素のノードを初期化する / O(1)
+        /// @brief 1 要素のノードを初期化する / O(1)
         Node(const T &value, const F &action)
             : left(nullptr), right(nullptr), key(value), data(value), lazy(action),
               rev(false), size(1), left_size(0) {}
 
-        /// @brief 右の子の部分木サイズに1を加えた重みを返す / O(1)
+        /// @brief 右の子の部分木の大きさに 1 を加えた重みを返す / O(1)
         int weight_right() const { return size - left_size; }
 
-        /// @brief 左の子の部分木サイズに1を加えた重みを返す / O(1)
+        /// @brief 左の子の部分木の大きさに 1 を加えた重みを返す / O(1)
         int weight_left() const { return left_size + 1; }
 
         /// @brief このノードの左右の重みが平衡条件を満たすか検査する / O(1)
@@ -47,7 +48,7 @@ private:
             assert(static_cast<long long>(weight_right()) * DELTA >= weight_left());
         }
 
-        /// @brief 子の情報から部分木サイズと総積を更新する / O(1)
+        /// @brief 子の情報から部分木の大きさと総積を更新する / O(1)
         void update() {
             left_size = left ? left->size : 0;
             size = left_size + 1 + (right ? right->size : 0);
@@ -79,7 +80,7 @@ private:
             }
         }
 
-        /// @brief このノード以下の構造を標準出力へ表示する / O(N)
+        /// @brief このノード以下の構造を標準出力に表示する / O(N)
         void print() const {
             cout << "this : key=" << key << ", size=" << size << endl;
             if (left) cout << "to-left" << endl;
@@ -294,28 +295,27 @@ public:
     /// @brief 空の木を構築する / O(1)
     LazyWBTree() : root(nullptr) {}
 
-    /// @brief valuesの要素を順番に格納した木を構築する / O(N)
+    /// @brief 列 values から構築する / O(N)
     LazyWBTree(const vector<T> &values) { _build(values); }
 
-    /// @brief otherを末尾へ破壊的に結合する / O(log N + log M)
-    /// @note 入力の木どうしでノードを共有しないこと
-    /// @note other.rootは残るが、otherを独立した木として再利用できない
+    /// @brief other を末尾へ破壊的に結合する / O(log N + log M)
+    /// @note 2 つの木でノードを共有しないこと。other.root は残るが、other は独立した木として再利用できない
     void merge(MyLazyWBTree &other) { root = _merge_node(root, other.root); }
 
-    /// @brief 先頭k要素と残りに破壊的に分割する / O(log N)
-    /// @note 元のrootは消去しないが、分割前のハンドルは独立した木として再利用できない
+    /// @brief 先頭 k 要素と残りに破壊的に分割する / O(log N)
+    /// @note 元の root は消去しないが、分割前の木は独立した木として再利用できない
     pair<MyLazyWBTree, MyLazyWBTree> split(const int k) {
         assert(0 <= k && k <= len());
         auto result = _split_node(root, k);
         return {_new(result.first), _new(result.second)};
     }
 
-    /// @brief 全要素に作用actionを適用する / O(1)
+    /// @brief 全要素に作用 action を適用する / O(1)
     void all_apply(const F action) {
         if (root && action != id()) root->apply(action);
     }
 
-    /// @brief 区間 [l, r) に作用actionを適用する / O(log N)
+    /// @brief 区間 [l, r) に作用 action を適用する / O(log N)
     void apply(const int l, const int r, const F action) {
         assert(0 <= l && l <= r && r <= len());
         if (l == r || !(action != id())) return;
@@ -331,12 +331,10 @@ public:
         dfs(dfs, root, l, r);
     }
 
-    /// @brief 全要素の総積を返す / O(1)
-    /// @note 空の木ではe()を返す
+    /// @brief 全要素の総積を返す / 空の木では e() / O(1)
     T all_prod() const { return root ? root->data : e(); }
 
-    /// @brief 区間 [l, r) の総積を返す / O(log N)
-    /// @note 空区間ではe()を返す
+    /// @brief 区間 [l, r) の総積を返す / 空区間では e() / O(log N)
     T prod(const int l, const int r) {
         assert(0 <= l && l <= r && r <= len());
         if (l == r) return e();
@@ -360,14 +358,14 @@ public:
         return dfs(dfs, root, l, r, identity);
     }
 
-    /// @brief 位置kにvalueを挿入する / O(log N)
+    /// @brief 位置 k に value を挿入する / O(log N)
     void insert(int k, const T value) {
         assert(0 <= k && k <= len());
         root = _insert_node(root, k, value);
     }
 
-    /// @brief 位置kの要素を削除し、その値を返す / O(log N)
-    /// @note 削除されたノードへのポインタは無効になる
+    /// @brief 位置 k の要素を削除して返す / O(log N)
+    /// @note 削除したノードへのポインタは無効になる
     T pop(int k) {
         assert(0 <= k && k < len());
         T value;
@@ -375,15 +373,14 @@ public:
         return value;
     }
 
-    /// @brief 区間 [l, r) の要素順を反転する / O(log N)
-    /// @note 総積が反転で変わらない場合に利用できる
-    /// @note 木全体の反転はO(1)
+    /// @brief 区間 [l, r) を反転する / O(log N)、木全体なら O(1)
+    /// @note 総積が反転で変わらない場合に使える
     void reverse(const int l, const int r) {
         assert(0 <= l && l <= r && r <= len());
         root = _reverse_node(root, l, r);
     }
 
-    /// @brief 要素を現在の順番でvectorに格納して返す / O(N)
+    /// @brief 要素を先頭から順に vector で返す / O(N)
     vector<T> tovector() {
         vector<T> result;
         result.reserve(len());
@@ -400,7 +397,7 @@ public:
         return result;
     }
 
-    /// @brief 位置kの要素をvalueに置き換える / O(log N)
+    /// @brief 位置 k の要素を value に変更する / O(log N)
     void set(int k, T value) {
         assert(0 <= k && k < len());
         auto dfs = [&](auto &&self, NodePtr node, int k) -> void {
@@ -414,7 +411,7 @@ public:
         dfs(dfs, root, k);
     }
 
-    /// @brief 位置kの要素を返す / O(log N)
+    /// @brief 位置 k の要素を返す / O(log N)
     T get(int k) {
         assert(0 <= k && k < len());
         const F identity = id();
@@ -430,10 +427,10 @@ public:
         }
     }
 
-    /// @brief 要素列を標準出力へ表示する / O(N)
+    /// @brief 要素列を標準出力に表示する / O(N)
     void print() { cout << *this << endl; }
 
-    /// @brief 要素列を出力ストリームへ書き込む / O(N)
+    /// @brief 要素列を out に書き込む / O(N)
     friend ostream& operator<<(ostream &out, LazyWBTree &tree) {
         vector<T> values = tree.tovector();
         out << '[';
@@ -447,7 +444,7 @@ public:
     /// @brief 要素数を返す / O(1)
     int len() const { return root ? root->size : 0; }
 
-    /// @brief 部分木サイズ、キャッシュ、平衡条件をassertで検査する / O(N)
+    /// @brief 部分木の大きさ、left_size、平衡条件を assert で検査する / O(N)
     void check() const {
         auto dfs = [&](auto &&self, NodePtr node) -> int {
             if (!node) return 0;

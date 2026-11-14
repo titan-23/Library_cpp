@@ -10,7 +10,7 @@ using namespace std;
 // StatePool
 namespace titan23 {
 
-// ノードプールクラス
+/// @brief T を id で管理し、削除した id を使い回すプール
 template<typename T>
 class StatePool {
 private:
@@ -19,9 +19,10 @@ private:
 
 public:
     StatePool() {}
+    /// @brief T を n 個確保して構築する
     StatePool(const int n) { init(n); }
 
-    /// clear
+    /// @brief 確保済みのすべての id を未使用に戻す
     void clear() {
         while (!unused_idx.empty()) unused_idx.pop();
         for (int i = (int)pool.size()-1; i >= 0; --i) {
@@ -29,7 +30,7 @@ public:
         }
     }
 
-    /// n要素確保する。
+    /// @brief T を n 個確保する / 空のプールに対してだけ呼ぶ
     void init(const int n) {
         for (int i = 0; i < n; ++i) {
             T* state = new T;
@@ -38,19 +39,19 @@ public:
         }
     }
 
-    /// id に対応する T のポインタを返す。
+    /// @brief id に対応する T のポインタを返す / O(1)
     T* get(int id) const {
         assert(0 <= id && id < pool.size());
         return pool[id];
     }
 
-    /// idに対応するTを仮想的に削除する。
+    /// @brief id に対応する T を仮想的に削除する / T は解放せず、id を未使用に戻す
     void del(int id) {
         assert(0 <= id && id < pool.size());
         unused_idx.emplace(id);
     }
 
-    /// T を作成し、それに対応する id を返す。
+    /// @brief T を 1 個割り当て、その id を返す / 未使用の id があれば使い回す
     int gen() {
         int state_id;
         if (unused_idx.empty()) {
@@ -64,19 +65,19 @@ public:
         return state_id;
     }
 
-    /// id に対応するTをコピーし、コピー先のidを返す。
-    /// T のコピーメソッドを呼び出す。
+    /// @brief id に対応する T を新しい id へコピーし、コピー先の id を返す / T の copy メソッドを呼ぶ
     int copy(const int id) {
         int new_id = gen();
         pool[id]->copy(pool[new_id]);
         return new_id;
     }
 
+    /// @brief 使用中の T の個数を返す
     int used_size() const {
         return (int)pool.size() - (int)unused_idx.size();
     }
 
-    /// 内部サイズを呼び出す
+    /// @brief 確保済みの T の個数を返す
     int get_size() const {
         return pool.size();
     }

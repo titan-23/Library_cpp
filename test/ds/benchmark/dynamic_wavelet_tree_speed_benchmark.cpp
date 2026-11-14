@@ -1,6 +1,8 @@
 // Example: g++ -std=c++17 -O3 -DNDEBUG -march=native -I. this_file.cpp -o /tmp/dwt_bench
 // /tmp/dwt_bench --n 300000 --q 300000 --sigma 300000 --distribution uniform
 // Use --operations rank,select,mixed to isolate work. Each mutation starts from a.
+// Define DWT_BENCH_DYNAMIC_WAVELET_MATRIX to measure DynamicWaveletMatrix instead
+// (see dynamic_wavelet_matrix_speed_benchmark.cpp). It skips select_remove.
 #include <algorithm>
 #include <chrono>
 #include <cstdint>
@@ -14,12 +16,23 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#ifdef DWT_BENCH_DYNAMIC_WAVELET_MATRIX
+#include "titan_cpplib/ds/dynamic_wavelet_matrix.cpp"
+#else
 #include "titan_cpplib/ds/dynamic_wavelet_tree.cpp"
+#endif
 
 namespace {
 
 using Key = uint64_t;
+#ifdef DWT_BENCH_DYNAMIC_WAVELET_MATRIX
+using Tree = titan23::DynamicWaveletMatrix<Key>;
+// Accepted by --operations but never measured, because Tree lacks them.
+const std::set<std::string> unsupported = {"select_remove"};
+#else
 using Tree = titan23::DynamicWaveletTree<Key>;
+const std::set<std::string> unsupported;
+#endif
 using Clock = std::chrono::steady_clock;
 
 const std::vector<std::string> operations = {
@@ -35,7 +48,9 @@ struct Options {
     std::string distribution = "uniform";
     std::set<std::string> selected;
 
-    bool wants(const std::string &name) const { return selected.empty() || selected.count(name); }
+    bool wants(const std::string &name) const {
+        return !unsupported.count(name) && (selected.empty() || selected.count(name));
+    }
 };
 
 Options parse_options(int argc, char **argv) {
@@ -51,6 +66,11 @@ Options parse_options(int argc, char **argv) {
             std::cout << "\nskew: 90% of values in [0, min(sigma, 16)); 10% uniform.\n"
                       << "pop/select_remove use min(N,Q) deletions; insert_pop counts both calls.\n"
                       << "mixed alternates set, kth_smallest, range_freq, access (25% each).\n";
+            if (!unsupported.empty()) {
+                std::cout << "unsupported (skipped):";
+                for (const auto &name : unsupported) std::cout << ' ' << name;
+                std::cout << '\n';
+            }
             std::exit(0);
         }
         if (++i == argc) throw std::invalid_argument("missing value for " + flag);
@@ -196,7 +216,14 @@ int run(const Options &o) {
 
     std::cout << std::fixed << std::setprecision(6)
               << "N=" << o.n << " Q=" << o.q << " sigma=" << sigma << " log=" << o.log << " seed=" << o.seed
-              << " distribution=" << o.distribution << '\n';
+              << " distribution=" << o.distribution;
+    if (!unsupported.empty()) {
+        std::cout << " unsupported=";
+        for (auto it = unsupported.begin(); it != unsupported.end(); ++it) {
+            std::cout << (it == unsupported.begin() ? "" : ",") << *it;
+        }
+    }
+    std::cout << '\n';
 
     bool reads = false;
     for (int i = 0; i < 9; ++i) reads |= o.wants(operations[i]);
@@ -247,11 +274,13 @@ int run(const Options &o) {
     mutate("set", o.q, [&](Tree &tree, uint64_t &) {
         for (const Query &q : queries) tree.set(q.pos, q.x);
     });
+#ifndef DWT_BENCH_DYNAMIC_WAVELET_MATRIX
     mutate("select_remove", removals.size(), [&](Tree &tree, uint64_t &checksum) {
         for (const Removal &r : removals) {
             checksum = checksum * 1000003 + tree.select_remove(r.occurrence, r.x);
         }
     });
+#endif
     mutate("mixed", o.q, [&](Tree &tree, uint64_t &checksum) {
         for (int i = 0; i < o.q; ++i) {
             const Query &q = queries[i];

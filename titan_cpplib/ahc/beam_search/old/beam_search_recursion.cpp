@@ -18,13 +18,14 @@ namespace flying_squirrel_recursion {
 
 using BeamParam = flying_squirrel::BeamParam;
 
+/// @brief 探索木を再帰で辿る木構造ビームサーチの旧実装
 template<typename ScoreType, typename HashType, typename Action, typename State>
 class BeamSearchWithTree {
 private:
     using TreeNodeID = int;
     using SubStateID = int;
 
-    /// try_opした結果をメモしておく構造体
+    /// @brief try_op の結果を保持する構造体
     struct SubState {
         TreeNodeID par;
         Action action;
@@ -34,7 +35,7 @@ private:
         SubState(TreeNodeID par, const Action &action, ScoreType score) : par(par), action(action), score(score) {}
     };
 
-    /// ビームサーチの過程を表す木のノード
+    /// @brief ビームサーチの過程を表す木のノード
     struct TreeNode {
         TreeNodeID par;
         Action pre_action;
@@ -84,7 +85,7 @@ private:
     tuple<int, TreeNodeID, vector<SubStateID>> get_next_beam(State* state, TreeNodeID node, int turn) {
         int cnt = 0;
         Action action = DAMMY_ACTION;
-        while (true) { // 一本道は行くだけ
+        while (true) { // 子が一つの間は適用して進む
             if (treenode_pool.get(node)->child.size() != 1) break;
             ++cnt;
             node = treenode_pool.get(node)->child[0];
@@ -97,7 +98,7 @@ private:
         return make_tuple(cnt, node, next_beam);
     }
 
-    /// 不要なNodeを削除し、木を更新する
+    /// 不要なノードを削除し、木を更新する
     bool update_tree(const TreeNodeID node, const int depth) {
         if (treenode_pool.get(node)->is_leaf()) return depth == 0;
         int idx = 0;
@@ -113,7 +114,7 @@ private:
         return idx > 0;
     }
 
-    /// node以上のパスを返す
+    /// 根から node までの行動列を返す
     vector<Action> get_path(TreeNodeID node) {
         vector<Action> result;
         while (node != -1 && treenode_pool.get(node)->par != -1) {
@@ -124,11 +125,11 @@ private:
         return result;
     }
 
-    /// for debug
+    /// デバッグ用
     void print_tree(State* state, const TreeNodeID node, int depth) {
     }
 
-    /// node以下で、葉かつ最も評価値の良いノードを見るける / 葉はターン数からは判断していないので注意
+    /// node 以下で評価値が最良の葉を求める / 葉かどうかはターン数ではなく子の有無で判定する
     void get_best_node(TreeNodeID node) {
         if (treenode_pool.get(node)->is_leaf()) {
             if (best_id == -1 || treenode_pool.get(node)->score < best_score) {
@@ -143,7 +144,7 @@ private:
     }
 
     vector<Action> get_result(TreeNodeID root) {
-        best_id = -1; // 更新
+        best_id = -1; // 初期化
         get_best_node(root);
         TreeNodeID node = best_id;
         vector<Action> result = get_path(node);
@@ -161,13 +162,7 @@ private:
     }
 
 public:
-    /**
-     * @brief ビームサーチをする
-     *
-     * @param param ターン数、ビーム幅を指定するパラメータ構造体
-     * @param verbose 途中結果のスコアを標準エラー出力するかどうか
-     * @return vector<Action>
-     */
+    /// @brief ビームサーチを実行し、行動列を返す / verbose なら途中のスコアを標準エラー出力に書く
     vector<Action> search(BeamParam &param, const bool verbose=false) {
         if (verbose) cerr << PRINT_GREEN << "Info: start search()" << PRINT_NONE << endl;
         init_bs(param);
@@ -187,7 +182,7 @@ public:
 
             // 次のビーム候補を求める
             auto [apply_only_turn, next_root, next_beam] = get_next_beam(state, root, turn-now_turn);
-            rnd.shuffle(next_beam); // シャッフルして多様性を確保(できているのか？)
+            rnd.shuffle(next_beam); // 多様性を確保するために無作為に並べ替える。効果は未確認
             root = next_root;
             now_turn += apply_only_turn;
             assert(!next_beam.empty());

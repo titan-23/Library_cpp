@@ -21,6 +21,7 @@ private:
     PersistentWeightedUnionFind(int n, IType par, WType weight) : n(n), par(par), weight(weight) {}
 
 public:
+    /// @brief 要素数 0 で構築する / O(1)
     PersistentWeightedUnionFind() : n(0) {}
 
     /// @brief 要素数 n で初期化する / O(n)
@@ -87,7 +88,7 @@ public:
         return root(x) == root(y);
     }
 
-    /// @brief `v[y] - v[x]` を返す。同じ集合に属することが前提 / O(log^2 n)
+    /// @brief `v[y] - v[x]` を返す / x と y が同じ集合に属することが前提 / O(log^2 n)
     T diff(int x, int y) const {
         assert(same(x, y));
         return potential(y) - potential(x);

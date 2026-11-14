@@ -6,10 +6,9 @@
 #include <cassert>
 using namespace std;
 
-// traveling_salesman_problem
 namespace titan23 {
 
-/// @brief 巡回セールスマン問題 最小重みハミルトン閉路 / O(2^n n^2)
+/// @brief 巡回セールスマン問題を解き、最小重みハミルトン閉路の重みを返す / O(2^n n^2)
 template<typename T>
 T traveling_salesman_problem(int n, T INF, const vector<vector<T>> &dist) {
     assert(n > 0);

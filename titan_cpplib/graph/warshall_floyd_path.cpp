@@ -12,14 +12,8 @@ using namespace std;
 
 namespace titan23 {
 
-/**
- * @brief 経路復元付き Warshall-Floyd
- * @details INF は到達不能を表す。負閉路を経由しない頂点対の最短距離は (-INF, INF) に収まる必要がある。
- *          範囲外の距離は ±INF に丸められ、到達判定や get_path が正しくなくなる。
- *          重みが -INF 未満の辺は -INF として扱う。
- *          T が 32 bit または 64 bit の符号付き整数、INF <= numeric_limits<T>::max() / 2 + 1 で、
- *          AVX-512 (F, VL) または AVX2 が有効なら主要なループを SIMD で処理する。それ以外は同じ処理を逐次に行う。
- */
+/// @brief 経路復元付きの Warshall-Floyd / INF は到達不能を表す / 重みが -INF 未満の辺は -INF として扱う
+/// 負閉路を経由しない頂点対の最短距離は (-INF, INF) に収まること / 外れると到達判定や get_path が正しくなくなる
 template<typename T>
 class WarshallFloydPath {
 private:
@@ -71,6 +65,8 @@ private:
         if constexpr (simd_available) {
             if (use_simd()) {
                 const Vec v_inf = Simd::set1(INF);
+                const Vec v_ninf = Simd::set1(-INF);
+                const int full = n / Simd::LANES * Simd::LANES;  // 端数のない部分の長さ
                 for (int k = 0; k < n; ++k) {
                     const T *row_k = dist.data() + (size_t)k*n;
                     for (int i = 0; i < n; ++i) {
@@ -79,19 +75,23 @@ private:
                         T *row_i = dist.data() + (size_t)i*n;
                         int *nxt_i = nxt.data() + (size_t)i*n;
                         const auto v_hop = Simd::int_set1(nxt[(size_t)i*n+k]);
-                        for (int j = 0; j < n; j += Simd::LANES) {
-                            Mask lane = Simd::lane_mask(n - j);
+                        // add_dist(dik, d[k][j]) を、dik についての場合分けをループの外に出して計算する
+                        const bool dik_ninf = dik <= -INF;
+                        const Vec v_dik = Simd::set1(dik);
+                        auto relax = [&](const int j, const Mask lane) {
                             Vec v_kj = Simd::load(lane, row_k+j);
                             Vec v_ij = Simd::load(lane, row_i+j);
                             Mask finite = Simd::cmpneq(lane, v_kj, v_inf);
-                            Vec v_new = add_dist_vec(dik, v_kj);
+                            Vec v_new = dik_ninf ? v_ninf : Simd::blend(Simd::min(Simd::max(Simd::add(v_dik, v_kj), v_ninf), v_inf), Simd::cmpeq(v_kj, v_ninf), v_ninf);
                             Mask upd = Simd::cmpgt(finite, v_ij, v_new);
-                            // 更新がなければ書き込まない (n が大きいとメモリ帯域が律速になるため)
+                            // n が大きいとメモリ帯域が律速になるので、更新がなければ書き込まない
                             if (upd) {
                                 Simd::store(row_i+j, upd, v_new);
                                 Simd::int_store(nxt_i+j, upd, v_hop);
                             }
-                        }
+                        };
+                        for (int j = 0; j < full; j += Simd::LANES) relax(j, Simd::ALL);
+                        if (full < n) relax(full, Simd::lane_mask(n - full));
                     }
                 }
                 return;
@@ -113,7 +113,7 @@ private:
         }
     }
 
-    /// @brief 負閉路を経由できる頂点対を `NEG_INF` にする / O(|V|^3)
+    /// @brief 負閉路を経由できる頂点対を記録する / O(|V|^3)
     void set_negative_infinity() {
         vector<int> negative_vertices;
         for (int v = 0; v < n; ++v) {
@@ -216,7 +216,7 @@ private:
 public:
     WarshallFloydPath() : n(0), INF(), negative_cycle(false) {}
 
-    /// @brief 時間 O(|V|^3), 空間 O(|V|^2)
+    /// @brief 隣接リスト G と INF から全点対の最短距離を求める / 時間 O(|V|^3)、空間 O(|V|^2)
     WarshallFloydPath(const vector<vector<pair<int, T>>> &G, const T INF) :
         n(G.size()), INF(INF), nxt(n*n, -1), dist(n*n, INF),
         neg_inf(n*n, 0), to_s(n), from_t(n), next_to_s(n),
@@ -237,7 +237,7 @@ public:
         set_negative_infinity();
     }
 
-    /// @brief 重み `w` の有向辺 `(s, t)` を追加する / O(|V|^2)
+    /// @brief 重み w の有向辺 (s, t) を追加して距離を更新する / O(|V|^2)
     void add_edge(int s, int t, T w) {
         w = clamp_weight(w);
         int st = s*n+t;
@@ -257,29 +257,29 @@ public:
         add_edge_rows(s, t, w, new_negative_cycle);
     }
 
-    /// @brief `s` から `t` に到達できるか / O(1)
+    /// @brief s から t に到達できるかを返す / O(1)
     bool reachable(int s, int t) const {
         int idx = s*n+t;
         return neg_inf[idx] || dist[idx] != INF;
     }
 
-    /// @brief `s` から `t` への経路上に負閉路があるか / O(1)
+    /// @brief s から t への経路上に負閉路があるかを返す / O(1)
     bool is_neg_inf(int s, int t) const {
         return neg_inf[s*n+t];
     }
 
-    /// @brief 負閉路が存在するか / O(1)
+    /// @brief 負閉路が存在するかを返す / O(1)
     bool has_negative_cycle() const {
         return negative_cycle;
     }
 
-    /// @brief `is_neg_inf(s, t) == false` のときのみ有効 / O(1)
+    /// @brief s から t への最短距離を返す / is_neg_inf(s, t) == false のときに限る / 到達不能なら INF / O(1)
     T get_dist(int s, int t) const {
         assert(!is_neg_inf(s, t));
         return dist[s*n+t];
     }
 
-    /// @brief 到達不能または `NEG_INF` の場合は空配列を返す / O(|path|)
+    /// @brief s から t への最短経路を頂点の列で返す / 到達不能か is_neg_inf(s, t) なら空 / O(|path|)
     vector<int> get_path(int s, int t) const {
         vector<int> path;
         int idx = s*n+t;

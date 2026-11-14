@@ -9,10 +9,12 @@ using namespace std;
 namespace flying_squirrel {
 namespace beam_log {
 
+/// @brief ログ行の先頭に付ける [BS] の印を返す
 inline const string& tag_bs() {
     static const string s = PRINT_BOLD + string("[BS]") + PRINT_NONE + " ";
     return s;
 }
+// 種類ごとの印。現在はすべて tag_bs() と同じ
 inline const string& tag_info()  { return tag_bs(); }
 inline const string& tag_ok()    { return tag_bs(); }
 inline const string& tag_warn()  { return tag_bs(); }
@@ -21,11 +23,13 @@ inline const string& tag_debug() { return tag_bs(); }
 inline const string& tag_plain() { return tag_bs(); }
 inline const string& tag_turn()  { return tag_bs(); }
 
+// 文字列を種類ごとの色で囲む
 inline string col_ok   (const string& m) { return PRINT_GREEN  + m + PRINT_NONE; }
 inline string col_warn (const string& m) { return PRINT_YELLOW + m + PRINT_NONE; }
 inline string col_error(const string& m) { return PRINT_RED    + m + PRINT_NONE; }
 inline string col_debug(const string& m) { return PRINT_DIM    + m + PRINT_NONE; }
 
+/// @brief msg に印を付け、種類に応じた色で 1 行出力する
 inline void info (ostream& os, const string& msg) { os << tag_bs() << msg << "\n"; }
 inline void ok   (ostream& os, const string& msg) { os << tag_bs() << col_ok(msg)    << "\n"; }
 inline void warn (ostream& os, const string& msg) { os << tag_bs() << col_warn(msg)  << "\n"; }
@@ -33,6 +37,7 @@ inline void error(ostream& os, const string& msg) { os << tag_bs() << col_error(
 inline void debug(ostream& os, const string& msg) { os << tag_bs() << col_debug(msg) << "\n"; }
 
 #ifdef BS_DEBUG
+/// @brief ok が false なら式と位置を出力して abort する / BS_DEBUG を定義したときだけ使える
 inline void assert_check(bool ok, const char* expr, const char* file, int line, const string& msg = "") {
     if (ok) return;
     ostringstream ss;
@@ -43,6 +48,7 @@ inline void assert_check(bool ok, const char* expr, const char* file, int line, 
 }
 #endif
 
+/// @brief 探索開始時に実装名と設定値を出力する
 inline void start_banner(ostream& os, const char* impl_name, const BeamParam& param) {
     os << tag_plain() << "================================================\n";
     os << tag_info()  << "start " << to_bold(impl_name) << "\n";
@@ -54,6 +60,7 @@ inline void start_banner(ostream& os, const char* impl_name, const BeamParam& pa
     os << tag_plain() << "------------------------------------------------\n";
 }
 
+/// @brief 1 ターンの進捗を 1 行で出力する / explored < 0 なら展開数を省き、pool は使わない
 template<class ScoreType>
 inline void turn_line(ostream& os, int turn, int max_turn, double elapsed_ms, int width, int pool, int cand,
                       int explored, ScoreType best_score, bool has_best = true) {
@@ -72,25 +79,30 @@ inline void turn_line(ostream& os, int turn, int max_turn, double elapsed_ms, in
     os << tag_turn() << ss.str() << "\n";
 }
 
+/// @brief ターンの行の下に補足を 1 行出力する
 inline void turn_line_extra(ostream& os, const string& extra) {
     os << tag_plain() << "  " << to_dim(extra) << "\n";
 }
 
+/// @brief 完成解を見つけたことを出力する
 template<class ScoreType>
 inline void on_solution_found(ostream& os, int turn, ScoreType score) {
     ostringstream ss;
     ss << "valid solution found at turn " << turn << " (score=" << score << ")";
     ok(os, ss.str());
 }
+/// @brief 候補がなくなったことを出力する
 inline void on_no_candidates(ostream& os, int turn) {
     ostringstream ss;
     ss << "no candidates at turn " << turn;
     error(os, ss.str());
 }
+/// @brief max_turn に達したことを出力する
 inline void on_max_turn(ostream& os) {
     ok(os, "reached max_turn");
 }
 
+/// @brief 探索終了時に終了理由と集計値を出力する
 template<class ScoreType>
 inline void end_banner(ostream& os, const char* reason, int turns_done, int max_turn, double total_ms,
                        double ave_width, ScoreType best_score, bool has_best, int actions_count) {
@@ -106,11 +118,12 @@ inline void end_banner(ostream& os, const char* reason, int turns_done, int max_
     os << tag_plain() << "================================================\n";
 }
 
+/// @brief 終了時の集計に key = value の行を加える
 inline void end_banner_extra(ostream& os, const string& key, long long value) {
     os << tag_info() << "  " << left << setw(14) << key << "= " << value << "\n";
 }
 
-/// @brief 実効ビーム幅の推移をスパークラインと統計値で出力する
+/// @brief 実効ビーム幅の推移を ▁〜█ の文字列と統計値で出力する / 標本が cols 個を超えると区間ごとに平均する
 inline void width_trace(ostream& os, const vector<int>& hist, int cols = 40) {
     if (hist.empty()) {
         os << tag_info() << "  wtrace = (no samples)\n";
@@ -119,7 +132,7 @@ inline void width_trace(ostream& os, const vector<int>& hist, int cols = 40) {
     static const char* blocks[8] = {"▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"};
     const int n = (int)hist.size();
 
-    // 標本数が cols を超える場合はバケット平均で圧縮する
+    // 標本数が cols を超える場合は区間ごとの平均で縮める
     vector<double> bucket;
     if (n <= cols) {
         bucket.assign(hist.begin(), hist.end());

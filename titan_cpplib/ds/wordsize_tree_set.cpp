@@ -8,6 +8,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 64 分木で [0, u] の整数を管理する集合
 class WordsizeTreeSet {
 private:
     using u64 = unsigned long long;
@@ -42,6 +43,7 @@ private:
 
 public:
     WordsizeTreeSet() : u(0), _len(0) {}
+    /// @brief [0, u] の整数を扱う空の集合を構築する
     WordsizeTreeSet(int u) : u(u+1), _len(0) {
         while (u) {
             u >>= 6;
@@ -49,6 +51,7 @@ public:
         }
     }
 
+    /// @brief s[i] == '1' である i を要素として構築する / 値の範囲は [0, u]
     WordsizeTreeSet(int u, const string &s) : u(u+1), _len(0) {
         u >>= 6;
         data.resize(get_dep(u));
@@ -63,6 +66,7 @@ public:
         _build(u, A);
     }
 
+    /// @brief a の要素から構築する / 値の範囲は [0, u]
     WordsizeTreeSet(int u, const vector<int> &a) : u(u+1), _len(0) {
         u >>= 6;
         data.resize(get_dep(u));
@@ -76,6 +80,7 @@ public:
         _build(u, A);
     }
 
+    /// @brief v を追加する / 既にあれば false を返す / O(log_64 u)
     bool add(int v) {
         assert(0 <= v && v < u);
         if ((data[0][v>>6] >> (v&63)) & 1) return false;
@@ -87,6 +92,7 @@ public:
         return true;
     }
 
+    /// @brief v があれば削除して true を返す / O(log_64 u)
     bool discard(int v) {
         if (((data[0][v >> 6] >> (v & 63) & 1)) == 0) return false;
         _len--;
@@ -98,12 +104,14 @@ public:
         return true;
     }
 
+    /// @brief v を削除する / v は集合に含まれる必要がある / O(log_64 u)
     void remove(int v) {
         if (!discard(v)) {
             assert(false);
         }
     }
 
+    /// @brief v 以上で最小の要素を返す / なければ -1 / O(log_64 u)
     int ge(int v) const {
         int d = 0;
         while (1) {
@@ -123,10 +131,12 @@ public:
         return v;
     }
 
+    /// @brief v より大きい最小の要素を返す / なければ -1 / O(log_64 u)
     int gt(int v) const {
         return ge(v+1);
     }
 
+    /// @brief v 以下で最大の要素を返す / なければ -1 / O(log_64 u)
     int le(int v) const {
         int d = 0;
         while (1) {
@@ -146,14 +156,17 @@ public:
         return v;
     }
 
+    /// @brief v より小さい最大の要素を返す / なければ -1 / O(log_64 u)
     int lt(int v) const {
         return v == 0 ? -1 : le(v-1);
     }
 
+    /// @brief v が含まれるか判定する / O(1)
     bool contains(int v) const {
         return (data[0][v>>6] >> (v&63) & 1) == 1;
     }
 
+    /// @brief 集合を {0, 1, ..., n-1} にする
     void fill(int n) {
         _len = n;
         for (int d = 0; d < (int)data.size(); ++d) {
@@ -169,8 +182,10 @@ public:
         }
     }
 
+    /// @brief 要素数を返す / O(1)
     int len() const { return _len; }
 
+    /// @brief 全要素を昇順に並べて返す
     vector<int> tovector() const {
         int v = 0;
         vector<int> a(_len);

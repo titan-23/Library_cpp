@@ -13,6 +13,7 @@ using namespace std;
 
 namespace titan23 {
 
+    /// @brief 隣接リストで持つグラフ / add_edge は u -> v の向きだけ加える
     class Graph {
       private:
         int n;
@@ -23,8 +24,10 @@ namespace titan23 {
       public:
         Graph() : n(0), G(0) {}
 
+        /// @brief 頂点数 n で構築する / O(n)
         Graph(int n) : n(n), G(n) {}
 
+        /// @brief 重み w の辺 u -> v を加える / O(1)
         void add_edge(const int u, const int v, const int w = 1) {
             assert(0 <= u && u < n);
             assert(0 <= v && v < n);
@@ -32,10 +35,12 @@ namespace titan23 {
             E.emplace_back(w, u, v);
         }
 
+        /// @brief 隣接リストの写しを返す
         vector<vector<int>> get_G() const {
             return G;
         }
 
+        /// @brief 加えた辺を (u, v) の列で返す
         vector<pair<int, int>> get_E() const {
             vector<pair<int, int>> res;
             res.reserve(E.size());
@@ -45,6 +50,7 @@ namespace titan23 {
             return res;
         }
 
+        /// @brief 二部グラフかを返す / 無向グラフは辺を両向きに加えておく / O(n + m)
         bool is_bipartite() {
             vector<int> col(n, -1);
             for (int v = 0; v < n; ++v) {
@@ -74,6 +80,7 @@ namespace titan23 {
             return true;
         }
 
+        /// @brief start からの距離を返す / 届かない頂点は -1 / O(n + m)
         vector<int> bfs(const int start) {
             vector<int> dist(n, -1);
             queue<int> todo;
@@ -91,6 +98,7 @@ namespace titan23 {
             return dist;
         }
 
+        /// @brief s から t への最短路の頂点列を返す / 届かなければ空 / O(n + m)
         vector<int> bfs_path(int s, int t) {
             vector<int> prev(n, -1);
             vector<int> dist(n, inf);
@@ -121,10 +129,12 @@ namespace titan23 {
             return path;
         }
 
+        /// @brief 頂点数を返す
         int len() const {
             return n;
         }
 
+        /// @brief トポロジカル順を返す / 閉路があると長さが n 未満になる / O(n + m)
         vector<int> topological_sort() {
             vector<int> d(n, 0);
             for (int i = 0; i < n; ++i) {
@@ -150,6 +160,7 @@ namespace titan23 {
             return res;
         }
 
+        /// @brief Kruskal 法で最小全域森の辺 (u, v) を返す / O(m log m)
         vector<pair<int, int>> minimum_spanning_tree() {
             titan23::UnionFind uf(n);
             vector<pair<int, int>> ans;

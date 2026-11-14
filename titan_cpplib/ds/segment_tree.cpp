@@ -9,6 +9,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief モノイド列の点更新と区間積を扱うセグメント木
 template <class T, T (*op)(T, T), T (*e)()>
 class SegmentTree {
 private:
@@ -19,10 +20,12 @@ private:
 public:
     SegmentTree() {}
 
+    /// @brief 長さ n で構築する / 初期値 e() / O(n)
     SegmentTree(const int n) {
         _build(n);
     }
 
+    /// @brief 列 a から構築する / O(n)
     SegmentTree(const vector<T> &a) {
         int n = (int)a.size();
         _build(n);
@@ -41,11 +44,13 @@ public:
         this->data.resize(this->_size*2, e());
     }
 
+    /// @brief a[k] を返す / O(1)
     T get(int const k) const {
         assert(0 <= k && k < n);
         return data[k+_size];
     }
 
+    /// @brief a[k] を v に変更する / O(log n)
     void set(int k, const T v) {
         assert(0 <= k && k < n);
         k += _size;
@@ -56,6 +61,7 @@ public:
         }
     }
 
+    /// @brief 区間 [l, r) の総積を返す / O(log n)
     T prod(int l, int r) const {
         assert(0 <= l && l <= r && r <= n);
         l += _size;
@@ -70,10 +76,12 @@ public:
         return op(lres, rres);
     }
 
+    /// @brief 列全体の総積を返す / O(1)
     T all_prod() const {
         return data[1];
     }
 
+    /// @brief f(prod(l, r)) が true となる最大の r を返す / f は単調で f(e()) が true / O(log n)
     template<typename F>  // F: function<bool (T)> f
     int max_right(int l, F &&f) const {
         assert(0 <= l && l <= n);
@@ -102,6 +110,7 @@ public:
         return n;
     }
 
+    /// @brief f(prod(l, r)) が true となる最小の l を返す / f は単調で f(e()) が true / O(log n)
     template<typename F>  // F: function<bool (T)> f
     int min_left(int r, F &&f) const {
         assert(0 <= r && r <= n);
@@ -130,6 +139,7 @@ public:
         return 0;
     }
 
+    /// @brief 列を vector で返す / O(n)
     vector<T> tovector() const {
         vector<T> res(n);
         for (int i = 0; i < n; ++i) {
@@ -143,8 +153,7 @@ public:
         return os;
     }
 
-    // a[k] を v に遅延的に変更する
-    // 次に lazy_all_prod() を呼び出すまでは反映されない
+    /// @brief a[k] を v に遅延的に変更する / 次に lazy_all_prod() を呼ぶまで反映されない
     void lazy_set(int k, T v) {
         k += _size;
         data[k] = v;
@@ -152,6 +161,7 @@ public:
         if (k) lazy.emplace_back(k);
     }
 
+    /// @brief lazy_set の変更を反映し、列全体の総積を返す
     T lazy_all_prod() {
         sort(lazy.begin(), lazy.end());
         int idx = 0;

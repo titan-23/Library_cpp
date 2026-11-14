@@ -4,10 +4,11 @@
 
 namespace flying_squirrel {
 
-/// @brief 1 操作で 1 世代進む、状態差分型 ChokudaiSearch
+/// @brief 1 操作で 1 世代進む、差分更新型の ChokudaiSearch
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
 using ChokudaiSearch = chokudai_detail::Search<ScoreType, HashType, Action, State, INF, false, record_history>;
 
+/// @brief ChokudaiSearch の別名
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
 using ChokudaiSearchWithTree = ChokudaiSearch<ScoreType, HashType, Action, State, INF, record_history>;
 

@@ -6,9 +6,9 @@
 #include <cassert>
 using namespace std;
 
-// MinHeap
 namespace titan23 {
 
+/// @brief 最小値を取り出せる二分ヒープ
 template<typename T>
 class MinHeap {
 private:
@@ -48,15 +48,16 @@ private:
 
 public:
     MinHeap() {}
+    /// @brief 列 a から構築する / O(n)
     MinHeap(vector<T> a) : a(a) { _heapify(); }
 
-    /// 最小の要素を返す / `O(1)`
+    /// @brief 最小の要素を返す / O(1)
     T get_min() const {
         assert(!a.empty());
         return a[0];
     }
 
-    /// 最小の要素を削除して返す / `O(logn)`
+    /// @brief 最小の要素を削除して返す / O(log n)
     T pop_min() {
         assert(!a.empty());
         T res = a[0];
@@ -66,13 +67,13 @@ public:
         return res;
     }
 
-    /// `key` を追加する / `O(logn)`
+    /// @brief key を追加する / O(log n)
     void push(const T key) {
         a.emplace_back(key);
         _up(a.size() - 1);
     }
 
-    /// `push` して `pop` する / `O(logn)`
+    /// @brief key を追加してから最小の要素を削除して返す / 空でないことが前提 / O(log n)
     T pushpop_min(const T key) {
         if (a[0] >= key) return key;
         T res = a[0];
@@ -81,7 +82,7 @@ public:
         return res;
     }
 
-    /// 最小の要素を `pop` して返し、新たに `key` を挿入する。 `pop -> push` と同じ / `O(logn)`
+    /// @brief 最小の要素を削除して返し、そのあと key を追加する / 空でないことが前提 / O(log n)
     T replace_min(const T key) {
         T res = a[0];
         a[0] = key;
@@ -89,12 +90,12 @@ public:
         return res;
     }
 
-    /// 要素数を返す / `O(1)`
+    /// @brief 要素数を返す / O(1)
     int len() const {
         return (int)a.size();
     }
 
-    /// 表示する
+    /// @brief 要素を昇順に表示する
     void print() const {
         vector<T> b = a;
         sort(b.begin(), b.end());

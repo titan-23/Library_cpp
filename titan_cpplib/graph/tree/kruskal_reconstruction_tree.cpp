@@ -15,12 +15,8 @@ using namespace std;
 
 namespace titan23 {
 
-/**
- * @brief 重みの昇順に連結成分を合併する Kruskal 再構築木（非連結なら森）
- * 元の頂点は葉 [0, N)、合併頂点は [N, node_count())。親の番号は子より大きい。
- * 構築 O(M log M + M alpha(N) + N log N)、保持領域 O(N log N)。辺のコピーに O(M) 領域。
- * T はデフォルト構築・コピー・大小比較 (<) が可能な型。数値の番兵は使用しない。
- */
+/// @brief 重みの昇順に連結成分を合併する Kruskal 再構築木 / 非連結なら森
+/// 葉 [0, N) が元の頂点、[N, node_count()) が合併頂点 / T は引数なしの構築、コピー、< による比較ができる型
 template<typename T = long long>
 class KruskalReconstructionTree {
 private:
@@ -47,7 +43,7 @@ private:
         dep.assign(total, 0);
         root_id.resize(total);
         ranges.resize(total);
-        // 親の番号が必ず大きいので、再帰せずに根と深さを計算できる。
+        // 親の番号が必ず大きいので、再帰せずに根と深さを計算できる
         for (int v = total - 1; v >= 0; --v) {
             if (par[v] == -1) {
                 root_id[v] = v;
@@ -71,7 +67,7 @@ private:
             }
         }
 
-        // 葉だけを DFS 順に並べ、各部分木を半開区間にする。
+        // 葉だけを DFS 順に並べ、各部分木を半開区間にする
         leaves.reserve(n);
         vector<int> st(forest_roots.rbegin(), forest_roots.rend());
         while (!st.empty()) {
@@ -95,7 +91,7 @@ public:
     /// @brief 頂点数 0 の空の森を作る
     KruskalReconstructionTree() = default;
 
-    /// @brief 頂点数 n、無向辺 (u, v, weight) の列から構築。自己ループ・多重辺も可。
+    /// @brief 頂点数 n と無向辺 (u, v, weight) の列から構築する / 自己ループと多重辺も可 / O(M log M + M alpha(N) + N log N)
     KruskalReconstructionTree(int n, vector<tuple<int, int, T>> edges) : n(n) {
         assert(0 <= n && n <= numeric_limits<int>::max() / 2);
         const size_t capacity = n == 0 ? 0 : size_t(n) * 2 - 1;
@@ -104,7 +100,7 @@ public:
         weight.reserve(capacity);
         par.assign(n, -1);
         child.assign(n, array<int, 2>{-1, -1});
-        weight.resize(n);  // 葉の値は使わない。
+        weight.resize(n);  // 葉の値は使わない
 
         sort(edges.begin(), edges.end(), [](const auto &a, const auto &b) {
             return get<2>(a) < get<2>(b);
@@ -128,59 +124,59 @@ public:
         preprocess();
     }
 
-    /// @brief 元のグラフの頂点数 / O(1)
+    /// @brief 元のグラフの頂点数を返す / O(1)
     int vertex_count() const { return n; }
 
-    /// @brief 合併頂点を含む頂点数。連結成分数を C として 2N-C / O(1)
+    /// @brief 合併頂点を含む頂点数を返す / 連結成分数を C として 2N-C / O(1)
     int node_count() const { return (int)par.size(); }
 
-    /// @brief 元のグラフの連結成分数 / O(1)
+    /// @brief 元のグラフの連結成分数を返す / O(1)
     int component_count() const { return (int)forest_roots.size(); }
 
-    /// @brief 森の根の列 / O(1)
+    /// @brief 森の根の列を返す / O(1)
     const vector<int> &roots() const { return forest_roots; }
 
-    /// @brief 再構築木上の親。根なら -1 / O(1)
+    /// @brief 再構築木上の親を返す / 根なら -1 / O(1)
     int parent(int node) const {
         check_node(node);
         return par[node];
     }
 
-    /// @brief 再構築木上の 2 つの子。葉なら {-1, -1} / O(1)
+    /// @brief 再構築木上の 2 つの子を返す / 葉なら {-1, -1} / O(1)
     array<int, 2> children(int node) const {
         check_node(node);
         return child[node];
     }
 
-    /// @brief 合併頂点の重み。葉は指定不可 / O(1)
+    /// @brief 合併頂点の重みを返す / 葉は指定できない / O(1)
     const T &merge_weight(int node) const {
         check_node(node);
         assert(n <= node);
         return weight[node];
     }
 
-    /// @brief 葉（元の頂点）の DFS 順 / O(1)
+    /// @brief 葉である元の頂点を DFS 順に並べた列を返す / O(1)
     const vector<int> &leaf_order() const { return leaves; }
 
-    /// @brief 元の頂点 v の leaf_order() 上の位置 / O(1)
+    /// @brief 元の頂点 v の leaf_order() 上の位置を返す / O(1)
     int leaf_index(int v) const {
         check_vertex(v);
         return ranges[v].first;
     }
 
-    /// @brief node の子孫の葉に対応する leaf_order() 上の半開区間 [l, r) / O(1)
+    /// @brief node の子孫の葉が並ぶ leaf_order() 上の半開区間 [l, r) を返す / O(1)
     pair<int, int> subtree_range(int node) const {
         check_node(node);
         return ranges[node];
     }
 
-    /// @brief node の子孫の葉の数 / O(1)
+    /// @brief node の子孫の葉の数を返す / O(1)
     int leaf_count(int node) const {
         const auto [l, r] = subtree_range(node);
         return r - l;
     }
 
-    /// @brief 再構築木上の LCA。合併頂点も指定可。異なる木なら -1 / O(log N)
+    /// @brief 再構築木上の LCA を返す / 合併頂点も指定できる / 異なる木なら -1 / O(log N)
     int lca(int u, int v) const {
         check_node(u);
         check_node(v);
@@ -200,14 +196,14 @@ public:
         return par[u];
     }
 
-    /// @brief 全ての辺を使ったとき元の頂点 u, v が連結か / O(1)
+    /// @brief 全ての辺を使ったとき元の頂点 u, v が連結かを返す / O(1)
     bool same(int u, int v) const {
         check_vertex(u);
         check_vertex(v);
         return root_id[u] == root_id[v];
     }
 
-    /// @brief 重み <= x の辺だけで元の頂点 u, v が連結か。同一頂点なら常に true / O(log N)
+    /// @brief 重み <= x の辺だけで元の頂点 u, v が連結かを返す / 同一頂点なら常に true / O(log N)
     bool same(int u, int v, const T &x) const {
         check_vertex(u);
         check_vertex(v);
@@ -215,7 +211,7 @@ public:
         return node != -1 && (u == v || !(x < weight[node]));
     }
 
-    /// @brief u, v が初めて連結になる重み。同一頂点または非連結なら nullopt / O(log N)
+    /// @brief u, v が初めて連結になる重みを返す / 同一頂点または非連結なら nullopt / O(log N)
     optional<T> merge_threshold(int u, int v) const {
         check_vertex(u);
         check_vertex(v);
@@ -224,7 +220,7 @@ public:
         return weight[node];
     }
 
-    /// @brief 重み <= x の辺で v が属する成分を表す再構築木の頂点 / O(log N)
+    /// @brief 重み <= x の辺で v が属する成分を表す再構築木の頂点を返す / O(log N)
     int component_node(int v, const T &x) const {
         check_vertex(v);
         for (int k = (int)up.size() - 1; k >= 0; --k) {
@@ -234,7 +230,7 @@ public:
         return v;
     }
 
-    /// @brief 重み <= x の辺で v から到達できる元の頂点数（v 自身を含む） / O(log N)
+    /// @brief 重み <= x の辺で v から到達できる元の頂点数を返す / v 自身を含む / O(log N)
     int component_size(int v, const T &x) const {
         return leaf_count(component_node(v, x));
     }

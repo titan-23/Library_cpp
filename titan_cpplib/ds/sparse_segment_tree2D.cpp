@@ -7,6 +7,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 必要な節点だけを作る 2 次元セグメント木 / op は可換であること
 template <class IndexType, class T, T (*op)(T, T), T (*e)()>
 class SparseSegmentTree2D {
 private:
@@ -113,28 +114,33 @@ private:
 
 public:
     SparseSegmentTree2D() : root(0) {}
+    /// @brief H × W の領域で構築する / 初期値 e() / O(1)
     SparseSegmentTree2D(IndexType H, IndexType W) : H(H), W(W) {
-        new_node_y(); // for dammy
-        new_node_x(); // for dammy
+        new_node_y(); // 番兵
+        new_node_x(); // 番兵
         root = new_node_y();
         Y[root].root = new_node_x();
     }
 
+    /// @brief 節点 cap 個分の領域を予約する
     void reserve(int cap) {
         X.reserve(cap);
         Y.reserve(cap);
     }
 
+    /// @brief (y, x) の値を返す / O(log H + log W)
     T get(IndexType y, IndexType x) const {
         assert(0 <= y && y < H);
         assert(0 <= x && x < W);
         return inner_getY(root, y, x, 0, H);
     }
 
+    /// @brief (y, x) の値を v に変更する / O(log H log W)
     void set(IndexType y, IndexType x, T v) {
         inner_setY(root, y, x, v, 0, H);
     }
 
+    /// @brief [u, d) × [l, r) の総積を返す / O(log H log W)
     T prod(IndexType u, IndexType d, IndexType l, IndexType r) const {
         assert(0 <= u && u <= d && d <= H);
         assert(0 <= l && l <= r && r <= W);

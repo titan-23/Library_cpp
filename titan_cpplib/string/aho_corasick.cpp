@@ -7,8 +7,8 @@
 #include <algorithm>
 using namespace std;
 
-/// @brief Aho-Corasick
 namespace titan23 {
+/// @brief 複数パターンを照合する Aho-Corasick 法のオートマトン / 文字は B から 26 種類
 class AhoCorasick {
 private:
     char B;
@@ -26,14 +26,18 @@ public:
     int root;
 
     AhoCorasick() {}
+
+    /// @brief 文字 B を先頭の文字として、根だけのオートマトンを作る
     AhoCorasick(char B) : B(B), node(1), root(0), trie(1), failtree(1) {
         node[0].fail = 0;
     }
 
+    /// @brief 頂点 cap 個分の領域を確保する
     void reserve(int cap) {
         node.reserve(cap);
     }
 
+    /// @brief パターン s を追加し、終端の頂点番号を返す / O(|s|)
     int add_string(const string &s) {
         int v = 0;
         for (char c : s) {
@@ -51,6 +55,7 @@ public:
         return v;
     }
 
+    /// @brief 失敗辺と遷移表を作り、cnt を失敗辺に沿って足し込む / パターンを追加し終えてから 1 回だけ呼ぶ
     void build() {
         queue<int> todo;
         for (int i = 0; i < 26; ++i) {
@@ -87,10 +92,12 @@ public:
         }
     }
 
+    /// @brief 頂点 v から文字 c で遷移した先の頂点番号を返す / build 後に使う / O(1)
     int next(int v, char c) const {
         return node[v].child[c-B];
     }
 
+    /// @brief 頂点 v の Node を返す / O(1)
     Node get(int v) const {
         return node[v];
     }

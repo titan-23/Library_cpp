@@ -1,14 +1,14 @@
 /// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/ds/icpc_lazy_rbst.cpp
 #pragma once
 
-// n=5e5, q=5e5 -> 1200ms
-
 #include <bits/stdc++.h>
 using namespace std;
 
+/// @brief シードを 12345 に固定した乱数生成器
 struct Random {
     std::mt19937 mt;
     Random() : mt(12345) {}
+    /// @brief [0, n) の一様乱数を返す
     int randrange(int n) {
         assert(n-1 >= 0);
         std::uniform_int_distribution<int> dist(0, n - 1);
@@ -16,6 +16,7 @@ struct Random {
     }
 } trnd;
 
+/// @brief 遅延伝播と反転を持つ RBST / ICPC 向けで、多くの操作はコメントアウトしてある
 template <class T, T (*op)(T, T), T (*e)(),
           class F, T (*mapping)(F, T), F (*composition)(F, F), F (*id)()>
 class LazyRBST {
@@ -121,12 +122,16 @@ class LazyRBST {
 
 public:
     LazyRBST() : root(nullptr) {}
+    /// @brief 列 a から構築する / O(n)
     LazyRBST(const vector<T> &a) : root(nullptr) { _build(a); }
 
+    /// @brief 要素数を返す / O(1)
     int len() const { return root ? root->size : 0; }
 
+    /// @brief other を末尾に結合する / 期待 O(log n)
     void merge(RBST &other) { root = _merge_node(root, other.root); }
 
+    /// @brief 先頭 k 要素と残りに分割する / 期待 O(log n)
     pair<RBST, RBST> split(int k) {
         auto [l, r] = _split_node(root, k);
         return {RBST(l), RBST(r)};

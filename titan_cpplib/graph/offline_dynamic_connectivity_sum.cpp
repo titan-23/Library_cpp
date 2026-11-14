@@ -9,9 +9,9 @@
 #include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
-// OfflineDynamicConnectivitySum
 namespace titan23 {
 
+/// @brief 辺の追加と削除をオフラインで処理し、各時刻のグラフを連結成分ごとの和つき Union-Find で調べる
 template<typename T>
 class OfflineDynamicConnectivitySum {
 private:
@@ -36,6 +36,7 @@ private:
 public:
     titan23::UndoableUnionFindSum<T> uf;
 
+    /// @brief 頂点数 n、時刻の数の上限 q で構築する / e は和の単位元で、各頂点の初期値にもなる
     OfflineDynamicConnectivitySum(const int n, const int q, T e) :
             n(n),
             query_count(0),
@@ -48,11 +49,13 @@ public:
         msks = (1ll << bits) - 1;
     }
 
+    /// @brief 辺 cap 本分の領域を確保する
     void reserve(int cap) {
         start.reserve(cap);
         edge_data.reserve(cap);
     }
 
+    /// @brief 現在の時刻から辺 {u, v} を加える / 多重辺も数える
     void add_edge(const int u, const int v) {
         auto [s, t] = minmax(u, v);
         long long edge = (long long)s<<bit|t;
@@ -69,6 +72,7 @@ public:
         }
     }
 
+    /// @brief 現在の時刻から辺 {u, v} を 1 本除く / 存在する辺に限る
     void delete_edge(const int u, const int v) {
         auto [s, t] = minmax(u, v);
         long long edge = (long long)s<<bit|t;
@@ -80,10 +84,12 @@ public:
         it->second = (long long)(a-1) << bits | b;
     }
 
+    /// @brief 時刻を 1 進める
     void next_query() {
         ++query_count;
     }
 
+    /// @brief 各時刻 k について、その時刻の辺を uf に反映して out(k) を呼ぶ / k は next_query を呼んだ回数未満
     template<typename F> // void out(int k) {}
     void run(F &&out) {
         assert(query_count <= q);

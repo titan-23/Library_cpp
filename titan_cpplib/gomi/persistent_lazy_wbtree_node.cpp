@@ -17,6 +17,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 区間作用、区間の総積、区間反転を扱う永続重み平衡木による列 / ノード領域 ma は全インスタンスで共有する
 template <class SizeType, class T, class F,
         T (*op)(T, T),
         T (*mapping)(F, T),
@@ -27,30 +28,34 @@ class PersistentLazyWBTree {
     using Index = conditional_t<(sizeof(SizeType) > 4), uint32_t, typename make_unsigned<SizeType>::type>;
     static constexpr unsigned index_bits = sizeof(SizeType) > 4 ? 31 : numeric_limits<SizeType>::digits;
 public:
+    /// @brief ノード領域を管理する / 番号 0 は番兵
     struct MemoryAllocator {
+        /// @brief 子の番号、反転フラグ、部分木サイズを持つ
         struct Node {
             Index left : index_bits;
             Index rev : 1;
             Index right;
             SizeType size, left_size;
 
-            /// @brief オブジェクトを構築する / O(1)
+            /// @brief メタデータをゼロ初期化する / O(1)
             Node() : left(0), rev(0), right(0), size(0), left_size(0) {}
 
-            /// @brief オブジェクトを構築する / O(1)
+            /// @brief 子と部分木サイズを設定する / O(1)
             Node(SizeType l, SizeType r, SizeType s) : left(l), rev(0), right(r), size(s), left_size(0) {}
         };
+        /// @brief 値、部分木の総積、遅延中の作用を持つ
         struct Data {
             T key, data;
             F lazy;
 
-            /// @brief オブジェクトを構築する / O(1)
+            /// @brief 既定値で初期化する / O(1)
             Data() = default;
 
-            /// @brief オブジェクトを構築する / O(1)
+            /// @brief 値、総積、作用を設定する / O(1)
             Data(const T& k, const T& d, const F& f)
                 : key(k), data(d), lazy(f) {}
         };
+        /// @brief 2^BlockBits 要素のブロック単位で領域を確保する配列
         template <class U, unsigned BlockBits>
         class BlockVector {
             static constexpr size_t block_size = size_t(1) << BlockBits;
@@ -89,22 +94,22 @@ public:
 
         public:
 
-            /// @brief オブジェクトを構築する / O(1)
+            /// @brief 空の領域を初期化する / O(1)
             BlockVector() = default;
 
-            /// @brief コピーを禁止する
+            /// @brief コピー構築を禁止する
             BlockVector(const BlockVector&) = delete;
 
-            /// @brief コピーを禁止する
+            /// @brief コピー代入を禁止する
             BlockVector& operator=(const BlockVector&) = delete;
 
-            /// @brief オブジェクトを構築する / O(1)
+            /// @brief 領域の所有権を移動する / O(1)
             BlockVector(BlockVector&& other) noexcept
                 : blocks_(move(other.blocks_)), size_(exchange(other.size_, 0)) {
                 other.blocks_.clear();
             }
 
-            /// @brief 領域の所有権を移動する / O(N)
+            /// @brief 現在の領域を破棄して所有権を移動する / O(N)
             BlockVector& operator=(BlockVector&& other) noexcept {
                 if (this != &other) {
                     clear_storage();
@@ -118,12 +123,12 @@ public:
             /// @brief 構築済み要素と領域を破棄する / O(N)
             ~BlockVector() { clear_storage(); }
 
-            /// @brief 要素への参照を返す / O(1)
+            /// @brief i 番目の要素への参照を返す / O(1)
             U& operator[](size_t i) noexcept {
                 return blocks_[i >> BlockBits][i & block_mask];
             }
 
-            /// @brief 要素への参照を返す / O(1)
+            /// @brief i 番目の要素への定数参照を返す / O(1)
             const U& operator[](size_t i) const noexcept {
                 return blocks_[i >> BlockBits][i & block_mask];
             }
@@ -134,16 +139,16 @@ public:
             /// @brief 確保済み容量を返す / O(1)
             size_t capacity() const noexcept { return blocks_.size() * block_size; }
 
-            /// @brief N ノード分の容量を確保する / O(N)
+            /// @brief N 要素分の容量を確保する / O(N)
             void reserve(size_t n) {
                 const size_t required = n / block_size + (n % block_size != 0);
                 blocks_.reserve(required);
                 while (blocks_.size() < required) add_block();
             }
 
+            /// @brief 末尾に要素を構築する / 償却 O(1)
             template <class... Args>
 
-            /// @brief 末尾に要素を構築する / 償却 O(1)
             U& emplace_back(Args&&... args) {
                 if (size_ == capacity()) add_block();
                 U *value = blocks_[size_ >> BlockBits] + (size_ & block_mask);
@@ -163,11 +168,12 @@ public:
             }
         };
 
+        /// @brief ノードの構造と値をまとめた要素
         struct Slot {
             Node tree;
             Data data;
 
-            /// @brief オブジェクトを構築する / O(1)
+            /// @brief ノードを初期化する / O(1)
             Slot(SizeType l, SizeType r, SizeType s, const T& key,
                  const T& aggregate, const F& lazy, int8_t rev)
                 : tree(l, r, s), data(key, aggregate, lazy) { tree.rev = rev != 0; }
@@ -175,14 +181,15 @@ public:
         using Pool = BlockVector<Slot, 16>;
         Pool pool;
 
+        /// @brief pool の各要素のメンバー Member を配列として扱う
         template<class U, U Slot::* Member>
         struct View {
             Pool *pool;
 
-            /// @brief 要素への参照を返す / O(1)
+            /// @brief i 番目の要素への参照を返す / O(1)
             U& operator[](size_t i) noexcept { return (*pool)[i].*Member; }
 
-            /// @brief 要素への参照を返す / O(1)
+            /// @brief i 番目の要素への定数参照を返す / O(1)
             const U& operator[](size_t i) const noexcept { return (*pool)[i].*Member; }
 
             /// @brief 構築済み要素数を返す / O(1)
@@ -191,26 +198,26 @@ public:
             /// @brief 確保済み容量を返す / O(1)
             size_t capacity() const noexcept { return pool->capacity(); }
 
-            /// @brief N ノード分の容量を確保する / O(N)
+            /// @brief N 要素分の容量を確保する / O(N)
             void reserve(size_t n) { pool->reserve(n); }
         };
         View<Node, &Slot::tree> tree;
         View<Data, &Slot::data> data;
         size_t ptr, cap;
 
-        /// @brief オブジェクトを構築する / O(1)
+        /// @brief 番兵を持つ領域を初期化する / O(1)
         MemoryAllocator() : tree{&pool}, data{&pool}, ptr(1), cap(0) {
             pool.emplace_back(0, 0, 0, T{}, T{}, F{}, 0);
             cap = pool.capacity();
         }
 
-        /// @brief オブジェクトを構築する / O(1)
+        /// @brief 領域の所有権を移動する / O(1)
         MemoryAllocator(MemoryAllocator&& other) noexcept
 
             : pool(move(other.pool)), tree{&pool}, data{&pool},
               ptr(other.ptr), cap(other.cap) {}
 
-        /// @brief 領域の所有権を移動する / O(N)
+        /// @brief 現在の領域を破棄して所有権を移動する / O(N)
         MemoryAllocator& operator=(MemoryAllocator&& other) noexcept {
             if (this != &other) {
                 pool = move(other.pool);
@@ -220,7 +227,7 @@ public:
             return *this;
         }
 
-        /// @brief ノードを複製する / 償却 O(1)
+        /// @brief ノードを複製して番号を返す / 償却 O(1)
         SizeType copy(SizeType node) {
             if (!node) return 0;
             if (ptr >= (uint64_t(1) << index_bits)) throw length_error("node index overflow");
@@ -238,7 +245,7 @@ public:
             return ptr++;
         }
 
-        /// @brief ノードを作成する / 償却 O(1)
+        /// @brief 値 key と作用 f を持つノードを作成して番号を返す / 償却 O(1)
         SizeType new_node(const T& key, const F& f) {
             if (ptr >= (uint64_t(1) << index_bits)) throw length_error("node index overflow");
             if (pool.size() > ptr) {
@@ -262,7 +269,7 @@ public:
             cap = pool.capacity();
         }
 
-        /// @brief 確保済み領域を再利用する / O(1)
+        /// @brief 確保済み領域を再利用できる状態に戻す / O(1)
         /// @note 同じ領域を共有する他の木は無効になる
         void reset() { ptr = 1; }
 
@@ -307,10 +314,12 @@ private:
         ma.pool[node].data.lazy = composition(f, ma.pool[node].data.lazy);
     }
 
+    // 番号が first より小さいノードは古い版に属するので複製する
     SizeType own(SizeType node, size_t first) {
         return node && static_cast<size_t>(node) < first ? ma.copy(node) : node;
     }
 
+    // 反転と作用を子へ伝播する。node は所有済みであること
     void propagate(SizeType node, size_t first) {
         assert(static_cast<size_t>(node) >= first);
         const bool rev = ma.pool[node].tree.rev;

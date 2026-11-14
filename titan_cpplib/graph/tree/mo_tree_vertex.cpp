@@ -5,7 +5,7 @@
 
 namespace titan23 {
 
-/// @brief 木上の Mo（頂点属性）
+/// @brief パス上の頂点を出し入れしてパスクエリを処理する木上の Mo
 class MoTreeVertex : public MoTreeBase<true> {
 public:
     using MoTreeBase<true>::MoTreeBase;

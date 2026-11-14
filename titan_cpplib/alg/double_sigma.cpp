@@ -6,13 +6,13 @@
 #include "titan_cpplib/ds/multiset_sum.cpp"
 using namespace std;
 
-// DoubleSigma
 namespace titan23 {
 
+/// @brief 列 A の全ての組 l < r について和を求める
 class DoubleSigma {
 public:
 
-/// `Σ|A[r]-A[l]|`
+/// @brief Σ|A[r]-A[l]| を返す / MultisetSum で先頭から順に求める
 template<typename T> static T sigma_abs_online(const vector<T> &A) {
     T ans = 0;
     titan23::MultisetSum<T> S;
@@ -28,7 +28,7 @@ template<typename T> static T sigma_abs_online(const vector<T> &A) {
     return ans;
 }
 
-/// `Σ|A[r]-A[l]|`
+/// @brief Σ|A[r]-A[l]| を返す / O(n log n)
 template<typename T> static T sigma_abs(vector<T> A) {
     sort(A.begin(), A.end());
     T ans = 0;
@@ -40,7 +40,7 @@ template<typename T> static T sigma_abs(vector<T> A) {
     return ans;
 }
 
-/// `Σ(A[r] - A[l])`
+/// @brief Σ(A[r] - A[l]) を返す / O(n)
 template<typename T> static T sigma_minus(const vector<T> &A) {
     const int n = A.size();
     T ans = 0;
@@ -53,7 +53,7 @@ template<typename T> static T sigma_minus(const vector<T> &A) {
     return ans;
 }
 
-/// `Σmax(A[r], A[l])`
+/// @brief Σmax(A[r], A[l]) を返す / MultisetSum で先頭から順に求める
 template<typename T> static T sigma_max_online(const vector<T> &A) {
     const int n = A.size();
     T ans = 0;
@@ -70,7 +70,7 @@ template<typename T> static T sigma_max_online(const vector<T> &A) {
     return ans;
 }
 
-/// `Σmin(A[r], A[l])`
+/// @brief Σmin(A[r], A[l]) を返す / MultisetSum で先頭から順に求める
 template<typename T> static T sigma_min_online(const vector<T> &A) {
     const int n = A.size();
     T ans = 0;
@@ -87,7 +87,7 @@ template<typename T> static T sigma_min_online(const vector<T> &A) {
     return ans;
 }
 
-/// `Σmax(A[r], A[l])`
+/// @brief Σmax(A[r], A[l]) を返す / O(n log n)
 template<typename T> static T sigma_max(vector<T> A) {
     sort(A.begin(), A.end());
     T ans = 0;
@@ -95,7 +95,7 @@ template<typename T> static T sigma_max(vector<T> A) {
     return ans;
 }
 
-/// `Σmin(A[r], A[l])`
+/// @brief Σmin(A[r], A[l]) を返す / O(n log n)
 template<typename T> static T sigma_min(vector<T> A) {
     sort(A.begin(), A.end());
     T ans = 0;

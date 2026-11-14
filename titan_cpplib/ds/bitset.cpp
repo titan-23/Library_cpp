@@ -7,14 +7,12 @@
 #include <concepts>
 #include <cstddef>
 #include <cstdint>
-#if defined(__AVX2__)
-#include <immintrin.h>
-#endif
+#include "titan_cpplib/others/simd_int.cpp"
 using namespace std;
 
 namespace titan23 {
 
-/// @brief 計算方式 / Scalar でもコンパイラにより自動ベクトル化される場合がある
+/// @brief Bitset の計算方式 / Auto は SimdBits の SIMD 実装を使い、Scalar は使わず、Avx2 は常に AVX2 を使う
 enum class BitsetBackend { Auto, Scalar, Avx2 };
 
 namespace bitset_detail {
@@ -22,15 +20,7 @@ enum class Operation { And, Or, Xor };
 struct Access;
 }  // namespace bitset_detail
 
-/**
- * @brief 固定長 Bitset / 64bit 単位で管理し、AVX2 に対応
- *
- * 各操作の計算量では W = ceil(N / 64)、K = 入力する Bitset の個数とする。
- * ビット i は words[i / 64] の下位から i % 64 番目に格納する。
- *
- * @tparam N ビット数
- * @tparam Backend 計算方式 / Auto はコンパイル時に有効な命令から選択する
- */
+/// @brief N ビットの固定長ビット列 / 64bit 単位で持ち、SimdBits で処理する / 計算量の W は ceil(N / 64)、K は入力する Bitset の個数
 template <size_t N, BitsetBackend Backend = BitsetBackend::Auto>
 class Bitset {
 public:
@@ -44,7 +34,36 @@ private:
     static_assert(Backend != BitsetBackend::Avx2,
                   "BitsetBackend::Avx2 requires an AVX2 compiler target");
 #endif
-    storage_type words_{};
+    storage_type words_;  // 初期値は各構築子で与える
+
+    // 全語を書き込む前提で、内部配列を初期化せずに構築するための目印
+    struct uninitialized_tag {};
+    explicit Bitset(uninitialized_tag) {}
+
+    using Simd = SimdBits;
+    using vector_type = typename Simd::Vec;
+    static constexpr size_t lanes = Simd::LANES;
+    // SimdBits で処理するか。Scalar は使わず、Avx2 は常に使う
+    static constexpr bool simd_enabled =
+        Backend == BitsetBackend::Avx2 || (Backend == BitsetBackend::Auto && Simd::VECTORIZED);
+    // Vec で処理できる語数。残りの語は 1 語ずつ処理する
+    static constexpr size_t vector_words = simd_enabled ? word_count / lanes * lanes : 0;
+    // Auto で count と count_* を SimdBits で処理する最小の語数
+#if defined(__AVX512VPOPCNTDQ__)
+    // 通常のループがベクトルの popcount になるため、コンパイラに任せる
+    static constexpr size_t simd_count_min = ~size_t{0};
+#elif defined(__AVX2__)
+    // 16 語未満では AVX2 を使わない
+    static constexpr size_t simd_count_min = 16;
+#elif defined(__POPCNT__)
+    // SSE2 のビット演算による数え上げは POPCNT 命令より遅い
+    static constexpr size_t simd_count_min = ~size_t{0};
+#else
+    // POPCNT 命令がないと std::popcount は関数呼び出しになるため、Vec 1 本分から SIMD を使う
+    static constexpr size_t simd_count_min = lanes;
+#endif
+    static constexpr bool simd_count =
+        simd_enabled && word_count >= lanes && (Backend == BitsetBackend::Avx2 || word_count >= simd_count_min);
 
     void trim() {
         if constexpr (N % 64 != 0) words_.back() &= (word_type{1} << (N % 64)) - 1;
@@ -60,91 +79,71 @@ private:
     }
 
     template <bitset_detail::Operation Op, class... Others>
-    size_t count_scalar(const Others &...others) const {
-        size_t result = 0;
-        for (size_t i = 0; i < word_count; ++i) {
-            result += std::popcount(combined_word<Op>(i, others...));
-        }
-        return result;
-    }
-
-#if defined(__AVX2__)
-    template <bitset_detail::Operation Op, class... Others>
-    __m256i combined_vector(size_t i, const Others &...others) const {
-        __m256i x = _mm256_loadu_si256(reinterpret_cast<const __m256i *>(words_.data() + i));
-        if constexpr (Op == bitset_detail::Operation::And) {
-            ((x = _mm256_and_si256(x, _mm256_loadu_si256(
-                reinterpret_cast<const __m256i *>(others.words_.data() + i)))), ...);
-        } else if constexpr (Op == bitset_detail::Operation::Or) {
-            ((x = _mm256_or_si256(x, _mm256_loadu_si256(
-                reinterpret_cast<const __m256i *>(others.words_.data() + i)))), ...);
-        } else {
-            ((x = _mm256_xor_si256(x, _mm256_loadu_si256(
-                reinterpret_cast<const __m256i *>(others.words_.data() + i)))), ...);
-        }
+    vector_type combined_vector(size_t i, const Others &...others) const {
+        vector_type x = Simd::loadu(words_.data() + i);
+        if constexpr (Op == bitset_detail::Operation::And) ((x = Simd::bit_and(x, Simd::loadu(others.words_.data() + i))), ...);
+        else if constexpr (Op == bitset_detail::Operation::Or) ((x = Simd::bit_or(x, Simd::loadu(others.words_.data() + i))), ...);
+        else ((x = Simd::bit_xor(x, Simd::loadu(others.words_.data() + i))), ...);
         return x;
     }
 
+    // 自身と others を Op で合成した結果を out に書く / out は自身でもよい
     template <bitset_detail::Operation Op, class... Others>
-    size_t count_avx2(const Others &...others) const {
-        const __m256i lookup = _mm256_setr_epi8(
-            0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4,
-            0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4);
-        const __m256i mask = _mm256_set1_epi8(15);
-        const __m256i zero = _mm256_setzero_si256();
-        auto byte_counts = [&](size_t i) {
-            const __m256i x = combined_vector<Op>(i, others...);
-            const __m256i lo = _mm256_and_si256(x, mask);
-            const __m256i hi = _mm256_and_si256(_mm256_srli_epi16(x, 4), mask);
-            return _mm256_add_epi8(_mm256_shuffle_epi8(lookup, lo),
-                                   _mm256_shuffle_epi8(lookup, hi));
-        };
-
-        __m256i total = zero;
+    void combine_into(Bitset &out, const Others &...others) const {
         size_t i = 0;
-        // 8 ベクトルごとに集計し、各バイトの累積値を 64 以下に抑える。
-        for (; i + 32 <= word_count; i += 32) {
-            __m256i bytes = zero;
-            for (size_t j = 0; j < 32; j += 4) {
-                bytes = _mm256_add_epi8(bytes, byte_counts(i + j));
-            }
-            total = _mm256_add_epi64(total, _mm256_sad_epu8(bytes, zero));
+        if constexpr (vector_words > 0) {
+            for (; i < vector_words; i += lanes) Simd::storeu(out.words_.data() + i, combined_vector<Op>(i, others...));
         }
-        __m256i bytes = zero;
-        for (; i + 4 <= word_count; i += 4) {
-            bytes = _mm256_add_epi8(bytes, byte_counts(i));
-        }
-        total = _mm256_add_epi64(total, _mm256_sad_epu8(bytes, zero));
-        array<word_type, 4> sums;
-        _mm256_storeu_si256(reinterpret_cast<__m256i *>(sums.data()), total);
-        size_t result = sums[0] + sums[1] + sums[2] + sums[3];
-        for (; i < word_count; ++i) {
-            result += std::popcount(combined_word<Op>(i, others...));
-        }
-        return result;
+        for (; i < word_count; ++i) out.words_[i] = combined_word<Op>(i, others...);
     }
-
-    static bool use_avx2_shift(size_t active_words) {
-        if constexpr (Backend == BitsetBackend::Scalar) return false;
-        if constexpr (Backend == BitsetBackend::Avx2) return true;
-        return active_words >= 16;
-    }
-#endif
 
     template <bitset_detail::Operation Op, class... Others>
     size_t count_impl(const Others &...others) const {
-#if defined(__AVX2__)
-        if constexpr (Backend == BitsetBackend::Avx2 && word_count >= 4) {
-            return count_avx2<Op>(others...);
+        size_t result = 0, i = 0;
+        if constexpr (simd_count) {
+            result = simd_bits_popcount(word_count / lanes, [&](size_t j) { return combined_vector<Op>(j * lanes, others...); });
+            i = word_count / lanes * lanes;
         }
-        // ベクトル popcount 命令が使える場合はコンパイラの自動ベクトル化に任せる。
-#if !defined(__AVX512VPOPCNTDQ__)
-        if constexpr (Backend == BitsetBackend::Auto && word_count >= 16) {
-            return count_avx2<Op>(others...);
+        for (; i < word_count; ++i) result += std::popcount(combined_word<Op>(i, others...));
+        return result;
+    }
+
+    // 自身と others を Op で合成し、All なら全ビットが 1 か、そうでなければ 1 があるかを返す
+    template <bitset_detail::Operation Op, bool All, class... Others>
+    bool test_impl(const Others &...others) const {
+        // All では N 以降のビットを含む末尾の語を除き、全ビットが有効な語だけを Vec で調べる
+        constexpr size_t simd_words = simd_enabled ? (All ? N / 64 : word_count) / lanes * lanes : 0;
+        size_t i = 0;
+        if constexpr (simd_words > 0) {
+            for (; i < simd_words; i += lanes) {
+                const vector_type x = combined_vector<Op>(i, others...);
+                if constexpr (All) {
+                    if (Simd::nonzero(Simd::bit_xor(x, Simd::ones()))) return false;
+                } else {
+                    if (Simd::nonzero(x)) return true;
+                }
+            }
         }
-#endif
-#endif
-        return count_scalar<Op>(others...);
+        for (; i < word_count; ++i) {
+            const word_type x = combined_word<Op>(i, others...);
+            if constexpr (All) {
+                word_type mask = ~word_type{0};
+                if constexpr (N % 64 != 0) {
+                    if (i + 1 == word_count) mask = (word_type{1} << (N % 64)) - 1;
+                }
+                if (x != mask) return false;
+            } else {
+                if (x != 0) return true;
+            }
+        }
+        return All;  // 空の Bitset では any = false、all = true
+    }
+
+    // シフトを SimdBits で処理するか / active_words はシフト後に値が入る語数
+    static bool use_simd_shift(size_t active_words) {
+        if constexpr (Backend == BitsetBackend::Avx2) return true;
+        else if constexpr (simd_enabled) return active_words >= 16;
+        else return false;
     }
 
     template <bool Or>
@@ -158,51 +157,40 @@ private:
         const unsigned r = k % 64;
         size_t i = word_count;
         if (r == 0) {
-#if defined(__AVX2__)
-            if constexpr (word_count >= 4) {
-                if (use_avx2_shift(word_count - q)) {
-                    for (; i >= q + 4; i -= 4) {
-                        const size_t dst = i - 4;
-                        __m256i x = _mm256_loadu_si256(
-                            reinterpret_cast<const __m256i *>(words_.data() + dst - q));
-                        if constexpr (Or) x = _mm256_or_si256(x, _mm256_loadu_si256(
-                            reinterpret_cast<const __m256i *>(words_.data() + dst)));
-                        _mm256_storeu_si256(reinterpret_cast<__m256i *>(words_.data() + dst), x);
+            if constexpr (simd_enabled) {
+                if (use_simd_shift(word_count - q)) {
+                    for (; i >= q + lanes; i -= lanes) {
+                        const size_t dst = i - lanes;
+                        vector_type x = Simd::loadu(words_.data() + dst - q);
+                        if constexpr (Or) x = Simd::bit_or(x, Simd::loadu(words_.data() + dst));
+                        Simd::storeu(words_.data() + dst, x);
                     }
                 }
             }
-#endif
             for (; i > q; --i) {
                 const word_type x = words_[i - 1 - q];
                 if constexpr (Or) words_[i - 1] |= x;
                 else words_[i - 1] = x;
             }
         } else {
-#if defined(__AVX2__)
-            if constexpr (word_count >= 5) {
-                if (use_avx2_shift(word_count - q)) {
-                    const __m128i left = _mm_cvtsi64_si128(r);
-                    const __m128i right = _mm_cvtsi64_si128(64 - r);
-                    // 読み書きが重なるため、両方の入力を読み込んでから書き込む。
-                    for (; i >= q + 5; i -= 4) {
-                        const size_t dst = i - 4;
-                        const __m256i a = _mm256_loadu_si256(
-                            reinterpret_cast<const __m256i *>(words_.data() + dst - q));
-                        const __m256i b = _mm256_loadu_si256(
-                            reinterpret_cast<const __m256i *>(words_.data() + dst - q - 1));
-                        __m256i x = _mm256_or_si256(_mm256_sll_epi64(a, left),
-                                                   _mm256_srl_epi64(b, right));
-                        if constexpr (Or) x = _mm256_or_si256(x, _mm256_loadu_si256(
-                            reinterpret_cast<const __m256i *>(words_.data() + dst)));
-                        _mm256_storeu_si256(reinterpret_cast<__m256i *>(words_.data() + dst), x);
+            if constexpr (simd_enabled) {
+                if (use_simd_shift(word_count - q)) {
+                    // 読み書きが重なるため、両方の入力を読み込んでから書き込む。上位側から処理する
+                    for (; i >= q + lanes + 1; i -= lanes) {
+                        const size_t dst = i - lanes;
+                        const vector_type a = Simd::loadu(words_.data() + dst - q);
+                        const vector_type b = Simd::loadu(words_.data() + dst - q - 1);
+                        vector_type x = Simd::bit_or(Simd::shl(a, r), Simd::shr(b, 64 - r));
+                        if constexpr (Or) x = Simd::bit_or(x, Simd::loadu(words_.data() + dst));
+                        Simd::storeu(words_.data() + dst, x);
                     }
                 }
             }
-#endif
-            for (; i > q + 1; --i) {
-                const word_type x = (words_[i - 1 - q] << r) | (words_[i - 2 - q] >> (64 - r));
-                if constexpr (Or) words_[i - 1] |= x;
-                else words_[i - 1] = x;
+            // 書き込む語を dst とする。i から q + 1 まで下る
+            for (size_t dst = i; dst-- > q + 1;) {
+                const word_type x = (words_[dst - q] << r) | (words_[dst - q - 1] >> (64 - r));
+                if constexpr (Or) words_[dst] |= x;
+                else words_[dst] = x;
             }
             const word_type x = words_[0] << r;
             if constexpr (Or) words_[q] |= x;
@@ -227,44 +215,33 @@ private:
         const size_t limit = word_count - q;
         size_t i = 0;
         if (r == 0) {
-#if defined(__AVX2__)
-            if constexpr (word_count >= 4) {
-                if (use_avx2_shift(limit)) {
-                    for (; i + 4 <= limit; i += 4) {
-                        __m256i x = _mm256_loadu_si256(
-                            reinterpret_cast<const __m256i *>(words_.data() + i + q));
-                        if constexpr (Or) x = _mm256_or_si256(x, _mm256_loadu_si256(
-                            reinterpret_cast<const __m256i *>(words_.data() + i)));
-                        _mm256_storeu_si256(reinterpret_cast<__m256i *>(words_.data() + i), x);
+            if constexpr (simd_enabled) {
+                if (use_simd_shift(limit)) {
+                    for (; i + lanes <= limit; i += lanes) {
+                        vector_type x = Simd::loadu(words_.data() + i + q);
+                        if constexpr (Or) x = Simd::bit_or(x, Simd::loadu(words_.data() + i));
+                        Simd::storeu(words_.data() + i, x);
                     }
                 }
             }
-#endif
             for (; i < limit; ++i) {
                 const word_type x = words_[i + q];
                 if constexpr (Or) words_[i] |= x;
                 else words_[i] = x;
             }
         } else {
-#if defined(__AVX2__)
-            if constexpr (word_count >= 5) {
-                if (use_avx2_shift(limit)) {
-                    const __m128i right = _mm_cvtsi64_si128(r);
-                    const __m128i left = _mm_cvtsi64_si128(64 - r);
-                    for (; i + 4 < limit; i += 4) {
-                        const __m256i a = _mm256_loadu_si256(
-                            reinterpret_cast<const __m256i *>(words_.data() + i + q));
-                        const __m256i b = _mm256_loadu_si256(
-                            reinterpret_cast<const __m256i *>(words_.data() + i + q + 1));
-                        __m256i x = _mm256_or_si256(_mm256_srl_epi64(a, right),
-                                                   _mm256_sll_epi64(b, left));
-                        if constexpr (Or) x = _mm256_or_si256(x, _mm256_loadu_si256(
-                            reinterpret_cast<const __m256i *>(words_.data() + i)));
-                        _mm256_storeu_si256(reinterpret_cast<__m256i *>(words_.data() + i), x);
+            if constexpr (simd_enabled) {
+                if (use_simd_shift(limit)) {
+                    // 読み書きが重なるため、両方の入力を読み込んでから書き込む。下位側から処理する
+                    for (; i + lanes < limit; i += lanes) {
+                        const vector_type a = Simd::loadu(words_.data() + i + q);
+                        const vector_type b = Simd::loadu(words_.data() + i + q + 1);
+                        vector_type x = Simd::bit_or(Simd::shr(a, r), Simd::shl(b, 64 - r));
+                        if constexpr (Or) x = Simd::bit_or(x, Simd::loadu(words_.data() + i));
+                        Simd::storeu(words_.data() + i, x);
                     }
                 }
             }
-#endif
             for (; i + 1 < limit; ++i) {
                 const word_type x = (words_[i + q] >> r) | (words_[i + q + 1] << (64 - r));
                 if constexpr (Or) words_[i] |= x;
@@ -282,15 +259,15 @@ private:
 
 public:
     /// @brief 全ビットを 0 で初期化する / O(W)
-    Bitset() = default;
+    Bitset() : words_{} {}
 
     /// @brief 下位 min(N, 64) ビットを value で初期化する / O(W)
-    explicit Bitset(const word_type value) {
+    explicit Bitset(const word_type value) : words_{} {
         if constexpr (word_count != 0) words_[0] = value;
         trim();
     }
 
-    /// @brief 64bit 単位の配列から構築する / N 以降のビットは除く / O(W)
+    /// @brief 64bit 単位の配列から構築する / ビット i は words[i / 64] の下位から i % 64 番目 / N 以降のビットは除く / O(W)
     static Bitset from_words(const storage_type &words) {
         Bitset result;
         result.words_ = words;
@@ -360,7 +337,13 @@ public:
 
     /// @brief 全ビットを反転する / O(W)
     Bitset &flip() {
-        for (word_type &x : words_) x = ~x;
+        size_t i = 0;
+        if constexpr (vector_words > 0) {
+            for (; i < vector_words; i += lanes) {
+                Simd::storeu(words_.data() + i, Simd::bit_xor(Simd::loadu(words_.data() + i), Simd::ones()));
+            }
+        }
+        for (; i < word_count; ++i) words_[i] = ~words_[i];
         trim();
         return *this;
     }
@@ -422,8 +405,7 @@ public:
 
     /// @brief 1 のビットが存在するか返す / O(W)
     bool any() const {
-        for (word_type x : words_) if (x) return true;
-        return false;
+        return test_impl<bitset_detail::Operation::Or, false>();
     }
 
     /// @brief 全ビットが 0 か返す / O(W)
@@ -433,36 +415,29 @@ public:
 
     /// @brief 全ビットが 1 か返す / 空なら true / O(W)
     bool all() const {
-        for (size_t i = 0; i < N / 64; ++i) {
-            if (words_[i] != ~word_type{0}) return false;
-        }
-        if constexpr (N % 64 != 0) return words_.back() == (word_type{1} << (N % 64)) - 1;
-        return true;
+        return test_impl<bitset_detail::Operation::Or, true>();
     }
 
     /// @brief 自身と other に共通する 1 のビットが存在するか返す / O(W)
     bool intersects(const Bitset &other) const {
-        for (size_t i = 0; i < word_count; ++i) {
-            if (words_[i] & other.words_[i]) return true;
-        }
-        return false;
+        return test_impl<bitset_detail::Operation::And, false>(other);
     }
 
     /// @brief 自身を other との AND に更新する / O(W)
     Bitset &operator&=(const Bitset &other) {
-        for (size_t i = 0; i < word_count; ++i) words_[i] &= other.words_[i];
+        combine_into<bitset_detail::Operation::And>(*this, other);
         return *this;
     }
 
     /// @brief 自身を other との OR に更新する / O(W)
     Bitset &operator|=(const Bitset &other) {
-        for (size_t i = 0; i < word_count; ++i) words_[i] |= other.words_[i];
+        combine_into<bitset_detail::Operation::Or>(*this, other);
         return *this;
     }
 
     /// @brief 自身を other との XOR に更新する / O(W)
     Bitset &operator^=(const Bitset &other) {
-        for (size_t i = 0; i < word_count; ++i) words_[i] ^= other.words_[i];
+        combine_into<bitset_detail::Operation::Xor>(*this, other);
         return *this;
     }
 
@@ -487,18 +462,24 @@ public:
     }
 
     /// @brief a と b の AND を返す / O(W)
-    friend Bitset operator&(Bitset a, const Bitset &b) {
-        return a &= b;
+    friend Bitset operator&(const Bitset &a, const Bitset &b) {
+        Bitset result{uninitialized_tag{}};
+        a.combine_into<bitset_detail::Operation::And>(result, b);
+        return result;
     }
 
     /// @brief a と b の OR を返す / O(W)
-    friend Bitset operator|(Bitset a, const Bitset &b) {
-        return a |= b;
+    friend Bitset operator|(const Bitset &a, const Bitset &b) {
+        Bitset result{uninitialized_tag{}};
+        a.combine_into<bitset_detail::Operation::Or>(result, b);
+        return result;
     }
 
     /// @brief a と b の XOR を返す / O(W)
-    friend Bitset operator^(Bitset a, const Bitset &b) {
-        return a ^= b;
+    friend Bitset operator^(const Bitset &a, const Bitset &b) {
+        Bitset result{uninitialized_tag{}};
+        a.combine_into<bitset_detail::Operation::Xor>(result, b);
+        return result;
     }
 
     /// @brief 全ビットを反転した結果を返す / O(W)
@@ -529,15 +510,12 @@ public:
 
 namespace bitset_detail {
 
-// 自由関数で使う共通処理。count / any / all は中間 Bitset を作らずに計算する。
-// 演算の種類と入力数はコンパイル時に決まる。
+// 自由関数で使う共通処理 / count、any、all は中間 Bitset を作らない
 struct Access {
     template <Operation Op, class Bits, class... Others>
     static Bits combine(const Bits &first, const Others &...others) {
-        Bits result;
-        for (size_t i = 0; i < Bits::word_count; ++i) {
-            result.words_[i] = first.template combined_word<Op>(i, others...);
-        }
+        Bits result{typename Bits::uninitialized_tag{}};
+        first.template combine_into<Op>(result, others...);
         return result;
     }
 
@@ -548,27 +526,13 @@ struct Access {
 
     template <Operation Op, bool All, class Bits, class... Others>
     static bool test(const Bits &first, const Others &...others) {
-        using Word = typename Bits::word_type;
-        for (size_t i = 0; i < Bits::word_count; ++i) {
-            const Word x = first.template combined_word<Op>(i, others...);
-            if constexpr (All) {
-                Word mask = ~Word{0};
-                if constexpr (Bits::size() % 64 != 0) {
-                    if (i + 1 == Bits::word_count) mask = (Word{1} << (Bits::size() % 64)) - 1;
-                }
-                if (x != mask) return false;
-            } else {
-                if (x != 0) return true;
-            }
-        }
-        return All; // 空の Bitset では any = false、all = true。
+        return first.template test_impl<Op, All>(others...);
     }
 };
 
 }  // namespace bitset_detail
 
-// 複数入力の演算は、同じ型の Bitset を 2 個以上受け取る。
-// 以下では W = ceil(N / 64)、K = 入力する Bitset の個数とする。
+// 以下の複数入力の演算は同じ型の Bitset を 2 個以上受け取る / W と K の意味は Bitset の説明と同じ
 
 /// @brief 全入力の AND を返す / O(KW)
 template <size_t N, BitsetBackend B, class... Others>

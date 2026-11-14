@@ -10,11 +10,13 @@ namespace titan23 {
 
 using ll = long long;
 
+/// @brief 等間隔に並ぶ要素に重み 1, 2, ..., k を付けた和を返す
+/// 参考: https://codeforces.com/contest/1921/problem/F
 template<typename T>
 class LinearCumSum {
 private:
     int n;
-    int B; // バケットサイズ
+    int B; // 公差 d < B のときは前計算を使う
     vector<T> A;
     vector<vector<vector<T>>> S, Si;
 
@@ -38,6 +40,7 @@ private:
 public:
     LinearCumSum() {}
 
+    /// @brief 列 a から構築する / O(n√n)
     LinearCumSum(const vector<T> &a) {
         n = (int)a.size();
         B = (int)sqrt(n);
@@ -45,12 +48,11 @@ public:
         build();
     }
 
-    // a_l * 1 + a_{l+d} * 2 + ... + a_{l+(k-1)*d} * k
+    /// @brief a_l * 1 + a_{l+d} * 2 + ... + a_{l+(k-1)*d} * k を返す / a == 1 が前提 / O(√n)
     T sum(int l, int d, int k, ll a, ll b) {
-        // https://codeforces.com/contest/1921/problem/F
         assert(l+d*(k-1) < n);
         assert(a == 1);
-        if (d >= B) { // naive
+        if (d >= B) { // 素朴に足す
             T s = 0;
             int idx = 1;
             for (int i = l; i <= l+d*(k-1); i += d) {

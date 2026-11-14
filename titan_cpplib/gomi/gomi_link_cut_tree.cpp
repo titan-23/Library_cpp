@@ -5,6 +5,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 遅延評価つき Link Cut Tree / 頂点は 0-indexed
 template <class T,
                     class F,
                     T (*op)(T, T),
@@ -20,6 +21,7 @@ private:
     vector<F> lazy;
 
 public:
+    /// @brief 頂点数 _n で辺のない森を構築する / O(n)
     LinkCutTree(int _n) {
         n = _n;
         key.resize(n+1, e());
@@ -160,6 +162,7 @@ public:
         _update_double(pnode, node);
     }
 
+    /// @brief 根から v までのパスを1本の splay 木にまとめる / 返り値は lca で使う
     int expose(const int v) {
         int pre = v;
         while (arr[v<<2|2] != n) {
@@ -177,12 +180,14 @@ public:
         return pre;
     }
 
+    /// @brief u と v の LCA を返す / root が -1 でなければ root を根にしてから求める
     int lca(const int u, const int v, int root=-1) {
         if (root != -1) evert(root);
         expose(u);
         return expose(v);
     }
 
+    /// @brief 根 c を頂点 p の子として辺で結ぶ / c と p は別の木にあること
     void link(const int c, const int p) {
         expose(c);
         expose(p);
@@ -192,6 +197,7 @@ public:
         --group_cnt;
     }
 
+    /// @brief 頂点 c と親を結ぶ辺を切る / c は根でないこと
     void cut(const int c) {
         expose(c);
         assert(arr[c<<2] != n);
@@ -201,10 +207,12 @@ public:
         ++group_cnt;
     }
 
+    /// @brief 木の個数を返す / O(1)
     int group_count() const {
         return group_cnt;
     }
 
+    /// @brief v を含む木の根を返す
     int root(int v) {
         expose(v);
         while (arr[v<<2] != n) {
@@ -215,22 +223,26 @@ public:
         return v;
     }
 
+    /// @brief u と v が同じ木にあるかを返す
     bool same(const int u, const int v) {
         return root(u) == root(v);
     }
 
+    /// @brief v を木の根にする
     void evert(const int v) {
         expose(v);
         arr[v<<2|3] ^= 1;
         _propagate(v);
     }
 
+    /// @brief u から v へのパス上の値を u 側から順に op で集約して返す
     T path_prod(const int u, const int v) {
         evert(u);
         expose(v);
         return data[v<<1];
     }
 
+    /// @brief u-v パス上の各頂点に f を作用させる
     void path_apply(const int u, const int v, F f) {
         evert(u);
         expose(v);
@@ -241,12 +253,14 @@ public:
         _propagate(v);
     }
 
+    /// @brief u-v パス上の頂点数を返す
     int path_length(const int u, const int v) {
         evert(u);
         expose(v);
         return size[v];
     }
 
+    /// @brief u と v が別の木なら辺 (u, v) を張って true を返す / 同じ木なら false
     bool merge(const int u, const int v) {
         if (same(u, v)) return false;
         evert(u);
@@ -257,6 +271,7 @@ public:
         return true;
     }
 
+    /// @brief u を根にして v と親を結ぶ辺を切り、true を返す / 別の木なら false
     bool split(const int u, const int v) {
         if (!same(v, u)) return false;
         evert(u);
@@ -264,6 +279,7 @@ public:
         return true;
     }
 
+    /// @brief s から t へのパスで k 番目の頂点を返す / 0-indexed / 範囲外なら -1
     int path_kth_elm(int s, int t, int k) {
         evert(s);
         expose(t);
@@ -282,11 +298,13 @@ public:
         }
     }
 
+    /// @brief 頂点 k の値を返す
     T get(const int k) {
         _splay(k);
         return key[k];
     }
 
+    /// @brief 頂点 k の値を v にする
     void set(const int k, const T v) {
         _splay(k);
         key[k] = v;

@@ -8,6 +8,7 @@ namespace flying_squirrel {
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
 using ChokudaiSearchTurn = chokudai_detail::Search<ScoreType, HashType, Action, State, INF, true, record_history>;
 
+/// @brief ChokudaiSearchTurn の別名
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
 using ChokudaiSearchWithTreeTurn = ChokudaiSearchTurn<ScoreType, HashType, Action, State, INF, record_history>;
 

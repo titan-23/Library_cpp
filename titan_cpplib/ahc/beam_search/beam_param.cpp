@@ -12,13 +12,12 @@ struct BeamParam {
     double time_limit;
     bool is_adjusting;
 
-    /// @brief ターンごとに重複判定用ハッシュを破棄するか
-    /// false にする場合、State のハッシュにターン情報が含まれないと、別ターンの候補も重複とみなされる
+    /// @brief ターンごとに重複判定用のハッシュを破棄するか
+    /// false のとき、State のハッシュにターンを含めないと、別ターンの候補も重複とみなされる
     bool clear_hash_every_turn;
 
-    /// @brief 固定深さ版と naive 版で、古いハッシュを破棄する間隔 0 なら破棄しない
-    /// 保持範囲は最後の破棄から 1〜K ターン分で、厳密な直近 K ターンではない
-    /// @note 可変ターン版では使用しない
+    /// @brief clear_hash_every_turn が false のとき、古いハッシュを破棄するターン間隔 K / 0 なら破棄しない
+    /// 固定深さ版と naive 版だけで使う。保持範囲は最後の破棄から 1〜K ターン分で、直近 K ターンちょうどではない
     int hash_window_turns;
 
     // 通常ターンとメタターンで共用する累積値
@@ -26,17 +25,17 @@ struct BeamParam {
     double time_sum;
     int prev_beam_width;
 
-    // 各ターンの実効幅 ログ出力にのみ使用する
+    // 各ターンの実効幅。ログ出力にだけ使う
     vector<int> width_hist;
 
     // beam_search_turn.cpp で使う target_turn 進行量の累積値
     long long target_step_sum;
     long long target_step_count;
 
-    // beam_search_turn.cpp の global seen_hash に与える初期容量のヒント 0 なら自動
+    // beam_search_turn.cpp の大域 seen_hash に与える初期容量の目安。0 なら自動で決める
     int seen_hash_capacity_hint;
 
-    // 展開のあるメタターンの累積時間と回数 時間は ms 単位
+    // 展開のあるメタターンの累積時間 [ms] と回数
     double time_active_sum;
     long long count_active;
 
@@ -45,7 +44,7 @@ struct BeamParam {
     double ema_step;
     int meta_sample_count;
 
-    // EMA の平滑化係数 大きいほど直近の値を重視する
+    // EMA の平滑化係数。大きいほど直近の値を重く見る
     double ema_alpha_rate;
     double ema_alpha_step;
 
@@ -57,6 +56,7 @@ struct BeamParam {
 
     BeamParam() { init(); }
 
+    /// @brief 探索の設定を指定して構築する / time_limit は ms 単位
     BeamParam(int max_turn, int beam_width, double time_limit, bool is_adjusting=false,
               bool clear_hash_every_turn=true, int hash_window_turns=0) {
         init();
@@ -68,6 +68,7 @@ struct BeamParam {
         this->hash_window_turns = hash_window_turns;
     }
 
+    /// @brief すべての値を既定値に戻す
     void init() {
         max_turn = 0;
         beam_width = 0;
@@ -96,10 +97,12 @@ struct BeamParam {
         calibration_meta_count = 3;
     }
 
+    /// @brief 指数移動平均を更新した値を返す / cur < 0 なら x を初期値とする
     static double ema_update(double cur, double x, double alpha) {
         return (cur < 0.0) ? x : (alpha * x + (1.0 - alpha) * cur);
     }
 
+    /// @brief 1 ターンの木の大きさ、ビーム幅、所要時間を記録する
     void timestamp(int pool_size, int beam_width, double time) {
         pool_size_sum += pool_size;
         beam_width_sum += beam_width;
@@ -108,13 +111,7 @@ struct BeamParam {
         width_hist.push_back(beam_width);
     }
 
-    /// @brief 1 メタターンの計測値を記録し、進行量の EMA を更新する
-    /// @param dt_expand_ms 候補展開の所要時間 [ms]
-    /// @param dt_update_ms ソートとツリー更新の所要時間 [ms]
-    /// @param tree_size 更新後の探索木のノード数
-    /// @param exp_count 一時的に候補へ登録された件数 現在は未使用
-    /// @param applied_w 展開した葉の数
-    /// @param delta_target target_turn の進行量
+    /// @brief 1 メタターンの計測値を記録し、展開の有無と進行量の EMA を更新する / 時間は ms 単位
     void timestamp_meta(double dt_expand_ms, double dt_update_ms, int tree_size, int exp_count, int applied_w,
                         int delta_target) {
         double dt_ms = dt_expand_ms + dt_update_ms;
@@ -148,9 +145,7 @@ struct BeamParam {
         return count_active > 0 && turn_sum > 0;
     }
 
-    /// @brief 残り時間から推奨ビーム幅を求める
-    /// @details 展開のあるターンの時間だけをビーム幅に比例させ、展開のないターンは固定費として扱う
-    /// @return 計測不足の場合は -1
+    /// @brief 残り時間と残りメタターン数から推奨ビーム幅を求める / 計測が足りなければ -1 を返す
     int recommend_width(double remain_time_ms, int remain_meta) const {
         if (!cost_model_ready())       return -1;
         if (remain_time_ms  <= 0.0)    return 1;
@@ -181,7 +176,7 @@ struct BeamParam {
         return W;
     }
 
-    /// @brief 通常のビームサーチで次ターンの幅を求める
+    /// @brief 通常のビームサーチで次ターンの幅を求める / is_adjusting が false なら beam_width を返す
     int get_beam_width(int remain_turn, int now_pool_size, double remain_time) {
         if (!is_adjusting || turn_sum <= 10) {
             return beam_width;
@@ -201,7 +196,7 @@ struct BeamParam {
     }
 
     /// @brief 累積した平均ビーム幅を標準エラーに出力する
-    /// @deprecated beam_log::end_banner で同等の情報を出力できる
+    /// @deprecated beam_log::end_banner で同じ情報を出力できる
     void report() const {
         cerr << to_bold("BeamParam-report----------------") << endl;
         if (turn_sum == 0) {
@@ -218,10 +213,12 @@ struct BeamParam {
     }
 };
 
+/// @brief max_turn と beam_width だけを指定した BeamParam を返す
 BeamParam gen_param(int max_turn, int beam_width) {
     return {max_turn, beam_width, -1};
 }
 
+/// @brief 制限時間と幅の調整の有無も指定した BeamParam を返す
 BeamParam gen_param(int max_turn, int beam_width, double time_limit, bool is_adjusting,
                     bool clear_hash_every_turn=true) {
     return {max_turn, beam_width, time_limit, is_adjusting, clear_hash_every_turn};

@@ -7,9 +7,9 @@
 #include <cmath>
 using namespace std;
 
-// DynamicList
 namespace titan23 {
 
+/// @brief 任意位置に挿入と削除ができる列 / 長さ BUCKET_MAX 以下のバケットに分けて持つ
 template<typename T>
 class DynamicList {
     private:
@@ -50,14 +50,17 @@ class DynamicList {
 public:
     DynamicList() : n(0) {}
 
+    /// @brief 列 a から構築する
     DynamicList(const vector<T> &a) : n(a.size()) {
         build(a);
     }
 
+    /// @brief 末尾に key を追加する
     void emplace_back(T key) {
         insert(len(), key);
     }
 
+    /// @brief k 番目に key を挿入する
     void insert(int k, T key) {
         assert(0 <= k && k <= len());
         if (data.empty()) {
@@ -81,12 +84,14 @@ public:
         ++n;
     }
 
+    /// @brief k 番目の値を返す
     bool access(int k) const {
         assert(0 <= k && k < len());
         auto [bucket_pos, bit_pos] = get_bucket(k);
         return data[bucket_pos][bit_pos];
     }
 
+    /// @brief k 番目を削除して返す
     T pop(int k) {
         assert(0 <= k && k < len());
         auto [bucket_pos, bit_pos] = get_bucket(k);
@@ -99,12 +104,14 @@ public:
         return res;
     }
 
+    /// @brief k 番目を v に変更する
     void set(int k, bool v) {
         assert(0 <= k && k < len());
         auto [bucket_pos, bit_pos] = get_bucket(k);
         data[bucket_pos][bit_pos] = v;
     }
 
+    /// @brief 全要素を列で返す
     vector<T> tovector() const {
         vector<T> a(len());
         int ptr = 0;
@@ -114,6 +121,7 @@ public:
         return a;
     }
 
+    /// @brief 列を出力する
     void print() const {
         vector<T> a = tovector();
         int n = (int)a.size();

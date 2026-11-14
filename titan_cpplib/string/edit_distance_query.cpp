@@ -15,6 +15,7 @@ using namespace std;
 namespace titan23 {
 namespace edit_distance_query_detail {
 
+// 接尾辞配列と LCP 配列の疎テーブルで、2 つの接尾辞の最長共通接頭辞の長さを返す
 class LCE {
     int n = 0;
     vector<int> rank;
@@ -87,14 +88,12 @@ public:
             }
             rank.swap(nrank);
             cls = ncls;
-            // 2 * len 要素まで比較済み
-            // 次の倍増によるオーバーフローを避ける
+            // 2 * len 要素まで比較済み。次の倍増によるオーバーフローを避ける
             if (len >= n - len) break;
             len *= 2;
         }
 
-        // lcp[r] は sa[r - 1] と sa[r] の LCP
-        // lcp[0] は使わない
+        // lcp[r] は sa[r - 1] と sa[r] の LCP で、lcp[0] は使わない
         vector<int> lcp(n, 0);
         int h = 0;
         for (int i = 0; i < n; ++i) {
@@ -140,12 +139,7 @@ public:
 
 } // namespace edit_distance_query_detail
 
-/// @brief 固定した 2 列の任意の半開区間同士の編集距離クエリ
-/// @details 挿入・削除・置換は各コスト 1
-/// 入力列の更新には再構築が必要
-/// N = |s|+|t|+1 として O(N log N) 時間・空間で前処理する
-/// 距離 d のクエリは O((d+1)^2) 時間、上限 k つきなら O((k+1)^2) 時間
-/// 決定的な LCE を使うため、ハッシュの衝突はない
+/// @brief 固定した 2 列 s, t の区間同士の編集距離を答える / 各操作のコストは 1 / 列を変えたら作り直す
 class EditDistanceQuery {
 private:
     int len_s = 0, len_t = 0;
@@ -175,9 +169,7 @@ private:
         const int init = extend(0, 0);
         if (n == m && init == n) return 0;
         if (lim == 0) return -1;
-        // prev[d] は、編集回数を固定したときに対角線 d = x-y 上で
-        // 一致部分を進み終えた最も遠い x
-        // 添字は prev_l だけずらす
+        // prev[d - prev_l] は、対角線 d = x-y 上で一致部分を進み終えた最も遠い x
         vector<int> prev(1, init), now;
         int prev_l = 0, prev_r = 0;
         const int end_d = n - m;
@@ -204,8 +196,7 @@ private:
                 if (rep >= 0) x = rep + 1;
                 if (del >= 0) x = max(x, del + 1);
                 if (ins >= 0) x = max(x, ins);
-                // 端を越える遷移は同じ対角線上の端へ切り詰める
-                // 「高々 cost 回」で到達可能な最遠点を保つ
+                // 端を越える遷移は同じ対角線上の端へ切り詰め、高々 cost 回で届く最遠点を保つ
                 x = min({x, n, m + d});
                 if (x < max(0, d)) continue;
                 x = extend(x, d);
@@ -220,13 +211,8 @@ private:
     }
 
 public:
-    /// @brief 2 列を前処理する
-    /// 構築後は元の列を変更・破棄してよい
-    /// @details 文字列、または const な size()/添字アクセスを持つ列を受け取る
-    /// 要素の < は等値比較と整合する strict weak ordering であること
-    /// |s|+|t|+1 <= INT_MAX が必要
-    /// 超える場合は length_error を送出する
-    /// 要素の比較・添字アクセスが O(1) なら O(N log N) 時間・空間
+    /// @brief s, t を前処理する / O(N log N) 時間・空間, N = |s|+|t|+1
+    /// 要素の < は等値比較と整合する狭義弱順序であること / N > INT_MAX なら length_error を送出する / 構築後は元の列を変更しても破棄してもよい
     template <class S, class T>
     EditDistanceQuery(const S &s, const T &t) {
         const auto &a = edit_distance_detail::as_sequence(s);
@@ -260,27 +246,24 @@ public:
         lc.build(seq);
     }
 
+    /// @brief |s| を返す
     int source_size() const { return len_s; }
+    /// @brief |t| を返す
     int target_size() const { return len_t; }
 
-    /// @brief s[l1:r1) と t[l2:r2) の正確な編集距離を返す
-    /// @details 距離 d に対し O((d+1)^2) 時間、O(d+1) 作業空間
+    /// @brief s[l1:r1) と t[l2:r2) の編集距離 d を返す / O((d+1)^2)
     int distance(int l1, int r1, int l2, int r2) const {
         check_ranges(l1, r1, l2, r2);
         return bounded_impl(l1, r1, l2, r2, max(r1 - l1, r2 - l2));
     }
 
-    /// @brief 区間の編集距離が k 以下なら正確な距離、超えるなら -1 を返す
-    /// @details k < 0 なら -1
-    /// O((k+1)^2) 時間、O(k+1) 作業空間 (k >= 0)
+    /// @brief 区間の編集距離が k 以下ならその値を返し、超えるか k < 0 なら -1 を返す / O((k+1)^2)
     int distance_bounded(int l1, int r1, int l2, int r2, int k) const {
         check_ranges(l1, r1, l2, r2);
         return bounded_impl(l1, r1, l2, r2, k);
     }
 
-    /// @brief 区間の編集距離が k 以下かを判定する
-    /// k < 0 なら false
-    /// @details O((k+1)^2) 時間、O(k+1) 作業空間 (k >= 0)
+    /// @brief 区間の編集距離が k 以下かを返す / k < 0 なら false / O((k+1)^2)
     bool within(int l1, int r1, int l2, int r2, int k) const {
         check_ranges(l1, r1, l2, r2);
         if (k < 0) return false;

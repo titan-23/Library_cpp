@@ -14,6 +14,7 @@ using namespace std;
 
 namespace flying_squirrel {
 
+/// @brief 探索木を tour と leaf の配列で持つ木構造ビームサーチの旧実装
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
 class BeamSearchWithTree {
 private:
@@ -25,7 +26,7 @@ private:
     ScoreType best_finished_score;
     vector<Action> best_finished_path;
 
-    // record_history 用。false なら if constexpr で全て消えるためゼロコスト
+    // record_history 用。false なら if constexpr で使用箇所が消え、実行時の負担はない
     int node_id_counter;
     vector<HistoryNode<ScoreType, HashType>> history;
     vector<TurnSnapshot> snapshots;
@@ -60,8 +61,7 @@ private:
         }
     }
 
-    /// 当該ターンの生存 node_id を集め、生き残らなかった status==0 を 1 に直し snapshot を積む。
-    /// candidates.next_beam を読むだけで探索状態は変更しない。beam_search.cpp と同ロジック。
+    // 当該ターンで生き残らなかった status==0 の履歴を 1 に直し、生存 node_id のスナップショットを積む
     void record_turn_survivors(int turn_label) {
         unordered_set<int> survived;
         for (int i = 0; i < (int)candidates.size(); ++i) {
@@ -76,9 +76,7 @@ private:
         snapshots.push_back({turn_label, vector<int>(survived.begin(), survived.end())});
     }
 
-    /// tour[leaf[k]..leaf[k+1]) を末尾 dst_end の手前にランク順に貼り込む共通ロジック。
-    /// dst_end は「親パス末尾の一つ後ろ」（葉のアクションを書く位置 = ancestor path one-past-end）。
-    /// 「経路復元: 親 leaf へ向かう祖先ぶんの action を tour から復元する」処理。
+    // 親 leaf へ向かう祖先の action を tour から復元し、dst_end の手前に書き込む
     template<class It>
     inline void copy_tour_path(int parent_leaf, int leaf_end, It dst_end) {
         int prog = 0;
@@ -95,13 +93,7 @@ private:
     }
 
 public:
-    /**
-     * @brief ビームサーチをする
-     *
-     * @param param ターン数、ビーム幅を指定するパラメータ構造体
-     * @param verbose ログ出力するかどうか
-     * @return vector<Action>
-     */
+    /// @brief ビームサーチを実行し、行動列を返す
     vector<Action> search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
         init_bs();
         if (verbose) {

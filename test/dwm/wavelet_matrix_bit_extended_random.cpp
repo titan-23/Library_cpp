@@ -43,6 +43,26 @@ void run(const uint64_t seed) {
             assert(matrix.kth_index_in_value_range(l, r, lower, upper, k) == positions[k]);
         }
 
+        // prev_value, next_value, range_count, access, kth_smallest を素朴な計算と比べる
+        const Key y = rng() % 128;
+        Key previous = -1, next = -1;
+        int same = 0;
+        vector<Key> sorted_keys(keys.begin() + l, keys.begin() + r);
+        sort(sorted_keys.begin(), sorted_keys.end());
+        for (int i = l; i < r; ++i) {
+            if (keys[i] < y) previous = max(previous, keys[i]);
+            if (keys[i] >= y && (next == -1 || keys[i] < next)) next = keys[i];
+            same += keys[i] == y;
+        }
+        assert(matrix.prev_value(l, r, y) == previous);
+        assert(matrix.next_value(l, r, y) == next);
+        assert(matrix.range_count(l, r, y) == same);
+        if (l < r) {
+            const int k = rng() % (r - l);
+            assert(matrix.kth_smallest(l, r, k) == sorted_keys[k]);
+            assert(matrix.access(l + k) == keys[l + k]);
+        }
+
         if (l == r) continue;
         vector<int> count(127);
         for (int i = l; i < r; ++i) ++count[keys[i]];

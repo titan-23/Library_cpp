@@ -6,6 +6,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 木を重心分解し、重心分解木を作る
 class CentroidDecomposition {
 private:
     int C;
@@ -53,6 +54,7 @@ private:
 
 public:
     CentroidDecomposition() : C(-1) {}
+    /// @brief 木の隣接リスト G から重心分解する / O(n log n)
     CentroidDecomposition(const vector<vector<int>> &G) : G(G) {
         int n = G.size();
         if (n == 0) return;
@@ -63,28 +65,12 @@ public:
         C = build(0);
     }
 
+    /// @brief 重心分解木の根 C と隣接リスト T を返す
     pair<int, vector<vector<int>>> get_result() {
         return {C, T};
     }
 
-    // vをまたぐパスについて考える vのみ / vを端点 / vを端点としない などの場合分け
-    // パスの重複に注意 / 元の木と重心分解の木の混同に注意
-    // bannedを見てはいけない
-    // cd.solve([&] (int v, const vector<bool>& banned) {});
-
-    // solve(func) は重心分解木 T を根 C から葉に向かって辿る
-    // 各頂点 v で func(v, banned) を呼ぶ
-    // 第2引数の banned は v より上位で既に中心として使われた頂点を true にした配列
-    // v の処理後に v 自身も true になってから、T の子へ降りる
-    // つまり func が呼ばれた時点で元の木 G 上で v から辿れる頂点のうち
-    // banned が false な範囲が
-    // 「v を中心として今回処理すべき部分木」にあたる
-    // func 内で部分木を探索するときは元の木 G の隣接リストを辿る
-    // banned が true な頂点には踏み込まない
-    // v をまたぐパスを数えるときは v の子部分木ごとに独立に集計する
-    // それぞれを集計してから組み合わせる
-    // 同じ子部分木に属する2頂点間の対は v をまたがない
-    // まとめて集計すると重複や誤カウントになる
+    /// @brief 重心分解木を根から葉へたどり、各頂点 v で func(v, banned) を呼ぶ / banned は上位の中心で true / func は元の木 G を探索し、banned が true の頂点には入らない
     // cd.solve([&] (int v, const vector<bool>& banned) { ... });
     template <typename F>
     void solve(F &&func) {

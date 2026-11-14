@@ -5,9 +5,9 @@
 #include <queue>
 using namespace std;
 
-// bfs_path
 namespace titan23 {
 
+/// @brief 重みなしグラフで s から t への最短経路の頂点列を返す / 到達できなければ空 / O(n + m)
 vector<int> bfs_path(const vector<vector<int>> &G, int s, int t) {
     int n = G.size();
     vector<int> prev(n, -1);

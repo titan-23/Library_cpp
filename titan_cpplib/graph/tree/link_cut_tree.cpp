@@ -6,11 +6,9 @@
 #include <vector>
 using namespace std;
 
-// Dynamic forest: updates and queries are amortized O(log n).
-// Construction/copy and memory are O(n); these bounds assume O(1) value operations.
-// Individual operations are not guaranteed worst-case O(log n).
 namespace titan23 {
 
+/// @brief 動的な森を扱う Link Cut Tree / 各操作は償却 O(log n)
 class LinkCutTree {
 private:
     struct Node {
@@ -48,7 +46,7 @@ private:
         x.sz = 1 + l.sz + r.sz;
     }
 
-    // p is the root of its auxiliary tree; g is its path parent.
+    // p は補助木の根で、g はそのパスの親
     void _rotate_root(int v, int p, int g) {
         Node &x = pool[v], &y = pool[p];
         bool d = y.r == v;
@@ -121,10 +119,8 @@ private:
         }
     }
 
-    // Only reversal is lazy. A pending reversal above g mirrors the whole
-    // rotated subtree, so pushing g, p, v locally is sufficient. This performs
-    // the usual zig/zig-zig/zig-zag steps without walking the ancestor path twice.
-    // PULL_ROOT=false is only for callers that immediately rebuild v.
+    // 遅延するのは反転だけなので、g, p, v を push すれば足りる
+    // PULL_ROOT=false は直後に v を再計算する呼び出し元だけが使う
     template<bool PULL_ROOT = true>
     void _splay(int v) {
         if (_is_root(v)) {
@@ -163,10 +159,12 @@ private:
     }
 
 public:
+    /// @brief 頂点数 0 で構築する
     LinkCutTree() : n(0) {
         pool.emplace_back(n, 0);
     }
 
+    /// @brief 頂点数 size で構築する / O(n)
     LinkCutTree(int size) : n(size) {
         assert(size >= 0);
         pool.reserve(size + 1);
@@ -174,12 +172,14 @@ public:
         pool.emplace_back(n, 0);
     }
 
+    /// @brief 根から v へのパスを露出する / expose(u) の直後なら u と v の LCA を返す / 償却 O(log n)
     int expose(int v) {
         assert(0 <= v && v < n);
         return _expose(v);
     }
 
-    // u, v (and root, if specified) must belong to the same component.
+    /// @brief u と v の LCA を返す / root を指定すると先に root を根にする / 償却 O(log n)
+    /// u, v と、指定した場合の root は同じ連結成分にあること
     int lca(int u, int v, int root = -1) {
         assert(0 <= u && u < n && 0 <= v && v < n);
         if (root != -1) evert(root);
@@ -187,7 +187,7 @@ public:
         return _expose(v);
     }
 
-    // c must be a represented-tree root in a different component from p.
+    /// @brief 根 c を p の子にする / c は p と別の連結成分にある表現木の根であること / 償却 O(log n)
     void link(int c, int p) {
         assert(0 <= c && c < n && 0 <= p && p < n);
         _splay(c);
@@ -198,7 +198,7 @@ public:
         _pull(p);
     }
 
-    // c must not be a represented-tree root.
+    /// @brief c と親の間の辺を切る / c は表現木の根でないこと / 償却 O(log n)
     void cut(int c) {
         assert(0 <= c && c < n);
         _expose(c);
@@ -209,6 +209,7 @@ public:
         _pull(c);
     }
 
+    /// @brief v を含む木の根を返す / 償却 O(log n)
     int root(int v) {
         assert(0 <= v && v < n);
         _expose(v);
@@ -220,6 +221,7 @@ public:
         return v;
     }
 
+    /// @brief u と v が同じ連結成分にあるかを返す / 償却 O(log n)
     bool same(int u, int v) {
         assert(0 <= u && u < n && 0 <= v && v < n);
         if (u == v) return true;
@@ -228,20 +230,22 @@ public:
         return pool[u].p != n;
     }
 
+    /// @brief v を木の根にする / 償却 O(log n)
     void evert(int v) {
         assert(0 <= v && v < n);
         _expose(v);
         _toggle(v);
     }
 
+    /// @brief u と v が別の連結成分なら辺 (u, v) を張って true を返す / 同じ成分なら根を変えずに false / 償却 O(log n)
     bool merge(int u, int v) {
         assert(0 <= u && u < n && 0 <= v && v < n);
         if (u == v) return false;
         _expose(u);
         _expose(v);
-        // A failed merge preserves the represented-tree root.
+        // 失敗時は表現木の根を変えない
         if (pool[u].p != n) return false;
-        // The components are disjoint, so exposing v left u exposed.
+        // 成分が異なるので、v を露出しても u は露出したまま
         _toggle(u);
         pool[u].p = v;
         pool[v].r = u;
@@ -249,19 +253,20 @@ public:
         return true;
     }
 
-    // u and v must be adjacent.
+    /// @brief 隣接する u と v の間の辺を切る / 償却 O(log n)
     void split(int u, int v) {
         evert(u);
         cut(v);
     }
 
-    // u and v must belong to the same component.
+    /// @brief u から v へのパス上の頂点数を返す / u, v は同じ連結成分にあること / 償却 O(log n)
     int path_length(int u, int v) {
         evert(u);
         expose(v);
         return pool[v].sz;
     }
 
+    /// @brief u から v へのパスで k 番目の頂点を返す / 0-indexed / 範囲外なら -1 / 償却 O(log n)
     int path_kth_elm(int u, int v, int k) {
         evert(u);
         expose(v);

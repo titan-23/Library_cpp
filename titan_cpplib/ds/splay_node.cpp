@@ -5,6 +5,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 遅延伝播つき splay 木の節点と、節点に対する操作
 template <class T, T (*op)(T, T), T (*e)(),
           class F, T (*mapping)(F, T), F (*composition)(F, F), F (*id)()>
 class LazySplayTreeNode {
@@ -12,6 +13,7 @@ public:
     struct Node;
     using NodePtr = Node*;
 
+    /// @brief 節点 / data は部分木の総積、rdata は逆順の総積
     struct Node {
         NodePtr left, right, par;
         T key, data, rdata;
@@ -23,6 +25,7 @@ public:
                 key(key), data(key), rdata(key),
                 lazy(lazy), size(1) {}
 
+        /// @brief 自身に f を作用させ、遅延値に f を合成する
         void propagate_lazy(F f) {
             key = mapping(f, key);
             data = mapping(f, data);
@@ -30,6 +33,7 @@ public:
             lazy = composition(f, lazy);
         }
 
+        /// @brief 遅延値を子に伝播する
         void propagate() {
             if (lazy != id()) {
                 if (left)  left->propagate_lazy(lazy);
@@ -38,6 +42,7 @@ public:
             }
         }
 
+        /// @brief 子から data, rdata, size を計算し直す
         void update() {
             data = key;
             rdata = key;
@@ -54,6 +59,7 @@ public:
             }
         }
 
+        /// @brief 親との間で回転する
         void rotate() {
             NodePtr pnode = par;
             NodePtr gnode = pnode->par;
@@ -79,6 +85,7 @@ public:
             update();
         }
 
+        /// @brief 自身を根まで splay する
         void splay() {
             while (par && par->par) {
                 par->par->propagate();
@@ -94,6 +101,7 @@ public:
             }
         }
 
+        /// @brief 部分木の最左の節点を splay して返す
         NodePtr left_splay() {
             NodePtr node = this;
             propagate();
@@ -105,6 +113,7 @@ public:
             return node;
         }
 
+        /// @brief 部分木の最右の節点を splay して返す
         NodePtr right_splay() {
             NodePtr node = this;
             propagate();
@@ -117,6 +126,7 @@ public:
         }
     };
 
+    /// @brief node を含む木で k 番目の節点を splay して返す / k は 0 始まり
     NodePtr kth_splay(NodePtr node, int k) {
         node->splay();
         while (1) {
@@ -134,6 +144,7 @@ public:
         return node;
     }
 
+    /// @brief key 以下で最大の節点を splay して返す / なければ nullptr
     NodePtr find_splay(NodePtr node, T key) {
         if (!node) return nullptr;
         NodePtr res = nullptr;
@@ -150,6 +161,7 @@ public:
         return res;
     }
 
+    /// @brief node を含む木を key 以下の部分木と key より大きい部分木に分ける / key 以下の節点があること
     pair<NodePtr, NodePtr> split(NodePtr node, T key) {
         if (!node) { return {nullptr, nullptr}; }
         node->splay();
@@ -169,6 +181,7 @@ public:
         }
     }
 
+    /// @brief node を含む木を標準エラー出力に出す / デバッグ用
     void print(NodePtr node) {
         while (node->par) {
             node = node->par;

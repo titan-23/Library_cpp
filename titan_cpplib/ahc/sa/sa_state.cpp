@@ -8,19 +8,21 @@
 #include "titan_cpplib/ahc/sa/sa.cpp"
 using namespace std;
 
-// minimize SA
+// 最小化の焼きなまし
 namespace sa {
 
 void sa_init() {
     titan23::Random sarnd;
 }
 
+/// @brief sa_run に渡す状態の雛形 / TODO の箇所を問題に合わせて書く
 class State {
 public:
     titan23::Random sarnd;
     using ScoreType = double; // TODO
 
     // TODO
+    /// @brief 開始温度と終了温度
     struct Param {
         double start_temp, end_temp;
         Param() : start_temp(1e3), end_temp(1e0) {}
@@ -28,6 +30,7 @@ public:
     inline static Param param;
 
     // TODO
+    /// @brief 直前の遷移の情報 / type は遷移の種類で [0, TYPE_CNT)
     struct Changed {
         int TYPE_CNT = 0; // TODO
         int type;
@@ -35,6 +38,7 @@ public:
     } changed;
 
     // TODO
+    /// @brief 最良解として保存する情報
     struct Result {
         ScoreType score, true_score;
         Result() {}
@@ -51,6 +55,7 @@ public:
     // TODO
 
     // TODO
+    /// @brief seed で乱数と状態を初期化する
     void init(uint32_t seed) {
         sarnd.set_seed(seed);
         score = 0;
@@ -61,20 +66,20 @@ public:
     ScoreType get_true_score() const { return score; }
 
     // TODO
-    // thresholdを超えたら必ずreject(同じなら遷移する)
-    // is_validをfalseにすると必ずrejectする / rollbackはする
-    // progress: 焼きなまし進行度 0.0~1.0 まで
+    /// @brief 近傍へ遷移し、score を更新する / threshold を超えたら必ず棄却され、等しければ遷移する
+    /// is_valid を false にすると必ず棄却され、rollback は呼ばれる / progress は進行度で 0.0 から 1.0
     void modify(const int64_t iter, const ScoreType threshold, const double progress) {}
 
     // TODO
-    // ライブラリ側でスコアを元の値に上書きするため、score の復元は不要
+    /// @brief modify の前の状態に戻す / score はライブラリが元の値に上書きするので復元しなくてよい
     void rollback() {}
 
     // TODO
-    // 遅延評価を採用した場合はここで盤面への書き込みを確定させる
+    /// @brief 遷移を確定する / 遅延評価にした場合は、盤面への書き込みをここで確定させる
     void advance() {}
 
     // TODO
+    /// @brief 現在の解を Result で返す
     Result get_result() const {
         return {get_score(), get_true_score()};
     }

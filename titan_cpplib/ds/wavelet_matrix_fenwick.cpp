@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <cassert>
 #include <iostream>
+#include <numeric>
 #include <queue>
 #include <tuple>
 #include <type_traits>
@@ -14,15 +15,9 @@
 #include "titan_cpplib/others/bit.cpp"
 using namespace std;
 
-// WaveletMatrixFenwick
 namespace titan23 {
 
-/**
- * @brief 静的なキーと更新可能な重みを持つウェーブレット行列
- *
- * @tparam T キーの型
- * @tparam W 重みの型
- */
+/// @brief 静的なキーと更新可能な重みを持つウェーブレット行列 / キーは [0, sigma) が前提
 template<typename T, typename W>
 class WaveletMatrixFenwick {
 private:
@@ -36,6 +31,29 @@ private:
     vector<FenwickTree<W>> _zero_sum;
     FenwickTree<W> _original_sum;
     FenwickTree<W> _leaf_sum;
+
+    // 段 bit の区間 [l, r) を、値の bit が b である要素の次の段での区間に移す
+    void _descend(const int bit, const bool b, int &l, int &r, const int l0, const int r0) const {
+        if (b) {
+            l += _mid[bit] - l0;
+            r += _mid[bit] - r0;
+        } else {
+            l = l0;
+            r = r0;
+        }
+    }
+
+    // 段 bit 以下だけを見て、空でない区間 [l, r) の最大値 (largest) か最小値を返す
+    // value には上位の段で決まった bit を入れておく
+    T _extreme(int bit, int l, int r, T value, const bool largest) const {
+        for (; bit >= 0; --bit) {
+            const int l0 = _v[bit].rank0(l), r0 = _v[bit].rank0(r);
+            const bool b = largest ? (r - r0 > l - l0) : (l0 == r0);
+            if (b) value |= static_cast<T>(1) << bit;
+            _descend(bit, b, l, r, l0, r0);
+        }
+        return value;
+    }
 
     W _zero_range_sum(const int bit, const int l, const int r) const { return _zero_sum[bit].sum(l, r); }
 
@@ -51,19 +69,9 @@ private:
         vector<W> zero_weights(_n);
 
         for (int bit = _log - 1; bit >= 0; --bit) {
-            _v[bit] = BitVector(_n);
-            int zeros = 0;
-            for (int i = 0; i < _n; ++i) {
-                bool b = (a[i] >> bit) & 1;
-                if (b) {
-                    _v[bit].set(i);
-                    zero_weights[i] = W(0);
-                } else {
-                    ++zeros;
-                    zero_weights[i] = w[i];
-                }
-            }
-            _v[bit].build();
+            _v[bit] = BitVector(_n, [&](const int i) { return (a[i] >> bit) & 1; });
+            for (int i = 0; i < _n; ++i) zero_weights[i] = (a[i] >> bit) & 1 ? W(0) : w[i];
+            const int zeros = _v[bit].rank0(_n);
             _mid[bit] = zeros;
             _zero_sum[bit] = FenwickTree<W>(zero_weights);
 
@@ -284,24 +292,24 @@ private:
     }
 
 public:
-    /// 空のFenwick付きウェーブレット行列を作成する / `O(1)`
+    /// @brief 空の行列を作る / O(1)
     WaveletMatrixFenwick() : _sigma(1), _log(0), _n(0), _weight_is_key(false), _original_sum(0), _leaf_sum(0) {}
 
-    /// 各キーが `[0, sigma)` の空のFenwick付きウェーブレット行列を作成する / `O(log(σ))`
+    /// @brief キーの範囲を [0, sigma) とする空の行列を作る / O(log(σ))
     WaveletMatrixFenwick(const T sigma)
         : _sigma(sigma), _log(bit_length(static_cast<unsigned long long>(sigma - 1))), _n(0), _weight_is_key(false), _v(_log), _mid(_log), _zero_sum(_log), _original_sum(0), _leaf_sum(0) {
         assert(sigma > 0);
         _build({}, {});
     }
 
-    /// キーと重みからFenwick付きウェーブレット行列を作成する / `O(nlog(σ))`
+    /// @brief キー列 keys と重み列 weights から構築する / O(nlog(σ))
     WaveletMatrixFenwick(const T sigma, const vector<T> &keys, const vector<W> &weights)
         : _sigma(sigma), _log(bit_length(static_cast<unsigned long long>(sigma - 1))), _n(keys.size()), _weight_is_key(false), _v(_log), _mid(_log), _zero_sum(_log) {
         assert(sigma > 0);
         _build(keys, weights);
     }
 
-    /// `weight = key` としてFenwick付きウェーブレット行列を作成する / `O(nlog(σ))`
+    /// @brief 重みをキーと同じ値にして、キー列 keys から構築する / O(nlog(σ))
     WaveletMatrixFenwick(const T sigma, const vector<T> &keys)
         : _sigma(sigma), _log(bit_length(static_cast<unsigned long long>(sigma - 1))), _n(keys.size()), _weight_is_key(true), _v(_log), _mid(_log), _zero_sum(_log) {
         assert(sigma > 0);
@@ -309,7 +317,7 @@ public:
         _build(keys, weights);
     }
 
-    /// `k` 番目のキーを返す / `O(log(σ))`
+    /// @brief k 番目のキーを返す / O(log(σ))
     T access(int k) const {
         assert(0 <= k && k < len());
         T result = 0;
@@ -324,22 +332,22 @@ public:
         return result;
     }
 
-    /// `k` 番目の重みを返す / `O(1)`
+    /// @brief k 番目の重みを返す / O(1)
     W access_weight(const int k) const {
         assert(0 <= k && k < len());
         return _weights[k];
     }
 
-    /// `k` 番目の `(key, weight)` を返す / `O(log(σ))`
+    /// @brief k 番目の (key, weight) を返す / O(log(σ))
     pair<T, W> access_pair(const int k) const { return {access(k), access_weight(k)}; }
 
-    /// `k` 番目の重みを `weight` に変更する / `O(log(n)log(σ))`
+    /// @brief k 番目の重みを weight に変更する / O(log(n)log(σ))
     void set_weight(const int k, const W weight) {
         assert(0 <= k && k < len());
         add_weight(k, weight - _weights[k]);
     }
 
-    /// `k` 番目の重みに `delta` を加える / `O(log(n)log(σ))`
+    /// @brief k 番目の重みに delta を加える / O(log(n)log(σ))
     void add_weight(const int k, const W delta) {
         assert(0 <= k && k < len());
         if (delta == W(0)) return;
@@ -355,41 +363,25 @@ public:
         _leaf_sum.add(position, delta);
     }
 
-    /// 区間 `[0, r)` の `key` の個数を返す / `O(log(σ))`
+    /// @brief 区間 [0, r) の key の個数を返す / O(log(σ))
     int rank(int r, const T key) const {
         assert(0 <= r && r <= len());
-        assert(0 <= key && key < _sigma);
-        int l = 0;
-        for (int bit = _log - 1; bit >= 0; --bit) {
-            if ((key >> bit) & 1) {
-                l = _v[bit].rank1(l) + _mid[bit];
-                r = _v[bit].rank1(r) + _mid[bit];
-            } else {
-                l = _v[bit].rank0(l);
-                r = _v[bit].rank0(r);
-            }
-        }
-        return r - l;
+        return range_count(0, r, key);
     }
 
-    /// 区間 `[l, r)` の `key` の個数を返す / `O(log(σ))`
+    /// @brief 区間 [l, r) の key の個数を返す / O(log(σ))
     int range_count(int l, int r, const T key) const {
         assert(0 <= l && l <= r && r <= len());
         assert(0 <= key && key < _sigma);
         for (int bit = _log - 1; bit >= 0; --bit) {
-            if ((key >> bit) & 1) {
-                l = _v[bit].rank1(l) + _mid[bit];
-                r = _v[bit].rank1(r) + _mid[bit];
-            } else {
-                l = _v[bit].rank0(l);
-                r = _v[bit].rank0(r);
-            }
+            if (l == r) return 0;
+            const int l0 = _v[bit].rank0(l), r0 = _v[bit].rank0(r);
+            _descend(bit, (key >> bit) & 1, l, r, l0, r0);
         }
         return r - l;
     }
 
-    /// 区間 `[l, r)` でキーが `[lower, upper)` にある `k` 番目の位置を返す / `O(log(n)log(σ))`
-    /// 例: `[5, 1, 4, 1, 9]`, `[lower, upper) = [1, 5)`, `k = 2` なら `3`
+    /// @brief 区間 [l, r) でキーが [lower, upper) にある k 番目の位置を返す / k は 0 から数える / O(log(n)log(σ))
     int kth_index_in_value_range(const int l, const int r, const T lower, const T upper, const int k) const {
         assert(0 <= k && k < range_freq(l, r, lower, upper));
         int left = l;
@@ -405,20 +397,18 @@ public:
         return right - 1;
     }
 
-    /// 区間 `[l, r)` でキーが `[lower, upper)` にある最初の位置を返す / `O(log(n)log(σ))`
-    /// 例: `[5, 1, 4, 1, 9]`, `[lower, upper) = [1, 5)` なら `1`
+    /// @brief 区間 [l, r) でキーが [lower, upper) にある最初の位置を返す / なければ -1 / O(log(n)log(σ))
     int next_index_in_value_range(const int l, const int r, const T lower, const T upper) const {
         return range_freq(l, r, lower, upper) == 0 ? -1 : kth_index_in_value_range(l, r, lower, upper, 0);
     }
 
-    /// 区間 `[l, r)` でキーが `[lower, upper)` にある最後の位置を返す / `O(log(n)log(σ))`
-    /// 例: `[5, 1, 4, 1, 9]`, `[lower, upper) = [1, 5)` なら `3`
+    /// @brief 区間 [l, r) でキーが [lower, upper) にある最後の位置を返す / なければ -1 / O(log(n)log(σ))
     int prev_index_in_value_range(const int l, const int r, const T lower, const T upper) const {
         int count = range_freq(l, r, lower, upper);
         return count == 0 ? -1 : kth_index_in_value_range(l, r, lower, upper, count - 1);
     }
 
-    /// `k` 番目の `key` の位置を返す / `O(log(n)log(σ))`
+    /// @brief k 番目の key の位置を返す / k は 0 から数える / O(log(n)log(σ))
     int select(int k, const T key) const {
         assert(0 <= key && key < _sigma);
         int position = 0;
@@ -440,14 +430,14 @@ public:
         return position;
     }
 
-    /// 区間 `[l, r)` にある `k` 番目の `key` の位置を返す / `O(log(n)log(σ))`
+    /// @brief 区間 [l, r) にある k 番目の key の位置を返す / k は 0 から数える / O(log(n)log(σ))
     int range_select(const int l, const int r, const int k, const T key) const {
         assert(0 <= l && l <= r && r <= len());
         assert(0 <= k && k < range_count(l, r, key));
         return select(rank(l, key) + k, key);
     }
 
-    /// 区間 `[l, r)` で昇順 `k` 番目のキーを返す / `O(log(σ))`
+    /// @brief 区間 [l, r) で昇順 k 番目のキーを返す / k は 0 から数える / O(log(σ))
     T kth_smallest(int l, int r, int k) const {
         assert(0 <= l && l <= r && r <= len());
         assert(0 <= k && k < r - l);
@@ -469,10 +459,10 @@ public:
         return result;
     }
 
-    /// 区間 `[l, r)` で降順 `k` 番目のキーを返す / `O(log(σ))`
+    /// @brief 区間 [l, r) で降順 k 番目のキーを返す / k は 0 から数える / O(log(σ))
     T kth_largest(const int l, const int r, const int k) const { return kth_smallest(l, r, r - l - k - 1); }
 
-    /// 区間 `[l, r)` に過半数を占めるキーがあるか判定する / `O(log(σ))`
+    /// @brief 区間 [l, r) に過半数を占めるキーがあるかとそのキーを返す / なければ {false, 0} / O(log(σ))
     pair<bool, T> has_majority(int l, int r) const {
         assert(0 <= l && l < r && r <= len());
         int majority = (r - l) / 2 + 1;
@@ -496,8 +486,7 @@ public:
         return {true, result};
     }
 
-    /// 区間 `[l, r)` で頻度が高いキーを最大 `k` 種類返す / 訪問Node数を `p` として `O(plog(p))`
-    /// 区間内の相異なるキー数を `D` とすると、最悪 `p = O(Dlog(σ))`
+    /// @brief 区間 [l, r) で頻度が高いキーを最大 k 種類、頻度とともに返す / 訪問する節点数を p として O(plog(p))
     vector<pair<T, int>> topk(const int l, const int r, int k) const {
         assert(0 <= l && l <= r && r <= len());
         vector<pair<T, int>> result;
@@ -523,13 +512,13 @@ public:
         return result;
     }
 
-    /// 区間 `[l, r)` で `upper` 未満のキーの個数を返す / `O(log(σ))`
+    /// @brief 区間 [l, r) で upper 未満のキーの個数を返す / O(log(σ))
     int range_freq(int l, int r, const T upper) const {
         assert(0 <= l && l <= r && r <= len());
         if (upper <= 0) return 0;
         if (upper >= _sigma) return r - l;
         int result = 0;
-        for (int bit = _log - 1; bit >= 0; --bit) {
+        for (int bit = _log - 1; bit >= 0 && l < r; --bit) {
             int l0 = _v[bit].rank0(l);
             int r0 = _v[bit].rank0(r);
             if ((upper >> bit) & 1) {
@@ -544,31 +533,71 @@ public:
         return result;
     }
 
-    /// 区間 `[l, r)` で `[lower, upper)` のキーの個数を返す / `O(log(σ))`
+    /// @brief 区間 [l, r) で [lower, upper) のキーの個数を返す / O(log(σ))
     int range_freq(const int l, const int r, const T lower, const T upper) const {
         if (lower >= upper) return 0;
         return range_freq(l, r, upper) - range_freq(l, r, lower);
     }
 
-    /// 区間 `[l, r)` で `upper` 未満のうち最大のキーを返す / `O(log(σ))`
-    T prev_value(const int l, const int r, const T upper) const {
-        int count = range_freq(l, r, upper);
-        return count == 0 ? static_cast<T>(-1) : kth_smallest(l, r, count - 1);
+    /// @brief 区間 [l, r) で upper 未満のうち最大のキーを返す / なければ -1 / O(log(σ))
+    T prev_value(int l, int r, const T upper) const {
+        assert(0 <= l && l <= r && r <= len());
+        if (l == r || upper <= 0) return static_cast<T>(-1);
+        if (upper >= _sigma) return _extreme(_log - 1, l, r, 0, true);
+        // upper の bit をたどり、upper 未満へ分かれられる最後の段を候補として覚える
+        int candidate_bit = -2, candidate_l = 0, candidate_r = 0;
+        T value = 0, candidate_value = 0;
+        for (int bit = _log - 1; bit >= 0 && l < r; --bit) {
+            const int l0 = _v[bit].rank0(l), r0 = _v[bit].rank0(r);
+            const bool b = (upper >> bit) & 1;
+            if (b) {
+                if (l0 < r0) {
+                    candidate_bit = bit - 1;
+                    candidate_l = l0;
+                    candidate_r = r0;
+                    candidate_value = value;
+                }
+                value |= static_cast<T>(1) << bit;
+            }
+            _descend(bit, b, l, r, l0, r0);
+        }
+        if (candidate_bit == -2) return static_cast<T>(-1);
+        return _extreme(candidate_bit, candidate_l, candidate_r, candidate_value, true);
     }
 
-    /// 区間 `[l, r)` で `lower` 以上のうち最小のキーを返す / `O(log(σ))`
-    T next_value(const int l, const int r, const T lower) const {
-        int count = range_freq(l, r, lower);
-        return count == r - l ? static_cast<T>(-1) : kth_smallest(l, r, count);
+    /// @brief 区間 [l, r) で lower 以上のうち最小のキーを返す / なければ -1 / O(log(σ))
+    T next_value(int l, int r, const T lower) const {
+        assert(0 <= l && l <= r && r <= len());
+        if (l == r || lower >= _sigma) return static_cast<T>(-1);
+        if (lower <= 0) return _extreme(_log - 1, l, r, 0, false);
+        // lower の bit をたどり、lower より大きい側へ分かれられる最後の段を候補として覚える
+        int candidate_bit = -2, candidate_l = 0, candidate_r = 0;
+        T value = 0, candidate_value = 0;
+        for (int bit = _log - 1; bit >= 0 && l < r; --bit) {
+            const int l0 = _v[bit].rank0(l), r0 = _v[bit].rank0(r);
+            const bool b = (lower >> bit) & 1;
+            if (!b && r - r0 > l - l0) {
+                candidate_bit = bit - 1;
+                candidate_l = l - l0 + _mid[bit];
+                candidate_r = r - r0 + _mid[bit];
+                candidate_value = value | (static_cast<T>(1) << bit);
+            }
+            if (b) value |= static_cast<T>(1) << bit;
+            _descend(bit, b, l, r, l0, r0);
+        }
+        // 最後まで残った要素は lower に等しい
+        if (l < r) return value;
+        if (candidate_bit == -2) return static_cast<T>(-1);
+        return _extreme(candidate_bit, candidate_l, candidate_r, candidate_value, false);
     }
 
-    /// 区間 `[l, r)` の重みの総和を返す / `O(log(n))`
+    /// @brief 区間 [l, r) の重みの総和を返す / O(log(n))
     W range_sum(const int l, const int r) const {
         assert(0 <= l && l <= r && r <= len());
         return _original_sum.sum(l, r);
     }
 
-    /// 区間 `[l, r)` で `upper` 未満のキーの個数と重みの総和を返す / `O(log(n)log(σ))`
+    /// @brief 区間 [l, r) で upper 未満のキーの個数と重みの総和を返す / O(log(n)log(σ))
     pair<int, W> count_sum_lt(int l, int r, const T upper) const {
         assert(0 <= l && l <= r && r <= len());
         if (upper <= 0) return {0, W(0)};
@@ -591,77 +620,66 @@ public:
         return {count, sum};
     }
 
-    /// 区間 `[l, r)` で `upper` 未満のキーを持つ要素の重みの総和を返す / `O(log(n)log(σ))`
+    /// @brief 区間 [l, r) で upper 未満のキーを持つ要素の重みの総和を返す / O(log(n)log(σ))
     W sum_lt(const int l, const int r, const T upper) const { return count_sum_lt(l, r, upper).second; }
 
-    /// 区間 `[l, r)` で `[lower, upper)` のキーを持つ要素の重みの総和を返す / `O(log(n)log(σ))`
+    /// @brief 区間 [l, r) で [lower, upper) のキーを持つ要素の重みの総和を返す / O(log(n)log(σ))
     W sum_range(const int l, const int r, const T lower, const T upper) const {
         if (lower >= upper) return W(0);
         return sum_lt(l, r, upper) - sum_lt(l, r, lower);
     }
 
-    /// 区間 `[l, r)` のキーが小さい方から `k` 個の重みの総和を返す / `O(log(n)log(σ))`
+    /// @brief 区間 [l, r) のキーが小さい方から k 個の重みの総和を返す / O(log(n)log(σ))
     W sum_k_smallest(const int l, const int r, const int k) const {
         assert(0 <= l && l <= r && r <= len());
         assert(0 <= k && k <= r - l);
         return _sum_k(l, r, k, false);
     }
 
-    /// 区間 `[l, r)` のキーが大きい方から `k` 個の重みの総和を返す / `O(log(n)log(σ))`
+    /// @brief 区間 [l, r) のキーが大きい方から k 個の重みの総和を返す / O(log(n)log(σ))
     W sum_k_largest(const int l, const int r, const int k) const {
         assert(0 <= l && l <= r && r <= len());
         assert(0 <= k && k <= r - l);
         return _sum_k(l, r, k, true);
     }
 
-    /// 小さいキーから集約した重みに対して `pred` が真である最大範囲を返す / `O(log(n)log(σ))`
-    /// 返り値は `(count, boundary_value, aggregate)`
-    /// `pred(0) == true` で、要素を加える順に一度偽になると真へ戻らないことを前提とする
-    /// 例: `[(1, 2), (2, 3), (3, 5)]`, `pred(sum) = (sum <= 4)` なら `(1, 2, 2)`
+    /// @brief 小さいキーから重みを足し、pred が真のまま採れる最大範囲を (count, boundary_value, aggregate) で返す / O(log(n)log(σ))
+    /// pred(0) が真で、一度偽になると真に戻らないことが前提
     template<class Pred>
     tuple<int, T, W> max_right_smallest(const int l, const int r, Pred pred) const {
         return _max_right(l, r, false, pred);
     }
 
-    /// 大きいキーから集約した重みに対して `pred` が真である最大範囲を返す / `O(log(n)log(σ))`
-    /// 返り値は `(count, boundary_value, aggregate)`
-    /// `pred(0) == true` で、要素を加える順に一度偽になると真へ戻らないことを前提とする
-    /// 例: `[(1, 2), (2, 3), (3, 5)]`, `pred(sum) = (sum <= 6)` なら `(1, 2, 5)`
+    /// @brief 大きいキーから重みを足し、pred が真のまま採れる最大範囲を (count, boundary_value, aggregate) で返す / O(log(n)log(σ))
+    /// pred(0) が真で、一度偽になると真に戻らないことが前提
     template<class Pred>
     tuple<int, T, W> max_right_largest(const int l, const int r, Pred pred) const {
         return _max_right(l, r, true, pred);
     }
 
-    /// 小さいキーから採用し、重みの総和が `budget` 以下である最大個数を返す / `O(log(n)log(σ))`
-    /// 全要素の重みが非負であることを前提とする
-    /// 例: `[(1, 2), (2, 3), (3, 5)]`, `budget = 4` なら `1`
+    /// @brief 小さいキーから採用し、重みの総和が budget 以下である最大個数を返す / 重みは非負が前提 / O(log(n)log(σ))
     int max_count_smallest_sum_le(const int l, const int r, const W budget) const {
         assert(budget >= W(0));
         auto [count, value, sum] = max_right_smallest(l, r, [&](W sum) { return sum <= budget; });
         return count;
     }
 
-    /// 大きいキーから採用し、重みの総和が `budget` 以下である最大個数を返す / `O(log(n)log(σ))`
-    /// 全要素の重みが非負であることを前提とする
-    /// 例: `[(1, 2), (2, 3), (3, 5)]`, `budget = 6` なら `1`
+    /// @brief 大きいキーから採用し、重みの総和が budget 以下である最大個数を返す / 重みは非負が前提 / O(log(n)log(σ))
     int max_count_largest_sum_le(const int l, const int r, const W budget) const {
         assert(budget >= W(0));
         auto [count, value, sum] = max_right_largest(l, r, [&](W sum) { return sum <= budget; });
         return count;
     }
 
-    /// 小さいキーからの累積重みが初めて `target` 以上になるキーを返す / `O(log(n)log(σ))`
-    /// 全要素の重みが非負で、`0 < target <= range_sum(l, r)` であることを前提とする
-    /// 例: `[(1, 2), (2, 3), (3, 5)]`, `target = 4` なら `2`
+    /// @brief 小さいキーからの累積重みが初めて target 以上になるキーを返す / O(log(n)log(σ))
+    /// 重みが非負で、0 < target <= range_sum(l, r) であることが前提
     T weighted_quantile(const int l, const int r, const W target) const {
         assert(W(0) < target && target <= range_sum(l, r));
         auto [count, value, sum] = max_right_smallest(l, r, [&](W sum) { return sum < target; });
         return value;
     }
 
-    /// 重み付き `numerator / denominator` 分位点を返す / `O(log(n)log(σ))`
-    /// 全要素の重みが非負であることを前提とする
-    /// 例: `[(1, 2), (2, 3), (3, 5)]`, `numerator / denominator = 1 / 2` なら `2`
+    /// @brief 重み付き numerator / denominator 分位点を返す / 0 < numerator <= denominator で、重みは非負が前提 / O(log(n)log(σ))
     T weighted_quantile(const int l, const int r, const long long numerator, const long long denominator) const {
         assert(0 < numerator && numerator <= denominator);
         W total = range_sum(l, r);
@@ -669,50 +687,60 @@ public:
         return weighted_quantile(l, r, _quantile_target(total, numerator, denominator));
     }
 
-    /// 重み付き中央値を返す / `O(log(n)log(σ))`
-    /// 全要素の重みが非負であることを前提とする
-    /// 例: `[(1, 2), (2, 3), (3, 5)]` なら `2`
+    /// @brief 重み付き中央値を返す / 重みは非負が前提 / O(log(n)log(σ))
     T weighted_median(const int l, const int r) const {
         return weighted_quantile(l, r, 1, 2);
     }
 
-    /// 小さいキーから採用し、重みの総和が `target` 以上になる最小個数を返す / `O(log(n)log(σ))`
-    /// 全要素の重みが非負であることを前提とし、達成できない場合は `-1` を返す
-    /// 例: `[(1, 2), (2, 3), (3, 5)]`, `target = 4` なら `2`
+    /// @brief 小さいキーから採用し、重みの総和が target 以上になる最小個数を返す / 重みは非負が前提 / 達成できなければ -1 / O(log(n)log(σ))
     int min_count_smallest_sum_ge(const int l, const int r, const W target) const {
         assert(0 <= l && l <= r && r <= len());
         return _min_count_sum_ge(l, r, target, false);
     }
 
-    /// 大きいキーから採用し、重みの総和が `target` 以上になる最小個数を返す / `O(log(n)log(σ))`
-    /// 全要素の重みが非負であることを前提とし、達成できない場合は `-1` を返す
-    /// 例: `[(1, 2), (2, 3), (3, 5)]`, `target = 4` なら `1`
+    /// @brief 大きいキーから採用し、重みの総和が target 以上になる最小個数を返す / 重みは非負が前提 / 達成できなければ -1 / O(log(n)log(σ))
     int min_count_largest_sum_ge(const int l, const int r, const W target) const {
         assert(0 <= l && l <= r && r <= len());
         return _min_count_sum_ge(l, r, target, true);
     }
 
-    /// 要素数を返す / `O(1)`
+    /// @brief 要素数を返す / O(1)
     int len() const { return _n; }
 
-    /// キー列を返す / `O(nlog(σ))`
+    /// @brief キー列を返す / O(nlog(σ))
     vector<T> tovector() const {
-        vector<T> result(_n);
-        for (int i = 0; i < _n; ++i) result[i] = access(i);
+        vector<T> result(_n, 0);
+        // order[p] は、今の段の位置 p にある要素の元の位置
+        vector<int> order(_n), work(_n);
+        iota(order.begin(), order.end(), 0);
+        for (int bit = _log - 1; bit >= 0; --bit) {
+            int zero = 0, one = _mid[bit];
+            for (int p = 0; p < _n; ++p) {
+                if (_v[bit].access(p)) {
+                    result[order[p]] |= static_cast<T>(1) << bit;
+                    work[one++] = order[p];
+                } else {
+                    work[zero++] = order[p];
+                }
+            }
+            order.swap(work);
+        }
         return result;
     }
 
-    /// 重み列を返す / `O(n)`
+    /// @brief 重み列を返す / O(n)
     vector<W> toweights() const { return _weights; }
 
-    /// `(key, weight)` の列を返す / `O(nlog(σ))`
+    /// @brief (key, weight) の列を返す / O(nlog(σ))
     vector<pair<T, W>> toitems() const {
+        const vector<T> keys = tovector();
+        const vector<W> weights = toweights();
         vector<pair<T, W>> result(_n);
-        for (int i = 0; i < _n; ++i) result[i] = access_pair(i);
+        for (int i = 0; i < _n; ++i) result[i] = {keys[i], weights[i]};
         return result;
     }
 
-    /// `(key, weight)` の列を表示する / `O(nlog(σ))`
+    /// @brief (key, weight) の列を標準出力に表示する / O(nlog(σ))
     void print() const {
         const vector<pair<T, W>> items = toitems();
         cout << "[";
@@ -723,7 +751,7 @@ public:
         cout << "]" << endl;
     }
 
-    /// `(key, weight)` の列を出力する / `O(nlog(σ))`
+    /// @brief (key, weight) の列を出力する / O(nlog(σ))
     friend ostream& operator<<(ostream& os, const WaveletMatrixFenwick<T, W> &wm) {
         const vector<pair<T, W>> items = wm.toitems();
         os << "[";

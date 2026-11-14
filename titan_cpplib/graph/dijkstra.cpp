@@ -5,17 +5,10 @@
 #include <queue>
 using namespace std;
 
-// dijkstra
 namespace titan23 {
-/**
- * @brief dijkstra
- *
- * @tparam T weight type
- * @param G weighted graph
- * @param start start
- * @param INF inf
- * @return vector<T> dist from start
- */
+
+/// @brief start から各頂点への最短距離を返す / 到達できない頂点は INF / O(n + m log m)
+/// @note G[v] は (行き先, 重み) の組を持ち、重みの型は T とする。重みは非負に限る
 template<typename T>
 vector<T> dijkstra(const vector<vector<pair<int, T>>> &G, const int start, const T INF) {
     const int n = G.size();

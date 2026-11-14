@@ -12,15 +12,8 @@ using namespace std;
 
 namespace titan23 {
 
-/**
- * @brief オフライン2次元点集合の重み総和
- *
- * 同じ座標へ複数回登録した点は別々の点として数える。
- * 同じ `y` を途中まで採用する場合は `x` の昇順、同じ `x` では登録順を使う。
- *
- * @tparam T 座標の型
- * @tparam W 重みの型
- */
+/// @brief オフラインの 2 次元点集合で、長方形内の点の個数と重みの総和を求める
+/// 同じ y の点を一部だけ採るときは x の昇順に、同じ x では登録順に採る
 template<typename T, typename W>
 class WaveletMatrix2DSum {
 private:
@@ -128,26 +121,28 @@ private:
     }
 
 public:
+    /// @brief 空の集合を作る
     WaveletMatrix2DSum() : _log(0), _n(0), _stride(1), _built(false) {}
 
+    /// @brief 点 (x, y, weight) の列から構築する / O(nlog(n))
     explicit WaveletMatrix2DSum(const vector<tuple<T, T, W>> &points) : WaveletMatrix2DSum() {
         _points = points;
         build();
     }
 
-    /// 登録予定の点数を予約する / `O(1)`
+    /// @brief 登録予定の点数を予約する / O(1)
     void reserve(int capacity) {
         assert(!_built);
         _points.reserve(capacity);
     }
 
-    /// 点 `(x, y)` へ重み `weight` を登録する / ならし `O(1)`
+    /// @brief 点 (x, y) に重み weight を登録する / 同じ座標への登録は別の点として数える / build 前に呼ぶ / ならし O(1)
     void add_point(T x, T y, W weight) {
         assert(!_built);
         _points.emplace_back(x, y, weight);
     }
 
-    /// 登録した点から構築する / `O(nlog(n))`
+    /// @brief 登録した点から構築する / O(nlog(n))
     void build() {
         vector<tuple<T, T, W>> a = _points;
         stable_sort(a.begin(), a.end(), [](const auto &x, const auto &y) { return get<0>(x) < get<0>(y); });
@@ -182,19 +177,13 @@ public:
         vector<int> ny(_n);
         vector<W> nweight(_n);
         for (int bit = _log - 1; bit >= 0; --bit) {
-            _v[bit] = BitVector(_n);
+            _v[bit] = BitVector(_n, [&](const int i) { return (y[i] >> bit) & 1; });
             size_t offset = static_cast<size_t>(bit) * _stride;
-            int zeros = 0;
             for (int i = 0; i < _n; ++i) {
-                bool b = (y[i] >> bit) & 1;
-                if (b) {
-                    _v[bit].set(i);
-                } else {
-                    ++zeros;
-                }
+                const bool b = (y[i] >> bit) & 1;
                 _zero_sum[offset + i + 1] = _zero_sum[offset + i] + (b ? W(0) : weight[i]);
             }
-            _v[bit].build();
+            const int zeros = _v[bit].rank0(_n);
             _mid[bit] = zeros;
 
             int zero = 0;
@@ -214,36 +203,35 @@ public:
         _built = true;
     }
 
-    /// `x` が `[x1, x2)` にある点の重みの総和を返す / `O(log(n))`
+    /// @brief x が [x1, x2) にある点の重みの総和を返す / O(log(n))
     W range_sum(T x1, T x2) const {
         auto [l, r] = _x_range(x1, x2);
         return _original_sum[r] - _original_sum[l];
     }
 
-    /// 長方形 `[x1, x2) × [y1, y2)` にある点の重みの総和を返す / `O(log(n))`
+    /// @brief 長方形 [x1, x2) × [y1, y2) にある点の重みの総和を返す / O(log(n))
     W range_sum(T x1, T x2, T y1, T y2) const {
         if (y1 >= y2) return W(0);
         return sum_lt(x1, x2, y2) - sum_lt(x1, x2, y1);
     }
 
-    /// `x` が `[x1, x2)`、`y` が `upper` 未満の点の個数と重みの総和を返す / `O(log(n))`
+    /// @brief x が [x1, x2)、y が upper 未満の点の個数と重みの総和を返す / O(log(n))
     pair<int, W> count_sum_lt(T x1, T x2, T upper) const {
         auto [l, r] = _x_range(x1, x2);
         int y = lower_bound(_y.begin(), _y.end(), upper) - _y.begin();
         return _count_sum_lt(l, r, y);
     }
 
-    /// `x` が `[x1, x2)`、`y` が `upper` 未満の点の重みの総和を返す / `O(log(n))`
+    /// @brief x が [x1, x2)、y が upper 未満の点の重みの総和を返す / O(log(n))
     W sum_lt(T x1, T x2, T upper) const { return count_sum_lt(x1, x2, upper).second; }
 
-    /// 長方形 `[x1, x2) × [y1, y2)` にある点数を返す / `O(log(n))`
+    /// @brief 長方形 [x1, x2) × [y1, y2) にある点数を返す / O(log(n))
     int range_count(T x1, T x2, T y1, T y2) const {
         if (y1 >= y2) return 0;
         return count_sum_lt(x1, x2, y2).first - count_sum_lt(x1, x2, y1).first;
     }
 
-    /// `x` が `[x1, x2)` にある点のうち、昇順 `k` 番目の `y` を返す / `O(log(n))`
-    /// 例: `[(0, 5), (1, 2), (2, 2)]` で `kth_y(0, 3, 1)` は `2`
+    /// @brief x が [x1, x2) にある点の y のうち、昇順 k 番目を返す / k は 0 から数える / O(log(n))
     T kth_y(T x1, T x2, int k) const {
         auto [l, r] = _x_range(x1, x2);
         assert(0 <= k && k < r - l);
@@ -265,23 +253,21 @@ public:
         return _y[ans];
     }
 
-    /// `x` が `[x1, x2)` にある点を `y` の昇順に並べ、先頭 `k` 点の重みの総和を返す / `O(log(n))`
-    /// 例: `[(0, 5, 4), (1, 2, 3), (2, 7, 6)]` で `sum_k_smallest_y(0, 3, 2)` は `7`
+    /// @brief x が [x1, x2) にある点を y の昇順に並べ、先頭 k 点の重みの総和を返す / O(log(n))
     W sum_k_smallest_y(T x1, T x2, int k) const {
         auto [l, r] = _x_range(x1, x2);
         assert(0 <= k && k <= r - l);
         return _sum_k(l, r, k, false);
     }
 
-    /// `x` が `[x1, x2)` にある点を `y` の降順に並べ、先頭 `k` 点の重みの総和を返す / `O(log(n))`
-    /// 例: `[(0, 5, 4), (1, 2, 3), (2, 7, 6)]` で `sum_k_largest_y(0, 3, 2)` は `10`
+    /// @brief x が [x1, x2) にある点を y の降順に並べ、先頭 k 点の重みの総和を返す / O(log(n))
     W sum_k_largest_y(T x1, T x2, int k) const {
         auto [l, r] = _x_range(x1, x2);
         assert(0 <= k && k <= r - l);
         return _sum_k(l, r, k, true);
     }
 
-    /// 登録点数を返す / `O(1)`
+    /// @brief 登録点数を返す / O(1)
     int len() const { return _n; }
 };
 

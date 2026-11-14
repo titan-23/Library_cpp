@@ -8,6 +8,7 @@
 
 namespace flying_squirrel {
 
+/// @brief Candidates が保持する候補 1 件
 template<typename ScoreType, class Action>
 struct BeamCandidate {
     int parent_leaf;
@@ -55,10 +56,10 @@ public:
 
     int size() const { return entry; }
 
+    /// @brief 枝刈りの閾値を返す / ビーム幅に達するまでは INF、以降は保持中の最悪スコア
     ScoreType threshold() const { return entry < beam_width ? INF : seg[1].first; }
 
-    /// @brief 候補が採用された場合は true を返す
-    /// @param node_id 履歴記録用の ID で、候補の比較には使用しない
+    /// @brief 候補を追加し、採用されたら true を返す / node_id は履歴記録用で比較には使わない
     bool push(ScoreType score, HashType hash, int parent_leaf, Action action, int node_id = -1) {
         if (is_built && score >= seg[1].first) {
             return false;
@@ -149,7 +150,7 @@ public:
     }
 
     /// @brief 次ターンに向けて候補を初期化する
-    /// @param hash_window_turns clear_hash が false のときにハッシュを破棄する間隔で、0 なら破棄しない
+    /// clear_hash が false のとき、hash_window_turns ターンごとにハッシュを破棄する。0 なら破棄しない
     void reset(int turn, int w, bool clear_hash, int hash_window_turns = 0) {
         beam_width = w;
         while (s < w) {
@@ -180,6 +181,7 @@ public:
         is_built = false;
     }
 
+    /// @brief スコアが最小の候補を返す
     BeamCandidate<ScoreType, Action> get_best() {
         return *min_element(next_beam.begin(), next_beam.begin() + entry,
                             [] (const BeamCandidate<ScoreType, Action> &left,
@@ -192,6 +194,7 @@ public:
 using ActionId = int;
 inline constexpr ActionId BAD_ID_FLAT = -1;
 
+/// @brief CandidatesFlat が保持する候補 1 件
 template<typename ScoreType, typename HashType>
 struct BeamCandidateFlat {
     int parent_leaf;
@@ -246,12 +249,11 @@ public:
 
     int size() const { return entry; }
 
+    /// @brief 枝刈りの閾値を返す / ビーム幅に達するまでは INF、以降は保持中の最悪スコア
     ScoreType threshold() const { return entry < beam_width ? INF : seg[1].first; }
 
-    /// @brief ActionId 付きの候補を追加する
-    /// @param aid 呼び出し側で確保した ActionId
-    /// @return 棄却時は slot が -1 で、置換時は evicted_aid に旧 ActionId を返す
-    /// @note 棄却された aid と、置き換えられた evicted_aid は呼び出し側が解放する
+    /// @brief 呼び出し側で確保した aid を持つ候補を追加する / 棄却時は slot が -1、置換時は evicted_aid に旧 ActionId を返す
+    /// 棄却された aid と、置き換えられた evicted_aid は呼び出し側が解放する
     PushResult push(ScoreType score, HashType hash, int parent_leaf, ActionId aid, int node_id = -1) {
         if (is_built && score >= seg[1].first) {
             return {-1, BAD_ID_FLAT};
@@ -295,7 +297,7 @@ public:
     }
 
     /// @brief 次ターンに向けて候補を初期化する
-    /// @param hash_window_turns clear_hash が false のときにハッシュを破棄する間隔で、0 なら破棄しない
+    /// clear_hash が false のとき、hash_window_turns ターンごとにハッシュを破棄する。0 なら破棄しない
     void reset(int turn, int w, bool clear_hash, int hash_window_turns = 0) {
         beam_width = w;
         while (s < w) {
@@ -326,6 +328,7 @@ public:
         is_built = false;
     }
 
+    /// @brief スコアが最小の候補を返す
     BeamCandidateFlat<ScoreType, HashType> get_best() {
         return *min_element(next_beam.begin(), next_beam.begin() + entry, [] (const auto &l, const auto &r) {
             return l.score < r.score;

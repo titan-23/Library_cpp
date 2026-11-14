@@ -6,9 +6,7 @@ using namespace std;
 // PersistentArray
 namespace titan23 {
 
-/**
- * @brief 永続配列
- */
+/// @brief 永続配列 / 0-indexed
 template<typename T>
 class PersistentArray {
     private:
@@ -67,12 +65,12 @@ class PersistentArray {
     public:
     PersistentArray() : root(nullptr), n(0) {}
 
-    /// 配列 `a` をもとに構築する / `O(n)`
+    /// @brief 配列 a から構築する / O(n)
     PersistentArray(const vector<T> a) {
         _build(a);
     }
 
-    /// 位置 `k` を `v` に変更した永続配列を返す / `O(logn)` time, `O(logn)` space
+    /// @brief 位置 k を v に変更した永続配列を返す / 時間 O(logn)、空間 O(logn)
     PersistentArray<T> set(int k, T v) const{
         assert(0 <= k && k < this->n);
         assert(this->root);
@@ -96,7 +94,7 @@ class PersistentArray {
         return res;
     }
 
-    /// 位置 `k` の値を返す / `O(logn)` time, `O(1)` space
+    /// @brief 位置 k の値を返す / 時間 O(logn)、空間 O(1)
     T get(int k) const {
         assert(0 <= k && k < this->n);
         assert(this->root);
@@ -113,12 +111,12 @@ class PersistentArray {
         return node->key;
     }
 
-    /// 永続配列全体をコピーして返す / `O(1)` time, `O(1)` space
+    /// @brief 永続配列全体を複製して返す / 時間 O(1)、空間 O(1)
     PersistentArray<T> copy() const {
         return _new(this->root ? this->root->copy() : nullptr);
     }
 
-    /// `vector` にして返す / `O(n)`
+    /// @brief vector にして返す / O(n)
     vector<T> tovector() const {
         vector<T> a(this->n);
         vector<NodePtr> q = {this->root};
@@ -131,11 +129,12 @@ class PersistentArray {
         return a;
     }
 
-    /// 要素数を返す / `O(1)`
+    /// @brief 要素数を返す / O(1)
     int len() const {
         return this->n;
     }
 
+    /// @brief 配列を出力する
     void print() const {
         vector<T> a = tovector();
         cout << "[";

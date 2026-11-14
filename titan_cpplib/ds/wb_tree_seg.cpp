@@ -9,6 +9,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 重み平衡木で管理し、区間の総積を求められる列 / op は結合的で、e は op の単位元である必要がある
 template<class T, T (*op)(T, T), T (*e)()>
 class WBSegTree : private detail::MutableWBSequence<T, op, e> {
     using Base = detail::MutableWBSequence<T, op, e>;
@@ -26,14 +27,14 @@ public:
     WBSegTree(const vector<T>& a) : root(Base::build_nodes(a, 0, static_cast<int>(a.size()))) {}
 
     /// @brief other を末尾に連結する / O(log(N + M))
-    /// @note 破壊的操作のため、連結後の other は独立に操作できない
+    /// 破壊的操作のため、連結後の other は独立に操作できない
     void merge(WBSegTree& other) {
         assert(!root || root != other.root);
         root = Base::merge_nodes(root, other.root);
     }
 
     /// @brief 先頭 k 要素と残りに分割して返す / O(log N)
-    /// @note 破壊的操作のため、分割前の列は独立に操作できない
+    /// 破壊的操作のため、分割前の列は独立に操作できない
     pair<WBSegTree, WBSegTree> split(int k) {
         assert(0 <= k && k <= len());
         auto result = Base::split_nodes(root, k);

@@ -13,17 +13,15 @@ using namespace std;
 
 namespace titan23 {
 
-// get_pos と pos の結果は次の変更操作まで有効
-// erase を持たないため key == 0 を空きスロットとして使う
-// USE_HASH_FUNC=true は固定入力への衝突攻撃を避ける実用的な乱択 mixer を使う
-// USE_HASH_FUNC=false では偏った下位ビットにより操作が O(n) になり得る
+/// @brief 線形探査で 64 bit 整数を鍵とする辞書 / 削除はできない
+/// USE_HASH_FUNC=true は乱択の混合関数で固定入力への衝突攻撃を避ける。false では下位ビットが偏ると操作が O(n) になり得る
 template<typename V, bool USE_HASH_FUNC=true>
 class LinearHashDict {
 private:
     using u64 = uint64_t;
 
-    vector<u64> keys;
-    vector<V> vals;
+    vector<u64> keys;  // erase を持たないので 0 を空きの印に使う
+    vector<V> vals;    // 鍵 0 の値は vals[cap] に置く
     int cap;
     int msk;
     u64 salt;
@@ -85,12 +83,14 @@ public:
         init_table(0);
     }
 
+    /// @brief n 要素まで再構築せずに持てる辞書を作る
     LinearHashDict(const int n) : cap(16), msk(15), salt(0), size(0), has_zero(false) {
         assert(n >= 0);
         init_seed();
         init_table(n);
     }
 
+    /// @brief key の位置と有無を返す / 無いときは挿入する位置を返す / 結果は次の変更操作まで有効
     pair<int, bool> get_pos(const u64 &key) const {
         if (key == 0) return {cap, has_zero};
         int pos = (int)(hash(key) & msk);
@@ -101,6 +101,7 @@ public:
         return {pos, false};
     }
 
+    /// @brief key の値を返す / 無ければ V()
     V get(const u64 key) const {
         if (key == 0) return has_zero ? vals[cap] : V();
         int pos = (int)(hash(key) & msk);
@@ -111,6 +112,7 @@ public:
         return V();
     }
 
+    /// @brief key の値を返す / 無ければ missing
     V get(const u64 key, const V missing) const {
         if (key == 0) return has_zero ? vals[cap] : missing;
         int pos = (int)(hash(key) & msk);
@@ -121,14 +123,17 @@ public:
         return missing;
     }
 
+    /// @brief key があるかを返す
     bool contains(const u64 key) const {
         return get_pos(key).second;
     }
 
+    /// @brief get_pos と同じ
     pair<int, bool> pos(const u64 key) const {
         return get_pos(key);
     }
 
+    /// @brief key の値を返す / 無ければ V() を挿入して返す
     V operator[](const u64 key) {
         if (key == 0) {
             if (has_zero) return vals[cap];
@@ -152,16 +157,19 @@ public:
         return val;
     }
 
+    /// @brief get_pos の結果から値を返す / 無ければ missing
     V inner_get(const pair<int, bool> &dat, const V missing) const {
         if (!dat.second) return missing;
         return vals[dat.first];
     }
 
+    /// @brief get_pos の結果から値を返す / 無ければ V()
     V inner_get(const pair<int, bool> &dat) {
         if (!dat.second) return V();
         return vals[dat.first];
     }
 
+    /// @brief get_pos の結果を使って key の値を val にする / get_pos との間に変更操作を挟まないこと
     void inner_set(const pair<int, bool> &dat, const u64 key, const V val) {
         vals[dat.first] = val;
         if (dat.second) return;
@@ -171,6 +179,7 @@ public:
         if (size * 2 > cap) rebuild();
     }
 
+    /// @brief key の値を val にする
     void set(const u64 key, const V val) {
         if (key == 0) {
             vals[cap] = val;
@@ -194,6 +203,7 @@ public:
         if (size * 2 > cap) rebuild();
     }
 
+    /// @brief key の値に val を加算する / 無ければ val で挿入する
     void add(const u64 key, const V val) {
         if (key == 0) {
             if (has_zero) vals[cap] += val;
@@ -219,6 +229,7 @@ public:
         if (size * 2 > cap) rebuild();
     }
 
+    /// @brief val が今の値より小さければ更新して true を返す / 無ければ挿入して false を返す
     bool contains_set(const u64 key, const V val) {
         if (key == 0) {
             if (!has_zero) {
@@ -248,6 +259,7 @@ public:
         return false;
     }
 
+    /// @brief 全ての値を返す / 順序は不定 / O(容量)
     vector<V> values() const {
         vector<V> res;
         res.reserve(size);
@@ -258,6 +270,7 @@ public:
         return res;
     }
 
+    /// @brief 全ての鍵と値の組を返す / 順序は不定 / O(容量)
     vector<pair<u64, V>> items() const {
         vector<pair<u64, V>> res;
         res.reserve(size);
@@ -268,6 +281,7 @@ public:
         return res;
     }
 
+    /// @brief 全要素を削除する / O(容量)
     void clear() {
         if (empty()) return;
         fill(keys.begin(), keys.end(), 0);
@@ -279,6 +293,7 @@ public:
         return size;
     }
 
+    /// @brief 表の容量を返す
     int inner_len() const {
         return cap;
     }

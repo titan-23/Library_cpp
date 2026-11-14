@@ -17,6 +17,8 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 遅延作用と区間反転に対応する永続重み平衡木 / 0-indexed
+/// 全インスタンスが静的なノード領域 ma を共有する
 template <class SizeType, class T, class F,
         T (*op)(T, T),
         T (*mapping)(F, T),
@@ -28,7 +30,9 @@ class PersistentLazyWBTree {
     static constexpr unsigned index_bits = sizeof(SizeType) > 4 ? 31 : numeric_limits<SizeType>::digits;
     using Wide = conditional_t<(sizeof(SizeType) < 8), uint64_t, __uint128_t>;
 public:
+    /// @brief 全ての木が共有するノード領域
     struct MemoryAllocator {
+        /// @brief 子の番号、反転フラグ、部分木サイズを持つ
         struct Node {
             Index left : index_bits;
             Index rev : 1;
@@ -41,6 +45,7 @@ public:
             /// @brief オブジェクトを構築する / O(1)
             Node(SizeType l, SizeType r, SizeType s) : left(l), rev(0), right(r), size(s), left_size(0) {}
         };
+        /// @brief 部分木の総積と遅延作用を持つ
         struct Data {
             T data;
             F lazy;
@@ -51,6 +56,7 @@ public:
             /// @brief オブジェクトを構築する / O(1)
             Data(const T& value, const F& f) : data(value), lazy(f) {}
         };
+        /// @brief 2^BlockBits 要素ずつのブロックで領域を確保する可変長配列
         template <class U, unsigned BlockBits>
         class BlockVector {
             static constexpr size_t block_size = size_t(1) << BlockBits;
@@ -104,7 +110,7 @@ public:
                 other.blocks_.clear();
             }
 
-            /// @brief 領域の所有権を移動する / O(N)
+            /// @brief 現在の N 要素と M ブロックを破棄して移動代入する / O(N + M)
             BlockVector& operator=(BlockVector&& other) noexcept {
                 if (this != &other) {
                     clear_storage();
@@ -115,7 +121,7 @@ public:
                 return *this;
             }
 
-            /// @brief 構築済み要素と領域を破棄する / O(N)
+            /// @brief 構築済みの N 要素と M ブロックを破棄する / O(N + M)
             ~BlockVector() { clear_storage(); }
 
             /// @brief 要素への参照を返す / O(1)
@@ -134,16 +140,15 @@ public:
             /// @brief 確保済み容量を返す / O(1)
             size_t capacity() const noexcept { return blocks_.size() * block_size; }
 
-            /// @brief N ノード分の容量を確保する / O(N)
+            /// @brief n 要素分の容量を確保する / O(n)
             void reserve(size_t n) {
                 const size_t required = n / block_size + (n % block_size != 0);
                 blocks_.reserve(required);
                 while (blocks_.size() < required) add_block();
             }
 
-            template <class... Args>
-
             /// @brief 末尾に要素を構築する / 償却 O(1)
+            template <class... Args>
             U& emplace_back(Args&&... args) {
                 if (size_ == capacity()) add_block();
                 U *value = blocks_[size_ >> BlockBits] + (size_ & block_mask);
@@ -163,6 +168,7 @@ public:
             }
         };
 
+        /// @brief 1 ノード分の Node と Data
         struct Slot {
             Node tree;
             Data data;
@@ -174,6 +180,7 @@ public:
         using Pool = BlockVector<Slot, 16>;
         Pool pool;
 
+        /// @brief pool の各 Slot の Member を配列として参照する
         template<class U, U Slot::* Member>
         struct View {
             Pool *pool;
@@ -190,7 +197,7 @@ public:
             /// @brief 確保済み容量を返す / O(1)
             size_t capacity() const noexcept { return pool->capacity(); }
 
-            /// @brief N ノード分の容量を確保する / O(N)
+            /// @brief n 要素分の容量を確保する / O(n)
             void reserve(size_t n) { pool->reserve(n); }
         };
         View<Node, &Slot::tree> tree;
@@ -209,7 +216,7 @@ public:
             : pool(move(other.pool)), tree{&pool}, data{&pool},
               ptr(other.ptr), cap(other.cap) {}
 
-        /// @brief 領域の所有権を移動する / O(N)
+        /// @brief 現在の N 要素と M ブロックを破棄して移動代入する / O(N + M)
         MemoryAllocator& operator=(MemoryAllocator&& other) noexcept {
             if (this != &other) {
                 pool = move(other.pool);
@@ -255,7 +262,7 @@ public:
             return ptr++;
         }
 
-        /// @brief N ノード分の容量を確保する / O(N)
+        /// @brief n ノード分の容量を確保する / O(n)
         void reserve(SizeType n) {
             pool.reserve(n);
             cap = pool.capacity();
@@ -272,6 +279,7 @@ public:
         size_t capacity_bytes() const { return pool.capacity() * sizeof(Slot); }
     };
 
+    /// @brief 全インスタンスが共有するノード領域
     static MemoryAllocator ma;
 
 private:

@@ -7,9 +7,9 @@
 #include <vector>
 using namespace std;
 
-// MultisetSum
 namespace titan23 {
 
+/// @brief 総和を求められる多重集合 / 重み平衡木で実装する
 template<typename T>
 class MultisetSum {
 private:
@@ -256,12 +256,15 @@ private:
 public:
     MultisetSum() : missing(), min_key(), max_key(), root(0), free(0) {}
 
+    /// @brief 空で構築する / 該当する要素がないとき le などは missing を返す
     MultisetSum(T missing) : missing(missing), min_key(), max_key(), root(0), free(0) {}
 
+    /// @brief 列 a の要素で構築する / O(n log n)
     MultisetSum(const vector<T> &a, T missing=-1) : missing(missing), min_key(), max_key(), root(0), free(0) {
         build(a);
     }
 
+    /// @brief key を val 個追加する / O(log n)
     void add(const T &key, int val=1) {
         bool was_empty = !root;
         bool inserted = false;
@@ -275,6 +278,7 @@ public:
         }
     }
 
+    /// @brief key を最大 val 個削除し、key があったかを返す / O(log n)
     bool discard(const T &key, int val=1) {
         bool update_min = root && key == min_key;
         bool update_max = root && key == max_key;
@@ -288,6 +292,7 @@ public:
         return true;
     }
 
+    /// @brief key を最大 val 個削除する / key があることが前提 / O(log n)
     void remove(const T &key, int val=1) {
         bool update_min = root && key == min_key;
         bool update_max = root && key == max_key;
@@ -300,6 +305,7 @@ public:
         if (erased && update_max) max_key = rightmost_key();
     }
 
+    /// @brief key 以下で最大の要素を返す / O(log n)
     T le(const T &key) const {
         T result = missing;
         int node = root;
@@ -315,6 +321,7 @@ public:
         return result;
     }
 
+    /// @brief key 未満で最大の要素を返す / O(log n)
     T lt(const T &key) const {
         T result = missing;
         int node = root;
@@ -329,6 +336,7 @@ public:
         return result;
     }
 
+    /// @brief key 以上で最小の要素を返す / O(log n)
     T ge(const T &key) const {
         T result = missing;
         int node = root;
@@ -344,6 +352,7 @@ public:
         return result;
     }
 
+    /// @brief key より大きい最小の要素を返す / O(log n)
     T gt(const T &key) const {
         T result = missing;
         int node = root;
@@ -358,6 +367,7 @@ public:
         return result;
     }
 
+    /// @brief key 未満の要素数を返す / O(log n)
     int index(const T &key) const {
         int result = 0;
         int node = root;
@@ -372,6 +382,7 @@ public:
         return result;
     }
 
+    /// @brief key 以下の要素数を返す / O(log n)
     int index_right(const T &key) const {
         int result = 0;
         int node = root;
@@ -386,16 +397,18 @@ public:
         return result;
     }
 
+    /// @brief key の個数を返す / O(log n)
     int count(const T &key) const {
         int node = find_key(key);
         return node ? nodes[node].val : 0;
     }
 
+    /// @brief key があるかを返す / O(log n)
     bool contains(const T &key) const {
         return find_key(key);
     }
 
-    // high未満
+    /// @brief high 未満の要素の総和を返す / O(log n)
     T sum(T high) const {
         if (!root || high <= min_key) return 0;
         if (max_key < high) return nodes[root].data;
@@ -412,11 +425,12 @@ public:
         return result;
     }
 
+    /// @brief 全要素の総和を返す / O(1)
     T all_prod() const {
         return root ? nodes[root].data : 0;
     }
 
-    // 総和がwを超えないように先頭からとるとき、いくつとれるか？
+    /// @brief 小さい順に取るとき、総和が w を超えない最大の個数を返す / O(log n)
     long long bisect_left_sum(T w) const {
         long long result = 0;
         T remain = w;
@@ -452,14 +466,17 @@ public:
         return result;
     }
 
+    /// @brief 昇順 k 番目の要素を返す / O(log n)
     T get(int k) const {
         return nodes[find_kth(k)].key;
     }
 
+    /// @brief 昇順 k 番目の要素を返す / O(log n)
     T operator[](int k) const {
         return get(k);
     }
 
+    /// @brief 昇順 k 番目の要素を 1 個削除して返す / 負の k は末尾から数える / O(log n)
     T pop(int k=-1) {
         if (k < 0) k += len();
         T key = get(k);
@@ -467,14 +484,17 @@ public:
         return key;
     }
 
+    /// @brief 要素数を返す / O(1)
     int len() const {
         return root ? nodes[root].valsize : 0;
     }
 
+    /// @brief 要素数を返す / O(1)
     int size() const {
         return len();
     }
 
+    /// @brief 昇順に並べた vector を返す / O(n)
     vector<T> tovector() const {
         vector<T> result;
         result.reserve(len());
@@ -494,6 +514,7 @@ public:
         return result;
     }
 
+    /// @brief 要素を出力する
     void print() const {
         vector<T> a = tovector();
         cout << "{";
@@ -504,6 +525,7 @@ public:
         cout << "}" << endl;
     }
 
+    /// @brief 木の不変条件を assert で検査する / デバッグ用
     void check() const {
         if (!root) return;
         auto dfs = [&] (auto &&dfs, int node) -> void {

@@ -11,12 +11,9 @@
 #include <numeric>
 using namespace std;
 
-// Random
 namespace titan23 {
 
-/**
- * @brief (疑似)乱数生成クラス(XOR shift)
- */
+/// @brief XOR shift による擬似乱数生成器
 class Random {
 private:
     uint32_t _x, _y, _z, _w;
@@ -31,9 +28,12 @@ private:
     }
 
 public:
+    /// @brief 固定の初期状態で構築する
     Random() : _x(123456789), _y(362436069), _z(521288629), _w(88675123) {}
+    /// @brief seed で構築する
     Random(uint32_t seed) { set_seed(seed); }
 
+    /// @brief seed で状態を初期化する
     void set_seed(uint32_t seed) {
         _x = seed;
         _y = _x * 1812433253U + 1;
@@ -41,51 +41,51 @@ public:
         _w = _z * 1812433253U + 1;
     }
 
-    /// `[0, 1]` の乱数を返す(実数)
+    /// @brief [0, 1] の実数の乱数を返す
     constexpr double random() { return (double)(_xor128()) / 0xFFFFFFFF; }
 
-    /// `[0, end]` の乱数を返す
+    /// @brief [0, end] の整数の乱数を返す
     constexpr int randint(const int end) {
         assert(0 <= end);
         return (((uint64_t)_xor128() * ((uint64_t)end + 1)) >> 32);
     }
 
-    /// `[begin, end]` の乱数を返す
+    /// @brief [begin, end] の整数の乱数を返す
     constexpr int randint(const int begin, const int end) {
         assert(begin <= end);
         return begin + (((uint64_t)_xor128() * ((uint64_t)end - begin + 1)) >> 32);
     }
 
-    /// `[0, end)` の乱数を返す
+    /// @brief [0, end) の整数の乱数を返す
     constexpr int randrange(const int end) {
         assert(0 < end);
         return (((uint64_t)_xor128() * end) >> 32);
     }
 
-    /// `[begin, end)` の乱数を返す
+    /// @brief [begin, end) の整数の乱数を返す
     constexpr int randrange(const int begin, const int end) {
         assert(begin < end);
         return begin + (((uint64_t)_xor128() * (end-begin)) >> 32);
     }
 
-    /// `[0, u64_MAX]` の乱数を返す / zobrist hash等の使用を想定
+    /// @brief [0, u64_MAX] の乱数を返す / Zobrist hash などでの使用を想定
     constexpr uint64_t rand_u64() {
         return ((uint64_t)_xor128() << 32) | _xor128();
     }
 
-    /// `[0, end)` の乱数を返す(整数, 64bit)
+    /// @brief [0, end) の 64 bit 整数の乱数を返す
     constexpr long long randrange_ll(const long long end) {
         assert(0 < end);
         return (long long)(((__uint128_t)rand_u64() * (uint64_t)end) >> 64);
     }
 
-    /// `[begin, end)` の乱数を返す(整数, 64bit)
+    /// @brief [begin, end) の 64 bit 整数の乱数を返す
     constexpr long long randrange_ll(const long long begin, const long long end) {
         assert(begin < end);
         return begin + (long long)(((__uint128_t)rand_u64() * (uint64_t)(end-begin)) >> 64);
     }
 
-    /// `[0, end)` の異なる乱数を2つ返す
+    /// @brief [0, end) から相異なる 2 つの乱数を小さい順に返す
     constexpr pair<int, int> rand_pair(const int end) {
         assert(end >= 2);
         int u = randrange(end);
@@ -95,7 +95,7 @@ public:
         return {u, v};
     }
 
-    /// `[begin, end)` の異なる乱数を2つ返す
+    /// @brief [begin, end) から相異なる 2 つの乱数を小さい順に返す
     constexpr pair<int, int> rand_pair(const int begin, const int end) {
         assert(end - begin >= 2);
         int u = randrange(begin, end);
@@ -105,7 +105,7 @@ public:
         return {u, v};
     }
 
-    /// Note `a`は非const
+    /// @brief a から重複なしで cnt 個を無作為に選んで返す / 選んだ要素を a の先頭へ移すので a は書き換わる / O(cnt)
     vector<int> rand_vec(const int cnt, vector<int> &a) {
         int n = a.size();
         for (int i = 0; i < cnt; ++i) {
@@ -116,12 +116,13 @@ public:
         return res;
     }
 
-    /// `[begin, end)` の乱数を返す(実数)
+    /// @brief [begin, end] の実数の乱数を返す
     constexpr double randdouble(const double begin, const double end) {
         assert(begin <= end);
         return begin + random() * (end-begin);
     }
 
+    /// @brief [first, last) を無作為に並べ替える / O(n)
     template <typename RandomIt>
     void shuffle(RandomIt first, RandomIt last) {
         int n = distance(first, last);
@@ -131,12 +132,13 @@ public:
         }
     }
 
-    /// `vector` をインプレースにシャッフルする / `O(n)`
+    /// @brief a をその場で無作為に並べ替える / O(n)
     template <typename T>
     void shuffle(vector<T> &a) {
         shuffle(a.begin(), a.end());
     }
 
+    /// @brief a から重複なしで k 個を無作為に選んで返す / O(n)
     template <typename T>
     vector<T> choices(const vector<T> &a, const int k) {
         int n = a.size();
@@ -154,12 +156,14 @@ public:
         return r;
     }
 
+    /// @brief a から無作為に 1 要素を選んで返す / O(1)
     template <typename T>
     constexpr T choice(const vector<T> &a) {
         assert(!a.empty());
         return a[randrange(a.size())];
     }
 
+    /// @brief 重み w に従って a から 1 要素を選んで返す / O(n)
     template <typename T>
     constexpr T choice(const vector<T> &a, const vector<int> &w) {
         assert(a.size() == w.size());
@@ -175,6 +179,7 @@ public:
         return choice(a, x);
     }
 
+    /// @brief 累積確率分布 w に従って a から 1 要素を選んで返す / O(log n)
     template <typename T>
     constexpr T choice(const vector<T> &a, const vector<double> &w) {
         double i = random();
@@ -187,6 +192,7 @@ public:
         return a[r];
     }
 
+    /// @brief a から無作為に 1 要素を取り除いて返す / O(n)
     template <typename T>
     constexpr T rand_pop(vector<T> &a) {
         assert(!a.empty());

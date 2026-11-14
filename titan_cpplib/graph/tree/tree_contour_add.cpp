@@ -10,8 +10,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// Distance range add and point get on a static tree
-/// Operations are O(log^2 N)
+/// @brief 静的な木で、距離が区間に入る頂点への加算と一点取得を行う / 各操作 O(log^2 N)
 template<typename T>
 class TreeContourAdd {
 private:
@@ -95,18 +94,22 @@ private:
 public:
     TreeContourAdd() = default;
 
+    /// @brief 木 G から構築する / 各頂点の値は T{}
     explicit TreeContourAdd(const vector<vector<int>> &G) : idx(G) {
         init(vector<T>(G.size()));
     }
 
+    /// @brief 木 G と各頂点の初期値 a から構築する
     TreeContourAdd(const vector<vector<int>> &G, const vector<T> &a) : idx(G) {
         init(a);
     }
 
+    /// @brief 頂点数を返す / O(1)
     int len() const {
         return (int)base.size();
     }
 
+    /// @brief v からの距離が [l, r) の頂点すべてに x を加算する / O(log^2 N)
     void add(int v, int l, int r, const T &x) {
         assert(0 <= v && v < len());
         l = clamp(l, 0, idx.n);
@@ -116,6 +119,7 @@ public:
         add_impl(v, l, r, y, idx.path_dist.data());
     }
 
+    /// @brief 頂点 v の値を返す / O(log^2 N)
     T get(int v) const {
         assert(0 <= v && v < len());
         return get_impl(v, idx.path_dist.data());

@@ -8,9 +8,10 @@
 #include "titan_cpplib/alg/random.cpp"
 using namespace std;
 
-// simulated annealing (minimize)
+// 焼きなまし法。スコアを最小化する
 namespace sa {
 
+// LOG_TABLE[i] = log((i + 0.5) / LOG_TABLE_SIZE)。受理の閾値を乱数から作るのに使う
 const int LOG_TABLE_SIZE = 4096;
 double LOG_TABLE[LOG_TABLE_SIZE];
 static bool is_log_initialized = [] {
@@ -20,15 +21,9 @@ static bool is_log_initialized = [] {
     return true;
 }();
 
-/// @brief 焼きなましを実行する
-/// @tparam State
-/// @param TIME_LIMIT 実行時間[ms]
-/// @param state 初期化済みの状態
-/// @param verbose ログ出力をするかどうか
-/// @return State::Result 最良解
+/// @brief 初期化済みの state から焼きなましを実行し、最良解を返す / TIME_LIMIT は実行時間 [ms]、verbose はログ出力の有無
 template<class State>
 typename State::Result sa_run(const double TIME_LIMIT, State& state, const bool verbose=true) {
-    // 準備
     titan23::Timer sa_timer;
     typename State::Result best_result = state.get_result();
     if (TIME_LIMIT <= 0) return best_result;
@@ -124,12 +119,7 @@ typename State::Result sa_run(const double TIME_LIMIT, State& state, const bool 
     return best_result;
 }
 
-/// @brief Stateを初期化して焼きなましを実行する
-/// @tparam State
-/// @param TIME_LIMIT 初期化を含む実行時間[ms]
-/// @param seed 乱数のシード値
-/// @param verbose ログ出力をするかどうか
-/// @return State::Result 最良解
+/// @brief State を seed で初期化して焼きなましを実行し、最良解を返す / TIME_LIMIT は初期化を含む実行時間 [ms]
 template<class State>
 typename State::Result sa_run(const double TIME_LIMIT, const uint32_t seed=23, const bool verbose=true) {
     titan23::Timer timer;
@@ -139,14 +129,8 @@ typename State::Result sa_run(const double TIME_LIMIT, const uint32_t seed=23, c
     return sa_run<State>(remaining_time, state, verbose);
 }
 
-/// @brief 2段階の多始点焼きなましを実行する
-/// @tparam State
-/// @param TIME_LIMIT 実行時間[ms]
-/// @param FIRST_PHASE_RATIO 第1フェーズに割り当てる時間の割合 (例: 0.2 なら 20% を第1フェーズに使用)
-/// @param NUM_STARTS 第1フェーズで実行する初期状態の数
-/// @param seed 乱数のベースシード値
-/// @param verbose ログ出力をするかどうか
-/// @return State::Result 最良解
+/// @brief 2 段階の多始点焼きなましを実行し、最良解を返す / TIME_LIMIT は実行時間 [ms]
+/// 第 1 段階は TIME_LIMIT * FIRST_PHASE_RATIO の時間で NUM_STARTS 個の初期状態を順に焼きなまし、第 2 段階はその最良の状態から続ける
 template<class State>
 typename State::Result sa_multi_run(
     const double TIME_LIMIT,
@@ -307,15 +291,8 @@ typename State::Result sa_multi_run(
     return best_result;
 }
 
-/// @brief
-/// @tparam State
-/// @param TIME_LIMIT 実行時間[ms]
-/// @param NUM_REPLICAS レプリカの個数
-/// @param SWAP_ITER_INTERVAL 熱浴交換のイテレーション回数
-/// @param verbose ログ出力するかどうか
-/// @param record 可視化用に記録するかどうか
-/// @param seed 乱数のベースシード値
-/// @return State::Result 最良解
+/// @brief NUM_REPLICAS 個の状態でレプリカ交換法を実行し、最良解を返す / 状態は OpenMP で並列に動くので、状態の間で可変のデータを共有しない
+/// SWAP_ITER_INTERVAL 回の反復ごとに熱浴を交換する。record が true なら replica_scores.csv と best_state_*.txt に記録する
 template<class State>
 typename State::Result replica_run(
     const double TIME_LIMIT,
@@ -411,7 +388,7 @@ typename State::Result replica_run(
     using TrueScoreType = decay_t<decltype(declval<State&>().get_true_score())>;
     vector<TrueScoreType> record_scores(NUM_REPLICAS);
     double last_print_time = 0.0;
-    const double PRINT_INTERVAL = 10000.0; // 10sec
+    const double PRINT_INTERVAL = 10000.0; // 10 秒
 
     while (now_time < TIME_LIMIT) {
         double block_start_time = now_time;

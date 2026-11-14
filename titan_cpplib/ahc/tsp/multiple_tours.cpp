@@ -18,6 +18,7 @@ class MultipleTspState;
 template<class EdgeCost>
 MultipleTspState<typename TspProblem<EdgeCost>::Cost> make_multiple_tsp_state(const TspProblem<EdgeCost>& problem, vector<int> depots, vector<vector<int>> routes);
 
+/// @brief MultipleTspState::make_two_opt が作る、1 つの巡回路内の未適用の 2-opt 操作
 template<class Cost>
 class MultipleTspTwoOptMove {
 public:
@@ -25,7 +26,9 @@ public:
     MultipleTspTwoOptMove(MultipleTspTwoOptMove&&) = default;
     MultipleTspTwoOptMove& operator=(const MultipleTspTwoOptMove&) = default;
     MultipleTspTwoOptMove& operator=(MultipleTspTwoOptMove&&) = default;
+    /// @brief 対象の巡回路の番号を返す
     int route() const { return route_; }
+    /// @brief 適用したときの巡回路の費用の差分を返す
     Cost delta() const { return delta_; }
 private:
     const void* problem_id_;
@@ -41,6 +44,7 @@ private:
     friend class MultipleTspState<Cost>;
 };
 
+/// @brief MultipleTspState::make_block_shift が作る、区間を別の巡回路へ移す未適用の操作
 template<class Cost>
 class MultipleTspBlockShiftMove {
 public:
@@ -48,9 +52,13 @@ public:
     MultipleTspBlockShiftMove(MultipleTspBlockShiftMove&&) = default;
     MultipleTspBlockShiftMove& operator=(const MultipleTspBlockShiftMove&) = default;
     MultipleTspBlockShiftMove& operator=(MultipleTspBlockShiftMove&&) = default;
+    /// @brief 移動元の巡回路の番号を返す
     int source_route() const { return source_route_; }
+    /// @brief 移動先の巡回路の番号を返す
     int target_route() const { return target_route_; }
+    /// @brief 適用したときの移動元の巡回路の費用の差分を返す
     Cost source_delta() const { return source_delta_; }
+    /// @brief 適用したときの移動先の巡回路の費用の差分を返す
     Cost target_delta() const { return target_delta_; }
 private:
     const void* problem_id_;
@@ -69,6 +77,7 @@ private:
     friend class MultipleTspState<Cost>;
 };
 
+/// @brief MultipleTspState::make_block_swap が作る、2 つの巡回路の区間を入れ替える未適用の操作
 template<class Cost>
 class MultipleTspBlockSwapMove {
 public:
@@ -76,9 +85,13 @@ public:
     MultipleTspBlockSwapMove(MultipleTspBlockSwapMove&&) = default;
     MultipleTspBlockSwapMove& operator=(const MultipleTspBlockSwapMove&) = default;
     MultipleTspBlockSwapMove& operator=(MultipleTspBlockSwapMove&&) = default;
+    /// @brief 1 つ目の巡回路の番号を返す
     int route1() const { return route1_; }
+    /// @brief 2 つ目の巡回路の番号を返す
     int route2() const { return route2_; }
+    /// @brief 適用したときの 1 つ目の巡回路の費用の差分を返す
     Cost delta1() const { return delta1_; }
+    /// @brief 適用したときの 2 つ目の巡回路の費用の差分を返す
     Cost delta2() const { return delta2_; }
 private:
     const void* problem_id_;
@@ -98,6 +111,8 @@ private:
     friend class MultipleTspState<Cost>;
 };
 
+/// @brief 固定デポを持つ複数の巡回路の状態 / 各巡回路の 0 番目はそのデポで、各点はいずれか 1 つの巡回路にちょうど 1 回現れる
+/// 操作は作成元の状態にだけ適用できる。状態を変更または代入すると、それ以前に作った操作は無効になる
 template<class Cost>
 class MultipleTspState {
 public:
@@ -137,26 +152,32 @@ public:
         return *this;
     }
 
+    /// @brief 問題の点数を返す
     int node_count() const { return (int)route_of_.size(); }
+    /// @brief 巡回路の数を返す
     int route_count() const { return (int)routes_.size(); }
+    /// @brief 巡回路 route_id の巡回順を返す
     const vector<int>& route(int route_id) const {
 #ifdef TITAN_DEBUG
         if (route_id < 0 || route_id >= route_count()) throw out_of_range("MultipleTspState::route: route is out of range");
 #endif
         return routes_[route_id];
     }
+    /// @brief node を含む巡回路の番号を返す
     int route_of(int node) const {
 #ifdef TITAN_DEBUG
         if (node < 0 || node >= node_count()) throw out_of_range("MultipleTspState::route_of: node is out of range");
 #endif
         return route_of_[node];
     }
+    /// @brief node の巡回路内の位置を返す
     int position(int node) const {
 #ifdef TITAN_DEBUG
         if (node < 0 || node >= node_count()) throw out_of_range("MultipleTspState::position: node is out of range");
 #endif
         return position_[node];
     }
+    /// @brief 巡回路 route_id の費用を返す
     Cost route_cost(int route_id) const {
 #ifdef TITAN_DEBUG
         if (route_id < 0 || route_id >= route_count()) throw out_of_range("MultipleTspState::route_cost: route is out of range");
@@ -164,12 +185,16 @@ public:
         return route_costs_[route_id];
     }
 
+    /// @brief 巡回路 route の区間 [left, right] を反転する 2-opt を作る / 作れない引数なら nullopt / O(1)
     template<class EdgeCost>
     optional<MultipleTspTwoOptMove<Cost>> make_two_opt(const TspProblem<EdgeCost>& problem, int route, int left, int right) const;
+    /// @brief source_route の区間 [first, first + length) を target_route の位置 after の直後へ移す操作を作る / O(length)
     template<class EdgeCost>
     optional<MultipleTspBlockShiftMove<Cost>> make_block_shift(const TspProblem<EdgeCost>& problem, int source_route, int first, int length, int target_route, int after) const;
+    /// @brief route1 の区間 [first1, first1 + length1) と route2 の区間 [first2, first2 + length2) を入れ替える操作を作る / O(length1 + length2)
     template<class EdgeCost>
     optional<MultipleTspBlockSwapMove<Cost>> make_block_swap(const TspProblem<EdgeCost>& problem, int route1, int first1, int length1, int route2, int first2, int length2) const;
+    /// @brief 操作 move を適用する / O(対象の巡回路の長さの和)
     template<class EdgeCost, class Move>
     void apply(const TspProblem<EdgeCost>& problem, const Move& move);
 private:
@@ -224,6 +249,7 @@ private:
     friend class MultipleTspBlockSwapMove<Cost>;
 };
 
+/// @brief デポの列 depots と巡回路の列 routes から状態を作る / routes[i][0] は depots[i]
 template<class EdgeCost>
 MultipleTspState<typename TspProblem<EdgeCost>::Cost> make_multiple_tsp_state(const TspProblem<EdgeCost>& problem, vector<int> depots, vector<vector<int>> routes) {
     using Cost = typename TspProblem<EdgeCost>::Cost;

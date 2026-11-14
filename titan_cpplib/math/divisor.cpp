@@ -7,7 +7,7 @@ using namespace std;
 
 namespace titan23 {
 
-// 約数全列挙 / O(√N)
+/// @brief N の約数を昇順で返す / O(√N)
 vector<long long> get_divisors(long long n) {
     vector<long long> l, r;
     for (long long i = 1; i*i <= n; ++i) {
@@ -21,7 +21,7 @@ vector<long long> get_divisors(long long n) {
     return l;
 }
 
-// Nを1回素因数分解する / O(√N)
+/// @brief N を素因数分解し、素因数と指数の組を昇順で返す / O(√N)
 vector<pair<long long, int>> factorization(long long n) {
     if (n == 1) return {};
     vector<pair<long long, int>> ret;
@@ -42,7 +42,7 @@ vector<pair<long long, int>> factorization(long long n) {
     return ret;
 }
 
-// Nの約数の個数を求める / O(√N)
+/// @brief N の約数の個数を返す / O(√N)
 int divisors_num(long long n) {
     int cnt = 0;
     for (long long i = 1; i * i <= n; ++i) {
@@ -53,7 +53,7 @@ int divisors_num(long long n) {
     return cnt;
 }
 
-// N以下のそれぞれの数の約数の個数を求める / O(NlogN)
+/// @brief N 以下の各数の約数の個数を返す / O(NlogN)
 vector<int> divisors_num_all(int n) {
     vector<int> cnt(n+1, 0);
     for (int i = 1; i <= n; ++i) {
@@ -64,7 +64,7 @@ vector<int> divisors_num_all(int n) {
     return cnt;
 }
 
-// N以下のそれぞれの数の約数の総和を求める / O(NlogN)
+/// @brief N 以下の各数の約数の総和を返す / O(NlogN)
 vector<long long> divisors_sum_all(int n) {
     vector<long long> S(n+1, 0);
     for (int i = 1; i <= n; ++i) {
@@ -75,7 +75,7 @@ vector<long long> divisors_sum_all(int n) {
     return S;
 }
 
-// N以下のそれぞれの数の素因数の種類数を求める / O(NloglogN)
+/// @brief N 以下の各数の素因数の種類数を返す / O(NloglogN)
 vector<int> primefactor_num(int n) {
     vector<int> cnt(n+1, 0);
     for (int i = 2; i <= n; ++i) {
@@ -87,8 +87,8 @@ vector<int> primefactor_num(int n) {
     return cnt;
 }
 
-// 事前にエラトステネスとかでsart(N)以下の素数を全列挙しておく
-// O(sqrt(N)log(log(sqrt(N)) + log(N))
+/// @brief 素数表 primes を使って N を素因数分解する / O(√N / log√N + log N)
+/// primes には sqrt(N) 以下の素数をエラトステネスの篩などで昇順にすべて列挙しておく
 vector<pair<int, int>> factorization_eratos(int n, const vector<int> &primes) {
     vector<pair<int, int>> res;
     for (int p : primes) {

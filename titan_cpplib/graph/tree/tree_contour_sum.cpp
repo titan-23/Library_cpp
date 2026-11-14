@@ -9,8 +9,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// Point update and distance range sum on a static tree
-/// Updates and prod are O(log^2 N)
+/// @brief 静的な木で、一点更新と距離が区間に入る頂点の和の取得を行う / 更新と prod は O(log^2 N)
 template<typename T>
 class TreeContourSum {
 private:
@@ -130,23 +129,28 @@ private:
 public:
     TreeContourSum() = default;
 
+    /// @brief 木 G から構築する / 各頂点の値は T{}
     explicit TreeContourSum(const vector<vector<int>> &G) : idx(G) {
         init(vector<T>(G.size()));
     }
 
+    /// @brief 木 G と各頂点の初期値 a から構築する
     TreeContourSum(const vector<vector<int>> &G, const vector<T> &a) : idx(G) {
         init(a);
     }
 
+    /// @brief 頂点数を返す / O(1)
     int len() const {
         return (int)val.size();
     }
 
+    /// @brief 頂点 v の値を返す / O(1)
     T get(int v) const {
         assert(0 <= v && v < len());
         return val[v];
     }
 
+    /// @brief 頂点 v の値に x を加算する / O(log^2 N)
     void add(int v, const T &x) {
         assert(0 <= v && v < len());
         const T y = x;
@@ -154,11 +158,13 @@ public:
         add_impl(v, y, idx.path_dist.data());
     }
 
+    /// @brief 頂点 v の値を x に変更する / O(log^2 N)
     void set(int v, const T &x) {
         assert(0 <= v && v < len());
         add(v, x - val[v]);
     }
 
+    /// @brief v からの距離が [l, r) の頂点の値の和を返す / O(log^2 N)
     T prod(int v, int l, int r) const {
         assert(0 <= v && v < len());
         if (l >= r) return T{};

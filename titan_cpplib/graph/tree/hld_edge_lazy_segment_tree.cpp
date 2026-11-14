@@ -8,7 +8,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 遅延セグ木搭載HLD（辺属性）/ 非可換に対応
+/// @brief 遅延セグメント木を載せた HLD で、辺に値を持つ / op は非可換でもよい
 template<class T,
         T (*op)(T, T),
         T (*e)(),
@@ -24,12 +24,13 @@ private:
 public:
     HLDEdgeLazySegmentTree() {}
 
+    /// @brief hld の上に、全ての辺の値を e() として構築する / n は頂点数 / O(N)
     HLDEdgeLazySegmentTree(titan23::HLD &hld, int n) : hld(hld) {
         this->seg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(n);
         this->rseg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(n);
     }
 
-    /// @brief a[k] を辺 (k, par[k]) の値とみなして構築する。a[root] は使われない / O(N)
+    /// @brief a[k] を辺 (k, par[k]) の値として構築する / a[root] は使わない / O(N)
     HLDEdgeLazySegmentTree(titan23::HLD &hld, vector<T> a) : hld(hld) {
         vector<T> b = hld.build_list(a);
         this->seg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(b);
@@ -37,8 +38,7 @@ public:
         this->rseg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(b);
     }
 
-    /// @brief 重み付き隣接リスト G と根から構築する
-    /// 各辺の重みを深い側の頂点に持たせる / O(N)
+    /// @brief 重み付き隣接リスト G と根から構築する / 各辺の重みは深い側の頂点に持たせる / O(N)
     HLDEdgeLazySegmentTree(const vector<vector<pair<int, T>>> &G, const int root) {
         int n = G.size();
         vector<vector<int>> g(n);
@@ -60,7 +60,7 @@ public:
         this->rseg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(b);
     }
 
-    /// @brief u から v へのパス上の辺の総積を返す / O(logN)
+    /// @brief u から v へのパス上の辺の総積を返す / O(log^2 N)
     T path_prod(int u, int v) {
         T lres = e(), rres = e();
         while (hld.head[u] != hld.head[v]) {
@@ -80,7 +80,7 @@ public:
         return op(lres, rres);
     }
 
-    /// @brief u から v へのパス上の辺に f を作用させる / O(logN)
+    /// @brief u から v へのパス上の辺に f を作用させる / O(log^2 N)
     void path_apply(int u, int v, F f) {
         while (hld.head[u] != hld.head[v]) {
             if (hld.dep[hld.head[u]] < hld.dep[hld.head[v]]) swap(u, v);
@@ -106,7 +106,7 @@ public:
         rseg.set(hld.n - hld.nodein[k] - 1, v);
     }
 
-    /// @brief 辺 (u, v) の値を x に更新する。u, v は親子であること / O(logN)
+    /// @brief 辺 (u, v) の値を x に更新する / u, v は親子であること / O(logN)
     void set_edge(int u, int v, T x) {
         set(hld.dep[u] > hld.dep[v] ? u : v, x);
     }

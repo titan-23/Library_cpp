@@ -8,6 +8,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 階乗とその逆元を前計算し、mint 上の順列と組合せの数を求める
 template<typename mint>
 class ModComb {
 private:
@@ -15,6 +16,7 @@ private:
 
 public:
     ModComb() {}
+    /// @brief n までの階乗、階乗の逆元、逆元を前計算する / mod は n より大きい素数とする / O(n)
     ModComb(int n) {
         const int mod = mint::mod();
         n = max(n, 1) + 1;
@@ -36,24 +38,30 @@ public:
         }
     }
 
+    /// @brief nPr を返す / r < 0 または n < r なら 0 / O(1)
     mint nPr(int n, int r) const {
         if (r < 0 || n < r) return mint::raw(0);
         return _fact[n] * _factinv[n-r];
     }
 
+    /// @brief nCr を返す / r < 0 または n < r なら 0 / O(1)
     mint nCr(int n, int r) const {
         if (r < 0 || n < r) return mint::raw(0);
         return _fact[n] * _factinv[r] * _factinv[n-r];
     }
 
+    /// @brief 重複組合せ nHr = (n+r-1)Cr を返す / O(1)
     mint nHr(int n, int r) const {
         return nCr(n+r-1, r);
     }
 
+    /// @brief n! を返す / O(1)
     mint fact(int n) const { return _fact[n]; }
 
+    /// @brief 1 / n! を返す / O(1)
     mint factinv(int n) const { return _factinv[n]; }
 
+    /// @brief 1 / n を返す / O(1)
     mint inv(int n) const { return _inv[n]; }
 };
 } // namespace titan23

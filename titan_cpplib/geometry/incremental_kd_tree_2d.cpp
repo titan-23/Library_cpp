@@ -19,6 +19,8 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 点の追加に対応する2次元 k-d 木 / 結果は距離の昇順、同距離なら点番号の昇順
+/// 座標、クエリ、半径、距離の二乗は Scalar の有限値に収まる必要がある / 追加と検索を別スレッドで同時に行ってはならない
 template <class Scalar_ = double>
 class IncrementalKdTree2D {
 public:
@@ -28,6 +30,7 @@ public:
 
     static_assert(is_floating_point_v<Scalar>, "IncrementalKdTree2D: Scalar must be a floating-point type");
 
+    /// @brief 空の木を構築する
     IncrementalKdTree2D() { path_.reserve(PATH_CAPACITY); }
 
     IncrementalKdTree2D(const IncrementalKdTree2D&) = default;
@@ -63,6 +66,7 @@ public:
         return *this;
     }
 
+    /// @brief 点列 points から構築する / 点番号は入力順 / 典型 O(n log n)、最悪 O(n²)
     explicit IncrementalKdTree2D(vector<Point> points) : points_(move(points)) {
         path_.reserve(PATH_CAPACITY);
         check_point_count(points_.size());
@@ -76,14 +80,20 @@ public:
         work_.clear();
     }
 
+    /// @brief 点数を返す / O(1)
     int point_count() const { return (int)points_.size(); }
+    /// @brief 全点の座標を返す / O(1)
+    /// 返した参照は reserve, add, add_all で無効になる場合がある
     const vector<Point>& points() const { return points_; }
 
+    /// @brief 点 id の座標を返す / O(1)
+    /// 返した参照は reserve, add, add_all で無効になる場合がある
     const Point& point(int id) const {
         check_point(id);
         return points_[id];
     }
 
+    /// @brief n 点分の領域を確保する
     void reserve(int n) {
         if (n < 0) throw invalid_argument("IncrementalKdTree2D::reserve: n must not be negative");
         points_.reserve(n);
@@ -91,6 +101,7 @@ public:
         work_.reserve(n);
     }
 
+    /// @brief 点 (x, y) を追加し、その点番号を返す / 点番号は追加順 / 典型的に償却 O(log² n)、最悪は 1 回の再構築で O(n log n)
     int add(Scalar x, Scalar y) {
         check_coordinates(x, y);
         int id = point_count();
@@ -144,8 +155,10 @@ public:
         return id;
     }
 
+    /// @brief 点 p を追加し、その点番号を返す
     int add(const Point& p) { return add(p[0], p[1]); }
 
+    /// @brief points をまとめて追加し、最初の点番号を返す / 木全体を 1 回だけ構築し直す / 典型 O(n log n)、最悪 O(n²)
     int add_all(span<const Point> points) {
         int first = point_count();
         if (points.empty()) return first;
@@ -165,6 +178,7 @@ public:
         return first;
     }
 
+    /// @brief 木全体を平衡に構築し直す / 点番号と検索結果は変わらない / 典型 O(n log n)、最悪 O(n²)
     void rebuild() {
         int n = point_count();
         if (n == 0) {
@@ -180,6 +194,7 @@ public:
         work_.clear();
     }
 
+    /// @brief (x, y) に最も近い点を返す / 点 exclude は除く / 該当なしなら nullopt / 典型 O(log n)、最悪 O(n)
     optional<Neighbor> nearest_neighbor(Scalar x, Scalar y, int exclude = -1) const {
         check_query(x, y, exclude);
         Neighbor best{-1, numeric_limits<Scalar>::infinity()};
@@ -190,25 +205,31 @@ public:
         return best;
     }
 
+    /// @brief 点 q に最も近い点を返す / 点 exclude は除く
     optional<Neighbor> nearest_neighbor(const Point& q, int exclude = -1) const {
         return nearest_neighbor(q[0], q[1], exclude);
     }
 
+    /// @brief 点 id を除き、点 id に最も近い点を返す
     optional<Neighbor> nearest_neighbor_of(int id) const {
         check_point(id);
         return nearest_neighbor(points_[id], id);
     }
 
+    /// @brief (x, y) に近い順に k 点を返す / 点 exclude は除く / 典型 O(log n + k log k)、最悪 O(n log k)
+    /// k は 0 以上 / 対象の点が k 個未満なら全点を返す
     vector<Neighbor> k_nearest_neighbors(Scalar x, Scalar y, int k, int exclude = -1) const {
         vector<Neighbor> out;
         k_nearest_neighbors(x, y, k, out, exclude);
         return out;
     }
 
+    /// @brief 点 q に近い順に k 点を返す / 点 exclude は除く
     vector<Neighbor> k_nearest_neighbors(const Point& q, int k, int exclude = -1) const {
         return k_nearest_neighbors(q[0], q[1], k, exclude);
     }
 
+    /// @brief (x, y) に近い順に k 点を out へ書き込む / out は空にしてから書き込み、容量は保つ
     void k_nearest_neighbors(Scalar x, Scalar y, int k, vector<Neighbor>& out, int exclude = -1) const {
         check_query(x, y, exclude);
         if (k < 0) throw invalid_argument("IncrementalKdTree2D::k_nearest_neighbors: k must not be negative");
@@ -229,20 +250,25 @@ public:
         sort_heap(out.begin(), out.end(), NeighborLess{});
     }
 
+    /// @brief 点 q に近い順に k 点を out へ書き込む
     void k_nearest_neighbors(const Point& q, int k, vector<Neighbor>& out, int exclude = -1) const {
         k_nearest_neighbors(q[0], q[1], k, out, exclude);
     }
 
+    /// @brief 点 id を除き、点 id に近い順に k 点を返す
     vector<Neighbor> k_nearest_neighbors_of(int id, int k) const {
         check_point(id);
         return k_nearest_neighbors(points_[id], k, id);
     }
 
+    /// @brief 点 id を除き、点 id に近い順に k 点を out へ書き込む
     void k_nearest_neighbors_of(int id, int k, vector<Neighbor>& out) const {
         check_point(id);
         k_nearest_neighbors(points_[id], k, out, id);
     }
 
+    /// @brief (x, y) から距離 radius 以内の点を返す / 境界を含む / sort_by_distance が false なら並べ替えない
+    /// radius は有限かつ 0 以上 / 返す点数を m として典型 O(log n + m log m)、最悪 O(n + m log m)
     vector<Neighbor> radius_neighbors(Scalar x, Scalar y, Scalar radius, int exclude = -1,
                                       bool sort_by_distance = true) const {
         vector<Neighbor> out;
@@ -250,11 +276,13 @@ public:
         return out;
     }
 
+    /// @brief 点 q から距離 radius 以内の点を返す / 点 exclude は除く
     vector<Neighbor> radius_neighbors(const Point& q, Scalar radius, int exclude = -1,
                                       bool sort_by_distance = true) const {
         return radius_neighbors(q[0], q[1], radius, exclude, sort_by_distance);
     }
 
+    /// @brief (x, y) から距離 radius 以内の点を out へ書き込む / out は空にしてから書き込み、容量は保つ
     void radius_neighbors(Scalar x, Scalar y, Scalar radius, vector<Neighbor>& out, int exclude = -1,
                           bool sort_by_distance = true) const {
         check_query(x, y, exclude);
@@ -275,16 +303,19 @@ public:
         if (sort_by_distance) sort(out.begin(), out.end(), NeighborLess{});
     }
 
+    /// @brief 点 q から距離 radius 以内の点を out へ書き込む
     void radius_neighbors(const Point& q, Scalar radius, vector<Neighbor>& out, int exclude = -1,
                           bool sort_by_distance = true) const {
         radius_neighbors(q[0], q[1], radius, out, exclude, sort_by_distance);
     }
 
+    /// @brief 点 id を除き、点 id から距離 radius 以内の点を返す
     vector<Neighbor> radius_neighbors_of(int id, Scalar radius, bool sort_by_distance = true) const {
         check_point(id);
         return radius_neighbors(points_[id], radius, id, sort_by_distance);
     }
 
+    /// @brief 点 id を除き、点 id から距離 radius 以内の点を out へ書き込む
     void radius_neighbors_of(int id, Scalar radius, vector<Neighbor>& out, bool sort_by_distance = true) const {
         check_point(id);
         radius_neighbors(points_[id], radius, out, id, sort_by_distance);
@@ -319,7 +350,7 @@ private:
     Point hi_{};
     int depth_limit_ = -1;
 
-    // DEPTH_SIZE[d] is ceil((4 / 3)^d); the next value no longer fits in int.
+    // DEPTH_SIZE[d] は ceil((4 / 3)^d)。次の値は int に収まらない
     inline static constexpr array<int, 75> DEPTH_SIZE = {
         1, 2, 2, 3, 4, 5, 6, 8, 10, 14, 18, 24, 32, 43, 57, 75, 100, 134, 178, 237, 316, 421, 561, 748, 997,
         1329, 1772, 2363, 3150, 4200, 5600, 7467, 9955, 13274, 17698, 23597, 31463, 41951, 55934, 74578,
@@ -548,7 +579,7 @@ private:
             out.push_back(cand);
             push_heap(out.begin(), out.end(), NeighborLess{});
         } else if (NeighborLess{}(cand, out.front())) {
-            // Replacing the heap root needs only one sift-down.
+            // 根の置き換えは、下方向への調整1回で済む
             int pos = 0;
             int size = (int)out.size();
             while (pos < size / 2) {
@@ -677,11 +708,14 @@ private:
     }
 };
 
+/// @brief 座標の配列から IncrementalKdTree2D を構築する / Scalar は入力の型を保つ
 template <class Scalar = double>
 auto make_incremental_kd_tree_2d(vector<array<Scalar, 2>> points) {
     return IncrementalKdTree2D<Scalar>(move(points));
 }
 
+/// @brief Scalar を明示し、get_coordinate(point, axis) で座標を取り出して IncrementalKdTree2D を構築する
+/// 木は変換後の座標だけを持つ / 点番号は入力順
 template <class Scalar, class Point, class GetCoordinate>
 auto make_incremental_kd_tree_2d_as(const vector<Point>& points, GetCoordinate get_coordinate) {
     using Coordinate = invoke_result_t<const GetCoordinate&, const Point&, int>;
@@ -701,6 +735,7 @@ auto make_incremental_kd_tree_2d_as(const vector<Point>& points, GetCoordinate g
     return IncrementalKdTree2D<Scalar>(move(coordinates));
 }
 
+/// @brief get_coordinate(point, axis) で座標を取り出して IncrementalKdTree2D を構築する / Scalar の既定は double
 template <class Scalar = double, class Point, class GetCoordinate>
 auto make_incremental_kd_tree_2d(const vector<Point>& points, GetCoordinate get_coordinate) {
     return make_incremental_kd_tree_2d_as<Scalar>(points, move(get_coordinate));

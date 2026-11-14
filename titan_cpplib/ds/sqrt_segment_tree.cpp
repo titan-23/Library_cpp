@@ -8,6 +8,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 平方分割で点更新と区間積を扱う / inv は op での逆元を返す
 template <class T, T (*op)(T, T), T (*e)(), T (*inv)(T)>
 class SqrtSegmentTree {
 private:
@@ -19,6 +20,7 @@ private:
 public:
     SqrtSegmentTree() : n(0), size(0), total(e()) {}
 
+    /// @brief 長さ n で構築する / 初期値 e() / O(n)
     SqrtSegmentTree(int n) : n(n), total(e()) {
         size = sqrt(n) + 1;
         int bucket_cnt = (n+size-1)/size;
@@ -31,6 +33,7 @@ public:
         }
     }
 
+    /// @brief 列 A から構築する / O(n)
     SqrtSegmentTree(const vector<T> &A) : n(A.size()), total(e()) {
         size = sqrt(n) + 1;
         int bucket_cnt = (n+size-1)/size;
@@ -47,7 +50,7 @@ public:
         }
     }
 
-    /// @brief 区間 `[l, r)` の総積を返す / O(√n)
+    /// @brief 区間 [l, r) の総積を返す / O(√n)
     T prod(int l, int r) const {
         assert(0 <= l && l <= r && r <= n);
         if (l == r) return e();
@@ -73,13 +76,13 @@ public:
         return total;
     }
 
-    /// @brief `a[i]` を返す / O(1)
+    /// @brief a[i] を返す / O(1)
     T get(int i) const {
         int k = i / size;
         return a[k][i-k*size];
     }
 
-    /// @brief `a[i]` を `v` に変更する / O(1)(`op` が可換群であることが前提)
+    /// @brief a[i] を v に変更する / op が可換群であることが前提 / O(1)
     void set(int i, const T &v) {
         int k = i / size;
         int j = i - k*size;

@@ -14,11 +14,13 @@ using namespace std;
 
 using Real = long double;
 const Real EPS = 1e-9;
+// 以下の比較関数は、差が EPS 未満の 2 値を等しいとみなす
 bool almostEqual(Real a, Real b) { return abs(a - b) < EPS; }
 bool lessThan(Real a, Real b) { return a < b && !almostEqual(a, b); }
 bool greaterThan(Real a, Real b) { return a > b && !almostEqual(a, b); }
 bool lessThanOrEqual(Real a, Real b) { return a < b || almostEqual(a, b); }
 bool greaterThanOrEqual(Real a, Real b) { return a > b || almostEqual(a, b); }
+/// @brief 2 次元の点またはベクトル
 struct Point {
   Real x, y;
   Point() = default;
@@ -31,9 +33,9 @@ struct Point {
   Real dot(const Point& p) const { return x * p.x + y * p.y; }
   /// @brief p との外積を返す
   Real cross(const Point& p) const { return x * p.y - y * p.x; }
-  /// @brief p1 と p2 を端点とするベクトルとの外積を返す
+  /// @brief 自身から p1 へのベクトルと、自身から p2 へのベクトルの外積を返す
   Real cross(const Point& p1, const Point& p2) const { return (p1.x - x) * (p2.y - y) - (p1.y - y) * (p2.x - x); }
-  /// @brief ２乗ノルムを返す
+  /// @brief 2 乗ノルムを返す
   Real norm() const { return x * x + y * y; }
   /// @brief ユークリッドノルムを返す
   Real abs() const { return sqrt(norm()); }
@@ -42,11 +44,12 @@ struct Point {
   bool operator==(const Point& p) const { return almostEqual(x, p.x) && almostEqual(y, p.y); }
   friend istream& operator>>(istream& is, Point& p) { return is >> p.x >> p.y; }
 };
+/// @brief 2 点 a, b を通る直線
 struct Line {
   Point a, b;
   Line() = default;
   Line(const Point& _a, const Point& _b) : a(_a), b(_b) {}
-  /// @brief 直線 Ax+By=C を定義する
+  /// @brief 直線 Ax + By = C を構築する / A と B の両方が 0 ではいけない
   Line(const Real& A, const Real& B, const Real& C) {
     if (almostEqual(A, 0)) {
       assert(!almostEqual(B, 0));
@@ -66,10 +69,12 @@ struct Line {
   bool operator==(const Line& l) const { return a == l.a && b == l.b; }
   friend istream& operator>>(istream& is, Line& l) { return is >> l.a >> l.b; }
 };
+/// @brief 2 点 a, b を端点とする線分
 struct Segment : Line {
   Segment() = default;
   using Line::Line;
 };
+/// @brief 円
 struct Circle {
   Point center;  ///< 中心
   Real r;  ///< 半径
@@ -79,13 +84,14 @@ struct Circle {
   bool operator==(const Circle& C) const { return center == C.center && r == C.r; }
   friend istream& operator>>(istream& is, Circle& C) { return is >> C.center >> C.r; }
 };
-/// @brief 3点の進行方向
+/// @brief 3 点の位置関係
 enum Orientation {
   COUNTER_CLOCKWISE,  ///< 反時計回り
   CLOCKWISE,  ///< 時計回り
   ONLINE_BACK, ONLINE_FRONT, ON_SEGMENT
 };
-/// @brief 3点 p0, p1, p2 の進行方向を返す
+/// @brief 3 点 p0, p1, p2 の位置関係を返す
+/// 一直線上では、p2 が p0 の後ろなら ONLINE_BACK、p1 の先なら ONLINE_FRONT、線分 p0p1 上なら ON_SEGMENT
 Orientation ccw(const Point& p0, const Point& p1, const Point& p2) {
   Point a = p1 - p0;
   Point b = p2 - p0;
@@ -96,6 +102,7 @@ Orientation ccw(const Point& p0, const Point& p1, const Point& p2) {
   if (lessThan(a.norm(), b.norm())) return ONLINE_FRONT;
   return ON_SEGMENT;
 }
+/// @brief Orientation を文字列に変換する
 string orientationToString(Orientation o) {
   switch (o) {
     case COUNTER_CLOCKWISE: return "COUNTER_CLOCKWISE";
@@ -106,47 +113,47 @@ string orientationToString(Orientation o) {
     default: return "UNKNOWN";
   }
 }
-/// @brief ベクトル p の直線 p1, p2 への正射影ベクトルを返す
+/// @brief 点 p を直線 p1p2 へ正射影した点を返す
 Point projection(const Point& p1, const Point& p2, const Point& p) {
   Point base = p2 - p1;
   Real r = (p - p1).dot(base) / base.norm();
   return p1 + base * r;
 }
-/// @brief ベクトル p の直線 l への正射影ベクトルを返す
+/// @brief 点 p を直線 l へ正射影した点を返す
 Point projection(const Line& l, const Point& p) {
   Point base = l.b - l.a;
   Real r = (p - l.a).dot(base) / base.norm();
   return l.a + base * r;
 }
-/// @brief ベクトル p の直線 p1, p2 に対する鏡像ベクトルを返す
+/// @brief 直線 p1p2 に関する点 p の鏡像を返す
 Point reflection(const Point& p1, const Point& p2, const Point& p) {
   Point proj = projection(p1, p2, p);
   return proj * 2 - p;
 }
-/// @brief ベクトル p の直線 l に対する鏡像ベクトルを返す
+/// @brief 直線 l に関する点 p の鏡像を返す
 Point reflection(const Line& l, const Point& p) {
   Point proj = projection(l, p);
   return proj * 2 - p;
 }
-/// @brief 直線の平行判定
+/// @brief 2 直線が平行か判定する
 bool isParallel(const Line& l1, const Line& l2) { return almostEqual((l1.b - l1.a).cross(l2.b - l2.a), 0); }
-/// @brief 直線の直交判定
+/// @brief 2 直線が直交するか判定する
 bool isOrthogonal(const Line& l1, const Line& l2) { return almostEqual((l1.b - l1.a).dot(l2.b - l2.a), 0); }
-/// @brief 線分の平行判定
+/// @brief 2 線分が平行か判定する
 bool isParallel(const Segment& l1, const Segment& l2) { return almostEqual((l1.b - l1.a).cross(l2.b - l2.a), 0); }
-/// @brief 線分の直交判定
+/// @brief 2 線分が直交するか判定する
 bool isOrthogonal(const Segment& l1, const Segment& l2) { return almostEqual((l1.b - l1.a).dot(l2.b - l2.a), 0); }
-/// @brief 直線と線分の平行判定
+/// @brief 直線と線分が平行か判定する
 bool isParallel(const Line& l1, const Segment& l2) { return almostEqual((l1.b - l1.a).cross(l2.b - l2.a), 0); }
-/// @brief 直線と線分の直交判定
+/// @brief 直線と線分が直交するか判定する
 bool isOrthogonal(const Line& l1, const Segment& l2) { return almostEqual((l1.b - l1.a).dot(l2.b - l2.a), 0); }
-/// @brief 線分と直線の平行判定
+/// @brief 線分と直線が平行か判定する
 bool isParallel(const Segment& l1, const Line& l2) { return almostEqual((l1.b - l1.a).cross(l2.b - l2.a), 0); }
-/// @brief 線分と直線の直交判定
+/// @brief 線分と直線が直交するか判定する
 bool isOrthogonal(const Segment& l1, const Line& l2) { return almostEqual((l1.b - l1.a).dot(l2.b - l2.a), 0); }
-/// @brief 点が直線上にあるか判定
+/// @brief 点 p が直線 l 上にあるか判定する
 bool isPointOnLine(const Point& p, const Line& l) { return almostEqual((l.b - l.a).cross(p - l.a), 0.0); }
-/// @brief 点が線分上にあるか判定
+/// @brief 点 p が線分 s 上にあるか判定する
 bool isPointOnSegment(const Point& p, const Segment& s) {
   return lessThanOrEqual(min(s.a.x, s.b.x), p.x) &&
         lessThanOrEqual(p.x, max(s.a.x, s.b.x)) &&
@@ -154,7 +161,7 @@ bool isPointOnSegment(const Point& p, const Segment& s) {
         lessThanOrEqual(p.y, max(s.a.y, s.b.y)) &&
         almostEqual((s.b - s.a).cross(p - s.a), 0.0);
 }
-/// @brief 直線の交差判定
+/// @brief 2 線分が交差するか判定する / 端点での接触も交差とみなす
 bool isIntersecting(const Segment& s1, const Segment& s2) {
   Point p0p1 = s1.b - s1.a, p0p2 = s2.a - s1.a, p0p3 = s2.b - s1.a, p2p3 = s2.b - s2.a, p2p0 = s1.a - s2.a, p2p1 = s1.b - s2.a;
   Real d1 = p0p1.cross(p0p2), d2 = p0p1.cross(p0p3), d3 = p2p3.cross(p2p0), d4 = p2p3.cross(p2p1);
@@ -165,7 +172,7 @@ bool isIntersecting(const Segment& s1, const Segment& s2) {
   if (almostEqual(d4, 0.0) && isPointOnSegment(s1.b, s2)) return true;
   return false;
 }
-/// @brief 線分の交点を返す
+/// @brief 2 線分の交点を返す / 2 線分は平行でなく、交差している必要がある
 Point getIntersection(const Segment& s1, const Segment& s2) {
   assert(isIntersecting(s1, s2));
   auto cross = [](Point p, Point q) { return p.x * q.y - p.y * q.x; };
@@ -175,13 +182,13 @@ Point getIntersection(const Segment& s1, const Segment& s2) {
   Real t = d1 / (d1 + d2);
   return s1.a + (s1.b - s1.a) * t;
 }
-/// @brief 点と線分の距離を返す
+/// @brief 点 p と線分 s の距離を返す
 Real distancePointToSegment(const Point& p, const Segment& s) {
   Point proj = projection(s.a, s.b, p);
   if (isPointOnSegment(proj, s)) return (p - proj).abs();
   else return min((p - s.a).abs(), (p - s.b).abs());
 }
-/// @brief 線分と線分の距離を返す
+/// @brief 2 線分の距離を返す
 Real distanceSegmentToSegment(const Segment& s1, const Segment& s2) {
   if (isIntersecting(s1, s2)) return 0.0;
   return min({distancePointToSegment(s1.a, s2),
@@ -200,7 +207,7 @@ Real getPolygonArea(const vector<Point>& points) {
   }
   return abs(area) / 2.0;
 }
-/// @brief 多角形が凸か判定
+/// @brief 多角形が凸か判定する
 bool isConvex(const vector<Point>& points) {
   int n = points.size();
   bool has_positive = false, has_negative = false;
@@ -215,7 +222,8 @@ bool isConvex(const vector<Point>& points) {
   }
   return !(has_positive && has_negative);
 }
-// 凸多角形に対する点の包含関係 / 2: pを含む, 1: pが辺上, 0: それ以外
+/// @brief 凸多角形 hull と点 p の包含関係を返す / 2: p を内部に含む, 1: p が辺上, 0: それ以外 / O(log n)
+/// hull の頂点は反時計回りに並べておく必要がある
 int convexPolygonContainsPoint(const vector<Point>& hull, const Point& p) {
   int n = hull.size();
   if (n == 0) return 0;
@@ -242,7 +250,7 @@ int convexPolygonContainsPoint(const vector<Point>& hull, const Point& p) {
   if (greaterThan(v, 0)) return (almostEqual(b1, 0) || almostEqual(b2, 0) ? 1 : 2);
   return 0;
 }
-/// @brief 点が凸多角形の辺上に存在するか判定
+/// @brief 点 p が多角形の辺上にあるか判定する
 bool isPointOnPolygon(const vector<Point>& polygon, const Point& p) {
   int n = polygon.size();
   rep(i, n) {
@@ -253,7 +261,8 @@ bool isPointOnPolygon(const vector<Point>& polygon, const Point& p) {
   }
   return false;
 }
-/// @brief 点が多角形の内部に存在するか判定（辺上は含まない）
+/// @brief 点 p が多角形の内部にあるか判定する
+/// 辺上の点では辺の向きによって結果が変わるので、先に isPointOnPolygon で調べる
 bool isPointInsidePolygon(const vector<Point>& polygon, const Point& p) {
   int n = polygon.size();
   bool inPolygon = false;
@@ -265,7 +274,7 @@ bool isPointInsidePolygon(const vector<Point>& polygon, const Point& p) {
   }
   return inPolygon;
 }
-/// @brief 凸包を求める
+/// @brief 凸包を反時計回りで返す / include_collinear が true なら辺上の点も残す / points は並べ替えられる
 vector<Point> convexHull(vector<Point>& points, bool include_collinear = false) {
   int n = points.size();
   if (n <= 1) return points;
@@ -293,7 +302,7 @@ vector<Point> convexHull(vector<Point>& points, bool include_collinear = false) 
   lower.insert(lower.end(), upper.begin(), upper.end());
   return lower;
 }
-/// @brief 凸包の直径を求める
+/// @brief 凸包の直径を返す
 Real convexHullDiameter(const vector<Point>& hull) {
   int n = hull.size();
   if (n == 1) return 0;
@@ -313,7 +322,7 @@ Real convexHullDiameter(const vector<Point>& hull) {
   }
   return max_dist;
 }
-/// @brief 凸包を直線で切断して左側を返す
+/// @brief 凸包 g を直線 l で切断し、l の左側を返す
 vector<Point> cutPolygon(const vector<Point>& g, const Line& l) {
   auto isLeft = [](const Point& p1, const Point& p2, const Point& p) -> bool { return (p2 - p1).cross(p - p1) > 0; };
   vector<Point> newPolygon;
@@ -331,8 +340,8 @@ vector<Point> cutPolygon(const vector<Point>& g, const Line& l) {
   }
   return newPolygon;
 }
-/// @brief 最近点対の距離を求める
-/// @note points は x 座標でソートされている必要がある
+/// @brief points[l, r) の最近点対の距離を返す
+/// points は x 座標の昇順に並べておく必要がある / 処理後の points[l, r) は y 座標の昇順になる
 Real closestPair(vector<Point>& points, int l, int r) {
   if (r - l <= 1) return numeric_limits<Real>::max();
   int mid = (l + r) >> 1;
@@ -355,11 +364,12 @@ Real closestPair(vector<Point>& points, int l, int r) {
   }
   return d;
 }
-/// @brief 線分の交差数を数える
+/// @brief 水平な線分と垂直な線分の交差数を数える / 各線分は軸に平行である必要がある
+/// 同じ y 座標の水平な線分どうしが重なると正しく数えられない
 int countIntersections(vector<Segment> segments) {
   struct Event {
     Real x;
-    int type;  // 0:horizontal start,1:vertical,2:horizontal end
+    int type;  // 0: 水平な線分の始点, 1: 垂直な線分, 2: 水平な線分の終点
     Real y1, y2;
     Event(Real x, int type, Real y1, Real y2) : x(x), type(type), y1(y1), y2(y2) {}
     bool operator<(const Event& other) const {
@@ -373,14 +383,14 @@ int countIntersections(vector<Segment> segments) {
   });
   for (const auto& seg : segments) {
     if (seg.a.y == seg.b.y) {
-      // Horizontal segment
+      // 水平な線分
       Real y = seg.a.y;
       Real x1 = min(seg.a.x, seg.b.x);
       Real x2 = max(seg.a.x, seg.b.x);
       events.emplace_back(x1, 0, y, y);
       events.emplace_back(x2, 2, y, y);
     } else {
-      // Vertical segment
+      // 垂直な線分
       Real x = seg.a.x;
       Real y1 = min(seg.a.y, seg.b.y);
       Real y2 = max(seg.a.y, seg.b.y);
@@ -403,7 +413,7 @@ int countIntersections(vector<Segment> segments) {
   }
   return intersectionCount;
 }
-/// @brief 2つの円の交点の個数を返す
+/// @brief 2 円の共通接線の本数を返す / 4: 離れている, 3: 外接, 2: 2 点で交わる, 1: 内接, 0: 一方が他方を含む
 int countCirclesIntersection(const Circle& c1, const Circle& c2) {
   Real d =
     sqrt((c1.center.x - c2.center.x) * (c1.center.x - c2.center.x) +
@@ -415,7 +425,7 @@ int countCirclesIntersection(const Circle& c1, const Circle& c2) {
   else if (almostEqual(d, fabs(r1 - r2))) return 1;
   else return 0;
 }
-/// @brief 内接円を求める
+/// @brief 三角形 ABC の内接円を返す
 Circle getInCircle(const Point& A, const Point& B, const Point& C) {
   Real a = (B - C).abs();
   Real b = (A - C).abs();
@@ -427,7 +437,7 @@ Circle getInCircle(const Point& A, const Point& B, const Point& C) {
   Real cy = (a * A.y + b * B.y + c * C.y) / (a + b + c);
   return Circle{Point(cx, cy), r};
 }
-/// @brief 外接円を求める
+/// @brief 三角形 ABC の外接円を返す
 Circle getCircumCircle(const Point& A, const Point& B, const Point& C) {
   Real D = 2 * (A.x * (B.y - C.y) + B.x * (C.y - A.y) + C.x * (A.y - B.y));
   Real Ux = ((A.x * A.x + A.y * A.y) * (B.y - C.y) + (B.x * B.x + B.y * B.y) * (C.y - A.y) + (C.x * C.x + C.y * C.y) * (A.y - B.y)) / D;
@@ -436,7 +446,8 @@ Circle getCircumCircle(const Point& A, const Point& B, const Point& C) {
   Real radius = (center - A).abs();
   return Circle{center, radius};
 }
-/// @brief 円と直線の交点を求める
+/// @brief 円 c と直線 p1p2 の交点を返す / 接する場合は同じ点を 2 つ返す / (x, y) の昇順
+/// 円と直線は共有点を持つ必要がある
 vector<Point> getCircleLineIntersection(const Circle& c, Point p1, Point p2) {
   Real cx = c.center.x, cy = c.center.y, r = c.r;
   Real dx = p2.x - p1.x;
@@ -470,12 +481,12 @@ vector<Point> getCircleLineIntersection(const Circle& c, Point p1, Point p2) {
   }
   return res;
 }
-/// @brief 2つの円の交点を求める
+/// @brief 2 円の交点を返す / 交わらなければ空 / (x, y) の昇順
 vector<Point> getCirclesIntersect(const Circle& c1, const Circle& c2) {
   Real x1 = c1.center.x, y1 = c1.center.y, r1 = c1.r;
   Real x2 = c2.center.x, y2 = c2.center.y, r2 = c2.r;
   Real d = sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
-  if (d > r1 + r2 || d < abs(r1 - r2)) return {};  // No intersection
+  if (d > r1 + r2 || d < abs(r1 - r2)) return {};  // 交点なし
   Real a = (r1 * r1 - r2 * r2 + d * d) / (2 * d);
   Real h = sqrt(r1 * r1 - a * a);
   Real x0 = x1 + a * (x2 - x1) / d;
@@ -494,7 +505,7 @@ vector<Point> getCirclesIntersect(const Circle& c1, const Circle& c2) {
   }
   return res;
 }
-/// @brief 点から引ける円の接線の接点を求める
+/// @brief 点 p から円 c へ引いた接線の接点を返す / p が円の内部なら空、円周上なら p のみ / (x, y) の昇順
 vector<Point> getTangentLinesFromPoint(const Circle& c, const Point& p) {
   Real cx = c.center.x, cy = c.center.y, r = c.r;
   Real px = p.x, py = p.y;
@@ -502,7 +513,7 @@ vector<Point> getTangentLinesFromPoint(const Circle& c, const Point& p) {
   Real dy = py - cy;
   Real d = (p - c.center).abs();
   if (lessThan(d, r))
-    return {};  // No tangents if the point is inside the circle
+    return {};  // 点が円の内部なら接線はない
   else if (almostEqual(d, r))
     return {p};
   Real a = r * r / d;
@@ -519,7 +530,8 @@ vector<Point> getTangentLinesFromPoint(const Circle& c, const Point& p) {
   }
   return res;
 }
-/// @brief 2つの円の共通接線を求める
+/// @brief 2 円の共通接線を求める / 各線分の a は c1 上の接点 / a の (x, y) の昇順
+/// b は c2 上の接点にならないので使わない
 vector<Segment> getCommonTangentsLine(const Circle& c1, const Circle& c2) {
   Real x1 = c1.center.x, y1 = c1.center.y, r1 = c1.r;
   Real x2 = c2.center.x, y2 = c2.center.y, r2 = c2.r;
@@ -527,9 +539,9 @@ vector<Segment> getCommonTangentsLine(const Circle& c1, const Circle& c2) {
   Real dy = y2 - y1;
   Real d = sqrt(dx * dx + dy * dy);
   vector<Segment> tangents;
-  // Coincident circles(infinite tangents)
+  // 2 円が一致すると共通接線は無数にある
   if (almostEqual(d, 0) && almostEqual(r1, r2)) return tangents;
-  // External tangents
+  // 共通内接線。d >= r1 + r2 のとき存在する
   if (greaterThanOrEqual(d, r1 + r2)) {
     Real a = atan2(dy, dx);
     for (int sign : {-1, 1}) {
@@ -542,7 +554,7 @@ vector<Segment> getCommonTangentsLine(const Circle& c1, const Circle& c2) {
       if (almostEqual(d, r1 + r2)) break;
     }
   }
-  // Internal tangents
+  // 共通外接線。d >= |r1 - r2| のとき存在する
   if (greaterThanOrEqual(d, fabs(r1 - r2))) {
     Real a = atan2(dy, dx);
     for (int sign : {-1, 1}) {

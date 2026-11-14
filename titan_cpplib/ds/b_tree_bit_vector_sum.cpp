@@ -8,11 +8,12 @@
 #include <utility>
 #include <vector>
 #include "titan_cpplib/others/bit.cpp"
+#include "titan_cpplib/others/simd_int.cpp"
 using namespace std;
 
-// BTreeBitVectorSum
 namespace titan23 {
 
+/// @brief ビットと重みの組の列を B 木で持つ / 複数の列が節点の領域を共有する
 template<typename W>
 class BTreeBitVectorSum {
 private:
@@ -41,7 +42,8 @@ private:
         array<W, _BRANCH> child_sum1;
         uint8_t count;
 
-        Internal() : count(0) {}
+        // SIMD の探索は未使用の要素も読むので、探索に使う累積値を初期化する
+        Internal() : child_size{}, child_ones{}, count(0) {}
     };
 
     struct Stats {
@@ -65,6 +67,7 @@ private:
     };
 
 public:
+    /// @brief 1 本の列を表す / 根の番号と高さを持つ
     struct Sequence {
         int root;
         uint8_t height;
@@ -72,6 +75,7 @@ public:
         Sequence() : root(0), height(0) {}
     };
 
+    /// @brief range_data の結果 / l0 = rank0(l)、r0 = rank0(r)、sum0 と sum1 は [l, r) のビット 0 と 1 の重みの和
     struct RangeData {
         int l0;
         int r0;
@@ -79,6 +83,7 @@ public:
         W sum1;
     };
 
+    /// @brief 位置 k の要素の情報 / bit と weight は要素の値、rank1 は [0, k) の 1 の個数
     struct AccessData {
         bool bit;
         int rank1;
@@ -138,6 +143,25 @@ private:
     W _sum_before(const Internal &node, const int pos) const { return pos == 0 ? W(0) : node.child_sum[pos - 1]; }
 
     W _sum1_before(const Internal &node, const int pos) const { return pos == 0 ? W(0) : node.child_sum1[pos - 1]; }
+
+    int _count_prefix(const Internal &node, const int pos, const bool bit) const {
+        return bit ? node.child_ones[pos] : node.child_size[pos] - node.child_ones[pos];
+    }
+
+    // child_size[pos] > k となる最初の pos を返す / 未使用の要素は結果に影響しない
+    int _find_size(const Internal &node, const int k) const {
+        const int pos = simd_find_first_greater_unchecked<_BRANCH>(node.child_size.data(), k);
+        assert(pos < node.count);
+        return pos;
+    }
+
+    // bit の個数の累積値が k を超える最初の pos を返す
+    int _find_count(const Internal &node, const int k, const bool bit) const {
+        const int pos = bit ? simd_find_first_greater_unchecked<_BRANCH>(node.child_ones.data(), k)
+                            : simd_find_first_greater_diff_unchecked<_BRANCH>(node.child_size.data(), node.child_ones.data(), k);
+        assert(pos < node.count);
+        return pos;
+    }
 
     Stats _stats(const int node, const int level) const {
         if (level == 0) {
@@ -240,6 +264,7 @@ private:
                    const int depth, const Stats& delta) {
         for (int i = 0; i < depth; ++i) {
             Internal &node = _internals[path[i]];
+            // 4 配列を 1 つのループで更新する
             for (int j = slots[i]; j < node.count; ++j) {
                 node.child_size[j] += delta.size;
                 node.child_ones[j] += delta.ones;
@@ -536,10 +561,17 @@ private:
 
     Prefix _leaf_prefix(const int leaf, const int take) const {
         const Leaf &node = _leaves[leaf];
-        Prefix result{popcount(node.bits & _mask(take)), 0, 0};
-        for (int i = 0; i < take; ++i) {
-            result.sum += node.weight[i];
-            if (_bit_at(node, i)) result.sum1 += node.weight[i];
+        const uint16_t take_mask = _mask(take);
+        Prefix result{popcount(node.bits & take_mask), 0, 0};
+        if constexpr (simd_int_vectorized_v<W>) {
+            // マスク付きの読み込みは take 以降の要素を読まない
+            result.sum = simd_masked_sum<_LEAF_CAP>(node.weight.data(), take_mask);
+            result.sum1 = simd_masked_sum<_LEAF_CAP>(node.weight.data(), node.bits & take_mask);
+        } else {
+            for (int i = 0; i < take; ++i) {
+                result.sum += node.weight[i];
+                if (_bit_at(node, i)) result.sum1 += node.weight[i];
+            }
         }
         return result;
     }
@@ -551,8 +583,7 @@ private:
         Prefix result{0, 0, 0};
         while (level > 0) {
             const Internal &n = _internals[node];
-            int pos = 0;
-            while (take > n.child_size[pos]) ++pos;
+            const int pos = _find_size(n, take - 1);
             result += _before(n, pos);
             take -= _size_before(n, pos);
             node = n.child[pos];
@@ -570,8 +601,7 @@ private:
         int ans = 0;
         while (level > 0) {
             const Internal& n = _internals[node];
-            int pos = 0;
-            while (take > n.child_size[pos]) ++pos;
+            const int pos = _find_size(n, take - 1);
             if (take == n.child_size[pos]) return ans + n.child_ones[pos];
             ans += _ones_before(n, pos);
             take -= _size_before(n, pos);
@@ -592,10 +622,8 @@ private:
         int level = sequence.height;
         while (level > 0) {
             const Internal &n = _internals[node];
-            int left_pos = 0;
-            while (l > n.child_size[left_pos]) ++left_pos;
-            int right_pos = left_pos;
-            while (r > n.child_size[right_pos]) ++right_pos;
+            const int left_pos = _find_size(n, l - 1);
+            const int right_pos = _find_size(n, r - 1);
             if (left_pos != right_pos) {
                 left_result += _before(n, left_pos);
                 right_result += _before(n, right_pos);
@@ -632,10 +660,8 @@ private:
         int level = seq.height;
         while (level > 0) {
             const Internal& n = _internals[node];
-            int lp = 0;
-            while (l > n.child_size[lp]) ++lp;
-            int rp = lp;
-            while (r > n.child_size[rp]) ++rp;
+            const int lp = _find_size(n, l - 1);
+            const int rp = _find_size(n, r - 1);
             int ls = _size_before(n, lp);
             int rs = _size_before(n, rp);
             if (lp != rp) {
@@ -684,12 +710,12 @@ private:
             return false;
         }
 
+        // l < r <= ノードの長さなので、l を含む子から走査を始められる
         const Internal &n = _internals[node];
-        for (int pos = 0; pos < n.count; ++pos) {
+        for (int pos = _find_size(n, l); pos < n.count; ++pos) {
             int begin = _size_before(n, pos);
             int end = n.child_size[pos];
             if (r <= begin) break;
-            if (end <= l) continue;
             int child_l = max(0, l - begin);
             int child_r = min(end - begin, r - begin);
             if (_consume(n.child[pos], level - 1, child_l, child_r, bit, target, count)) return true;
@@ -723,11 +749,10 @@ private:
         }
 
         const Internal &n = _internals[node];
-        for (int pos = 0; pos < n.count; ++pos) {
+        for (int pos = _find_size(n, l); pos < n.count; ++pos) {
             int begin = _size_before(n, pos);
             int end = n.child_size[pos];
             if (r <= begin) break;
-            if (end <= l) continue;
             int child_l = max(0, l - begin);
             int child_r = min(end - begin, r - begin);
             if (_consume_pred(n.child[pos], level - 1, child_l, child_r, bit, aggregate, count, pred)) return true;
@@ -749,13 +774,16 @@ private:
     }
 
 public:
+    /// @brief 列を 1 本も持たない状態で作る
     BTreeBitVectorSum() : _leaves(1), _internals(1), _free_leaf(0), _free_internal(0) {}
 
+    /// @brief 全列の長さの合計 total_size と列の数 sequence_count に合わせて領域を予約する
     void reserve(int total_size, int sequence_count) {
         _leaves.reserve(_leaves.size() + sequence_count + (total_size + _LEAF_CAP - 1) / _LEAF_CAP);
         _internals.reserve(_internals.size() + total_size / (_LEAF_CAP * _BRANCH_MIN) + sequence_count / 32 + 1);
     }
 
+    /// @brief start <= i < end の範囲で、ビット bits[i] と重み weights[order[i]] を並べた列を作る / O(end - start)
     Sequence build(const vector<uint8_t>& bits, const vector<int>& order, const vector<W>& weights,
                    int start, int end) {
         Sequence sequence;
@@ -825,16 +853,20 @@ public:
         return sequence;
     }
 
+    /// @brief 列の長さを返す / O(1)
     int len(const Sequence& sequence) const {
         return sequence.root == 0 ? 0 : _stats(sequence.root, sequence.height).size;
     }
 
+    /// @brief 列が空かを返す / O(1)
     bool empty(const Sequence &sequence) const { return sequence.root == 0; }
 
+    /// @brief 列全体の重みの和を返す / O(1)
     W all_sum(const Sequence& sequence) const {
         return sequence.root == 0 ? W(0) : _stats(sequence.root, sequence.height).sum;
     }
 
+    /// @brief 区間 [l, r) の RangeData を返す / 列は空でないこと / O(log n)
     RangeData range_data(const Sequence &sequence, const int l, const int r) const {
         assert(sequence.root != 0);
         assert(0 <= l && l <= r && r <= len(sequence));
@@ -844,12 +876,14 @@ public:
         return {l - left.ones, r - right.ones, sum - sum1, sum1};
     }
 
+    /// @brief [0, r) に含まれる 0 の個数を返す / 列は空でないこと / O(log n)
     int rank0(const Sequence& seq, const int r) const {
         assert(seq.root != 0);
         assert(0 <= r && r <= len(seq));
         return r - _ones_node(seq.root, seq.height, r);
     }
 
+    /// @brief rank0(l) と rank0(r) の組を返す / 列は空でないこと / O(log n)
     pair<int, int> rank0_pair(const Sequence& seq, const int l, const int r) const {
         assert(seq.root != 0);
         assert(0 <= l && l <= r && r <= len(seq));
@@ -857,6 +891,7 @@ public:
         return {l - lo, r - ro};
     }
 
+    /// @brief 位置 k の AccessData を返す / O(log n)
     AccessData access(const Sequence &sequence, int k) const {
         assert(0 <= k && k < len(sequence));
         int node = sequence.root;
@@ -864,8 +899,7 @@ public:
         int rank1 = 0;
         while (level > 0) {
             const Internal &n = _internals[node];
-            int pos = 0;
-            while (k >= n.child_size[pos]) ++pos;
+            const int pos = _find_size(n, k);
             rank1 += _ones_before(n, pos);
             k -= _size_before(n, pos);
             node = n.child[pos];
@@ -876,6 +910,7 @@ public:
         return {_bit_at(leaf, k), rank1, leaf.weight[k]};
     }
 
+    /// @brief 位置 k のビットと、[0, k) の 1 の個数を返す / O(log n)
     pair<bool, int> access_bit(const Sequence& seq, int k) const {
         assert(0 <= k && k < len(seq));
         int node = seq.root;
@@ -883,8 +918,7 @@ public:
         int rank1 = 0;
         while (level > 0) {
             const Internal& n = _internals[node];
-            int pos = 0;
-            while (k >= n.child_size[pos]) ++pos;
+            const int pos = _find_size(n, k);
             rank1 += _ones_before(n, pos);
             k -= _size_before(n, pos);
             node = n.child[pos];
@@ -895,14 +929,14 @@ public:
         return {_bit_at(leaf, k), rank1};
     }
 
+    /// @brief 位置 k の重みを返す / O(log n)
     W access_weight(const Sequence& seq, int k) const {
         assert(0 <= k && k < len(seq));
         int node = seq.root;
         int level = seq.height;
         while (level > 0) {
             const Internal& n = _internals[node];
-            int pos = 0;
-            while (k >= n.child_size[pos]) ++pos;
+            const int pos = _find_size(n, k);
             k -= _size_before(n, pos);
             node = n.child[pos];
             --level;
@@ -910,6 +944,7 @@ public:
         return _leaves[node].weight[k];
     }
 
+    /// @brief 位置 k にビット bit と重み weight を挿入し、[0, k) の 1 の個数を返す / O(log n)
     int insert(Sequence &sequence, int k, const bool bit, const W weight) {
         assert(0 <= k && k <= len(sequence));
         if (sequence.root == 0) {
@@ -927,8 +962,8 @@ public:
         int level = sequence.height;
         while (level > 0) {
             const Internal &n = _internals[node];
-            int pos = 0;
-            while (pos + 1 < n.count && k > n.child_size[pos]) ++pos;
+            // k は 0 以上ノードの長さ以下なので、最後の子より後ろには進まない
+            const int pos = _find_size(n, k - 1);
             rank1 += _ones_before(n, pos);
             k -= _size_before(n, pos);
             path[depth] = node;
@@ -955,6 +990,7 @@ public:
         return rank1;
     }
 
+    /// @brief 位置 k の要素を削除し、その AccessData を返す / O(log n)
     AccessData pop(Sequence &sequence, int k) {
         assert(0 <= k && k < len(sequence));
         array<int, _MAX_HEIGHT> path;
@@ -965,8 +1001,7 @@ public:
         int level = sequence.height;
         while (level > 0) {
             const Internal &n = _internals[node];
-            int pos = 0;
-            while (k >= n.child_size[pos]) ++pos;
+            const int pos = _find_size(n, k);
             rank1 += _ones_before(n, pos);
             k -= _size_before(n, pos);
             path[depth] = node;
@@ -989,6 +1024,7 @@ public:
         return {bit, rank1, weight};
     }
 
+    /// @brief 位置 k のビットを bit、重みを weight にし、変更前の AccessData を返す / O(log n)
     AccessData set(Sequence &sequence, int k, const bool bit, const W weight) {
         assert(0 <= k && k < len(sequence));
         array<int, _MAX_HEIGHT> path;
@@ -999,8 +1035,7 @@ public:
         int level = sequence.height;
         while (level > 0) {
             const Internal &n = _internals[node];
-            int pos = 0;
-            while (k >= n.child_size[pos]) ++pos;
+            const int pos = _find_size(n, k);
             rank1 += _ones_before(n, pos);
             k -= _size_before(n, pos);
             path[depth] = node;
@@ -1024,6 +1059,7 @@ public:
         return {old_bit, rank1, old_weight};
     }
 
+    /// @brief 位置 k のビットを bit にし、変更前の AccessData を返す / O(log n)
     AccessData set_bit(Sequence& seq, int k, const bool bit) {
         assert(0 <= k && k < len(seq));
         array<int, _MAX_HEIGHT> path;
@@ -1034,8 +1070,7 @@ public:
         int level = seq.height;
         while (level > 0) {
             const Internal& n = _internals[node];
-            int pos = 0;
-            while (k >= n.child_size[pos]) ++pos;
+            const int pos = _find_size(n, k);
             rank1 += _ones_before(n, pos);
             k -= _size_before(n, pos);
             path[depth] = node;
@@ -1056,6 +1091,7 @@ public:
         return {old, rank1, weight};
     }
 
+    /// @brief 位置 k の重みに delta を足し、足す前の AccessData を返す / O(log n)
     AccessData add_weight(Sequence &sequence, int k, W delta) {
         assert(0 <= k && k < len(sequence));
         array<int, _MAX_HEIGHT> path;
@@ -1066,8 +1102,7 @@ public:
         int level = sequence.height;
         while (level > 0) {
             const Internal &n = _internals[node];
-            int pos = 0;
-            while (k >= n.child_size[pos]) ++pos;
+            const int pos = _find_size(n, k);
             rank1 += _ones_before(n, pos);
             k -= _size_before(n, pos);
             path[depth] = node;
@@ -1087,6 +1122,7 @@ public:
         return {bit, rank1, old_weight};
     }
 
+    /// @brief 0 から数えて k 番目のビット bit の位置を返す / 列は空でなく、k はビット bit の個数未満 / O(log n)
     int select(const Sequence &sequence, int k, const bool bit) const {
         assert(sequence.root != 0);
         const Stats root_stats = _stats(sequence.root, sequence.height);
@@ -1096,13 +1132,8 @@ public:
         int offset = 0;
         while (level > 0) {
             const Internal &n = _internals[node];
-            int pos = 0;
-            while (true) {
-                int count = bit ? n.child_ones[pos] : n.child_size[pos] - n.child_ones[pos];
-                if (k < count) break;
-                ++pos;
-            }
-            if (pos > 0) k -= bit ? n.child_ones[pos - 1] : n.child_size[pos - 1] - n.child_ones[pos - 1];
+            const int pos = _find_count(n, k, bit);
+            if (pos > 0) k -= _count_prefix(n, pos - 1, bit);
             offset += _size_before(n, pos);
             node = n.child[pos];
             --level;
@@ -1116,6 +1147,7 @@ public:
         return -1;
     }
 
+    /// @brief 0 から数えて k 番目のビット bit を削除し、その位置を返す / 列は空でなく、k はビット bit の個数未満 / O(log n)
     int select_pop(Sequence& seq, int k, const bool bit) {
         assert(seq.root != 0);
         const Stats root = _stats(seq.root, seq.height);
@@ -1128,15 +1160,8 @@ public:
         int off = 0;
         while (level > 0) {
             const Internal& n = _internals[node];
-            int pos = 0;
-            while (true) {
-                int cnt = bit ? n.child_ones[pos] : n.child_size[pos] - n.child_ones[pos];
-                if (k < cnt) break;
-                ++pos;
-            }
-            if (pos > 0) {
-                k -= bit ? n.child_ones[pos - 1] : n.child_size[pos - 1] - n.child_ones[pos - 1];
-            }
+            const int pos = _find_count(n, k, bit);
+            if (pos > 0) k -= _count_prefix(n, pos - 1, bit);
             off += _size_before(n, pos);
             path[depth] = node;
             slots[depth++] = pos;
@@ -1159,6 +1184,7 @@ public:
         return ans;
     }
 
+    /// @brief [l, r) のビット bit の要素を左から取り、重みの和が target 以上になる最小の個数を返す / 届かなければ -1
     int min_count_sum_ge(const Sequence &sequence, const int l, const int r, const bool bit, W target) const {
         if (target <= W(0)) return 0;
         RangeData data = range_data(sequence, l, r);
@@ -1170,6 +1196,7 @@ public:
         return count;
     }
 
+    /// @brief [l, r) のビット bit の要素の重みを左から aggregate に足し、pred が真である間に足せる最大の個数を返す / pred(aggregate) が真であること / aggregate は足し終えた値に更新される
     template<class Pred>
     int max_count(const Sequence &sequence, const int l, const int r, const bool bit, W &aggregate, Pred pred) const {
         assert(0 <= l && l <= r && r <= len(sequence));
@@ -1180,6 +1207,7 @@ public:
         return count;
     }
 
+    /// @brief [l, r) のビット bit の要素のうち、左から k 個の重みの和を返す / k はその個数以下 / O(log n)
     W sum_first_k(const Sequence &sequence, const int l, const int r, const bool bit, const int k) const {
         if (k == 0) return W(0);
         RangeData data = range_data(sequence, l, r);
@@ -1192,6 +1220,7 @@ public:
         return bit ? prefix.sum1 : prefix.sum0;
     }
 
+    /// @brief 列のビットと重みを vector にして返す / O(n)
     pair<vector<uint8_t>, vector<W>> tovector(const Sequence &sequence) const {
         vector<uint8_t> bits;
         vector<W> weights;

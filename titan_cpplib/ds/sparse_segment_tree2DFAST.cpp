@@ -8,7 +8,7 @@ using namespace std;
 
 namespace titan23 {
 
-// y軸が狭いセグ木
+/// @brief y の範囲が狭いときの 2 次元セグメント木 / x 方向は必要な節点だけを作る / op は可換であること
 template <class IndexType, class T, T (*op)(T, T), T (*e)()>
 class SparseSegmentTree2DFAST {
 private:
@@ -68,24 +68,28 @@ private:
 
 public:
     SparseSegmentTree2DFAST() {}
+    /// @brief H × W の領域で構築する / 初期値 e() / H < 1e8 / O(H)
     SparseSegmentTree2DFAST(IndexType H, IndexType W) : H(H), W(W) {
         assert(H < 1e8);
         log = bit_length(H);
         size = 1<<log;
         dat.resize(size*2, 0);
-        new_node_x(); // for dammy
+        new_node_x(); // 番兵
     }
 
+    /// @brief 節点 cap 個分の領域を予約する
     void reserve(int cap) {
         X.reserve(cap);
     }
 
+    /// @brief (y, x) の値を返す / O(log W)
     T get(IndexType y, IndexType x) const {
         assert(0 <= y && y < H);
         assert(0 <= x && x < W);
         return inner_getX(dat[y+size], x, 0, W);
     }
 
+    /// @brief (y, x) の値を v に変更する / O(log H log W)
     void set(IndexType y, IndexType x, T v) {
         assert(0 <= y && y < H);
         assert(0 <= x && x < W);
@@ -101,6 +105,7 @@ public:
         }
     }
 
+    /// @brief [u, d) × [l, r) の総積を返す / O(log H log W)
     T prod(IndexType u, IndexType d, IndexType l, IndexType r) const {
         assert(0 <= u && u <= d && d <= H);
         assert(0 <= l && l <= r && r <= W);

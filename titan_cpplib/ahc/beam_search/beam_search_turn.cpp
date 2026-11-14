@@ -34,6 +34,7 @@ private:
     ActionId best_finished_par_aid;
     Action best_finished_action;
 
+    /// @brief 探索木の巡回列の要素
     struct TreeNode {
         int dir_or_leaf_id; // 非負なら葉、負なら巡回の入退場マーカー
         int subtree_end; // PRE_ORDER から部分木の直後へスキップするための添字
@@ -42,6 +43,7 @@ private:
         TreeNode(int d, ActionId a, int target) : dir_or_leaf_id(d), subtree_end(0), aid(a), target_turn(target) {}
     };
 
+    /// @brief 遷移先ターンの候補プールに登録する候補
     struct BeamCandidate {
         ScoreType score;
         int par; // 親の葉の展開順
@@ -78,6 +80,7 @@ private:
         free_slots.push_back(slot);
     }
 
+    /// @brief record_history 用の履歴ノード
     struct HistoryNode {
         int node_id;
         int parent_id;
@@ -88,6 +91,7 @@ private:
         string state_info;
         int status;
     };
+    /// @brief record_history 用の、ターンごとの生存ノード一覧
     struct TurnSnapshot {
         int turn;
         vector<int> active_node_ids;
@@ -135,6 +139,7 @@ private:
         ofs << "  ]\n}\n";
     }
 
+    /// @brief 1 つの遷移先ターンの候補を、ハッシュの重複を除いてビーム幅まで保持する
     class Candidates {
     private:
         using T = pair<ScoreType, int>;
@@ -176,8 +181,7 @@ private:
 
         ScoreType threshold() const { return entry < beam_width ? INF : seg[1].first; }
 
-        /// @brief 候補を登録し、生存フラグを更新する
-        /// @return 登録先の添字 棄却した場合は -1
+        /// @brief 候補を登録し、生存フラグを更新する / 登録先の添字を返し、棄却時は -1 を返す
         int push(ScoreType score, HashType hash, int par, ActionId aid, vector<uint8_t>& is_survived, int target_turn) {
             if (is_built && score >= seg[1].first) {
                 return -1;
@@ -221,6 +225,7 @@ private:
             return i;
         }
 
+        /// @brief ビーム幅を w にして、候補とハッシュを空にする
         void reset(int w) {
             beam_width = w;
             while (s < w) {
@@ -244,13 +249,13 @@ private:
     };
 
     vector<Candidates> cands_pool;
-    vector<int> turn_to_pool_idx; // target_turn から cands_pool への添字 -1 は未確保
+    vector<int> turn_to_pool_idx; // target_turn から cands_pool への添字。-1 は未確保
     vector<int> free_pool_indices;
     vector<ScoreType> thresholds; // 各ターンで受理できるスコアの上限
     vector<pair<int, bool>> pre_stack; // PRE_ORDER の添字と最小ターンの再計算フラグ
 
-    /// @brief clear_hash_every_turn が false のとき、ハッシュごとの最良候補を全ターンで共有する
-    /// より早いターンへの候補か、同じターンでスコアを改善する候補だけを通す
+    // clear_hash_every_turn が false のとき全ターンで共有する、ハッシュごとの最良候補
+    // より早いターンへの候補か、同じターンでスコアを改善する候補だけを通す
     titan23::HashDict<pair<ScoreType, int>, false> seen_hash;
     bool use_global_seen;
 
@@ -703,12 +708,8 @@ private:
     }
 
 public:
-    /// @brief 複数ターン先への遷移を含むビームサーチを実行する
-    /// @tparam materialize_final_state 最終状態を構築するか
-    /// @param param ターン数やビーム幅などの設定
-    /// @param verbose ログを出力するか
-    /// @param history_file record_history が true のときに履歴を JSON で出力するファイル名
-    /// @return 探索結果
+    /// @brief 複数ターン先への遷移を含むビームサーチを実行し、探索結果を返す
+    /// materialize_final_state が true なら最終状態も構築する。record_history が true なら history_file に履歴を JSON で書き出す
     template<bool materialize_final_state=true>
     Result search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
         if (param.max_turn <= 0 || param.beam_width <= 0) {

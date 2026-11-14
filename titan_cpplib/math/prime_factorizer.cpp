@@ -9,9 +9,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 素因数分解, 約数列挙
-/// 前計算: <O(√nloglog√n), O(√n)>
-/// クエリ: O(√n / log√n) 時間
+/// @brief √n 以下の素数表を使って素因数分解と約数列挙をする
 class PrimeFactorizer {
 private:
     vector<int> primelist;
@@ -19,8 +17,7 @@ private:
 public:
     PrimeFactorizer() {}
 
-    /// @brief <O(√nloglog√n), O(√n)>
-    /// @param n 最大値
+    /// @brief 最大値 n に対して √n 以下の素数表を作る / 時間 O(√nloglog√n)、空間 O(√n)
     PrimeFactorizer(long long n) {
         long long max_sqrt = sqrt(n+1) + 1;
         vector<bool> is_prime(max_sqrt + 1, true);
@@ -41,7 +38,7 @@ public:
         }
     }
 
-    /// @brief 素因数分解する / O(√n / log√n)
+    /// @brief n を素因数分解し、素因数を重複込みで昇順に返す / O(√n / log√n)
     vector<long long> p_factorization(long long n) const {
         vector<long long> ret;
         for (long long p : primelist) {
@@ -57,7 +54,7 @@ public:
         return ret;
     }
 
-    /// @brief 素因数分解する / O(√n / log√n)
+    /// @brief n を素因数分解し、素因数から指数への map を返す / O(√n / log√n)
     map<long long, int> p_factorization_map(long long n) const {
         map<long long, int> ret;
         for (long long p : primelist) {
@@ -73,8 +70,7 @@ public:
         return ret;
     }
 
-    /// @brief 約数列挙
-    /// O(√n/log√n + d(n)logd(n)) / d(n)はnの約数の個数
+    /// @brief n の約数を昇順で返す / O(√n/log√n + d(n)logd(n))、d(n) は n の約数の個数
     vector<long long> get_divisors(long long n) const {
         if (n == 1) {
             return {1};

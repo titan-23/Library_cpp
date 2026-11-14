@@ -9,13 +9,8 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief パラメータ探索の枝刈り 同じシード集合での評価スコアを Wilcoxon 符号順位検定で比較し
-///        現パラメータが既知ベストに有意に劣るとき評価を早期に打ち切る
-///        使い方 パラメータ 1 つにつき
-///          1. シードごとに評価し report(seed, score) で報告する
-///          2. 区切りで should_prune() を呼び true なら以降の評価をやめる
-///          3. 評価を終えたら next_param(was_pruned) を呼び次のパラメータへ進む
-///        ベスト更新は next_param 内で自動 完走かつ平均が改善したときだけ置き換える
+/// @brief 同じシードでの評価を Wilcoxon 符号順位検定で比べ、既知の最良に有意に劣るパラメータの評価を打ち切る枝刈り器
+/// パラメータごとに report と should_prune を繰り返し、評価を終えたら next_param を呼ぶ
 template<typename ScoreType=double>
 class WilcoxonPruner {
 private:
@@ -37,11 +32,7 @@ private:
     vector<pair<double, double>> workspace_diffs;
 
 public:
-     /// @brief 枝刈り器を構築する
-     /// @param max_seeds 評価に使用するシードの最大数 内部の配列サイズを事前確保するために使用します
-     /// @param p_threshold 枝刈りを判定する有意水準
-     /// @param min_samples 枝刈り判定を開始する最低限の共通シード数
-     /// @param is_minimize 最小化問題の場合はtrue、最大化問題の場合はfalseを指定します
+     /// @brief 枝刈り器を構築する / seed は [0, max_seeds)、p_threshold は有意水準、is_minimize の既定は最小化
      WilcoxonPruner(int max_seeds, double p_threshold=0.1, int min_samples=5, bool is_minimize=true)
         : p_threshold(p_threshold), min_samples(min_samples), is_minimize(is_minimize), max_seeds(max_seeds), best_count(0), best_sum(0), now_count(0), now_sum(0) {
         best_scores.assign(max_seeds, 0);
@@ -51,9 +42,7 @@ public:
         workspace_diffs.reserve(max_seeds);
     }
 
-    /// @brief シードに対する評価スコアを報告します
-    /// @param seed 評価に使用したシード値
-    /// @param score 評価関数の結果スコア
+    /// @brief シード seed での評価スコア score を報告する / 同じ seed を再び報告すると上書きする
     void report(int seed, ScoreType score) {
         if (!has_now_score[seed]) {
             has_now_score[seed] = true;
@@ -65,8 +54,7 @@ public:
         now_sum += score;
     }
 
-    /// @brief 現在のパラメータが過去のベストパラメータに対して統計的に有意に劣っているかを判定します
-    /// @return 枝刈りすべき（劣っている）場合はtrue、評価を継続すべき場合はfalseを返します
+    /// @brief 現パラメータが最良パラメータより統計的に有意に劣り、枝刈りすべきなら true を返す
     bool should_prune() {
         if (best_count == 0 || now_count < min_samples) return false;
         workspace_diffs.clear();
@@ -103,8 +91,8 @@ public:
         return p_value < p_threshold;
     }
 
-    /// @brief 現在のパラメータの評価を終了し、次のパラメータ評価の準備を行います
-    /// @param was_pruned 途中で枝刈りされて終了した場合はtrue、完走した場合はfalseを指定します
+    /// @brief 現パラメータの評価を終え、次のパラメータに備える / 枝刈りで終えたなら was_pruned を true にする
+    /// 枝刈りされずに min_samples 個以上のシードを評価し、平均が最良より良いときだけ最良を置き換える
     void next_param(bool was_pruned) {
         if (!was_pruned && now_count >= min_samples) {
             bool update = false;

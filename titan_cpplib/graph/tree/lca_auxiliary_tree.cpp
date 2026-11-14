@@ -8,11 +8,12 @@
 #include "titan_cpplib/graph/tree/lca.cpp"
 using namespace std;
 
-// LCAAuxiliaryTree
 namespace titan23 {
 
+/// @brief 指定した頂点集合の補助木を LCA を用いて作る / 元の木の根は 0
 struct LCAAuxiliaryTree {
     int n; vector<int> in, out; LCA tree;
+    /// @brief 木 G から前計算する / O(n)
     LCAAuxiliaryTree(vector<vector<int>> G) : n(G.size()), in(n, -1), out(n, -1), tree(G, 0) {
         int t = 0;
         auto dfs = [&] (auto &&dfs, int v,int p) -> void {
@@ -22,6 +23,8 @@ struct LCAAuxiliaryTree {
         };
         dfs(dfs, 0, -1);
     }
+    /// @brief vs とその LCA からなる補助木を作り、根を返す / O(|vs| log |vs|)
+    /// 辺は親から子の向きで RES に追加する / RES の大きさは n
     int build(vector<int> vs, vector<vector<int>> &RES) {
         assert((int)RES.size() == n);
         auto cmp = [&] (int x, int y) { return in[x] < in[y]; };

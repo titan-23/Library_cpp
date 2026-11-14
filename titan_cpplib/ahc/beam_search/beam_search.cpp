@@ -39,6 +39,7 @@ private:
         return gblock[(size_t)depth][(size_t)slot];
     }
 
+    /// @brief 生存候補 1 つを表す / Action は世代ブロック内の位置で持つ
     struct CandIdx {
         int parent_leaf;
         ScoreType score;
@@ -61,8 +62,7 @@ private:
     vector<Action> result_prefix;
     vector<vector<Action>> slab_pool;
 
-    /// @brief 確定した接頭辞を退避し、参照されなくなった世代ブロックを再利用プールへ移す
-    /// @param limit 次世代以降で参照される最小の深さ
+    /// @brief 確定した接頭辞を退避し、参照されなくなった世代ブロックを再利用プールへ移す / limit は次世代以降で参照される最小の深さ
     void confirm_and_free(int limit) {
         while (freed_to + 1 < limit) {
             int depth = freed_to + 1;
@@ -108,7 +108,7 @@ private:
         }
     }
 
-    /// @brief 探索状態をルートへ戻し、返却経路を適用した最終状態を構築する
+    /// @brief 探索状態を根へ戻し、返却経路を適用した最終状態を構築する
     template<bool materialize_final_state>
     unique_ptr<State> build_final_state(State& state, const vector<Action>& result_actions, int current_depth) {
         if constexpr (materialize_final_state) {
@@ -136,6 +136,7 @@ private:
         /// @brief 現在の枝刈り閾値を返す
         inline ScoreType threshold() const { return bs.candidates.threshold(); }
 
+        /// @brief 受け取った Action を評価し、完成解なら最良解を更新し、そうでなければ候補に登録する
         inline void operator()(Action &action) {
             ++bs.explored_per_turn;
             ScoreType threshold = bs.candidates.threshold();
@@ -213,8 +214,7 @@ private:
         snapshots.push_back({turn_label, vector<int>(survived.begin(), survived.end())});
     }
 
-    /// @brief 親葉までの差分経路を tour から復元する
-    /// @param dst_end 復元先となる親経路の終端
+    /// @brief 親葉までの差分経路を tour から復元する / dst_end は復元先となる親経路の終端
     template<class It>
     inline void copy_tour_path(int parent_leaf, int leaf_end, It dst_end) {
         int progress = 0;
@@ -231,12 +231,8 @@ private:
     }
 
 public:
-    /// @brief ビームサーチを実行する
-    /// @tparam materialize_final_state 最終状態を構築する場合は true
-    /// @param param 探索ターン数とビーム幅の設定
-    /// @param verbose ログを出力する場合は true
-    /// @param history_file record_history が true のときに履歴を JSON で出力するファイル名
-    /// @return 探索結果
+    /// @brief ビームサーチを実行し、探索結果を返す / materialize_final_state が true なら最終状態も構築する
+    /// record_history が true のとき、履歴を JSON で history_file に書き出す
     template<bool materialize_final_state=true>
     Result search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
         if (param.max_turn <= 0 || param.beam_width <= 0) {

@@ -15,14 +15,19 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 列を管理する永続重み平衡木 / 0-indexed
+/// 全インスタンスが静的なノード領域 ma を共有する
 template<class T, typename SizeType = int>
 class PersistentWBTree {
     using Id = uint32_t;
     static constexpr Id leaf_bit = Id(1) << 31;
 
 public:
+    /// @brief 全ての木が共有するノード領域 / 値は葉ごとに keys へ置く
     struct MemoryAllocator {
+        /// @brief 内部ノード / 子の番号と左部分木の要素数を持つ
         struct Node { Id left, right; SizeType left_size; };
+        /// @brief 2^BlockBits 要素ずつのブロックで領域を確保する可変長配列
         template <class U, unsigned BlockBits>
         class Blocks {
             static constexpr size_t block_size = size_t(1) << BlockBits;
@@ -104,7 +109,7 @@ public:
             /// @brief 確保済み容量を返す / O(1)
             size_t capacity() const noexcept { return blocks_.size() * block_size; }
 
-            /// @brief N 要素分の容量を確保する / O(N)
+            /// @brief n 要素分の容量を確保する / O(n)
             void reserve(size_t n) {
                 const size_t required = n / block_size + (n % block_size != 0);
                 blocks_.reserve(required);
@@ -159,7 +164,7 @@ public:
         /// @note この領域を使う既存の木は無効になる
         void reset() { ptr = 1; leaf_ptr = 0; }
 
-        /// @brief N 個の内部ノードの容量を確保する / O(N)
+        /// @brief n 個の内部ノードの容量を確保する / O(n)
         void reserve(size_t n) { nodes.reserve(n); }
 
         /// @brief 確保済み領域のバイト数を返す / O(1)
@@ -168,6 +173,7 @@ public:
         }
     };
 
+    /// @brief 全インスタンスが共有するノード領域
     inline static MemoryAllocator ma;
 
 private:
@@ -418,7 +424,7 @@ public:
         dfs(dfs, root);
     }
 
-    /// @brief N 個の内部ノードの容量を確保する / O(N)
+    /// @brief n 個の内部ノードの容量を確保する / O(n)
     static void reserve(SizeType n) { assert(n >= 0); ma.reserve(static_cast<size_t>(n)); }
 
     /// @brief 木を再構築する / O(N)

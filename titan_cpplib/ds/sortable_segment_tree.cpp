@@ -14,9 +14,8 @@ using namespace std;
 
 namespace titan23 {
 
-/// 区間ソートが可能なセグ木
-/// T の `<` と `==` が定義され、全順序であること
-/// コピーするとバグるので、`tovector()` としてコピーすること
+/// @brief 区間ソートができるセグメント木 / T の < と == が定義され、全順序であること
+/// コピーすると正しく動かないので、複製には tovector() を使う
 template <class T, T (*op)(T, T), T (*e)()>
 class SortableSegmentTree {
 private:
@@ -137,12 +136,12 @@ private:
         return node;
     }
 
-    // key以下の要素を持つ部分木, keyより大きい要素を持つ部分木 / 返り値のノードはsplay済み
+    // key 以下の部分木と key より大きい部分木に分ける / 返すノードは splay 済み
     pair<NodePtr, NodePtr> split(NodePtr node, T key) {
         if (!node) return {nullptr, nullptr};
         node->splay();
         NodePtr nxt = find_splay(node, key);
-        if (!nxt) return {nullptr, node}; // nodeはsplay済み
+        if (!nxt) return {nullptr, node}; // node は splay 済み
         NodePtr r = nxt->right;
         nxt->right = nullptr;
         if (r) r->par = nullptr;
@@ -164,10 +163,9 @@ private:
         cerr << "]" << endl;
     }
 
+    // 位置 k の直前で木を切り、k を木の先頭にする
     void make_kyokai(int k) {
-        // ..., k, ... で切る
-        // ひとつのSplayTreeNodeはソート済みなので、キー順と添え字順が一致している！
-        // ので、nodeptr[k]でsplay()すると、左側はkey以下(未満？)かつ添え字もk以下になる！
+        // 1 つの木はソート済みなので、キー順と添字順が一致する
         if (k == n) return;
         if (ws.contains(k)) return;
         ws.add(k);
@@ -200,14 +198,14 @@ private:
         is_rev[k] = is_rev[idx];
     }
 
-    // idx: nodeptr[idx]がk番目のノードを含む木
-    // tree_idx: nodeptr[idx]内でk番目のノードのインデックス
+    // k 番目を含む木の先頭位置 idx と、その木の中での位置 tree_idx を返す
     pair<int, int> get_index(int k) {
         int idx = fw.bisect_right(k);
         int tree_idx = k - fw.pref(idx);
         return {idx, tree_idx};
     }
 
+    // 2 つの木をキー順を保って併合する
     NodePtr merge(NodePtr a, NodePtr b) {
         if (!a) return b;
         if (!b) return a;
@@ -235,6 +233,7 @@ private:
         return concat(concat(X, a), b);
     }
 
+    // nodeptr[l, r) の節点から、添字順に並んだ平衡な木を作る
     NodePtr build(int l, int r) {
         auto _build = [&] (auto &&_build, int L, int R) -> NodePtr {
             int mid = (L + R) / 2;
@@ -256,7 +255,7 @@ private:
 public:
     SortableSegmentTree() {}
 
-    /// @brief 長さ N として初期化する / O(N)
+    /// @brief 長さ N で構築する / 初期値 e() / O(N)
     SortableSegmentTree(int n) : n(n), seg(n), ws(n), nodeptr(n), is_rev(n, false) {
         for (int i = 0; i < n; ++i) {
             nodeptr[i] = new Node(e());
@@ -273,7 +272,7 @@ public:
         for (int i = 1; i < n; ++i) nodeptr[i] = nullptr;
     }
 
-    /// @brief 配列 a で初期化する / O(N)
+    /// @brief 列 a から構築する / O(N)
     SortableSegmentTree(vector<T> a) : n(a.size()), ws(n), nodeptr(n), is_rev(n, false) {
         ws.fill(n);
         for (int i = 0; i < n; ++i) {
@@ -325,7 +324,7 @@ public:
         make_kyokai(k);
         make_kyokai(k+1);
         auto [idx, tree_idx] = get_index(k);
-        auto ptr = nodeptr[idx]; // make_kyokaiよりnodeptr[idx]にはA[idx]が存在する
+        auto ptr = nodeptr[idx]; // make_kyokai により nodeptr[idx] に A[idx] がある
         return ptr->key;
     }
 
@@ -335,14 +334,14 @@ public:
         make_kyokai(k);
         make_kyokai(k+1);
         auto [idx, tree_idx] = get_index(k);
-        auto ptr = nodeptr[idx]; // make_kyokaiよりnodeptr[idx]にはA[idx]が存在する
+        auto ptr = nodeptr[idx]; // make_kyokai により nodeptr[idx] に A[idx] がある
         ptr->key = key;
         ptr->update();
         seg.set(k, ptr->data);
         is_rev[k] = false;
     }
 
-    /// @brief 区間 [l, r) を昇順にソートする reverse=true のときは降順にソートする / 償却 O(log^2 N)
+    /// @brief 区間 [l, r) を昇順にソートする / reverse = true なら降順 / 償却 O(log^2 N)
     void sort(int l, int r, bool reverse=false) {
         assert(0 <= l && l <= r && r <= n);
         if (r - l <= 1) return;
@@ -353,7 +352,7 @@ public:
         int s = 0;
         while (1) {
             int gt = ws.gt(idx);
-            // make_kyokaiより、gt=rでとまる(r!=n)
+            // r != n なら make_kyokai により gt == r で止まる
             if (gt == r || gt == -1) break;
             int gt_size = fw.get(gt);
             s += gt_size;
@@ -385,7 +384,7 @@ public:
         return seg.all_prod();
     }
 
-    /// @brief vector として返す / O(N)
+    /// @brief 列を vector で返す / O(N)
     vector<T> tovector() {
         vector<T> a; a.reserve(n);
         for (int i = 0; i < n; ++i) {

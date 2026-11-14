@@ -12,6 +12,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief Pollard の rho 法で素因数分解する
 class PollardRho {
 private:
     using ll = __int128_t;
@@ -56,6 +57,7 @@ private:
     }
 
 public:
+    /// @brief n を素因数分解し、素因数から指数への map を返す
     map<ll, int> factorize(ll n) {
         map<ll, int> res;
         // for (ll p : P200) {

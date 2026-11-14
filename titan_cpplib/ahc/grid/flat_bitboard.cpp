@@ -21,9 +21,8 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief グリッド全体を 1 つの Word で持つ BitBoard H*W <= sizeof(Word)*8 が前提
-///        セル (r,c) は bit (r*W+c) に対応する
-///        探索系は内部バッファを共有するため同じインスタンスの並列実行は不可
+/// @brief グリッド全体を 1 つの Word に持つ BitBoard / H*W <= sizeof(Word)*8 が前提
+/// セル (r,c) は bit (r*W+c) に対応する。探索系は内部の作業領域を共有するため、同じインスタンスを並列に使えない
 template<class Word, Neighborhood NB = Neighborhood::Four>
 class FlatBitboard {
 public:
@@ -156,11 +155,12 @@ private:
     }
 
 public:
+    /// @brief 立っているビット数を返す
     int popcount(Word x) const {
         return titan23::popcount(x);
     }
 
-    /// @brief 最下位の立っているビットの位置 x != 0 が前提
+    /// @brief 最下位の立っているビットの位置を返す / x != 0 が前提
     int ctz(Word x) const {
         return titan23::countr_zero(x);
     }
@@ -169,9 +169,10 @@ public:
         : H(0), W(0), N(0), FULL(0), LEFT_COL(0), RIGHT_COL(0), road(0),
           frontier(0), next(0), seen(0), comp(0) {}
 
+    /// @brief h*w の盤面を作り、全セルを道にする
     FlatBitboard(int h, int w) { resize(h, w); }
 
-    /// @brief 盤面を h*w に作り直し、全セルを道にする
+    /// @brief 盤面を h*w に作り直し、全セルを道にする / O(H)
     void resize(int h, int w) {
         assert(0 <= h && 0 <= w);
         assert((long long)h * w <= word_bits());
@@ -194,20 +195,28 @@ public:
     int width() const { return W; }
     bool inside(int r, int c) const { return in_bounds(r, c); }
 
+    /// @brief 道セルの集合を返す / O(1)
     const Set &road_set() const { return road; }
+    /// @brief 道セル数を返す / O(1)
     int road_count() const { return count(road); }
+    /// @brief 壁セル数を返す / O(1)
     int wall_count() const { return N - road_count(); }
+    /// @brief 壁セルの集合を out に書く / O(1)
     void wall_set(Set &out) const { out = FULL & ~road; }
+    /// @brief out 用に空集合を作る / O(1)
     Set new_set() const { return Word(0); }
 
-    /// @brief 全セルを道にする
+    /// @brief 全セルを道にする / O(1)
     void clear() { road = FULL; }
+    /// @brief 全セルを道にする / O(1)
     void open_all() { clear(); }
 
-    /// @brief 全セルを壁にする
+    /// @brief 全セルを壁にする / O(1)
     void fill() { road = Word(0); }
+    /// @brief 全セルを壁にする / O(1)
     void block_all() { fill(); }
 
+    /// @brief grid の wall_ch を壁、それ以外を道として読み取る / O(HW)
     void from_grid(const vector<string> &grid, char wall_ch = '#') {
         assert((int)grid.size() == H);
         road = Word(0);
@@ -219,30 +228,38 @@ public:
         }
     }
 
+    /// @brief (r,c) を道にする / O(1)
     void set_road(int r, int c) {
         TITAN_FLAT_BITBOARD_ASSERT(in_bounds(r, c));
         road |= bit(r, c);
     }
 
+    /// @brief (r,c) を壁にする / O(1)
     void set_wall(int r, int c) {
         TITAN_FLAT_BITBOARD_ASSERT(in_bounds(r, c));
         road &= ~bit(r, c);
     }
 
+    /// @brief (r,c) が道かを返す / O(1)
     bool is_road(int r, int c) const {
         TITAN_FLAT_BITBOARD_ASSERT(in_bounds(r, c));
         return (road & bit(r, c)) != 0;
     }
 
+    /// @brief 盤面を out に退避する / O(1)
     void snapshot(Set &out) const { out = road; }
+    /// @brief 退避した盤面を戻す / O(1)
     void restore(const Set &snap) { road = snap & FULL; }
 
+    /// @brief H, W, 壁配置がすべて一致するかを返す
     bool operator==(const FlatBitboard &o) const {
         return H == o.H && W == o.W && road == o.road;
     }
 
+    /// @brief 盤面が異なるかを返す
     bool operator!=(const FlatBitboard &o) const { return !(*this == o); }
 
+    /// @brief 盤面を壁 '#'、道 '.' で os に出力する
     friend ostream &operator<<(ostream &os, const FlatBitboard &b) {
         for (int r = 0; r < b.H; ++r) {
             for (int c = 0; c < b.W; ++c) {
@@ -253,6 +270,7 @@ public:
         return os;
     }
 
+    /// @brief マスクを 0 は '#'、1 は '.' で os に出力する
     void print(const Set &s, ostream &os) const {
         for (int r = 0; r < H; ++r) {
             for (int c = 0; c < W; ++c) {
@@ -262,7 +280,7 @@ public:
         }
     }
 
-    /// @brief 任意マスクを one/zero のグリッドへ変換する
+    /// @brief マスクを one/zero の文字盤に変換する / O(HW)
     void to_grid(const Set &s, vector<string> &grid, char one = '.', char zero = '#') const {
         grid.assign(H, string(W, zero));
         for (Word x = s & FULL; x; x &= x - 1) {
@@ -271,54 +289,79 @@ public:
         }
     }
 
+    /// @brief マスクを空にする / O(1)
     void clear(Set &s) const { s = Word(0); }
 
+    /// @brief (r,c) が立っているかを返す / O(1)
     bool test(const Set &s, int r, int c) const {
         TITAN_FLAT_BITBOARD_ASSERT(in_bounds(r, c));
         return (s & bit(r, c)) != 0;
     }
 
+    /// @brief (r,c) を立てる / O(1)
     void set(Set &s, int r, int c) const {
         TITAN_FLAT_BITBOARD_ASSERT(in_bounds(r, c));
         s |= bit(r, c);
     }
 
+    /// @brief (r,c) を落とす / O(1)
     void reset(Set &s, int r, int c) const {
         TITAN_FLAT_BITBOARD_ASSERT(in_bounds(r, c));
         s &= ~bit(r, c);
     }
 
+    /// @brief (r,c) を反転する / O(1)
     void flip(Set &s, int r, int c) const {
         TITAN_FLAT_BITBOARD_ASSERT(in_bounds(r, c));
         s ^= bit(r, c);
     }
 
+    /// @brief 立っているセル数を返す / O(1)
     int count(const Set &s) const { return popcount(s & FULL); }
+    /// @brief a と b の共通セル数を返す / O(1)
     int count_and(const Set &a, const Set &b) const { return popcount(a & b & FULL); }
+    /// @brief 立っているセルが 1 つ以上あるかを返す / O(1)
     bool any(const Set &s) const { return (s & FULL) != 0; }
+    /// @brief 空かを返す / O(1)
     bool none(const Set &s) const { return !any(s); }
+    /// @brief a と b が一致するかを返す / O(1)
     bool equals(const Set &a, const Set &b) const { return ((a ^ b) & FULL) == 0; }
+    /// @brief a と b が共通セルを持つかを返す / O(1)
     bool intersects(const Set &a, const Set &b) const { return (a & b & FULL) != 0; }
+    /// @brief a と b が共通セルを持たないかを返す / O(1)
     bool disjoint(const Set &a, const Set &b) const { return !intersects(a, b); }
+    /// @brief a が b の部分集合かを返す / O(1)
     bool is_subset(const Set &a, const Set &b) const { return (a & ~b & FULL) == 0; }
 
+    /// @brief マスクの 64bit ハッシュを返す / 衝突はあり得る / O(1)
     uint64_t hash64(const Set &s) const {
         uint64_t shape = ((uint64_t)(uint32_t)H << 32) | (uint32_t)W;
         return mix64(hash_word(s & FULL) ^ mix64(shape));
     }
 
+    /// @brief 道セルの 64bit ハッシュを返す / 衝突はあり得る / O(1)
     uint64_t hash64() const { return hash64(road); }
 
+    /// @brief 積 a & b を out に書く / O(1)
     void band(const Set &a, const Set &b, Set &out) const { out = a & b & FULL; }
+    /// @brief 和 a | b を out に書く / O(1)
     void bor(const Set &a, const Set &b, Set &out) const { out = (a | b) & FULL; }
+    /// @brief 対称差 a ^ b を out に書く / O(1)
     void bxor(const Set &a, const Set &b, Set &out) const { out = (a ^ b) & FULL; }
+    /// @brief 差 a \ b を out に書く / O(1)
     void bdiff(const Set &a, const Set &b, Set &out) const { out = a & ~b & FULL; }
+    /// @brief a &= b を計算する / O(1)
     void iand(Set &a, const Set &b) const { a &= b; }
+    /// @brief a |= b を計算する / O(1)
     void ior(Set &a, const Set &b) const { a = (a | b) & FULL; }
+    /// @brief a ^= b を計算する / O(1)
     void ixor(Set &a, const Set &b) const { a = (a ^ b) & FULL; }
+    /// @brief a \= b を計算する / O(1)
     void idiff(Set &a, const Set &b) const { a &= ~b; }
+    /// @brief 道セル内の補集合 road & ~a を out に書く / O(1)
     void complement_into(const Set &a, Set &out) const { out = road & ~a; }
 
+    /// @brief cells を立てたマスクを out に書く / 壁上のセルは落とす
     void make_set(const vector<pair<int,int>> &cells, Set &out) const {
         out = Word(0);
         for (auto [r, c] : cells) {
@@ -327,6 +370,7 @@ public:
         }
     }
 
+    /// @brief 立っている各セル (r,c) について f(r,c) を呼ぶ
     template<class F>
     void for_each(const Set &s, F &&f) const {
         for (Word x = s & FULL; x; x &= x - 1) {
@@ -335,11 +379,13 @@ public:
         }
     }
 
+    /// @brief 立っているセルを out に集める
     void cells(const Set &s, vector<pair<int,int>> &out) const {
         out.clear();
         for_each(s, [&](int r, int c) { out.emplace_back(r, c); });
     }
 
+    /// @brief 行優先で最初のセルを (r,c) に書く / 空集合なら false / O(1)
     bool first(const Set &s, int &r, int &c) const {
         Word x = s & FULL;
         if (!x) return false;
@@ -349,6 +395,7 @@ public:
         return true;
     }
 
+    /// @brief 行優先で k 番目のセルを (r,c) に書く / k は 0 始まり、範囲外なら false
     bool kth_cell(const Set &s, int k, int &r, int &c) const {
         Word x = s & FULL;
         if (k < 0 || k >= popcount(x)) return false;
@@ -359,7 +406,7 @@ public:
         return true;
     }
 
-    /// @brief s を含む最小半開矩形を返す 空集合なら false
+    /// @brief s を含む最小の半開矩形 [r1,r2) x [c1,c2) を書く / 空集合なら false
     bool bounding_box(const Set &s, int &r1, int &c1, int &r2, int &c2) const {
         Word x = s & FULL;
         if (!x) return false;
@@ -377,6 +424,7 @@ public:
         return true;
     }
 
+    /// @brief 半開矩形 [r1,r2) x [c1,c2) のマスクを out に書く / O(H)
     void rect(int r1, int c1, int r2, int c2, Set &out) const {
         assert(0 <= r1 && r1 <= r2 && r2 <= H);
         assert(0 <= c1 && c1 <= c2 && c2 <= W);
@@ -386,7 +434,7 @@ public:
         for (int r = r1; r < r2; ++r) out |= cols << (r * W);
     }
 
-    /// @brief s を (dr,dc) 平行移動して out に書く 壁は考慮しない
+    /// @brief s を (dr,dc) 平行移動して out に書く / 壁は考慮しない / O(H)
     void shift(const Set &s, int dr, int dc, Set &out) const {
         TITAN_FLAT_BITBOARD_ASSERT(&s != &out);
         out = Word(0);
@@ -402,51 +450,56 @@ public:
         }
     }
 
+    /// @brief s を 1 マス左へ移動して out に書く / 壁は考慮しない / O(1)
     void shift_left(const Set &s, Set &out) const {
         TITAN_FLAT_BITBOARD_ASSERT(&s != &out);
         out = move_left(s);
     }
 
+    /// @brief s を 1 マス右へ移動して out に書く / 壁は考慮しない / O(1)
     void shift_right(const Set &s, Set &out) const {
         TITAN_FLAT_BITBOARD_ASSERT(&s != &out);
         out = move_right(s);
     }
 
+    /// @brief s を 1 マス上へ移動して out に書く / 壁は考慮しない / O(1)
     void shift_up(const Set &s, Set &out) const {
         TITAN_FLAT_BITBOARD_ASSERT(&s != &out);
         out = move_up(s);
     }
 
+    /// @brief s を 1 マス下へ移動して out に書く / 壁は考慮しない / O(1)
     void shift_down(const Set &s, Set &out) const {
         TITAN_FLAT_BITBOARD_ASSERT(&s != &out);
         out = move_down(s);
     }
 
+    /// @brief s を (dr,dc) 平行移動し、道セルだけを out に残す / O(H)
     void step(const Set &s, int dr, int dc, Set &out) const {
         TITAN_FLAT_BITBOARD_ASSERT(&s != &out);
         shift(s, dr, dc, out);
         out &= road;
     }
 
-    /// @brief s を道セル内で設定された近傍に 1 ステップ拡張して out に書く
+    /// @brief s の各セルから近傍へ 1 マス動いた先の道セルを out に書く / O(1)
     void expand(const Set &s, Set &out) const {
         TITAN_FLAT_BITBOARD_ASSERT(&s != &out);
         out = expand_raw(s) & road;
     }
 
-    /// @brief s に隣接する道セルを out に書く s 自身は除く
+    /// @brief s に隣接し s に含まれない道セルを out に書く / O(1)
     void border(const Set &s, Set &out) const {
         TITAN_FLAT_BITBOARD_ASSERT(&s != &out);
         out = expand_raw(s) & road & ~s;
     }
 
-    /// @brief s と隣接セルの和集合を out に書く road は考慮しない
+    /// @brief s と隣接セルの和集合を out に書く / road は考慮しない / O(1)
     void dilate(const Set &s, Set &out) const {
         TITAN_FLAT_BITBOARD_ASSERT(&s != &out);
         out = (s | expand_raw(s)) & FULL;
     }
 
-    /// @brief s を盤面内で k 回膨張して out に書く road は考慮しない / O(k)
+    /// @brief s を盤面内で k 回膨張して out に書く / road は考慮しない / O(k)
     void dilate(const Set &s, int k, Set &out) const {
         assert(0 <= k);
         TITAN_FLAT_BITBOARD_ASSERT(&s != &out);
@@ -454,34 +507,37 @@ public:
         for (int step_i = 0; step_i < k; ++step_i) out |= expand_raw(out);
     }
 
-    /// @brief 周囲すべてが s に含まれるセルを out に書く 盤面外は 0 と扱う
+    /// @brief 周囲すべてが s に含まれるセルを out に書く / 盤面外は 0 と扱う / O(1)
     void erode(const Set &s, Set &out) const {
         TITAN_FLAT_BITBOARD_ASSERT(&s != &out);
         out = eroded(s);
     }
 
-    /// @brief s の内側境界を out に書く 盤面外は 0 と扱う
+    /// @brief s の内側境界を out に書く / 盤面外は 0 と扱う / O(1)
     void inner_border(const Set &s, Set &out) const {
         TITAN_FLAT_BITBOARD_ASSERT(&s != &out);
         out = s & ~eroded(s) & FULL;
     }
 
+    /// @brief 座標列 sources からの到達集合を out に書く
     void flood(const vector<pair<int,int>> &sources, Set &out) const {
         make_set(sources, out);
         out = flood_closure(out);
     }
 
+    /// @brief Set sources からの到達集合を out に書く / sources と out は別の Set にする
     void flood(const Set &sources, Set &out) const {
         TITAN_FLAT_BITBOARD_ASSERT(&sources != &out);
         out = flood_closure(sources);
     }
 
+    /// @brief (r,c) からの到達集合を out に書く
     void flood(int r, int c, Set &out) const {
         TITAN_FLAT_BITBOARD_ASSERT(in_bounds(r, c));
         out = flood_closure(bit(r, c));
     }
 
-    /// @brief 盤面外周に接する道から到達できる道セルを out に書く
+    /// @brief 盤面外周の道セルから到達できる道セルを out に書く
     void reachable_from_border(Set &out) const {
         if (H == 0 || W == 0) {
             out = Word(0);
@@ -498,7 +554,7 @@ public:
         out = road & ~comp & FULL;
     }
 
-    /// @brief 連結な道集合で (r,c) を消しても連結性を保つ十分条件を 3x3 局所判定する
+    /// @brief 連結な道集合から (r,c) を消しても連結性を保つ十分条件を 3x3 の範囲で判定する / O(1)
     bool locally_removable(int r, int c) const {
         TITAN_FLAT_BITBOARD_ASSERT(in_bounds(r, c));
         if (!is_road(r, c)) return false;
@@ -543,11 +599,13 @@ public:
         return lut[pattern];
     }
 
+    /// @brief 座標列 sources から max_steps 回までの拡張で届く集合を out に書く
     void flood_limited(const vector<pair<int,int>> &sources, int max_steps, Set &out) const {
         make_set(sources, comp);
         flood_limited(comp, max_steps, out);
     }
 
+    /// @brief Set sources から max_steps 回までの拡張で届く集合を out に書く
     void flood_limited(const Set &sources, int max_steps, Set &out) const {
         assert(0 <= max_steps);
         TITAN_FLAT_BITBOARD_ASSERT(&sources != &out);
@@ -560,18 +618,21 @@ public:
         }
     }
 
+    /// @brief a と b が連結かを返す
     bool connected(pair<int,int> a, pair<int,int> b) const {
         TITAN_FLAT_BITBOARD_ASSERT(in_bounds(a.first, a.second));
         TITAN_FLAT_BITBOARD_ASSERT(in_bounds(b.first, b.second));
         return connected_points(a.first, a.second, b.first, b.second);
     }
 
+    /// @brief a から b までの最短距離を返す / 到達不能なら -1
     int distance(pair<int,int> a, pair<int,int> b) const {
         TITAN_FLAT_BITBOARD_ASSERT(in_bounds(a.first, a.second));
         TITAN_FLAT_BITBOARD_ASSERT(in_bounds(b.first, b.second));
         return distance_points(a.first, a.second, b.first, b.second);
     }
 
+    /// @brief (r,c) から targets の最寄りセルまでの距離を返し、そのセルを hit に書く / 同距離なら行優先で最小、到達不能なら -1
     int nearest_in_set(int r, int c, const Set &targets, pair<int,int> &hit) const {
         TITAN_FLAT_BITBOARD_ASSERT(in_bounds(r, c));
         if (!is_road(r, c)) return -1;
@@ -593,21 +654,25 @@ public:
         return -1;
     }
 
+    /// @brief (r,c) を含む連結成分を out に書く / 壁なら空集合
     void component(int r, int c, Set &out) const {
         TITAN_FLAT_BITBOARD_ASSERT(in_bounds(r, c));
         out = flood_closure(bit(r, c));
     }
 
+    /// @brief (r,c) を含む連結成分のセル数を返す / 壁なら 0
     int component_size(int r, int c) const {
         TITAN_FLAT_BITBOARD_ASSERT(in_bounds(r, c));
         return popcount(flood_closure(bit(r, c)));
     }
 
+    /// @brief 座標列 sources からの多始点最短距離を dist に書く / dist は長さ H*W で添字は r*W+c、未到達は -1
     void bfs_dist(const vector<pair<int,int>> &sources, vector<int> &dist) const {
         make_set(sources, comp);
         bfs_dist(comp, dist);
     }
 
+    /// @brief Set sources からの多始点最短距離を dist に書く / 未到達は -1
     void bfs_dist(const Set &sources, vector<int> &dist) const {
         dist.assign(N, -1);
         seen = frontier = sources & road;
@@ -623,6 +688,7 @@ public:
         }
     }
 
+    /// @brief a から b への最短経路を path に書く / dist は使い回す作業領域、到達不能なら false
     bool shortest_path(
         pair<int,int> a,
         pair<int,int> b,
@@ -668,6 +734,7 @@ public:
         return true;
     }
 
+    /// @brief a から b への最短経路を path に書く / 到達不能なら false
     bool shortest_path(pair<int,int> a, pair<int,int> b, vector<pair<int,int>> &path) const {
         TITAN_FLAT_BITBOARD_ASSERT(in_bounds(a.first, a.second));
         TITAN_FLAT_BITBOARD_ASSERT(in_bounds(b.first, b.second));
@@ -709,6 +776,7 @@ public:
         return true;
     }
 
+    /// @brief 多始点最短距離を dist に、最寄り始点の番号を src に書く / 同距離なら番号最小、未到達は -1
     void bfs_nearest(const vector<pair<int,int>> &sources, vector<int> &dist, vector<int> &src) const {
         dist.assign(N, -1);
         src.assign(N, -1);
@@ -797,7 +865,8 @@ public:
         }
     }
 
-    /// @brief 各連結成分について f(component_set, size) を呼ぶ 成分数を返す
+    /// @brief 各連結成分について f(component_set, size) を呼び、成分数を返す
+    /// component_set は f の実行中だけ有効。f から同じ FlatBitboard の探索を呼ばない
     template<class F>
     int for_each_component(F &&f) const {
         Word rem = road;
@@ -811,6 +880,7 @@ public:
         return result;
     }
 
+    /// @brief 道セルの連結成分数を返す
     int components() const {
         Word isolated = road & ~expand_raw(road);
         Word rem = road & ~isolated;
@@ -823,6 +893,7 @@ public:
         return count;
     }
 
+    /// @brief 各道セルに連結成分番号を振り、成分数を返す / lab は長さ H*W、壁は -1
     int label(vector<int> &lab) const {
         lab.assign(N, -1);
         Word rem = road;
@@ -838,6 +909,7 @@ public:
         return id;
     }
 
+    /// @brief 最大の連結成分を out に書き、そのセル数を返す
     int largest_component(Set &out) const {
         Word isolated = road & ~expand_raw(road);
         Word rem = road & ~isolated;

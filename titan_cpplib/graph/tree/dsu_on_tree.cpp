@@ -5,9 +5,9 @@
 #include <cassert>
 using namespace std;
 
-// DSUonTree
 namespace titan23 {
 
+/// @brief DSU on tree で、各頂点の部分木についての集計を行う
 class DSUonTree {
 private:
     vector<vector<int>> G;
@@ -16,7 +16,7 @@ private:
 
     int dfs1(int v, int p=-1) {
         if (G[v].size() >= 2 && G[v][0] == p) swap(G[v][0], G[v][1]);
-        for (int &x : G[v]) if (x != p) { // need `&`
+        for (int &x : G[v]) if (x != p) { // swap するので参照で受ける
             sz[v] += dfs1(x, v);
             if (sz[x] > sz[G[v][0]]) swap(x, G[v][0]);
         }
@@ -31,10 +31,13 @@ private:
     }
 
 public:
+    /// @brief 根 root の木 G で前処理する / O(n)
     DSUonTree(vector<vector<int>> G, int root) : G(G), n(G.size()), t(0), root(root), sz(n, 1), path(n), in(n), out(n) { dfs1(root); dfs2(root); }
 
+    /// @brief u の行きがけ順の番号を返す
     int idx(int u) const { return in[u]; }
 
+    /// @brief 各頂点 v で、v の部分木の全頂点に update を適用した状態で query(v) を呼ぶ / 部分木を捨てるときは各頂点に clear を呼び、最後に reset を呼ぶ
     void run(const auto &update, const auto &query, const auto &clear, const auto &reset) {
         auto dsu = [&](auto dsu, int v, int p=-1, bool keep=false) -> void {
             for (int i = 0; i < (int)G[v].size(); ++i) if (i && G[v][i] != p) {

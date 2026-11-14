@@ -10,6 +10,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 遅延伝播と区間反転を持つ RBST / 0-indexed
 template <class T, T (*op)(T, T), T (*e)(),
           class F, T (*mapping)(F, T), F (*composition)(F, F), F (*id)()>
 class LazyRBST {
@@ -154,17 +155,21 @@ class LazyRBST {
 
 public:
     LazyRBST() : root(nullptr) {}
+    /// @brief 列 a から構築する / O(n)
     LazyRBST(const vector<T> &a) : root(nullptr) { _build(a); }
 
+    /// @brief other を末尾に結合する / 期待 O(log n)
     void merge(RBST &other) {
         root = _merge_node(root, other.root);
     }
 
+    /// @brief 先頭 k 要素と残りに分割する / 期待 O(log n)
     pair<RBST, RBST> split(int k) {
         auto [l, r] = _split_node(root, k);
         return {RBST(l), RBST(r)};
     }
 
+    /// @brief 区間 [l, r) に f を作用させる / 期待 O(log n)
     void apply(int l, int r, F f) {
         assert(0 <= l && l <= r && r <= len());
         if (l == r) return;
@@ -184,10 +189,12 @@ public:
         dfs(dfs, root, 0, len());
     }
 
+    /// @brief 全要素の総積を返す / O(1)
     T all_prod() const {
         return this->root ? this->root->data : e();
     }
 
+    /// @brief 区間 [l, r) の総積を返す / 期待 O(log n)
     T prod(int l, int r) {
         assert(0 <= l && l <= r && r <= len());
         if (l == r) return e();
@@ -205,6 +212,7 @@ public:
         return dfs(dfs, root, 0, len());
     }
 
+    /// @brief 位置 k に key を挿入する / 期待 O(log n)
     void insert(int k, T key) {
         assert(0 <= k && k <= len());
         auto [s, t] = _split_node(root, k);
@@ -212,6 +220,7 @@ public:
         root = _merge_node(_merge_node(s, node), t);
     }
 
+    /// @brief 位置 k の要素を削除して返す / 期待 O(log n)
     T pop(int k) {
         assert(0 <= k && k < len());
         auto [s, t] = _split_node(root, k + 1);
@@ -221,6 +230,7 @@ public:
         return res;
     }
 
+    /// @brief 区間 [l, r) を反転する / 期待 O(log n)
     void reverse(int l, int r) {
         assert(0 <= l && l <= r && r <= len());
         if (l == r) return;
@@ -231,6 +241,7 @@ public:
         root = _merge_node(_merge_node(u, s), t);
     }
 
+    /// @brief 要素を先頭から順に vector で返す / O(n)
     vector<T> tovector() {
         NodePtr node = root;
         stack<NodePtr> s;
@@ -249,6 +260,7 @@ public:
         return a;
     }
 
+    /// @brief 位置 k の要素を返す / 期待 O(log n)
     T get(int k) {
         assert(0 <= k && k < len());
         NodePtr node = root;
@@ -266,6 +278,7 @@ public:
         }
     }
 
+    /// @brief 位置 k の要素を key に変更する / 期待 O(log n)
     void set(int k, T key) {
         assert(0 <= k && k < len());
         NodePtr node = root;
@@ -290,10 +303,12 @@ public:
         }
     }
 
+    /// @brief 要素数を返す / O(1)
     int len() const {
         return root ? root->size : 0;
     }
 
+    /// @brief 要素列を標準出力に出力する / O(n)
     void print() {
         vector<T> a = tovector();
         cout << "[";
@@ -304,6 +319,7 @@ public:
         cout << "]" << endl;
     }
 
+    /// @brief 木の高さを返す / O(n)
     int height() {
         auto dfs = [&] (auto &&dfs, NodePtr node) -> int {
             if (!node) return 0;
@@ -312,6 +328,7 @@ public:
         return dfs(dfs, root);
     }
 
+    /// @brief 木を完全に平衡な形に作り直す / O(n)
     void rebuild() {
         vector<T> a = tovector();
         _build(a);

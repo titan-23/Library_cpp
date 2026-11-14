@@ -9,8 +9,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief エラトステネスの篩
-/// 時間計算量: O(NloglogN)
+/// @brief エラトステネスの篩で n 以下の素数を昇順で返す / O(nloglogn)
 vector<int> get_primelist(int n) {
     if (n < 2) return {};
     vector<bool> is_prime(n + 1, true);
@@ -32,9 +31,7 @@ vector<int> get_primelist(int n) {
     return primelist;
 }
 
-/// @brief 区間 [l, r) の素数を列挙
-/// 時間計算量: O(√r + (r-l) loglog r)
-/// 空間計算量: O(√r + (r-l))
+/// @brief 区間 [l, r) の素数を昇順で返す / 時間 O((√r + (r-l)) loglog r)、空間 O(√r + (r-l))
 vector<long long> get_primelist_range(long long l, long long r) {
     assert(l <= r);
     if (r <= 2) return {};

@@ -12,6 +12,7 @@
 #include "titan_cpplib/ahc/clustering/kmeans.cpp"
 using namespace std;
 namespace titan23 {
+/// @brief kmeans_balanced 系の関数の結果 / 反復中で total_cost が最小だった状態を持ち、total_flow_cost はその flow_cost の和
 template <class Center, class Cost>
 struct KMeansBalancedResult {
     vector<int> labels;
@@ -65,6 +66,7 @@ long long calculate_total_flow_cost(const vector<Point>& points, const vector<in
     return (long long)total;
 }
 
+// 各クラスタの点数を ranges に収め、flow_cost の和が最小の割り当てを最小費用流で求める
 template <class Point, class Center, class FlowCostFn>
 void assign_balanced(const vector<Point>& points, const vector<Center>& centers, const vector<ClusterSizeRange>& ranges, vector<int>& labels, vector<int>& counts, FlowCostFn& flow_cost) {
     int n = points.size(), cluster_count = centers.size();
@@ -126,7 +128,7 @@ auto run_balanced(const vector<Point>& points, vector<Center> centers, const vec
     Cost best_cost = Cost(0);
     long long best_flow_cost = 0;
     bool has_best = false, best_converged = false;
-    // cost and flow_cost may order states differently, so keep the cheapest state seen so far.
+    // cost と flow_cost で状態の順序が違いうるので、これまでで cost が最小の状態を保持する
     auto save_best = [&](Cost current_cost, long long current_flow_cost, bool converged) {
         best_labels = labels;
         best_centers = centers;
@@ -160,11 +162,14 @@ auto run_balanced(const vector<Point>& points, vector<Center> centers, const vec
 }
 }
 
+/// @brief 中心 initial_centers から、各クラスタの点数を ranges の範囲に収めて k-means を行う
+/// 割り当ては flow_cost の和を最小にして決める。flow_cost は非負の整数を返し、その値の (n + k + 3) 倍が 8e18 + 1000 を超えないこと
 template <class Point, class Center, class CostFn, class FlowCostFn, class CenterFn>
 auto kmeans_balanced_from_centers(const vector<Point>& points, const vector<Center>& initial_centers, const vector<ClusterSizeRange>& ranges, CostFn cost, FlowCostFn flow_cost, CenterFn center_of, int max_iterations = 100) {
     return kmeans_detail::run_balanced(points, initial_centers, ranges, cost, flow_cost, center_of, max_iterations);
 }
 
+/// @brief K-means++ で初期化し、各クラスタの点数を ranges の範囲に収めて k-means を行う
 template <class Point, class CostFn, class FlowCostFn, class CenterFn>
 auto kmeans_balanced(const vector<Point>& points, const vector<ClusterSizeRange>& ranges, CostFn cost, FlowCostFn flow_cost, CenterFn center_of, KMeansOptions options = {}) {
     using Center = remove_cvref_t<invoke_result_t<CenterFn&, const vector<Point>&, span<const int>>>;
@@ -174,6 +179,7 @@ auto kmeans_balanced(const vector<Point>& points, const vector<ClusterSizeRange>
     return kmeans_detail::run_balanced(points, move(centers), ranges, cost, flow_cost, center_of, options.max_iterations);
 }
 
+/// @brief 種を変えて kmeans_balanced を trials 回行い、total_cost が最小の結果を返す
 template <class Point, class CostFn, class FlowCostFn, class CenterFn>
 auto kmeans_balanced_best_of(const vector<Point>& points, const vector<ClusterSizeRange>& ranges, int trials, CostFn cost, FlowCostFn flow_cost, CenterFn center_of, KMeansOptions options = {}) {
     return kmeans_detail::run_best_of("kmeans_balanced_best_of", trials, options, [&](const KMeansOptions& current) {
@@ -181,16 +187,19 @@ auto kmeans_balanced_best_of(const vector<Point>& points, const vector<ClusterSi
     });
 }
 
+/// @brief クラスタ j の点数をちょうど sizes[j] にして kmeans_balanced_from_centers を行う
 template <class Point, class Center, class CostFn, class FlowCostFn, class CenterFn>
 auto kmeans_balanced_exact_from_centers(const vector<Point>& points, const vector<Center>& initial_centers, const vector<int>& sizes, CostFn cost, FlowCostFn flow_cost, CenterFn center_of, int max_iterations = 100) {
     return kmeans_balanced_from_centers(points, initial_centers, kmeans_detail::make_exact_ranges(sizes), move(cost), move(flow_cost), move(center_of), max_iterations);
 }
 
+/// @brief クラスタ j の点数をちょうど sizes[j] にして kmeans_balanced を行う
 template <class Point, class CostFn, class FlowCostFn, class CenterFn>
 auto kmeans_balanced_exact(const vector<Point>& points, const vector<int>& sizes, CostFn cost, FlowCostFn flow_cost, CenterFn center_of, KMeansOptions options = {}) {
     return kmeans_balanced(points, kmeans_detail::make_exact_ranges(sizes), move(cost), move(flow_cost), move(center_of), options);
 }
 
+/// @brief クラスタ j の点数をちょうど sizes[j] にして kmeans_balanced_best_of を行う
 template <class Point, class CostFn, class FlowCostFn, class CenterFn>
 auto kmeans_balanced_exact_best_of(const vector<Point>& points, const vector<int>& sizes, int trials, CostFn cost, FlowCostFn flow_cost, CenterFn center_of, KMeansOptions options = {}) {
     return kmeans_balanced_best_of(points, kmeans_detail::make_exact_ranges(sizes), trials, move(cost), move(flow_cost), move(center_of), options);

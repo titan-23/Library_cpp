@@ -5,7 +5,7 @@
 
 namespace titan23 {
 
-/// @brief 木上の Mo（辺属性）
+/// @brief パス上の辺を出し入れしてパスクエリを処理する木上の Mo
 class MoTreeEdge : public MoTreeBase<false> {
 public:
     using MoTreeBase<false>::MoTreeBase;

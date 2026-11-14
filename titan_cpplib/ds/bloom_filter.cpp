@@ -8,6 +8,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief u64 のキーを扱うブルームフィルタ / contains は偽陽性があり得る
 class BloomFilter {
 private:
     using u64 = unsigned long long;
@@ -16,7 +17,7 @@ private:
     int msk;
     static constexpr int K = 3; // ハッシュ関数の数
 
-    // 最小の2のべき乗に切り上げる関数
+    // n 以上の最小の 2 べきを返す
     int next_pow2(int n) const {
         if (n == 0) return 1;
         int p = 1;
@@ -40,12 +41,14 @@ private:
     }
 
 public:
+    /// @brief init_size ビット以上の領域で空のフィルタを作る
     BloomFilter(int init_size) : size(0) {
         int nbits = next_pow2((init_size + 63) / 64);
         bits.resize(nbits, 0);
         msk = nbits - 1;
     }
 
+    /// @brief key を追加する / O(1)
     void insert(const u64 key) {
         for (const u64 &h : get_hashes(key)) {
             bits[(h >> 6) & msk] |= (1ull << (h & 63));
@@ -53,15 +56,17 @@ public:
         ++size;
     }
 
+    /// @brief key を含む可能性があれば true を返す / O(1)
     bool contains(const u64 key) const {
         for (const u64 &h : get_hashes(key)) {
             if (!((bits[(h >> 6) & msk] >> (h & 63)) & 1)) {
                 return false;
             }
         }
-        return true; // たぶん存在する
+        return true; // 偽陽性の場合がある
     }
 
+    /// @brief contains(key) を返し、false なら key を追加する / 追加しても len() は増えない / O(1)
     bool contains_insert(const u64 key) {
         array<u64, K> hashes = get_hashes(key);
         bool contains = true;
@@ -78,12 +83,15 @@ public:
         return false;
     }
 
+    /// @brief 内部の u64 配列の長さを返す
     int inner_len() const { return (int)bits.size(); }
 
+    /// @brief insert を呼んだ回数を返す
     int len() const { return size; }
 
     bool empty() const { return size == 0; }
 
+    /// @brief 全ビットを 0 に戻す / len() が 0 なら何もしない
     void clear() {
         if (empty()) return;
         size = 0;

@@ -7,14 +7,21 @@
 #include "titan_cpplib/ahc/tsp/tsp_symmetric_moves.cpp"
 using namespace std;
 namespace titan23 {
+/// @brief 2-opt 局所探索の設定
 struct TspLocalSearchOptions {
+    /// 評価する手の数の上限 / -1 なら上限なし
     int64_t max_evaluated_moves = -1;
+    /// true なら最初に見つけた改善手を適用し、false なら一巡のうち費用差が最小の手を適用する
     bool first_improvement = true;
 };
 
+/// @brief 2-opt 局所探索の結果
 struct TspLocalSearchResult {
+    /// 評価した手の数
     int64_t evaluated_moves;
+    /// 適用した手の数
     int64_t applied_moves;
+    /// 局所最適に達したか / 評価上限で止まった場合は false
     bool locally_optimal;
 };
 
@@ -27,6 +34,7 @@ inline int previous_index(int index, int n) {
     return index == 0 ? n - 1 : index - 1;
 }
 
+// 位置 edge1, edge2 から始まる辺を切る 2-opt の反転区間 [left, right] を求める / 隣接する辺なら false
 inline bool make_two_opt_indices(int edge1, int edge2, int n, int& left, int& right) {
     if (edge1 == edge2 || (edge1 + 1) % n == edge2 || (edge2 + 1) % n == edge1) return false;
     if (edge1 > edge2) swap(edge1, edge2);
@@ -35,6 +43,7 @@ inline bool make_two_opt_indices(int edge1, int edge2, int n, int& left, int& ri
     return true;
 }
 
+// enumerate が列挙する 2-opt を評価し、改善手がなくなるか評価上限に達するまで適用する
 template<class EdgeCost, class Enumerate>
 TspLocalSearchResult run(
     const TspProblem<EdgeCost>& problem,
@@ -80,6 +89,7 @@ TspLocalSearchResult run(
 }
 }
 
+/// @brief 全ての 2-opt を調べる局所探索で state を改善する
 template<class EdgeCost>
 TspLocalSearchResult tsp_two_opt_local_search(
     const TspProblem<EdgeCost>& problem,
@@ -101,6 +111,7 @@ TspLocalSearchResult tsp_two_opt_local_search(
     return tsp_local_search_detail::run(problem, state, options, enumerate);
 }
 
+/// @brief 候補表 candidates の各点と候補点を隣接させる 2-opt だけを調べる局所探索で state を改善する
 template<class EdgeCost>
 TspLocalSearchResult tsp_two_opt_local_search(
     const TspProblem<EdgeCost>& problem,

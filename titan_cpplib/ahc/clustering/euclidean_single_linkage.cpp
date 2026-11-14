@@ -106,11 +106,15 @@ inline HierarchicalClusteringResult build_result(int input_point_count, const De
 }
 }
 
+/// @brief 二次元の整数座標の点をユークリッド距離の単連結法で併合し、併合の列を返す / O(n log n)
+/// 同じ座標の点は距離 0 で先に併合する
 inline HierarchicalClusteringResult euclidean_single_linkage_2d(const vector<IntegerPoint>& points) {
     if (points.size() > (size_t)numeric_limits<int>::max()) throw invalid_argument("euclidean_single_linkage_2d: points.size() must fit in int");
     return euclidean_single_linkage_internal::build_result((int)points.size(), delaunay_triangulation(points));
 }
 
+/// @brief get_x, get_y で取り出した整数座標について単連結法の併合の列を返す / O(n log n)
+/// 座標は int に収まること。収まらなければ invalid_argument を投げる
 template <class Point, class GetX, class GetY>
 HierarchicalClusteringResult euclidean_single_linkage_2d(const vector<Point>& points, GetX get_x, GetY get_y) {
     if (points.size() > (size_t)numeric_limits<int>::max()) throw invalid_argument("euclidean_single_linkage_2d: points.size() must fit in int");

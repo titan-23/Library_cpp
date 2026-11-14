@@ -9,27 +9,27 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief Stern-Brocot 木の上で正の有理数を扱う
 template<class T>
 class SternBrocotTree {
 public:
+    /// @brief 開区間 (p/q, r/s) で表すノード / 値は (p+r)/(q+s)
     struct Node {
-        // 開区間 (p/q, r/s)
-        // (p+r)/(q+s) がこのノードの値
         T p, q, r, s;
 
-        /// @brief 分母
+        /// @brief 値の分母を返す
         T den() const { return q + s; }
 
-        /// @brief 分子
+        /// @brief 値の分子を返す
         T num() const { return p + r; }
 
-        /// @brief 左の子へd進む
+        /// @brief 左の子の方向へ d 回進んだノードを返す
         Node left(T d) const { return {p, q, r+p*d, s+q*d}; }
 
-        /// @brief 右の子へd進む
+        /// @brief 右の子の方向へ d 回進んだノードを返す
         Node right(T d) const { return {p+r*d, q+s*d, r, s}; }
 
-        /// @brief 開区間を返す
+        /// @brief 開区間の端点を {{p, q}, {r, s}} で返す
         pair<pair<T, T>, pair<T, T>> range() const { return {{p, q}, {r, s}}; }
 
         friend ostream& operator<<(ostream& os, const Node n) {
@@ -66,7 +66,7 @@ private:
     }
 
 public:
-    /// @brief p/qに対応するノードを返す
+    /// @brief p/q に対応するノードを返す / p/q は既約にしてから扱う
     Node get_node(T p, T q) {
         T g = internal_gcd(p, q);
         p /= g;
@@ -90,6 +90,7 @@ public:
         return now;
     }
 
+    /// @brief 根から a までの経路を、向き 'L' または 'R' と進む回数の組の列で返す
     vector<pair<char, T>> encode_path(const Node &a) {
         vector<pair<char, T>> path;
         Node now = a;
@@ -109,6 +110,7 @@ public:
         return path;
     }
 
+    /// @brief 根から経路 P に沿って進んだノードを返す
     Node decode_path(const vector<pair<char, T>> &P) {
         Node now = root();
         for (const auto &[d, c] : P) {
@@ -117,6 +119,7 @@ public:
         return now;
     }
 
+    /// @brief a と b の最小共通祖先を返す
     Node lca(const Node &a, const Node &b) {
         auto pathA = encode_path(a);
         auto pathB = encode_path(b);
@@ -130,7 +133,7 @@ public:
         return decode_path(res);
     }
 
-    /// @brief nodeの祖先であって、深さがkのノードを返す
+    /// @brief node の祖先のうち深さ k のノードを返す / k が node の深さより大きければ先頭が false
     pair<bool, Node> ancestor(const Node &node, T k) {
         auto path = encode_path(node);
         T dep = 0;
@@ -154,13 +157,9 @@ public:
         return {true, res};
     }
 
-    /// @brief SBT上で単調性を持つ判定関数fの境界を探索する / O(log d)
-    /// @brief f(0/1) != f(1/0) であること
-    /// @param f 単調関数
-    /// @param d 探索する分母分子の上限
-    /// @return 境界の区間を持つノード
-    /// node.p/node.q: 境界の左側の分数(f(0/1)と同じ値を返す最大の分数)
-    /// node.r/node.s: 境界の右側の分数(f(1/0)と同じ値を返す最小の分数)
+    /// @brief 単調な判定関数 f(p, q) の境界を、分母と分子が d 以下の分数の範囲で探す / O(log d)
+    /// f(0/1) != f(1/0) が前提
+    /// 返すノードの p/q は f(0/1) と同じ値を返す最大の分数、r/s は f(1/0) と同じ値を返す最小の分数
     template<class F>
     Node binary_search(F f, T d) {
         Node now = root();

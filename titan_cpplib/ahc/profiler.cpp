@@ -8,8 +8,10 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 名前を付けた区間の実行回数と実行時間を集計する / 区間は入れ子にできる
 class Profiler {
 public:
+    /// @brief report で並べる順
     enum class SortBy {
         Name,
         TotalTime,
@@ -33,10 +35,12 @@ private:
     vector<TimerState> timer_stack;
 
 public:
+    /// @brief 名前 name の区間の計測を始める
     void start(const string& name) {
         timer_stack.push_back({name, timer.elapsed()});
     }
 
+    /// @brief 最後に始めた区間の計測を終えて記録する / 計測中の区間がなければ何もしない
     void stop() {
         if (timer_stack.empty()) return;
         double current_time_ms = timer.elapsed();
@@ -47,6 +51,7 @@ public:
         timer_stack.pop_back();
     }
 
+    /// @brief 集計結果を sort_by の順に並べ、表として標準エラー出力に書く
     void report(SortBy sort_by=SortBy::Name) const {
         vector<pair<string, Record>> sorted_records(records.begin(), records.end());
 
@@ -87,6 +92,7 @@ public:
 } profiler;
 } // namespace titan23
 
+// PROFILE が未定義なら、PROF_START と PROF_STOP は何もしない
 #ifdef PROFILE
 #define PROF_START(name) titan23::profiler.start(name)
 #define PROF_STOP() titan23::profiler.stop()

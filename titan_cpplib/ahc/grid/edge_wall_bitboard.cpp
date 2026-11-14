@@ -21,6 +21,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief 盤面上の移動方向
 enum class GridDirection : uint8_t {
     Up,
     Right,
@@ -28,10 +29,8 @@ enum class GridDirection : uint8_t {
     Left,
 };
 
-/// @brief セル間の壁を持つ4近傍グリッド用Bitboard
-///        1行を1つのWordで持ち、幅はWordのビット数以下とする
-///        Setを出力するメソッドでは入力と出力に別のバッファを渡す
-///        探索系は内部バッファを共有するため、同じインスタンスで同時に呼ばない
+/// @brief セル間に壁がある4近傍グリッド用Bitboard / 1行を1つのWordで持ち、幅はWordのビット数以下とする
+/// Setを出力するメソッドには入力と別のSetを渡す。探索系は内部の作業領域を共有するため、同じインスタンスで同時に呼ばない
 template<class Word>
 class EdgeWallBitboard {
 public:
@@ -132,9 +131,10 @@ private:
 
 public:
     EdgeWallBitboard() = default;
+    /// @brief height*widthの盤面を作り、外周以外のすべての辺を開く
     EdgeWallBitboard(int height, int width) { resize(height, width); }
 
-    /// @brief 盤面を作り直し、外周以外のすべての辺を開く
+    /// @brief 盤面を作り直し、外周以外のすべての辺を開く / O(HW)
     void resize(int height, int width) {
         assert(0 <= height);
         assert(0 <= width && width <= word_bits());
@@ -165,7 +165,7 @@ public:
     int cell_count() const { return N; }
     bool inside(int row, int column) const { return in_bounds(row, column); }
 
-    /// @brief 右壁と下壁を読み取る '0' は通行可能、'1' は壁
+    /// @brief 右壁と下壁を読み取る / '0'は通行可能、'1'は壁 / O(HW)
     void from_walls(
         const vector<string>& right_walls,
         const vector<string>& down_walls
@@ -199,50 +199,58 @@ public:
         rebuild_destinations();
     }
 
+    /// @brief (row,column)からdirectionへ移動できるかを返す / O(1)
     bool can_move(int row, int column, GridDirection direction) const {
         TITAN_EDGE_WALL_BITBOARD_ASSERT(in_bounds(row, column));
         int d = checked_direction_index(direction);
         return (movable[d][row] & bit(column)) != 0;
     }
 
-    /// @brief 壁なら同じindex、移動できるなら移動先indexを返す
+    /// @brief directionへ移動した先のindexを返す / 壁なら同じindex / O(1)
     int destination_index(int index, GridDirection direction) const {
         TITAN_EDGE_WALL_BITBOARD_ASSERT(0 <= index && index < N);
         int d = checked_direction_index(direction);
         return destination[d][index];
     }
 
+    /// @brief 空の集合を作る / O(H)
     Set new_set() const { return Set(H, Word(0)); }
 
+    /// @brief 集合を空にする / O(H)
     void clear(Set& set) const {
         assert_set(set);
         fill(set.begin(), set.end(), Word(0));
     }
 
+    /// @brief (row,column)が立っているかを返す / O(1)
     bool test(const Set& set, int row, int column) const {
         assert_set(set);
         TITAN_EDGE_WALL_BITBOARD_ASSERT(in_bounds(row, column));
         return (set[row] & bit(column)) != 0;
     }
 
+    /// @brief (row,column)を立てる / O(1)
     void set(Set& set, int row, int column) const {
         assert_set(set);
         TITAN_EDGE_WALL_BITBOARD_ASSERT(in_bounds(row, column));
         set[row] |= bit(column);
     }
 
+    /// @brief (row,column)を落とす / O(1)
     void reset(Set& set, int row, int column) const {
         assert_set(set);
         TITAN_EDGE_WALL_BITBOARD_ASSERT(in_bounds(row, column));
         set[row] &= ~bit(column);
     }
 
+    /// @brief (row,column)を反転する / O(1)
     void flip(Set& set, int row, int column) const {
         assert_set(set);
         TITAN_EDGE_WALL_BITBOARD_ASSERT(in_bounds(row, column));
         set[row] ^= bit(column);
     }
 
+    /// @brief 立っているセル数を返す / O(H)
     int count(const Set& set) const {
         assert_set(set);
         int result = 0;
@@ -250,6 +258,7 @@ public:
         return result;
     }
 
+    /// @brief firstとsecondの共通セル数を返す / O(H)
     int count_and(const Set& first, const Set& second) const {
         assert_set(first);
         assert_set(second);
@@ -258,6 +267,7 @@ public:
         return result;
     }
 
+    /// @brief 立っているセルが1つ以上あるかを返す / O(H)
     bool any(const Set& set) const {
         assert_set(set);
         for (Word row : set) {
@@ -266,8 +276,10 @@ public:
         return false;
     }
 
+    /// @brief 空かを返す / O(H)
     bool none(const Set& set) const { return !any(set); }
 
+    /// @brief firstとsecondが一致するかを返す / O(H)
     bool equals(const Set& first, const Set& second) const {
         assert_set(first);
         assert_set(second);
@@ -277,6 +289,7 @@ public:
         return true;
     }
 
+    /// @brief firstとsecondが共通セルを持つかを返す / O(H)
     bool intersects(const Set& first, const Set& second) const {
         assert_set(first);
         assert_set(second);
@@ -286,10 +299,12 @@ public:
         return false;
     }
 
+    /// @brief firstとsecondが共通セルを持たないかを返す / O(H)
     bool disjoint(const Set& first, const Set& second) const {
         return !intersects(first, second);
     }
 
+    /// @brief firstがsecondの部分集合かを返す / O(H)
     bool is_subset(const Set& first, const Set& second) const {
         assert_set(first);
         assert_set(second);
@@ -299,6 +314,7 @@ public:
         return true;
     }
 
+    /// @brief 積first & secondをoutに書く / O(H)
     void band(const Set& first, const Set& second, Set& out) const {
         assert_set(first);
         assert_set(second);
@@ -306,6 +322,7 @@ public:
         for (int row = 0; row < H; ++row) out[row] = first[row] & second[row] & FULL;
     }
 
+    /// @brief 和first | secondをoutに書く / O(H)
     void bor(const Set& first, const Set& second, Set& out) const {
         assert_set(first);
         assert_set(second);
@@ -313,6 +330,7 @@ public:
         for (int row = 0; row < H; ++row) out[row] = (first[row] | second[row]) & FULL;
     }
 
+    /// @brief 対称差first ^ secondをoutに書く / O(H)
     void bxor(const Set& first, const Set& second, Set& out) const {
         assert_set(first);
         assert_set(second);
@@ -320,6 +338,7 @@ public:
         for (int row = 0; row < H; ++row) out[row] = (first[row] ^ second[row]) & FULL;
     }
 
+    /// @brief 差first \ secondをoutに書く / O(H)
     void bdiff(const Set& first, const Set& second, Set& out) const {
         assert_set(first);
         assert_set(second);
@@ -327,36 +346,42 @@ public:
         for (int row = 0; row < H; ++row) out[row] = first[row] & ~second[row] & FULL;
     }
 
+    /// @brief first &= secondを計算する / O(H)
     void iand(Set& first, const Set& second) const {
         assert_set(first);
         assert_set(second);
         for (int row = 0; row < H; ++row) first[row] &= second[row];
     }
 
+    /// @brief first |= secondを計算する / O(H)
     void ior(Set& first, const Set& second) const {
         assert_set(first);
         assert_set(second);
         for (int row = 0; row < H; ++row) first[row] = (first[row] | second[row]) & FULL;
     }
 
+    /// @brief first ^= secondを計算する / O(H)
     void ixor(Set& first, const Set& second) const {
         assert_set(first);
         assert_set(second);
         for (int row = 0; row < H; ++row) first[row] = (first[row] ^ second[row]) & FULL;
     }
 
+    /// @brief first \= secondを計算する / O(H)
     void idiff(Set& first, const Set& second) const {
         assert_set(first);
         assert_set(second);
         for (int row = 0; row < H; ++row) first[row] &= ~second[row];
     }
 
+    /// @brief 盤面内の補集合FULL & ~sourceをoutに書く / O(H)
     void complement_into(const Set& source, Set& out) const {
         assert_set(source);
         assert_set(out);
         for (int row = 0; row < H; ++row) out[row] = FULL & ~source[row];
     }
 
+    /// @brief cellsを立てた集合をoutに書く
     void make_set(const vector<pair<int, int>>& cells, Set& out) const {
         assert_set(out);
         clear(out);
@@ -366,6 +391,7 @@ public:
         }
     }
 
+    /// @brief 立っている各セル(row,column)についてfunction(row,column)を呼ぶ
     template<class Function>
     void for_each(const Set& set, Function&& function) const {
         assert_set(set);
@@ -376,13 +402,14 @@ public:
         }
     }
 
+    /// @brief 立っているセルをoutに集める
     void cells(const Set& set, vector<pair<int, int>>& out) const {
         out.clear();
         out.reserve(count(set));
         for_each(set, [&](int row, int column) { out.emplace_back(row, column); });
     }
 
-    /// @brief 移動に成功したセルの移動先だけをoutに書く
+    /// @brief 移動に成功したセルの移動先だけをoutに書く / O(H)
     void move_success(const Set& source, GridDirection direction, Set& out) const {
         assert_set(source);
         assert_set(out);
@@ -402,7 +429,7 @@ public:
         }
     }
 
-    /// @brief 指示方向へ移動し、壁に当たるセルは元の位置へ残す
+    /// @brief 指示方向へ移動した集合をoutに書く / 壁に当たるセルは元の位置に残す / O(H)
     void advance(const Set& source, GridDirection direction, Set& out) const {
         assert_set(source);
         assert_set(out);
@@ -432,7 +459,7 @@ public:
         }
     }
 
-    /// @brief 指示を実行する場合と実行しない場合の到達候補をoutに書く
+    /// @brief 指示を実行する場合と実行しない場合の到達候補をoutに書く / O(H)
     void advance_uncertain(const Set& source, GridDirection direction, Set& out) const {
         assert_set(source);
         assert_set(out);
@@ -460,7 +487,7 @@ public:
         }
     }
 
-    /// @brief 1手で移動できる隣接セルをoutに書く
+    /// @brief 1手で移動できる隣接セルをoutに書く / O(H)
     void expand(const Set& source, Set& out) const {
         assert_set(source);
         assert_set(out);
@@ -506,7 +533,7 @@ public:
         }
     }
 
-    /// @brief 多始点最短距離をrow*W+columnの配列へ書く。未到達は-1
+    /// @brief 多始点最短距離をdistanceに書く / 添字はrow*W+column、未到達は-1
     void bfs_dist(const Set& sources, vector<int>& distance) const {
         assert_set(sources);
         distance.assign(N, -1);
@@ -550,7 +577,7 @@ public:
         }
     }
 
-    /// @brief startからgoalへの最短路を返す。到達不能ならfalse
+    /// @brief startからgoalへの最短路をpathに書く / 到達不能ならfalse
     bool shortest_path(
         pair<int, int> start,
         pair<int, int> goal,
@@ -622,13 +649,14 @@ public:
         return true;
     }
 
-    /// @brief 集合をone/zeroの文字盤へ変換する
+    /// @brief 集合をone/zeroの文字盤へ変換する / O(HW)
     void to_grid(const Set& set, vector<string>& grid, char one = '.', char zero = '#') const {
         assert_set(set);
         grid.assign(H, string(W, zero));
         for_each(set, [&](int row, int column) { grid[row][column] = one; });
     }
 
+    /// @brief 立っているセルを'.'、それ以外を'#'としてoutputに出力する
     void print(const Set& set, ostream& output) const {
         vector<string> grid;
         to_grid(set, grid);

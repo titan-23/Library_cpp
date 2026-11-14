@@ -5,18 +5,18 @@
 
 namespace titan23 {
 
-/// @brief 木上の Mo（頂点値を直接渡す）
+/// @brief パス上の頂点の値を出し入れしてパスクエリを処理する木上の Mo / add と del には頂点番号でなく値を渡す
 template<typename T>
 class MoTreeVertexValue : public MoTreeBase<true> {
 private:
     vector<T> values;
 
 public:
-    /// @brief 頂点値 values と根 root で初期化
+    /// @brief 頂点の値 values と根 root で初期化する
     MoTreeVertexValue(const vector<T> &values, int root = 0)
         : MoTreeBase<true>(values.size(), root), values(values) {}
 
-    /// @brief 無向木 G、頂点値 values と根 root から構築
+    /// @brief 無向木 G、頂点の値 values と根 root から構築する
     MoTreeVertexValue(const vector<vector<int>> &G, const vector<T> &values, int root = 0)
         : MoTreeBase<true>(G, root), values(values) {}
 

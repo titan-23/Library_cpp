@@ -8,6 +8,7 @@ using namespace std;
 
 namespace titan23 {
 
+/// @brief Hoeffding の不等式で、既知の最良より有意に劣るパラメータの評価を打ち切る枝刈り器
 template<typename ScoreType=double>
 class HoeffdingPruner {
 private:
@@ -31,12 +32,8 @@ private:
     double diff_sum;
 
 public:
-    /// @brief コンストラクタ
-    /// @param max_seeds 評価に使用するシードの最大数
-    /// @param score_range 1つのシードに対するスコア差の最大幅（理論上の上限 - 下限）
-    /// @param delta 誤って最良候補を枝刈りしてしまう確率の上限（有意水準に相当、例: 0.05）
-    /// @param min_samples 枝刈り判定を開始する最低限の共通シード数
-    /// @param is_minimize 最小化問題の場合はtrue、最大化問題の場合はfalseを指定します
+    /// @brief 枝刈り器を構築する / seed は [0, max_seeds)、is_minimize の既定は最小化
+    /// score_range は 1 シードでのスコア差の最大幅、delta は最良を誤って枝刈りする確率の上限
     HoeffdingPruner(int max_seeds, double score_range, double delta=0.05, int min_samples=5, bool is_minimize=true)
         : score_range(score_range), delta(delta), min_samples(min_samples), is_minimize(is_minimize), max_seeds(max_seeds),
           best_count(0), best_sum(0), current_count(0), current_sum(0), common_count(0), diff_sum(0.0) {
@@ -47,9 +44,7 @@ public:
         has_current_score.assign(max_seeds, false);
     }
 
-    /// @brief シードに対する評価スコアを報告します
-    /// @param seed 評価に使用したシード値
-    /// @param score 評価関数の結果スコア
+    /// @brief シード seed での評価スコア score を報告する / 同じ seed を再び報告すると上書きする
     void report(int seed, ScoreType score) {
         if (!has_current_score[seed]) {
             has_current_score[seed] = true;
@@ -74,8 +69,7 @@ public:
         current_sum += score;
     }
 
-    /// @brief 現在のパラメータが過去のベストパラメータに対して統計的に有意に劣っているかを判定します
-    /// @return 枝刈りすべき（劣っている）場合はtrue、評価を継続すべき場合はfalseを返します
+    /// @brief 現パラメータが最良パラメータより統計的に有意に劣り、枝刈りすべきなら true を返す
     bool should_prune() const {
         if (best_count == 0 || common_count < min_samples) return false;
 
@@ -85,8 +79,8 @@ public:
         return mean_diff > epsilon;
     }
 
-    /// @brief 現在のパラメータの評価を終了し、次のパラメータ評価の準備を行います
-    /// @param was_pruned 途中で枝刈りされて終了した場合はtrue、完走した場合はfalseを指定します
+    /// @brief 現パラメータの評価を終え、次のパラメータに備える / 枝刈りで終えたなら was_pruned を true にする
+    /// 枝刈りされずに min_samples 個以上のシードを評価し、平均が最良より良いときだけ最良を置き換える
     void next_param(bool was_pruned) {
         if (!was_pruned && current_count >= min_samples) {
             bool update = false;

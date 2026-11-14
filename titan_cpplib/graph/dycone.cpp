@@ -10,10 +10,9 @@
 #include <unordered_map>
 using namespace std;
 
-// DyCone
 namespace titan23 {
 
-/// @brief オフラインダイコネ / 全体で期待 `O((n+q)logn)`
+/// @brief 辺の追加と削除がある無向グラフで、連結性の問い合わせをオフラインで処理する / 全体で期待 `O((n+q)logn)`
 class DyCone {
 private:
     static constexpr int ADD = 0, DEL = 1, QUERY = 2;
@@ -157,7 +156,7 @@ public:
         Q.emplace_back(ADD, u, v, NEVER);
     }
 
-    /// @brief 辺 `(u, v)` を削除する 存在する辺のみ削除できる / 期待 `O(logn)`
+    /// @brief 辺 `(u, v)` を削除する / 存在する辺に限る / 期待 `O(logn)`
     void delete_edge(int u, int v) {
         assert(0 <= u && u < n && 0 <= v && v < n);
         if (u == v) return;
@@ -171,14 +170,13 @@ public:
         Q.emplace_back(DEL, u, v, -t);
     }
 
-    /// @brief クエリ時刻とする / `O(1)`
+    /// @brief この時点を問い合わせ時刻として記録する / `O(1)`
     void next_query() {
         Q.emplace_back(QUERY, 0, 0, NEVER);
     }
 
-    /// @brief 更新を順に処理し、`k` 番目のクエリ時刻で `out(k)` を呼ぶ
-    /// 全体で期待 `O((n+q)logn)`
-    /// @param out `void out(int k)`
+    /// @brief 更新を順に処理し、`k` 番目の問い合わせ時刻で `void out(int k)` を呼ぶ / 全体で期待 `O((n+q)logn)`
+    /// @note out の中で呼んだ same、size、group_count は、その時刻のグラフに対する値を返す
     template<typename F>
     void run(F &&out) {
         vector<pair<int, int>>().swap(chain);
