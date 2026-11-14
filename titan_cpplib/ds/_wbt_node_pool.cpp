@@ -1,3 +1,4 @@
+/// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/ds/_wbt_node_pool.cpp
 #pragma once
 
 #include <cassert>

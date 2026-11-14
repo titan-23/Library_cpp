@@ -1,3 +1,4 @@
+/// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/ds/_mutable_wbt_sequence.cpp
 #pragma once
 
 #include <algorithm>
