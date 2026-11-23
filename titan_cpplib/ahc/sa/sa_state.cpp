@@ -72,6 +72,7 @@ public:
 
     // TODO
     /// @brief modify の前の状態に戻す / score はライブラリが元の値に上書きするので復元しなくてよい
+    /// is_valid = false でも呼ばれるので注意
     void rollback() {}
 
     // TODO
