@@ -71,12 +71,11 @@
 - `tsp_iterated_local_search.cpp`: 2-opt、Or-opt、3-opt の局所探索と Double Bridge を繰り返す反復局所探索、`solve_tsp`
 - `atsp_iterated_local_search.cpp`: 辺のコストが向きによって異なる問題の反復局所探索、`solve_atsp`、始点から戻らない経路を求める `solve_atsp_path`
 - `tsp_guided_local_search.cpp`: 標準的な誘導局所探索
-- `tsp_edge_penalty_search.cpp`: `tsp/examples/tsp2.py` と同じ処理順の比較用探索
 - `tsp_initial_state.cpp`: SA の初期状態を改善する方法の切り替え
 - `multiple_tours.cpp`: 固定デポがある複数の巡回路での区間の移動と交換
 - `how_to_use_tsp.md`: 使用例、利用条件、計算量
-- `test/`: 差分、不変条件、比較用探索、SA 連携の自動確認
-- `examples/`: 参照元の大きな SA の例、`tsp2.py`、TSPLIB 入力、可視化
+- `test/`: コストの差分、状態の不変条件、探索結果、SA との連携の確認
+- `examples/`: SA の使用例、TSPLIB の入力、可視化スクリプト
 
 巡回順、点から位置への逆引き、巡回路のコストは `TspState` がまとめて管理します。近傍操作では先にコストの差分だけを計算し、採択後に状態へ適用できます。このため、焼きなましで操作の適用を採択後まで遅延させる場合に使用できます。
 

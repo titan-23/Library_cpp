@@ -75,94 +75,6 @@ void expect_exception(Function&& function) {
     assert(thrown);
 }
 
-struct EdgePenaltyReferenceResult {
-    vector<int> best_order;
-    Cost best_cost;
-    int64_t evaluated_moves;
-    int64_t applied_moves;
-    int64_t best_updates;
-};
-
-template<class Problem>
-EdgePenaltyReferenceResult run_edge_penalty_reference(
-    const Problem& problem,
-    const TspCandidates& candidates,
-    vector<int> order,
-    int rounds
-) {
-    int n = order.size();
-    vector<vector<int64_t>> penalties(n, vector<int64_t>(n, 1));
-    vector<int> position(n);
-    for (int i = 0; i < n; ++i) position[order[i]] = i;
-    Cost current_cost = 0;
-    for (int i = 0; i < n; ++i) current_cost += problem.edge_cost(order[i], order[(i + 1) % n]);
-    Cost best_cost = current_cost;
-    vector<int> best_order = order;
-    long double lambda = 0.3L * best_cost / n;
-    int64_t evaluated_moves = 0, applied_moves = 0, best_updates = 0;
-    for (int round = 0; round < rounds; ++round) {
-        int index1 = -1;
-        long double maximum_utility = -1;
-        for (int i = 0; i < n; ++i) {
-            int u = order[i], v = order[(i + 1) % n];
-            long double utility = (long double)problem.edge_cost(u, v) / penalties[u][v];
-            if (maximum_utility < utility) {
-                maximum_utility = utility;
-                index1 = i;
-            }
-        }
-        int index2 = (index1 + 1) % n;
-        int city1 = order[index1], city2 = order[index2];
-        ++penalties[city1][city2];
-        ++penalties[city2][city1];
-        for (int city3 : candidates[city1]) {
-            int index3 = position[city3];
-            int index4 = (index3 + 1) % n;
-            if (index2 == index3 || index1 == index4) continue;
-            int city4 = order[index4];
-            ++evaluated_moves;
-            Cost true_delta =
-                problem.edge_cost(city1, city3) +
-                problem.edge_cost(city2, city4) -
-                problem.edge_cost(city1, city2) -
-                problem.edge_cost(city3, city4);
-            int64_t penalty_delta =
-                penalties[city1][city3] + penalties[city2][city4] -
-                penalties[city1][city2] - penalties[city3][city4];
-            if ((long double)true_delta + lambda * penalty_delta >= 0) continue;
-            current_cost += true_delta;
-            int left = index2, right = index3;
-            if (left > right) {
-                left = index3 + 1;
-                right = index2 - 1;
-            }
-            reverse(order.begin() + left, order.begin() + right + 1);
-            for (int i = left; i <= right; ++i) position[order[i]] = i;
-            ++applied_moves;
-            if (current_cost < best_cost) {
-                best_cost = current_cost;
-                best_order = order;
-                lambda = 0.1L * best_cost / n;
-                ++best_updates;
-            }
-            break;
-        }
-    }
-    return {move(best_order), best_cost, evaluated_moves, applied_moves, best_updates};
-}
-
-vector<pair<int, int>> cycle_edges(const vector<int>& order) {
-    vector<pair<int, int>> edges;
-    edges.reserve(order.size());
-    for (int i = 0; i < (int)order.size(); ++i) {
-        int u = order[i], v = order[(i + 1) % order.size()];
-        if (u > v) swap(u, v);
-        edges.emplace_back(u, v);
-    }
-    sort(edges.begin(), edges.end());
-    return edges;
-}
-
 template<class Problem>
 void test_moves(const Problem& problem, const vector<vector<Cost>>& distance, const vector<int>& order) {
     int n = order.size();
@@ -362,35 +274,6 @@ int main() {
     auto guided_result = tsp_guided_local_search(problem, candidates, guided, guided_options);
     validate_state(guided, distance, order[0]);
     assert(guided_result.penalty_rounds <= guided_options.max_penalty_rounds);
-    auto edge_penalty = problem.make_state(order);
-    TspEdgePenaltySearchOptions edge_options;
-    edge_options.max_penalty_rounds = 30;
-    edge_options.max_evaluated_moves = 20000;
-    auto edge_result = tsp_edge_penalty_search(problem, candidates, edge_penalty, edge_options);
-    validate_state(edge_penalty, distance, order[0]);
-    assert(edge_result.penalty_rounds <= edge_options.max_penalty_rounds);
-    auto edge_reference = run_edge_penalty_reference(problem, candidates, order, edge_options.max_penalty_rounds);
-    assert(edge_penalty.total_cost() == edge_reference.best_cost);
-    assert(cycle_edges(edge_penalty.order()) == cycle_edges(edge_reference.best_order));
-    assert(edge_result.evaluated_moves == edge_reference.evaluated_moves);
-    assert(edge_result.applied_moves == edge_reference.applied_moves);
-    assert(edge_result.best_updates == edge_reference.best_updates);
-    vector<int> comparison_order(n);
-    iota(comparison_order.begin(), comparison_order.end(), 0);
-    for (int case_id = 0; case_id < 40; ++case_id) {
-        auto compared_state = problem.make_state(comparison_order);
-        TspEdgePenaltySearchOptions compared_options;
-        compared_options.max_penalty_rounds = 80;
-        auto compared_result = tsp_edge_penalty_search(problem, candidates, compared_state, compared_options);
-        auto reference = run_edge_penalty_reference(problem, candidates, comparison_order, compared_options.max_penalty_rounds);
-        validate_state(compared_state, distance, comparison_order[0]);
-        assert(compared_state.total_cost() == reference.best_cost);
-        assert(cycle_edges(compared_state.order()) == cycle_edges(reference.best_order));
-        assert(compared_result.evaluated_moves == reference.evaluated_moves);
-        assert(compared_result.applied_moves == reference.applied_moves);
-        assert(compared_result.best_updates == reference.best_updates);
-        next_permutation(comparison_order.begin() + 1, comparison_order.end());
-    }
     auto iterated = problem.make_state(order);
     TspIteratedLocalSearchOptions iterated_options;
     iterated_options.max_iterations = 2000;

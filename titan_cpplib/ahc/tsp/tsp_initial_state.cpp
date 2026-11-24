@@ -2,7 +2,7 @@
 #pragma once
 #include <cstdint>
 #include <stdexcept>
-#include "titan_cpplib/ahc/tsp/tsp_edge_penalty_search.cpp"
+#include "titan_cpplib/ahc/tsp/tsp_guided_local_search.cpp"
 #include "titan_cpplib/ahc/tsp/tsp_iterated_local_search.cpp"
 using namespace std;
 namespace titan23 {
@@ -11,8 +11,7 @@ enum class TspInitialSearch {
     none,
     two_opt,
     guided_local_search,
-    edge_penalty_search,
-    iterated_local_search,
+    iterated_local_search = 4,
 };
 
 /// @brief improve_tsp_initial_state の設定 / search で選択した方法の設定だけを使用する
@@ -20,7 +19,6 @@ struct TspInitialStateOptions {
     TspInitialSearch search = TspInitialSearch::none;
     TspLocalSearchOptions local_search;
     TspGuidedLocalSearchOptions guided_local_search;
-    TspEdgePenaltySearchOptions edge_penalty_search;
     TspIteratedLocalSearchOptions iterated_local_search;
 };
 
@@ -76,24 +74,6 @@ TspInitialStateResult improve_tsp_initial_state(
             candidates,
             state,
             options.guided_local_search
-        );
-        return {
-            options.search,
-            result.evaluated_moves,
-            result.applied_moves,
-            result.penalty_rounds,
-            result.best_updates,
-            result.elapsed_ms,
-            false,
-            result.stop_reason,
-        };
-    }
-    if (options.search == TspInitialSearch::edge_penalty_search) {
-        TspEdgePenaltySearchResult result = tsp_edge_penalty_search(
-            problem,
-            candidates,
-            state,
-            options.edge_penalty_search
         );
         return {
             options.search,

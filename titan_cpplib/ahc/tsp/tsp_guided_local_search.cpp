@@ -7,7 +7,6 @@
 #include <limits>
 #include <stdexcept>
 #include <type_traits>
-#include <unordered_map>
 #include <utility>
 #include <vector>
 #include "titan_cpplib/ahc/tsp/tsp_local_search.cpp"
@@ -38,16 +37,6 @@ using tsp_local_search_detail::SearchTimer;
 inline uint64_t edge_key(int u, int v) {
     if (u > v) swap(u, v);
     return (uint64_t)(uint32_t)u << 32 | (uint32_t)v;
-}
-
-inline int64_t get_penalty(const unordered_map<uint64_t, int64_t>& penalties, int u, int v) {
-    auto it = penalties.find(edge_key(u, v));
-    return it == penalties.end() ? 0 : it->second;
-}
-
-inline void increment_counter(int64_t& counter, const char* message) {
-    if (counter == numeric_limits<int64_t>::max()) throw overflow_error(message);
-    ++counter;
 }
 
 inline void check_options(const TspGuidedLocalSearchOptions& options) {

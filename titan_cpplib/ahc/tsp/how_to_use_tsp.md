@@ -134,12 +134,13 @@ long long cost = state.total_cost();                   // 改善後のコスト
 
 ## 対称 TSP の探索手法
 
+対称 TSP の巡回順を求める場合は、最近傍法で初期解を作成して反復局所探索を行う `solve_tsp` を推奨します。初期巡回路を指定する場合は `tsp_iterated_local_search` を使用します。
+
 | 関数 | 内容 | 用途 |
 |---|---|---|
 | `tsp_iterated_local_search` | 2-opt、Or-opt、3-opt の局所探索と Double Bridge を繰り返す | 巡回順を求める場合の基本 |
 | `tsp_two_opt_local_search` | 2-opt でコストが減少する間、操作を繰り返す | 初期解の局所的な改善 |
-| `tsp_guided_local_search` | 辺にペナルティを加える誘導局所探索 | 反復局所探索との比較 |
-| `tsp_edge_penalty_search` | `tsp2.py` と同じ処理順の探索 | `tsp2.py` との比較 |
+| `tsp_guided_local_search` | 巡回路の辺にペナルティを加えて 2-opt を再開する | 元のコストでは 2-opt で改善できない巡回路から探索を続ける場合 |
 
 TSPLIB の各入力について、最適解のコストに対する超過率を示します。辺のコストは距離行列で与え、候補数を 10 として最近傍法の初期解から探索しました。表の時間は探索時間のみで、反復局所探索の値は 5 種類のシードでの平均です。
 
@@ -205,18 +206,6 @@ edge_cost(u, v) / (1 + penalty(u, v))
 
 各回の局所探索を終えるたびに元のコストを比較し、最良の巡回路を `state` に返します。実行時間とペナルティの更新回数の少なくとも一方に上限を設定してください。
 
-## `tsp2.py` と同じ順序で辺を選択する探索
-
-```cpp
-TspEdgePenaltySearchOptions options;
-options.max_penalty_rounds = 10000;
-options.max_evaluated_moves = 2000000;
-options.time_limit_ms = 100;
-auto result = tsp_edge_penalty_search(problem, candidates, state, options);
-```
-
-各反復では評価値が最大の辺を走査順に 1 本選び、その辺のペナルティを 1 増やします。選択した辺を削除する 2-opt のうち、ペナルティ付きのコストが初めて減少した操作を 1 回適用します。該当する操作がなければ次の反復に進みます。辺の走査順と採択条件は `tsp2.py` と共通です。
-
 ## 焼きなましへの組み込み
 
 巡回順と問題固有の変数を同時に探索する場合は、焼きなましの `State` に `TspState` を保持します。`make_two_opt` などのメソッドでコストの差分を求め、操作を採択した時点で `apply` を呼び出します。
@@ -273,7 +262,7 @@ double remaining = max(0.0, 1900.0 - timer.elapsed());
 auto result = sa::sa_run<State>(remaining, state, true);
 ```
 
-`initial_options.search` の既定値は `none` で、作成した巡回路をそのまま使用します。初期解を改善する場合は `two_opt`, `guided_local_search`, `edge_penalty_search`, `iterated_local_search` のいずれかを指定します。
+`initial_options.search` の既定値は `none` で、作成した巡回路をそのまま使用します。初期解を改善する場合は `two_opt`, `guided_local_search`, `iterated_local_search` のいずれかを指定します。
 
 ## 複数巡回路
 
@@ -308,7 +297,6 @@ auto swap = state.make_block_swap(problem, route1, first1, length1, route2, firs
 | `tsp_iterated_local_search.cpp` | 反復局所探索、`solve_tsp` |
 | `atsp_iterated_local_search.cpp` | 非対称コストの反復局所探索、`solve_atsp`、`solve_atsp_path` |
 | `tsp_guided_local_search.cpp` | 誘導局所探索 |
-| `tsp_edge_penalty_search.cpp` | `tsp2.py` と同じ処理順で動作する比較用の探索 |
 | `tsp_initial_state.cpp` | SA の初期状態の改善方法を選択する補助関数 |
 | `multiple_tours.cpp` | 固定デポのある複数の巡回路 |
 | `test/tsp_test.cpp` | 操作によるコストの差分、状態の不変条件、探索結果の自動テスト |
@@ -343,4 +331,4 @@ auto swap = state.make_block_swap(problem, route1, first1, length1, route2, firs
 - 辺のコストは有限かつ 0 以上とします。対称 TSP の探索と `TspState` の近傍操作では、往路と復路のコストが等しいことが条件です。三角不等式は不要です。
 - コストの型 `Cost` には、巡回路の総コストと差分計算の中間値を表現できる符号付き整数型または浮動小数点型を使用します。
 - `TspProblem` は、その問題から作成した候補表と状態より後に破棄してください。
-- 反復局所探索には実行時間または反復回数の上限を設定します。誘導局所探索と `tsp_edge_penalty_search` には実行時間またはペナルティの更新回数の上限が必要です。
+- 反復局所探索には実行時間または反復回数の上限を設定します。誘導局所探索には実行時間またはペナルティの更新回数の上限が必要です。

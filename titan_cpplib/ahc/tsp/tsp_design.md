@@ -24,10 +24,9 @@
 | `tsp_iterated_local_search.cpp` | 対称 TSP の反復局所探索と `solve_tsp` |
 | `atsp_iterated_local_search.cpp` | 非対称 TSP の反復局所探索、`solve_atsp`、`solve_atsp_path` |
 | `tsp_guided_local_search.cpp` | 誘導局所探索 |
-| `tsp_edge_penalty_search.cpp` | `examples/tsp2.py` の辺の選択順と採択条件を再現する探索 |
 | `tsp_initial_state.cpp` | 焼きなましに渡す初期巡回路の改善 |
 | `multiple_tours.cpp` | 固定デポを備えた複数巡回路の状態と近傍操作 |
-| `examples/` | 焼きなましの使用例 `sa_tsp.cpp`、比較用の `tsp2.py`、TSPLIB の入力、可視化スクリプト |
+| `examples/` | 焼きなましの使用例 `sa_tsp.cpp`、TSPLIB の入力、可視化スクリプト |
 | `test/` | 近傍操作、状態の不変条件、探索結果の確認 |
 
 各関数の使用例は [利用ガイド](how_to_use_tsp.md) に記載しています。
@@ -398,47 +397,6 @@ auto result = tsp_guided_local_search(
 
 時間は探索関数内で計測します。問題、候補表、初期状態の準備に要した時間は対象外です。各ペナルティ更新の開始時と局所探索で 128 点を処理するごとに経過時間を確認するため、次の確認までに制限時間を超える場合があります。
 
-## `tsp2.py` の辺選択と 2-opt
-
-`tsp_edge_penalty_search` は `examples/tsp2.py` と同じ順序で辺を評価します。初期巡回路を最良解とし、`lambda = initial_penalty_ratio * best_cost / state.size()` で係数を初期化します。
-
-1. 現在の巡回路を走査し、`edge_cost(u, v) / (1 + penalty(u, v))` が最大となる最初の辺を選びます。選んだ無向辺のペナルティを 1 増やします。
-2. 選択した辺の始点 `u` からコストの小さい順に候補点を調べます。2-opt で削除するもう一方の辺は、候補点から巡回順で次の点に向かう辺です。
-3. `true_delta + lambda * penalty_delta < 0` を満たす最初の操作を適用します。該当する操作がなければ次の反復に進みます。
-4. 元のコストが最良値を下回ったら巡回順を保存し、係数を `lambda = improved_penalty_ratio * best_cost / state.size()` に更新します。
-
-```cpp
-struct TspEdgePenaltySearchOptions {
-    int64_t max_penalty_rounds = -1;
-    int64_t max_evaluated_moves = -1;
-    double time_limit_ms = -1;
-    long double initial_penalty_ratio = 0.3L;
-    long double improved_penalty_ratio = 0.1L;
-};
-
-struct TspEdgePenaltySearchResult {
-    int64_t evaluated_moves;
-    int64_t applied_moves;
-    int64_t penalty_rounds;
-    int64_t best_updates;
-    double elapsed_ms;
-    TspSearchStopReason stop_reason;
-};
-
-auto result = tsp_edge_penalty_search(
-    problem, candidates, state, options);
-```
-
-ハッシュ表はペナルティを増やした回数を辺ごとに保持します。未登録の辺の値を 0 とし、辺の選択時は分母を `1 + penalty` とすることで、初期値が 1 の `tsp2.py` と同じ評価値になります。2-opt は追加する辺と削除する辺が同数なので、ペナルティの差分では全辺に共通の初期値が相殺されます。
-
-`TspState::total_cost()` は元の辺のコストの総和です。探索終了時には、この値が最小だった巡回順を `state` に反映します。
-
-時間、候補の評価回数、ペナルティの更新回数のうち、最初に達した上限で停止します。反復の開始時に複数の上限に達していれば、記載した順序で停止理由を決定します。有効な上限のいずれかが 0 の場合、巡回路が 4 点未満の場合、または候補数が 0 の場合は、入力状態をそのまま返します。経過時間は各反復の開始時に確認するため、1 回の辺の走査、候補の評価、2-opt の適用にかかる時間だけ上限を超える場合があります。
-
-`TspState` は開始点を先頭に固定します。Python 版の配列は 2-opt によって先頭の点が変化する場合があるため、比較用の探索では Python 版に対応する走査開始点と走査方向を別に保持します。2-opt の適用後はこの 2 つを更新し、次の反復でも Python 版と同じ順序で辺を評価します。
-
-誘導局所探索と比較する場合は問題と候補表を共有し、同じ初期状態を複製します。比較したい条件に応じて探索時間、候補の評価回数、ペナルティの更新回数の上限をそろえます。記録する値は巡回路の最良コスト、操作の評価回数と適用回数、ペナルティの更新回数、経過時間です。
-
 ## 焼きなましの初期状態
 
 `improve_tsp_initial_state` は `TspInitialStateOptions::search` に対応する探索を初期巡回路に適用します。
@@ -448,15 +406,13 @@ enum class TspInitialSearch {
     none,
     two_opt,
     guided_local_search,
-    edge_penalty_search,
-    iterated_local_search,
+    iterated_local_search = 4,
 };
 
 struct TspInitialStateOptions {
     TspInitialSearch search = TspInitialSearch::none;
     TspLocalSearchOptions local_search;
     TspGuidedLocalSearchOptions guided_local_search;
-    TspEdgePenaltySearchOptions edge_penalty_search;
     TspIteratedLocalSearchOptions iterated_local_search;
 };
 ```
@@ -539,8 +495,8 @@ public:
 - 辺のコスト関数は `const` で呼び出すことができ、有限かつ 0 以上の値を返す必要があります。対称 TSP の探索と `TspState` の近傍操作では両方向のコストが等しいことも条件です。
 - `Cost` には、総コスト、差分、`total_cost + delta` の各中間値を表現できる符号付きの算術型を使用します。
 - 候補数は 0 以上です。時間と回数の上限には `-1` または 0 以上の値を指定し、`-1` はその上限を無効とします。
-- `penalty_ratio`, `initial_penalty_ratio`, `improved_penalty_ratio`, `temperature_ratio` は有限かつ 0 以上、`max_kick_length` は正の整数とします。
-- ペナルティを使用する探索では、実行時間とペナルティの更新回数の少なくとも一方に上限を指定します。候補の評価回数は追加の上限として指定できます。
+- `penalty_ratio` と `temperature_ratio` は有限かつ 0 以上、`max_kick_length` は正の整数とします。
+- 誘導局所探索では、実行時間とペナルティの更新回数の少なくとも一方に上限を指定します。候補の評価回数は追加の上限として指定できます。
 - 反復局所探索では、実行時間と反復回数の少なくとも一方に上限を指定します。
 
 点数、巡回順、探索設定などの引数が条件を満たさない場合は `invalid_argument` を送出します。近傍操作の添字や区間長が無効な場合は、繰り返し候補を評価できるように `valid()` が `false` の操作を返します。辺のコストと算術演算の範囲は呼び出し側で保証します。
@@ -572,14 +528,12 @@ public:
 
 誘導局所探索では候補を相互に登録するため、1 点の候補数が `c` を超える場合があります。局所探索で調べた候補の総数を `H`、ペナルティの更新回数を `R`、最良解の保存回数を `B`、ペナルティを加えた異なる辺の数を `P` とします。探索の準備後は、ハッシュ表の操作を平均 `O(1)` として `O(V + H + Σs_i + Rn + (B + 1)n)` 時間、追加メモリは `O(nc + P)` です。`Rn` は各反復でペナルティを加える辺を選択するための走査に対応します。
 
-`tsp2.py` と同じ順序で評価する探索では 1 回のペナルティ更新につき 1 点の候補表を走査します。走査した候補の総数を `H` とすると `H = O(Rc)` です。候補表の作成を除く時間は平均 `O(Rn + H + Σs_i + (B + 1)n)`、追加メモリは `O(n + P)` です。
-
 同じ確定状態を `r` 個のレプリカに複製する時間とメモリは `O(rn)` です。各レプリカが独立に誘導局所探索を実行する場合は、それぞれの探索時間と作業領域が必要です。距離行列を事前に作成する場合は別途 `O(n²)` の時間とメモリを使用します。
 
 複数巡回路で長さ `L` の区間を移動する操作の評価時間は `O(L)` です。区間を交換する場合は 2 区間の長さの和に比例し、各区間を長さ 1 から 3 に制限すれば定数時間です。どちらも適用時間は対象の巡回路の長さの和に比例します。
 
 ## テストの対象
 
-- `test/tsp_test.cpp` は各操作のコストの差分を巡回路全体の再計算と照合し、各点の位置、開始点、点の一意性、複数巡回路での所属を確認します。`tsp_edge_penalty_search` の結果は `tsp2.py` に対応する参照実装と、反復局所探索と `solve_tsp` の結果は小規模な入力の全列挙と照合します。
+- `test/tsp_test.cpp` は各操作のコストの差分を巡回路全体の再計算と照合し、各点の位置、開始点、点の一意性、複数巡回路での所属を確認します。反復局所探索と `solve_tsp` の結果は小規模な入力の全列挙と照合します。
 - `test/atsp_test.cpp` は入辺候補と出辺候補の順序、部分巡回路、初期解を確認します。小規模な入力では、巡回路のコストを全列挙の結果と照合します。始点に戻らない経路についても、終点を固定する場合と任意とする場合の両方で同じ照合を行います。
 - `test/tsp_sa_test.cpp` は初期化済みの状態を `sa_run` に渡し、初期巡回路の 2-opt と焼きなましでの近傍操作の遅延適用を確認します。
