@@ -1,9 +1,10 @@
 /// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/ahc/tsp/tsp_guided_local_search.cpp
 #pragma once
 #include <algorithm>
-#include <chrono>
 #include <cmath>
+#include <cstddef>
 #include <cstdint>
+#include <limits>
 #include <stdexcept>
 #include <type_traits>
 #include <unordered_map>
@@ -12,20 +13,12 @@
 #include "titan_cpplib/ahc/tsp/tsp_local_search.cpp"
 using namespace std;
 namespace titan23 {
-/// @brief 探索を停止した理由
-enum class TspSearchStopReason {
-    completed,
-    time_limit,
-    evaluated_move_limit,
-    penalty_round_limit,
-};
-
 /// @brief tsp_guided_local_search の設定 / 上限は -1 で無効 / 時間とペナルティの更新回数の少なくとも一方の上限を有効にする
 struct TspGuidedLocalSearchOptions {
     int64_t max_penalty_rounds = -1;
     int64_t max_evaluated_moves = -1;
     double time_limit_ms = -1;
-    int time_check_interval = 256;
+    /// ペナルティ 1 あたりのコストを、最初の局所最適解の辺の平均コストに対する比で指定する
     long double penalty_ratio = 0.3L;
 };
 
@@ -40,16 +33,7 @@ struct TspGuidedLocalSearchResult {
 };
 
 namespace tsp_guided_detail {
-class SearchTimer {
-    chrono::steady_clock::time_point start_;
-
-public:
-    SearchTimer() : start_(chrono::steady_clock::now()) {}
-
-    double elapsed_ms() const {
-        return chrono::duration<double, milli>(chrono::steady_clock::now() - start_).count();
-    }
-};
+using tsp_local_search_detail::SearchTimer;
 
 inline uint64_t edge_key(int u, int v) {
     if (u > v) swap(u, v);
@@ -70,208 +54,179 @@ inline void check_options(const TspGuidedLocalSearchOptions& options) {
     if (options.max_penalty_rounds < -1) throw invalid_argument("tsp_guided_local_search: max_penalty_rounds must be -1 or nonnegative");
     if (options.max_evaluated_moves < -1) throw invalid_argument("tsp_guided_local_search: max_evaluated_moves must be -1 or nonnegative");
     if (!isfinite(options.time_limit_ms) || (options.time_limit_ms < 0 && options.time_limit_ms != -1)) throw invalid_argument("tsp_guided_local_search: time_limit_ms must be -1 or nonnegative");
-    if (options.time_check_interval <= 0) throw invalid_argument("tsp_guided_local_search: time_check_interval must be positive");
     if (!isfinite(options.penalty_ratio) || options.penalty_ratio < 0) throw invalid_argument("tsp_guided_local_search: penalty_ratio must be finite and nonnegative");
     if (options.max_penalty_rounds == -1 && options.time_limit_ms == -1) {
         throw invalid_argument("tsp_guided_local_search: a time or penalty round limit must be enabled");
     }
 }
 
-inline int previous_index(int index, int n) {
-    return index == 0 ? n - 1 : index - 1;
-}
+/// @brief 辺のペナルティを保持するハッシュ表 / ペナルティを加えた辺だけを保存する
+class EdgePenaltyTable {
+public:
+    static constexpr bool enabled = true;
 
-inline bool adjacent_edges(int edge1, int edge2, int n) {
-    if (edge1 == edge2) return true;
-    return (edge1 + 1) % n == edge2 || (edge2 + 1) % n == edge1;
-}
-
-// 2-opt で 2 辺を削除して 2 辺を追加したときの、ペナルティを加えたコストの差分
-template<class EdgeCost, class Cost>
-long double penalized_delta(
-    const TspProblem<EdgeCost>&,
-    const TspState<Cost>& state,
-    int left,
-    int right,
-    Cost true_delta,
-    long double lambda,
-    const unordered_map<uint64_t, int64_t>& penalties
-) {
-    const vector<int>& order = state.order();
-    int n = order.size();
-    int a = order[left - 1];
-    int b = order[left];
-    int c = order[right];
-    int d = order[(right + 1) % n];
-    long double removed = (long double)get_penalty(penalties, a, b) + (long double)get_penalty(penalties, c, d);
-    long double added = (long double)get_penalty(penalties, a, c) + (long double)get_penalty(penalties, b, d);
-    return (long double)true_delta + lambda * (added - removed);
-}
-
-// ペナルティを加えたコストで改善する 2-opt を見つけた時点で適用し、候補内の局所最適解に達するまで繰り返す
-template<class EdgeCost, class Cost, class AppliedFn>
-TspSearchStopReason descend(
-    const TspProblem<EdgeCost>& problem,
-    const TspCandidates& candidates,
-    TspState<Cost>& state,
-    long double lambda,
-    const unordered_map<uint64_t, int64_t>& penalties,
-    const TspGuidedLocalSearchOptions& options,
-    const SearchTimer& timer,
-    int64_t& evaluated_moves,
-    int64_t& applied_moves,
-    AppliedFn&& on_applied
-) {
-    int n = state.size();
-    while (true) {
-        if (options.time_limit_ms >= 0 && timer.elapsed_ms() >= options.time_limit_ms) return TspSearchStopReason::time_limit;
-        bool applied = false;
-        const vector<int>& order = state.order();
-        for (int index = 0; index < n && !applied; ++index) {
-            int u = order[index];
-            for (int v : candidates[u]) {
-                int other = state.position(v);
-                if (other < 0 || other == index) continue;
-                int edge_pairs[2][2] = {
-                    {index, other},
-                    {previous_index(index, n), previous_index(other, n)},
-                };
-                for (auto& edge_pair : edge_pairs) {
-                    int edge1 = edge_pair[0], edge2 = edge_pair[1];
-                    if (adjacent_edges(edge1, edge2, n)) continue;
-                    if (options.time_limit_ms >= 0 && evaluated_moves % options.time_check_interval == 0 && timer.elapsed_ms() >= options.time_limit_ms) {
-                        return TspSearchStopReason::time_limit;
-                    }
-                    if (options.max_evaluated_moves >= 0 && evaluated_moves >= options.max_evaluated_moves) {
-                        return TspSearchStopReason::evaluated_move_limit;
-                    }
-                    int first = min(edge1, edge2);
-                    int second = max(edge1, edge2);
-                    int left = first + 1;
-                    int right = second;
-                    auto move = state.make_two_opt(problem, left, right);
-                    if (!move) continue;
-                    increment_counter(evaluated_moves, "tsp_guided_local_search: evaluated move counter overflow");
-                    long double delta = penalized_delta(problem, state, left, right, move->delta(), lambda, penalties);
-                    if (delta < 0) {
-                        state.apply(problem, *move);
-                        increment_counter(applied_moves, "tsp_guided_local_search: applied move counter overflow");
-                        on_applied();
-                        applied = true;
-                        break;
-                    }
-                }
-                if (applied) break;
-            }
-        }
-        if (!applied) return TspSearchStopReason::completed;
+    /// @brief expected_edges 本の辺を再配置なしで保存できる大きさで構築する
+    explicit EdgePenaltyTable(size_t expected_edges) {
+        size_t capacity = 64;
+        while (capacity < expected_edges * 2) capacity *= 2;
+        resize(capacity);
     }
-}
+
+    /// @brief 辺 {u, v} のペナルティを返す / 平均 O(1)
+    int64_t get(int u, int v) const {
+        uint64_t key = edge_key(u, v);
+        size_t index = slot(key);
+        while (keys_[index] != empty_key) {
+            if (keys_[index] == key) return values_[index];
+            index = (index + 1) & mask_;
+        }
+        return 0;
+    }
+
+    /// @brief 辺 {u, v} のペナルティを 1 増やす / 平均 O(1)
+    void increment(int u, int v) {
+        uint64_t key = edge_key(u, v);
+        size_t index = slot(key);
+        while (keys_[index] != empty_key) {
+            if (keys_[index] == key) {
+                ++values_[index];
+                return;
+            }
+            index = (index + 1) & mask_;
+        }
+        keys_[index] = key;
+        values_[index] = 1;
+        if (++size_ * 2 > keys_.size()) grow();
+    }
+
+private:
+    static constexpr uint64_t empty_key = numeric_limits<uint64_t>::max();
+    vector<uint64_t> keys_;
+    vector<int64_t> values_;
+    size_t mask_ = 0;
+    size_t size_ = 0;
+    int shift_ = 0;
+
+    size_t slot(uint64_t key) const {
+        return (size_t)((key * 0x9e3779b97f4a7c15ULL) >> shift_);
+    }
+
+    // capacity は 2 の冪で 64 以上
+    void resize(size_t capacity) {
+        keys_.assign(capacity, empty_key);
+        values_.assign(capacity, 0);
+        mask_ = capacity - 1;
+        shift_ = 64;
+        while (((size_t)1 << (64 - shift_)) < capacity) --shift_;
+    }
+
+    void grow() {
+        vector<uint64_t> old_keys = move(keys_);
+        vector<int64_t> old_values = move(values_);
+        resize(old_keys.size() * 2);
+        for (size_t i = 0; i < old_keys.size(); ++i) {
+            if (old_keys[i] == empty_key) continue;
+            size_t index = slot(old_keys[i]);
+            while (keys_[index] != empty_key) index = (index + 1) & mask_;
+            keys_[index] = old_keys[i];
+            values_[index] = old_values[i];
+        }
+    }
+};
 }
 
-/// @brief 誘導局所探索で state を改善する / 終了時の state は探索中に見つけた真のコストが最小の巡回路になる
+/// @brief 誘導局所探索で state を改善する / 終了時の state は、局所探索が収束した時点の巡回路のうちペナルティを含まないコストが最小のもの
+/// 巡回路の向きは変化する場合がある / order()[0] は変化しない
+/// ペナルティを加えた辺の端点だけをキューに追加し、その周囲の 2-opt だけを再評価する
 template<class EdgeCost>
-auto tsp_guided_local_search(
+TspGuidedLocalSearchResult tsp_guided_local_search(
     const TspProblem<EdgeCost>& problem,
     const TspCandidates& candidates,
     TspState<typename TspProblem<EdgeCost>::Cost>& state,
     TspGuidedLocalSearchOptions options
 ) {
     using Cost = typename TspProblem<EdgeCost>::Cost;
-    static_assert(is_convertible_v<Cost, long double>, "tsp_guided_local_search: Cost must be convertible to long double");
+    static_assert(is_convertible_v<Cost, double>, "tsp_guided_local_search: Cost must be convertible to double");
     tsp_guided_detail::check_options(options);
     if (!candidates.belongs_to(problem)) throw invalid_argument("tsp_guided_local_search: candidates and problem do not match");
     if (!state.belongs_to(problem)) throw invalid_argument("tsp_guided_local_search: state and problem do not match");
     tsp_guided_detail::SearchTimer timer;
-    int64_t evaluated_moves = 0, applied_moves = 0, penalty_rounds = 0, best_updates = 0;
-    auto finish = [&](TspSearchStopReason reason, vector<int>& best_order) {
-        if (state.order() != best_order) state.reset(problem, move(best_order));
-        return TspGuidedLocalSearchResult{
-            evaluated_moves,
-            applied_moves,
-            penalty_rounds,
-            best_updates,
-            timer.elapsed_ms(),
-            reason,
-        };
+    int n = state.size();
+    if (n < 4 || candidates.candidate_count() == 0) return {0, 0, 0, 0, timer.elapsed_ms(), TspSearchStopReason::completed};
+    if (options.time_limit_ms == 0) return {0, 0, 0, 0, timer.elapsed_ms(), TspSearchStopReason::time_limit};
+    if (options.max_evaluated_moves == 0) return {0, 0, 0, 0, timer.elapsed_ms(), TspSearchStopReason::evaluated_move_limit};
+    using Penalty = tsp_guided_detail::EdgePenaltyTable;
+    // ペナルティを加えた辺を削除する 2-opt をその辺の端点からすべて評価するために、近傍を対称にする
+    tsp_local_search_detail::TourSearch<EdgeCost, Penalty> search(problem, candidates, state.order(), state.total_cost(), true);
+    search.set_use_or_opt(false);
+    if (options.max_evaluated_moves >= 0) search.set_evaluation_limit(options.max_evaluated_moves);
+    bool time_limited = options.time_limit_ms >= 0;
+    auto time_over = [&] { return time_limited && timer.elapsed_ms() >= options.time_limit_ms; };
+    int64_t penalty_rounds = 0, best_updates = 0;
+    Cost current_cost = state.total_cost();
+    Cost best_cost = current_cost;
+    // has_best が false の場合は現在の巡回路が最良解であり、true の場合は best_order が最良解を保持する
+    vector<int> best_order;
+    bool has_best = false;
+    // キューが空になるまで探索して最良解のコストを更新し、探索が終了した理由を返す
+    auto descend = [&]() {
+        search.reset_delta();
+        bool finished = search.run(time_over);
+        current_cost += search.delta_sum();
+        if (current_cost < best_cost) {
+            best_cost = current_cost;
+            has_best = false;
+            ++best_updates;
+        }
+        if (finished) return TspSearchStopReason::completed;
+        search.clear_queue();
+        return search.evaluation_limit_reached() ? TspSearchStopReason::evaluated_move_limit : TspSearchStopReason::time_limit;
     };
-    vector<int> best_order = state.order();
-    Cost best_cost = state.total_cost();
-    if (state.size() < 4 || candidates.candidate_count() == 0) return finish(TspSearchStopReason::completed, best_order);
-    if (options.time_limit_ms == 0) return finish(TspSearchStopReason::time_limit, best_order);
-    if (options.max_evaluated_moves == 0) return finish(TspSearchStopReason::evaluated_move_limit, best_order);
-    unordered_map<uint64_t, int64_t> penalties;
-    penalties.reserve((size_t)state.size() * 4 + 1);
-    auto count_initial_improvement = [&] {
-        tsp_guided_detail::increment_counter(best_updates, "tsp_guided_local_search: best update counter overflow");
+    auto finish = [&](TspSearchStopReason reason) {
+        if (has_best) search.set_order(best_order);
+        if (search.applied_moves() > 0) tsp_local_search_detail::write_back(problem, state, search.order());
+        return TspGuidedLocalSearchResult{search.evaluated_moves(), search.applied_moves(), penalty_rounds, best_updates, timer.elapsed_ms(), reason};
     };
-    TspSearchStopReason reason = tsp_guided_detail::descend(
-        problem,
-        candidates,
-        state,
-        0,
-        penalties,
-        options,
-        timer,
-        evaluated_moves,
-        applied_moves,
-        count_initial_improvement
-    );
-    if (state.total_cost() < best_cost) {
-        best_cost = state.total_cost();
-        best_order = state.order();
-    }
-    if (reason != TspSearchStopReason::completed) return finish(reason, best_order);
-    if (options.max_penalty_rounds == 0) return finish(TspSearchStopReason::penalty_round_limit, best_order);
-    long double lambda = options.penalty_ratio * (long double)best_cost / state.size();
-    vector<uint64_t> selected_edges;
-    selected_edges.reserve(state.order().size());
+    search.push_all();
+    TspSearchStopReason reason = descend();
+    if (reason != TspSearchStopReason::completed) return finish(reason);
+    if (options.max_penalty_rounds == 0) return finish(TspSearchStopReason::penalty_round_limit);
+    double lambda = (double)options.penalty_ratio * (double)best_cost / n;
+    Penalty penalties((size_t)n * 4);
+    search.set_penalty(&penalties, lambda);
+    vector<int> selected;
     while (true) {
-        if (options.time_limit_ms >= 0 && timer.elapsed_ms() >= options.time_limit_ms) return finish(TspSearchStopReason::time_limit, best_order);
-        if (options.max_evaluated_moves >= 0 && evaluated_moves >= options.max_evaluated_moves) return finish(TspSearchStopReason::evaluated_move_limit, best_order);
-        if (options.max_penalty_rounds >= 0 && penalty_rounds >= options.max_penalty_rounds) return finish(TspSearchStopReason::penalty_round_limit, best_order);
-        const vector<int>& order = state.order();
-        long double maximum_utility = -1;
-        selected_edges.clear();
-        for (int i = 0; i < (int)order.size(); ++i) {
-            int u = order[i], v = order[(i + 1) % order.size()];
-            uint64_t key = tsp_guided_detail::edge_key(u, v);
-            int64_t penalty = tsp_guided_detail::get_penalty(penalties, u, v);
-            long double utility = (long double)problem.edge_cost(u, v) / (1 + (long double)penalty);
+        if (time_over()) return finish(TspSearchStopReason::time_limit);
+        if (options.max_penalty_rounds >= 0 && penalty_rounds >= options.max_penalty_rounds) return finish(TspSearchStopReason::penalty_round_limit);
+        // 現在の巡回路の辺のうち、コストを 1 + ペナルティで割った値が最大の辺すべてにペナルティを加える
+        const vector<int>& order = search.order();
+        double maximum_utility = -1;
+        selected.clear();
+        for (int i = 0; i < n; ++i) {
+            int u = order[i], v = order[i + 1 == n ? 0 : i + 1];
+            double utility = (double)problem.edge_cost(u, v) / (1 + (double)penalties.get(u, v));
             if (maximum_utility < utility) {
                 maximum_utility = utility;
-                selected_edges.clear();
-                selected_edges.push_back(key);
+                selected.clear();
+                selected.push_back(i);
             } else if (maximum_utility == utility) {
-                selected_edges.push_back(key);
+                selected.push_back(i);
             }
         }
-        for (uint64_t key : selected_edges) {
-            int64_t& penalty = penalties[key];
-            if (penalty == numeric_limits<int64_t>::max()) throw overflow_error("tsp_guided_local_search: penalty overflow");
-            ++penalty;
+        if (!has_best) {
+            // 現在の巡回路が最良解であるため、ペナルティで変化する前に保存する
+            best_order = order;
+            has_best = true;
         }
-        tsp_guided_detail::increment_counter(penalty_rounds, "tsp_guided_local_search: penalty round counter overflow");
-        auto save_best = [&] {
-            if (state.total_cost() < best_cost) {
-                best_cost = state.total_cost();
-                best_order = state.order();
-                tsp_guided_detail::increment_counter(best_updates, "tsp_guided_local_search: best update counter overflow");
-            }
-        };
-        reason = tsp_guided_detail::descend(
-            problem,
-            candidates,
-            state,
-            lambda,
-            penalties,
-            options,
-            timer,
-            evaluated_moves,
-            applied_moves,
-            save_best
-        );
-        if (reason != TspSearchStopReason::completed) return finish(reason, best_order);
+        for (int i : selected) {
+            int u = order[i], v = order[i + 1 == n ? 0 : i + 1];
+            penalties.increment(u, v);
+            search.push(u);
+            search.push(v);
+        }
+        ++penalty_rounds;
+        reason = descend();
+        if (reason != TspSearchStopReason::completed) return finish(reason);
     }
 }
 }

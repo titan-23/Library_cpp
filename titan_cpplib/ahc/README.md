@@ -1,6 +1,6 @@
 # AHC ライブラリ概要
 
-`titan_cpplib/ahc/` には AHC の提出コードへ組み込む探索部品、問題ごとの雛形、実験用コード、解法設計の文書があります。
+`titan_cpplib/ahc/` には AHC の提出コードへ組み込む探索部品、問題ごとのテンプレート、実験用コード、解法設計の文書があります。
 各 `.cpp` はほかの `titan_cpplib` と同様に提出コードから直接 `include` して使用します。
 
 ## ビームサーチ
@@ -15,7 +15,7 @@
 - `beam_param.cpp`: 最大ターン、ビーム幅、制限時間、重複除去の方法などの設定です。
 - `candidates.cpp`: ハッシュで重複を除去し、上位の候補を保持する共通部品です。
 - `beam_log.cpp`, `beam_history.cpp`: ログと探索履歴を出力します。
-- `beam_search_state.cpp`, `beam_search_state_turn.cpp`: 問題固有の `Action` と `State` を実装するための雛形です。
+- `beam_search_state.cpp`, `beam_search_state_turn.cpp`: 問題固有の `Action` と `State` を実装するためのテンプレートです。
 - `how_to_use_beam_search.md`: 標準版と可変ターン版の利用方法を説明します。
 - `dynamic_beam_width_proposal.md`: 現行の動的ビーム幅を置き換える未実装の設計案です。
 - `old/`: 過去の実装です。
@@ -39,7 +39,7 @@
 - `chokudai_search.cpp`: 毎世代型です。`ChokudaiSearch` が 1 操作で 1 世代進む状態を扱います。
 - `chokudai_search_turn.cpp`: 世代をスキップする型です。`ChokudaiSearchTurn` が `Action::target_turn` ごとに候補を管理します。
 - `chokudai_param.cpp`: 既存の `BeamParam` に巡回数の上限を加える設定です。
-- `chokudai_search_state.cpp`, `chokudai_search_state_turn.cpp`: 問題固有の `Action` と `State` を実装するための雛形です。
+- `chokudai_search_state.cpp`, `chokudai_search_state_turn.cpp`: 問題固有の `Action` と `State` を実装するためのテンプレートです。
 - `how_to_use_chokudai_search.md`: 使用例、ビームサーチからの移行、設定、計算量とメモリを説明します。
 
 `beam_width` は 1 回の巡回で各世代から展開する数であり、保存する候補数に上限はありません。
@@ -53,21 +53,23 @@
 - `sa_run`: 単一の状態で行う通常の焼きなましです。提出では主にこの関数を使用します。
 - `sa_multi_run`: 複数の初期状態を短時間ずつ探索し、最良の状態から残りの時間で探索を続けます。
 - `replica_run`: 複数の温度を OpenMP で並列に探索するレプリカ交換法です。主にローカルでの調査に使用します。
-- `sa_state.cpp`: `modify`、`rollback`、`advance` などを実装するための雛形です。
+- `sa_state.cpp`: `modify`、`rollback`、`advance` などを実装するためのテンプレートです。
 - `how_to_use_sa.md`: 状態の更新手順、差分計算、採択判定、並列実行時の注意を説明します。
 - `test/vis_replica.py`: レプリカ交換の記録を描画する補助処理です。
 
 焼きなましでもスコアは小さいほど良いものとして扱います。`modify` で変更の候補を作成し、不採択の場合は `rollback`、採択の場合は `advance` を呼び出します。
 
-引数のある状態を使用する場合は、seed から状態を作成する関数を `sa_run` へ渡すことができます。TSP の初期局所探索などの探索前の処理も、この関数の中に記述できます。
+引数のある状態を使用する場合は、先に状態を構築し、初期化済みの状態を受け取る `sa_run` へ渡します。TSP の初期局所探索などの探索前の処理は、状態を構築する前に行います。
 
 ## 巡回セールスマン問題
 
-`tsp/` は対称 TSP 向けの状態と近傍操作を提供します。
+`tsp/` は対称 TSP の巡回路を改善する探索と、焼きなましに組み込むための状態と近傍操作を提供します。巡回順を求める場合は `solve_tsp` または `tsp_iterated_local_search` を基本にします。
 
 - `tsp.cpp`: 問題、候補表、単一の巡回路の状態、最近傍法による初期解
 - `tsp_symmetric_moves.cpp`: 2-opt、Or-opt、反転 Or-opt、Double Bridge
 - `tsp_local_search.cpp`: 全探索または候補制限付きの 2-opt 局所探索
+- `tsp_iterated_local_search.cpp`: 2-opt、Or-opt、3-opt の局所探索と Double Bridge を繰り返す反復局所探索、`solve_tsp`
+- `atsp_iterated_local_search.cpp`: 辺のコストが向きによって異なる問題の反復局所探索、`solve_atsp`、始点から戻らない経路を求める `solve_atsp_path`
 - `tsp_guided_local_search.cpp`: 標準的な誘導局所探索
 - `tsp_edge_penalty_search.cpp`: `tsp/examples/tsp2.py` と同じ処理順の比較用探索
 - `tsp_initial_state.cpp`: SA の初期状態を改善する方法の切り替え

@@ -129,7 +129,7 @@ old/、test/、ahclib_results、ビルド成果物は対象外です。
 - **[軽微] CandIdx::action_count のコメントが実装と一致していません**。「composed 子=gen-1」とありますが、finalize_generation は常に gen を設定し、compose_pass は action_count を更新しません。実装は「常に gen、ghost は no-op」で一貫しており正しいため、コメント側を修正すべきです。結果として eff_depth は世代内の全要素で同じ値になり、可変深さに対応した copy_tour_path (ratchet 版) は現状では base 版と同じ動作になります。
 - **[軽微]** compose 版には `Action::compose(child)` が必要ですが、how_to_use_beam_search.md には compose 版の記載自体がありません (後述)。
 
-## beam_search_state.cpp / beam_search_state_turn.cpp (雛形)
+## beam_search_state.cpp / beam_search_state_turn.cpp (テンプレート)
 
 - どちらも対応するエンジンのインターフェースと一致しています。try_op が pre_*/nxt_* を設定する規約、submit.threshold の形、target_turn の扱いについてのコメントも正確です。
 - **[軽微]** `titan23::Random brnd` と gen_param が非 inline のグローバル定義であり、複数の TU では重複定義になります。単一 TU が前提であれば実害はありません。

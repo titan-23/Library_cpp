@@ -4,7 +4,6 @@
 #include <cstddef>
 #include <cstdint>
 #include <limits>
-#include <optional>
 #include <stdexcept>
 #include <type_traits>
 #include <utility>
@@ -18,40 +17,48 @@ class MultipleTspState;
 template<class EdgeCost>
 MultipleTspState<typename TspProblem<EdgeCost>::Cost> make_multiple_tsp_state(const TspProblem<EdgeCost>& problem, vector<int> depots, vector<vector<int>> routes);
 
-/// @brief MultipleTspState::make_two_opt が作る、1 つの巡回路内の未適用の 2-opt 操作
+/// @brief MultipleTspState::make_two_opt が作る、1 つの巡回路内の未適用の 2-opt 操作 / デフォルト構築した値は無効な操作
 template<class Cost>
 class MultipleTspTwoOptMove {
 public:
+    /// @brief 無効な操作を作る / make_ 系のメソッドは、作成できない引数に対してこの値を返す
+    MultipleTspTwoOptMove() = default;
     MultipleTspTwoOptMove(const MultipleTspTwoOptMove&) = default;
     MultipleTspTwoOptMove(MultipleTspTwoOptMove&&) = default;
     MultipleTspTwoOptMove& operator=(const MultipleTspTwoOptMove&) = default;
     MultipleTspTwoOptMove& operator=(MultipleTspTwoOptMove&&) = default;
+    /// @brief 適用できる操作なら true を返す
+    bool valid() const { return state_ != nullptr; }
     /// @brief 対象の巡回路の番号を返す
     int route() const { return route_; }
     /// @brief 適用したときの巡回路のコストの差分を返す
     Cost delta() const { return delta_; }
 private:
-    const void* problem_id_;
-    const MultipleTspState<Cost>* state_;
-    uint64_t revision_;
-    int route_;
-    int left_;
-    int right_;
-    Cost delta_;
+    const void* problem_id_ = nullptr;
+    const MultipleTspState<Cost>* state_ = nullptr;
+    uint64_t revision_ = 0;
+    int route_ = 0;
+    int left_ = 0;
+    int right_ = 0;
+    Cost delta_{};
 
     MultipleTspTwoOptMove(const void* problem_id, const MultipleTspState<Cost>* state, uint64_t revision, int route, int left, int right, Cost delta)
         : problem_id_(problem_id), state_(state), revision_(revision), route_(route), left_(left), right_(right), delta_(move(delta)) {}
     friend class MultipleTspState<Cost>;
 };
 
-/// @brief MultipleTspState::make_block_shift が作る、区間を別の巡回路へ移動する未適用の操作
+/// @brief MultipleTspState::make_block_shift が作る、区間を別の巡回路へ移動する未適用の操作 / デフォルト構築した値は無効な操作
 template<class Cost>
 class MultipleTspBlockShiftMove {
 public:
+    /// @brief 無効な操作を作る / make_ 系のメソッドは、作成できない引数に対してこの値を返す
+    MultipleTspBlockShiftMove() = default;
     MultipleTspBlockShiftMove(const MultipleTspBlockShiftMove&) = default;
     MultipleTspBlockShiftMove(MultipleTspBlockShiftMove&&) = default;
     MultipleTspBlockShiftMove& operator=(const MultipleTspBlockShiftMove&) = default;
     MultipleTspBlockShiftMove& operator=(MultipleTspBlockShiftMove&&) = default;
+    /// @brief 適用できる操作なら true を返す
+    bool valid() const { return state_ != nullptr; }
     /// @brief 移動元の巡回路の番号を返す
     int source_route() const { return source_route_; }
     /// @brief 移動先の巡回路の番号を返す
@@ -61,30 +68,34 @@ public:
     /// @brief 適用したときの移動先の巡回路のコストの差分を返す
     Cost target_delta() const { return target_delta_; }
 private:
-    const void* problem_id_;
-    const MultipleTspState<Cost>* state_;
-    uint64_t revision_;
-    int source_route_;
-    int first_;
-    int length_;
-    int target_route_;
-    int after_;
-    Cost source_delta_;
-    Cost target_delta_;
+    const void* problem_id_ = nullptr;
+    const MultipleTspState<Cost>* state_ = nullptr;
+    uint64_t revision_ = 0;
+    int source_route_ = 0;
+    int first_ = 0;
+    int length_ = 0;
+    int target_route_ = 0;
+    int after_ = 0;
+    Cost source_delta_{};
+    Cost target_delta_{};
 
     MultipleTspBlockShiftMove(const void* problem_id, const MultipleTspState<Cost>* state, uint64_t revision, int source_route, int first, int length, int target_route, int after, Cost source_delta, Cost target_delta)
         : problem_id_(problem_id), state_(state), revision_(revision), source_route_(source_route), first_(first), length_(length), target_route_(target_route), after_(after), source_delta_(move(source_delta)), target_delta_(move(target_delta)) {}
     friend class MultipleTspState<Cost>;
 };
 
-/// @brief MultipleTspState::make_block_swap が作る、2 つの巡回路の区間を入れ替える未適用の操作
+/// @brief MultipleTspState::make_block_swap が作る、2 つの巡回路の区間を入れ替える未適用の操作 / デフォルト構築した値は無効な操作
 template<class Cost>
 class MultipleTspBlockSwapMove {
 public:
+    /// @brief 無効な操作を作る / make_ 系のメソッドは、作成できない引数に対してこの値を返す
+    MultipleTspBlockSwapMove() = default;
     MultipleTspBlockSwapMove(const MultipleTspBlockSwapMove&) = default;
     MultipleTspBlockSwapMove(MultipleTspBlockSwapMove&&) = default;
     MultipleTspBlockSwapMove& operator=(const MultipleTspBlockSwapMove&) = default;
     MultipleTspBlockSwapMove& operator=(MultipleTspBlockSwapMove&&) = default;
+    /// @brief 適用できる操作なら true を返す
+    bool valid() const { return state_ != nullptr; }
     /// @brief 1 つ目の巡回路の番号を返す
     int route1() const { return route1_; }
     /// @brief 2 つ目の巡回路の番号を返す
@@ -94,17 +105,17 @@ public:
     /// @brief 適用したときの 2 つ目の巡回路のコストの差分を返す
     Cost delta2() const { return delta2_; }
 private:
-    const void* problem_id_;
-    const MultipleTspState<Cost>* state_;
-    uint64_t revision_;
-    int route1_;
-    int first1_;
-    int length1_;
-    int route2_;
-    int first2_;
-    int length2_;
-    Cost delta1_;
-    Cost delta2_;
+    const void* problem_id_ = nullptr;
+    const MultipleTspState<Cost>* state_ = nullptr;
+    uint64_t revision_ = 0;
+    int route1_ = 0;
+    int first1_ = 0;
+    int length1_ = 0;
+    int route2_ = 0;
+    int first2_ = 0;
+    int length2_ = 0;
+    Cost delta1_{};
+    Cost delta2_{};
 
     MultipleTspBlockSwapMove(const void* problem_id, const MultipleTspState<Cost>* state, uint64_t revision, int route1, int first1, int length1, int route2, int first2, int length2, Cost delta1, Cost delta2)
         : problem_id_(problem_id), state_(state), revision_(revision), route1_(route1), first1_(first1), length1_(length1), route2_(route2), first2_(first2), length2_(length2), delta1_(move(delta1)), delta2_(move(delta2)) {}
@@ -186,15 +197,15 @@ public:
         return route_costs_[route_id];
     }
 
-    /// @brief 巡回路 route の区間 [left, right] を反転する 2-opt を作る / 作成できない引数なら nullopt / O(1)
+    /// @brief 巡回路 route の区間 [left, right] を反転する 2-opt を作る / 作成できない引数なら valid() が false の操作を返す / O(1)
     template<class EdgeCost>
-    optional<MultipleTspTwoOptMove<Cost>> make_two_opt(const TspProblem<EdgeCost>& problem, int route, int left, int right) const;
+    MultipleTspTwoOptMove<Cost> make_two_opt(const TspProblem<EdgeCost>& problem, int route, int left, int right) const;
     /// @brief source_route の区間 [first, first + length) を target_route の位置 after の直後へ移動する操作を作る / O(length)
     template<class EdgeCost>
-    optional<MultipleTspBlockShiftMove<Cost>> make_block_shift(const TspProblem<EdgeCost>& problem, int source_route, int first, int length, int target_route, int after) const;
+    MultipleTspBlockShiftMove<Cost> make_block_shift(const TspProblem<EdgeCost>& problem, int source_route, int first, int length, int target_route, int after) const;
     /// @brief route1 の区間 [first1, first1 + length1) と route2 の区間 [first2, first2 + length2) を入れ替える操作を作る / O(length1 + length2)
     template<class EdgeCost>
-    optional<MultipleTspBlockSwapMove<Cost>> make_block_swap(const TspProblem<EdgeCost>& problem, int route1, int first1, int length1, int route2, int first2, int length2) const;
+    MultipleTspBlockSwapMove<Cost> make_block_swap(const TspProblem<EdgeCost>& problem, int route1, int first1, int length1, int route2, int first2, int length2) const;
     /// @brief 操作 move を適用する / O(対象の巡回路の長さの和)
     template<class EdgeCost, class Move>
     void apply(const TspProblem<EdgeCost>& problem, const Move& move);
@@ -259,13 +270,13 @@ MultipleTspState<typename TspProblem<EdgeCost>::Cost> make_multiple_tsp_state(co
 
 template<class Cost>
 template<class EdgeCost>
-optional<MultipleTspTwoOptMove<Cost>> MultipleTspState<Cost>::make_two_opt(const TspProblem<EdgeCost>& problem, int route, int left, int right) const {
+MultipleTspTwoOptMove<Cost> MultipleTspState<Cost>::make_two_opt(const TspProblem<EdgeCost>& problem, int route, int left, int right) const {
     static_assert(is_same_v<Cost, typename TspProblem<EdgeCost>::Cost>);
     if (problem_id_ != static_cast<const void*>(&problem)) throw invalid_argument("MultipleTspState::make_two_opt: state and problem do not match");
-    if (route < 0 || route >= route_count()) return nullopt;
+    if (route < 0 || route >= route_count()) return {};
     int size = (int)routes_[route].size();
-    if (size < 4 || left < 1 || left >= right || right >= size) return nullopt;
-    if (left == 1 && right == size - 1) return nullopt;
+    if (size < 4 || left < 1 || left >= right || right >= size) return {};
+    if (left == 1 && right == size - 1) return {};
     int before = routes_[route][left - 1];
     int first = routes_[route][left];
     int last = routes_[route][right];
@@ -280,13 +291,13 @@ optional<MultipleTspTwoOptMove<Cost>> MultipleTspState<Cost>::make_two_opt(const
 
 template<class Cost>
 template<class EdgeCost>
-optional<MultipleTspBlockShiftMove<Cost>> MultipleTspState<Cost>::make_block_shift(const TspProblem<EdgeCost>& problem, int source_route, int first, int length, int target_route, int after) const {
+MultipleTspBlockShiftMove<Cost> MultipleTspState<Cost>::make_block_shift(const TspProblem<EdgeCost>& problem, int source_route, int first, int length, int target_route, int after) const {
     static_assert(is_same_v<Cost, typename TspProblem<EdgeCost>::Cost>);
     if (problem_id_ != static_cast<const void*>(&problem)) throw invalid_argument("MultipleTspState::make_block_shift: state and problem do not match");
-    if (source_route < 0 || source_route >= route_count() || target_route < 0 || target_route >= route_count() || source_route == target_route) return nullopt;
+    if (source_route < 0 || source_route >= route_count() || target_route < 0 || target_route >= route_count() || source_route == target_route) return {};
     int source_size = (int)routes_[source_route].size();
     int target_size = (int)routes_[target_route].size();
-    if (first < 1 || first >= source_size || length <= 0 || length > source_size - first || after < 0 || after >= target_size) return nullopt;
+    if (first < 1 || first >= source_size || length <= 0 || length > source_size - first || after < 0 || after >= target_size) return {};
     int past_last = first + length;
     int block_first = routes_[source_route][first];
     int block_last = routes_[source_route][past_last - 1];
@@ -321,14 +332,14 @@ optional<MultipleTspBlockShiftMove<Cost>> MultipleTspState<Cost>::make_block_shi
 
 template<class Cost>
 template<class EdgeCost>
-optional<MultipleTspBlockSwapMove<Cost>> MultipleTspState<Cost>::make_block_swap(const TspProblem<EdgeCost>& problem, int route1, int first1, int length1, int route2, int first2, int length2) const {
+MultipleTspBlockSwapMove<Cost> MultipleTspState<Cost>::make_block_swap(const TspProblem<EdgeCost>& problem, int route1, int first1, int length1, int route2, int first2, int length2) const {
     static_assert(is_same_v<Cost, typename TspProblem<EdgeCost>::Cost>);
     if (problem_id_ != static_cast<const void*>(&problem)) throw invalid_argument("MultipleTspState::make_block_swap: state and problem do not match");
-    if (route1 < 0 || route1 >= route_count() || route2 < 0 || route2 >= route_count() || route1 == route2) return nullopt;
+    if (route1 < 0 || route1 >= route_count() || route2 < 0 || route2 >= route_count() || route1 == route2) return {};
     int size1 = (int)routes_[route1].size();
     int size2 = (int)routes_[route2].size();
-    if (first1 < 1 || first1 >= size1 || length1 <= 0 || length1 > size1 - first1) return nullopt;
-    if (first2 < 1 || first2 >= size2 || length2 <= 0 || length2 > size2 - first2) return nullopt;
+    if (first1 < 1 || first1 >= size1 || length1 <= 0 || length1 > size1 - first1) return {};
+    if (first2 < 1 || first2 >= size2 || length2 <= 0 || length2 > size2 - first2) return {};
     int past_last1 = first1 + length1;
     int past_last2 = first2 + length2;
     int before1 = routes_[route1][first1 - 1];
@@ -367,6 +378,7 @@ void MultipleTspState<Cost>::apply(const TspProblem<EdgeCost>& problem, const Mo
     using MoveType = remove_cvref_t<Move>;
     static_assert(is_same_v<MoveType, MultipleTspTwoOptMove<Cost>> || is_same_v<MoveType, MultipleTspBlockShiftMove<Cost>> || is_same_v<MoveType, MultipleTspBlockSwapMove<Cost>>);
     const void* problem_id = static_cast<const void*>(&problem);
+    if (!move.valid()) throw logic_error("MultipleTspState::apply: move is invalid");
     if (problem_id_ != problem_id || move.problem_id_ != problem_id) throw invalid_argument("MultipleTspState::apply: state, move, and problem do not match");
     if (move.state_ != this) throw logic_error("MultipleTspState::apply: move was created from another state");
     if (move.revision_ != revision_) throw logic_error("MultipleTspState::apply: move is stale");

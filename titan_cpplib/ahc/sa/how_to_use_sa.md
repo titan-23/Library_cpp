@@ -39,7 +39,7 @@ while (時間内):
 | ファイル | 役割 |
 |---|---|
 | `titan_cpplib/ahc/sa/sa.cpp` | `sa_run`, `replica_run` を提供するエンジン本体。`<omp.h>`, `timer.cpp`, `random.cpp` を include している |
-| `titan_cpplib/ahc/sa/sa_state.cpp` | **コピーして使用する雛形** (`namespace sa { class State {...} }`)。冒頭で `sa.cpp` を include している |
+| `titan_cpplib/ahc/sa/sa_state.cpp` | **コピーして使用するテンプレート** (`namespace sa { class State {...} }`)。冒頭で `sa.cpp` を include している |
 
 ユーザが行う作業は、`sa_state.cpp` 相当の内容を自分のファイルに用意し、`State` の `TODO` の箇所を埋めることだけです。エンジンを個別に include する必要はありません。
 
@@ -48,11 +48,11 @@ while (時間内):
 | 記号 | 提供元 | 備考 |
 |---|---|---|
 | `ScoreType` | **ユーザ** (`State` 内の `using ScoreType = double;`) | 既定は double。整数スコアなら `long long` などに変更する。スコアは**最小化**される |
-| `sarnd` | seed 版の雛形 (`State` のパブリックメンバ `titan23::Random`) | seed 版では `init` の中で `sarnd.set_seed(seed)` を呼び出す必要がある。初期化済み State 版では任意の乱数生成器を使用できる |
-| `is_valid` / `score` / `reset_is_valid` / `get_score` / `get_true_score` / `get_result` | 雛形 | シグネチャの変更は禁止。中身は Section 2 の仕様に従う |
-| `Param` (`inline static`) / `Changed` / `Result` | 枠は雛形、**中身はユーザ** | `start_temp` と `end_temp`、`TYPE_CNT` と `type`、`Result::print` を埋める |
+| `sarnd` | seed 版のテンプレート (`State` のパブリックメンバ `titan23::Random`) | seed 版では `init` の中で `sarnd.set_seed(seed)` を呼び出す必要がある。初期化済み State 版では任意の乱数生成器を使用できる |
+| `is_valid` / `score` / `reset_is_valid` / `get_score` / `get_true_score` / `get_result` | テンプレート | シグネチャの変更は禁止。中身は Section 2 の仕様に従う |
+| `Param` (`inline static`) / `Changed` / `Result` | 枠はテンプレート、**中身はユーザ** | `start_temp` と `end_temp`、`TYPE_CNT` と `type`、`Result::print` を埋める |
 
-#### 最小テンプレート (雛形の要点と main)
+#### 最小構成のコード (テンプレートの要点と main)
 
 ```cpp
 #include <bits/stdc++.h>
@@ -64,7 +64,7 @@ using namespace std;
 namespace sa {
 class State {
 public:
-    titan23::Random sarnd;                      // 雛形にあるメンバ / 削除しない
+    titan23::Random sarnd;                      // テンプレートにあるメンバ / 削除しない
     using ScoreType = double;                   // スコアは最小化される / 型は問題に合わせて変更できる
 
     struct Param { double start_temp, end_temp; // スコアのスケールに合わせて設定する
@@ -199,7 +199,7 @@ seed 版は `State::init(seed)` の時間も `TIME_LIMIT` に含めます。初�
 - シグネチャ: `void modify(const int64_t iter, const ScoreType threshold, const double progress)`
 - 目的: 近傍操作を選択し、スコアを差分更新します。
 - 要件:
-  - 雛形では `sarnd` を用いて近傍操作を選択してください。初期化済み State 版では、事前に seed を設定した任意の乱数生成器を State 内に保持することができます。
+  - テンプレートでは `sarnd` を用いて近傍操作を選択してください。初期化済み State 版では、事前に seed を設定した任意の乱数生成器を State 内に保持することができます。
   - 操作の種類を `changed.type` に代入し、ロールバックに必要な情報を `changed` に保存してください。
   - 次状態のスコアを差分計算し、`score` に代入してください。直後にライブラリが `get_score()` を呼び出します。
   - ルール違反の場合と早期に打ち切る場合は、Section 1 の「スコア計算の早期打ち切り」に従い、`is_valid=false` にして直ちにリターンしてください。`is_valid=false` の場合も `rollback()` は必ず呼び出されるため、`modify` の中で盤面を部分的に変更した場合は、その変更も `rollback` で元に戻してください。

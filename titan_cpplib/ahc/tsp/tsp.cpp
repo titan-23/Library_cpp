@@ -4,7 +4,6 @@
 #include <cstddef>
 #include <cstdint>
 #include <limits>
-#include <optional>
 #include <span>
 #include <stdexcept>
 #include <type_traits>
@@ -17,23 +16,27 @@ class TspProblem;
 template<class Cost>
 class TspState;
 
-/// @brief TspState::make_two_opt が作る未適用の 2-opt 操作
+/// @brief TspState::make_two_opt が作る未適用の 2-opt 操作 / デフォルト構築した値は無効な操作
 template<class Cost>
 class TspTwoOptMove {
 public:
+    /// @brief 無効な操作を作る / make_ 系のメソッドは、作成できない引数に対してこの値を返す
+    TspTwoOptMove() = default;
     TspTwoOptMove(const TspTwoOptMove&) = default;
     TspTwoOptMove(TspTwoOptMove&&) = default;
     TspTwoOptMove& operator=(const TspTwoOptMove&) = default;
     TspTwoOptMove& operator=(TspTwoOptMove&&) = default;
-    /// @brief 適用したときのコストの差分を返す
+    /// @brief 適用できる操作なら true を返す
+    bool valid() const { return state_ != nullptr; }
+    /// @brief 適用したときのコストの差分を返す / 無効な操作では 0
     Cost delta() const { return delta_; }
 private:
-    const void* problem_id_;
-    const TspState<Cost>* state_;
-    uint64_t revision_;
-    int left_;
-    int right_;
-    Cost delta_;
+    const void* problem_id_ = nullptr;
+    const TspState<Cost>* state_ = nullptr;
+    uint64_t revision_ = 0;
+    int left_ = 0;
+    int right_ = 0;
+    Cost delta_{};
 
     TspTwoOptMove(const void* problem_id, const TspState<Cost>* state, uint64_t revision, int left, int right, Cost delta)
         : problem_id_(problem_id), state_(state), revision_(revision), left_(left), right_(right), delta_(move(delta)) {}
@@ -41,25 +44,29 @@ private:
     friend class TspState;
 };
 
-/// @brief TspState::make_or_opt が作る未適用の Or-opt 操作
+/// @brief TspState::make_or_opt が作る未適用の Or-opt 操作 / デフォルト構築した値は無効な操作
 template<class Cost>
 class TspOrOptMove {
 public:
+    /// @brief 無効な操作を作る / make_ 系のメソッドは、作成できない引数に対してこの値を返す
+    TspOrOptMove() = default;
     TspOrOptMove(const TspOrOptMove&) = default;
     TspOrOptMove(TspOrOptMove&&) = default;
     TspOrOptMove& operator=(const TspOrOptMove&) = default;
     TspOrOptMove& operator=(TspOrOptMove&&) = default;
-    /// @brief 適用したときのコストの差分を返す
+    /// @brief 適用できる操作なら true を返す
+    bool valid() const { return state_ != nullptr; }
+    /// @brief 適用したときのコストの差分を返す / 無効な操作では 0
     Cost delta() const { return delta_; }
 private:
-    const void* problem_id_;
-    const TspState<Cost>* state_;
-    uint64_t revision_;
-    int first_;
-    int length_;
-    int after_;
-    bool reversed_;
-    Cost delta_;
+    const void* problem_id_ = nullptr;
+    const TspState<Cost>* state_ = nullptr;
+    uint64_t revision_ = 0;
+    int first_ = 0;
+    int length_ = 0;
+    int after_ = 0;
+    bool reversed_ = false;
+    Cost delta_{};
 
     TspOrOptMove(const void* problem_id, const TspState<Cost>* state, uint64_t revision, int first, int length, int after, bool reversed, Cost delta)
         : problem_id_(problem_id), state_(state), revision_(revision), first_(first), length_(length), after_(after), reversed_(reversed), delta_(move(delta)) {}
@@ -67,25 +74,29 @@ private:
     friend class TspState;
 };
 
-/// @brief TspState::make_double_bridge が作る未適用の Double Bridge 操作
+/// @brief TspState::make_double_bridge が作る未適用の Double Bridge 操作 / デフォルト構築した値は無効な操作
 template<class Cost>
 class TspDoubleBridgeMove {
 public:
+    /// @brief 無効な操作を作る / make_ 系のメソッドは、作成できない引数に対してこの値を返す
+    TspDoubleBridgeMove() = default;
     TspDoubleBridgeMove(const TspDoubleBridgeMove&) = default;
     TspDoubleBridgeMove(TspDoubleBridgeMove&&) = default;
     TspDoubleBridgeMove& operator=(const TspDoubleBridgeMove&) = default;
     TspDoubleBridgeMove& operator=(TspDoubleBridgeMove&&) = default;
-    /// @brief 適用したときのコストの差分を返す
+    /// @brief 適用できる操作なら true を返す
+    bool valid() const { return state_ != nullptr; }
+    /// @brief 適用したときのコストの差分を返す / 無効な操作では 0
     Cost delta() const { return delta_; }
 private:
-    const void* problem_id_;
-    const TspState<Cost>* state_;
-    uint64_t revision_;
-    int cut1_;
-    int cut2_;
-    int cut3_;
-    int cut4_;
-    Cost delta_;
+    const void* problem_id_ = nullptr;
+    const TspState<Cost>* state_ = nullptr;
+    uint64_t revision_ = 0;
+    int cut1_ = 0;
+    int cut2_ = 0;
+    int cut3_ = 0;
+    int cut4_ = 0;
+    Cost delta_{};
 
     TspDoubleBridgeMove(const void* problem_id, const TspState<Cost>* state, uint64_t revision, int cut1, int cut2, int cut3, int cut4, Cost delta)
         : problem_id_(problem_id), state_(state), revision_(revision), cut1_(cut1), cut2_(cut2), cut3_(cut3), cut4_(cut4), delta_(move(delta)) {}
@@ -124,7 +135,7 @@ public:
     }
     /// @brief 巡回順 order の状態を作る / order は重複しない 1 点以上の点の列 / O(n)
     TspState<Cost> make_state(vector<int> order) const;
-    /// @brief start から最近傍法で全点を巡る状態を作る / O(n^2)
+    /// @brief start から最近傍法で全点を巡る状態を作る / 同じコストなら点番号の小さい点を選ぶ / O(n^2)
     TspState<Cost> make_nearest_neighbor_state(int start) const;
     /// @brief start と nodes_to_visit の点だけを最近傍法で巡る状態を作る / nodes_to_visit は重複せず start を含まない
     TspState<Cost> make_nearest_neighbor_state(int start, span<const int> nodes_to_visit) const;
@@ -194,7 +205,7 @@ private:
     friend TspCandidates make_tsp_candidates(const TspProblem<EdgeCost>& problem, int requested_count);
 };
 
-/// @brief 各点の近傍候補を c = min(requested_count, n - 1) 個ずつ求める / 平均 O(n^2 + nc log(c+1))
+/// @brief 各点の近傍候補を c = min(requested_count, n - 1) 個ずつ求める / O(n^2) 回の edge_cost の呼び出しと、最悪 O(n^2 c) の挿入
 template<class EdgeCost>
 TspCandidates make_tsp_candidates(const TspProblem<EdgeCost>& problem, int requested_count) {
     using Cost = typename TspProblem<EdgeCost>::Cost;
@@ -204,20 +215,26 @@ TspCandidates make_tsp_candidates(const TspProblem<EdgeCost>& problem, int reque
     vector<int> candidates;
     if (candidate_count == 0) return TspCandidates(n, 0, move(candidates), static_cast<const void*>(&problem));
     if ((size_t)n > candidates.max_size() / (size_t)candidate_count) throw length_error("make_tsp_candidates: candidate table is too large");
-    candidates.reserve((size_t)n * (size_t)candidate_count);
-    vector<pair<Cost, int>> nearest;
-    nearest.reserve((size_t)n - 1);
-    auto less_neighbor = [](const pair<Cost, int>& a, const pair<Cost, int>& b) {
-        if (a.first < b.first) return true;
-        if (b.first < a.first) return false;
-        return a.second < b.second;
-    };
+    candidates.resize((size_t)n * (size_t)candidate_count);
+    // コストの昇順に並べた上位 candidate_count 個を保持し、点番号の昇順に走査して挿入する
+    // コストが同じ点は後から挿入しないため、点番号の小さい順になる
+    vector<Cost> nearest_cost((size_t)candidate_count);
     for (int u = 0; u < n; ++u) {
-        nearest.clear();
-        for (int v = 0; v < n; ++v) if (u != v) nearest.emplace_back(problem.edge_cost(u, v), v);
-        if (candidate_count < n - 1) nth_element(nearest.begin(), nearest.begin() + candidate_count, nearest.end(), less_neighbor);
-        sort(nearest.begin(), nearest.begin() + candidate_count, less_neighbor);
-        for (int i = 0; i < candidate_count; ++i) candidates.push_back(nearest[i].second);
+        int* nearest = candidates.data() + (size_t)u * (size_t)candidate_count;
+        int count = 0;
+        for (int v = 0; v < n; ++v) {
+            if (u == v) continue;
+            Cost cost = problem.edge_cost(u, v);
+            if (count == candidate_count && !(cost < nearest_cost[count - 1])) continue;
+            int i = count < candidate_count ? count++ : count - 1;
+            while (i > 0 && cost < nearest_cost[i - 1]) {
+                nearest_cost[i] = nearest_cost[i - 1];
+                nearest[i] = nearest[i - 1];
+                --i;
+            }
+            nearest_cost[i] = cost;
+            nearest[i] = v;
+        }
     }
     return TspCandidates(n, candidate_count, move(candidates), static_cast<const void*>(&problem));
 }
@@ -279,16 +296,16 @@ public:
         return problem_id_ == static_cast<const void*>(&problem);
     }
 
-    /// @brief 区間 [left, right] を反転する 2-opt を作る / 作成できない引数なら nullopt / O(1)
+    /// @brief 区間 [left, right] を反転する 2-opt を作る / 作成できない引数なら valid() が false の操作を返す / O(1)
     template<class EdgeCost>
-    optional<TspTwoOptMove<Cost>> make_two_opt(const TspProblem<EdgeCost>& problem, int left, int right) const;
+    TspTwoOptMove<Cost> make_two_opt(const TspProblem<EdgeCost>& problem, int left, int right) const;
     /// @brief 区間 [first, first + length) を変更前の位置 after の直後へ移動する Or-opt を作る / reversed なら区間を反転して移動する / O(1)
     template<class EdgeCost>
-    optional<TspOrOptMove<Cost>> make_or_opt(const TspProblem<EdgeCost>& problem, int first, int length, int after, bool reversed) const;
+    TspOrOptMove<Cost> make_or_opt(const TspProblem<EdgeCost>& problem, int first, int length, int after, bool reversed) const;
     /// @brief 位置 cut1 < cut2 < cut3 < cut4 を始点とする 4 辺を切る Double Bridge を作る / O(1)
     template<class EdgeCost>
-    optional<TspDoubleBridgeMove<Cost>> make_double_bridge(const TspProblem<EdgeCost>& problem, int cut1, int cut2, int cut3, int cut4) const;
-    /// @brief 操作 move を適用する / 2-opt は O(反転区間の長さ)、Or-opt と Double Bridge は O(n)
+    TspDoubleBridgeMove<Cost> make_double_bridge(const TspProblem<EdgeCost>& problem, int cut1, int cut2, int cut3, int cut4) const;
+    /// @brief 操作 move を適用する / O(位置が変化する区間の長さ)
     template<class EdgeCost, class Move>
     void apply(const TspProblem<EdgeCost>& problem, const Move& move);
     /// @brief 巡回順全体を order に置き換える / O(n)
@@ -360,24 +377,27 @@ TspState<typename TspProblem<EdgeCost>::Cost> TspProblem<EdgeCost>::make_nearest
         if (visited[node]) throw invalid_argument("TspProblem::make_nearest_neighbor_state: nodes must be distinct and exclude start");
         visited[node] = 1;
     }
-    fill(visited.begin(), visited.end(), 0);
-    visited[start] = 1;
+    // 未訪問の点だけを remaining に保持し、選択した点は末尾の点と入れ替えて取り除く
+    vector<int> remaining(nodes_to_visit.begin(), nodes_to_visit.end());
     vector<int> order;
     order.reserve(nodes_to_visit.size() + 1);
     order.push_back(start);
-    for (size_t step = 0; step < nodes_to_visit.size(); ++step) {
+    while (!remaining.empty()) {
         int current = order.back();
+        size_t best_index = 0;
         int best_node = -1;
         Cost best_cost{};
-        for (int node : nodes_to_visit) if (!visited[node]) {
+        for (size_t i = 0; i < remaining.size(); ++i) {
+            int node = remaining[i];
             Cost candidate_cost = edge_cost(current, node);
             if (best_node == -1 || candidate_cost < best_cost || (!(best_cost < candidate_cost) && node < best_node)) {
+                best_index = i;
                 best_node = node;
                 best_cost = move(candidate_cost);
             }
         }
-        if (best_node == -1) throw logic_error("TspProblem::make_nearest_neighbor_state: failed to select a node");
-        visited[best_node] = 1;
+        remaining[best_index] = remaining.back();
+        remaining.pop_back();
         order.push_back(best_node);
     }
     return make_state(move(order));

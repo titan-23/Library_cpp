@@ -44,6 +44,17 @@ void validate_state(const State& state, const vector<vector<Cost>>& distance, in
     assert(state.total_cost() == calculate_cost(state.order(), distance));
 }
 
+// 全ての巡回順を列挙して最小のコストを求める
+Cost calculate_optimal_cost(const vector<vector<Cost>>& distance) {
+    vector<int> order(distance.size());
+    iota(order.begin(), order.end(), 0);
+    Cost best = calculate_cost(order, distance);
+    do {
+        best = min(best, calculate_cost(order, distance));
+    } while (next_permutation(order.begin() + 1, order.end()));
+    return best;
+}
+
 vector<vector<Cost>> make_distance(int n) {
     vector<vector<Cost>> distance(n, vector<Cost>(n));
     for (int u = 0; u < n; ++u) for (int v = u + 1; v < n; ++v) {
@@ -158,9 +169,9 @@ void test_moves(const Problem& problem, const vector<vector<Cost>>& distance, co
     for (int left = 0; left <= n; ++left) for (int right = left; right <= n; ++right) {
         auto state = problem.make_state(order);
         auto move = state.make_two_opt(problem, left, right);
-        if (!move) continue;
-        Cost expected = state.total_cost() + move->delta();
-        state.apply(problem, *move);
+        if (!move.valid()) continue;
+        Cost expected = state.total_cost() + move.delta();
+        state.apply(problem, move);
         validate_state(state, distance, order[0]);
         assert(state.total_cost() == expected);
     }
@@ -168,9 +179,9 @@ void test_moves(const Problem& problem, const vector<vector<Cost>>& distance, co
         for (int after = 0; after < n; ++after) for (bool reversed : {false, true}) {
             auto state = problem.make_state(order);
             auto move = state.make_or_opt(problem, first, length, after, reversed);
-            if (!move) continue;
-            Cost expected = state.total_cost() + move->delta();
-            state.apply(problem, *move);
+            if (!move.valid()) continue;
+            Cost expected = state.total_cost() + move.delta();
+            state.apply(problem, move);
             validate_state(state, distance, order[0]);
             assert(state.total_cost() == expected);
         }
@@ -179,9 +190,9 @@ void test_moves(const Problem& problem, const vector<vector<Cost>>& distance, co
         for (int cut3 = cut2 + 1; cut3 < n; ++cut3) for (int cut4 = cut3 + 1; cut4 < n; ++cut4) {
             auto state = problem.make_state(order);
             auto move = state.make_double_bridge(problem, cut1, cut2, cut3, cut4);
-            if (!move) continue;
-            Cost expected = state.total_cost() + move->delta();
-            state.apply(problem, *move);
+            if (!move.valid()) continue;
+            Cost expected = state.total_cost() + move.delta();
+            state.apply(problem, move);
             validate_state(state, distance, order[0]);
             assert(state.total_cost() == expected);
         }
@@ -222,9 +233,9 @@ void test_multiple_moves(const Problem& problem, const vector<vector<Cost>>& dis
         for (int left = 0; left <= size; ++left) for (int right = left; right <= size; ++right) {
             auto state = make_multiple_tsp_state(problem, depots, routes);
             auto move = state.make_two_opt(problem, route, left, right);
-            if (!move) continue;
-            Cost expected = state.route_cost(route) + move->delta();
-            state.apply(problem, *move);
+            if (!move.valid()) continue;
+            Cost expected = state.route_cost(route) + move.delta();
+            state.apply(problem, move);
             validate_multiple_state(state, depots, distance);
             assert(state.route_cost(route) == expected);
         }
@@ -235,10 +246,10 @@ void test_multiple_moves(const Problem& problem, const vector<vector<Cost>>& dis
                 for (int after = 0; after < (int)routes[target].size(); ++after) {
                     auto state = make_multiple_tsp_state(problem, depots, routes);
                     auto move = state.make_block_shift(problem, source, first, length, target, after);
-                    if (!move) continue;
-                    Cost expected_source = state.route_cost(source) + move->source_delta();
-                    Cost expected_target = state.route_cost(target) + move->target_delta();
-                    state.apply(problem, *move);
+                    if (!move.valid()) continue;
+                    Cost expected_source = state.route_cost(source) + move.source_delta();
+                    Cost expected_target = state.route_cost(target) + move.target_delta();
+                    state.apply(problem, move);
                     validate_multiple_state(state, depots, distance);
                     assert(state.route_cost(source) == expected_source);
                     assert(state.route_cost(target) == expected_target);
@@ -253,10 +264,10 @@ void test_multiple_moves(const Problem& problem, const vector<vector<Cost>>& dis
                     for (int length2 = 0; length2 <= (int)routes[route2].size(); ++length2) {
                         auto state = make_multiple_tsp_state(problem, depots, routes);
                         auto move = state.make_block_swap(problem, route1, first1, length1, route2, first2, length2);
-                        if (!move) continue;
-                        Cost expected1 = state.route_cost(route1) + move->delta1();
-                        Cost expected2 = state.route_cost(route2) + move->delta2();
-                        state.apply(problem, *move);
+                        if (!move.valid()) continue;
+                        Cost expected1 = state.route_cost(route1) + move.delta1();
+                        Cost expected2 = state.route_cost(route2) + move.delta2();
+                        state.apply(problem, move);
                         validate_multiple_state(state, depots, distance);
                         assert(state.route_cost(route1) == expected1);
                         assert(state.route_cost(route2) == expected2);
@@ -267,17 +278,17 @@ void test_multiple_moves(const Problem& problem, const vector<vector<Cost>>& dis
     }
     auto repeated = make_multiple_tsp_state(problem, depots, routes);
     auto first_swap = repeated.make_block_swap(problem, 0, 1, 2, 1, 1, 1);
-    assert(first_swap);
-    repeated.apply(problem, *first_swap);
+    assert(first_swap.valid());
+    repeated.apply(problem, first_swap);
     auto second_swap = repeated.make_block_swap(problem, 0, 1, 1, 2, 1, 1);
-    assert(second_swap);
-    repeated.apply(problem, *second_swap);
+    assert(second_swap.valid());
+    repeated.apply(problem, second_swap);
     validate_multiple_state(repeated, depots, distance);
     vector<vector<int>> depot_only_routes = {{0, 3, 4, 5, 8}, {1, 6, 7}, {2}};
     auto depot_only = make_multiple_tsp_state(problem, depots, depot_only_routes);
     auto into_depot_only = depot_only.make_block_shift(problem, 0, 1, 2, 2, 0);
-    assert(into_depot_only);
-    depot_only.apply(problem, *into_depot_only);
+    assert(into_depot_only.valid());
+    depot_only.apply(problem, into_depot_only);
     validate_multiple_state(depot_only, depots, distance);
 }
 
@@ -307,13 +318,17 @@ int main() {
     validate_state(partial, distance, 1);
     auto assigned = problem.make_state(order);
     auto stale_move = assigned.make_two_opt(problem, 1, 3);
-    assert(stale_move);
+    assert(stale_move.valid());
     assigned = nearest;
     validate_state(assigned, distance, nearest.order()[0]);
-    expect_exception([&] { assigned.apply(problem, *stale_move); });
+    expect_exception([&] { assigned.apply(problem, stale_move); });
     assigned = problem.make_state(order);
     validate_state(assigned, distance, order[0]);
-    expect_exception([&] { assigned.apply(problem, *stale_move); });
+    expect_exception([&] { assigned.apply(problem, stale_move); });
+    TspTwoOptMove<Cost> invalid_move;
+    assert(!invalid_move.valid());
+    assert(!assigned.make_two_opt(problem, 0, 3).valid());
+    expect_exception([&] { assigned.apply(problem, invalid_move); });
     vector<vector<Cost>> other_distance = distance;
     TspProblem other_problem(n, MatrixCost{&other_distance});
     auto other_candidates = make_tsp_candidates(other_problem, n - 1);
@@ -376,6 +391,26 @@ int main() {
         assert(compared_result.best_updates == reference.best_updates);
         next_permutation(comparison_order.begin() + 1, comparison_order.end());
     }
+    auto iterated = problem.make_state(order);
+    TspIteratedLocalSearchOptions iterated_options;
+    iterated_options.max_iterations = 2000;
+    auto iterated_result = tsp_iterated_local_search(problem, candidates, iterated, iterated_options);
+    validate_state(iterated, distance, order[0]);
+    assert(iterated_result.iterations == iterated_options.max_iterations);
+    assert(iterated_result.stop_reason == TspSearchStopReason::iteration_limit);
+    assert(iterated.total_cost() == calculate_optimal_cost(distance));
+    expect_exception([&] {
+        TspIteratedLocalSearchOptions no_limit;
+        tsp_iterated_local_search(problem, candidates, iterated, no_limit);
+    });
+    vector<int> solved = solve_tsp(n, edge_cost, 10.0, 4);
+    assert((int)solved.size() == n && solved[0] == 4);
+    assert(calculate_cost(solved, distance) == calculate_optimal_cost(distance));
+    vector<int> partial_order = {1, 2, 4, 6, 8};
+    auto partial_iterated = problem.make_state(partial_order);
+    tsp_iterated_local_search(problem, candidates, partial_iterated, iterated_options);
+    validate_state(partial_iterated, distance, 1);
+    assert(partial_iterated.size() == (int)partial_order.size());
     auto initial_state = problem.make_state(order);
     TspInitialStateOptions initial_options;
     initial_options.search = TspInitialSearch::two_opt;
@@ -387,11 +422,11 @@ int main() {
     vector<vector<int>> routes = {{0, 3, 4, 5}, {1, 6, 7}, {2, 8}};
     auto assigned_multiple = make_multiple_tsp_state(problem, depots, routes);
     auto stale_multiple_move = assigned_multiple.make_block_shift(problem, 0, 1, 1, 1, 0);
-    assert(stale_multiple_move);
+    assert(stale_multiple_move.valid());
     auto replacement_multiple = make_multiple_tsp_state(problem, depots, {{0, 5, 4, 3}, {1, 7, 6}, {2, 8}});
     assigned_multiple = replacement_multiple;
     validate_multiple_state(assigned_multiple, depots, distance);
-    expect_exception([&] { assigned_multiple.apply(problem, *stale_multiple_move); });
+    expect_exception([&] { assigned_multiple.apply(problem, stale_multiple_move); });
     test_multiple_moves(problem, distance);
     cout << "ok\n";
 }

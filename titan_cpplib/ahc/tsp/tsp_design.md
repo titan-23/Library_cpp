@@ -7,7 +7,7 @@
 - `TspProblem`: 点の数と辺のコスト関数を保持します。
 - `TspCandidates`: 近傍の候補表を保持します。
 - `TspState`: 巡回順、各点の位置、現在のコスト、作業領域を保持します。
-- 局所探索、誘導局所探索、辺にペナルティを加える比較用の探索: 渡された `TspState` を直接更新します。
+- 局所探索、反復局所探索、誘導局所探索、辺にペナルティを加える比較用の探索: 渡された `TspState` を直接更新します。
 - 焼きなまし: 問題固有の `sa::State` が `TspState` と未適用の操作を保持します。
 
 `sa_tsp.cpp` からは正しい差分計算と巡回路の更新だけを共通化します。`tsp2.py` の探索は、標準的な誘導局所探索とは別の比較対象として残します。
@@ -16,14 +16,14 @@
 
 ## 対象とする問題
 
-初版は対称 TSP だけを対象とします。
+`TspState` と、名前が `tsp_` で始まる探索は対称 TSP だけを対象とします。
 
 - 巡回路は対象とする各点を一度ずつ訪問する閉路です。
 - `edge_cost(u, v) == edge_cost(v, u)`
 - 辺のコストは有限かつ 0 以上です。
 - 三角不等式を満たす必要はありません。
 
-非対称 TSP では、2-opt で区間を反転すると区間内の全ての辺の向きが変化します。境界の辺だけを使用してコストの差分を定数時間で求めることができないため、初版では対応しません。
+非対称 TSP では、2-opt で区間を反転すると区間内の全ての辺の向きが変化します。境界の辺だけを使用してコストの差分を定数時間で求めることができないため、`TspState` の近傍操作と対称版の探索は対称 TSP だけを対象とします。非対称 TSP には `atsp_iterated_local_search.cpp` の探索を使用します。
 
 ## ファイル構成
 
@@ -32,6 +32,8 @@ titan_cpplib/ahc/tsp/
 ├── tsp.cpp
 ├── tsp_symmetric_moves.cpp
 ├── tsp_local_search.cpp
+├── tsp_iterated_local_search.cpp
+├── atsp_iterated_local_search.cpp
 ├── tsp_guided_local_search.cpp
 ├── tsp_edge_penalty_search.cpp
 ├── tsp_initial_state.cpp
@@ -43,7 +45,9 @@ titan_cpplib/ahc/tsp/
 
 - `tsp.cpp`: `TspProblem`、`TspCandidates`、`TspState`、最近傍法による初期解
 - `tsp_symmetric_moves.cpp`: 2-opt、Or-opt、反転 Or-opt、Double Bridge
-- `tsp_local_search.cpp`: 全探索または候補制限付きの 2-opt 局所探索
+- `tsp_local_search.cpp`: 全探索または候補制限付きの 2-opt 局所探索と、探索関数が共有する内部クラス `TourSearch`
+- `tsp_iterated_local_search.cpp`: 反復局所探索と、巡回順を 1 回の呼び出しで求める `solve_tsp`
+- `atsp_iterated_local_search.cpp`: 非対称コストの反復局所探索と、`solve_atsp`、`solve_atsp_path`
 - `tsp_guided_local_search.cpp`: 標準的な誘導局所探索
 - `tsp_edge_penalty_search.cpp`: 現在の `tsp2.py` の処理順を再現した比較用の探索
 - `tsp_initial_state.cpp`: SA の初期状態の改善方法を選択する補助関数
@@ -111,7 +115,7 @@ public:
 
 候補表は長さ `node_count * candidate_count` の 1 次元配列で保持します。実際の候補数は `min(requested_count, node_count-1)` とします。
 
-各点について `(辺費用, 点番号)` の組を `nth_element` で絞り込み、選択した部分だけをソートします。コストが同じ場合は点番号が小さい方を先にします。
+各点について、コストの昇順に並べた上位 `candidate_count` 個を保持し、ほかの点を点番号の昇順に走査して挿入します。コストが同じ場合は点番号が小さい方を先にします。`edge_cost` の呼び出しは `O(n²)` 回で、上位に入る点だけを挿入します。
 
 `TspCandidates` は作成元の問題を識別し、探索関数へ別の問題と組み合わせて渡した場合は例外を投げます。同じ問題から候補数の異なる表を複数作成することができます。
 
@@ -130,15 +134,15 @@ public:
     Cost total_cost() const;
 
     template<class EdgeCost>
-    optional<TspTwoOptMove<Cost>> make_two_opt(
+    TspTwoOptMove<Cost> make_two_opt(
         const TspProblem<EdgeCost>& problem,
         int left, int right) const;
     template<class EdgeCost>
-    optional<TspOrOptMove<Cost>> make_or_opt(
+    TspOrOptMove<Cost> make_or_opt(
         const TspProblem<EdgeCost>& problem,
         int first, int length, int after, bool reversed) const;
     template<class EdgeCost>
-    optional<TspDoubleBridgeMove<Cost>> make_double_bridge(
+    TspDoubleBridgeMove<Cost> make_double_bridge(
         const TspProblem<EdgeCost>& problem,
         int cut1, int cut2, int cut3, int cut4) const;
 
@@ -175,7 +179,7 @@ uint64_t revision;
 
 状態は `TspProblem::make_state` からだけ作成します。巡回順、位置、コストは外部から個別に変更できないようにします。
 
-`reset` は巡回順全体を置き換え、位置とコストを再計算します。誘導局所探索の終了時に保存済みの最良の巡回順へ戻す用途で使用し、それまでに作成した未適用の操作を全て無効にします。
+`reset` は巡回順全体を置き換え、位置とコストを再計算します。探索関数が終了時に探索結果の巡回順を `state` へ反映する用途で使用し、それまでに作成した未適用の操作を全て無効にします。
 
 状態のコピーは巡回順、位置、コスト、作業領域を複製するため `O(n)` です。問題と候補表は複製しません。コピー先は独立した新しい確定状態となり、コピー元で作成した操作は適用できません。代入の前に代入先から作成した操作も無効になります。未適用の操作を作成してから適用するまでの間は、作成元の状態を移動または破棄してはいけません。
 
@@ -197,9 +201,9 @@ auto partial_state =
 
 ```cpp
 auto move = state.make_two_opt(problem, left, right);
-if (move) {
-    auto next_cost = state.total_cost() + move->delta();
-    state.apply(problem, *move);
+if (move.valid()) {
+    auto next_cost = state.total_cost() + move.delta();
+    state.apply(problem, move);
 }
 
 auto move = state.make_or_opt(
@@ -217,7 +221,9 @@ auto move = state.make_double_bridge(
 - 変更前の添字
 - コストの差分
 
-適用時に問題、状態、`revision` を確認します。別の状態から作成した操作、古い操作、別の問題の操作は適用できません。
+操作の型はデフォルト構築することができ、その値は無効な操作です。`valid()` は適用できる操作の場合に true を返します。`optional` は使用しません。
+
+適用時に問題、状態、`revision` を確認します。無効な操作、別の状態から作成した操作、古い操作、別の問題の操作は適用できません。
 
 添字は全て、操作を作成した時点の巡回順に対するものとします。
 
@@ -226,16 +232,16 @@ auto move = state.make_double_bridge(
 - 反転 Or-opt: 区間を反転してから移動します。
 - Double Bridge: `cut1 < cut2 < cut3 < cut4` を始点とする 4 辺を削除し、5 つの区間を `S0,S3,S2,S1,S4` の順に連結します。`cut4 == n-1` の場合は最後の区間を空とします。
 
-移動する区間には 0 番目を含めません。無効な添字、隣接する辺だけを削除する操作、実質的に変化しない操作には `nullopt` を返します。
+移動する区間には 0 番目を含めません。無効な添字、隣接する辺だけを削除する操作、実質的に変化しない操作には、無効な操作を返します。
 
-2-opt は追加の配列を使用せずに区間を反転し、Or-opt は `rotate` を使用します。Double Bridge は `TspState` の作業領域を使用し、反復中に配列を確保しません。
+2-opt は追加の配列を使用せずに区間を反転し、Or-opt は `rotate` を使用します。Double Bridge は `TspState` の作業領域を使用し、反復中に配列を確保しません。各点の位置は、位置が変化する区間だけを更新します。
 
 | 操作 | コストの差分 | 適用 |
 |---|---:|---:|
 | 2-opt | `O(1)` | 反転する区間の長さに比例 |
-| Or-opt | `O(1)` | `O(n)` |
-| 反転 Or-opt | `O(1)` | `O(n)` |
-| Double Bridge | `O(1)` | `O(n)` |
+| Or-opt | `O(1)` | 移動する区間と移動先の間の長さに比例 |
+| 反転 Or-opt | `O(1)` | 移動する区間と移動先の間の長さに比例 |
+| Double Bridge | `O(1)` | `cut4 - cut1` に比例 |
 
 ## 局所探索
 
@@ -265,20 +271,123 @@ auto result = tsp_two_opt_local_search(
 
 候補表を渡さない全探索版も用意します。コストが下がる操作がなくなって全探索版が終了した場合、結果は 2-opt に関する局所最適解です。候補制限版の場合は候補内の局所最適解です。
 
-候補制限版では、各候補点について巡回路上の前後の 2 辺を評価します。候補数を `n-1` にすると、隣接していない全ての辺の組を評価します。
+候補制限版では、点 `u` とその候補点 `v` を隣接させる 2-opt を評価します。`u` と `v` それぞれの次の点への辺を削除する操作と、前の点への辺を削除する操作の 2 通りです。候補数を `n-1` にすると、隣接していない全ての辺の組を評価します。
 
-部分巡回路では、候補表に含まれていても巡回路に存在しない点を `position(node) == -1` で判定してスキップします。
+部分巡回路では、候補表に含まれていても巡回路に存在しない点を探索の準備の時点で除きます。
+
+全探索版の `first_improvement == true` では、改善する操作を適用した後も続きの組を評価し、改善する操作のない一巡で終了します。
+
+候補制限版の `first_improvement == true` は、内部クラス `TourSearch` で探索します。
+
+- 巡回路を配列で保持し、向きと開始位置を区別しません。区間の反転では、反転する区間とその補集合のうち短い方を反転します。終了時に、開始点が 0 番目になるように巡回順を回転して `state` へ反映します。
+- 再評価する点をキューで管理します。最初に全ての点をキューに追加し、操作を適用するたびに、辺が変化した 4 点をキューに追加します。
+- キューから取り出した点 `t1` について、`t1` と候補点 `t3` を結ぶ辺が、削除する `t1` の辺より短い操作だけを評価します。候補はコストの昇順に並んでいるため、長い候補に達した時点で打ち切ります。
+- キューが空になった後、打ち切りを行わずに全ての候補を評価する一巡を、操作を 1 つも適用しなくなるまで繰り返します。この一巡により、終了時の結果は候補内の局所最適解になります。
+
+## 反復局所探索
+
+```cpp
+struct TspIteratedLocalSearchOptions {
+    double time_limit_ms = -1;
+    int64_t max_iterations = -1;
+    int max_kick_length = 50;
+    double temperature_ratio = 0.5;
+    uint32_t seed = 23;
+    bool use_three_opt = true;
+};
+
+struct TspIteratedLocalSearchResult {
+    int64_t iterations;
+    int64_t accepted_iterations;
+    int64_t applied_moves;
+    double elapsed_ms;
+    TspSearchStopReason stop_reason;
+};
+
+auto result = tsp_iterated_local_search(
+    problem, candidates, state, options);
+```
+
+`TourSearch` で 2-opt、Or-opt、3-opt の局所探索を行い、次の反復を上限に達するまで繰り返します。
+
+1. 巡回路上の位置を無作為に選び、その直後に続く 3 つの区間を逆の順に並べ替える Double Bridge を適用します。各区間の長さは 1 以上 `max_kick_length` 以下から無作為に選びます。
+2. Double Bridge で辺が変化した 8 点だけをキューに追加し、キューが空になるまで局所探索を行います。
+3. コストが増加しなければ採択します。増加した場合は、温度 `T` に対して確率 `exp(-増加量 / T)` で採択します。
+4. 採択しない場合は、反復の中で適用した反転を逆順に適用し、Double Bridge を元に戻します。
+
+Or-opt は、キューから取り出した点 `t1` から始まる長さ 1 から 3 の区間を、`t1` の候補点とその隣の点の間へ移動します。区間の向きを維持する移動と反転する移動の両方を評価します。区間の移動は 2 回または 3 回の区間の反転として適用します。
+
+3-opt は、キューから取り出した点 `a` について、辺 `{a,b}`, `{c,d}`, `{e,f}` を削除し、辺 `{a,c}`, `{d,e}`, `{f,b}` を追加する操作です。`use_three_opt == true` の場合に評価します。
+
+- `b` は `a` の隣の点、`c` は `a` の候補点、`d` は `c` の隣の点、`e` は `d` の候補点、`f` は `e` の隣の点です。
+- `cost(a,b) - cost(a,c)` が正で、それに `cost(c,d) - cost(d,e)` を加えた値も正である組合せだけを評価します。候補はコストの昇順に並んでいるため、正でなくなった時点で打ち切ります。
+- `d` が `c` の先の点である場合は、辺 `{a,c}`, `{b,d}` を追加する 2-opt の後に、辺 `{b,d}` と `{e,f}` を交換する 2-opt を続ける操作になります。
+- `d` が `c` の手前の点である場合は、`b` から `d` までの区間を `e` と `f` の間へ移動する操作になります。区間の長さに上限はなく、向きを維持する移動と反転する移動の両方を評価します。
+
+計測では、3-opt を加えると反復 1 回あたりの時間が約 2.5 倍になりますが、同じ制限時間での結果は 1000 点を超える入力とクラスタ状の入力で改善しました。11 入力の平均の超過は、100 ms で 0.67% から 0.54%、1000 ms で 0.27% から 0.19% になりました。超過は、同じ探索を 20 秒以上実行して得たコストまたは最適解のコストに対する割合です。
+
+温度の初期値は `temperature_ratio` と巡回路の辺の平均コストの積とし、時間または反復の回数の進行度に対して線形に 0 まで下げます。悪化を採択するため、最良の巡回路から初めて悪化する時点で巡回順を保存し、終了時に `state` を最良の巡回路へ戻します。
+
+時間と反復の回数の少なくとも一方の上限を有効にします。`max_iterations == 0` の場合は最初の局所探索だけを行います。点の数が 4 未満または候補数が 0 の場合は、入力状態を変更せずに返します。点の数が 8 未満の場合は Double Bridge を適用せず、最初の局所探索だけを行います。
+
+`solve_tsp` は、問題、候補数 10 の候補表、最近傍法の初期解を作成して反復局所探索を呼び出し、巡回順を返します。
+
+## 非対称コストの探索
+
+`atsp_iterated_local_search.cpp` は、`edge_cost(u, v)` と `edge_cost(v, u)` が異なる問題のための反復局所探索です。`TspProblem` をそのまま使用し、巡回順は `vector<int>` で受け渡します。`TspState` の近傍操作は対称なコストを前提にしているため使用しません。
+
+```cpp
+struct AtspCandidates {
+    int node_count;
+    int candidate_count;
+    vector<int> out;   // 出る辺のコストが小さい点
+    vector<int> in;    // 入る辺のコストが小さい点
+    const void* problem_id;
+};
+
+AtspCandidates make_atsp_candidates(problem, requested_count);
+auto result = atsp_iterated_local_search(problem, candidates, order, options);
+vector<int> order = solve_atsp(node_count, edge_cost, time_limit_ms, start, seed);
+vector<int> path = solve_atsp_path(node_count, edge_cost, time_limit_ms, start, goal, seed);
+```
+
+候補表は、全ての辺を 1 回走査して、出る辺の上位と入る辺の上位を同時に求めます。
+
+内部クラス `atsp_detail::TourSearch` は、向きのある巡回路を配列で保持します。反復の構成、採択の規則、最良解の保存は対称版と同じです。局所探索の操作は次のとおりです。
+
+- 隣接する 2 区間の入れ替え: 巡回路上でこの順に現れる辺 `a→b`, `c→d`, `e→f` を削除し、辺 `a→d`, `e→b`, `c→f` を追加します。区間 `[b..c]` と区間 `[d..e]` が入れ替わり、どの辺の向きも変化しません。`a` から出る辺の候補と `c` から出る辺の候補をたどる探索と、`b` に入る辺の候補と `f` に入る辺の候補をたどる探索の両方を行います。
+- Or-opt: 長さ 1 から 3 の区間を別の位置へ移動します。区間の先頭に入る辺の候補と、区間の末尾から出る辺の候補から移動先を選びます。これも 2 区間の入れ替えとして適用します。
+- 2-opt: 区間 `[b..c]` を反転します。区間内の辺の向きが逆になるため、差分には区間内の各辺の `cost(v, u) - cost(u, v)` の総和を加えます。
+- 反転 Or-opt: 長さ 2 または 3 の区間を反転して移動します。
+
+2 区間の入れ替えでは、巡回路を 3 区間とみなし、最も長い区間を動かさずに残りの 2 区間を入れ替えます。巡回路としては同じ結果になり、時間は短い 2 区間の長さの和に比例します。
+
+区間の反転のために、各点 `u` について、`u` から次の点 `v` への辺の `cost(v, u) - cost(u, v)` を保持します。区間を反転したときの区間内のコストの変化は、この値を区間に沿って合計して求めます。合計に区間の長さに比例する時間がかかるため、反転する区間の長さを `max_reverse_length` 以下に制限します。区間を反転すると、区間内の辺は向きが逆になるだけであるため、保持する値は辺のコストを参照せずに符号の反転で更新します。
+
+計測では、区間を反転する操作を加えると、対称な 1000 点の入力の 1000 ms での超過が 0.82% から 0.16% になりました。開始位置と終了位置がある入力と乱数の行列では、明確な効果はありませんでした。長さの上限は 200 と 400 が同程度で、1000 では悪化しました。
+
+`solve_atsp` の初期解は最近傍法で作成します。2000 点以下で、ハンガリアン法の見積もり時間が残り時間の半分以下の場合は、割当問題の最適解から作った巡回順も作成し、コストの小さい方を使用します。
+
+- 割当問題の最適解は、各点から出る辺と入る辺を 1 本ずつ選んだときのコストの総和が最小の辺集合で、いくつかの閉路になります。最大の閉路に、ほかの閉路を大きい順に 1 つずつ併合します。併合では、2 つの閉路から 1 辺ずつ選んで行き先を入れ替え、コストの増加が最小の組を選びます。
+- 互いに最も近い 2 点の組に含まれる点が全体の 1/4 を超える場合と、閉路の数が点数の 1/8 を超える場合は、この初期解を使用しません。対称に近い問題では長さ 2 の閉路が多くなり、併合によるコストの増加が大きいためです。
+- 乱数の行列の 1000 点では、最近傍法の初期解のコストが 62043、割当問題による初期解が 17022 で、割当問題の最適値は 15918 でした。
+
+`solve_atsp_path` は、番号 `node_count` の点を追加して巡回路の問題に変換します。追加した点から出る辺は始点への辺だけ、追加した点に入る辺は終点からの辺だけをコスト 0 とし、それ以外の辺はどの経路のコストよりも大きい値にします。終点を固定しない場合は、全ての点から追加した点への辺をコスト 0 にします。初期解は禁止した辺を含まないように作成し、探索はコストが最小の巡回順を返すため、結果も禁止した辺を含みません。
 
 ## 誘導局所探索
 
-標準版は、ペナルティを更新するたびに、ペナルティを加えたコストで局所探索を行います。
+標準版は、ペナルティを更新するたびに、ペナルティを加えたコストで局所探索を行います。探索には `TourSearch` の 2-opt を使用します。
 
-1. 真の辺のコストで候補内の局所最適解まで探索します。
+1. 真の辺のコストで、キューが空になるまで探索します。
 2. 最初の局所最適解から `lambda = penalty_ratio * total_cost / state.size()` を定めます。
-3. 現在の巡回路の辺のうち、`edge_cost(u,v) / (1+penalty(u,v))` が最大となる全ての辺にペナルティを加えます。
-4. ペナルティを加えたコストで候補内の局所最適解まで探索します。
-5. 真のコストが最良であれば巡回順を保存します。上限に達するまで 3～5 を繰り返します。
+3. 現在の巡回路の辺のうち、`edge_cost(u,v) / (1+penalty(u,v))` が最大となる全ての辺にペナルティを加え、その辺の端点をキューに追加します。
+4. ペナルティを加えたコストで、キューが空になるまで探索します。
+5. 真のコストが最良であれば記録します。上限に達するまで 3～5 を繰り返します。
 6. 終了時に、渡された `state` を最良の巡回路へ戻します。
+
+ペナルティの変化で差分が変化する 2-opt は、ペナルティを加えた辺を削除する操作だけです。その操作をすべて辺の端点から評価するために、点 `u` の近傍には、`u` の候補点に加えて `u` を候補に含む点も含めます。ペナルティを加えたコストでは、候補の長さによる打ち切りを行いません。
+
+真のコストが最良であるかは、手順 1 と 4 の探索が終了した時点で判定します。巡回順は、最良の巡回路に次のペナルティを加える直前に保存します。
 
 ペナルティを加えたコストは次の式とします。
 
@@ -293,7 +402,6 @@ struct TspGuidedLocalSearchOptions {
     int64_t max_penalty_rounds = -1;
     int64_t max_evaluated_moves = -1;
     double time_limit_ms = -1;
-    int time_check_interval = 256;
     long double penalty_ratio = 0.3L;
 };
 
@@ -302,6 +410,7 @@ enum class TspSearchStopReason {
     time_limit,
     evaluated_move_limit,
     penalty_round_limit,
+    iteration_limit,
 };
 
 struct TspGuidedLocalSearchResult {
@@ -319,13 +428,13 @@ auto result = tsp_guided_local_search(
 
 最良の巡回路は探索中の作業領域へ保存し、結果の型には巡回路を重複して保持しません。終了後は `state.order()` と `state.total_cost()` から結果を取得します。
 
-ペナルティは各状態に `n*n` の表として保持させず、実際にペナルティを加えた無向辺だけを疎な表へ保存します。ペナルティは 1 回の探索の中だけで使用するため、探索の後も存続する `TspState` のメンバにはしません。
+ペナルティは各状態に `n*n` の表として保持させず、実際にペナルティを加えた無向辺だけをハッシュ表へ保存します。ペナルティは 1 回の探索の中だけで使用するため、探索の後も存続する `TspState` のメンバにはしません。
 
 時間、候補の評価回数、ペナルティの更新回数の上限のうち、最初に達した上限で停止します。少なくとも 1 つの上限を明示的に有効にします。`time_limit_ms == 0` または `max_evaluated_moves == 0` の場合は、入力状態を変更せずに返します。`max_penalty_rounds == 0` の場合は真のコストによる最初の局所探索だけを行い、ペナルティは更新しません。
 
 複数の上限に同時に達した場合は、時間、候補の評価回数、ペナルティの更新回数の順に停止理由を定めます。開始時に時間の上限または候補の評価回数の上限が 0 であれば、ペナルティの更新回数の上限に関係なく何も行いません。点の数が 4 未満または候補数が 0 の場合も、辺のコストを評価せずに入力状態をそのまま返します。
 
-時間の上限は、誘導局所探索の関数を呼び出した時点から計測します。問題、候補表、初期状態の構築時間は含めません。時間を確認する間隔と、実行中の 1 回の辺の走査、巡回路の保存、2-opt の適用の残り時間の分だけ、上限を超える可能性があります。
+時間の上限は、誘導局所探索の関数を呼び出した時点から計測します。問題、候補表、初期状態の構築時間は含めません。時間は、ペナルティを更新するたびと、局所探索で 128 点を処理するたびに確認します。その間隔の分だけ、上限を超える可能性があります。
 
 ## 現在の tsp2.py の方式
 
@@ -383,6 +492,7 @@ enum class TspInitialSearch {
     two_opt,
     guided_local_search,
     edge_penalty_search,
+    iterated_local_search,
 };
 
 struct TspInitialStateOptions {
@@ -390,6 +500,7 @@ struct TspInitialStateOptions {
     TspLocalSearchOptions local_search;
     TspGuidedLocalSearchOptions guided_local_search;
     TspEdgePenaltySearchOptions edge_penalty_search;
+    TspIteratedLocalSearchOptions iterated_local_search;
 };
 ```
 
@@ -414,17 +525,22 @@ case TspInitialSearch::edge_penalty_search:
         problem, candidates, tsp,
         initial_options.edge_penalty_search);
     break;
+case TspInitialSearch::iterated_local_search:
+    tsp_iterated_local_search(
+        problem, candidates, tsp,
+        initial_options.iterated_local_search);
+    break;
 }
 return State(&problem, &candidates, move(tsp), seed);
 ```
 
-既定値は `none` とし、初期解の改善を使用する場合だけ、時間、候補の評価回数、ペナルティの更新回数の上限を与えます。まず `none`、通常の 2-opt、標準版、`tsp2.py` の方式の 4 通りを同じ初期巡回路から比較します。
+既定値は `none` とし、初期解の改善を使用する場合だけ、時間、候補の評価回数、ペナルティの更新回数、反復の回数の上限を与えます。
 
 計算量は、専用の時間の上限だけでなく候補の評価回数の上限でも制限することができます。実行時間に依存しない比較には候補の評価回数またはペナルティの更新回数を使用し、本番では初期解用の時間の上限も併用します。候補表は一度だけ作成し、初期解の改善と焼きなましで共有します。
 
-誘導局所探索を初期解に使用する方針は妥当ですが、常に有利とは限りません。初期解のコストは下がりますが、焼きなましの反復に使用できる時間と複数の初期解の多様性が減少するためです。制限時間が短い場合は、まず通常の 2-opt を基準にし、誘導局所探索へ渡す上限を小さい値から増やして、最終的なコストと焼きなましの反復回数を合わせて比較します。
+初期解の改善は常に有利とは限りません。初期解のコストは下がりますが、焼きなましの反復に使用できる時間と複数の初期解の多様性が減少するためです。制限時間が短い場合は、まず通常の 2-opt を基準にし、反復局所探索へ渡す上限を小さい値から増やして、最終的なコストと焼きなましの反復回数を合わせて比較します。
 
-`sa_run` は、seed から状態を返す状態生成関数を受け取ることができます。タイマーは状態生成関数を呼び出す前に開始するため、その中で行う初期解の改善は焼きなましの制限時間に含まれます。`sa_run` の前に問題と候補表を作成する時間は含まれないため、プログラム全体の制限時間からその分を減算して `sa_run` へ渡します。
+`sa_run` には初期化済みの状態を渡します。`sa_run` の `TIME_LIMIT` は呼び出してからの時間であるため、問題と候補表の作成、初期解の改善、状態の構築にかかった時間をプログラム全体の制限時間から減算して渡します。
 
 同じ初期巡回路を使用する複数のレプリカでは、決定的な初期解の改善を各レプリカで繰り返さないようにします。一度改善した確定状態を `O(n)` で複製し、焼きなましの乱数だけを変更します。異なる初期巡回路を試す場合だけ、各状態に独立した上限を与えて初期解の改善を行います。
 
@@ -437,27 +553,30 @@ class State {
     const Problem* problem;
     const TspCandidates* candidates;
     TspState<Cost> tsp;
-    variant<monostate, TwoOptMove, OrOptMove, DoubleBridgeMove>
-        pending_move;
+    TspTwoOptMove<Cost> two_opt;
+    TspOrOptMove<Cost> or_opt;
+    TspDoubleBridgeMove<Cost> double_bridge;
     ScoreType score;
 };
 ```
+
+操作の種類ごとにメンバを 1 つ用意し、`changed.type` で使用するメンバを選択します。
 
 1 回の反復の処理は次のとおりです。
 
 1. `modify` の先頭で有効な操作番号を設定します。
 2. `TspState` から操作を作成しますが、この時点では適用しません。
-3. 操作を `pending_move` へ保存し、`score` だけを提案後のコストへ更新します。
-4. `advance` で操作を適用し、`pending_move` を空にします。
-5. 棄却した場合は `pending_move` を破棄し、巡回路は変更しません。
+3. 操作をメンバへ保存し、`score` だけを提案後のコストへ更新します。作成できなかった場合は `is_valid = false` にします。
+4. `advance` で、保存した操作を適用します。
+5. 棄却した場合は何もしません。巡回路は変更していません。
 
 単一の TSP では、提案後のコストは `tsp.total_cost() + move.delta()` です。
 
-`sa_run`、`sa_multi_run`、`replica_run` の状態生成関数を受け取る版を使用すれば、`State` のデフォルト構築は不要です。従来の `State::init(seed)` を使用する版も残します。
+初期化済みの状態を受け取る `sa_run` を使用すれば、`State` のデフォルト構築は不要です。`sa_multi_run` と `replica_run` は、デフォルト構築の後に `State::init(seed)` を呼び出します。
 
 問題と候補表は全レプリカで共有し、`TspState`、乱数、作業領域、未適用の操作はレプリカごとに保持します。問題のデータは大域変数で渡さないようにします。
 
-`sa::State` を保存または複製するのは、`pending_move` が空である反復の境界だけとします。複製先の `pending_move` は空にし、新しい `TspState` から操作を再作成します。
+`sa::State` を複製すると、保存した操作は複製元の `TspState` から作成した操作のままになり、複製先では適用できません。複製先では、`modify` で新しい `TspState` から操作を再作成してから `advance` を呼び出します。
 
 ## 複数巡回路
 
@@ -522,11 +641,12 @@ K-means による初期分割も固定しません。K-means、個数制約付�
 - 辺のコスト関数は `const` で呼び出すことができ、有限かつ 0 以上の値を返す対称な関数です。
 - 候補数は 0 以上です。
 - 各上限は `-1` または 0 以上です。
-- `time_check_interval > 0`
-- `penalty_ratio`、`initial_penalty_ratio`、`improved_penalty_ratio` は有限かつ 0 以上です。
+- `penalty_ratio`、`initial_penalty_ratio`、`improved_penalty_ratio`、`temperature_ratio` は有限かつ 0 以上です。
+- `max_kick_length > 0`
 - ペナルティを使用する探索では、時間の上限とペナルティの更新回数の上限の少なくとも一方を有効にします。候補の評価回数の上限は補助的な上限として使用します。
+- 反復局所探索では、時間の上限と反復の回数の上限の少なくとも一方を有効にします。
 
-構築時に一度確認できる違反には `invalid_argument` を投げます。反復中の無効な近傍の候補は `nullopt` とし、例外は使用しません。辺のコストの条件と算術演算の範囲は利用側の前提とし、反復中にはチェックしません。
+構築時に一度確認できる違反には `invalid_argument` を投げます。反復中の無効な近傍の候補には無効な操作を返し、例外は使用しません。辺のコストの条件と算術演算の範囲は利用側の前提とし、反復中にはチェックしません。
 
 ## 計算量
 
@@ -537,19 +657,23 @@ K-means による初期分割も固定しません。K-means、個数制約付�
 | `TspState` の作成 | `O(n)` | `O(n)` |
 | `TspState` のコピー | `O(n)` | `O(n)` |
 | 最近傍法による初期解 | `O(n²)` | `O(n)` |
-| 候補表 | 平均 `O(n² + nc log(c+1))` | `O(nc+n)` |
+| 候補表 | `O(n²)` 回の `edge_cost` の呼び出しと、最悪 `O(n²c)` の挿入 | `O(nc)` |
 | 2-opt の評価 | `O(1)` | `O(1)` |
 | 2-opt の適用 | `O(s_i)` | `O(1)` |
 | Or-opt の評価 | `O(1)` | `O(1)` |
-| Or-opt の適用 | `O(n)` | `O(1)` |
+| Or-opt の適用 | `O(s_i)` | `O(1)` |
 | Double Bridge の評価 | `O(1)` | `O(1)` |
-| Double Bridge の適用 | `O(n)` | State 内の `O(n)` の作業領域 |
+| Double Bridge の適用 | `O(s_i)` | State 内の `O(n)` の作業領域 |
 | 全ての 2-opt の一巡 | `O(n²)` | `O(1)` |
-| 候補を制限した一巡 | `O(n(c+1))` | `O(1)` |
+| `TourSearch` の構築 | `O(nc²)` | `O(nc)` |
+| `TourSearch` での 1 点の再評価 | `O(c)` | `O(1)` |
+| `TourSearch` での区間の反転 | 区間とその補集合のうち短い方の長さに比例 | `O(1)` |
 
-候補を制限した局所探索の単純な上界は `O((A+1)n(c+1) + Σs_i)`、全探索版は `O((A+1)n² + Σs_i)` です。
+全探索版の時間は、一巡の数を `W` として `O(Wn² + Σs_i)` です。候補を制限した局所探索は、キューから取り出した点の数を `V` として `O(Vc + Σs_i)` と、最後の確認の一巡ごとの `O(nc)` です。
 
-誘導局所探索について、有効な 2-opt の評価回数を `Q`、候補表の参照回数を `H`、ペナルティの更新回数を `R`、最良解の更新回数を `B`、ペナルティを加えた異なる辺の数を `P` とします。候補表の作成を除く時間は平均 `O(H + Q + Σs_i + Rn + (B+1)n)`、追加メモリは `O(n+P)` です。
+反復局所探索は、1 回の反復につき、Double Bridge の `O(max_kick_length)` と、その後の局所探索の `O(Vc + Σs_i)` です。採択しない場合は、同じ `Σs_i` の時間で元に戻します。最良の巡回順の保存は 1 回につき `O(n)` です。
+
+誘導局所探索について、ペナルティの更新回数を `R`、最良解の更新回数を `B`、ペナルティを加えた異なる辺の数を `P` とします。候補表の作成を除く時間は平均 `O(Vc + Σs_i + Rn + (B+1)n)`、追加メモリは `O(nc+P)` です。`Rn` は、ペナルティを加える辺を選ぶための巡回路の走査です。
 
 `tsp2.py` の方式では、候補表の作成を除く時間が平均 `O(Rn + H + Q + Σs_i + (B+1)n)`、追加メモリが `O(n+P)` です。全ての点を含む巡回路では `H=O(Rc)` となります。
 
@@ -561,6 +685,6 @@ K-means による初期分割も固定しません。K-means、個数制約付�
 
 ## 実装済みのテスト
 
-`test/tsp_test.cpp` では、小さい入力について、各操作のコストの差分をコスト全体の再計算の結果と照合します。操作後の各点の位置、固定開始点、各点の一意性、複数巡回路での所属も確認します。比較用の探索は、複数の初期巡回順について、`tsp2.py` と同じ処理を直接記述した参照実装と照合します。
+`test/tsp_test.cpp` では、小さい入力について、各操作のコストの差分をコスト全体の再計算の結果と照合します。操作後の各点の位置、固定開始点、各点の一意性、複数巡回路での所属も確認します。比較用の探索は、複数の初期巡回順について、`tsp2.py` と同じ処理を直接記述した参照実装と照合します。反復局所探索と `solve_tsp` は、全ての巡回順を列挙して求めた最小のコストと照合します。
 
 `test/tsp_sa_test.cpp` では、デフォルト構築できない SA の状態を先に構築してから `sa_run` へ渡し、初期解に対する 2-opt と、焼きなましでの操作の遅延適用を組み合わせます。

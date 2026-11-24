@@ -3,21 +3,20 @@
 #include <algorithm>
 #include <cstdint>
 #include <limits>
-#include <optional>
 #include <stdexcept>
 #include <type_traits>
 #include "titan_cpplib/ahc/tsp/tsp.cpp"
 using namespace std;
 namespace titan23 {
-/// @brief 位置 [left, right] を反転する 2-opt の操作を作成する / 状態は変更しない / 無効な引数なら nullopt / O(1)
+/// @brief 位置 [left, right] を反転する 2-opt の操作を作成する / 状態は変更しない / 無効な引数なら valid() が false の操作を返す / O(1)
 template<class Cost>
 template<class EdgeCost>
-optional<TspTwoOptMove<Cost>> TspState<Cost>::make_two_opt(const TspProblem<EdgeCost>& problem, int left, int right) const {
+TspTwoOptMove<Cost> TspState<Cost>::make_two_opt(const TspProblem<EdgeCost>& problem, int left, int right) const {
     static_assert(is_same_v<Cost, typename TspProblem<EdgeCost>::Cost>);
     if (problem_id_ != static_cast<const void*>(&problem)) throw invalid_argument("TspState::make_two_opt: state and problem do not match");
     int n = size();
-    if (n < 4 || left < 1 || left >= n || right < left || right >= n) return nullopt;
-    if (left == right || (left == 1 && right == n - 1)) return nullopt;
+    if (n < 4 || left < 1 || left >= n || right < left || right >= n) return {};
+    if (left == right || (left == 1 && right == n - 1)) return {};
     int before = order_[left - 1];
     int first = order_[left];
     int last = order_[right];
@@ -31,19 +30,19 @@ optional<TspTwoOptMove<Cost>> TspState<Cost>::make_two_opt(const TspProblem<Edge
 }
 
 /// @brief [first, first + length) を変更前の位置 after の直後へ移動する Or-opt の操作を作成する / O(1)
-/// reversed なら区間を反転して移動する / 状態は変更しない / 無効な引数なら nullopt を返す
+/// reversed なら区間を反転して移動する / 状態は変更しない / 無効な引数なら valid() が false の操作を返す
 template<class Cost>
 template<class EdgeCost>
-optional<TspOrOptMove<Cost>> TspState<Cost>::make_or_opt(const TspProblem<EdgeCost>& problem, int first, int length, int after, bool reversed) const {
+TspOrOptMove<Cost> TspState<Cost>::make_or_opt(const TspProblem<EdgeCost>& problem, int first, int length, int after, bool reversed) const {
     static_assert(is_same_v<Cost, typename TspProblem<EdgeCost>::Cost>);
     if (problem_id_ != static_cast<const void*>(&problem)) throw invalid_argument("TspState::make_or_opt: state and problem do not match");
     int n = size();
-    if (n < 4 || first < 1 || first >= n || length <= 0 || length > n - first || after < 0 || after >= n) return nullopt;
+    if (n < 4 || first < 1 || first >= n || length <= 0 || length > n - first || after < 0 || after >= n) return {};
     int past_last = first + length;
-    if (first <= after && after < past_last) return nullopt;
-    if (length == n - 1) return nullopt;
+    if (first <= after && after < past_last) return {};
+    if (length == n - 1) return {};
     if (after == first - 1) {
-        if (!reversed || length == 1) return nullopt;
+        if (!reversed || length == 1) return {};
         int before = order_[first - 1];
         int block_first = order_[first];
         int block_last = order_[past_last - 1];
@@ -56,7 +55,7 @@ optional<TspOrOptMove<Cost>> TspState<Cost>::make_or_opt(const TspProblem<EdgeCo
         return TspOrOptMove<Cost>(problem_id_, this, revision_, first, length, after, true, move(delta));
     }
     if (reversed && length == n - 2) {
-        if ((first == 1 && past_last == n - 1 && after == n - 1) || (first == 2 && past_last == n && after == 0)) return nullopt;
+        if ((first == 1 && past_last == n - 1 && after == n - 1) || (first == 2 && past_last == n && after == 0)) return {};
     }
     int before = order_[first - 1];
     int block_first = order_[first];
@@ -80,14 +79,14 @@ optional<TspOrOptMove<Cost>> TspState<Cost>::make_or_opt(const TspProblem<EdgeCo
 }
 
 /// @brief 位置 cut1 < cut2 < cut3 < cut4 から始まる 4 辺を削除する Double Bridge の操作を作成する / O(1)
-/// 状態は変更しない / 無効な引数なら nullopt を返す
+/// 状態は変更しない / 無効な引数なら valid() が false の操作を返す
 template<class Cost>
 template<class EdgeCost>
-optional<TspDoubleBridgeMove<Cost>> TspState<Cost>::make_double_bridge(const TspProblem<EdgeCost>& problem, int cut1, int cut2, int cut3, int cut4) const {
+TspDoubleBridgeMove<Cost> TspState<Cost>::make_double_bridge(const TspProblem<EdgeCost>& problem, int cut1, int cut2, int cut3, int cut4) const {
     static_assert(is_same_v<Cost, typename TspProblem<EdgeCost>::Cost>);
     if (problem_id_ != static_cast<const void*>(&problem)) throw invalid_argument("TspState::make_double_bridge: state and problem do not match");
     int n = size();
-    if (n < 5 || cut1 < 0 || cut1 >= cut2 || cut2 >= cut3 || cut3 >= cut4 || cut4 >= n) return nullopt;
+    if (n < 5 || cut1 < 0 || cut1 >= cut2 || cut2 >= cut3 || cut3 >= cut4 || cut4 >= n) return {};
     int end0 = order_[cut1];
     int begin1 = order_[(cut1 + 1) % n];
     int end1 = order_[cut2];
@@ -108,8 +107,9 @@ optional<TspDoubleBridgeMove<Cost>> TspState<Cost>::make_double_bridge(const Tsp
     return TspDoubleBridgeMove<Cost>(problem_id_, this, revision_, cut1, cut2, cut3, cut4, move(delta));
 }
 
-/// @brief 操作 move を適用する / 2-opt は O(right - left)、Or-opt と Double Bridge は O(n)
-/// 別の状態から作成した操作や、状態の変更前に作成した古い操作を渡すと例外を投げる
+/// @brief 操作 move を適用する / O(位置が変化する区間の長さ)
+/// 位置が変化する区間は、2-opt では [left, right]、Or-opt では移動する区間と移動先の間、Double Bridge では (cut1, cut4]
+/// 無効な操作、別の状態から作成した操作、状態の変更前に作成した古い操作を渡すと例外を投げる
 template<class Cost>
 template<class EdgeCost, class Move>
 void TspState<Cost>::apply(const TspProblem<EdgeCost>& problem, const Move& move) {
@@ -117,6 +117,7 @@ void TspState<Cost>::apply(const TspProblem<EdgeCost>& problem, const Move& move
     using MoveType = remove_cvref_t<Move>;
     static_assert(is_same_v<MoveType, TspTwoOptMove<Cost>> || is_same_v<MoveType, TspOrOptMove<Cost>> || is_same_v<MoveType, TspDoubleBridgeMove<Cost>>);
     const void* problem_id = static_cast<const void*>(&problem);
+    if (!move.valid()) throw logic_error("TspState::apply: move is invalid");
     if (problem_id_ != problem_id || move.problem_id_ != problem_id) throw invalid_argument("TspState::apply: state, move, and problem do not match");
     if (move.state_ != this) throw logic_error("TspState::apply: move was created from another state");
     if (move.revision_ != revision_) throw logic_error("TspState::apply: move is stale");
@@ -126,27 +127,34 @@ void TspState<Cost>::apply(const TspProblem<EdgeCost>& problem, const Move& move
         for (int i = move.left_; i <= move.right_; ++i) position_[order_[i]] = i;
     } else if constexpr (is_same_v<MoveType, TspOrOptMove<Cost>>) {
         int past_last = move.first_ + move.length_;
+        // 位置が変化する区間 [changed_first, changed_past_last)
+        int changed_first = move.first_;
+        int changed_past_last = past_last;
         if (move.after_ == move.first_ - 1) {
             reverse(order_.begin() + move.first_, order_.begin() + past_last);
         } else {
             if (move.reversed_) reverse(order_.begin() + move.first_, order_.begin() + past_last);
             if (move.after_ < move.first_) {
                 rotate(order_.begin() + move.after_ + 1, order_.begin() + move.first_, order_.begin() + past_last);
+                changed_first = move.after_ + 1;
             } else {
                 rotate(order_.begin() + move.first_, order_.begin() + past_last, order_.begin() + move.after_ + 1);
+                changed_past_last = move.after_ + 1;
             }
         }
-        for (int i = 0; i < size(); ++i) position_[order_[i]] = i;
+        for (int i = changed_first; i < changed_past_last; ++i) position_[order_[i]] = i;
     } else {
         if (work_buffer_.size() != order_.size()) throw logic_error("TspState::apply: invalid work buffer size");
+        // 位置 (cut1, cut4] の 3 区間だけを並べ替える
         int out = 0;
-        for (int i = 0; i <= move.cut1_; ++i) work_buffer_[out++] = order_[i];
         for (int i = move.cut3_ + 1; i <= move.cut4_; ++i) work_buffer_[out++] = order_[i];
         for (int i = move.cut2_ + 1; i <= move.cut3_; ++i) work_buffer_[out++] = order_[i];
         for (int i = move.cut1_ + 1; i <= move.cut2_; ++i) work_buffer_[out++] = order_[i];
-        for (int i = move.cut4_ + 1; i < size(); ++i) work_buffer_[out++] = order_[i];
-        order_.swap(work_buffer_);
-        for (int i = 0; i < size(); ++i) position_[order_[i]] = i;
+        for (int i = 0; i < out; ++i) {
+            int position = move.cut1_ + 1 + i;
+            order_[position] = work_buffer_[i];
+            position_[order_[position]] = position;
+        }
     }
     total_cost_ += move.delta_;
     ++revision_;

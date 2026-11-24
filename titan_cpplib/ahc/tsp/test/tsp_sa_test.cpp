@@ -59,23 +59,19 @@ public:
 
     void modify(int64_t, ScoreType, double) {
         changed.type = 0;
-        pending_.reset();
         auto [left, right] = random_.rand_pair(1, tsp_.size());
         pending_ = tsp_.make_two_opt(*problem_, left, right);
-        if (!pending_) {
+        if (!pending_.valid()) {
             is_valid = false;
             return;
         }
-        score = tsp_.total_cost() + pending_->delta();
+        score = tsp_.total_cost() + pending_.delta();
     }
 
-    void rollback() {
-        pending_.reset();
-    }
+    void rollback() {}
 
     void advance() {
-        tsp_.apply(*problem_, *pending_);
-        pending_.reset();
+        tsp_.apply(*problem_, pending_);
     }
 
     Result get_result() const {
@@ -87,7 +83,7 @@ private:
     const TspCandidates* candidates_;
     TspState<Cost> tsp_;
     Random random_;
-    optional<TspTwoOptMove<Cost>> pending_;
+    TspTwoOptMove<Cost> pending_;
 };
 
 int main() {

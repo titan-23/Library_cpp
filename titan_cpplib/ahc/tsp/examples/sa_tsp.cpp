@@ -77,7 +77,7 @@ public:
 
     struct Changed {
         int TYPE_CNT = 7;
-        int type;
+        int type = 0;
         // 遷移の対象の巡回路と位置
         int r1, r2;
         int u_idx, v_idx, w_idx;
@@ -422,6 +422,8 @@ public:
                            ((old_d2 + changed.diff_d2) * (old_d2 + changed.diff_d2) - old_d2 * old_d2);
             score += changed.diff;
         } else if (changed.type == 6) {
+            // 辺にペナルティを加える 2-opt で巡回路 r1 を改善する
+            // 距離が減少した場合だけ、この関数の中で巡回路を変更する / 必ず採択されるため、rollback では元に戻さない
             int r1 = sarnd.randrange(K);
             auto &tr = tours[r1];
             int n = tr.size();
@@ -459,12 +461,13 @@ public:
                     int idx4 = (idx3 + 1) % n;
                     if (idx2 == idx3 || idx1 == idx4) continue;
                     int city4 = route[idx4];
-                    int diff_d = (DIST[city1][city3] + DIST[city2][city4]) - (DIST[city1][city2] + DIST[city3][city4]);
+                    ll diff_d = (DIST[city1][city3] + DIST[city2][city4]) - (DIST[city1][city2] + DIST[city3][city4]);
                     int l3 = local_id[city3], l4 = local_id[city4];
                     double delta_p = coef * ((P[l1][l3] + P[l2][l4]) - (P[l1][l2] + P[l3][l4]));
                     if (diff_d + delta_p < 0) {
                         current_linear_dist += diff_d;
-                        if (idx2 <= idx3) {
+                        // idx2 が 0 の場合は、デポを先頭に維持するために反対側の区間を反転する
+                        if (idx2 != 0 && idx2 <= idx3) {
                             reverse(route.begin() + idx2, route.begin() + idx3 + 1);
                         } else {
                             reverse(route.begin() + idx4, route.begin() + idx1 + 1);

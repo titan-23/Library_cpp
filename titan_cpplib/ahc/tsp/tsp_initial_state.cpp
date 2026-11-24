@@ -1,7 +1,9 @@
 /// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/ahc/tsp/tsp_initial_state.cpp
 #pragma once
 #include <cstdint>
+#include <stdexcept>
 #include "titan_cpplib/ahc/tsp/tsp_edge_penalty_search.cpp"
+#include "titan_cpplib/ahc/tsp/tsp_iterated_local_search.cpp"
 using namespace std;
 namespace titan23 {
 /// @brief SA の初期状態を改善する方法
@@ -10,6 +12,7 @@ enum class TspInitialSearch {
     two_opt,
     guided_local_search,
     edge_penalty_search,
+    iterated_local_search,
 };
 
 /// @brief improve_tsp_initial_state の設定 / search で選択した方法の設定だけを使用する
@@ -18,13 +21,15 @@ struct TspInitialStateOptions {
     TspLocalSearchOptions local_search;
     TspGuidedLocalSearchOptions guided_local_search;
     TspEdgePenaltySearchOptions edge_penalty_search;
+    TspIteratedLocalSearchOptions iterated_local_search;
 };
 
-/// @brief improve_tsp_initial_state の統計と停止した理由
+/// @brief improve_tsp_initial_state の統計と停止した理由 / 選択した方法にない項目は 0
 struct TspInitialStateResult {
     TspInitialSearch search;
     int64_t evaluated_moves;
     int64_t applied_moves;
+    /// ペナルティの更新回数 / 反復局所探索では反復の回数
     int64_t penalty_rounds;
     int64_t best_updates;
     double elapsed_ms;
@@ -96,6 +101,24 @@ TspInitialStateResult improve_tsp_initial_state(
             result.applied_moves,
             result.penalty_rounds,
             result.best_updates,
+            result.elapsed_ms,
+            false,
+            result.stop_reason,
+        };
+    }
+    if (options.search == TspInitialSearch::iterated_local_search) {
+        TspIteratedLocalSearchResult result = tsp_iterated_local_search(
+            problem,
+            candidates,
+            state,
+            options.iterated_local_search
+        );
+        return {
+            options.search,
+            0,
+            result.applied_moves,
+            result.iterations,
+            0,
             result.elapsed_ms,
             false,
             result.stop_reason,

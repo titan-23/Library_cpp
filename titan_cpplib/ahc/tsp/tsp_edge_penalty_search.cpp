@@ -151,7 +151,7 @@ auto tsp_edge_penalty_search(
             int first_edge = min(edge1, edge2);
             int second_edge = max(edge1, edge2);
             auto move = state.make_two_opt(problem, first_edge + 1, second_edge);
-            if (!move) continue;
+            if (!move.valid()) continue;
             long double removed_penalty =
                 (long double)tsp_guided_detail::get_penalty(penalties, city1, city2) +
                 (long double)tsp_guided_detail::get_penalty(penalties, city3, city4);
@@ -159,7 +159,7 @@ auto tsp_edge_penalty_search(
                 (long double)tsp_guided_detail::get_penalty(penalties, city1, city3) +
                 (long double)tsp_guided_detail::get_penalty(penalties, city2, city4);
             long double augmented_delta =
-                (long double)move->delta() +
+                (long double)move.delta() +
                 lambda * (added_penalty - removed_penalty);
             if (augmented_delta >= 0) continue;
             int left = index2, right = index3;
@@ -177,7 +177,7 @@ auto tsp_edge_penalty_search(
                 int second_index = left == 1 ? right : 1;
                 next_logical_second = tsp_edge_penalty_detail::logical_node(state, logical_first, direction, second_index);
             }
-            state.apply(problem, *move);
+            state.apply(problem, move);
             tsp_guided_detail::increment_counter(applied_moves, "tsp_edge_penalty_search: applied move counter overflow");
             int first_position = state.position(next_logical_first);
             int forward_node = state.order()[(first_position + 1) % n];

@@ -25,7 +25,7 @@ template<typename ScoreType, typename HashType, class Action, class State,
          ScoreType INF, bool record_history = false>
 ```
 
-問題ごとに内容を記述する雛形は `chokudai_search_state.cpp` と `chokudai_search_state_turn.cpp` です。
+問題ごとに内容を記述するテンプレートは `chokudai_search_state.cpp` と `chokudai_search_state_turn.cpp` です。
 追加の設定は `chokudai_param.cpp`、二つの型に共通する探索本体は `chokudai_search_base.cpp` にあります。
 通常は選択した探索本体だけを include すれば、`BeamParam`、`ChokudaiParam`、`BeamResult` も利用できます。
 
