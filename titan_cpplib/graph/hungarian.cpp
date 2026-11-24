@@ -23,11 +23,13 @@ int padded(const int m) {
     return (m + lanes - 1) / lanes * lanes;
 }
 
+struct NeverStop { bool operator()() const { return false; } };
+
 // 左の頂点 n 個を右の頂点 m 個 (n <= m) に割り当てるコスト最小の割当を返す
 // cost には左の頂点ごとに stride 個ずつ値を並べ、各行の先頭の m 個を使用する
-// stride は padded<T>(m)
-template<class T>
-vector<int> solve(const T *cost, const int n, const int m, const int stride) {
+// stride は padded<T>(m) / stop() が true になった場合は空の割当を返す
+template<class T, class Stop = NeverStop>
+vector<int> solve(const T *cost, const int n, const int m, const int stride, Stop stop = {}) {
     using S = Simd<T>;
     using Idx = typename S::Idx;
     const T INF = numeric_limits<T>::has_infinity ? numeric_limits<T>::infinity() : numeric_limits<T>::max();
@@ -40,6 +42,7 @@ vector<int> solve(const T *cost, const int n, const int m, const int stride) {
     vector<pair<int, T>> visited;
     visited.reserve(m);
     for (int l = 0; l < n; ++l) {
+        if ((l & 15) == 0 && stop()) return {};
         const T *row = cost + (size_t)l * stride;
         int best = 0;
         for (int r = 1; r < m; ++r) if (row[r] < row[best]) best = r;
@@ -58,6 +61,7 @@ vector<int> solve(const T *cost, const int n, const int m, const int stride) {
         int i0 = s, j1;
         Idx j0 = -1;
         while (true) {
+            if (stop()) return {};
             const T *row = cost + (size_t)i0 * stride;
             const T offset = dist - u[i0];
             T best;

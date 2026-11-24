@@ -4,7 +4,9 @@
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
+#include <functional>
 #include <limits>
+#include <queue>
 #include <stdexcept>
 #include <type_traits>
 #include <utility>
@@ -70,32 +72,11 @@ AtspCandidates make_atsp_candidates(const TspProblem<EdgeCost>& problem, int req
 }
 
 namespace atsp_detail {
-// 割当問題の最適解から巡回順を作る / 閉路の数が max_cycles を超える場合は空の列を返す
-// 割当問題の最適解は、各点から出る辺と入る辺を 1 本ずつ選んだときのコストの総和が最小の辺集合で、いくつかの閉路になる
-// 最大の閉路に、ほかの閉路を大きい順に 1 つずつ併合する / 併合では、2 つの閉路から 1 辺ずつ選んで行き先を入れ替える
-template<class EdgeCost>
-vector<int> assignment_order(const TspProblem<EdgeCost>& problem, int start, int max_cycles) {
-    using Cost = typename TspProblem<EdgeCost>::Cost;
-    using Weight = conditional_t<is_floating_point_v<Cost>, double, long long>;
-    int n = problem.node_count();
-    if (n < 3) {
-        vector<int> order = {start};
-        for (int v = 0; v < n; ++v) if (v != start) order.push_back(v);
-        return order;
-    }
-    vector<vector<Weight>> weight((size_t)n, vector<Weight>((size_t)n));
-    Weight maximum{};
-    for (int u = 0; u < n; ++u) {
-        for (int v = 0; v < n; ++v) {
-            if (u == v) continue;
-            weight[u][v] = (Weight)problem.edge_cost(u, v);
-            if (maximum < weight[u][v]) maximum = weight[u][v];
-        }
-    }
-    // 同じ点への辺を選ばないように、どの巡回路のコストよりも大きい値にする
-    Weight forbidden = (maximum + 1) * (Weight)n;
-    for (int u = 0; u < n; ++u) weight[u][u] = forbidden;
-    vector<int> next_node = Hungarian<Weight>(weight).solve().second;
+// 割当の閉路を大きい順に併合して 1 本の巡回路にする / 閉路数が上限を超えた場合と中断時は空の列を返す
+template<class EdgeCost, class Stop>
+vector<int> merge_cycles(vector<int> next_node, int start, int max_cycles, EdgeCost cost, Stop stop) {
+    using Weight = decltype(cost(0, 0));
+    int n = (int)next_node.size();
     vector<int> cycle_of((size_t)n, -1);
     vector<int> cycle_size;
     for (int s = 0; s < n; ++s) {
@@ -112,7 +93,7 @@ vector<int> assignment_order(const TspProblem<EdgeCost>& problem, int start, int
     vector<int> cycle_order((size_t)cycle_count);
     for (int i = 0; i < cycle_count; ++i) cycle_order[i] = i;
     stable_sort(cycle_order.begin(), cycle_order.end(), [&](int a, int b) { return cycle_size[a] > cycle_size[b]; });
-    // main_nodes は併合済みの閉路の点 / 併合しても点の集合が増えるだけで、走査の順序は結果に影響しない
+    // main_nodes に併合済みの閉路の全点を保持する
     vector<vector<int>> members((size_t)cycle_count);
     for (int v = 0; v < n; ++v) members[cycle_of[v]].push_back(v);
     vector<int> main_nodes = members[cycle_order[0]];
@@ -121,11 +102,12 @@ vector<int> assignment_order(const TspProblem<EdgeCost>& problem, int start, int
         int best_i = -1, best_j = -1;
         Weight best_delta{};
         for (int i : main_nodes) {
+            if (stop()) return {};
             int next_i = next_node[i];
-            Weight cost_i = weight[i][next_i];
+            Weight cost_i = cost(i, next_i);
             for (int j : other) {
                 int next_j = next_node[j];
-                Weight delta = weight[i][next_j] + weight[j][next_i] - cost_i - weight[j][next_j];
+                Weight delta = cost(i, next_j) + cost(j, next_i) - cost_i - cost(j, next_j);
                 if (best_i == -1 || delta < best_delta) {
                     best_delta = delta;
                     best_i = i;
@@ -144,6 +126,46 @@ vector<int> assignment_order(const TspProblem<EdgeCost>& problem, int start, int
         v = next_node[v];
     }
     return order;
+}
+
+template<class EdgeCost>
+using AssignmentWeight = conditional_t<is_floating_point_v<typename TspProblem<EdgeCost>::Cost>,
+    common_type_t<double, typename TspProblem<EdgeCost>::Cost>, long long>;
+
+template<class EdgeCost, class Stop = hungarian_detail::NeverStop>
+vector<int> assignment_order(const TspProblem<EdgeCost>& problem, int start, int max_cycles,
+        Stop stop = {}, const vector<int>* feasible = nullptr) {
+    using Weight = AssignmentWeight<EdgeCost>;
+    int n = problem.node_count();
+    if (n < 3) {
+        vector<int> order = {start};
+        for (int v = 0; v < n; ++v) if (v != start) order.push_back(v);
+        return order;
+    }
+    int stride = hungarian_detail::padded<Weight>(n);
+    vector<Weight> weight((size_t)n * stride);
+    auto at = [&](int u, int v) -> Weight& { return weight[(size_t)u * stride + v]; };
+    for (int u = 0; u < n; ++u) {
+        if ((u & 15) == 0 && stop()) return {};
+        for (int v = 0; v < n; ++v) if (u != v) at(u, v) = (Weight)problem.edge_cost(u, v);
+    }
+    // 既知の巡回路のコストを上界にして、自己ループを割当から除く
+    using Sum = conditional_t<is_integral_v<Weight>, __int128_t, long double>;
+    Sum bound{};
+    for (int i = 0; i < n; ++i) {
+        int j = i + 1 == n ? 0 : i + 1;
+        bound += at(feasible ? (*feasible)[i] : i, feasible ? (*feasible)[j] : j);
+    }
+    Weight forbidden;
+    if constexpr (is_integral_v<Weight>) {
+        forbidden = bound < numeric_limits<Weight>::max() ? (Weight)(bound + 1) : numeric_limits<Weight>::max();
+    } else {
+        forbidden = nextafter((Weight)bound, numeric_limits<Weight>::infinity());
+    }
+    for (int u = 0; u < n; ++u) at(u, u) = forbidden;
+    vector<int> next_node = hungarian_detail::solve(weight.data(), n, n, stride, stop);
+    if (next_node.empty()) return {};
+    return merge_cycles(move(next_node), start, max_cycles, [&](int u, int v) -> Sum { return at(u, v); }, stop);
 }
 }
 
@@ -194,13 +216,15 @@ public:
     using Cost = typename TspProblem<EdgeCost>::Cost;
 
     /// @brief 巡回順 order と候補表 candidates から構築する / 候補のうち巡回路に含まれない点は除く / O(node_count + n c)
-    TourSearch(const TspProblem<EdgeCost>& problem, const AtspCandidates& candidates, const vector<int>& order, Cost total_cost)
+    TourSearch(const TspProblem<EdgeCost>& problem, const AtspCandidates& candidates, const vector<int>& order, Cost total_cost, int max_reverse_length)
         : problem_(problem), n_((int)order.size()), k_(max(candidates.candidate_count, 1)), order_(order), position_((size_t)problem.node_count(), -1),
           out_((size_t)problem.node_count() * (size_t)k_, -1), in_((size_t)problem.node_count() * (size_t)k_, -1),
-          out_cost_(out_.size(), Cost{}), in_cost_(in_.size(), Cost{}), reverse_gain_((size_t)problem.node_count(), Cost{}),
+          out_cost_(out_.size(), Cost{}), in_cost_(in_.size(), Cost{}), reverse_gain_(max_reverse_length >= 2 ? (size_t)problem.node_count() : 0, Cost{}), max_reverse_length_(max_reverse_length),
           queue_(order.size()), in_queue_((size_t)problem.node_count(), 0) {
         for (int i = 0; i < n_; ++i) position_[order_[i]] = i;
-        for (int i = 0; i < n_; ++i) refresh(i);
+        if (max_reverse_length_ >= 2) {
+            for (int i = 0; i < n_; ++i) refresh(i);
+        }
         int c = candidates.candidate_count;
         for (int u : order_) {
             size_t out_index = (size_t)u * (size_t)k_, in_index = out_index;
@@ -227,10 +251,10 @@ public:
     void set_order(const vector<int>& order) {
         order_ = order;
         for (int i = 0; i < n_; ++i) position_[order_[i]] = i;
-        for (int i = 0; i < n_; ++i) refresh(i);
+        if (max_reverse_length_ >= 2) {
+            for (int i = 0; i < n_; ++i) refresh(i);
+        }
     }
-    /// @brief 区間を反転する操作で反転する区間の長さの上限を設定する / 0 なら区間を反転する操作を使用しない
-    void set_max_reverse_length(int length) { max_reverse_length_ = length; }
     /// @brief 評価した操作の数を返す
     int64_t evaluated_moves() const { return evaluated_moves_; }
     /// @brief 適用した操作の数を返す
@@ -303,20 +327,14 @@ public:
     /// 適用後に同じ start と長さ length3, length2, length1 で呼び出すと元の巡回順に戻る / O(length1 + length2 + length3)
     void double_bridge(int start, int length1, int length2, int length3, bool evaluate) {
         int total = length1 + length2 + length3;
-        work_.resize((size_t)total);
-        int first_index = start + 1;
-        if (first_index == n_) first_index = 0;
-        int index = first_index;
-        for (int t = 0; t < total; ++t) {
-            work_[t] = order_[index];
-            if (++index == n_) index = 0;
-        }
+        int first = wrap(start + 1);
+        int second = wrap(first + length1);
+        int third = wrap(second + length2);
         if (evaluate) {
-            int before = order_[start];
-            int after = order_[index];
-            int b_first = work_[0], b_last = work_[length1 - 1];
-            int c_first = work_[length1], c_last = work_[length1 + length2 - 1];
-            int d_first = work_[length1 + length2], d_last = work_[total - 1];
+            int before = order_[start], after = order_[wrap(third + length3)];
+            int b_first = order_[first], b_last = order_[wrap(first + length1 - 1)];
+            int c_first = order_[second], c_last = order_[wrap(second + length2 - 1)];
+            int d_first = order_[third], d_last = order_[wrap(third + length3 - 1)];
             Cost delta{};
             delta += cost(before, d_first);
             delta += cost(d_last, c_first);
@@ -336,23 +354,18 @@ public:
             push(d_last);
             push(after);
         }
-        index = first_index;
-        auto write = [&](int from, int length) {
-            for (int t = 0; t < length; ++t) {
-                int v = work_[from + t];
-                order_[index] = v;
-                position_[v] = index;
-                if (++index == n_) index = 0;
-            }
-        };
-        write(length1 + length2, length3);
-        write(length1, length2);
-        write(0, length1);
+        work_.resize(total);
+        copy_block(third, length3, work_.data());
+        copy_block(second, length2, work_.data() + length3);
+        copy_block(first, length1, work_.data() + length3 + length2);
+        write_block(first, total);
         // 始点が変化した辺は、並べ替えた範囲の直前の点と、並べ替え後の 3 区間の末尾の点から出る辺
-        refresh(start);
-        refresh(wrap(start + length3));
-        refresh(wrap(start + length3 + length2));
-        refresh(wrap(start + total));
+        if (max_reverse_length_ >= 2) {
+            refresh(start);
+            refresh(wrap(start + length3));
+            refresh(wrap(start + length3 + length2));
+            refresh(wrap(start + total));
+        }
     }
 
 private:
@@ -375,7 +388,9 @@ private:
     vector<Cost> in_cost_;
     // reverse_gain_[u] は、u から次の点 v への辺を逆向きにしたときのコストの増加量 cost(v, u) - cost(u, v)
     vector<Cost> reverse_gain_;
-    int max_reverse_length_ = 0;
+    int max_reverse_length_;
+    // 現在の巡回路で順方向と逆方向のコストが異なる辺の数
+    int asymmetric_edges_ = 0;
     vector<int> queue_;
     vector<unsigned char> in_queue_;
     int queue_head_ = 0;
@@ -409,16 +424,18 @@ private:
     void refresh(int index) {
         int u = order_[index];
         int v = order_[index + 1 == n_ ? 0 : index + 1];
+        asymmetric_edges_ -= reverse_gain_[u] != Cost{};
         reverse_gain_[u] = cost(v, u) - cost(u, v);
+        asymmetric_edges_ += reverse_gain_[u] != Cost{};
     }
     // first から巡回路の向きに length 点続く区間を反転したときの、区間内の辺のコストの増加量 / O(length)
     Cost reverse_delta(int first, int length) const {
+        if (asymmetric_edges_ == 0) return Cost{};
         Cost result{};
         int index = position_[first];
-        for (int t = 1; t < length; ++t) {
-            result += reverse_gain_[order_[index]];
-            if (++index == n_) index = 0;
-        }
+        int tail = min(length - 1, n_ - index);
+        for (int i = index; i < index + tail; ++i) result += reverse_gain_[order_[i]];
+        for (int i = 0; i < length - 1 - tail; ++i) result += reverse_gain_[order_[i]];
         return result;
     }
 
@@ -426,8 +443,10 @@ private:
     void reverse_block(int start, int length) {
         // 区間内の辺 u -> v は v -> u になるため、v の reverse_gain_ は u の値の符号を反転した値になる
         // 末尾側から更新することで、まだ参照していない値を残す
-        {
+        if (asymmetric_edges_ != 0) {
             int index = wrap(start + length - 1);
+            // 内部の差を 1 点ずつ移すと、先頭の値が重複し、末尾の値が除かれる
+            asymmetric_edges_ += (reverse_gain_[order_[start]] != Cost{}) - (reverse_gain_[order_[index]] != Cost{});
             for (int t = length - 1; t > 0; --t) {
                 int previous_index = index == 0 ? n_ - 1 : index - 1;
                 reverse_gain_[order_[index]] = -reverse_gain_[order_[previous_index]];
@@ -455,28 +474,35 @@ private:
         if (logging_) log_.push_back({start, length, -1});
     }
 
-    // 位置 start から始まる長さ first_length の区間 X と、それに続く長さ second_length の区間 Y を入れ替えて Y, X の順にする
-    // 区間は配列の末尾から先頭へ続いてもよい / O(first_length + second_length)
+    // 巡回路上の連続区間をコピーする / 配列の末尾をまたぐ場合は 2 区間に分ける
+    void copy_block(int start, int length, int* dest) const {
+        int tail = min(length, n_ - start);
+        copy_n(order_.data() + start, tail, dest);
+        copy_n(order_.data(), length - tail, dest + tail);
+    }
+
+    // 作業領域から巡回路に書き戻し、位置が変化した範囲の逆引きを更新する
+    void write_block(int start, int length) {
+        int tail = min(length, n_ - start);
+        copy_n(work_.data(), tail, order_.data() + start);
+        copy_n(work_.data() + tail, length - tail, order_.data());
+        for (int i = start; i < start + tail; ++i) position_[order_[i]] = i;
+        for (int i = 0; i < length - tail; ++i) position_[order_[i]] = i;
+    }
+
+    // 隣接する 2 区間の順序を交換する / O(first_length + second_length)
     void rotate_blocks(int start, int first_length, int second_length) {
-        auto put = [this](int index, int v) {
-            order_[index] = v;
-            position_[v] = index;
-        };
-        if (first_length <= second_length) {
-            work_.resize((size_t)first_length);
-            for (int t = 0; t < first_length; ++t) work_[t] = order_[wrap(start + t)];
-            for (int t = 0; t < second_length; ++t) put(wrap(start + t), order_[wrap(start + first_length + t)]);
-            for (int t = 0; t < first_length; ++t) put(wrap(start + second_length + t), work_[t]);
-        } else {
-            work_.resize((size_t)second_length);
-            for (int t = 0; t < second_length; ++t) work_[t] = order_[wrap(start + first_length + t)];
-            for (int t = first_length; t-- > 0;) put(wrap(start + second_length + t), order_[wrap(start + t)]);
-            for (int t = 0; t < second_length; ++t) put(wrap(start + t), work_[t]);
-        }
+        int length = first_length + second_length;
+        work_.resize(length);
+        copy_block(wrap(start + first_length), second_length, work_.data());
+        copy_block(start, first_length, work_.data() + second_length);
+        write_block(start, length);
         // 始点が変化した辺は、入れ替えた範囲の直前の点と、入れ替え後の 2 区間の末尾の点から出る辺
-        refresh(start == 0 ? n_ - 1 : start - 1);
-        refresh(wrap(start + second_length - 1));
-        refresh(wrap(start + first_length + second_length - 1));
+        if (max_reverse_length_ >= 2) {
+            refresh(start == 0 ? n_ - 1 : start - 1);
+            refresh(wrap(start + second_length - 1));
+            refresh(wrap(start + first_length + second_length - 1));
+        }
     }
 
     // 区間 B = [b, ..., c] と、その直後の区間 C = [next(c), ..., e] を入れ替える
@@ -585,6 +611,8 @@ private:
         }
         // Or-opt: 長さ 1 から 3 の区間 S = [first, ..., last] を辺 e -> f の間へ移動する
         // 辺 p -> first, last -> q, e -> f を削除し、辺 p -> q, e -> first, last -> f を追加する
+        // 同じ区間を反転して移す場合も、元の位置から取り除く差分は共通
+        Cost forward_removal[4]{}, backward_removal[4]{};
         {
             // t を S の先頭とし、t に入る辺の候補から e を選ぶ
             int first = t, last = t;
@@ -595,6 +623,7 @@ private:
                 int q = next(last);
                 if (last == p || q == p) break;
                 Cost remove_gain = cost_p_first + cost(last, q) - cost(p, q);
+                forward_removal[length] = remove_gain;
                 if (!(Cost{} < remove_gain)) continue;
                 for (int i = 0; i < k_; ++i) {
                     int e = in[i];
@@ -621,6 +650,7 @@ private:
                 int p = prev(first);
                 if (first == q || p == q) break;
                 Cost remove_gain = cost(p, first) + cost_last_q - cost(p, q);
+                backward_removal[length] = remove_gain;
                 if (!(Cost{} < remove_gain)) continue;
                 for (int i = 0; i < k_; ++i) {
                     int f = out[i];
@@ -683,12 +713,11 @@ private:
             // t を S の末尾とし、t に入る辺の候補から e を選ぶ
             int first = t, last = t;
             int q = next(last);
-            Cost cost_last_q = cost(last, q);
             for (int length = 2; length <= 3; ++length) {
                 first = prev(first);
                 int p = prev(first);
                 if (first == q || p == q) break;
-                Cost remove_gain = cost(p, first) + cost_last_q - cost(p, q);
+                Cost remove_gain = backward_removal[length];
                 if (!(Cost{} < remove_gain)) continue;
                 Cost inside = reverse_delta(first, length);
                 for (int i = 0; i < k_; ++i) {
@@ -710,12 +739,11 @@ private:
             // t を S の先頭とし、t から出る辺の候補から f を選ぶ
             int first = t, last = t;
             int p = prev(first);
-            Cost cost_p_first = cost(p, first);
             for (int length = 2; length <= 3; ++length) {
                 last = next(last);
                 int q = next(last);
                 if (last == p || q == p) break;
-                Cost remove_gain = cost_p_first + cost(last, q) - cost(p, q);
+                Cost remove_gain = forward_removal[length];
                 if (!(Cost{} < remove_gain)) continue;
                 Cost inside = reverse_delta(first, length);
                 for (int i = 0; i < k_; ++i) {
@@ -784,7 +812,7 @@ typename TspProblem<EdgeCost>::Cost atsp_tour_cost(const TspProblem<EdgeCost>& p
 
 /// @brief 非対称 TSP の巡回順 order を反復局所探索で改善する / 辺のコストは edge_cost(u, v) と edge_cost(v, u) が異なってよい
 /// order は重複しない点の列で、辺は order[i] から order[i + 1] への向き / 終了時の order は探索中に見つけたコストが最小の巡回順で、order[0] は変化しない
-/// 局所探索は区間を反転しない操作 (Or-opt と、隣接する 2 区間の入れ替え) だけを使用する
+/// 局所探索は区間の入れ替えと Or-opt を評価し、設定に応じて 2-opt と反転 Or-opt を加える
 template<class EdgeCost>
 AtspIteratedLocalSearchResult atsp_iterated_local_search(
     const TspProblem<EdgeCost>& problem,
@@ -812,8 +840,7 @@ AtspIteratedLocalSearchResult atsp_iterated_local_search(
     if (time_over()) return {0, 0, 0, timer.elapsed_ms(), TspSearchStopReason::time_limit};
     Cost initial_cost = atsp_tour_cost(problem, order);
     if (options.max_reverse_length < 0) throw invalid_argument("atsp_iterated_local_search: max_reverse_length must be nonnegative");
-    atsp_detail::TourSearch<EdgeCost> search(problem, candidates, order, initial_cost);
-    search.set_max_reverse_length(options.max_reverse_length);
+    atsp_detail::TourSearch<EdgeCost> search(problem, candidates, order, initial_cost, options.max_reverse_length);
     int64_t iterations = 0, accepted_iterations = 0;
     TspSearchStopReason reason = TspSearchStopReason::completed;
     search.reset_delta();
@@ -852,7 +879,8 @@ AtspIteratedLocalSearchResult atsp_iterated_local_search(
             bool finished = search.run(time_over);
             if (!finished) search.clear_queue();
             Cost delta = search.delta_sum();
-            bool accept = finished && !(Cost{} < delta);
+            // 中断した反復でも、既に最良解を改善していればその巡回路を採用する
+            bool accept = finished ? delta <= Cost{} : delta < -excess;
             if (finished && !accept && base_temperature > 0) {
                 double progress = 0;
                 if (time_limited) progress = now / options.time_limit_ms;
@@ -876,7 +904,7 @@ AtspIteratedLocalSearchResult atsp_iterated_local_search(
                     excess = Cost{};
                     has_best = false;
                 }
-                ++accepted_iterations;
+                if (finished) ++accepted_iterations;
             } else {
                 search.undo_log();
                 search.double_bridge(start, length3, length2, length1, false);
@@ -896,89 +924,313 @@ AtspIteratedLocalSearchResult atsp_iterated_local_search(
 }
 
 namespace atsp_detail {
-// 反復局所探索の初期解を作る / time_limit_ms は、割当問題による初期解を試すかどうかの判断に使用する残り時間
-// order は最近傍法などで作った巡回順で、割当問題の最適解から作った巡回順の方がコストが小さい場合は置き換える
+// 始点から最近傍法で巡回順を作る / 候補内に次の訪問先がない場合だけ全点を走査する
 template<class EdgeCost>
-void improve_initial_order(const TspProblem<EdgeCost>& problem, const AtspCandidates& candidates, vector<int>& order, double time_limit_ms) {
-    int n = problem.node_count();
-    if (n < 8 || n > 2000 || candidates.candidate_count == 0 || (int)order.size() != n) return;
-    // ハンガリアン法の時間を 1.5e-8 * n^3 [ms] と見積もり、残り時間の半分以下の場合だけ試す
-    if (1.5e-8 * (double)n * (double)n * (double)n > 0.5 * time_limit_ms) return;
-    // 互いに最も近い 2 点は割当問題の解で長さ 2 の閉路になりやすい / そのような点が多い問題では、閉路の併合によるコストの増加が大きい
-    int c = candidates.candidate_count;
-    int mutual = 0;
-    for (int u = 0; u < n; ++u) {
-        int v = candidates.out[(size_t)u * (size_t)c];
-        if (candidates.out[(size_t)v * (size_t)c] == u) ++mutual;
+vector<int> nearest_order(const TspProblem<EdgeCost>& problem, const AtspCandidates& candidates,
+                          int start) {
+    int node_count = problem.node_count();
+    if (start < 0 || start >= node_count) throw invalid_argument("solve_atsp: start is out of range");
+    vector<unsigned char> visited(node_count, 0);
+    vector<int> order;
+    order.reserve(problem.node_count());
+    order.push_back(start);
+    visited[start] = 1;
+    while ((int)order.size() < node_count) {
+        int u = order.back(), next = -1;
+        size_t offset = (size_t)u * candidates.candidate_count;
+        for (int j = 0; j < candidates.candidate_count; ++j) {
+            int v = candidates.out[offset + j];
+            if (!visited[v]) {
+                next = v;
+                break;
+            }
+        }
+        if (next < 0) {
+            typename TspProblem<EdgeCost>::Cost best{};
+            for (int v = 0; v < node_count; ++v) if (!visited[v]) {
+                auto cost = problem.edge_cost(u, v);
+                if (next < 0 || cost < best) {
+                    next = v;
+                    best = cost;
+                }
+            }
+        }
+        order.push_back(next);
+        visited[next] = 1;
     }
-    if (mutual * 4 > n) return;
-    vector<int> assignment = assignment_order(problem, order[0], n / 8);
-    if (!assignment.empty() && atsp_tour_cost(problem, assignment) < atsp_tour_cost(problem, order)) order = move(assignment);
-}
+    return order;
 }
 
-/// @brief 非対称 TSP の巡回順を求めて返す / 辺は返す列の順の向きで、末尾の点から先頭の点への辺を含む / 返す巡回順の先頭は start
-/// time_limit_ms は候補表と初期解の作成を含む実行時間の上限 [ms] / 候補表と初期解の作成は途中で中断しない
-/// 初期解は最近傍法で作る / 点数が 2000 以下で時間に余裕がある場合は、割当問題の最適解から作った巡回順とコストを比較し、小さい方を使用する
+// 最小の閉路を近傍候補または初期巡回路の辺で別の閉路に併合する / O(n k log n)
+template<class EdgeCost, class Stop>
+vector<int> merge_candidate_cycles(const TspProblem<EdgeCost>& problem, const AtspCandidates& candidates,
+                                   const vector<int>& seed, vector<int> next, Stop stop) {
+    using Cost = typename TspProblem<EdgeCost>::Cost;
+    using Sum = conditional_t<is_integral_v<Cost>, __int128_t, long double>;
+    int n = (int)next.size(), k = candidates.candidate_count;
+    vector<int> component(n, -1), size(n), prev(n), seed_next(n);
+    vector<Cost> arc(n);
+    using Entry = pair<int, int>;
+    priority_queue<Entry, vector<Entry>, greater<Entry>> queue;
+    for (int i = 0; i < n; ++i) {
+        prev[next[i]] = i;
+        seed_next[seed[i]] = seed[i + 1 == n ? 0 : i + 1];
+        arc[i] = problem.edge_cost(i, next[i]);
+        if (component[i] >= 0) continue;
+        for (int v = i; component[v] < 0; v = next[v]) {
+            component[v] = i;
+            ++size[i];
+        }
+        queue.emplace(size[i], i);
+    }
+    if ((int)queue.size() > n / 8) return {};
+    while (!queue.empty()) {
+        auto [count, id] = queue.top();
+        queue.pop();
+        if (size[id] != count) continue;
+        if (count == n) break;
+        int best_u = -1, best_w = -1;
+        Sum best_delta{};
+        auto consider = [&](int u, int w) {
+            if (component[w] == id) return;
+            Sum delta = (Sum)problem.edge_cost(u, next[w]) - arc[u]
+                      + problem.edge_cost(w, next[u]) - arc[w];
+            if (best_u < 0 || delta < best_delta) {
+                best_delta = delta;
+                best_u = u;
+                best_w = w;
+            }
+        };
+        int u = id;
+        do {
+            if (stop()) return {};
+            // 初期巡回路は必ずこの閉路から出る辺を含む
+            consider(u, prev[seed_next[u]]);
+            for (int j = 0; j < k; ++j) {
+                int v = candidates.out[(size_t)u * k + j];
+                consider(u, prev[v]);
+                consider(u, candidates.in[(size_t)next[u] * k + j]);
+            }
+            u = next[u];
+        } while (u != id);
+        int other = component[best_w];
+        do {
+            component[u] = other;
+            u = next[u];
+        } while (u != id);
+        size[id] = 0;
+        size[other] += count;
+        queue.emplace(size[other], other);
+        swap(next[best_u], next[best_w]);
+        prev[next[best_u]] = best_u;
+        prev[next[best_w]] = best_w;
+        arc[best_u] = problem.edge_cost(best_u, next[best_u]);
+        arc[best_w] = problem.edge_cost(best_w, next[best_w]);
+    }
+    vector<int> result(n);
+    int v = seed.front();
+    for (int& u : result) {
+        u = v;
+        v = next[v];
+    }
+    return result;
+}
+
+// 入辺と出辺の候補に現在の巡回路の辺を加え、オークション法で閉路被覆を求める
+// 各点が行き先を 1 つ確保し、競合した場合は元の所有者が別の行き先を選ぶ
+template<class EdgeCost, class Stop>
+vector<int> candidate_assignment_order(const TspProblem<EdgeCost>& problem, const AtspCandidates& candidates,
+                                       const vector<int>& order, Stop stop) {
+    using Cost = typename TspProblem<EdgeCost>::Cost;
+    struct Edge { int to; Cost cost; };
+    int n = (int)order.size(), k = candidates.candidate_count;
+    vector<vector<Edge>> edges(n);
+    vector<long double> spreads(n);
+    for (int i = 0; i < n; ++i) {
+        if ((i & 127) == 0 && stop()) return {};
+        int u = order[i];
+        const int* out = candidates.out.data() + (size_t)u * k;
+        edges[u].reserve(2 * k + 1);
+        for (int j = 0; j < k; ++j) edges[u].push_back({out[j], problem.edge_cost(u, out[j])});
+        spreads[u] = (long double)edges[u].back().cost - edges[u].front().cost;
+        int v = order[i + 1 == n ? 0 : i + 1];
+        if (find(out, out + k, v) == out + k) edges[u].push_back({v, problem.edge_cost(u, v)});
+    }
+    for (int i = 0; i < n; ++i) {
+        if ((i & 127) == 0 && stop()) return {};
+        int v = order[i], previous = order[i == 0 ? n - 1 : i - 1];
+        for (int j = 0; j < k; ++j) {
+            int u = candidates.in[(size_t)v * k + j];
+            const int* out = candidates.out.data() + (size_t)u * k;
+            if (u != previous && find(out, out + k, v) == out + k) {
+                edges[u].push_back({v, problem.edge_cost(u, v)});
+            }
+        }
+    }
+    // 典型的な候補間のコスト差に比例した最小入札幅を使用する
+    nth_element(spreads.begin(), spreads.begin() + n / 2, spreads.end());
+    long double epsilon = spreads[n / 2] / 128;
+    if (!(epsilon > 0) || stop()) return {};
+    vector<long double> price(n, 0);
+    vector<int> owner(n, -1), successor(n, -1);
+    // 全ての点が先に 1 回ずつ入札し、行き先を失った点は次の周で入札する
+    vector<int> pending(n), displaced;
+    for (int u = 0; u < n; ++u) pending[u] = u;
+    for (int64_t bids = 0; !pending.empty() && bids < 32LL * n;) {
+        displaced.clear();
+        for (int u : pending) {
+            if ((bids++ & 127) == 0 && stop()) return {};
+            long double best = numeric_limits<long double>::infinity(), second = best;
+            int v = -1;
+            for (const Edge& edge : edges[u]) {
+                long double value = ((long double)edge.cost - edges[u].front().cost) + price[edge.to];
+                if (value < best) {
+                    second = best;
+                    best = value;
+                    v = edge.to;
+                } else if (value < second) {
+                    second = value;
+                }
+            }
+            if (!isfinite(second)) return {};
+            price[v] += (second - best) + epsilon;
+            if (owner[v] >= 0) displaced.push_back(owner[v]);
+            owner[v] = u;
+            successor[u] = v;
+        }
+        pending.swap(displaced);
+    }
+    // 入札回数の上限に達した場合は、未割当の点と未使用の行き先だけを貪欲に対応させる
+    if (!pending.empty()) {
+        vector<int> available;
+        for (int v = 0; v < n; ++v) if (owner[v] < 0) available.push_back(v);
+        for (int u : pending) {
+            if (stop()) return {};
+            int best = -1;
+            Cost best_cost{};
+            for (int j = 0; j < (int)available.size(); ++j) {
+                if (available[j] == u) continue;
+                Cost cost = problem.edge_cost(u, available[j]);
+                if (best < 0 || cost < best_cost) {
+                    best = j;
+                    best_cost = cost;
+                }
+            }
+            if (best < 0) return {};
+            successor[u] = available[best];
+            available[best] = available.back();
+            available.pop_back();
+        }
+    }
+    auto quick = merge_candidate_cycles(problem, candidates, order, successor, stop);
+    if (quick.empty()) return {};
+    auto merged = merge_cycles(move(successor), order.front(), n / 8,
+        [&](int u, int v) { return (long double)problem.edge_cost(u, v); }, stop);
+    if (merged.empty()) return quick;
+    auto total = [&](const vector<int>& tour) {
+        using Sum = conditional_t<is_integral_v<Cost>, __int128_t, long double>;
+        Sum sum{};
+        for (int i = 0; i < n; ++i) sum += problem.edge_cost(tour[i], tour[i + 1 == n ? 0 : i + 1]);
+        return sum;
+    };
+    return total(merged) <= total(quick) ? move(merged) : move(quick);
+}
+
+// 残り時間に応じて全辺または近傍候補から割当を求め、巡回路のコストが下がる場合に order を更新する
 template<class EdgeCost>
-vector<int> solve_atsp(int node_count, EdgeCost edge_cost, double time_limit_ms, int start = 0, uint32_t seed = 23) {
+void improve_initial_order(const TspProblem<EdgeCost>& problem, const AtspCandidates& candidates,
+        vector<int>& order, double time_limit_ms, double setup_ms, int free_start) {
+    int n = problem.node_count(), c = candidates.candidate_count;
+    if (n < 8 || c == 0 || (int)order.size() != n || !(time_limit_ms > 0)) return;
+    // 終点自由の経路で始点に戻る辺はコスト 0 に設定するため、相互最近傍の判定から除く
+    auto nearest = [&](int u) {
+        const int* out = candidates.out.data() + (size_t)u * c;
+        if (out[0] != free_start) return out[0];
+        return c > 1 ? out[1] : -1;
+    };
+    int mutual = 0;
+    for (int u = 0; u < n; ++u) {
+        if (u == free_start) continue;
+        int v = nearest(u);
+        if (v >= 0 && nearest(v) == u) ++mutual;
+    }
+    if (mutual > (n - (free_start >= 0)) / 4) return;
+    tsp_local_search_detail::SearchTimer timer;
+    auto keep_better = [&](vector<int> candidate) {
+        if (candidate.empty()) return;
+        auto incumbent = atsp_tour_cost(problem, order);
+        typename TspProblem<EdgeCost>::Cost total{};
+        for (int i = 0; i < n; ++i) {
+            auto cost = problem.edge_cost(candidate[i], candidate[i + 1 == n ? 0 : i + 1]);
+            if (cost >= incumbent - total) return;
+            total += cost;
+        }
+        if (total < incumbent) order = move(candidate);
+    };
+    // 候補辺で先に巡回路を作り、全辺の割当を中断しても初期解として使用できるようにする
+    auto sparse_stop = [&] { return timer.elapsed_ms() >= 0.4 * time_limit_ms; };
+    keep_better(candidate_assignment_order(problem, candidates, order, sparse_stop));
+    double spent = timer.elapsed_ms();
+    double remaining = time_limit_ms - spent;
+    // 初期化に費やした時間の 3 倍以上が残る場合だけ、追加の割当に残り時間の半分までを割く
+    if (remaining < 3 * (setup_ms + spent)) return;
+    using Weight = AssignmentWeight<EdgeCost>;
+    constexpr size_t matrix_budget = 32ULL << 20;
+    if ((size_t)n > matrix_budget / sizeof(Weight) / n
+        || (size_t)hungarian_detail::padded<Weight>(n) > matrix_budget / sizeof(Weight) / n) return;
+    auto dense_stop = [&] { return timer.elapsed_ms() >= spent + remaining / 2; };
+    keep_better(assignment_order(problem, order.front(), n / 8, dense_stop, &order));
+}
+
+template<class EdgeCost>
+vector<int> solve_cycle(int node_count, EdgeCost edge_cost, double time_limit_ms, int start, uint32_t seed, int free_start) {
     tsp_local_search_detail::SearchTimer timer;
     TspProblem<EdgeCost> problem(node_count, move(edge_cost));
     AtspCandidates candidates = make_atsp_candidates(problem, 10);
-    vector<int> order = problem.make_nearest_neighbor_state(start).order();
-    atsp_detail::improve_initial_order(problem, candidates, order, time_limit_ms - timer.elapsed_ms());
+    vector<int> order = nearest_order(problem, candidates, start);
+    double setup_ms = timer.elapsed_ms();
+    improve_initial_order(problem, candidates, order, time_limit_ms - setup_ms, setup_ms, free_start);
     AtspIteratedLocalSearchOptions options;
     options.time_limit_ms = max(0.0, time_limit_ms - timer.elapsed_ms());
     options.seed = seed;
     atsp_iterated_local_search(problem, candidates, order, options);
     return order;
 }
+}
+
+/// @brief 非対称 TSP の巡回順を求めて返す / 辺は返す列の順の向きで、末尾の点から先頭の点への辺を含む / 返す巡回順の先頭は start
+/// time_limit_ms は候補表と初期解の作成を含む実行時間の上限 [ms] / 候補表と最近傍法の巡回順は必ず作成する
+/// 初期化の実行時間と残り時間に応じて、全辺または近傍候補の割当からも初期解を求める
+template<class EdgeCost>
+vector<int> solve_atsp(int node_count, EdgeCost edge_cost, double time_limit_ms, int start = 0, uint32_t seed = 23) {
+    return atsp_detail::solve_cycle(node_count, move(edge_cost), time_limit_ms, start, seed, -1);
+}
 
 /// @brief start から始まり全点を 1 回ずつ通る、戻らない経路の訪問順を求めて返す / 辺のコストは非対称でよい
 /// goal が 0 以上なら経路の終点を goal に固定し、-1 なら終点を固定しない / node_count >= 2 で、goal は start と異なること
 /// 返す列の先頭は start で、長さは node_count / time_limit_ms は候補表と初期解の作成を含む実行時間の上限 [ms]
-/// Cost は (辺のコストの最大値 + 1) * (node_count + 2) * 2 を表現できること
+/// 終点を固定する場合は始点と終点を 1 点にまとめ、終点が自由な場合は始点に戻る辺のコストを 0 にする
 template<class EdgeCost>
 vector<int> solve_atsp_path(int node_count, EdgeCost edge_cost, double time_limit_ms, int start, int goal = -1, uint32_t seed = 23) {
     using Cost = remove_cvref_t<invoke_result_t<const EdgeCost&, int, int>>;
-    tsp_local_search_detail::SearchTimer timer;
     if (node_count < 2) throw invalid_argument("solve_atsp_path: node_count must be at least 2");
     if (start < 0 || start >= node_count) throw invalid_argument("solve_atsp_path: start is out of range");
     if (goal < -1 || goal >= node_count || goal == start) throw invalid_argument("solve_atsp_path: goal must be -1 or a node other than start");
-    // 経路の終点から始点へ戻る部分を、番号 node_count の点で表す
-    // この点から出る辺は start への辺だけ、この点に入る辺は終点からの辺だけをコスト 0 とし、それ以外はどの経路のコストよりも大きい値にする
-    int dummy = node_count;
-    Cost maximum{};
-    for (int u = 0; u < node_count; ++u) {
-        for (int v = 0; v < node_count; ++v) {
-            if (u == v) continue;
-            Cost cost = edge_cost(u, v);
-            if (maximum < cost) maximum = cost;
-        }
-    }
-    Cost forbidden = (maximum + 1) * (Cost)(node_count + 2) * (Cost)2;
-    auto path_cost = [&edge_cost, dummy, start, goal, forbidden](int u, int v) -> Cost {
-        if (u == dummy) return v == start ? Cost{} : forbidden;
-        if (v == dummy) return goal < 0 || u == goal ? Cost{} : forbidden;
-        return edge_cost(u, v);
+    if (node_count == 2) return {start, 1 - start};
+    bool fixed = goal >= 0;
+    int anchor = start - (fixed && goal < start);
+    auto original = [=](int v) { return v + (fixed && v >= goal); };
+    // 固定終点への入辺を anchor の入辺に、始点からの出辺を anchor の出辺にする
+    auto path_cost = [&](int u, int v) -> Cost {
+        if (v == anchor) return fixed ? edge_cost(original(u), goal) : Cost{};
+        return edge_cost(original(u), original(v));
     };
-    TspProblem problem(node_count + 1, path_cost);
-    AtspCandidates candidates = make_atsp_candidates(problem, 10);
-    // 初期解は、start から最近傍法で goal 以外の点を巡り、goal で終わる経路
-    vector<int> nodes;
-    nodes.reserve((size_t)node_count);
-    for (int v = 0; v < node_count; ++v) if (v != start && v != goal) nodes.push_back(v);
-    vector<int> order = problem.make_nearest_neighbor_state(start, nodes).order();
-    if (goal >= 0) order.push_back(goal);
-    order.push_back(dummy);
-    atsp_detail::improve_initial_order(problem, candidates, order, time_limit_ms - timer.elapsed_ms());
-    AtspIteratedLocalSearchOptions options;
-    options.time_limit_ms = max(0.0, time_limit_ms - timer.elapsed_ms());
-    options.seed = seed;
-    atsp_iterated_local_search(problem, candidates, order, options);
-    // 初期解は禁止した辺を含まず、探索はコストが最小の巡回順を返すため、dummy は末尾にある
-    rotate(order.begin(), find(order.begin(), order.end(), dummy) + 1, order.end());
-    order.pop_back();
+    vector<int> order = atsp_detail::solve_cycle(node_count - fixed, path_cost, time_limit_ms, anchor, seed,
+                                                fixed ? -1 : anchor);
+    if (fixed) {
+        for (int& v : order) v = original(v);
+        order.push_back(goal);
+    }
     return order;
 }
 }
