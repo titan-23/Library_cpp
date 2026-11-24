@@ -1,6 +1,8 @@
-// e-means の測定。g++ -std=c++20 -O2 -DNDEBUG -I. this_file.cpp -o /tmp/emeans_bench
+// e-means の測定
+// g++ -std=c++20 -O2 -DNDEBUG -I. this_file.cpp -o /tmp/emeans_bench
 // /tmp/emeans_bench n d k [polish] [seed] [ptype]
-// k 個の中心のまわりに正規分布で n 点を置く。polish は Hamerly 法の反復の上限 (既定 100)
+// k 個の中心の周囲に正規分布で n 点を配置する
+// polish は Hamerly 法の反復の上限 (既定値 100)
 // ptype: vec (vector<double>), arr2 (array<double, 2>), int (vector<int>)
 #include <array>
 #include <chrono>
@@ -32,7 +34,7 @@ int main(int argc, char **argv) {
     uint32_t seed = argc > 5 ? atoi(argv[5]) : 1;
     string ptype = argc > 6 ? argv[6] : "vec";
     mt19937_64 rng(12345);
-    // 中心のまわりに正規分布で点を置く
+    // 中心の周囲に正規分布で点を配置する
     int g = max(1, k);
     vector<vector<double>> mu(g, vector<double>(d));
     uniform_real_distribution<double> U(0, 1000);

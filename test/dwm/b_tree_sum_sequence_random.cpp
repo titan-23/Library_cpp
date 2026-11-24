@@ -15,7 +15,7 @@ namespace {
 using Weight = long long;
 using Pool = titan23::BTreeSumSequence<Weight>;
 
-// 1 つの領域に複数の列を置き、各操作を素朴な配列と比べる
+// 1 つの領域に複数の列を作成し、各操作の結果を素朴な配列と比較する
 void run(const uint64_t seed, const int sequence_count, const int max_size, const int steps) {
     mt19937_64 rng(seed);
     auto random_int = [&](const int lo, const int hi) { return lo + int(rng() % uint64_t(hi - lo + 1)); };
@@ -81,7 +81,7 @@ void run(const uint64_t seed, const int sequence_count, const int max_size, cons
     }
     for (int s = 0; s < sequence_count; ++s) check_all(s);
 
-    // 全要素を削除してから作り直し、解放した節点の再利用を確かめる
+    // 全要素を削除してから再構築し、解放した節点の再利用を確認する
     for (int s = 0; s < sequence_count; ++s) {
         while (!naive[s].empty()) {
             const int k = random_int(0, int(naive[s].size()) - 1);
@@ -109,7 +109,7 @@ void run(const uint64_t seed, const int sequence_count, const int max_size, cons
 }  // namespace
 
 int main() {
-    // 小さい列では葉 1 つの場合を、大きい列では分割と併合を多く通す
+    // 小さい列では葉が 1 つの場合を、大きい列では分割と併合が多く発生する場合をテストする
     run(1, 8, 40, 200000);
     run(2, 4, 3000, 300000);
     run(3, 2, 20000, 200000);

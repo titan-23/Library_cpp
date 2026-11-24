@@ -12,10 +12,10 @@
 #include "titan_cpplib/ds/union_find.cpp"
 using namespace std;
 namespace titan23 {
-/// @brief シュタイナー木を作る方式
+/// @brief シュタイナー木を求める方式
 enum class SteinerTreeMethod { cached_prim, incremental_prim, mehlhorn, mst_prune };
 
-/// @brief 木の辺 (u, v)、総費用、端点が連結だったかを持つ
+/// @brief 木の辺 (u, v)、総コスト、端点が連結であったかを保持する
 template <class T>
 struct SteinerTreeResult {
     vector<pair<int, int>> edges;
@@ -23,7 +23,7 @@ struct SteinerTreeResult {
     bool feasible = true;
 };
 
-/// @brief 端点を全て含む木を近似的に求める / 非負重みの無向グラフで、構築後は変えない
+/// @brief 端点をすべて含む木を近似的に求める / 非負重みの無向グラフを対象とし、グラフは構築後に変更しない
 template <class T>
 class MinimumSteinerTree {
     static_assert(is_arithmetic_v<T> && !is_same_v<T, bool>);
@@ -32,7 +32,8 @@ class MinimumSteinerTree {
     struct Cache { vector<T> dist; vector<int> parent_edge; };
     struct Candidate { int terminal, closest; T distance; };
     using Result = SteinerTreeResult<T>;
-    // 頂点ごとに要素を 1 個だけ持つ二分ヒープ。要素数は n 以下に収まる
+    // 頂点ごとに要素を 1 個だけ保持する二分ヒープ
+    // 要素数は n 以下に収まる
     class Heap {
         const vector<T>& distance_;
         vector<int> heap_, position_;
@@ -183,7 +184,7 @@ class MinimumSteinerTree {
         }
         return finish(ids);
     }
-    // 端点ごとの最短路表を使い、木に最も近い端点を順に加える
+    // 端点ごとの最短路表を使用し、木に最も近い端点を順に加える
     Result cached_prim(const vector<int>& terminals, int root, T bound) {
         auto& remaining = candidates_;
         remaining.clear();
@@ -208,7 +209,7 @@ class MinimumSteinerTree {
                 int id = parent[v];
                 if (id < 0) throw logic_error("steiner: invalid cached path");
                 v = other(id, v);
-                // 閉路を作らないよう、木と最後に交わった点より後ろだけ残す
+                // 閉路を作らないように、経路のうち木と最後に交わった頂点より後ろの部分だけを残す
                 if (in_tree(v)) { path.clear(); vertices.clear(); }
                 else { path.push_back(id); vertices.push_back(v); }
             }
@@ -298,7 +299,7 @@ class MinimumSteinerTree {
             if (--remaining == 0) break;
         }
         if (remaining > 0) throw overflow_error("steiner: terminal connection cost must be below INF");
-        // 展開後に閉路はないので、端点でない葉を刈るだけでよい
+        // 経路の展開後に閉路はないため、端点でない葉を削除すれば十分である
         vector<int> degree(n_, 0), leaves;
         for (int id : ids) { edge_mark_[id] = generation_; ++degree[edges_[id].u]; ++degree[edges_[id].v]; }
         for (int v = 0; v < n_; ++v) if (degree[v] == 1 && !is_terminal(v)) leaves.push_back(v);
@@ -321,7 +322,7 @@ class MinimumSteinerTree {
 
 public:
     MinimumSteinerTree() = default;
-    /// @brief 隣接リスト graph から構築する / 重みは 0 以上 inf 未満で、各辺を両向きに同じ最小重みで与える
+    /// @brief 隣接リスト graph から構築する / 重みは 0 以上 inf 未満 / 各辺は両方向に与え、両方向の最小重みを一致させる
     MinimumSteinerTree(const vector<vector<pair<int, T>>>& graph, T inf) : inf_(inf) {
         if (graph.size() > size_t(numeric_limits<int>::max())) throw invalid_argument("steiner: too many vertices");
         if (!finite(inf) || inf <= 0) throw invalid_argument("steiner: INF must be positive and finite");
@@ -376,7 +377,7 @@ public:
     /// @brief mst_prune で求めた木の辺を返す / 端点が非連結なら runtime_error
     vector<pair<int, int>> build_mst_prune(const vector<int>& terminals) { return require_feasible(solve(terminals, SteinerTreeMethod::mst_prune)); }
 
-    /// @brief 全ての端点を根に cached_prim を試し、最良の木の辺を返す / 端点が非連結なら runtime_error
+    /// @brief すべての端点を根として cached_prim を試し、最良の木の辺を返す / 端点が非連結なら runtime_error
     vector<pair<int, int>> build_prim_fullsearch(const vector<int>& terminals) {
         auto unique = prepare(terminals);
         if (unique.size() <= 1) return {};
@@ -392,7 +393,7 @@ public:
         return move(best.edges);
     }
 
-    /// @brief mehlhorn の解と、最大 starts 個の根から growth で育てた解のうち最良を返す / growth は Prim の 2 方式のどちらか / 最初の根は terminals.back()
+    /// @brief mehlhorn の解と、最大 starts 個の根から growth で構築した解のうち最良のものを返す / growth には Prim 法の 2 方式のどちらかを指定する / 最初の根は terminals.back()
     Result solve_best(const vector<int>& terminals, int starts = 8, uint32_t seed = 0,
                       SteinerTreeMethod growth = SteinerTreeMethod::incremental_prim) {
         if (starts < 0) throw invalid_argument("steiner: starts must be nonnegative");
@@ -413,9 +414,9 @@ public:
         }
         return best;
     }
-    /// @brief 最短路表を作った始点の数を返す
+    /// @brief 最短路表を作成済みの始点の数を返す
     int cached_source_count() const { return cached_count_; }
-    /// @brief 最短路表と最小全域森を捨てる
+    /// @brief 最短路表と最小全域森を破棄する
     void clear_cache() {
         for (auto& row : cache_) { vector<T>().swap(row.dist); vector<int>().swap(row.parent_edge); }
         cached_count_ = 0;

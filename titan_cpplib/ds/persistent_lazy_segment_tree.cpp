@@ -57,7 +57,7 @@ public:
             return idx;
         }
 
-        /// @brief 新しいノードを作り、その番号を返す
+        /// @brief 新しいノードを作成し、その番号を返す
         int new_node(const T key, const F f) {
             if (tree.size() > ptr) {
                 tree[ptr] = {0, 0};
@@ -85,7 +85,7 @@ public:
             ptr = 1;
         }
 
-        /// @brief 使ったノード数が容量の 99% を超えたかを返す
+        /// @brief 使用したノード数が容量の 99% を超えたかを返す
         bool almost_full() const {
             return (double)ptr > max(1.0, cap*0.99);
         }
@@ -192,7 +192,7 @@ private:
         return dfs(dfs, root, 0, len());
     }
 
-    /// @brief vector にして返す / O(n)
+    /// @brief vector に変換して返す / O(n)
     vector<T> tovector() {
         if (len() == 0) return {};
         vector<T> a(len());
@@ -281,7 +281,7 @@ private:
         cout << "]" << endl;
     }
 
-    /// @brief 自身の [l, r) を from の [l, r) で置き換えた木を返す / 自身は変えない
+    /// @brief 自身の [l, r) を from の [l, r) で置き換えた木を返す / 自身は変更しない
     PLSEG copy_from(PLSEG &from, int l, int r) {
         assert(0 <= l && l <= r && r <= len());
         auto dfs = [&] (auto &&dfs, int fr, int to, int left, int right) -> int {
@@ -291,7 +291,8 @@ private:
             if (right <= l || r <= left) { return to; }
             if (l <= left && right <= r) { return fr; }
             int mid = (left + right) / 2;
-            // data はこの後の update で求め直す。lazy は伝播済み
+            // data はこの後の update で求め直す
+            // lazy は伝播済みである
             ma.tree[to].left = dfs(dfs, ma.tree[fr].left, ma.tree[to].left, left, mid);
             ma.tree[to].right = dfs(dfs, ma.tree[fr].right, ma.tree[to].right, mid, right);
             update(to);
@@ -317,7 +318,7 @@ private:
         return os;
     }
 
-    /// @brief ノード領域を初期化し、tree だけを作り直す / tree 以外の木は無効になる
+    /// @brief ノード領域を初期化し、tree だけを再構築する / tree 以外の木は無効になる
     static void rebuild(PLSEG &tree) {
         PLSEG::ma.reset();
         vector<T> a = tree.tovector();

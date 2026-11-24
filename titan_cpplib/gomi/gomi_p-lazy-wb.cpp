@@ -49,7 +49,7 @@ public:
             return idx;
         }
 
-        /// @brief 値 key と作用 f を持つノードを作成して番号を返す
+        /// @brief 値 key と作用 f を保持するノードを作成して番号を返す
         SizeType new_node(const T key, const F f) {
             if (left.size() > ptr) {
                 left[ptr] = 0;
@@ -88,12 +88,12 @@ public:
         }
 
         /// @brief 確保済み領域を再利用できる状態に戻す / O(1)
-        /// この領域を使う既存の木は無効になる
+        /// この領域を使用する既存の木は無効になる
         void reset() {
             ptr = 1;
         }
 
-        /// @brief 確保済み領域がほぼ埋まっているか判定する / O(1)
+        /// @brief 確保済み領域の空きがほとんどないか判定する / O(1)
         bool almost_full() const {
             return (double)ptr > max(1.0, cap*0.99);
         }
@@ -401,7 +401,7 @@ private:
         return _new(_merge_with_root(s, new_node, t));
     }
 
-    /// @brief 位置 k の値を削除した列と削除値を返す
+    /// @brief 位置 k の値を削除した列と、削除した値を返す
     pair<PLTM, T> pop(SizeType k) {
         assert(0 <= k && k < len());
         auto [s_, t] = _split_node(this->root, k+1);
@@ -520,7 +520,7 @@ private:
         return ma.size[root];
     }
 
-    /// @brief 部分木の大きさと平衡条件を検査する / O(n)
+    /// @brief 部分木の大きさと平衡条件を確認する / O(n)
     void check() const {
         auto rec = [&] (auto &&rec, SizeType node) -> pair<SizeType, SizeType> {
             SizeType ls = 0, rs = 0;
@@ -558,7 +558,7 @@ private:
         return os;
     }
 
-    /// @brief 確保済み領域を初期化して tree を作り直す / O(n)
+    /// @brief 確保済み領域を初期化して tree を再構築する / O(n)
     /// 同じ領域を共有する他の木は無効になる
     static void rebuild(PLTM &tree) {
         PLTM::ma.reset();

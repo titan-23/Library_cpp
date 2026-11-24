@@ -39,7 +39,7 @@ private:
     vector<vector<Action>> action_slab_pool;
     vector<vector<Slot>> parent_slab_pool;
 
-    /// @brief 生存候補 1 つを表す / Action は世代ブロック内の位置で持つ
+    /// @brief 生存候補 1 つを表す / Action は世代ブロック内の位置で保持する
     struct CandIdx {
         int parent_leaf;
         ScoreType score;
@@ -121,7 +121,7 @@ private:
         }
     }
 
-    /// @brief 根直下の候補から最初の展開順と LCP を作る
+    /// @brief 根直下の候補から最初の展開順と LCP を求める
     void build_root_frontier() {
         int sz = (int)cand.size();
         frontier_slot.resize(sz);
@@ -130,7 +130,7 @@ private:
         entry_lcp = 0;
     }
 
-    /// @brief 整列後の候補から次世代の展開順と隣接葉 LCP を作る
+    /// @brief ソート後の候補から次世代の展開順と隣接する葉の LCP を求める
     void build_next_frontier(int depth) {
         int old_size = (int)frontier_slot.size();
         int next_size = (int)cand.size();
@@ -166,7 +166,7 @@ private:
         }
     }
 
-    /// @brief 確定済みの接頭辞と現在の trace から終了経路を作る
+    /// @brief 確定済みの接頭辞と現在の trace から完成解までの経路を構築する
     void build_best_path(int upto) {
         best_finished_path = result_prefix;
         for (int depth = freed_to + 1; depth <= upto; ++depth) {
@@ -174,7 +174,7 @@ private:
         }
     }
 
-    /// @brief 現在の State を根へ戻し、返却経路を適用した最終状態を構築する
+    /// @brief 現在の State を根へ戻し、返り値の Action 列を適用した最終状態を構築する
     template<bool materialize_final_state>
     unique_ptr<State> build_final_state(State& state, const vector<Action>& result_actions, int current_depth) {
         if constexpr (materialize_final_state) {
@@ -279,7 +279,7 @@ private:
         snapshots.push_back({turn_label, vector<int>(survived.begin(), survived.end())});
     }
 
-    /// @brief vector 列挙で得た Action を評価して候補へ登録する
+    /// @brief vector への列挙で得た Action を評価して候補へ登録する
     void submit_vector_action(State& state, Action& action, int parent_leaf, int parent_node_id, int turn) {
         auto [score, hash, finished] = state.try_op(action, candidates.threshold());
         if (score >= INF) {
@@ -318,7 +318,7 @@ private:
 
 public:
     /// @brief ビームサーチを実行し、探索結果を返す / materialize_final_state が true なら最終状態も構築する
-    /// record_history が true のとき、履歴を JSON で history_file に書き出す
+    /// record_history が true のとき、履歴を JSON で history_file に出力する
     template<bool materialize_final_state=true>
     Result search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
         if (param.max_turn <= 0 || param.beam_width <= 0) {

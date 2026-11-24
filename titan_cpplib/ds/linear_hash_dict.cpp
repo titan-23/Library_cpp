@@ -13,15 +13,16 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 線形探査で 64 bit 整数を鍵とする辞書 / 削除はできない
-/// USE_HASH_FUNC=true は乱択の混合関数で固定入力への衝突攻撃を避ける。false では下位ビットが偏ると操作が O(n) になり得る
+/// @brief 線形探査で 64 bit 整数をキーとする辞書 / 削除はできない
+/// USE_HASH_FUNC=true では乱択のハッシュ関数を使用して、固定の入力による衝突攻撃を防ぐ
+/// USE_HASH_FUNC=false ではキーの下位ビットが偏ると操作が O(n) になり得る
 template<typename V, bool USE_HASH_FUNC=true>
 class LinearHashDict {
 private:
     using u64 = uint64_t;
 
-    vector<u64> keys;  // erase を持たないので 0 を空きの印に使う
-    vector<V> vals;    // 鍵 0 の値は vals[cap] に置く
+    vector<u64> keys;  // erase がないため 0 で空きを表す
+    vector<V> vals;    // キー 0 の値は vals[cap] に格納する
     int cap;
     int msk;
     u64 salt;
@@ -83,7 +84,7 @@ public:
         init_table(0);
     }
 
-    /// @brief n 要素まで再構築せずに持てる辞書を作る
+    /// @brief n 要素まで再構築せずに保持できる辞書を作成する
     LinearHashDict(const int n) : cap(16), msk(15), salt(0), size(0), has_zero(false) {
         assert(n >= 0);
         init_seed();
@@ -101,7 +102,7 @@ public:
         return {pos, false};
     }
 
-    /// @brief key の値を返す / 無ければ V()
+    /// @brief key の値を返す / 無ければ V() を返す
     V get(const u64 key) const {
         if (key == 0) return has_zero ? vals[cap] : V();
         int pos = (int)(hash(key) & msk);
@@ -112,7 +113,7 @@ public:
         return V();
     }
 
-    /// @brief key の値を返す / 無ければ missing
+    /// @brief key の値を返す / 無ければ missing を返す
     V get(const u64 key, const V missing) const {
         if (key == 0) return has_zero ? vals[cap] : missing;
         int pos = (int)(hash(key) & msk);
@@ -157,19 +158,19 @@ public:
         return val;
     }
 
-    /// @brief get_pos の結果から値を返す / 無ければ missing
+    /// @brief get_pos の結果から値を返す / 無ければ missing を返す
     V inner_get(const pair<int, bool> &dat, const V missing) const {
         if (!dat.second) return missing;
         return vals[dat.first];
     }
 
-    /// @brief get_pos の結果から値を返す / 無ければ V()
+    /// @brief get_pos の結果から値を返す / 無ければ V() を返す
     V inner_get(const pair<int, bool> &dat) {
         if (!dat.second) return V();
         return vals[dat.first];
     }
 
-    /// @brief get_pos の結果を使って key の値を val にする / get_pos との間に変更操作を挟まないこと
+    /// @brief get_pos の結果を使用して key の値を val に設定する / get_pos との間に変更操作を挟まないこと
     void inner_set(const pair<int, bool> &dat, const u64 key, const V val) {
         vals[dat.first] = val;
         if (dat.second) return;
@@ -179,7 +180,7 @@ public:
         if (size * 2 > cap) rebuild();
     }
 
-    /// @brief key の値を val にする
+    /// @brief key の値を val に設定する
     void set(const u64 key, const V val) {
         if (key == 0) {
             vals[cap] = val;
@@ -229,7 +230,7 @@ public:
         if (size * 2 > cap) rebuild();
     }
 
-    /// @brief val が今の値より小さければ更新して true を返す / 無ければ挿入して false を返す
+    /// @brief val が現在の値より小さければ更新して true を返す / key が無ければ挿入して false を返す
     bool contains_set(const u64 key, const V val) {
         if (key == 0) {
             if (!has_zero) {
@@ -270,7 +271,7 @@ public:
         return res;
     }
 
-    /// @brief 全ての鍵と値の組を返す / 順序は不定 / O(容量)
+    /// @brief 全てのキーと値の組を返す / 順序は不定 / O(容量)
     vector<pair<u64, V>> items() const {
         vector<pair<u64, V>> res;
         res.reserve(size);
@@ -293,7 +294,7 @@ public:
         return size;
     }
 
-    /// @brief 表の容量を返す
+    /// @brief ハッシュ表の容量を返す
     int inner_len() const {
         return cap;
     }

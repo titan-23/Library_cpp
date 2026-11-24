@@ -9,7 +9,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 任意位置に挿入と削除ができる列 / 長さ BUCKET_MAX 以下のバケットに分けて持つ
+/// @brief 任意の位置で挿入と削除ができる列 / 要素を長さ BUCKET_MAX 以下のバケットに分けて保持する
 template<typename T>
 class DynamicList {
     private:

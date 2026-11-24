@@ -12,7 +12,7 @@ using namespace std;
 // Osa_k
 namespace titan23 {
 
-/// @brief 最小素因数の表を使って素因数分解と約数列挙をする
+/// @brief 最小素因数の表を使用して素因数分解と約数列挙を行う
 class Osa_k {
 private:
     vector<int> min_factor;
@@ -20,7 +20,7 @@ private:
 public:
     Osa_k() : min_factor(0) {}
 
-    /// @brief 最大値 n までの最小素因数の表を作る / 時間 O(nloglogn)、空間 O(n)
+    /// @brief 最大値 n までの最小素因数の表を作成する / 時間 O(nloglogn)、空間 O(n)
     Osa_k(const int n) : min_factor(n+1) {
         for (int i = 0; i <= n; ++i) {
             min_factor[i] = i;
@@ -36,7 +36,7 @@ public:
         }
     }
 
-    /// @brief n を素因数分解し、素因数を重複込みで昇順に返す / O(logn)
+    /// @brief n を素因数分解し、素因数を重複も含めて昇順に返す / O(logn)
     vector<int> p_factorization(int n) const {
         vector<int> ret;
         while (n > 1) {

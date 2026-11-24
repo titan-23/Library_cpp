@@ -12,8 +12,9 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief hopscotch hashing で 64 bit 整数を鍵とする辞書 / 削除はできない
-/// USE_HASH_FUNC=true は乱択の混合関数で固定入力への衝突攻撃を避ける。false で同じ home に k 個集中すると検索は O(k)
+/// @brief hopscotch hashing で 64 bit 整数をキーとする辞書 / 削除はできない
+/// USE_HASH_FUNC=true では乱択のハッシュ関数を使用して、固定の入力による衝突攻撃を避ける
+/// USE_HASH_FUNC=false では同じ home に k 個のキーが集中すると検索が O(k) になる
 template<typename V, bool USE_HASH_FUNC=true>
 class HopscotchHashDict {
 private:
@@ -32,7 +33,7 @@ private:
     vector<u64> keys;
     vector<V> vals;
     vector<int> over_head;
-    vector<Overflow> over; // 同一 home への極端な集中を正確に扱う退避領域
+    vector<Overflow> over; // 同一 home への極端な集中を正しく扱うための退避領域
     int cap;
     int msk;
     u64 salt;
@@ -177,7 +178,7 @@ public:
         init_table(cap);
     }
 
-    /// @brief n 要素分以上の容量を確保して作る
+    /// @brief n 要素分以上の容量を確保して作成する
     HopscotchHashDict(const int n) : cap(32), msk(31), salt(0), size(0) {
         assert(n >= 0);
         while (n > cap - cap / 8) cap *= 2;
@@ -194,14 +195,14 @@ public:
         return {pos, true};
     }
 
-    /// @brief key の値を返す / 無ければ V()
+    /// @brief key の値を返す / 無ければ V() を返す
     V get(const u64 key) const {
         const auto [pos, exist] = get_pos(key);
         if (!exist) return V();
         return value_at(pos);
     }
 
-    /// @brief key の値を返す / 無ければ missing
+    /// @brief key の値を返す / 無ければ missing を返す
     V get(const u64 key, const V missing) const {
         const auto [pos, exist] = get_pos(key);
         if (!exist) return missing;
@@ -213,7 +214,7 @@ public:
         return get_pos(key).second;
     }
 
-    /// @brief get_pos と同じ
+    /// @brief get_pos と同じ結果を返す
     pair<int, bool> pos(const u64 key) const {
         return get_pos(key);
     }
@@ -227,21 +228,21 @@ public:
         return val;
     }
 
-    /// @brief get_pos の結果から値を返す / 無ければ missing
+    /// @brief get_pos の結果から値を返す / 無ければ missing を返す
     V inner_get(const pair<int, bool> &dat, const V missing) const {
         const auto [pos, exist] = dat;
         if (!exist) return missing;
         return value_at(pos);
     }
 
-    /// @brief get_pos の結果から値を返す / 無ければ V()
+    /// @brief get_pos の結果から値を返す / 無ければ V() を返す
     V inner_get(const pair<int, bool> &dat) {
         const auto [pos, exist] = dat;
         if (!exist) return V();
         return value_at(pos);
     }
 
-    /// @brief get_pos の結果を使って key の値を val にする / get_pos との間に変更操作を挟まないこと
+    /// @brief get_pos の結果を使用して key の値を val に設定する / get_pos との間に変更操作を挟まないこと
     void inner_set(const pair<int, bool> &dat, const u64 key, const V val) {
         const auto [pos, exist] = dat;
         if (exist) {
@@ -251,7 +252,7 @@ public:
         }
     }
 
-    /// @brief key の値を val にする
+    /// @brief key の値を val に設定する
     void set(const u64 key, const V val) {
         const auto dat = get_pos(key);
         inner_set(dat, key, val);
@@ -267,7 +268,7 @@ public:
         }
     }
 
-    /// @brief val が今の値より小さければ更新して true を返す / 無ければ挿入して false を返す
+    /// @brief val が現在の値より小さければ更新して true を返す / 無ければ挿入して false を返す
     bool contains_set(const u64 key, const V val) {
         const auto [pos, exist] = get_pos(key);
         if (exist) {
@@ -292,7 +293,7 @@ public:
         return res;
     }
 
-    /// @brief 全ての鍵と値の組を返す / 順序は不定 / O(容量)
+    /// @brief 全てのキーと値の組を返す / 順序は不定 / O(容量)
     vector<pair<u64, V>> items() const {
         vector<pair<u64, V>> res;
         res.reserve(size);
@@ -317,7 +318,7 @@ public:
         return size;
     }
 
-    /// @brief 表の容量を返す
+    /// @brief ハッシュテーブルの容量を返す
     int inner_len() const {
         return cap;
     }

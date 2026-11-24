@@ -162,7 +162,7 @@ public:
         }
     }
 
-    /// @brief f(prod(l, r)) が true となる最大の r を返す / f は単調で f(e()) = true が前提 / O(log n)
+    /// @brief f(prod(l, r)) が true となる最大の r を返す / f が単調で f(e()) = true であることを前提とする / O(log n)
     template<typename Func>
     int max_right(int l, Func f) {
         assert(0 <= l && l <= n);
@@ -194,7 +194,7 @@ public:
         return n;
     }
 
-    /// @brief f(prod(l, r)) が true となる最小の l を返す / f は単調で f(e()) = true が前提 / O(log n)
+    /// @brief f(prod(l, r)) が true となる最小の l を返す / f が単調で f(e()) = true であることを前提とする / O(log n)
     template<typename Func>
     int min_left(int r, Func f) {
         assert(0 <= r && r <= n);

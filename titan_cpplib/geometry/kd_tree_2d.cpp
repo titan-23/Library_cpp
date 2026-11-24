@@ -17,7 +17,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 全点を構築時に与える静的な2次元 k-d 木 / 結果は距離の昇順、同距離なら点番号の昇順
+/// @brief 全点を構築時に与える静的な 2 次元 k-d 木 / 結果は距離の昇順で、距離が同じ場合は点番号の昇順
 /// 座標、クエリ、半径、距離の二乗は Scalar の有限値に収まる必要がある
 template <class Scalar_ = double>
 class KdTree2D {
@@ -57,7 +57,7 @@ public:
         return *this;
     }
 
-    /// @brief 点列 points から構築する / 点番号は入力順 / 典型 O(n log n)、最悪 O(n²)
+    /// @brief 点列 points から構築する / 点番号は入力順 / 典型的には O(n log n)、最悪 O(n²)
     explicit KdTree2D(vector<Point> points) : points_(move(points)) {
         build_tree();
     }
@@ -73,7 +73,7 @@ public:
         return points_[id];
     }
 
-    /// @brief (x, y) に最も近い点を返す / 点 exclude は除く / 該当なしなら nullopt / 典型 O(log n)、最悪 O(n)
+    /// @brief (x, y) に最も近い点を返す / 点 exclude は除く / 該当する点がない場合は nullopt / 典型的には O(log n)、最悪 O(n)
     optional<Neighbor> nearest_neighbor(Scalar x, Scalar y, int exclude = -1) const {
         check_query(x, y);
         check_exclude(exclude);
@@ -97,7 +97,7 @@ public:
         return nearest_neighbor(p[0], p[1], id);
     }
 
-    /// @brief (x, y) に近い順に k 点を返す / 点 exclude は除く / 典型 O(log n + k log k)、最悪 O(n log k)
+    /// @brief (x, y) に近い順に k 点を返す / 点 exclude は除く / 典型的には O(log n + k log k)、最悪 O(n log k)
     /// k は 0 以上 / 対象の点が k 個未満なら全点を返す
     vector<Neighbor> k_nearest_neighbors(Scalar x, Scalar y, int k, int exclude = -1) const {
         vector<Neighbor> out;
@@ -110,7 +110,7 @@ public:
         return k_nearest_neighbors(q[0], q[1], k, exclude);
     }
 
-    /// @brief (x, y) に近い順に k 点を out へ書き込む / out は空にしてから書き込み、容量は保つ
+    /// @brief (x, y) に近い順に k 点を out に格納する / out は空にしてから格納し、容量は維持する
     void k_nearest_neighbors(Scalar x, Scalar y, int k, vector<Neighbor>& out, int exclude = -1) const {
         check_query(x, y);
         check_exclude(exclude);
@@ -132,7 +132,7 @@ public:
         sort_heap(out.begin(), out.end(), NeighborLess{});
     }
 
-    /// @brief 点 q に近い順に k 点を out へ書き込む
+    /// @brief 点 q に近い順に k 点を out に格納する
     void k_nearest_neighbors(const Point& q, int k, vector<Neighbor>& out, int exclude = -1) const {
         k_nearest_neighbors(q[0], q[1], k, out, exclude);
     }
@@ -144,7 +144,7 @@ public:
         return out;
     }
 
-    /// @brief 点 id を除き、点 id に近い順に k 点を out へ書き込む
+    /// @brief 点 id を除き、点 id に近い順に k 点を out に格納する
     void k_nearest_neighbors_of(int id, int k, vector<Neighbor>& out) const {
         check_point(id);
         const Point& p = points_[id];
@@ -152,7 +152,7 @@ public:
     }
 
     /// @brief (x, y) から距離 radius 以内の点を返す / 境界を含む / sort_by_distance が false なら並べ替えない
-    /// radius は有限かつ 0 以上 / 返す点数を m として典型 O(log n + m log m)、最悪 O(n + m log m)
+    /// radius は有限かつ 0 以上 / 返す点数を m として典型的には O(log n + m log m)、最悪 O(n + m log m)
     vector<Neighbor> radius_neighbors(Scalar x, Scalar y, Scalar radius, int exclude = -1,
                                       bool sort_by_distance = true) const {
         vector<Neighbor> out;
@@ -166,7 +166,7 @@ public:
         return radius_neighbors(q[0], q[1], radius, exclude, sort_by_distance);
     }
 
-    /// @brief (x, y) から距離 radius 以内の点を out へ書き込む / out は空にしてから書き込み、容量は保つ
+    /// @brief (x, y) から距離 radius 以内の点を out に格納する / out は空にしてから格納し、容量は維持する
     void radius_neighbors(Scalar x, Scalar y, Scalar radius, vector<Neighbor>& out, int exclude = -1,
                           bool sort_by_distance = true) const {
         check_query(x, y);
@@ -192,7 +192,7 @@ public:
         if (sort_by_distance) sort(out.begin(), out.end(), NeighborLess{});
     }
 
-    /// @brief 点 q から距離 radius 以内の点を out へ書き込む
+    /// @brief 点 q から距離 radius 以内の点を out に格納する
     void radius_neighbors(const Point& q, Scalar radius, vector<Neighbor>& out, int exclude = -1,
                           bool sort_by_distance = true) const {
         radius_neighbors(q[0], q[1], radius, out, exclude, sort_by_distance);
@@ -205,7 +205,7 @@ public:
         return out;
     }
 
-    /// @brief 点 id を除き、点 id から距離 radius 以内の点を out へ書き込む
+    /// @brief 点 id を除き、点 id から距離 radius 以内の点を out に格納する
     void radius_neighbors_of(int id, Scalar radius, vector<Neighbor>& out, bool sort_by_distance = true) const {
         check_point(id);
         const Point& p = points_[id];
@@ -213,10 +213,11 @@ public:
     }
 
 private:
-    // 先行順に並べる。count 点の部分木では、子の根の位置を count から求める
+    // ノードは先行順に並べる
+    // count 点の部分木では、子の根の位置を count から求める
     struct Node {
         int id;
-        // 下位31ビットは部分木内の最小点番号、最上位ビットは分割軸
+        // 下位 31 ビットは部分木内の最小の点番号、最上位ビットは分割軸
         uint32_t min_axis;
     };
 
@@ -417,7 +418,7 @@ private:
             out.push_back(candidate);
             push_heap(out.begin(), out.end(), NeighborLess{});
         } else if (NeighborLess{}(candidate, out.front())) {
-            // 根の置き換えは、下方向への調整1回で済む
+            // 根の置き換えは下方向への調整 1 回で完了する
             int pos = 0;
             int size = (int)out.size();
             while (pos < size / 2) {
@@ -569,14 +570,14 @@ private:
     }
 };
 
-/// @brief 座標の配列から KdTree2D を構築する / Scalar は入力の型を保つ
+/// @brief 座標の配列から KdTree2D を構築する / Scalar は入力の型と同じ
 template <class Scalar = double>
 auto make_kd_tree_2d(vector<array<Scalar, 2>> points) {
     return KdTree2D<Scalar>(move(points));
 }
 
 /// @brief get_coordinate(point, axis) で座標を取り出して KdTree2D を構築する / Scalar の既定は double
-/// 木は変換後の座標だけを持つ / 点番号は入力順
+/// 木は変換後の座標だけを保持する / 点番号は入力順
 template <class Scalar = double, class Point, class GetCoordinate>
 auto make_kd_tree_2d(const vector<Point>& points, GetCoordinate get_coordinate) {
     using Coordinate = invoke_result_t<const GetCoordinate&, const Point&, int>;

@@ -14,7 +14,7 @@ using namespace std;
 /// 木上のビームサーチライブラリ
 namespace flying_squirrel {
 
-/// @brief 探索木を行きがけと帰りがけの列で持つ木構造ビームサーチの旧実装
+/// @brief 探索木を行きがけと帰りがけの列で保持する木構造ビームサーチの旧実装
 /// 参考: https://eijirou-kyopro.hatenablog.com/entry/2024/02/01/115639
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
 class BeamSearchWithTree {
@@ -53,7 +53,7 @@ private:
         BeamCandidate(int p, ScoreType s, Action a, ActionIDType id) : par(p), score(s), action(move(a)), action_id(id) {}
     };
 
-    // 探索木の巡回列。dir_or_leaf_id は葉なら leaf_id、行きがけなら -1、帰りがけなら -2
+    // 探索木の巡回列 / dir_or_leaf_id は葉なら leaf_id、行きがけなら -1、帰りがけなら -2
     vector<TreeNode> tree, nxt_tree;
     int last_fixed_node_id;
 
@@ -88,10 +88,10 @@ private:
 
         int size() const { return entry; }
 
-        /// @brief 保持中で最悪のスコアを返す / これ以上のスコアは採用されない。ビーム幅に達するまでは INF
+        /// @brief 保持している候補の中で最悪のスコアを返す / この値以上のスコアは採用されない / 候補数がビーム幅に達するまでは INF を返す
         ScoreType threshold() const { return entry < beam_width ? INF : seg[1].first; }
 
-        /// @brief 候補を追加し、採用されたら true を返す
+        /// @brief 候補を追加し、採用された場合は true を返す
         bool push(
             ScoreType score, HashType hash,
             int par, Action action, ActionIDType action_id
@@ -127,7 +127,7 @@ private:
             return true;
         }
 
-        /// @brief 次ターンに向けて候補を初期化する / clear_hash が false なら前ターンの生存候補を予約済みとして残す
+        /// @brief 次ターンに向けて候補を初期化する / clear_hash が false なら前ターンで生き残った候補を予約済みとして残す
         void reset(int turn, int w, bool clear_hash) {
             beam_width = w;
             while (s < w) {
@@ -164,7 +164,7 @@ private:
 
     vector<Action> actions;
 
-    // 次のビーム候補を求める。depth == 0 なら tree を辿らず state から直接展開する
+    // 次のビーム候補を求める / depth == 0 なら tree を辿らず state から直接展開する
     void get_next_beam(State &state, const int turn, const int depth) {
         if (depth == 0) {
             actions.clear();
@@ -255,7 +255,7 @@ private:
         int apply_only_turn = 0;
         while (true) {
             const auto &[dir_or_leaf_id, action, action_id] = tree[i];
-            // 先頭の行きがけと末尾の帰りがけで action_id が一致すれば一本道なので、適用して確定する
+            // 先頭の行きがけと末尾の帰りがけで action_id が一致すれば一本道であるため、適用して確定する
             if (dir_or_leaf_id == PRE_ORDER && action_id == tree.back().action_id) {
                 ++i;
                 result.emplace_back(action);
@@ -294,7 +294,7 @@ private:
             } else {
                 int pre_dir = nxt_tree.back().dir_or_leaf_id;
                 if (pre_dir == PRE_ORDER) {
-                    nxt_tree.pop_back(); // 一つ前が行きがけなら、削除して追加しない
+                    nxt_tree.pop_back(); // 直前の要素が行きがけなら、それを削除して追加しない
                 } else {
                     nxt_tree.emplace_back(POST_ORDER, move(action), action_id);
                 }
@@ -383,7 +383,7 @@ public:
             if (found_finished) {
                 turns_done = turn + 1;
                 if (best_finished_par != PRE_ORDER) {
-                    // best_finished_par の葉まで木を DFS で辿り、PRE_ORDER の action を順に積む
+                    // best_finished_par の葉まで木を DFS で辿り、PRE_ORDER の action を順に追加する
                     for (const auto &[dir_or_leaf_id, action, _] : tree) {
                         if (dir_or_leaf_id >= 0) {
                             if (best_finished_par == dir_or_leaf_id) {

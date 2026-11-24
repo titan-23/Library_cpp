@@ -10,8 +10,8 @@ using namespace std;
 namespace titan23 {
 
 /// @brief 有向グラフ G を強連結成分分解し、成分を縮約したグラフを返す / O(n + m log m)
-/// @return {groups, F, ids, ids_inv}。groups[i] と ids_inv[i] は成分 i の頂点、F は縮約後の隣接リスト、ids[v] は頂点 v の成分番号
-/// @note 成分番号はトポロジカル順に付く
+/// @return {groups, F, ids, ids_inv} / groups[i] と ids_inv[i] は成分 i の頂点、F は縮約後の隣接リスト、ids[v] は頂点 v の成分番号
+/// @note 成分番号はトポロジカル順に割り当てられる
 tuple<vector<vector<int>>, vector<vector<int>>, vector<int>, vector<vector<int>>> get_scc_graph(const vector<vector<int>> &G) {
     int n = G.size();
     vector<int> st(n, 0);

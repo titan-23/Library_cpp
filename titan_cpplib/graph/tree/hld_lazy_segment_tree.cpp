@@ -25,13 +25,13 @@ private:
 public:
     HLDLazySegmentTree() {}
 
-    /// @brief hld の上に、全頂点の値を e() として構築する / O(N)
+    /// @brief hld から構築し、全頂点の値を e() とする / O(N)
     HLDLazySegmentTree(titan23::HLD &hld) : hld(hld) {
         seg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(hld.n);
         rseg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(hld.n);
     }
 
-    /// @brief hld の上に、頂点 k の値を a[k] として構築する / O(N)
+    /// @brief hld から構築し、頂点 k の値を a[k] とする / O(N)
     HLDLazySegmentTree(titan23::HLD &hld, vector<T> a) : hld(hld) {
         vector<T> b = hld.build_list(a);
         seg = titan23::LazySegmentTree<T, op, e, F, mapping, composition, id>(b);

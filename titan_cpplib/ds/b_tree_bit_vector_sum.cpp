@@ -13,7 +13,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief ビットと重みの組の列を B 木で持つ / 複数の列が節点の領域を共有する
+/// @brief ビットと重みの組の列を B 木で保持する / 複数の列が節点の領域を共有する
 template<typename W>
 class BTreeBitVectorSum {
 private:
@@ -42,7 +42,7 @@ private:
         array<W, _BRANCH> child_sum1;
         uint8_t count;
 
-        // SIMD の探索は未使用の要素も読むので、探索に使う累積値を初期化する
+        // SIMD の探索は未使用の要素も参照するため、探索に使用する累積値を初期化する
         Internal() : child_size{}, child_ones{}, count(0) {}
     };
 
@@ -67,7 +67,7 @@ private:
     };
 
 public:
-    /// @brief 1 本の列を表す / 根の番号と高さを持つ
+    /// @brief 1 本の列を表す / 根の番号と高さを保持する
     struct Sequence {
         int root;
         uint8_t height;
@@ -75,7 +75,7 @@ public:
         Sequence() : root(0), height(0) {}
     };
 
-    /// @brief range_data の結果 / l0 = rank0(l)、r0 = rank0(r)、sum0 と sum1 は [l, r) のビット 0 と 1 の重みの和
+    /// @brief range_data の結果 / l0 = rank0(l)、r0 = rank0(r)、sum0 と sum1 はそれぞれ [l, r) でビットが 0, 1 の要素の重みの総和
     struct RangeData {
         int l0;
         int r0;
@@ -264,7 +264,7 @@ private:
                    const int depth, const Stats& delta) {
         for (int i = 0; i < depth; ++i) {
             Internal &node = _internals[path[i]];
-            // 4 配列を 1 つのループで更新する
+            // 4 つの配列を 1 つのループで更新する
             for (int j = slots[i]; j < node.count; ++j) {
                 node.child_size[j] += delta.size;
                 node.child_ones[j] += delta.ones;
@@ -564,7 +564,7 @@ private:
         const uint16_t take_mask = _mask(take);
         Prefix result{popcount(node.bits & take_mask), 0, 0};
         if constexpr (simd_int_vectorized_v<W>) {
-            // マスク付きの読み込みは take 以降の要素を読まない
+            // マスク付きの読み込みは take 以降の要素を参照しない
             result.sum = simd_masked_sum<_LEAF_CAP>(node.weight.data(), take_mask);
             result.sum1 = simd_masked_sum<_LEAF_CAP>(node.weight.data(), node.bits & take_mask);
         } else {
@@ -710,7 +710,7 @@ private:
             return false;
         }
 
-        // l < r <= ノードの長さなので、l を含む子から走査を始められる
+        // l < r <= ノードの長さであるため、l を含む子から走査を開始できる
         const Internal &n = _internals[node];
         for (int pos = _find_size(n, l); pos < n.count; ++pos) {
             int begin = _size_before(n, pos);
@@ -774,16 +774,16 @@ private:
     }
 
 public:
-    /// @brief 列を 1 本も持たない状態で作る
+    /// @brief 列を 1 本も保持しない状態で構築する
     BTreeBitVectorSum() : _leaves(1), _internals(1), _free_leaf(0), _free_internal(0) {}
 
-    /// @brief 全列の長さの合計 total_size と列の数 sequence_count に合わせて領域を予約する
+    /// @brief 全列の長さの合計 total_size と列の数 sequence_count に応じて領域を確保する
     void reserve(int total_size, int sequence_count) {
         _leaves.reserve(_leaves.size() + sequence_count + (total_size + _LEAF_CAP - 1) / _LEAF_CAP);
         _internals.reserve(_internals.size() + total_size / (_LEAF_CAP * _BRANCH_MIN) + sequence_count / 32 + 1);
     }
 
-    /// @brief start <= i < end の範囲で、ビット bits[i] と重み weights[order[i]] を並べた列を作る / O(end - start)
+    /// @brief start <= i < end の範囲で、ビット bits[i] と重み weights[order[i]] を並べた列を構築する / O(end - start)
     Sequence build(const vector<uint8_t>& bits, const vector<int>& order, const vector<W>& weights,
                    int start, int end) {
         Sequence sequence;
@@ -861,7 +861,7 @@ public:
     /// @brief 列が空かを返す / O(1)
     bool empty(const Sequence &sequence) const { return sequence.root == 0; }
 
-    /// @brief 列全体の重みの和を返す / O(1)
+    /// @brief 列全体の重みの総和を返す / O(1)
     W all_sum(const Sequence& sequence) const {
         return sequence.root == 0 ? W(0) : _stats(sequence.root, sequence.height).sum;
     }
@@ -962,7 +962,7 @@ public:
         int level = sequence.height;
         while (level > 0) {
             const Internal &n = _internals[node];
-            // k は 0 以上ノードの長さ以下なので、最後の子より後ろには進まない
+            // k は 0 以上ノードの長さ以下であるため、最後の子より後ろには進まない
             const int pos = _find_size(n, k - 1);
             rank1 += _ones_before(n, pos);
             k -= _size_before(n, pos);
@@ -1024,7 +1024,7 @@ public:
         return {bit, rank1, weight};
     }
 
-    /// @brief 位置 k のビットを bit、重みを weight にし、変更前の AccessData を返す / O(log n)
+    /// @brief 位置 k のビットを bit、重みを weight に設定し、変更前の AccessData を返す / O(log n)
     AccessData set(Sequence &sequence, int k, const bool bit, const W weight) {
         assert(0 <= k && k < len(sequence));
         array<int, _MAX_HEIGHT> path;
@@ -1059,7 +1059,7 @@ public:
         return {old_bit, rank1, old_weight};
     }
 
-    /// @brief 位置 k のビットを bit にし、変更前の AccessData を返す / O(log n)
+    /// @brief 位置 k のビットを bit に設定し、変更前の AccessData を返す / O(log n)
     AccessData set_bit(Sequence& seq, int k, const bool bit) {
         assert(0 <= k && k < len(seq));
         array<int, _MAX_HEIGHT> path;
@@ -1091,7 +1091,7 @@ public:
         return {old, rank1, weight};
     }
 
-    /// @brief 位置 k の重みに delta を足し、足す前の AccessData を返す / O(log n)
+    /// @brief 位置 k の重みに delta を加え、加える前の AccessData を返す / O(log n)
     AccessData add_weight(Sequence &sequence, int k, W delta) {
         assert(0 <= k && k < len(sequence));
         array<int, _MAX_HEIGHT> path;
@@ -1184,7 +1184,7 @@ public:
         return ans;
     }
 
-    /// @brief [l, r) のビット bit の要素を左から取り、重みの和が target 以上になる最小の個数を返す / 届かなければ -1
+    /// @brief [l, r) のビット bit の要素を左から順に取り、重みの総和が target 以上になる最小の個数を返す / 総和が target に達しなければ -1
     int min_count_sum_ge(const Sequence &sequence, const int l, const int r, const bool bit, W target) const {
         if (target <= W(0)) return 0;
         RangeData data = range_data(sequence, l, r);
@@ -1196,7 +1196,7 @@ public:
         return count;
     }
 
-    /// @brief [l, r) のビット bit の要素の重みを左から aggregate に足し、pred が真である間に足せる最大の個数を返す / pred(aggregate) が真であること / aggregate は足し終えた値に更新される
+    /// @brief [l, r) のビット bit の要素の重みを左から順に aggregate に加え、pred が真である間に加えることができる最大の個数を返す / pred(aggregate) が真であること / aggregate は加算後の値に更新される
     template<class Pred>
     int max_count(const Sequence &sequence, const int l, const int r, const bool bit, W &aggregate, Pred pred) const {
         assert(0 <= l && l <= r && r <= len(sequence));
@@ -1207,7 +1207,7 @@ public:
         return count;
     }
 
-    /// @brief [l, r) のビット bit の要素のうち、左から k 個の重みの和を返す / k はその個数以下 / O(log n)
+    /// @brief [l, r) のビット bit の要素のうち、左から k 個の重みの総和を返す / k はその個数以下 / O(log n)
     W sum_first_k(const Sequence &sequence, const int l, const int r, const bool bit, const int k) const {
         if (k == 0) return W(0);
         RangeData data = range_data(sequence, l, r);
@@ -1220,7 +1220,7 @@ public:
         return bit ? prefix.sum1 : prefix.sum0;
     }
 
-    /// @brief 列のビットと重みを vector にして返す / O(n)
+    /// @brief 列のビットと重みを vector に格納して返す / O(n)
     pair<vector<uint8_t>, vector<W>> tovector(const Sequence &sequence) const {
         vector<uint8_t> bits;
         vector<W> weights;

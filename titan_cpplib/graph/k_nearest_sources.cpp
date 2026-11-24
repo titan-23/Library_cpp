@@ -11,7 +11,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 多始点から各頂点への、相異なる始点のうち近い方 K 個の距離と始点を求める
+/// @brief 複数の始点から各頂点への距離について、相異なる始点のうち近い順に K 個の距離と始点を求める
 template<typename T>
 class KNearestSources {
 private:
@@ -40,7 +40,7 @@ public:
     vector<pair<T, int>> dist;
 
     KNearestSources() {}
-    /// @brief 隣接リスト G と始点の列 S から求める / 重みは 0 以上 / 届かない距離は INF / O(K(N+M)(K + log(KN)))
+    /// @brief 隣接リスト G と始点の列 S から求める / 重みは 0 以上 / 到達しない場合の距離は INF / O(K(N+M)(K + log(KN)))
     KNearestSources(const vector<vector<pair<int, T>>> &G, const vector<int> &S, int K, T INF) :
             n(G.size()), K(K), INF(INF), dist(n*K, {INF, -1}) {
         using P = tuple<T, int, int>;
@@ -87,7 +87,7 @@ public:
         }
     }
 
-    /// @brief v に届いた相異なる始点の数を返す / 0 以上 K 以下 / O(K)
+    /// @brief v に到達した相異なる始点の数を返す / 0 以上 K 以下 / O(K)
     int count(int v) const {
         int c = 0;
         for (int i = 0; i < K; ++i) {

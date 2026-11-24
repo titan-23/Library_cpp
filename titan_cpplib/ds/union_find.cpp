@@ -9,7 +9,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 経路圧縮と要素数による併合を使う Union-Find
+/// @brief 経路圧縮と要素数による併合を使用する Union-Find
 class UnionFind {
 private:
     int n, group_numbers;

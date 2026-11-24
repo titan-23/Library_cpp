@@ -9,7 +9,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 区間代入と1点取得を行う双対セグ木
+/// @brief 区間代入と 1 点取得を行う双対セグメント木
 template <class T>
 class DualSegmentTreeRUQ {
 private:

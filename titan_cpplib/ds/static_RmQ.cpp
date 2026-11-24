@@ -87,7 +87,7 @@ public:
         build_sparse_table(init);
     }
 
-    /// @brief 区間 [l, r) の最小値を返す / 空区間は INF / O(1)
+    /// @brief 区間 [l, r) の最小値を返す / 空区間では INF を返す / O(1)
     T prod(int l, int r) const {
         assert(0 <= l && l <= r && r <= n);
         if (l == r) return INF;

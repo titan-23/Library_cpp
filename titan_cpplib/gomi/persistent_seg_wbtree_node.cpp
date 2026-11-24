@@ -21,7 +21,7 @@ class PersistentSegWBTree {
 public:
     /// @brief ノード領域を管理する / 番号 0 は番兵
     struct MemoryAllocator {
-        /// @brief 子の番号と部分木サイズを持つ
+        /// @brief 子の番号と部分木サイズを保持する
         struct Node {
             SizeType left, right, size, left_size;
 
@@ -31,7 +31,7 @@ public:
             /// @brief 子と部分木サイズを設定する / O(1)
             Node(SizeType l, SizeType r, SizeType s) : left(l), right(r), size(s), left_size(0) {}
         };
-        /// @brief 値、部分木の総積、反転フラグを持つ
+        /// @brief 値、部分木の総積、反転フラグを保持する
         struct Data {
             T key, data;
             int8_t rev;
@@ -190,7 +190,7 @@ public:
         View<Data, &Slot::data> data;
         size_t ptr, cap;
 
-        /// @brief 番兵を持つ領域を初期化する / O(1)
+        /// @brief 番兵を含む領域を初期化する / O(1)
         MemoryAllocator() : tree{&pool}, data{&pool}, ptr(1), cap(0) {
             pool.emplace_back(0, 0, 0, T{}, T{}, 0);
             cap = pool.capacity();
@@ -228,7 +228,7 @@ public:
             return ptr++;
         }
 
-        /// @brief 値 key を持つノードを作成する / 償却 O(1)
+        /// @brief 値 key を保持するノードを作成する / 償却 O(1)
         SizeType new_node(const T& key) {
             if (pool.size() > ptr) {
                 pool[ptr].tree = {0, 0, 1};
@@ -254,10 +254,10 @@ public:
         }
 
         /// @brief 確保済み領域を再利用できる状態に戻す / O(1)
-        /// @note この領域を使う既存の木は無効になる
+        /// @note この領域を使用する既存の木は無効になる
         void reset() { ptr = 1; }
 
-        /// @brief 確保済み領域がほぼ埋まっているか判定する / O(1)
+        /// @brief 確保済み領域の空きがほとんどないか判定する / O(1)
         bool almost_full() const { return (double)ptr > max(1.0, cap * 0.99); }
 
         /// @brief 確保済みノード領域のバイト数を返す / O(1)
@@ -358,7 +358,7 @@ private:
         return u;
     }
 
-    // node は所有済みで反転も解消済み。子は古い版に属することがある
+    // node は新しい版に属し、反転も解消済みであること / 子は古い版に属する場合がある
     SizeType balance(SizeType node, size_t first) {
         if (weight_left(node) * DELTA < weight_right(node)) {
             SizeType u = own(ma.pool[node].tree.right, first);
@@ -409,7 +409,7 @@ private:
         return pivot;
     }
 
-    // 探索経路だけを複製して挿入する。first は公開操作の開始時の ma.ptr
+    // 探索経路だけを複製して挿入する / first には公開操作の開始時の ma.ptr を渡す
     SizeType insert_node(SizeType node, SizeType k, const T &value, size_t first) {
         if (!node) return ma.new_node(value);
         node = own(node, first);
@@ -424,7 +424,7 @@ private:
         return balance(node, first);
     }
 
-    // 端の要素を取り除き、その値を value に入れる
+    // 端の要素を取り除き、その値を value に格納する
     SizeType erase_extreme(SizeType node, T &value, bool rightmost, size_t first) {
         SizeType next = rightmost ? ma.pool[node].tree.right : ma.pool[node].tree.left;
         if (!next && !ma.pool[node].data.rev) {
@@ -446,7 +446,7 @@ private:
     }
 
     SizeType erase_node(SizeType node, SizeType k, T &value, size_t first) {
-        // 葉は反転の影響を受けないので、複製せずに取り除ける
+        // 葉は反転の影響を受けないため、複製せずに取り除くことができる
         if (ma.pool[node].tree.size == 1) {
             value = ma.pool[node].data.key;
             return 0;
@@ -463,7 +463,7 @@ private:
             value = ma.pool[node].data.key;
             if (!left) return right;
             if (!right) return left;
-            // 偏りを広げないよう、重い側から代わりの要素を取り出す
+            // 偏りが大きくならないように、重い側から代わりの要素を取り出す
             T replacement;
             if (left_size >= ma.pool[node].tree.size-left_size-1) {
                 ma.pool[node].tree.left = erase_extreme(left, replacement, true, first);
@@ -666,7 +666,7 @@ private:
         return _new(insert_node(root, k, key, first));
     }
 
-    /// @brief 位置 k の要素を削除した列と削除値を返す / O(log N)
+    /// @brief 位置 k の要素を削除した列と、削除した値を返す / O(log N)
     pair<PLTM, T> pop(SizeType k) {
         assert(0 <= k && k < len());
         const size_t first = ma.ptr;
@@ -676,7 +676,7 @@ private:
     }
 
     /// @brief 区間 [l, r) を反転した列を返す / O(log N)
-    /// @note 総積が反転で変化しない場合に使える
+    /// @note 総積が反転で変化しない場合に使用できる
     PLTM reverse(SizeType l, SizeType r) {
         assert(0 <= l && l <= r && r <= len());
         return _new(reverse_node(root, l, r, ma.ptr));
@@ -760,7 +760,7 @@ private:
         return ma.pool[root].tree.size;
     }
 
-    /// @brief 部分木サイズと平衡条件を検査する / O(N)
+    /// @brief 部分木サイズと平衡条件を確認する / O(N)
     void check() const {
         auto rec = [&] (auto &&rec, SizeType node) -> pair<SizeType, SizeType> {
             SizeType ls = 0, rs = 0;

@@ -10,7 +10,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 静的な木で、距離が区間に入る頂点への加算と一点取得を行う / 各操作 O(log^2 N)
+/// @brief 静的な木で、距離が区間に含まれる頂点への加算と一点取得を行う / 各操作 O(log^2 N)
 template<typename T>
 class TreeContourAdd {
 private:

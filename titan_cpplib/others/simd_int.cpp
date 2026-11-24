@@ -13,8 +13,8 @@
 
 namespace titan23 {
 
-/// @brief 32 bit と 64 bit の符号付き整数の SIMD 演算を、命令セットによらない名前でまとめる / 実装は AVX-512, AVX2, SSE2, 逐次の順に選ぶ
-/// Mask の bit i が要素 i を表す / load と store は Mask の要素だけを読み書きし、load は他の要素を 0 にする / 加減算は 2 の補数で巡回する
+/// @brief 32 bit と 64 bit の符号付き整数の SIMD 演算を、命令セットによらない名前でまとめる / 実装は AVX-512, AVX2, SSE2, 逐次処理の順に選ぶ
+/// Mask の bit i が要素 i を表す / load と store は Mask で指定した要素だけにアクセスし、load は他の要素を 0 にする / 加減算は 2 の補数でラップアラウンドする
 template<class T, size_t Size = sizeof(T)>
 struct SimdInt;
 
@@ -88,7 +88,7 @@ struct SimdInt<T, 4> {
 
 #elif defined(__AVX2__)
 
-// AVX2 段。比較の結果は movemask で bit 列にし、マスク付きの読み書きでは要素ごとのマスクに戻す
+// AVX2 版 / 比較の結果は movemask で bit 列にし、マスク付きのロードとストアでは要素ごとのマスクに戻す
 template<class T>
 struct SimdInt<T, 8> {
     static constexpr const char *NAME = "avx2";
@@ -200,7 +200,7 @@ struct SimdInt<T, 4> {
 
 #else
 
-// SIMD 命令がない場合は 1 要素ずつ処理する。SSE2 がある場合も 64 bit 整数はこれを使う
+// SIMD 命令がない場合は 1 要素ずつ処理する / SSE2 がある場合も 64 bit 整数ではこの実装を使用する
 template<class T, size_t Size>
 struct SimdInt {
     static constexpr const char *NAME = "scalar";
@@ -240,7 +240,7 @@ struct SimdInt {
 
 #if defined(__SSE2__)
 
-// SSE2 段。min, max は比較と論理演算で組み、一部の要素だけの読み書きは一時配列を経由する
+// SSE2 版 / min, max は比較と論理演算の組み合わせで実装し、一部の要素だけのロードとストアは一時配列を経由する
 template<class T>
 struct SimdInt<T, 4> {
     static constexpr const char *NAME = "sse2";
@@ -310,7 +310,7 @@ struct SimdInt<T, 4> {
 
 #endif
 
-/// @brief SimdInt で扱える型かを表す / 比較を使う関数はさらに符号付きを要求する
+/// @brief SimdInt で使用できる型かを表す / 比較を使用する関数では、さらに符号付きであることを条件とする
 template<class T>
 inline constexpr bool simd_int_supported_v =
     std::is_integral_v<T> && !std::is_same_v<T, bool> && (sizeof(T) == 4 || sizeof(T) == 8);
@@ -328,7 +328,7 @@ constexpr typename S::Mask full_mask(const int rest) {
     return rest >= S::LANES ? S::ALL : (typename S::Mask)((1u << rest) - 1);
 }
 
-// f(integral_constant<int, 0>), ..., f(integral_constant<int, COUNT-1>) を展開して呼ぶ
+// f(integral_constant<int, 0>), ..., f(integral_constant<int, COUNT-1>) を展開して呼び出す
 template<class F, size_t... I>
 inline void unroll(F &&f, std::index_sequence<I...>) {
     (f(std::integral_constant<int, (int)I>{}), ...);
@@ -336,17 +336,17 @@ inline void unroll(F &&f, std::index_sequence<I...>) {
 
 }  // namespace simd_int_detail
 
-/// @brief T で SimdInt の SIMD 実装が使えるかを表す
+/// @brief T で SimdInt の SIMD 実装を使用できるかを表す
 template<class T>
 inline constexpr bool simd_int_vectorized_v = simd_int_detail::vectorized<T>::value;
 
 namespace simd_int_detail {
 
-// N 要素の bit 列を入れる整数型。N <= 31 なら番兵の bit N も 32 bit に収まる
+// N 要素の bit 列を格納する整数型 / N <= 31 なら番兵の bit N も 32 bit に収まる
 template<int N>
 using lane_bits_t = std::conditional_t<(N < 32), uint32_t, uint64_t>;
 
-// a[0, N) で a[i] - b[i] > key (DIFF が false なら a[i] > key) となる要素を bit 列で返す
+// a[0, N) で a[i] - b[i] > key となる要素を bit 列で返す / DIFF が false の場合は a[i] > key となる要素を返す
 template<int N, bool DIFF, class T>
 inline lane_bits_t<N> greater_bits(const T *a, const T *b, const T key) {
     using S = SimdInt<T>;
@@ -358,7 +358,7 @@ inline lane_bits_t<N> greater_bits(const T *a, const T *b, const T key) {
         constexpr auto valid = full_mask<S>(N - i);
         auto x = S::load(valid, a + i);
         if constexpr (DIFF) x = S::sub(x, S::load(valid, b + i));
-        // 全要素を比べる場合は、Mask 型への切り詰めがない cmpgt_bits を使う
+        // 全要素を比較する場合は Mask 型への切り詰めがない cmpgt_bits を使用する
         if constexpr (valid == S::ALL) bits |= Bits(S::cmpgt_bits(x, k)) << i;
         else bits |= Bits(S::cmpgt(valid, x, k)) << i;
     }, std::make_index_sequence<(N + S::LANES - 1) / S::LANES>{});
@@ -377,7 +377,7 @@ inline int find_first_greater(const T *a, const T *b, const T key) {
     if constexpr (simd_int_vectorized_v<T> && std::is_signed_v<T>) {
         using Bits = lane_bits_t<N>;
         const Bits bits = greater_bits<N, DIFF>(a, b, key);
-        // 番兵の bit N を立てると、該当がないとき N になる
+        // 番兵の bit N を立てると、該当する要素がない場合の結果は N になる
         if constexpr (CHECKED) return countr_zero_bits(Bits(bits | (Bits(1) << N)));
         else return countr_zero_bits(bits);
     } else {
@@ -391,7 +391,7 @@ inline int find_first_greater(const T *a, const T *b, const T key) {
 
 }  // namespace simd_int_detail
 
-/// @brief a[0, N) で a[i] > key となる最小の i を返す / なければ N / 0 < N <= 63
+/// @brief a[0, N) で a[i] > key となる最小の i を返す / なければ N を返す / 0 < N <= 63
 template<int N, class T>
 inline int simd_find_first_greater(const T *a, const T key) {
     return simd_int_detail::find_first_greater<N, false, true>(a, a, key);
@@ -403,19 +403,19 @@ inline int simd_find_first_greater_unchecked(const T *a, const T key) {
     return simd_int_detail::find_first_greater<N, false, false>(a, a, key);
 }
 
-/// @brief a[0, N), b[0, N) で a[i] - b[i] > key となる最小の i を返す / なければ N / 0 < N <= 63 / 差は T に収まる前提
+/// @brief a[0, N), b[0, N) で a[i] - b[i] > key となる最小の i を返す / なければ N を返す / 0 < N <= 63 / 差が T に収まることを前提とする
 template<int N, class T>
 inline int simd_find_first_greater_diff(const T *a, const T *b, const T key) {
     return simd_int_detail::find_first_greater<N, true, true>(a, b, key);
 }
 
-/// @brief a[0, N), b[0, N) で a[i] - b[i] > key となる最小の i を返す / そのような i が必ずある前提で番兵を省く / 0 < N <= 63 / 差は T に収まる前提
+/// @brief a[0, N), b[0, N) で a[i] - b[i] > key となる最小の i を返す / そのような i が必ずある前提で番兵を省く / 0 < N <= 63 / 差が T に収まることを前提とする
 template<int N, class T>
 inline int simd_find_first_greater_diff_unchecked(const T *a, const T *b, const T key) {
     return simd_int_detail::find_first_greater<N, true, false>(a, b, key);
 }
 
-/// @brief mask の bit i が立つ a[i] (0 <= i < N) の和を返す / 0 < N <= 63
+/// @brief mask の bit i が立つ a[i] (0 <= i < N) の総和を返す / 0 < N <= 63
 template<int N, class T>
 inline T simd_masked_sum(const T *a, uint64_t mask) {
     static_assert(0 < N && N <= 63);
@@ -437,7 +437,7 @@ inline T simd_masked_sum(const T *a, uint64_t mask) {
 
 namespace simd_int_detail {
 
-// SSE2 だけが使えるか。SimdInt の SSE2 段は 32 bit 整数だけを扱うので、64 bit 整数の一致判定はここで別に組む
+// SSE2 だけを使用できる環境かを表す / SimdInt の SSE2 版は 32 bit 整数だけを扱うため、64 bit 整数の一致判定はここで別に実装する
 #if defined(__SSE2__) && !defined(__AVX2__)
 inline constexpr bool SSE2_ONLY = true;
 #else
@@ -446,13 +446,13 @@ inline constexpr bool SSE2_ONLY = false;
 
 }  // namespace simd_int_detail
 
-/// @brief simd_equal_bits が SIMD 命令で動くかを表す / SSE2 だけの環境でも 64 bit 整数を扱える
+/// @brief simd_equal_bits が SIMD 命令で動作するかを表す / SSE2 だけの環境でも 64 bit 整数を扱うことができる
 template<class T>
 inline constexpr bool simd_equal_bits_vectorized_v =
     simd_int_vectorized_v<T> || (simd_int_detail::SSE2_ONLY && simd_int_supported_v<T> && sizeof(T) == 8);
 
 /// @brief a[0, N) で a[i] == key となる要素を bit 列で返す / 0 < N <= 63
-/// 符号の有無は問わない / a[0, N) はすべて読める必要がある
+/// 符号の有無は問わない / a[0, N) のすべての要素が読み込み可能である必要がある
 template<int N, class T>
 inline simd_int_detail::lane_bits_t<N> simd_equal_bits(const T *a, const T key) {
     static_assert(simd_int_supported_v<T>);
@@ -466,13 +466,13 @@ inline simd_int_detail::lane_bits_t<N> simd_equal_bits(const T *a, const T key) 
             constexpr int i = decltype(chunk)::value * S::LANES;
             constexpr auto valid = simd_int_detail::full_mask<S>(N - i);
             const auto eq = S::cmpeq(S::load(valid, a + i), k);
-            // load は valid の外を 0 にするので、key が 0 でも valid の外を拾わないよう絞る
+            // load は valid の外の要素を 0 にするため、key が 0 でも valid の外を一致としないように valid との論理積を取る
             if constexpr (valid == S::ALL) bits |= Bits(eq) << i;
             else bits |= Bits(eq & valid) << i;
         }, std::make_index_sequence<(N + S::LANES - 1) / S::LANES>{});
 #if defined(__SSE2__) && !defined(__AVX2__)
     } else if constexpr (sizeof(T) == 8) {
-        // 32 bit ずつ比べ、上下の半分がともに一致した 64 bit 要素を一致とする
+        // 32 bit ずつ比較し、上位と下位の 32 bit がともに一致した 64 bit 要素を一致とする
         const __m128i k = _mm_set1_epi64x((long long)key);
         simd_int_detail::unroll([&](auto chunk) {
             constexpr int i = decltype(chunk)::value * 2;
@@ -491,8 +491,8 @@ inline simd_int_detail::lane_bits_t<N> simd_equal_bits(const T *a, const T key) 
     return bits;
 }
 
-/// @brief 64 bit 語の配列をビット演算で扱う / 実装は AVX2, SSE2, 逐次の順に選ぶ
-/// shl と shr は各語を r (0 <= r < 64) ビットずらし、語の外へ出たビットは捨てる / 1 の数え上げには simd_bits_popcount を使う
+/// @brief 64 bit 語の配列をビット演算で扱う / 実装は AVX2, SSE2, 逐次処理の順に選ぶ
+/// shl と shr は各語を r (0 <= r < 64) ビットシフトし、語の外へ出たビットは破棄する / 1 のビットの個数は simd_bits_popcount で求める
 #if defined(__AVX2__)
 
 struct SimdBits {
@@ -532,7 +532,7 @@ struct SimdBits {
 
 #elif defined(__SSE2__)
 
-// SSE2 段。1 の数え上げはビット演算で、非 0 判定は比較で行う
+// SSE2 版 / 1 のビットの個数はビット演算で求め、非 0 の判定は比較で行う
 struct SimdBits {
     static constexpr const char *NAME = "sse2";
     static constexpr bool VECTORIZED = true;
@@ -549,7 +549,7 @@ struct SimdBits {
     static Vec shl(Vec a, unsigned r) { return _mm_sll_epi64(a, _mm_cvtsi32_si128(int(r))); }
     static Vec shr(Vec a, unsigned r) { return _mm_srl_epi64(a, _mm_cvtsi32_si128(int(r))); }
     static bool nonzero(Vec a) { return _mm_movemask_epi8(_mm_cmpeq_epi8(a, _mm_setzero_si128())) != 0xFFFF; }
-    // 2 bit、4 bit、8 bit ごとの和を順に作る
+    // 2 bit、4 bit、8 bit ごとの和を順に求める
     static Vec byte_popcount(Vec x) {
         const __m128i m1 = _mm_set1_epi8(0x55), m2 = _mm_set1_epi8(0x33), m4 = _mm_set1_epi8(0x0F);
         x = _mm_sub_epi8(x, _mm_and_si128(_mm_srli_epi64(x, 1), m1));
@@ -591,7 +591,7 @@ struct SimdBits {
 
 #endif
 
-/// @brief load(j) が返す Vec (0 <= j < vectors) に含まれる 1 のビット数の和を返す / S は既定のまま使う
+/// @brief load(j) が返す Vec (0 <= j < vectors) に含まれる 1 のビットの個数の総和を返す / S は既定のまま使用する
 template <class Load, class S = SimdBits>
 inline uint64_t simd_bits_popcount(const size_t vectors, Load &&load) {
     auto total = S::zero();
@@ -599,7 +599,7 @@ inline uint64_t simd_bits_popcount(const size_t vectors, Load &&load) {
     if constexpr (S::HAS_POPCOUNT64) {
         for (; j < vectors; ++j) total = S::add64(total, S::popcount64(load(j)));
     } else {
-        // 1 本で各バイトは 8 以下なので、8 本ずつバイトのまま足しても 64 以下に収まる
+        // ベクトル 1 本では各バイトの値は 8 以下であるため、8 本ずつバイト単位のまま加算しても 64 以下に収まる
         const size_t groups = vectors / 8;
         for (size_t g = 0; g < groups; ++g) {
             auto bytes = S::zero();
@@ -689,7 +689,7 @@ struct Scalar {
 }  // namespace simd_vec_detail
 
 /// @brief 32 bit と 64 bit の符号付き整数と float, double の SIMD 演算 / 比較の結果は要素ごとのマスクで返す
-/// lt は NaN を含む要素で偽になる / mul_rounded は FMA に融合せず逐次と同じ値を返す / argmin は同じ値なら番号が最小の要素を返す
+/// lt は NaN を含む要素で偽になる / mul_rounded は FMA に融合せず逐次処理と同じ値を返す / argmin は同じ値なら番号が最小の要素を返す
 template<class T, class = void>
 struct SimdVec : simd_vec_detail::Scalar<T> {};
 
@@ -843,7 +843,7 @@ struct SimdVec<float> {
 
 #elif defined(__SSE2__)
 
-// SSE2 段。選択は論理演算で組み、64 bit の番号の一致は 32 bit ずつ比べる
+// SSE2 版 / 選択は論理演算で実装し、64 bit の番号の一致は 32 bit ずつ比較して判定する
 namespace simd_vec_detail {
 inline __m128i select128(__m128i m, __m128i a, __m128i b) { return _mm_or_si128(_mm_and_si128(m, a), _mm_andnot_si128(m, b)); }
 inline __m128i cmpeq64(__m128i a, __m128i b) {

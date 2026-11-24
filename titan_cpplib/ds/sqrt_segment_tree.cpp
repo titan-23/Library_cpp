@@ -82,7 +82,7 @@ public:
         return a[k][i-k*size];
     }
 
-    /// @brief a[i] を v に変更する / op が可換群であることが前提 / O(1)
+    /// @brief a[i] を v に変更する / op が可換群の演算であることが前提 / O(1)
     void set(int i, const T &v) {
         int k = i / size;
         int j = i - k*size;

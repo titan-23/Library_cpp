@@ -85,7 +85,7 @@ private:
     tuple<int, TreeNodeID, vector<SubStateID>> get_next_beam(State* state, TreeNodeID node, int turn) {
         int cnt = 0;
         Action action = DAMMY_ACTION;
-        while (true) { // 子が一つの間は適用して進む
+        while (true) { // 子が 1 つの間は適用して進む
             if (treenode_pool.get(node)->child.size() != 1) break;
             ++cnt;
             node = treenode_pool.get(node)->child[0];
@@ -162,7 +162,7 @@ private:
     }
 
 public:
-    /// @brief ビームサーチを実行し、行動列を返す / verbose なら途中のスコアを標準エラー出力に書く
+    /// @brief ビームサーチを実行し、行動列を返す / verbose なら途中のスコアを標準エラー出力に表示する
     vector<Action> search(BeamParam &param, const bool verbose=false) {
         if (verbose) cerr << PRINT_GREEN << "Info: start search()" << PRINT_NONE << endl;
         init_bs(param);
@@ -182,7 +182,7 @@ public:
 
             // 次のビーム候補を求める
             auto [apply_only_turn, next_root, next_beam] = get_next_beam(state, root, turn-now_turn);
-            rnd.shuffle(next_beam); // 多様性を確保するために無作為に並べ替える。効果は未確認
+            rnd.shuffle(next_beam); // 多様性を確保するために無作為に並べ替える / 効果は未確認
             root = next_root;
             now_turn += apply_only_turn;
             assert(!next_beam.empty());
@@ -192,7 +192,7 @@ public:
                 })))->score << endl;
             }
 
-            // ビームを絞る
+            // ビームを絞り込む
             // int beam_width = min(param.beam_width, (int)next_beam.size());
             int beam_width = min(param.get_beam_width(param.max_turn-turn, treenode_pool.used_size(), param.time_limit-beam_timer.elapsed()), (int)next_beam.size());
             nth_element(next_beam.begin(), next_beam.begin() + beam_width, next_beam.end(), [&] (const SubStateID &left, const SubStateID &right) {

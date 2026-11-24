@@ -15,7 +15,7 @@ class AHCSettings:
     direction: str = "maximize"  # minimize / maximize
     njobs: int = 100
     timeout: Optional[int] = None
-    is_int: bool = True  # スコアが整数なら True 小数なら False
+    is_int: bool = True  # スコアが整数なら True、小数なら False
 
     filename = "./ahc064.cpp"
     compile_command = f"make ahc064"
@@ -48,7 +48,7 @@ class AHCSettings:
 
     @staticmethod
     def objective(trial: optuna.trial.Trial) -> tuple:
-        # 返り値のタプルはコマンドライン引数として渡す順番にする
+        # 返り値のタプルの要素はコマンドライン引数として渡す順に並べる
 
         # 焼きなましの温度
         start_temp = trial.suggest_float("start_temp", 1e0, 1e5, log=True)
@@ -63,7 +63,7 @@ class AHCSettings:
         W = list(map(x / sum(W) for x in W))
         return (start_temp, k, *W)
 
-    # 探索の起点として最初に評価するパラメータ値の辞書をリストを指定する
+    # 探索の起点として最初に評価するパラメータ値の辞書のリストを指定する
     optuna_init_trials: list[dict[str, int | float]] = [
         # {"start_temp": 1000.0, "k": 0.01, "w1": 1.0, "w2": 1.0,},
     ]

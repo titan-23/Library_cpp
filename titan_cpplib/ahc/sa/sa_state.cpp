@@ -8,14 +8,14 @@
 #include "titan_cpplib/ahc/sa/sa.cpp"
 using namespace std;
 
-// 最小化の焼きなまし
+// スコアを最小化する焼きなまし
 namespace sa {
 
 void sa_init() {
     titan23::Random sarnd;
 }
 
-/// @brief sa_run に渡す状態の雛形 / TODO の箇所を問題に合わせて書く
+/// @brief sa_run に渡す状態の雛形 / TODO の箇所を問題に合わせて実装する
 class State {
 public:
     titan23::Random sarnd;
@@ -30,7 +30,7 @@ public:
     inline static Param param;
 
     // TODO
-    /// @brief 直前の遷移の情報 / type は遷移の種類で [0, TYPE_CNT)
+    /// @brief 直前の遷移の情報 / type は遷移の種類で、[0, TYPE_CNT) の値を取る
     struct Changed {
         int TYPE_CNT = 0; // TODO
         int type;
@@ -66,17 +66,17 @@ public:
     ScoreType get_true_score() const { return score; }
 
     // TODO
-    /// @brief 近傍へ遷移し、score を更新する / threshold を超えたら必ず棄却され、等しければ遷移する
-    /// is_valid を false にすると必ず棄却され、rollback は呼ばれる / progress は進行度で 0.0 から 1.0
+    /// @brief 近傍へ遷移し、score を更新する / score が threshold を超えたら必ず棄却され、等しければ遷移する
+    /// is_valid を false にすると必ず棄却され、rollback が呼び出される / progress は進行度で、0.0 から 1.0 の値を取る
     void modify(const int64_t iter, const ScoreType threshold, const double progress) {}
 
     // TODO
-    /// @brief modify の前の状態に戻す / score はライブラリが元の値に上書きするので復元しなくてよい
-    /// is_valid = false でも呼ばれるので注意
+    /// @brief modify の前の状態に戻す / score はライブラリが元の値に戻すため、復元は不要
+    /// is_valid = false の場合も呼び出されることに注意する
     void rollback() {}
 
     // TODO
-    /// @brief 遷移を確定する / 遅延評価にした場合は、盤面への書き込みをここで確定させる
+    /// @brief 遷移を確定する / 遅延評価の場合は盤面の変更をここで確定させる
     void advance() {}
 
     // TODO

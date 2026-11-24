@@ -13,7 +13,7 @@ using namespace std;
 
 namespace flying_squirrel {
 
-/// @brief 展開順を cand から求め、隣接する葉の LCP から候補間の状態差分を復元するビームサーチ
+/// @brief 展開順を cand から求め、隣接する葉の LCP から候補間の状態の差分を復元するビームサーチ
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
 class BeamSearchWithTree {
 private:
@@ -39,7 +39,7 @@ private:
     vector<vector<Action>> action_slab_pool;
     vector<vector<Slot>> parent_slab_pool;
 
-    /// @brief 生存候補 1 つを表す / Action は世代ブロック内の位置で持つ
+    /// @brief 生存候補 1 つを表す / Action は世代別のブロック内の位置で参照する
     struct CandIdx {
         int parent_leaf;
         ScoreType score;
@@ -74,7 +74,7 @@ private:
         return cand[cand.size() - 1 - ordinal].action_slot;
     }
 
-    /// @brief 確定した接頭辞を退避して不要な世代ブロックを再利用プールへ移す
+    /// @brief 確定した接頭辞を退避し、不要になった世代別のブロックを再利用プールへ移す
     void confirm_and_free(int keep_from) {
         while (freed_to + 1 < keep_from) {
             int depth = freed_to + 1;
@@ -88,7 +88,7 @@ private:
         }
     }
 
-    /// @brief 親のスロットを旧 cand から求め、最終候補を世代別ブロックへ格納する
+    /// @brief 親のスロットを更新前の cand から求め、最終候補を世代別のブロックへ格納する
     void finalize_generation(int depth) {
         int sz = candidates.size();
         if ((int)action_block.size() <= depth) action_block.resize(depth + 1);
@@ -126,14 +126,14 @@ private:
         }
     }
 
-    /// @brief 根直下の候補から最初の隣接葉 LCP を作る
+    /// @brief 根直下の候補から、隣接する葉の LCP の初期値を作成する
     void build_root_frontier() {
         int sz = (int)cand.size();
         adjacent_lcp.assign(max(0, sz - 1), 0);
         entry_lcp = 0;
     }
 
-    /// @brief 整列後の候補から次世代の隣接葉 LCP を作る
+    /// @brief ソート後の候補から、次世代における隣接する葉の LCP を作成する
     void build_next_frontier(int depth) {
         int old_size = (int)adjacent_lcp.size() + 1;
         int next_size = (int)cand.size();
@@ -165,7 +165,7 @@ private:
         }
     }
 
-    /// @brief 確定済みの接頭辞と現在の trace から終了経路を作る
+    /// @brief 確定済みの接頭辞と現在の trace から完成解の経路を作成する
     void build_best_path(int upto) {
         best_finished_path = result_prefix;
         for (int depth = freed_to + 1; depth <= upto; ++depth) {
@@ -173,7 +173,7 @@ private:
         }
     }
 
-    /// @brief 現在の State を根へ戻し、返却経路を適用した最終状態を構築する
+    /// @brief 現在の State を根の状態へ戻し、探索結果として返す操作列を適用した最終状態を構築する
     template<bool materialize_final_state>
     unique_ptr<State> build_final_state(State& state, const vector<Action>& result_actions, int current_depth) {
         if constexpr (materialize_final_state) {
@@ -190,7 +190,7 @@ private:
         }
     }
 
-    /// @brief 列挙された Action の評価と候補登録を行う
+    /// @brief 列挙された Action の評価と候補への登録を行う
     struct Submitter {
         BeamSearchWithTree &bs;
         State &st;
@@ -263,7 +263,7 @@ private:
         result_prefix.clear();
     }
 
-    /// @brief 生存候補を記録して脱落した履歴ノードの状態を更新する
+    /// @brief 生存候補を記録し、脱落した履歴ノードの状態を更新する
     void record_turn_survivors(int turn_label) {
         unordered_set<int> survived;
         for (int i = 0; i < candidates.size(); ++i) survived.insert(candidates.next_beam[i].node_id);
@@ -276,7 +276,7 @@ private:
         snapshots.push_back({turn_label, vector<int>(survived.begin(), survived.end())});
     }
 
-    /// @brief vector 列挙で得た Action を評価して候補へ登録する
+    /// @brief enumerate_actions が vector に列挙した Action を評価し、候補へ登録する
     void submit_vector_action(State& state, Action& action, int parent_leaf, int parent_node_id, int turn) {
         auto [score, hash, finished] = state.try_op(action, candidates.threshold());
         if (score >= INF) {
@@ -315,7 +315,7 @@ private:
 
 public:
     /// @brief ビームサーチを実行し、探索結果を返す / materialize_final_state が true なら最終状態も構築する
-    /// record_history が true のとき、履歴を JSON で history_file に書き出す
+    /// record_history が true の場合は履歴を JSON 形式で history_file に出力する
     template<bool materialize_final_state=true>
     Result search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
         if (param.max_turn <= 0 || param.beam_width <= 0) {

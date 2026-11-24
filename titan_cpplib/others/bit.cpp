@@ -5,7 +5,7 @@
 #include <climits>
 #include <cstdint>
 #include <type_traits>
-// Zen 1/2 では PDEP が遅いので、それ以外の BMI2 対応 CPU でだけ使う
+// Zen 1/2 では PDEP が遅いため、それ以外の BMI2 対応 CPU でだけ使用する
 #if defined(__BMI2__) && defined(__x86_64__) && !defined(__znver1__) && !defined(__znver2__)
 #define TITAN23_FAST_PDEP 1
 #include <immintrin.h>
@@ -58,7 +58,7 @@ constexpr int countr_zero(T x) {
     }
 }
 
-/// @brief x を表すのに要る bit 数を返す / x == 0 なら 0
+/// @brief x を表すのに必要な bit 数を返す / x == 0 なら 0 を返す
 template<typename T>
 constexpr int bit_length(T x) {
     return sizeof(T) * CHAR_BIT - countl_zero(x);
@@ -83,7 +83,7 @@ constexpr int popcount(T x) {
 
 namespace bit_detail {
 
-// table[b][j] は、1 バイトの値 b で下から j 番目に立っている bit の位置
+// table[b][j] は 1 バイトの値 b で下から j 番目に立っている bit の位置を表す
 constexpr array<array<uint8_t, 8>, 256> make_select_in_byte_table() {
     array<array<uint8_t, 8>, 256> table{};
     for (int b = 0; b < 256; ++b) {
@@ -99,12 +99,12 @@ inline constexpr array<array<uint8_t, 8>, 256> select_in_byte_table = make_selec
 
 }  // namespace bit_detail
 
-/// @brief x で下から k 番目に立っている bit の位置を返す / k は 0 始まりで、k < popcount(x) が前提
+/// @brief x で下から k 番目に立っている bit の位置を返す / k は 0 始まりで、k < popcount(x) を前提とする
 inline int select64(unsigned long long x, int k) {
 #if defined(TITAN23_FAST_PDEP)
     return __builtin_ctzll(_pdep_u64(1ull << k, x));
 #else
-    // 下半分の 1 の個数で、k 番目が上下どちらにあるかを 3 回絞り込み、最後の 1 バイトは表で引く
+    // 下半分の 1 の個数で k 番目が上下どちらにあるかを判定して範囲を 3 回絞り込み、最後の 1 バイトは表を引いて求める
     int pos = 0;
     for (int width = 32; width >= 8; width >>= 1) {
         const int count = __builtin_popcountll(x & ((1ull << width) - 1));

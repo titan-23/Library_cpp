@@ -12,7 +12,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 重みの列を B 木で持ち、位置の挿入・削除と区間和を扱う / 複数の列が節点の領域を共有する
+/// @brief 重みの列を B 木で保持し、位置を指定した挿入と削除、区間和の計算を行う / 複数の列で節点の領域を共有する
 template<typename W>
 class BTreeSumSequence {
 private:
@@ -37,7 +37,7 @@ private:
         array<W, _BRANCH> child_sum;
         uint8_t count;
 
-        // SIMD の探索は未使用の要素も読むので、探索に使う累積値を初期化する
+        // SIMD による探索は未使用の要素も参照するため、探索で使用する累積値を初期化する
         Internal() : child_size{}, count(0) {}
     };
 
@@ -47,7 +47,7 @@ private:
     };
 
 public:
-    /// @brief 1 本の列を表す / 根の番号と高さを持つ
+    /// @brief 1 本の列を表す / 根の番号と高さを保持する
     struct Sequence {
         int root;
         uint8_t height;
@@ -166,7 +166,7 @@ private:
         }
     }
 
-    // pos の子を child に置き換え、累積値を child の実際の値に合わせる
+    // 位置 pos の子を child に置き換え、累積値を child の実際の値に合わせる
     void _set_child(const int node, const int pos, const int child, const int child_level) {
         Internal &n = _internals[node];
         const Stats old_stats = _child_stats(n, pos);
@@ -430,7 +430,7 @@ private:
         _rebalance_internal(sequence, path, slots, parent_depth, 1);
     }
 
-    // 葉の [l, r) の和。マスク付きの読み込みは範囲外の要素を読まない
+    // 葉の区間 [l, r) の和 / マスク付きの読み込みは範囲外の要素を参照しない
     W _leaf_range_sum(const int leaf, const int l, const int r) const {
         const W *weight = _leaves[leaf].weight.data();
         if constexpr (simd_int_vectorized_v<W>) {
@@ -489,16 +489,16 @@ private:
     }
 
 public:
-    /// @brief 列を 1 本も持たない状態で作る
+    /// @brief 列を 1 本も保持しない状態で構築する
     BTreeSumSequence() : _leaves(1), _internals(1), _free_leaf(0), _free_internal(0) {}
 
-    /// @brief 全列の長さの合計 total_size と列の数 sequence_count に合わせて領域を予約する
+    /// @brief すべての列の長さの合計 total_size と列の数 sequence_count に合わせて領域を予約する
     void reserve(int total_size, int sequence_count) {
         _leaves.reserve(_leaves.size() + sequence_count + (total_size + _LEAF_CAP - 1) / _LEAF_CAP);
         _internals.reserve(_internals.size() + total_size / (_LEAF_CAP * _BRANCH_MIN) + sequence_count / 32 + 1);
     }
 
-    /// @brief start <= i < end の範囲で weights[order[i]] を並べた列を作る / O(end - start)
+    /// @brief start <= i < end の範囲で weights[order[i]] を並べた列を構築する / O(end - start)
     Sequence build(const vector<int> &order, const vector<W> &weights, int start, int end) {
         Sequence sequence;
         int n = end - start;
@@ -574,7 +574,7 @@ public:
     W range_sum(const Sequence &sequence, int l, int r) const {
         assert(0 <= l && l <= r && r <= len(sequence));
         if (l == r) return W(0);
-        // l と r が同じ子に入る間は共通の経路を降り、分かれたら各々の前置和を求める
+        // l と r が同じ子に含まれる間は共通の経路を降り、異なる子に分かれた時点で l と r のそれぞれについて先頭からの和を求める
         int node = sequence.root;
         int level = sequence.height;
         while (level > 0) {
@@ -629,7 +629,7 @@ public:
         int level = sequence.height;
         while (level > 0) {
             Internal &n = _internals[node];
-            // k は 0 以上ノードの長さ以下なので、最後の子より後ろには進まない
+            // k は 0 以上かつ節点の部分木の要素数以下であるため、降りる先が最後の子より後ろになることはない
             const int pos = _find_size(n, k - 1);
             k -= _size_before(n, pos);
             // 祖先の累積値は降りながら更新する
@@ -675,7 +675,7 @@ public:
         return weight;
     }
 
-    /// @brief 位置 k の重みに delta を足し、足す前の重みを返す / O(log n)
+    /// @brief 位置 k の重みに delta を加え、加える前の重みを返す / O(log n)
     W add(Sequence &sequence, int k, const W delta) {
         assert(0 <= k && k < len(sequence));
         array<int, _MAX_HEIGHT> path;
@@ -690,7 +690,7 @@ public:
         return old;
     }
 
-    /// @brief 位置 k の重みを weight にし、変更前の重みを返す / O(log n)
+    /// @brief 位置 k の重みを weight に変更し、変更前の重みを返す / O(log n)
     W set(Sequence &sequence, int k, const W weight) {
         assert(0 <= k && k < len(sequence));
         array<int, _MAX_HEIGHT> path;
@@ -706,7 +706,7 @@ public:
         return old;
     }
 
-    /// @brief 列を vector にして返す / O(n)
+    /// @brief 列を vector に変換して返す / O(n)
     vector<W> tovector(const Sequence &sequence) const {
         vector<W> weights;
         weights.reserve(len(sequence));

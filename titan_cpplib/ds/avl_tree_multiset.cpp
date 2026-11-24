@@ -10,11 +10,11 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief AVL 木による多重集合 / 同じ値は 1 個の節点にまとめて個数を持つ
+/// @brief AVL 木による多重集合 / 同じ値は 1 個の節点にまとめて個数を保持する
 template<typename T>
 class AVLTreeMultiset {
     public:
-    /// @brief 木の節点 / val は key の個数、valsize は部分木の個数の和
+    /// @brief 木の節点 / val は key の個数、valsize は部分木の val の総和
     class AVLTreeMultisetNode {
         public:
         using AVLTreeMultisetNodePtr = AVLTreeMultisetNode*;
@@ -33,7 +33,7 @@ class AVLTreeMultiset {
             return hl - hr;
         }
 
-        /// @brief 子から valsize と height を計算し直す / O(1)
+        /// @brief 子から valsize と height を再計算する / O(1)
         void update() {
             valsize = val + (left ? left->valsize : 0) + (right ? right->valsize : 0);
             height = 1 + max((left ? left->height : 0), (right ? right->height : 0));
@@ -45,7 +45,7 @@ class AVLTreeMultiset {
     using AVLTreeMultisetNodePtr = AVLTreeMultisetNode*;
     AVLTreeMultisetNodePtr root;
 
-    /// @brief a から木を作り根を返す / 等しい値は 1 個の節点にまとめる / O(n log n)
+    /// @brief a から木を構築して根を返す / 等しい値は 1 個の節点にまとめる / O(n log n)
     AVLTreeMultisetNodePtr build(vector<T> a) {
         vector<T> x;
         vector<int> y;
@@ -91,7 +91,7 @@ class AVLTreeMultiset {
         return _build(_build, 0, x.size());
     }
 
-    /// @brief 削除の後、node から根へ向かって平衡を直す / O(log n)
+    /// @brief 削除の後に node から根へ向かって平衡を回復する / O(log n)
     void _remove_balance(AVLTreeMultisetNodePtr node) {
         while (node) {
             AVLTreeMultisetNodePtr new_node = nullptr;
@@ -126,7 +126,7 @@ class AVLTreeMultiset {
         }
     }
 
-    /// @brief 挿入の後、node から根へ向かって平衡を直す / O(log n)
+    /// @brief 挿入の後に node から根へ向かって平衡を回復する / O(log n)
     void _add_balance(AVLTreeMultisetNodePtr node) {
         AVLTreeMultisetNodePtr new_node = nullptr;
         while (node) {
@@ -162,7 +162,7 @@ class AVLTreeMultiset {
         }
     }
 
-    /// @brief node から根までの valsize と height を計算し直す / O(log n)
+    /// @brief node から根までの valsize と height を再計算する / O(log n)
     void _update_par(AVLTreeMultisetNodePtr node) {
         while (node) {
             node->update();
@@ -180,7 +180,7 @@ class AVLTreeMultiset {
         return nullptr;
     }
 
-    /// @brief 小さい方から k 番目の要素を持つ節点を返す / 0-indexed / O(log n)
+    /// @brief 小さい方から k 番目の要素を含む節点を返す / 0-indexed / O(log n)
     AVLTreeMultisetNodePtr find_kth(int k) const {
         AVLTreeMultisetNodePtr node = root;
         while (true) {
@@ -197,11 +197,11 @@ class AVLTreeMultiset {
     }
 
 public:
-    /// @brief 空の多重集合を作る / missing は初期化しない
+    /// @brief 空の多重集合を構築する / missing は初期化しない
     AVLTreeMultiset() : root(nullptr) {}
-    /// @brief 空の多重集合を作る / 該当する要素がない探索は missing を返す
+    /// @brief 空の多重集合を構築する / 該当する要素がない探索は missing を返す
     AVLTreeMultiset(T missing) : missing(missing), root(nullptr) {}
-    /// @brief a の要素から作る / O(n log n)
+    /// @brief a の要素から構築する / O(n log n)
     AVLTreeMultiset(const vector<T> &a, T missing) : missing(missing) {
         this->root = build(a);
     }
@@ -261,7 +261,7 @@ public:
         }
     }
 
-    /// @brief key を最大 val 個削除し、key があったかを返す / O(log n)
+    /// @brief key を最大 val 個削除し、key が存在したかを返す / O(log n)
     bool discard(const T &key, int val=1) {
         AVLTreeMultisetNodePtr node = find_key(key);
         if (!node) return false;
@@ -274,7 +274,7 @@ public:
         return true;
     }
 
-    /// @brief key を最大 val 個削除する / key がある必要がある / O(log n)
+    /// @brief key を最大 val 個削除する / key が存在する必要がある / O(log n)
     void remove(const T &key, int val=1) {
         AVLTreeMultisetNodePtr node = find_key(key);
         assert(node);
@@ -447,7 +447,7 @@ public:
         return root ? root->valsize : 0;
     }
 
-    /// @brief 全要素を {a, b, ...} の形で標準出力に書く / O(n)
+    /// @brief 全要素を {a, b, ...} の形で標準出力に出力する / O(n)
     void print() const {
         vector<T> a = tovector();
         int n = a.size();
@@ -459,7 +459,7 @@ public:
         cout << "}" << endl;
     }
 
-    /// @brief 木の不変条件を assert で調べる / デバッグ用
+    /// @brief 木の不変条件を assert で確認する / デバッグ用
     void check() const {
         if (!root) {
         // cout << "height=0" << endl;

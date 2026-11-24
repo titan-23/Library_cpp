@@ -9,7 +9,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief √n 以下の素数表を使って素因数分解と約数列挙をする
+/// @brief √n 以下の素数表を使用して素因数分解と約数列挙を行う
 class PrimeFactorizer {
 private:
     vector<int> primelist;
@@ -17,7 +17,7 @@ private:
 public:
     PrimeFactorizer() {}
 
-    /// @brief 最大値 n に対して √n 以下の素数表を作る / 時間 O(√nloglog√n)、空間 O(√n)
+    /// @brief 最大値 n に対して √n 以下の素数表を作成する / 時間 O(√nloglog√n)、空間 O(√n)
     PrimeFactorizer(long long n) {
         long long max_sqrt = sqrt(n+1) + 1;
         vector<bool> is_prime(max_sqrt + 1, true);
@@ -38,7 +38,7 @@ public:
         }
     }
 
-    /// @brief n を素因数分解し、素因数を重複込みで昇順に返す / O(√n / log√n)
+    /// @brief n を素因数分解し、素因数を重複も含めて昇順に返す / O(√n / log√n)
     vector<long long> p_factorization(long long n) const {
         vector<long long> ret;
         for (long long p : primelist) {

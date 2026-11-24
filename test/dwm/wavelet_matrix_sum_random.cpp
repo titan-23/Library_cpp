@@ -100,7 +100,7 @@ void verify(const vector<Key> &keys, const vector<Weight> &weights, const int si
         assert(matrix.range_count(l, r, value) == range_count);
         assert(ordinary.range_count(l, r, value) == range_count);
         if (rank > 0) {
-            // 先頭から j 番目の value の位置を、WaveletMatrix の select と比べる
+            // 先頭から j 番目の value の位置を WaveletMatrix の select の結果と比較する
             const int j = rng() % rank;
             int position = -1;
             for (int i = 0, seen = 0; i < r; ++i) {

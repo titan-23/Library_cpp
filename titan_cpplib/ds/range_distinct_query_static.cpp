@@ -13,17 +13,17 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 静的な列の区間に含まれる異なる値の個数を数える / 索引の大きさは O(n log n) bits
+/// @brief 静的な列の区間に含まれる異なる値の個数を求める / メモリ使用量は O(n log n) bits
 template<typename T>
 class StaticRangeDistinctQuery {
 private:
     WaveletMatrix<int> wm;
 
     static WaveletMatrix<int> build(const vector<T> &a) {
-        // BitVector の切り上げ計算 n+63 が int に収まる範囲に限る
+        // n は BitVector が切り上げのために計算する n+63 が int に収まる範囲に限る
         assert(a.size() <= static_cast<size_t>(numeric_limits<int>::max() - 63));
         const int n = static_cast<int>(a.size());
-        // prev[i] は直前の同じ値の位置 + 1 で、なければ 0
+        // prev[i] は直前の同じ値の位置 + 1 で、なければ 0 とする
         vector<int> prev(n);
         map<T, int> last;
         for (int i = 0; i < n; ++i) {
@@ -44,7 +44,7 @@ public:
     int count(const int l, const int r) const {
         assert(0 <= l && l <= r && r <= len());
         if (l == r) return 0;
-        // prev[i] <= l の要素が、区間内でその値の最初の出現となる
+        // prev[i] <= l となる要素は、区間内でその値が最初に現れる要素である
         return wm.range_freq(l, r, l + 1);
     }
 

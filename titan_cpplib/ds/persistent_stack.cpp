@@ -37,7 +37,7 @@ public:
         return node->key;
     }
 
-    /// @brief 最後に積んだ値を取り除いたスタックとその値を返す / O(1)
+    /// @brief 最後に積んだ値を取り除いたスタックと、その値を返す / O(1)
     pair<PersistentStack<T>, T> pop() const {
         assert(node);
         T res = node->key;

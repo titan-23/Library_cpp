@@ -1,25 +1,46 @@
 # グリッド
 
-AHCの盤面処理をまとめたディレクトリです。セル壁と辺壁の盤面をビット並列で処理できます。
+AHC の盤面処理のライブラリを格納したディレクトリです。壁と道の盤面をビット並列で処理する Bitboard と、鏡で光を反射させる盤面を扱う MirrorGrid があります。
 
-## 選び方
+## 実装の選択
 
-| 条件 | 実装 |
-|---|---|
-| 幅が64以下または128以下 | `bitboard.cpp` |
-| 全セル数が64以下または128以下 | `flat_bitboard.cpp` |
-| 隣接セル間に壁があり、幅が64以下または128以下 | `edge_wall_bitboard.cpp` |
+| 盤面 | 実装 | 文書 |
+|---|---|---|
+| セルが壁か道で、幅が 64 以下または 128 以下 | `bitboard.cpp` | [Bitboard](docs/bitboard.md) |
+| セルが壁か道で、全セル数が 64 以下または 128 以下 | `flat_bitboard.cpp` | [Bitboard](docs/bitboard.md) |
+| 隣接するセルの間に壁があり、幅が 64 以下または 128 以下 | `edge_wall_bitboard.cpp` | [EdgeWallBitboard](docs/edge_wall_bitboard.md) |
+| 鏡やブロックを配置し、光の終点を求める | `mirror_grid.cpp` | [MirrorGrid](docs/mirror_grid.md) |
 
-`bitboard.cpp` は1行を一つの整数で持ちます。`flat_bitboard.cpp` は盤面全体を一つの整数で持ちます。どちらも4近傍・8近傍、集合演算、到達判定、最短距離、連結成分などに対応します。
+include するファイルは、使用するクラスのファイル 1 つだけです。
 
-`edge_wall_bitboard.cpp` は方向ごとの通行可能な辺を持つ4近傍専用の実装です。壁に当たった場合の停止を含む集合遷移にも対応します。
+```cpp
+#include "titan_cpplib/ahc/grid/mirror_grid.cpp"
+using namespace titan23;
+```
+
+- `bitboard.cpp` は 1 行を 1 つの整数で保持します。
+- `flat_bitboard.cpp` は盤面全体を 1 つの整数で保持します。
+- `bitboard.cpp` と `flat_bitboard.cpp` は 4 近傍と 8 近傍、集合演算、到達判定、最短距離、連結成分などに対応します。
+- `edge_wall_bitboard.cpp` は方向ごとに通行可能な辺を保持する 4 近傍専用の実装です。壁があるセルが元の位置に残る動作を含む、集合の移動にも対応します。
+- `mirror_grid.cpp` は直進、`/`、`\`、ブロックの 4 種類のセルを扱います。外周のポートから入射した光の終点を定数時間で返します。1 つのセルを変更した場合に終点が変化するポートも、盤面を変更せずに求めることができます。
 
 ## 構成
 
-- `bitboard_common.cpp`: 4近傍と8近傍の共通定義
-- `edge_wall_bitboard.cpp`: セル間の壁を持つグリッド
-- [Bitboardの使い方](docs/bitboard.md)
-- [辺に壁があるグリッド用Bitboard](docs/edge_wall_bitboard.md)
-- [一般Gridの設計案](docs/design.md)
+| ファイル | 内容 |
+|---|---|
+| `grid_common.cpp` | 方向 `GridDirection`、4 近傍と 8 近傍の移動、アサーション用マクロ |
+| `row_bitboard_base.cpp` | `Bitboard` と `EdgeWallBitboard` に共通の集合演算 |
+| `bitboard.cpp` | 1 行を 1 つの整数で保持する Bitboard |
+| `flat_bitboard.cpp` | 盤面全体を 1 つの整数で保持する Bitboard |
+| `edge_wall_bitboard.cpp` | セル間に壁がある Bitboard |
+| `mirror_grid.cpp` | 鏡とブロックを配置するグリッド |
 
-探索用の作業領域を内部で共有するため、同じインスタンスで複数の探索を同時に実行しないでください。
+`grid_common.cpp` と `row_bitboard_base.cpp` は、ほかのファイルが include する共通部品です。内容は[グリッドの共通部品](docs/grid_common.md)に記載しています。`clear()` と `fill()` の廃止など、以前の版からの変更点も同じ文書に記載しています。
+
+[一般 Grid の設計案](docs/design.md)は、セルの型を限定しない `Grid<Cell>` の設計案であり、未実装です。
+
+## 共通の注意点
+
+- Bitboard の探索は内部の作業領域を共有します。同じインスタンスで複数の探索を同時に実行しないでください。
+- 引数の範囲チェックは `TITAN_DEBUG` の定義時だけ行います。開発時は include の前に `#define TITAN_DEBUG` を記述します。
+- 方向の順序はどのファイルでも上、右、下、左です。

@@ -19,12 +19,12 @@ private:
     int bit, msk;
 
     vector<T> vertexcost;
-    vector<T> vcost1;  // 頂点の部分木用。in に +w、out に 0
-    vector<T> vcost2;  // 頂点のパス用。in に +w、out に -w
+    vector<T> vcost1;  // 頂点の部分木用 / in に +w、out に 0
+    vector<T> vcost2;  // 頂点のパス用 / in に +w、out に -w
     vector<T> ecost1;  // 辺の部分木用
     vector<T> ecost2;  // 辺のパス用
-    vector<int> nodein, nodeout, depth, par;  // in/out 巡回の位置。巡回の長さは 2n
-    vector<int> visit;     // LCA 用に訪れた頂点を並べた巡回。長さ 2n-1
+    vector<int> nodein, nodeout, depth, par;  // in/out を記録する Euler tour での位置 / この Euler tour の長さは 2n
+    vector<int> visit;     // LCA 用に訪問した頂点を順に並べた Euler tour / 長さ 2n-1
     vector<int> firstocc;  // visit での最初の出現位置
 
     titan23::FenwickTree<T> vcost_subtree;
@@ -56,16 +56,16 @@ public:
         visit.assign(2*n-1, 0);
         firstocc.assign(n, -1);
 
-        // 1 回の DFS で、重み用の in/out 巡回 t と LCA 用の巡回 vt を作る
-        int t = -1;   // in/out 巡回の添字。長さ 2n
-        int vt = -1;  // visit の添字。長さ 2n-1
+        // 1 回の DFS で、重み用の in/out の Euler tour t と LCA 用の Euler tour vt を作成する
+        int t = -1;   // in/out の Euler tour の添字 / 長さ 2n
+        int vt = -1;  // visit の添字 / 長さ 2n-1
         depth[root] = 0;
         stack<pair<int, T>> st;
         st.push({~root, 0});
         st.push({root, 0});
         while (!st.empty()) {
             auto [v, ec] = st.top(); st.pop();
-            if (v >= 0) {  // 入場
+            if (v >= 0) {  // 行きがけ
                 t++;
                 nodein[v] = t;
                 vcost1[t] = vertexcost[v];
@@ -82,7 +82,7 @@ public:
                     st.push({~x, c});
                     st.push({x, c});
                 }
-            } else {  // 退場
+            } else {  // 帰りがけ
                 v = ~v;
                 t++;
                 nodeout[v] = t + 1;
@@ -90,7 +90,7 @@ public:
                 vcost2[t] = -vertexcost[v];
                 ecost1[t] = 0;
                 ecost2[t] = -ec;
-                if (par[v] != -1) {  // 親へ戻る = 親を記録
+                if (par[v] != -1) {  // 親へ戻るときに親を記録する
                     vt++;
                     visit[vt] = par[v];
                 }

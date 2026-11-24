@@ -10,7 +10,7 @@ using namespace std;
 
 namespace {
 
-// 長さと 1 の密度を変えながら、rank / access / select を素朴な計算と比べる
+// 長さと 1 の密度を変更しながら、rank / access / select を素朴な計算と比較する
 void run(const uint64_t seed, const int max_n, const int iterations) {
     mt19937_64 rng(seed);
     for (int it = 0; it < iterations; ++it) {
@@ -19,7 +19,7 @@ void run(const uint64_t seed, const int max_n, const int iterations) {
         vector<int> a(n);
         for (int &x : a) x = int(rng() % 100) < density;
 
-        // 関数から作る版と、set と build で作る版の両方を確かめる
+        // 関数から構築したものと、set と build で構築したものの両方を確認する
         titan23::BitVector from_function(n, [&](const int i) { return a[i]; });
         titan23::BitVector from_set(n);
         for (int i = 0; i < n; ++i) {
@@ -53,7 +53,7 @@ void run(const uint64_t seed, const int max_n, const int iterations) {
 }  // namespace
 
 int main() {
-    // 64 bit 境界と select の標本間隔 256 をまたぐ長さを多く含める
+    // 64 bit の境界と select のサンプリング間隔 256 をまたぐ長さを多く含める
     run(1, 70, 2000);
     run(2, 600, 1000);
     run(3, 5000, 300);

@@ -14,7 +14,7 @@ struct FenwickTree {
     int _n, _s;
     vector<T> _tree;
 
-    // n 以上の最小の 2 冪を返す
+    // n 以上の最小の 2 のべき乗を返す
     static int _calc_s(const int n) {
         int s = 1;
         while (s < n) s <<= 1;
@@ -83,7 +83,7 @@ struct FenwickTree {
         add(k, x-pre);
     }
 
-    /// @brief a[0] + ... + a[i] >= w となる最小の i を返す / 無ければ n、w == 0 なら -1 / 要素は非負が前提 / O(log n)
+    /// @brief a[0] + ... + a[i] >= w となる最小の i を返す / 無ければ n を返し、w == 0 の場合は -1 を返す / 要素が非負であることを前提とする / O(log n)
     int bisect_left(T w) const {
         int i = 0, s = _s;
         while (s) {
@@ -96,7 +96,7 @@ struct FenwickTree {
         return (w ? i : -1);
     }
 
-    /// @brief a[0] + ... + a[i] > w となる最小の i を返す / 無ければ n / 要素は非負が前提 / O(log n)
+    /// @brief a[0] + ... + a[i] > w となる最小の i を返す / 無ければ n を返す / 要素が非負であることを前提とする / O(log n)
     int bisect_right(T w) const {
         int i = 0, s = _s;
         while (s) {

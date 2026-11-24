@@ -9,7 +9,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 0 以上 2^bit 未満の整数の集合を二分トライで持つ / 全要素への xor を扱う
+/// @brief 0 以上 2^bit 未満の整数の集合を二分トライで保持する / 全要素への xor を扱う
 template<typename T>
 class BinaryTrieSet {
 private:
@@ -74,7 +74,7 @@ private:
     }
 
 public:
-    /// @brief 0 以上 2^bit 未満の値を扱う空の集合を作る
+    /// @brief 0 以上 2^bit 未満の値を扱う空の集合を構築する
     BinaryTrieSet(int bit) : bit(bit) {
         root = 1;
         lim = (T)1 << bit;
@@ -137,7 +137,7 @@ public:
         return true;
     }
 
-    /// @brief 小さい方から k 番目の値を削除して返す / k は 0 から数え、負なら後ろから数える / O(bit)
+    /// @brief 小さい方から k 番目の値を削除して返す / k は 0 始まりとし、負の場合は末尾からの位置とする / O(bit)
     T pop(int k) {
         if (k < 0) k += len();
         assert(0 <= k && k < len());
@@ -249,14 +249,14 @@ public:
         return k;
     }
 
-    /// @brief [low, high) に含まれる要素数を返す / O(bit)
+    /// @brief 区間 [low, high) に含まれる要素数を返す / O(bit)
     int count_range(T low, T high) const {
         int hi = high >= lim ? len() : index(high);
         int lo = low >= lim ? len() : index(low);
         return hi - lo;
     }
 
-    /// @brief 小さい方から k 番目の値を返す / k は 0 から数える / O(bit)
+    /// @brief 小さい方から k 番目の値を返す / k は 0 始まりとする / O(bit)
     T get(int k) const {
         assert(0 <= k && k < len());
         int node = root;
@@ -287,26 +287,26 @@ public:
         return res;
     }
 
-    /// @brief key より大きい最小の値を返す / 無ければ -1 / O(bit)
+    /// @brief key より大きい最小の値を返す / 存在しない場合は -1 を返す / O(bit)
     T gt(T key) const {
         int i = index_right(key);
         return (i >= ma.tree[root].size ? (-1) : get(i));
     }
 
-    /// @brief key より小さい最大の値を返す / 無ければ -1 / O(bit)
+    /// @brief key より小さい最大の値を返す / 存在しない場合は -1 を返す / O(bit)
     T lt(T key) const {
         int i = index(key) - 1;
         return (i < 0 ? -1 : get(i));
     }
 
-    /// @brief key 以上の最小の値を返す / 無ければ -1 / O(bit)
+    /// @brief key 以上の最小の値を返す / 存在しない場合は -1 を返す / O(bit)
     T ge(T key) const {
         if (key == 0) return (!empty() ? get_min() : -1);
         int i = index_right(key - 1);
         return (i >= ma.tree[root].size ? -1 : get(i));
     }
 
-    /// @brief key 以下の最大の値を返す / 無ければ -1 / O(bit)
+    /// @brief key 以下の最大の値を返す / 存在しない場合は -1 を返す / O(bit)
     T le(T key) const {
         int i = index_right(key) - 1;
         return (i < 0 ? -1 : get(i));

@@ -18,8 +18,8 @@ template<typename T> static T sigma_abs_online(const vector<T> &A) {
     titan23::MultisetSum<T> S;
     T sum = 0;
     for (const T a : A) {
-        T sum_a = S.sum(a); // a未満の総和
-        int cnt = S.index(a); // a未満の個数
+        T sum_a = S.sum(a); // a 未満の総和
+        int cnt = S.index(a); // a 未満の個数
         ans += a*cnt - sum_a;
         ans += (sum-sum_a) - a*(S.len()-cnt);
         S.add(a);

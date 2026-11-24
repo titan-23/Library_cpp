@@ -30,18 +30,18 @@ private:
         bool rev;
         int size, left_size;
 
-        /// @brief 1要素のノードを初期化する / O(1)
+        /// @brief 1 要素のノードを初期化する / O(1)
         Node(const T &value, const F &action)
             : left(nullptr), right(nullptr), key(value), data(value), lazy(action),
               rev(false), size(1), left_size(0) {}
 
-        /// @brief 右の子の部分木サイズに1を加えた重みを返す / O(1)
+        /// @brief 右の子の部分木サイズに 1 を加えた重みを返す / O(1)
         int weight_right() const { return size - left_size; }
 
-        /// @brief 左の子の部分木サイズに1を加えた重みを返す / O(1)
+        /// @brief 左の子の部分木サイズに 1 を加えた重みを返す / O(1)
         int weight_left() const { return left_size + 1; }
 
-        /// @brief このノードの左右の重みが平衡条件を満たすか検査する / O(1)
+        /// @brief このノードの左右の重みが平衡条件を満たすか確認する / O(1)
         void balance_check() const {
             assert(static_cast<long long>(weight_left()) * DELTA >= weight_right());
             assert(static_cast<long long>(weight_right()) * DELTA >= weight_left());
@@ -55,14 +55,14 @@ private:
             if (right) data = op(data, right->data);
         }
 
-        /// @brief この部分木に作用を適用し、遅延情報へ合成する / O(1)
+        /// @brief この部分木に作用を適用し、遅延作用に合成する / O(1)
         void apply(const F &action) {
             key = mapping(action, key);
             data = mapping(action, data);
             lazy = composition(action, lazy);
         }
 
-        /// @brief 遅延作用と反転情報を子へ伝播する / O(1)
+        /// @brief 遅延作用と反転フラグを子へ伝播する / O(1)
         void propagate() {
             if (rev) {
                 swap(left, right);
@@ -294,28 +294,28 @@ public:
     /// @brief 空の木を構築する / O(1)
     LazyWBTree() : root(nullptr) {}
 
-    /// @brief valuesの要素を順番に格納した木を構築する / O(N)
+    /// @brief values の要素を順番に格納した木を構築する / O(N)
     LazyWBTree(const vector<T> &values) { _build(values); }
 
-    /// @brief otherを末尾へ破壊的に結合する / O(log N + log M)
+    /// @brief other を末尾へ破壊的に結合する / O(log N + log M)
     /// @note 入力の木どうしでノードを共有しないこと
-    /// @note other.rootは残るが、otherを独立した木として再利用できない
+    /// @note other.root は残るが、other を独立した木として再利用できない
     void merge(MyLazyWBTree &other) { root = _merge_node(root, other.root); }
 
-    /// @brief 先頭k要素と残りに破壊的に分割する / O(log N)
-    /// @note 元のrootは消去しないが、分割前のハンドルは独立した木として再利用できない
+    /// @brief 先頭 k 要素と残りに破壊的に分割する / O(log N)
+    /// @note 元の root は消去しないが、分割前のハンドルは独立した木として再利用できない
     pair<MyLazyWBTree, MyLazyWBTree> split(const int k) {
         assert(0 <= k && k <= len());
         auto result = _split_node(root, k);
         return {_new(result.first), _new(result.second)};
     }
 
-    /// @brief 全要素に作用actionを適用する / O(1)
+    /// @brief 全要素に作用 action を適用する / O(1)
     void all_apply(const F action) {
         if (root && action != id()) root->apply(action);
     }
 
-    /// @brief 区間 [l, r) に作用actionを適用する / O(log N)
+    /// @brief 区間 [l, r) に作用 action を適用する / O(log N)
     void apply(const int l, const int r, const F action) {
         assert(0 <= l && l <= r && r <= len());
         if (l == r || !(action != id())) return;
@@ -332,11 +332,11 @@ public:
     }
 
     /// @brief 全要素の総積を返す / O(1)
-    /// @note 空の木ではe()を返す
+    /// @note 空の木では e() を返す
     T all_prod() const { return root ? root->data : e(); }
 
     /// @brief 区間 [l, r) の総積を返す / O(log N)
-    /// @note 空区間ではe()を返す
+    /// @note 空の区間では e() を返す
     T prod(const int l, const int r) {
         assert(0 <= l && l <= r && r <= len());
         if (l == r) return e();
@@ -360,13 +360,13 @@ public:
         return dfs(dfs, root, l, r, identity);
     }
 
-    /// @brief 位置kにvalueを挿入する / O(log N)
+    /// @brief 位置 k に value を挿入する / O(log N)
     void insert(int k, const T value) {
         assert(0 <= k && k <= len());
         root = _insert_node(root, k, value);
     }
 
-    /// @brief 位置kの要素を削除し、その値を返す / O(log N)
+    /// @brief 位置 k の要素を削除し、その値を返す / O(log N)
     /// @note 削除されたノードへのポインタは無効になる
     T pop(int k) {
         assert(0 <= k && k < len());
@@ -375,15 +375,15 @@ public:
         return value;
     }
 
-    /// @brief 区間 [l, r) の要素順を反転する / O(log N)
-    /// @note 総積が反転で変わらない場合に利用できる
-    /// @note 木全体の反転はO(1)
+    /// @brief 区間 [l, r) の要素の順序を反転する / O(log N)
+    /// @note 総積が反転で変化しない場合に利用できる
+    /// @note 木全体を反転する場合は O(1) である
     void reverse(const int l, const int r) {
         assert(0 <= l && l <= r && r <= len());
         root = _reverse_node(root, l, r);
     }
 
-    /// @brief 要素を現在の順番でvectorに格納して返す / O(N)
+    /// @brief 要素を現在の順番で vector に格納して返す / O(N)
     vector<T> tovector() {
         vector<T> result;
         result.reserve(len());
@@ -400,7 +400,7 @@ public:
         return result;
     }
 
-    /// @brief 位置kの要素をvalueに置き換える / O(log N)
+    /// @brief 位置 k の要素を value に置き換える / O(log N)
     void set(int k, T value) {
         assert(0 <= k && k < len());
         auto dfs = [&](auto &&self, NodePtr node, int k) -> void {
@@ -414,7 +414,7 @@ public:
         dfs(dfs, root, k);
     }
 
-    /// @brief 位置kの要素を返す / O(log N)
+    /// @brief 位置 k の要素を返す / O(log N)
     T get(int k) {
         assert(0 <= k && k < len());
         const F identity = id();
@@ -433,7 +433,7 @@ public:
     /// @brief 要素列を標準出力へ表示する / O(N)
     void print() { cout << *this << endl; }
 
-    /// @brief 要素列を出力ストリームへ書き込む / O(N)
+    /// @brief 要素列をストリームへ出力する / O(N)
     friend ostream& operator<<(ostream &out, LazyWBTree &tree) {
         vector<T> values = tree.tovector();
         out << '[';
@@ -447,7 +447,7 @@ public:
     /// @brief 要素数を返す / O(1)
     int len() const { return root ? root->size : 0; }
 
-    /// @brief 部分木サイズ、キャッシュ、平衡条件をassertで検査する / O(N)
+    /// @brief 部分木サイズ、キャッシュ、平衡条件を assert で確認する / O(N)
     void check() const {
         auto dfs = [&](auto &&self, NodePtr node) -> int {
             if (!node) return 0;

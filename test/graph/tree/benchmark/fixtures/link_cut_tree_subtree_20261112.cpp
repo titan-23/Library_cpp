@@ -200,7 +200,7 @@ public:
         return expose(v);
     }
 
-    // c は表現木の根で p とは異なる連結成分に属すること
+    // c は表現木の根で、p とは異なる連結成分に属すること
     void link(int c, int p) {
         assert(0 <= c && c < n && 0 <= p && p < n);
         _link(c, p);

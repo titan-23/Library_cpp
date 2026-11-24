@@ -12,7 +12,7 @@ enum class TspInitialSearch {
     edge_penalty_search,
 };
 
-/// @brief improve_tsp_initial_state の設定 / search で選んだ方法の設定だけを使う
+/// @brief improve_tsp_initial_state の設定 / search で選択した方法の設定だけを使用する
 struct TspInitialStateOptions {
     TspInitialSearch search = TspInitialSearch::none;
     TspLocalSearchOptions local_search;
@@ -20,7 +20,7 @@ struct TspInitialStateOptions {
     TspEdgePenaltySearchOptions edge_penalty_search;
 };
 
-/// @brief improve_tsp_initial_state の統計と止めた理由
+/// @brief improve_tsp_initial_state の統計と停止した理由
 struct TspInitialStateResult {
     TspInitialSearch search;
     int64_t evaluated_moves;
@@ -32,7 +32,7 @@ struct TspInitialStateResult {
     TspSearchStopReason stop_reason;
 };
 
-/// @brief options.search で選んだ方法で state を改善する / none なら何もしない
+/// @brief options.search で選択した方法で state を改善する / none なら何もしない
 template<class EdgeCost>
 TspInitialStateResult improve_tsp_initial_state(
     const TspProblem<EdgeCost>& problem,

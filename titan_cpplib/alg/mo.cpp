@@ -53,7 +53,7 @@ public:
     }
 
     /// @brief 追加したクエリを一括処理する / O(n√q)
-    /// add(i), del(i) で要素 i を出し入れし、out(i) で i 番目のクエリに答える
+    /// add(i), del(i) で要素 i の追加と削除を行い、out(i) で i 番目のクエリに答える
     template<typename F1, typename F2, typename F3>
     void run_light(F1 &&add, F2 &&del, F3 &&out) {
         vector<int> qi(q);
@@ -76,8 +76,8 @@ public:
         }
     }
 
-    /// @brief 追加したクエリを一括処理する / 左右の出し入れを別の関数で行う / O(n√q)
-    /// add_left(i), add_right(i), del_left(i), del_right(i) で要素 i を出し入れし、out(i) で i 番目のクエリに答える
+    /// @brief 追加したクエリを一括処理する / 左端と右端での追加と削除を別の関数で行う / O(n√q)
+    /// add_left(i), add_right(i), del_left(i), del_right(i) で要素 i の追加と削除を行い、out(i) で i 番目のクエリに答える
     template<typename F1, typename F2, typename F3, typename F4, typename F5>
     void run(F1 &&add_left, F2 &&add_right, F3 &&del_left, F4 &&del_right, F5 &&out) {
         vector<int> qi(q);
@@ -100,8 +100,8 @@ public:
         }
     }
 
-    /// @brief 追加したクエリを一括処理する / 各関数に動かさない側の端も渡す / O(n√q)
-    /// add_left(i, r), add_right(l, i), del_left(i, r), del_right(l, i), out(i) の形で呼ぶ
+    /// @brief 追加したクエリを一括処理する / 移動しない側の端も各関数に渡す / O(n√q)
+    /// add_left(i, r), add_right(l, i), del_left(i, r), del_right(l, i), out(i) の形で呼び出す
     template<typename F1, typename F2, typename F3, typename F4, typename F5>
     void run_range(F1 &&add_left, F2 &&add_right, F3 &&del_left, F4 &&del_right, F5 &&out) {
         vector<int> qi(q);
@@ -116,10 +116,10 @@ public:
         int nl = 0, nr = 0;
         for (const int i : qi) {
             const int li = _l[i], ri = _r[i];
-            while (nl > li) add_left(--nl, nr);   // 左を1広げ nl を追加
-            while (nr < ri) add_right(nl, nr++);  // 右を1広げ nr を追加
-            while (nl < li) del_left(nl++, nr);   // 左を1縮め nl を削除
-            while (nr > ri) del_right(nl, --nr);  // 右を1縮め nr を削除
+            while (nl > li) add_left(--nl, nr);   // 区間を左に 1 広げて nl を追加する
+            while (nr < ri) add_right(nl, nr++);  // 区間を右に 1 広げて nr を追加する
+            while (nl < li) del_left(nl++, nr);   // 区間を左から 1 縮めて nl を削除する
+            while (nr > ri) del_right(nl, --nr);  // 区間を右から 1 縮めて nr を削除する
             out(i);
         }
     }

@@ -7,7 +7,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 矩形加算と1点取得を扱う動的2次元木 / DynamicFenwickTree2D に差分を持たせる
+/// @brief 矩形加算と 1 点取得を扱う動的な 2 次元の木 / DynamicFenwickTree2D で差分を保持する
 template<typename T, typename W>
 struct DynamicFenwicktree2D_RAQ {
     DynamicFenwickTree2D<T, W> bit;
@@ -22,7 +22,7 @@ struct DynamicFenwicktree2D_RAQ {
     void add(T h1, T w1, T h2, T w2, W x) {
         assert(0 <= h1 && h1 <= h2 && h2 <= _h);
         assert(0 <= w1 && w1 <= w2 && w2 <= _w);
-        // 内部の add は範囲外の (h, w) を弾くため、境界を確認する
+        // 内部の add は範囲外の (h, w) を受け付けないため、境界を確認する
         if (h1 < _h && w1 < _w) bit.add(h1, w1, x);
         if (h1 < _h && w2 < _w) bit.add(h1, w2, -x);
         if (h2 < _h && w1 < _w) bit.add(h2, w1, -x);
@@ -37,7 +37,7 @@ struct DynamicFenwicktree2D_RAQ {
         return bit.sum(h + 1, w + 1);
     }
 
-    /// @brief 木が持つノードを解放し、根を初期化する / O(K)、K はノード数
+    /// @brief 木が保持するノードを解放し、根を初期化する / O(K)、K はノード数
     void reset() {
         bit.reset();
     }

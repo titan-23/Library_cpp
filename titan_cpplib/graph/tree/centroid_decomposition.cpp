@@ -6,7 +6,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 木を重心分解し、重心分解木を作る
+/// @brief 木を重心分解し、重心分解木を構築する
 class CentroidDecomposition {
 private:
     int C;
@@ -70,7 +70,7 @@ public:
         return {C, T};
     }
 
-    /// @brief 重心分解木を根から葉へたどり、各頂点 v で func(v, banned) を呼ぶ / banned は上位の中心で true / func は元の木 G を探索し、banned が true の頂点には入らない
+    /// @brief 重心分解木を根から葉へたどり、各頂点 v で func(v, banned) を呼び出す / banned は上位の重心で true / func は banned が true の頂点を除いて元の木 G を探索する
     // cd.solve([&] (int v, const vector<bool>& banned) { ... });
     template <typename F>
     void solve(F &&func) {

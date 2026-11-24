@@ -10,7 +10,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief std::map で要素ごとの個数を持つ多重集合 / 該当する要素がない問い合わせには missing を返す
+/// @brief std::map で要素ごとの個数を保持する多重集合 / 該当する要素がない問い合わせには missing を返す
 template<typename T>
 class StdMultiset {
 private:
@@ -20,9 +20,9 @@ private:
     ll len;
 
 public:
-    /// @brief 空の多重集合を作る / missing は T()
+    /// @brief 空の多重集合を構築する / missing は T()
     StdMultiset() : missing(T()), len(0) {}
-    /// @brief 該当なしの返り値を missing として空の多重集合を作る
+    /// @brief 該当する要素がないときの返り値を missing として空の多重集合を構築する
     StdMultiset(T missing) : missing(missing), len(0) {}
     /// @brief 列 a の要素から構築する / O(n log n)
     StdMultiset(const vector<T> &a, T missing = T()) : missing(missing), len(0) {

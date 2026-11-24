@@ -9,9 +9,9 @@
 
 namespace titan23::detail {
 
-/// @brief Aggregate が true のときだけ集約値 data を持つノードの基底
+/// @brief Aggregate が true のときだけ集約値 data を保持するノードの基底クラス
 template<class T, bool Aggregate> struct WBAggregate {
-    /// @brief 集約値を持たない補助オブジェクトを構築する / O(1)
+    /// @brief 集約値を保持しない補助オブジェクトを構築する / O(1)
     explicit WBAggregate(const T&) {}
 };
 
@@ -22,22 +22,23 @@ template<class T> struct WBAggregate<T, true> {
     explicit WBAggregate(const T& value) : data(value) {}
 };
 
-/// @brief 重み平衡木で列を管理する基底クラス / Op を与えると各部分木の集約値を持つ
+/// @brief 重み平衡木で列を管理する基底クラス / Op を与えると各部分木の集約値を保持する
 template<class T, T (*Op)(T, T) = nullptr, T (*E)() = nullptr>
 class MutableWBSequence {
 protected:
     static constexpr bool aggregate = Op != nullptr;
-    // 片側の重みが反対側の DELTA 倍を超えたら回転する。子の内側の重みが外側の GAMMA 倍以上なら二重回転にする
+    // 片側の重みが反対側の DELTA 倍を超えた場合は回転する
+    // 子の内側の重みが外側の GAMMA 倍以上の場合は二重回転を行う
     static constexpr int DELTA = 3, GAMMA = 2;
     struct Node : WBAggregate<T, aggregate> {
         T key;
         Node *left = nullptr, *right = nullptr;
         int size = 1, left_size = 0;
 
-        /// @brief 値 value を持つ葉ノードを構築する / O(1)
+        /// @brief 値 value を保持する葉ノードを構築する / O(1)
         explicit Node(const T& value) : WBAggregate<T, aggregate>(value), key(value) {}
 
-        /// @brief 子の情報から部分木サイズと集約値を再計算する / O(1)
+        /// @brief 子から部分木のサイズと集約値を再計算する / O(1)
         void update() {
             left_size = left ? left->size : 0;
             size = 1 + left_size + (right ? right->size : 0);
@@ -47,7 +48,7 @@ protected:
             }
         }
 
-        /// @brief 子の情報から部分木サイズと集約値を再計算する / O(1)
+        /// @brief 子から部分木のサイズと集約値を再計算する / O(1)
         void _update() { update(); }
 
         /// @brief 左部分木の要素数 + 1 を重みとして返す / O(1)
@@ -59,7 +60,7 @@ protected:
         /// @brief 左部分木の重みが占める割合を返す / O(1)
         double balance() const { return double(left_size + 1) / (size + 1.0); }
 
-        /// @brief このノードの左右の重みが平衡条件を満たすか検査する / O(1)
+        /// @brief このノードの左右の重みが平衡条件を満たすかを確認する / O(1)
         void balance_check() const {
             assert(1LL * weight_left() * DELTA >= weight_right());
             assert(1LL * weight_right() * DELTA >= weight_left());

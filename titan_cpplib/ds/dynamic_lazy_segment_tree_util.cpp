@@ -11,9 +11,9 @@ using namespace std;
 namespace titan23 {
 namespace dynamic_lazy_segment_tree {
 
-// 第1テンプレート引数は値の型で、添字と長さの型は既定でlong long
-// 和を扱う木には、値が0でも1要素分の長さを含む初期値を渡す
-// 和や長さを含む計算結果は各型の範囲に収める
+// 第 1 テンプレート引数は値の型で、添字と長さの型は既定で long long である
+// 和を扱う木には、値が 0 でも 1 要素分の長さを含む初期値を渡す
+// 和や長さを含む計算結果は各型の範囲に収まる必要がある
 
 /// @brief 区間の和と長さ
 template <class T, class Index = long long>
@@ -34,17 +34,17 @@ Sum<T, Index> op_sum(Sum<T, Index> a, Sum<T, Index> b) {
     return {a.sum + b.sum, a.len + b.len};
 }
 
-/// @brief 和と長さが0の単位元を返す / O(1)
+/// @brief 和と長さが 0 の単位元を返す / O(1)
 template <class T, class Index>
 Sum<T, Index> e_sum() { return {T(0), 0}; }
 
-/// @brief 同じ集約値をn個結合した和と長さを返す / O(1)
+/// @brief 同じ集約値を n 個結合した和と長さを返す / O(1)
 template <class T, class Index>
 Sum<T, Index> pow_sum(Sum<T, Index> a, Index n) {
     return {a.sum * T(n), a.len * n};
 }
 
-/// @brief 区間の各要素にfを加えた和を求める / O(1)
+/// @brief 区間の各要素に f を加えた和を求める / O(1)
 template <class T, class Index>
 Sum<T, Index> map_add_sum(T f, Sum<T, Index> s) {
     return {s.sum + f * T(s.len), s.len};
@@ -53,19 +53,19 @@ Sum<T, Index> map_add_sum(T f, Sum<T, Index> s) {
 /// @brief 値に加算作用を適用する / O(1)
 template <class T> T map_add(T f, T s) { return s + f; }
 
-/// @brief 加算作用gの後にfを適用する作用を返す / O(1)
+/// @brief 加算作用 g の後に f を適用する作用を返す / O(1)
 template <class T> T comp_add(T f, T g) { return f + g; }
 
 /// @brief 値を変更しない加算作用を返す / O(1)
 template <class T> T id_add() { return T(0); }
 
-/// @brief 代入作用 / 有効フラグを別に持ち、numeric_limits<T>::max()/lowest()を含む全ての値を代入できる
+/// @brief 代入作用 / 有効フラグを別に保持し、numeric_limits<T>::max()/lowest() を含む全ての値を代入できる
 template <class T>
 struct Assign {
     T value{};
     bool active = false;
 
-    /// @brief 指定値を代入する作用を作る / O(1)
+    /// @brief 指定値を代入する作用を作成する / O(1)
     static Assign set(T value) { return {value, true}; }
 
     /// @brief 保持している値が等しいか判定する / O(1)
@@ -77,13 +77,13 @@ struct Assign {
     bool operator!=(const Assign& other) const { return !(*this == other); }
 };
 
-/// @brief 代入作用gの後にfを適用する作用を返す / O(1)
+/// @brief 代入作用 g の後に f を適用する作用を返す / O(1)
 template <class T> Assign<T> comp_set(Assign<T> f, Assign<T> g) { return f.active ? f : g; }
 
 /// @brief 値を変更しない代入作用を返す / O(1)
 template <class T> Assign<T> id_set() { return {}; }
 
-/// @brief 有効な代入作用なら指定値に置き換える / O(1)
+/// @brief 有効な代入作用の場合は値を指定値に置き換える / O(1)
 template <class T> T map_set(Assign<T> f, T s) { return f.active ? f.value : s; }
 
 /// @brief 区間の各要素に値を代入した和を求める / O(1)
@@ -98,7 +98,7 @@ template <class T> T op_min(T a, T b) { return min(a, b); }
 /// @brief 最小値の単位元を返す / O(1)
 template <class T> T e_min() { return numeric_limits<T>::max(); }
 
-/// @brief 同じ値をn個結合した最小値を返す / O(1)
+/// @brief 同じ値を n 個結合した最小値を返す / O(1)
 template <class T, class Index> T pow_min(T a, Index n) { return n == 0 ? e_min<T>() : a; }
 
 /// @brief 最大値を求める / O(1)
@@ -107,10 +107,10 @@ template <class T> T op_max(T a, T b) { return max(a, b); }
 /// @brief 最大値の単位元を返す / O(1)
 template <class T> T e_max() { return numeric_limits<T>::lowest(); }
 
-/// @brief 同じ値をn個結合した最大値を返す / O(1)
+/// @brief 同じ値を n 個結合した最大値を返す / O(1)
 template <class T, class Index> T pow_max(T a, Index n) { return n == 0 ? e_max<T>() : a; }
 
-/// @brief xをa*x+bに変換する作用
+/// @brief x を a*x+b に変換する作用
 template <class T>
 struct Affine {
     T a, b;
@@ -122,13 +122,13 @@ struct Affine {
     bool operator!=(const Affine& other) const { return !(*this == other); }
 };
 
-/// @brief 区間の各要素をa*x+bに変換した和を求める / O(1)
+/// @brief 区間の各要素を a*x+b に変換した和を求める / O(1)
 template <class T, class Index>
 Sum<T, Index> map_affine_sum(Affine<T> f, Sum<T, Index> s) {
     return {f.a * s.sum + f.b * T(s.len), s.len};
 }
 
-/// @brief アフィン変換gの後にfを適用する作用を返す / O(1)
+/// @brief アフィン変換 g の後に f を適用する作用を返す / O(1)
 template <class T> Affine<T> comp_affine(Affine<T> f, Affine<T> g) {
     return {f.a * g.a, f.a * g.b + f.b};
 }
@@ -163,7 +163,7 @@ Stats<T, Index> e_stats() {
     return {T(0), numeric_limits<T>::max(), numeric_limits<T>::lowest(), 0};
 }
 
-/// @brief 同じ統計値をn個結合する / O(1)
+/// @brief 同じ統計値を n 個結合する / O(1)
 template <class T, class Index>
 Stats<T, Index> pow_stats(Stats<T, Index> s, Index n) {
     if (n == 0) return e_stats<T, Index>();
@@ -176,10 +176,10 @@ struct SetAdd {
     bool has_set;
     T set_val, add_val;
 
-    /// @brief 指定値を代入する作用を作る / O(1)
+    /// @brief 指定値を代入する作用を作成する / O(1)
     static SetAdd set(T value) { return {true, value, T(0)}; }
 
-    /// @brief 指定値を加算する作用を作る / O(1)
+    /// @brief 指定値を加算する作用を作成する / O(1)
     static SetAdd add(T value) { return {false, T(0), value}; }
 
     /// @brief 作用が等しいか判定する / O(1)
@@ -202,7 +202,7 @@ Stats<T, Index> map_set_add_stats(SetAdd<T> f, Stats<T, Index> s) {
     return {s.sum + f.add_val * T(s.len), s.mn + f.add_val, s.mx + f.add_val, s.len};
 }
 
-/// @brief 代入・加算作用gの後にfを適用する作用を返す / O(1)
+/// @brief 代入・加算作用 g の後に f を適用する作用を返す / O(1)
 template <class T>
 SetAdd<T> comp_set_add(SetAdd<T> f, SetAdd<T> g) {
     if (f.has_set) return f;
@@ -212,9 +212,9 @@ SetAdd<T> comp_set_add(SetAdd<T> f, SetAdd<T> g) {
 /// @brief 値を変更しない代入・加算作用を返す / O(1)
 template <class T> SetAdd<T> id_set_add() { return {false, T(0), T(0)}; }
 
-/// @brief 始点をoriginとしたときの区間和をsum+slope*originで表す値 / sum・slopeと途中の積もTの範囲に収める
-/// 実際の値はprod(l,r).eval(l)やget(i).eval(i)で得る / 初期値や点代入の値vは{v,0,1}で渡す
-/// max_right(l,pred)のpredはs.eval(l)で、min_left(r,pred)のpredはs.eval(r-s.len)で判定する
+/// @brief 始点を origin としたときの区間和を sum+slope*origin で表す値 / sum, slope と途中の積も T の範囲に収まる必要がある
+/// 実際の値は prod(l,r).eval(l) や get(i).eval(i) で得る / 初期値や 1 点代入の値 v は {v,0,1} で渡す
+/// max_right(l,pred) の pred は s.eval(l) で、min_left(r,pred) の pred は s.eval(r-s.len) で判定する
 template <class T, class Index = long long>
 struct APSum {
     T sum, slope;
@@ -232,7 +232,7 @@ struct APSum {
     bool operator!=(const APSum& other) const { return !(*this == other); }
 };
 
-/// @brief 各要素iにa+b*iを加算する作用 / iは[0,N)での絶対添字
+/// @brief 各要素 i に a+b*i を加算する作用 / i は [0,N) での絶対添字
 template <class T>
 struct APAdd {
     T a, b;
@@ -244,7 +244,7 @@ struct APAdd {
     bool operator!=(const APAdd& other) const { return !(*this == other); }
 };
 
-/// @brief 0以上n未満の整数の和に係数を掛け、係数0の中間値のオーバーフローを避ける / O(1)
+/// @brief 0 以上 n 未満の整数の和に係数を掛け、係数が 0 の場合の中間値のオーバーフローを避ける / O(1)
 template <class T, class Index>
 T scaled_triangular(T coefficient, Index n) {
     if (n == 0) return T(0);
@@ -261,7 +261,7 @@ APSum<T, Index> op_ap_sum(APSum<T, Index> a, APSum<T, Index> b) {
 template <class T, class Index>
 APSum<T, Index> e_ap_sum() { return {T(0), T(0), 0}; }
 
-/// @brief 同じ区間和の式をn個並べて結合する / O(1)
+/// @brief 同じ区間和の式を n 個並べて結合する / O(1)
 template <class T, class Index>
 APSum<T, Index> pow_ap_sum(APSum<T, Index> s, Index n) {
     if (n == 0) return e_ap_sum<T, Index>();
@@ -269,13 +269,13 @@ APSum<T, Index> pow_ap_sum(APSum<T, Index> s, Index n) {
     return {s.sum * T(n) + scaled_triangular(s.slope * T(s.len), n), s.slope * T(n), s.len * n};
 }
 
-/// @brief 各要素iへのa+b*iの加算を区間和の式へ反映する / O(1)
+/// @brief 各要素 i への a+b*i の加算を区間和の式へ反映する / O(1)
 template <class T, class Index>
 APSum<T, Index> map_ap_add(APAdd<T> f, APSum<T, Index> s) {
     return {s.sum + f.a * T(s.len) + scaled_triangular(f.b, s.len), s.slope + f.b * T(s.len), s.len};
 }
 
-/// @brief 等差数列加算作用gの後にfを適用する作用を返す / O(1)
+/// @brief 等差数列加算作用 g の後に f を適用する作用を返す / O(1)
 template <class T> APAdd<T> comp_ap_add(APAdd<T> f, APAdd<T> g) { return {f.a + g.a, f.b + g.b}; }
 
 /// @brief 値を変更しない等差数列加算作用を返す / O(1)
@@ -329,31 +329,31 @@ using LazySegSetAddStats = DynamicLazySegmentTree<
     Index, Stats<T, Index>, op_stats<T, Index>, e_stats<T, Index>,
     SetAdd<T>, map_set_add_stats<T, Index>, comp_set_add<T>, id_set_add<T>, pow_stats<T, Index>>;
 
-/// @brief 各要素をfとの最小値に更新する作用と区間最小値
+/// @brief 各要素を f との最小値に更新する作用と区間最小値
 template <class T, class Index = long long>
 using LazySegChminMin = DynamicLazySegmentTree<
     Index, T, op_min<T>, e_min<T>,
     T, op_min<T>, op_min<T>, e_min<T>, pow_min<T, Index>>;
 
-/// @brief 各要素をfとの最小値に更新する作用と区間最大値
+/// @brief 各要素を f との最小値に更新する作用と区間最大値
 template <class T, class Index = long long>
 using LazySegChminMax = DynamicLazySegmentTree<
     Index, T, op_max<T>, e_max<T>,
     T, op_min<T>, op_min<T>, e_min<T>, pow_max<T, Index>>;
 
-/// @brief 各要素をfとの最大値に更新する作用と区間最小値
+/// @brief 各要素を f との最大値に更新する作用と区間最小値
 template <class T, class Index = long long>
 using LazySegChmaxMin = DynamicLazySegmentTree<
     Index, T, op_min<T>, e_min<T>,
     T, op_max<T>, op_max<T>, e_max<T>, pow_min<T, Index>>;
 
-/// @brief 各要素をfとの最大値に更新する作用と区間最大値
+/// @brief 各要素を f との最大値に更新する作用と区間最大値
 template <class T, class Index = long long>
 using LazySegChmaxMax = DynamicLazySegmentTree<
     Index, T, op_max<T>, e_max<T>,
     T, op_max<T>, op_max<T>, e_max<T>, pow_max<T, Index>>;
 
-/// @brief 区間への等差数列加算と区間和 / 値はAPSumで持つ
+/// @brief 区間への等差数列加算と区間和 / 値は APSum で保持する
 template <class T, class Index = long long>
 using LazySegAddAPSum = DynamicLazySegmentTree<
     Index, APSum<T, Index>, op_ap_sum<T, Index>, e_ap_sum<T, Index>,

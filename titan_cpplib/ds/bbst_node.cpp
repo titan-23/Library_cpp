@@ -5,7 +5,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 平衡二分探索木のノードを回転、走査する静的関数の集まり / ノードは left、right、par と update() を持つこと
+/// @brief 平衡二分探索木のノードの回転と走査を行う静的関数をまとめたクラス / ノードにはメンバ left, right, par と関数 update() が必要
 template<typename NodePtr>
 class BBSTNode {
     public:

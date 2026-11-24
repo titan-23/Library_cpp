@@ -98,7 +98,7 @@ public:
         build();
     }
 
-    /// @brief 辺に値を持つ無向木 G と根 root から構築する
+    /// @brief 辺が値を保持する無向木 G と根 root から構築する
     template<typename T>
     MoTreeBase(const vector<vector<pair<int, T>>> &G, int root = 0) : MoTreeBase(G.size(), root) {
         for (int u = 0; u < n; ++u) {
@@ -109,7 +109,7 @@ public:
         build();
     }
 
-    /// @brief 無向辺を追加し、登録順の辺番号を返す / add_query と run より前に呼ぶこと / O(1)
+    /// @brief 無向辺を追加し、登録順の辺番号を返す / add_query と run より前に呼び出すこと / O(1)
     int add_edge(int u, int v) {
         assert(!built);
         graph[u].emplace_back(v, edge_count);

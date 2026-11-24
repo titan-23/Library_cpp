@@ -32,7 +32,7 @@ class WBNodePool {
     }
 
     static void set_live(Slot* slot, bool value) noexcept {
-        // この 1 バイトは Node と next のどちらの領域よりも後ろにあり、それらを構築しても上書きされない
+        // この 1 バイトは Node と next のどちらの領域よりも後ろにあるため、それらを構築しても値が変化しない
         reinterpret_cast<unsigned char*>(slot)[sizeof(Node)] = value;
     }
     static constexpr std::size_t block_size = std::size_t(1) << BlockBits;
@@ -109,7 +109,7 @@ public:
     /// @brief ノードを破棄してスロットを再利用可能にする / O(1)
     void release(Node* node) noexcept {
         assert(node);
-        // union とその直接のメンバーはポインタ相互変換可能なので、node から Slot* に戻せる
+        // union とその直接のメンバーはポインタ相互変換可能であるため、node から Slot* に戻すことができる
         auto* slot = reinterpret_cast<Slot*>(node);
         assert(live(slot));
         node->~Node();

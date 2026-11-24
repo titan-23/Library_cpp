@@ -75,7 +75,7 @@ vector<long long> divisors_sum_all(int n) {
     return S;
 }
 
-/// @brief N 以下の各数の素因数の種類数を返す / O(NloglogN)
+/// @brief N 以下の各数の相異なる素因数の個数を返す / O(NloglogN)
 vector<int> primefactor_num(int n) {
     vector<int> cnt(n+1, 0);
     for (int i = 2; i <= n; ++i) {
@@ -87,7 +87,7 @@ vector<int> primefactor_num(int n) {
     return cnt;
 }
 
-/// @brief 素数表 primes を使って N を素因数分解する / O(√N / log√N + log N)
+/// @brief 素数表 primes を使用して N を素因数分解する / O(√N / log√N + log N)
 /// primes には sqrt(N) 以下の素数をエラトステネスの篩などで昇順にすべて列挙しておく
 vector<pair<int, int>> factorization_eratos(int n, const vector<int> &primes) {
     vector<pair<int, int>> res;

@@ -17,10 +17,10 @@
 #include "titan_cpplib/ahc/sa/sa.cpp"
 using namespace std;
 namespace titan23 {
-/// @brief 点の座標を double の平坦な配列に写したもの / 複数の状態から読み取り専用で共有する
+/// @brief 点の座標を double の 1 次元配列にコピーしたもの / 複数の状態から読み取り専用で共有する
 class ClusteringSaProblem {
 public:
-    /// @brief size() と operator[] を持つ点の列から構築する / O(nd)
+    /// @brief size() と operator[] のある点の列から構築する / O(nd)
     template<class Point>
     explicit ClusteringSaProblem(const vector<Point>& points) {
         if (points.empty()) throw invalid_argument("ClusteringSaProblem: points must not be empty");
@@ -130,7 +130,7 @@ struct ClusteringNeighborhoodWeights {
     int rebuild = 10;
 };
 
-/// @brief クラスタリングの焼きなましの設定 / 各項目の意味は docs/clustering_sa.md にある
+/// @brief クラスタリングの焼きなましの設定 / 各項目の意味は docs/clustering_sa.md に記載している
 struct ClusteringSaOptions {
     int nearby_cluster_count = 4;
     int cluster_samples = 4;
@@ -164,7 +164,7 @@ enum ClusteringMoveType {
     clustering_move_type_count = 4
 };
 
-/// @brief 探索全体の統計 / 近傍ごとの試行数、有効な提案数、採択数、改善量などを持つ
+/// @brief 探索全体の統計 / 近傍ごとの試行数、有効な提案数、採択数、改善量などを保持する
 struct ClusteringSaStatistics {
     array<int64_t, clustering_move_type_count> attempts{};
     array<int64_t, clustering_move_type_count> valid_proposals{};
@@ -181,7 +181,7 @@ struct ClusteringSaStatistics {
     int64_t rebuild_three_same_state = 0;
 };
 
-/// @brief 焼きなましの結果 / 所属と費用は最良解、統計は探索全体のもの
+/// @brief 焼きなましの結果 / 所属とコストは最良解のもの、統計は探索全体のもの
 struct ClusteringSaResult {
     double score = 0;
     double true_score = 0;
@@ -200,8 +200,8 @@ struct ClusteringSaResult {
     }
 };
 
-/// @brief labels が ranges を満たすか検査し、各クラスタの平均までの二乗距離の総和を返す / O(nd + kd)
-/// 満たさなければ invalid_argument を投げる
+/// @brief labels が ranges を満たすか確認し、各クラスタの平均までの二乗距離の総和を返す / O(nd + kd)
+/// 満たさない場合は invalid_argument を投げる
 inline double clustering_cost_from_labels(const ClusteringSaProblem& problem, const vector<int>& labels, const vector<ClusterSizeRange>& ranges) {
     check_clustering_size_ranges(problem.point_count(), ranges);
     if (ranges.size() > (size_t)numeric_limits<int>::max()) throw invalid_argument("clustering_cost_from_labels: ranges.size() must fit in int");
@@ -231,7 +231,7 @@ inline double clustering_cost_from_labels(const ClusteringSaProblem& problem, co
     return total_cost;
 }
 
-/// @brief sa::sa_run に渡す状態 / modify は所属を変えず、advance() で提案を反映する
+/// @brief sa::sa_run に渡す状態 / modify は所属を変更せず、advance() で提案を反映する
 class ClusteringSaState {
 public:
     using ScoreType = double;
@@ -253,7 +253,7 @@ public:
     bool is_valid = true;
     ScoreType score = 0;
 
-    /// @brief 初期所属 labels から状態を作る / labels は ranges を満たすこと / problem は状態より後に破棄すること
+    /// @brief 初期所属 labels から状態を構築する / labels は ranges を満たすこと / problem は状態より後に破棄すること
     ClusteringSaState(const ClusteringSaProblem& problem, vector<int> labels, vector<ClusterSizeRange> ranges, ClusteringSaOptions options, uint32_t seed)
         : problem_(&problem), ranges_(move(ranges)), options_(move(options)), partition_(problem.point_count(), checked_cluster_count(ranges_), move(labels)), random_(seed) {
         resolve_options();
@@ -267,18 +267,18 @@ public:
     }
 
     void reset_is_valid() { is_valid = true; }
-    /// @brief 焼きなましの評価値として、費用を score_scale で割った値を返す / modify の後は提案後の値を返す
+    /// @brief 焼きなましの評価値として、コストを score_scale で割った値を返す / modify の後は提案後の値を返す
     ScoreType get_score() const { return score; }
-    /// @brief 現在の所属の費用を返す
+    /// @brief 現在の所属のコストを返す
     ScoreType get_true_score() const { return total_cost_; }
     /// @brief 現在の所属を返す
     const ClusteringPartition& partition() const { return partition_; }
-    /// @brief 各クラスタの費用を返す
+    /// @brief 各クラスタのコストを返す
     const vector<double>& cluster_costs() const { return cluster_costs_; }
-    /// @brief 現在の所属の費用を返す
+    /// @brief 現在の所属のコストを返す
     double total_cost() const { return total_cost_; }
 
-    /// @brief 近傍を 1 つ選んで提案し、提案後の評価値を score に入れる / 提案できなければ is_valid = false
+    /// @brief 近傍を 1 つ選んで提案し、提案後の評価値を score に格納する / 提案できない場合は is_valid = false とする
     void modify(int64_t, ScoreType, double progress) {
         clear_pending();
         current_progress_ = progress;
@@ -296,7 +296,7 @@ public:
         else if (type == clustering_swap) valid = propose_swap();
         else if (type == clustering_cycle) valid = propose_cycle();
         else {
-            // 二クラスタ再構築が同じ所属に戻り続けたら、三クラスタ再構築を行う
+            // 所属が変化しない 2 クラスタの再構築が続いた場合は 3 クラスタの再構築を行う
             bool rebuild_three_due_to_stagnation = options_.rebuild_three_same_state_threshold > 0 && rebuild_two_same_state_streak_ >= options_.rebuild_three_same_state_threshold;
             bool rebuild_three_randomly = options_.rebuild_three_probability > 0 && random_unit() < options_.rebuild_three_probability;
             attempted_rebuild_three = partition_.cluster_count() >= 3 && (rebuild_three_due_to_stagnation || rebuild_three_randomly);
@@ -317,7 +317,7 @@ public:
         score = normalized_score(total_cost_ + pending_delta_);
     }
 
-    /// @brief 提案を捨てる
+    /// @brief 提案を破棄する
     void rollback() {
         clear_pending();
     }
@@ -349,7 +349,7 @@ public:
         clear_pending();
     }
 
-    /// @brief 現在の所属、中心、点数、費用を返す / O(n + kd)
+    /// @brief 現在の所属、中心、点数、コストを返す / O(n + kd)
     Result get_result() const {
         int cluster_count = partition_.cluster_count();
         int dimension = problem_->dimension();
@@ -363,7 +363,7 @@ public:
         return {normalized_score(total_cost_), total_cost_, total_cost_, score_scale_, partition_.labels(), move(centers), move(sizes), statistics_};
     }
 
-    /// @brief 探索全体の統計を result に入れる
+    /// @brief 探索全体の統計を result に格納する
     void finalize_result(Result& result) const {
         result.statistics = statistics_;
     }
@@ -371,7 +371,7 @@ public:
 private:
     static constexpr int NEARBY_INSERTION_LIMIT = 8;
 
-    // (値, 番号) を値、番号の順に比べ、同点の扱いを決定的にする
+    // (値, 番号) を値、番号の順に比較し、同点の扱いを決定的にする
     struct LessValueIndex {
         bool operator()(const pair<double, int>& a, const pair<double, int>& b) const {
             if (a.first < b.first) return true;
@@ -397,7 +397,7 @@ private:
         double cluster2_cost = 0;
     };
 
-    // point1 は cluster2 へ、point2 は cluster3 へ、point3 は cluster1 へ移る
+    // point1 は cluster2 へ、point2 は cluster3 へ、point3 は cluster1 へ移動する
     struct CycleMove {
         int point1 = -1;
         int point2 = -1;
@@ -416,7 +416,8 @@ private:
     ClusteringPartition partition_;
     Random random_;
 
-    // 現在の所属の正確な集計。クラスタ c は [c * dimension, (c + 1) * dimension) を使う
+    // 現在の所属の正確な集計
+    // クラスタ c は [c * dimension, (c + 1) * dimension) を使用する
     vector<double> coordinate_sums_;
     vector<double> squared_norm_sums_;
     vector<double> cluster_costs_;
@@ -427,7 +428,8 @@ private:
     bool can_relocate_ = false;
     ClusteringSaStatistics statistics_;
 
-    // 候補情報。古くてもよく、費用差は常に正確な集計から求める
+    // 候補の情報
+    // 古い値でもよく、コスト差は常に正確な集計から求める
     int nearby_count_ = 0;
     vector<int> nearby_clusters_;
     vector<pair<double, int>> nearby_work_;
@@ -439,15 +441,17 @@ private:
     int accepted_since_refresh_ = 0;
     bool candidates_dirty_ = false;
 
-    // 提案中の変更。advance() で反映する
+    // 提案中の変更
+    // advance() で反映する
     int pending_type_ = -1;
     double pending_delta_ = 0;
     RelocateMove relocate_move_;
     SwapMove swap_move_;
     CycleMove cycle_move_;
 
-    // 2 または 3 クラスタの再構築。枠 i は rebuild_clusters_[i] を指し、二クラスタ版は枠 0 と 1 を使う
-    // 和と中心は枠 i について [i * dimension, (i + 1) * dimension) を使う
+    // 2 または 3 クラスタの再構築
+    // スロット i は rebuild_clusters_[i] を指し、2 クラスタの再構築ではスロット 0 と 1 を使用する
+    // 和と中心はスロット i について [i * dimension, (i + 1) * dimension) を使用する
     int pending_rebuild_cluster_count_ = 0;
     array<int, 3> rebuild_clusters_{};
     array<int, 3> rebuild_sizes_{};
@@ -589,7 +593,7 @@ private:
         rebuild_three_cost_matrix_.reserve((size_t)rebuild_three_limit * 3);
     }
 
-    // ---- 集計と費用 ----
+    // ---- 集計とコスト ----
 
     double* sum_data(int cluster) { return coordinate_sums_.data() + (size_t)cluster * problem_->dimension(); }
     const double* sum_data(int cluster) const { return coordinate_sums_.data() + (size_t)cluster * problem_->dimension(); }
@@ -618,7 +622,8 @@ private:
         return calculate_cost_from_values(sum_data(cluster), squared_norm_sums_[cluster], partition_.cluster_size(cluster));
     }
 
-    // 点 removed を除き、点 added を加えた後のクラスタの費用。-1 はその操作がないことを表す
+    // 点 removed を除き、点 added を加えた後のクラスタのコストを返す
+    // -1 はその操作がないことを表す
     double calculate_changed_cost(int cluster, int count_change, int removed, int added) const {
         int count = partition_.cluster_size(cluster) + count_change;
         if (count <= 0) throw logic_error("ClusteringSaState: changed cluster count must be positive");
@@ -650,9 +655,10 @@ private:
         return distance;
     }
 
-    // ---- 候補情報 ----
+    // ---- 候補の情報 ----
 
-    // 各中心に近いクラスタと、各点についてその中で最良の別クラスタおよびそこまでの差を求め直す
+    // 各中心に近いクラスタを求め直す
+    // 各点については、その中で最良の別クラスタと、そこまでの二乗距離から現在の中心までの二乗距離を引いた差を求め直す
     void refresh_candidates() {
         int point_count = problem_->point_count();
         int cluster_count = partition_.cluster_count();
@@ -759,7 +765,8 @@ private:
         throw logic_error("ClusteringSaState: failed to select a move type");
     }
 
-    // 条件を満たすクラスタを reservoir sampling で一様に 1 つ選ぶ。なければ -1 を返す
+    // 条件を満たすクラスタを reservoir sampling で一様に 1 つ選ぶ
+    // 条件を満たすクラスタがない場合は -1 を返す
     template <class Feasible>
     int select_uniform_cluster(Feasible feasible) {
         int selected = -1;
@@ -771,7 +778,7 @@ private:
         return selected;
     }
 
-    // 抽出したクラスタのうち、一点当たり費用が最大のものを優先する
+    // 抽出したクラスタのうち、1 点当たりのコストが最大のものを優先する
     int select_source_cluster(bool require_removal_space, bool uniform) {
         int cluster_count = partition_.cluster_count();
         auto feasible = [&](int cluster) {
@@ -796,7 +803,8 @@ private:
         return -1;
     }
 
-    // 移動先があればそこに相対的に近い点を優先する。なければ、所属の余裕が小さい点と費用が大きい点のどちらを優先するかを無作為に決める
+    // 移動先がある場合は、そこに相対的に近い点を優先する
+    // 移動先がない場合は、所属の余裕が小さい点とコストが大きい点のどちらを優先するかを無作為に決定する
     int select_point(int cluster, int target_cluster, bool uniform) {
         const vector<int>& members = partition_.members(cluster);
         if (members.empty()) return -1;
@@ -819,7 +827,7 @@ private:
         return best;
     }
 
-    // 点の次候補、source に近いクラスタ、条件を満たす任意のクラスタの順に優先する
+    // 点の最良の別クラスタ、source に近いクラスタ、条件を満たす任意のクラスタの順に優先する
     int select_target_cluster(int source, int point, int forbidden, bool require_addition_space, bool uniform) {
         int cluster_count = partition_.cluster_count();
         auto feasible = [&](int cluster) {
@@ -864,7 +872,7 @@ private:
         return cluster3 != -1;
     }
 
-    // 抽出した点を評価し、費用差が最小の変更のうち最初に見つけたものを残す
+    // 抽出した点を評価し、コスト差が最小の変更のうち最初に見つけたものを採用する
     template <class Move, class Evaluate>
     bool select_best_member(const vector<int>& members, int samples, Evaluate evaluate, Move& best_move, double& best_delta) {
         bool found = false;
@@ -961,7 +969,8 @@ private:
         return -1;
     }
 
-    // cluster から take 点を選んで pending_rebuild_points_ に加える。半分は他クラスタとの余裕が小さい点、残りは現在の中心から遠い点とする
+    // cluster から take 点を選んで pending_rebuild_points_ に追加する
+    // 半分は他のクラスタとの余裕が小さい点、残りは現在の中心から遠い点とする
     void select_rebuild_points(int cluster, int other1, int other2, int take) {
         const vector<int>& members = partition_.members(cluster);
         if (take >= (int)members.size()) {
@@ -1104,7 +1113,8 @@ private:
         return isfinite(pending_delta_);
     }
 
-    // budget 点を 3 クラスタに点数の比で配る。各クラスタに 1 点以上配る
+    // budget 点を 3 クラスタに点数の比で配分する
+    // 各クラスタには 1 点以上を配分する
     array<int, 3> calculate_rebuild_three_takes(const array<int, 3>& sizes, int budget) const {
         array<int, 3> takes{1, 1, 1};
         int total_size = sizes[0] + sizes[1] + sizes[2];
@@ -1125,7 +1135,8 @@ private:
         return takes;
     }
 
-    // 取り出した点を 3 つの仮中心へ、枠 i に takes[i] 点ずつ最適に割り当てる。枠 0 と 1 の点数を状態とする動的計画法
+    // 取り出した点を 3 つの仮の中心へ、スロット i に takes[i] 点ずつ最適に割り当てる
+    // スロット 0 と 1 の点数を状態とする動的計画法で求める
     bool assign_rebuild_three(const array<int, 3>& takes, bool compare_previous, bool& same_assignment) {
         int selected_count = pending_rebuild_points_.size();
         size_t width2 = (size_t)takes[1] + 1;
@@ -1191,7 +1202,8 @@ private:
         return true;
     }
 
-    // 2 クラスタから境界の点と遠い点を取り出し、新しい 2 つの仮中心のまわりに分け直す。両クラスタの点数は保つ
+    // 2 クラスタから境界の点と遠い点を取り出し、新しい 2 つの仮の中心に基づいて再分割する
+    // 両クラスタの点数は維持する
     bool propose_rebuild_two() {
         bool uniform = use_uniform_selection();
         int cluster1, point, cluster2;
@@ -1239,7 +1251,7 @@ private:
             return pending_rebuild_points_[a.second] < pending_rebuild_points_[b.second];
         };
         for (int iteration = 0; iteration < options_.rebuild_iterations; ++iteration) {
-            // 中心を固定し、費用の差が小さい take1 点を cluster1 に入れる
+            // 中心を固定し、コストの差が小さい take1 点を cluster1 に割り当てる
             const double* center1 = rebuild_center_data(0);
             const double* center2 = rebuild_center_data(1);
             for (int index = 0; index < selected_count; ++index) {
@@ -1274,7 +1286,8 @@ private:
         return finish_rebuild_proposal(2);
     }
 
-    // 3 クラスタから点を取り出し、上の動的計画法で新しい 3 つの仮中心へ割り当て直す。3 クラスタの点数は保つ
+    // 3 クラスタから点を取り出し、上の動的計画法で新しい 3 つの仮の中心へ再び割り当てる
+    // 3 クラスタの点数は維持する
     bool propose_rebuild_three() {
         bool uniform = use_uniform_selection();
         int cluster1, point1, cluster2, point2, cluster3;
@@ -1374,7 +1387,7 @@ private:
         update_center(cycle_move_.cluster3);
     }
 
-    // 両クラスタの点数は変わらないので、移る点を 2 点ずつ交換すればよい
+    // 両クラスタの点数は変化しないため、移動する点を 2 点ずつ交換すればよい
     void apply_rebuild_two_labels() {
         int cluster1 = rebuild_clusters_[0];
         int cluster2 = rebuild_clusters_[1];
@@ -1440,7 +1453,7 @@ inline ClusteringSaResult clustering_sa_from_labels(const ClusteringSaProblem& p
     if (!isfinite(time_limit_ms) || time_limit_ms < 0) throw invalid_argument("clustering_sa_from_labels: time_limit_ms must be finite and nonnegative");
     Timer timer;
     ClusteringSaState state(problem, initial_labels, ranges, move(options), seed);
-    // クラスタが 1 つなら変更の余地がない
+    // クラスタが 1 つの場合は所属を変更できない
     double effective_time_limit = ranges.size() == 1 ? 0 : time_limit_ms;
     double remaining_time = max(0.0, effective_time_limit - timer.elapsed());
     ClusteringSaResult result = sa::sa_run<ClusteringSaState>(remaining_time, state, verbose);
@@ -1448,9 +1461,9 @@ inline ClusteringSaResult clustering_sa_from_labels(const ClusteringSaProblem& p
     return result;
 }
 
-/// @brief 初期所属を複数作り、費用が最小のものから残り時間で焼きなましを行う
-/// 約 time_limit_ms * initialization_time_ratio [ms] の間、種 seed, seed + 1, ... で initial_label_factory を呼ぶ。少なくとも 1 回は呼ぶ
-/// initial_label_factory(uint32_t) は ranges を満たす vector<int> を返すこと。initialization_time_ratio は [0, 1] の範囲にすること
+/// @brief 初期所属を複数作成し、コストが最小のものから残り時間で焼きなましを行う
+/// 約 time_limit_ms * initialization_time_ratio [ms] の間、シード seed, seed + 1, ... で initial_label_factory を呼び出す / 少なくとも 1 回は呼び出す
+/// initial_label_factory(uint32_t) は ranges を満たす vector<int> を返すこと / initialization_time_ratio は [0, 1] の範囲にすること
 template<class InitialLabelFactory>
 inline ClusteringSaResult clustering_sa_from_label_factory(const ClusteringSaProblem& problem, const vector<ClusterSizeRange>& ranges, double time_limit_ms, double initialization_time_ratio, InitialLabelFactory initial_label_factory, ClusteringSaOptions options = {}, uint32_t seed = 23, bool verbose = false) {
     using Labels = remove_cvref_t<invoke_result_t<InitialLabelFactory&, uint32_t>>;

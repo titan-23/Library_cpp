@@ -14,7 +14,7 @@ inline const string& tag_bs() {
     static const string s = PRINT_BOLD + string("[BS]") + PRINT_NONE + " ";
     return s;
 }
-// 種類ごとの印。現在はすべて tag_bs() と同じ
+// 種類ごとの印 / 現在はすべて tag_bs() と同じ
 inline const string& tag_info()  { return tag_bs(); }
 inline const string& tag_ok()    { return tag_bs(); }
 inline const string& tag_warn()  { return tag_bs(); }
@@ -37,7 +37,7 @@ inline void error(ostream& os, const string& msg) { os << tag_bs() << col_error(
 inline void debug(ostream& os, const string& msg) { os << tag_bs() << col_debug(msg) << "\n"; }
 
 #ifdef BS_DEBUG
-/// @brief ok が false なら式と位置を出力して abort する / BS_DEBUG を定義したときだけ使える
+/// @brief ok が false なら式と位置を出力して abort する / BS_DEBUG を定義したときだけ使用できる
 inline void assert_check(bool ok, const char* expr, const char* file, int line, const string& msg = "") {
     if (ok) return;
     ostringstream ss;
@@ -60,7 +60,7 @@ inline void start_banner(ostream& os, const char* impl_name, const BeamParam& pa
     os << tag_plain() << "------------------------------------------------\n";
 }
 
-/// @brief 1 ターンの進捗を 1 行で出力する / explored < 0 なら展開数を省き、pool は使わない
+/// @brief 1 ターンの進捗を 1 行で出力する / explored < 0 なら展開数を省略し、pool は使用しない
 template<class ScoreType>
 inline void turn_line(ostream& os, int turn, int max_turn, double elapsed_ms, int width, int pool, int cand,
                       int explored, ScoreType best_score, bool has_best = true) {
@@ -132,7 +132,7 @@ inline void width_trace(ostream& os, const vector<int>& hist, int cols = 40) {
     static const char* blocks[8] = {"▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"};
     const int n = (int)hist.size();
 
-    // 標本数が cols を超える場合は区間ごとの平均で縮める
+    // 標本数が cols を超える場合は区間ごとに平均して cols 個にまとめる
     vector<double> bucket;
     if (n <= cols) {
         bucket.assign(hist.begin(), hist.end());

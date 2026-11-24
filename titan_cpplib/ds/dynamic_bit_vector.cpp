@@ -6,7 +6,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 挿入と削除ができるビットベクトル / 長さ BUCKET_MAX 以下のバケットに分けて持つ
+/// @brief 挿入と削除ができるビットベクトル / 長さ BUCKET_MAX 以下のバケットに分割して保持する
 class DynamicBitVector {
 private:
     static const int BUCKET_MAX = 1000;

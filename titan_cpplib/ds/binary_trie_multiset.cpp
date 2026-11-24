@@ -8,7 +8,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 0 以上 2^bit 未満の整数の多重集合を二分トライで持つ / 全要素への xor を扱う
+/// @brief 0 以上 2^bit 未満の整数の多重集合を二分トライで保持する / 全要素への xor を扱う
 template<typename T>
 class BinaryTrieMultiset {
 private:
@@ -63,7 +63,7 @@ private:
 
     public:
     BinaryTrieMultiset() {}
-    /// @brief 0 以上 2^bit 未満の値を扱う空の多重集合を作る
+    /// @brief 0 以上 2^bit 未満の値を扱う空の多重集合を構築する
     BinaryTrieMultiset(const int bit) {
         end = 2;
         this->bit = bit;
@@ -168,7 +168,7 @@ private:
         return node == -1 ? 0 : size[node];
     }
 
-    /// @brief 小さい方から k 番目の値を 1 個削除して返す / k は 0 から数え、負なら後ろから数える / O(bit)
+    /// @brief 小さい方から k 番目の値を 1 個削除して返す / k は 0 始まりとし、負の場合は末尾からの位置とする / O(bit)
     T pop(int k = -1) {
         if (k < 0) k += len();
         int node = root;
@@ -318,14 +318,14 @@ private:
         return k;
     }
 
-    /// @brief [low, high) に含まれる要素数を返す / O(bit)
+    /// @brief 区間 [low, high) に含まれる要素数を返す / O(bit)
     int count_range(T low, T high) const {
         int hi = high >= lim ? len() : index(high);
         int lo = low >= lim ? len() : index(low);
         return hi - lo;
     }
 
-    /// @brief 小さい方から k 番目の値を返す / k は 0 から数え、負なら後ろから数える / O(bit)
+    /// @brief 小さい方から k 番目の値を返す / k は 0 始まりとし、負の場合は末尾からの位置とする / O(bit)
     T get(int k) const {
         if (k < 0) k += len();
         int node = root;
@@ -356,32 +356,32 @@ private:
         return res;
     }
 
-    /// @brief key より大きい最小の値を返す / 無ければ -1 / O(bit)
+    /// @brief key より大きい最小の値を返す / 存在しない場合は -1 を返す / O(bit)
     T gt(T key) const {
         int i = index_right(key);
         return (i >= size[root]? (-1) : get(i));
     }
 
-    /// @brief key より小さい最大の値を返す / 無ければ -1 / O(bit)
+    /// @brief key より小さい最大の値を返す / 存在しない場合は -1 を返す / O(bit)
     T lt(T key) const {
         int i = index(key) - 1;
         return (i < 0? -1 : get(i));
     }
 
-    /// @brief key 以上の最小の値を返す / 無ければ -1 / O(bit)
+    /// @brief key 以上の最小の値を返す / 存在しない場合は -1 を返す / O(bit)
     T ge(T key) const {
         if (key == 0) return (!empty()? get_min() : -1);
         int i = index_right(key - 1);
         return (i >= size[root]? -1 : get(i));
     }
 
-    /// @brief key 以下の最大の値を返す / 無ければ -1 / O(bit)
+    /// @brief key 以下の最大の値を返す / 存在しない場合は -1 を返す / O(bit)
     T le(T key) const {
         int i = index_right(key) - 1;
         return (i < 0? -1 : get(i));
     }
 
-    /// @brief 全要素を重複込みで昇順に並べて返す
+    /// @brief 重複も含めた全要素を昇順に並べて返す
     vector<T> tovector() const {
         vector<T> a;
         if (empty()) return a;
@@ -428,7 +428,7 @@ private:
         cout << "}" << endl;
     }
 
-    /// @brief 要素数を重複込みで返す / O(1)
+    /// @brief 重複も含めた要素数を返す / O(1)
     int len() const {
         return size[root];
     }

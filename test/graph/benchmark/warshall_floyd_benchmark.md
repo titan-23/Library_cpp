@@ -1,28 +1,31 @@
 # Warshall-Floyd 系の高速化の測定記録
 
-2026-11-13。WarshallFloyd、WarshallFloydSIMD、WarshallFloydPath、WarshallFloydSIMDNonnegative を対象にした。
+2026-11-13 の記録です。WarshallFloyd、WarshallFloydSIMD、WarshallFloydPath、WarshallFloydSIMDNonnegative を対象にしました。
 
 ## 測定条件
 
-- CPU は AMD Ryzen Threadripper 3990X (Zen 2)、コンパイラは GCC 12.3.0。
-- ベンチマークは [warshall_floyd_benchmark.cpp](warshall_floyd_benchmark.cpp)。n=600、追加する辺は 600 本。
-- build は負の辺のない密なグラフ (各頂点から 8 本)、build_neg は 30% が負の辺のグラフ、add_edge は build のあとに正の辺を追加する。
-- WarshallFloyd と WarshallFloydPath の INF は numeric_limits<T>::max() / 2 で、SIMD の経路を通る。
-- `-std=c++17 -O2 -DNDEBUG -march=native` (native) と、`-march` なしの既定ビルド (SSE2 まで) を測った。
-- 変更前は HEAD (`9634bd5`) のヘッダ。CPU 4 に固定し、交互に 3 回ずつ実行した中央値。
-- 表の ns は native の値で、build は 1 回の構築を n^3 で割った値、add_edge は辺 1 本あたりの値。短縮は `1 - 後 / 前`。チェックサムは全行で一致した。
+- CPU は AMD Ryzen Threadripper 3990X (Zen 2)、コンパイラは GCC 12.3.0 です。
+- ベンチマークには [warshall_floyd_benchmark.cpp](warshall_floyd_benchmark.cpp) を使用しました。n=600 で、追加する辺は 600 本です。
+- 各操作の内容は次のとおりです。
+  - build は負の辺のない密なグラフの構築です。各頂点から 8 本の辺を張ります。
+  - build_neg は 30% が負の辺であるグラフの構築です。
+  - add_edge は build の後に正の辺を追加する操作です。
+- WarshallFloyd と WarshallFloydPath の INF は numeric_limits<T>::max() / 2 であり、この場合は SIMD による処理が実行されます。
+- `-std=c++17 -O2 -DNDEBUG -march=native` でのビルド (native) と、`-march` を指定しない既定のビルド (SSE2 まで) を測定しました。
+- 変更前のコードには HEAD (`9634bd5`) のヘッダを使用しました。CPU 4 に固定して交互に 3 回ずつ実行し、その中央値を記載しています。
+- 表の ns は native の値です。build は 1 回の構築の時間を n^3 で割った値、add_edge は辺 1 本あたりの値です。native と既定のビルドの列は短縮率で、`1 - 後 / 前` で求めました。チェックサムは表の全行で一致しました。
 
 ## 変更点
 
-- simd_int.cpp に SSE2 段を加えたので、既定ビルドの int は 4 要素ずつ処理するようになった。64 bit 整数は既定ビルドでは逐次のままである。
-- WarshallFloyd に、WarshallFloydPath と同じ条件で SIMD の経路を加えた。重みが -INF 未満の辺は -INF に丸める。
-- WarshallFloydSIMD の負閉路の伝播と、add_edge の neg_inf の更新を SIMD にした。
-- WarshallFloyd と WarshallFloydPath の構築の内側のループを、端数のない部分と最後の端数に分け、dik についての場合分けをループの外に出した。
-- 更新がない要素へ書き込まない形は残した。選んだ値を全要素に書き込む形は 4〜21% 遅かった。
+- simd_int.cpp に SSE2 版を追加したため、既定のビルドの int は 4 要素ずつ処理されるようになりました。64 bit 整数は既定のビルドでは逐次処理のままです。
+- WarshallFloyd に、WarshallFloydPath と同じ条件で SIMD による処理を追加しました。重みが -INF 未満の辺は -INF に丸めます。
+- WarshallFloydSIMD の負閉路の伝播と、add_edge の neg_inf の更新を SIMD で処理するように変更しました。
+- WarshallFloyd と WarshallFloydPath の構築の内側のループを端数のない部分と末尾の端数に分割し、dik についての場合分けをループの外に移動しました。
+- 更新がない要素には値を格納しない方式を維持しました。選択した値を全要素に格納する方式は 4〜21% 遅くなりました。
 
 ## 結果
 
-| 操作 | 前 ns | 後 ns | native | 既定ビルド |
+| 操作 | 前 ns | 後 ns | native | 既定のビルド |
 |---|---:|---:|---:|---:|
 | WarshallFloyd<int>.build | 1.2 | 0.3 | 78.0% | 51.4% |
 | WarshallFloyd<int>.build_neg | 1.4 | 0.3 | 79.6% | 62.4% |
@@ -49,11 +52,11 @@
 
 ## 注意
 
-- 既定ビルドの 64 bit 整数は SIMD を使わず、コードも変えていない。それでも WarshallFloydSIMD<ll>.build が 14% 遅く、WarshallFloydSIMDNonnegative<ll>.add_edge が 6% 遅く測られた。
-- warshall_floyd_simd.cpp だけを HEAD 版に戻したビルドでも同じ速さだったので、今回の変更によるものではない。同じ翻訳単位の他のヘッダが変わり、関数全体の生成コードと配置が変わった影響とみられる。
+- 既定のビルドでは 64 bit 整数の処理に SIMD を使用しておらず、そのコードも変更していません。それでも WarshallFloydSIMD<ll>.build は 14%、WarshallFloydSIMDNonnegative<ll>.add_edge は 6% 遅く計測されました。
+- warshall_floyd_simd.cpp だけを HEAD 版に戻したビルドでも同じ速度だったため、今回の変更によるものではありません。同じ翻訳単位の他のヘッダが変更され、関数全体の生成コードと配置が変化した影響と考えられます。
 
 ## 検証
 
-- [warshall_floyd_random.cpp](../warshall_floyd_random.cpp) で、4 クラスを int と long long について素朴な Floyd 法と比べた。距離、到達判定、負閉路の判定、経路復元、add_edge 後の状態を確かめる。
-- native、既定ビルド、SIMD を無効にしたビルドの 3 構成で通った。AVX-512 はコンパイルだけを確かめた。
-- SSE2 段の max をわざと誤らせると、このテストが失敗することを確かめた。
+- [warshall_floyd_random.cpp](../warshall_floyd_random.cpp) で、4 クラスの int 版と long long 版を素朴な Floyd 法と比較しました。このテストでは距離、到達判定、負閉路の判定、経路復元、add_edge 後の状態を確認します。
+- native、既定のビルド、SIMD を無効にしたビルドの 3 構成でテストが成功しました。AVX-512 についてはコンパイルできることだけを確認しました。
+- SSE2 版の max に意図的に誤りを入れると、このテストが失敗することを確認しました。

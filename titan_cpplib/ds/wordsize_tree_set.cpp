@@ -111,7 +111,7 @@ public:
         }
     }
 
-    /// @brief v 以上で最小の要素を返す / なければ -1 / O(log_64 u)
+    /// @brief v 以上で最小の要素を返す / ない場合は -1 を返す / O(log_64 u)
     int ge(int v) const {
         int d = 0;
         while (1) {
@@ -131,12 +131,12 @@ public:
         return v;
     }
 
-    /// @brief v より大きい最小の要素を返す / なければ -1 / O(log_64 u)
+    /// @brief v より大きい最小の要素を返す / ない場合は -1 を返す / O(log_64 u)
     int gt(int v) const {
         return ge(v+1);
     }
 
-    /// @brief v 以下で最大の要素を返す / なければ -1 / O(log_64 u)
+    /// @brief v 以下で最大の要素を返す / ない場合は -1 を返す / O(log_64 u)
     int le(int v) const {
         int d = 0;
         while (1) {
@@ -156,7 +156,7 @@ public:
         return v;
     }
 
-    /// @brief v より小さい最大の要素を返す / なければ -1 / O(log_64 u)
+    /// @brief v より小さい最大の要素を返す / ない場合は -1 を返す / O(log_64 u)
     int lt(int v) const {
         return v == 0 ? -1 : le(v-1);
     }

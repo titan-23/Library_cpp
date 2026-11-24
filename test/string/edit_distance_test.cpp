@@ -42,7 +42,7 @@ void verify_restore(const S &s, const T &t, int distance,
     for (const auto &operation : operations) {
         assert(i <= operation.source_index && operation.source_index <= n);
         assert(j <= operation.target_index && operation.target_index <= m);
-        // 添字は編集後の配列ではなく、元の列における位置を表す
+        // 添字は編集後の列ではなく、元の列における位置を表す
         while (i < operation.source_index && j < operation.target_index) {
             assert(s[i] == t[j]);
             ++i;
@@ -213,7 +213,7 @@ void test_exhaustive() {
     }
 }
 
-// 要素のコピーや operator!= を要求しないことを C++17 でも確認する
+// 要素のコピーや operator!= を必要としないことを C++17 でも確認する
 struct EqualityOnlyToken {
     int value;
     explicit EqualityOnlyToken(int value) : value(value) {}
@@ -360,7 +360,7 @@ void test_size_limit() {
         expect_length_error([&] { (void)edit_distance_restore(s, t); });
         expect_length_error([&] { (void)edit_distance_restore_bounded(s, t, INT_MAX); });
     };
-    // 巨大な領域を確保せず、int への変換前に長さを拒否することを確認する
+    // 巨大な領域を確保せず、int への変換前に長さが上限を超える入力を拒否することを確認する
     for (size_t n : {(size_t)INT_MAX, (size_t)INT_MAX + 1}) {
         const HugeSequence s{n};
         check(s, empty);

@@ -97,7 +97,7 @@ void affine_test() {
             }
         }
     }
-    // n=1の処理で不要な二乗を行うと64 bitを超える係数を使う
+    // n=1 の処理で不要な二乗を行うと 64 bit を超える係数が使用される
     const auto once = normal::pow_affine(normal::Affine<ll>{10000000000LL, 7}, 1LL);
     assert(once.a == 10000000000LL && once.b == 7);
     mt19937 rng(471932);

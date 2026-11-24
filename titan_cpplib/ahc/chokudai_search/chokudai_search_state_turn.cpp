@@ -14,13 +14,14 @@ using HashType = unsigned long long;
 constexpr ScoreType INF = 1e18; // TODO 実際の評価値より大きい値にする
 titan23::Random brnd;
 
-/// @brief 探索開始前に 1 度だけ呼んで初期化する
+/// @brief 探索の開始前に 1 度だけ呼び出して初期化する
 void chokudai_init() {
     // TODO Zobrist hash 用の乱数テーブルなどを用意する
 }
 
-// TODO Action を問題に合わせて書く。score と hash のメモは無くしたい
-/// @brief 遷移と rollback に使う情報 / メモリ量は少ないほどよい
+// TODO Action を問題に合わせて実装する
+// score と hash の値を Action に記録しないようにしたい
+/// @brief 遷移と rollback に使用する情報 / メモリ量は少ないほどよい
 /// target_turn メンバはライブラリが参照する
 struct Action {
     ScoreType pre_score, nxt_score;
@@ -42,7 +43,7 @@ class State {
 private:
     ScoreType score;
     HashType hash;
-    int turn; // 絶対ターン
+    int turn; // 初期状態からのターン数
 
 public:
     /// @brief 状態を初期化する
@@ -53,16 +54,17 @@ public:
         turn = 0;
     }
 
-    /// @brief 現状態から遷移可能な Action を 1 つずつ submit(action) に渡す
-    /// last_action は親の Action で、target_turn == -1 なら根を表す。submit.threshold(target_turn) は常に INF を返す
+    /// @brief 現在の状態から遷移可能な Action を 1 つずつ submit(action) に渡す
+    /// last_action は親の Action で、target_turn == -1 なら根を表す
+    /// submit.threshold(target_turn) は常に INF を返す
     template<typename Submit>
     void enumerate_actions(const Action &last_action, Submit &&submit) const {
         // TODO: Action a = ...; submit(a); を必要なだけ繰り返す
     }
 
-    /// @brief action を適用したときの評価値、ハッシュ値、終了したかを返す / INF を返すと採用されない
-    /// rollback に必要な情報はすべて action に書く
-    /// target_turn を決めた後、評価値が thresholds[target_turn] 以上と確定した時点で計算を打ち切ってよい
+    /// @brief action を適用したときの評価値、ハッシュ値、終了したかどうかを返す / INF を返すと採用されない
+    /// rollback に必要な情報はすべて action に記録する
+    /// target_turn を決定した後、評価値が thresholds[target_turn] 以上と確定した時点で計算を打ち切ってよい
     tuple<ScoreType, HashType, bool> try_op(Action &action, const vector<ScoreType> &thresholds) const {
         action.pre_score = score;
         action.pre_hash = hash;
@@ -99,22 +101,22 @@ public:
         turn = action.pre_turn;
     }
 
-    /// @brief デバッグ用に現在の状態を出力する / ライブラリからは呼ばれない
+    /// @brief デバッグ用に現在の状態を出力する / ライブラリからは呼び出されない
     void print() const {
     }
 
-    /// @brief record_history=true のときに使う可視化用の JSON 文字列を返す / 不要なら "{}" のままでよい
+    /// @brief record_history=true のときに使用する可視化用の JSON 文字列を返す / 不要なら "{}" のままでよい
     string get_state_info() const {
         return "{}";
     }
 };
 
-/// @brief 最大探索ターン max_turn と、各巡回で各世代から展開する数 beam_width を指定した ChokudaiParam を返す / 時間制限なし
+/// @brief 最大探索ターン max_turn と、各巡回で各世代から展開する候補の数 beam_width を指定した ChokudaiParam を返す / 時間は制限しない
 flying_squirrel::ChokudaiParam gen_param(int max_turn, int beam_width) {
     return {max_turn, beam_width, -1};
 }
 
-/// @brief 打ち切り時間 time_limit [ms] も指定した ChokudaiParam を返す / time_limit が負なら無制限
+/// @brief 打ち切り時間 time_limit [ms] も指定した ChokudaiParam を返す / time_limit が負なら時間を制限しない
 flying_squirrel::ChokudaiParam gen_param(int max_turn, int beam_width, double time_limit) {
     return {max_turn, beam_width, time_limit};
 }

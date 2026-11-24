@@ -10,14 +10,14 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 両端の追加と削除、全要素の総積を扱う両端キュー
+/// @brief 両端での追加と削除、全要素の総積を扱う両端キュー
 template<class T, T (*op)(T, T), T (*e)()>
 class FoldableDeque {
 private:
     FoldableStack<T, op, e, true> front;
     FoldableStack<T, op, e, false> back;
 
-    // 全要素を前半と後半に分け、front と back に積み直す
+    // 全要素を前半と後半に分割し、前半から front を、後半から back を再構築する
     void rebuild() {
         vector<T> a;
         a.reserve(front.size() + back.size());

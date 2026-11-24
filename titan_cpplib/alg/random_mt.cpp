@@ -113,7 +113,7 @@ public:
         return {u, v};
     }
 
-    /// @brief a から重複なしで cnt 個を無作為に選んで返す / 選んだ要素を a の先頭へ移すので a は書き換わる / O(cnt)
+    /// @brief a から重複なしで cnt 個を無作為に選んで返す / 選んだ要素を a の先頭へ移動するため a は変更される / O(cnt)
     vector<int> rand_vec(const int cnt, vector<int> &a) {
         int n = a.size();
         assert(cnt <= n);
@@ -131,7 +131,7 @@ public:
         return dist(_mt);
     }
 
-    /// @brief a をその場で無作為に並べ替える / O(n)
+    /// @brief a 自体を無作為に並べ替える / O(n)
     template <typename T>
     void shuffle(vector<T> &a) {
         std::shuffle(a.begin(), a.end(), _mt);

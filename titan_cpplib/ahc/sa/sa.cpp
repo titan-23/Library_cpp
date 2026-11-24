@@ -8,10 +8,11 @@
 #include "titan_cpplib/alg/random.cpp"
 using namespace std;
 
-// 焼きなまし法。スコアを最小化する
+// スコアを最小化する焼きなまし法
 namespace sa {
 
-// LOG_TABLE[i] = log((i + 0.5) / LOG_TABLE_SIZE)。受理の閾値を乱数から作るのに使う
+// LOG_TABLE[i] = log((i + 0.5) / LOG_TABLE_SIZE)
+// 乱数から受理の閾値を求めるために使用する
 const int LOG_TABLE_SIZE = 4096;
 double LOG_TABLE[LOG_TABLE_SIZE];
 static bool is_log_initialized = [] {
@@ -130,7 +131,7 @@ typename State::Result sa_run(const double TIME_LIMIT, const uint32_t seed=23, c
 }
 
 /// @brief 2 段階の多始点焼きなましを実行し、最良解を返す / TIME_LIMIT は実行時間 [ms]
-/// 第 1 段階は TIME_LIMIT * FIRST_PHASE_RATIO の時間で NUM_STARTS 個の初期状態を順に焼きなまし、第 2 段階はその最良の状態から続ける
+/// 第 1 段階は TIME_LIMIT * FIRST_PHASE_RATIO の時間で NUM_STARTS 個の初期状態を順に焼きなまし、第 2 段階は第 1 段階で得た最良の状態から焼きなましを続ける
 template<class State>
 typename State::Result sa_multi_run(
     const double TIME_LIMIT,
@@ -291,8 +292,8 @@ typename State::Result sa_multi_run(
     return best_result;
 }
 
-/// @brief NUM_REPLICAS 個の状態でレプリカ交換法を実行し、最良解を返す / 状態は OpenMP で並列に動くので、状態の間で可変のデータを共有しない
-/// SWAP_ITER_INTERVAL 回の反復ごとに熱浴を交換する。record が true なら replica_scores.csv と best_state_*.txt に記録する
+/// @brief NUM_REPLICAS 個の状態でレプリカ交換法を実行し、最良解を返す / 状態は OpenMP で並列に更新されるため、状態の間で可変のデータを共有しないようにする
+/// SWAP_ITER_INTERVAL 回の反復ごとに熱浴を交換する / record が true なら replica_scores.csv と best_state_*.txt に記録する
 template<class State>
 typename State::Result replica_run(
     const double TIME_LIMIT,

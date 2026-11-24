@@ -8,7 +8,8 @@
 
 using namespace std;
 
-// 値は [0, n) を扱う 番兵は -1 と n
+// [0, n) の値を扱う
+// 番兵は -1 と n とする
 const int NEG_INF = -1;
 
 vector<pair<int, int>> to_ranges(const vector<bool> &b) {

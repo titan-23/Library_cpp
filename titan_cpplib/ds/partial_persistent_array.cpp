@@ -9,7 +9,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 部分永続配列 / 最新の時刻にだけ書き込み、過去の任意の時刻の値を読める
+/// @brief 部分永続配列 / 最新の時刻にだけ値を設定でき、過去の任意の時刻の値を参照できる
 template <typename T>
 class PartialPersistentArray {
 private:
@@ -30,8 +30,8 @@ public:
         last = 0;
     }
 
-    /// @brief 時刻 t に a[k] を v にする / 償却 O(1)
-    /// t は直前の set の時刻以上で、a[k] を最後に変更した時刻より大きいことが前提
+    /// @brief 時刻 t に a[k] を v に更新する / 償却 O(1)
+    /// t は直前の set の時刻以上で、a[k] を最後に変更した時刻より大きいことを前提とする
     void set(int k, const T &v, int t) {
         assert(t >= last);
         assert(t > ts[k].back());
@@ -40,7 +40,7 @@ public:
         last = t;
     }
 
-    /// @brief 時刻 t における a[k] を返す / t = -1 なら最新の値
+    /// @brief 時刻 t における a[k] を返す / t = -1 なら最新の値を返す
     T get(int k, int t = -1) const {
         if (t == -1 || t >= ts[k].back()) {
             return a[k].back();

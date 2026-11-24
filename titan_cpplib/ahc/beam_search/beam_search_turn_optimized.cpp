@@ -15,7 +15,7 @@ namespace flying_squirrel {
 /// @brief 候補全体を (par, score) でソートするか
 constexpr const bool SORT_CANDIDATES_BY_SCORE = false;
 
-/// @brief 複数ターン先へ遷移する Action に対応した定数倍最適化版木構造ビームサーチ
+/// @brief 複数ターン先へ遷移する Action に対応した木構造ビームサーチの定数倍最適化版
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
 class BeamSearchWithTree {
 private:
@@ -36,7 +36,7 @@ private:
     ActionId best_finished_par_aid;
     Action best_finished_action;
 
-    /// @brief 探索木の巡回列の要素
+    /// @brief 探索木を巡回順に並べた列の要素
     struct TreeNode {
         int kind_end;
         ActionId aid; // 同じ辺の PRE_ORDER、POST_ORDER、葉で共有する ID
@@ -52,19 +52,19 @@ private:
         PoolEntry(ScoreType s, ActionId a) : score(s), aid(a) {}
     };
 
-    /// @brief 親番号を持つ BeamCandidate の基底
+    /// @brief 親番号を保持する BeamCandidate の基底クラス
     struct CandidateParent {
         int par = 0;
         void set_parent(int value) { par = value; }
         int parent() const { return par; }
     };
-    /// @brief 親番号を持たない BeamCandidate の基底
+    /// @brief 親番号を保持しない BeamCandidate の基底クラス
     struct EmptyCandidateParent {
         void set_parent(int) {}
         int parent() const { return 0; }
     };
 
-    /// @brief 現在のメタターンで一度採用された候補 / 通常は親番号を持たず、範囲の境界で親を表す
+    /// @brief 現在のメタターンで一度採用された候補 / 通常は親番号を保持せず、範囲の境界で親を表す
     struct BeamCandidate : conditional_t<SORT_CANDIDATES_BY_SCORE, CandidateParent,
                                          EmptyCandidateParent> {
         using ParentBase = conditional_t<SORT_CANDIDATES_BY_SCORE, CandidateParent,
@@ -116,7 +116,7 @@ private:
         string state_info;
         int status;
     };
-    /// @brief record_history 用の、ターンごとの生存ノード一覧
+    /// @brief record_history 用の、ターンごとの生存ノードの一覧
     struct TurnSnapshot {
         int turn;
         vector<int> active_node_ids;
@@ -173,7 +173,7 @@ private:
         int beam_width = 0, entry = 0;
         int s = 1;
         vector<T> seg;
-        bool is_built = false; // ビーム幅に達するまではセグメント木を参照しない
+        bool is_built = false; // 候補数がビーム幅に達するまではセグメント木を参照しない
 
         void set(int k, T v) {
             k += s;
@@ -197,7 +197,7 @@ private:
         }
 
     public:
-        /// @brief push の結果 / 棄却時は slot=-1、置換時は evicted_aid に旧 ActionId が入る
+        /// @brief push の結果 / 棄却時は slot=-1、置換時は evicted_aid に置換前の ActionId が格納される
         struct PushResult {
             int slot;
             ActionId evicted_aid;
@@ -214,13 +214,13 @@ private:
 
         ScoreType threshold() const { return entry < beam_width ? INF : seg[1].first; }
 
-        /// @brief ActionId を確保する前に採否と格納位置を決める / 棄却時は slot=-1、置換時は evicted_aid に旧 ActionId を返す
+        /// @brief ActionId を確保する前に採否と格納位置を決定する / 棄却時は slot=-1、置換時は evicted_aid に置換前の ActionId を返す
         PushResult push(ScoreType score, HashType hash) {
             auto pos = hash_to_idx.get_pos(hash);
             int idx = hash_to_idx.inner_get(pos, -1);
-            // 置換済みの旧キーは辞書に残るので、スロットの hash と一致するときだけ生存中の候補とみなす
+            // 置き換えられた候補のキーは辞書に残るため、スロットの hash と一致するときだけ生存中の候補とみなす
             if (idx != -1 && uint64_t(hashidx[idx]) != uint64_t(hash)) idx = -1;
-            if (idx != -1) { // 同じハッシュはスコアが改善する場合だけ置き換える
+            if (idx != -1) { // 同じハッシュの候補はスコアが改善する場合だけ置き換える
                 if (score < next_beam[idx].score) {
                     ActionId old_aid = next_beam[idx].aid;
                     next_beam[idx].score = score;
@@ -231,7 +231,7 @@ private:
                 }
                 return {-1, BAD_ID};
             }
-            if (entry < beam_width) { // ビーム幅に達するまでは末尾に追加する
+            if (entry < beam_width) { // 候補数がビーム幅に達するまでは末尾に追加する
                 int slot = entry;
                 hash_to_idx.inner_set(pos, hash, slot);
                 next_beam[slot].score = score;
@@ -243,7 +243,7 @@ private:
                 }
                 return {slot, BAD_ID};
             }
-            // 最も悪い候補を置き換える
+            // スコアが最も悪い候補を置き換える
             auto [_, i] = seg[1];
             ActionId old_aid = next_beam[i].aid;
             next_beam[i].score = score;
@@ -258,7 +258,7 @@ private:
             next_beam[slot].aid = aid;
         }
 
-        /// @brief ビーム幅を w にして、候補とハッシュを空にする
+        /// @brief ビーム幅を w に設定し、候補とハッシュを空にする
         void reset(int w) {
             beam_width = w;
             s = 1;
@@ -279,22 +279,22 @@ private:
     };
 
     vector<Candidates> cands_pool;
-    vector<int> turn_to_pool_idx; // target_turn から cands_pool への添字。-1 は未確保
+    vector<int> turn_to_pool_idx; // target_turn から cands_pool への添字 / -1 は未確保を表す
     vector<int> free_pool_indices;
     vector<ScoreType> thresholds; // 各ターンで受理できるスコアの上限
     struct PreFrame {
         int pre_idx;
         int min_target;
     };
-    vector<PreFrame> pre_stack; // PRE_ORDER の添字と生存する直下要素の最小ターン
+    vector<PreFrame> pre_stack; // PRE_ORDER の添字と生存する直下の要素の最小ターン
 
     // clear_hash_every_turn が false のとき全ターンで共有する、ハッシュごとの最良候補
-    // より早いターンへの候補か、同じターンでスコアを改善する候補だけを通す
+    // より早いターンへの候補か、同じターンでスコアを改善する候補だけを通過させる
     titan23::HashDict<pair<ScoreType, int>, false> seen_hash;
     bool use_global_seen;
 
-    int min_target_in_tree; // 木にある葉の最小 target_turn
-    int expanded_leaf_count; // この世代で展開した葉数
+    int min_target_in_tree; // 木にある葉の target_turn の最小値
+    int expanded_leaf_count; // この世代で展開した葉の数
 
     /// @brief 動的調整時のビーム幅を残り時間と実測値から求める
     int compute_req_w() {
@@ -303,7 +303,7 @@ private:
         if (param.meta_sample_count < param.calibration_meta_count || !param.cost_model_ready()) {
             return param.beam_width;
         }
-        // 1 世代あたりの進行ターン数は EMA、累積平均の順で見積もり、未計測なら 1 とする
+        // 1 世代あたりに進むターン数は EMA、累積平均の順に優先して見積もり、未計測なら 1 とする
         double ave_step;
         if (param.ema_step > 0.0) {
             ave_step = max(0.5, param.ema_step);
@@ -342,10 +342,10 @@ private:
     }
 
     vector<BeamCandidate> new_candidates;
-    vector<int> candidate_group_ends; // 展開した親ごとの new_candidates 終端
+    vector<int> candidate_group_ends; // 展開した親ごとの new_candidates の終端
 
     /// @brief 候補を評価し、完成解を更新するか、未完了の候補を遷移先ターンのプールに登録する
-    // 命令キャッシュの圧迫を避けるため、インライン展開せず hot section に一つだけ置く
+    // 命令キャッシュの圧迫を避けるため、インライン展開せず hot section に 1 つだけ配置する
 #ifdef __clang__
     [[gnu::hot, gnu::noinline]]
 #else
@@ -422,7 +422,7 @@ private:
         }
     }
 
-    /// @brief enumerate_actions が候補登録と枝刈り閾値の取得に使う受け口
+    /// @brief enumerate_actions が候補の登録と枝刈り閾値の取得に使用するオブジェクト
     struct Submitter {
         BeamSearchWithTree& bs;
         State& st;
@@ -470,7 +470,7 @@ private:
                 if (node.target_turn == turn) {
                     const int par = expanded_leaf_count;
                     ++expanded_leaf_count;
-                    // enumerate_actions 中に action_pool が再確保され得るため、親 Action は退避する
+                    // enumerate_actions の実行中に action_pool が再確保される可能性があるため、親の Action は退避する
                     Action action = act(node.aid);
                     state.apply_op(action);
                     Submitter submit{*this, state, par, node.aid, turn};
@@ -748,7 +748,8 @@ private:
 
 public:
     /// @brief 複数ターン先への遷移を含むビームサーチを実行し、探索結果を返す
-    /// materialize_final_state が true なら最終状態も構築する。record_history が true なら history_file に履歴を JSON で書き出す
+    /// materialize_final_state が true なら最終状態も構築する
+    /// record_history が true なら history_file に履歴を JSON 形式で出力する
     template<bool materialize_final_state=true>
     Result search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
         if (param.max_turn <= 0 || param.beam_width <= 0) {

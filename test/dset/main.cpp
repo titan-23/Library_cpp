@@ -207,7 +207,7 @@ class MultisetSum {
         return i < data.size() && pos < data[i].size() && data[i][pos] == key;
     }
 
-    // [l, r)の総和を返す
+    // [l, r) の総和を返す
     T sum(int l, int r) const {
         T sum = 0;
         int u = 0, v = 0;

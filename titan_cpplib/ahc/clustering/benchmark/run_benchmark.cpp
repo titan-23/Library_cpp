@@ -275,8 +275,8 @@ Solution run_kmeans(const ClusteringBenchmarkCase& problem, uint32_t seed, int m
     return solution(kmeans(problem.points, problem.cluster_count, SquaredDistance{}, MeanCenter{}, options));
 }
 
-// run(seed), run(seed + 1), ... を time_limit_ms [ms] が過ぎるまで繰り返し、費用が最小の結果を残す
-// 期限の時点で実行中の回は途中で止めない
+// run(seed), run(seed + 1), ... を time_limit_ms [ms] が経過するまで繰り返し、コストが最小の結果を返す
+// time_limit_ms が経過した時点で実行中の回は中断しない
 template <class RunFn>
 Solution run_repeated(uint32_t seed, double time_limit_ms, RunFn run) {
     Clock::time_point start = Clock::now();
@@ -312,7 +312,8 @@ void set_move_weight(ClusteringNeighborhoodWeights& weights, int type, int value
     else if (type == clustering_rebuild) weights.rebuild = value;
 }
 
-// sa_no_<move> は近傍を 1 つ外す。sa_no_rebuild_three は二クラスタ再構築だけを残す
+// sa_no_<move> は近傍を 1 つ無効にする
+// sa_no_rebuild_three は 3 クラスタの再構築を無効にし、再構築には 2 クラスタの再構築だけを使用する
 ClusteringSaOptions sa_options_for_method(const string& method) {
     ClusteringSaOptions options;
     if (method == "sa_no_rebuild_three") {
@@ -332,7 +333,8 @@ ClusteringSaOptions sa_options_for_method(const string& method) {
     return options;
 }
 
-// Hamerly 法の所属を返す。個数範囲に違反すれば簡単な貪欲法で範囲に合わせる
+// Hamerly 法の所属を返す
+// 所属が個数の範囲に違反する場合は、簡単な貪欲法で範囲を満たすように補正する
 Solution run_hamerly_repaired(const ClusteringBenchmarkCase& problem, uint32_t seed, int max_iterations) {
     KMeansOptions options{max_iterations, seed};
     auto result = kmeans_hamerly(problem.points, problem.cluster_count, SquaredDistance{}, EuclideanDistance{}, MeanCenter{}, options);
@@ -344,8 +346,8 @@ Solution run_hamerly_repaired(const ClusteringBenchmarkCase& problem, uint32_t s
     return solution;
 }
 
-// sa と sa_no_* は Hamerly 法の所属から、sa_balanced は個数制約付き K-means の所属から焼きなましを行う
-// 時間制限は初期所属の作成を含む
+// sa と sa_no_* は Hamerly 法の所属から、sa_balanced は個数制約付き K-means の所属から焼きなましを開始する
+// 時間制限には初期所属の作成時間を含む
 Solution run_sa(const ClusteringBenchmarkCase& problem, uint32_t seed, int max_iterations, double total_time_limit_ms, const string& method, bool balanced_start, double& initialization_ms, double& search_ms) {
     Clock::time_point total_start = Clock::now();
     double flow_cost_scale = balanced_start ? choose_flow_cost_scale(problem) : numeric_limits<double>::quiet_NaN();

@@ -70,7 +70,7 @@ class PersistentArray {
         _build(a);
     }
 
-    /// @brief 位置 k を v に変更した永続配列を返す / 時間 O(logn)、空間 O(logn)
+    /// @brief 位置 k の値を v に変更した永続配列を返す / 時間 O(logn)、空間 O(logn)
     PersistentArray<T> set(int k, T v) const{
         assert(0 <= k && k < this->n);
         assert(this->root);

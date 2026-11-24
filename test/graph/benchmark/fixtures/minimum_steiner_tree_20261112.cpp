@@ -161,7 +161,7 @@ public:
         return final_edges;
     }
 
-    // 始点を全探索し、最小コストのシュタイナー木(近似)の辺集合を返す
+    // 始点を全探索し、最小コストのシュタイナー木 (近似) の辺集合を返す
     vector<pair<int, int>> build_prim_fullsearch(const vector<int> &terminal) {
         if (terminal.size() <= 1) return {};
         bool first = true;

@@ -1,5 +1,5 @@
-// Gcd・Affine・MaxSubSumについて同じ操作列を比較する補足ベンチ
-// 操作生成・木の構築・独立参照との照合は計測外
+// Gcd, Affine, MaxSubSum について同じ操作列で比較する補足のベンチマーク
+// 操作の生成、木の構築、独立した参照実装との照合は計測の対象外とする
 #include <algorithm>
 #include <chrono>
 #include <cstddef>
@@ -38,7 +38,7 @@ struct Options {
     bool verify = false;
 };
 
-/// @brief 引数を読み取り固定条件の項目を検証する / O(argc)
+/// @brief 引数を読み取り、固定条件の項目を検証する / O(argc)
 Options parse_options(int argc, char** argv) {
     Options opt;
     for (int i = 1; i < argc; ++i) {
@@ -72,7 +72,7 @@ Options parse_options(int argc, char** argv) {
 
 struct Query { Index l, r; long long value; bool update; };
 
-/// @brief 既存ベンチと同じ分布で区間を生成する / O(1)
+/// @brief 既存のベンチマークと同じ分布で区間を生成する / O(1)
 pair<Index, Index> interval(const Options& opt, mt19937_64& rng) {
     if (opt.distribution == "short") {
         const Index l = uniform_int_distribution<Index>(0, opt.n - 1)(rng);
@@ -87,7 +87,7 @@ pair<Index, Index> interval(const Options& opt, mt19937_64& rng) {
     return {l + offset, r + offset + 1};
 }
 
-/// @brief 既存ベンチと同じ乱数列で操作を生成する / O(Q)
+/// @brief 既存のベンチマークと同じ乱数列で操作を生成する / O(Q)
 vector<Query> generate(const Options& opt) {
     mt19937_64 rng(opt.seed);
     vector<Query> queries;
@@ -110,7 +110,7 @@ vector<Query> generate(const Options& opt) {
     return queries;
 }
 
-/// @brief 結果の1フィールドを検査値へ追加する / O(1)
+/// @brief 結果の 1 フィールドをチェックサムへ追加する / O(1)
 void checksum_add(uint64_t& checksum, long long value) {
     checksum ^= static_cast<uint64_t>(value) + UINT64_C(0x9e3779b97f4a7c15) +
                 (checksum << 6) + (checksum >> 2);
@@ -132,7 +132,7 @@ long long peak_rss_bytes() {
 }
 
 
-// Affineの係数型は64bitを使い、全ての演算をmod 1e9+7で行う
+// Affine の係数の型には 64bit を使用し、すべての演算を mod 1e9+7 で行う
 struct Modulo {
     static constexpr long long modulus = 1000000007;
     long long value;
@@ -140,7 +140,7 @@ struct Modulo {
     /// @brief 非負整数を剰余へ変換する / O(1)
     Modulo(long long x = 0) : value(x % modulus) {}
 
-    /// @brief 2つの剰余を加算する / O(1)
+    /// @brief 2 つの剰余を加算する / O(1)
     friend Modulo operator+(Modulo a, Modulo b) {
         const long long sum = a.value + b.value;
         Modulo result;
@@ -148,7 +148,7 @@ struct Modulo {
         return result;
     }
 
-    /// @brief 2つの剰余を乗算する / O(1)
+    /// @brief 2 つの剰余を乗算する / O(1)
     friend Modulo operator*(Modulo a, Modulo b) {
         return Modulo(a.value * b.value);
     }
@@ -164,10 +164,10 @@ struct GcdMonoid {
     /// @brief 単位元を返す / O(1)
     static Value identity() { return util::e_gcd<long long>(); }
 
-    /// @brief 座標順に2区間を結合する / O(logV)
+    /// @brief 座標順に 2 つの区間を結合する / O(logV)
     static Value combine(Value a, Value b) { return util::op_gcd(a, b); }
 
-    /// @brief 結果の全フィールドを検査値へ追加する / O(1)
+    /// @brief 結果の全フィールドをチェックサムへ追加する / O(1)
     static void checksum(uint64_t& result, Value value) { checksum_add(result, value); }
 };
 
@@ -175,7 +175,7 @@ struct AffineMonoid {
     using Value = util::Affine<Modulo>;
     using Tree = util::SegAffine<Modulo>;
 
-    /// @brief 入力値からvalue*x+1を作る / O(1)
+    /// @brief 入力値から value*x+1 を作成する / O(1)
     static Value make(long long value) { return {Modulo(value), Modulo(1)}; }
 
     /// @brief 単位元を返す / O(1)
@@ -184,7 +184,7 @@ struct AffineMonoid {
     /// @brief 左の関数の後に右の関数を適用する / O(1)
     static Value combine(Value a, Value b) { return util::op_affine(a, b); }
 
-    /// @brief 結果の全フィールドを検査値へ追加する / O(1)
+    /// @brief 結果の全フィールドをチェックサムへ追加する / O(1)
     static void checksum(uint64_t& result, Value value) {
         checksum_add(result, value.a.value);
         checksum_add(result, value.b.value);
@@ -195,16 +195,16 @@ struct MaxSubSumMonoid {
     using Value = util::MaxSubSum<long long>;
     using Tree = util::SegMaxSubSum<long long>;
 
-    /// @brief 入力値から1要素の集約値を作る / O(1)
+    /// @brief 入力値から 1 要素の集約値を作成する / O(1)
     static Value make(long long value) { return Value(value); }
 
     /// @brief 単位元を返す / O(1)
     static Value identity() { return util::e_max_sub_sum<long long>(); }
 
-    /// @brief 座標順に2区間を結合する / O(1)
+    /// @brief 座標順に 2 つの区間を結合する / O(1)
     static Value combine(Value a, Value b) { return util::op_max_sub_sum(a, b); }
 
-    /// @brief 結果の全フィールドを検査値へ追加する / O(1)
+    /// @brief 結果の全フィールドをチェックサムへ追加する / O(1)
     static void checksum(uint64_t& result, Value value) {
         checksum_add(result, value.sum);
         checksum_add(result, value.pre);
@@ -213,9 +213,9 @@ struct MaxSubSumMonoid {
     }
 };
 
-// 更新座標だけを圧縮した配列セグ木で、疎な木の分岐やノードを使わずに照合する
-// 全ての未登録座標は単位元なので、その区間を省略しても積の順序は変わらない
-/// @brief 独立した配列セグ木で全クエリの検査値を求める / O(QlogQ)
+// 更新する座標だけを圧縮した配列のセグメント木で、疎な木の分岐やノードを使用せずに照合する
+// 未登録の座標はすべて単位元であるため、その区間を省略しても積の順序は変化しない
+/// @brief 独立した配列のセグメント木で全クエリのチェックサムを求める / O(QlogQ)
 template<class Monoid>
 uint64_t reference_checksum(const vector<Query>& queries) {
     using Value = typename Monoid::Value;
@@ -248,7 +248,7 @@ uint64_t reference_checksum(const vector<Query>& queries) {
     return checksum;
 }
 
-/// @brief 更新と区間集約だけを計測してJSONを出力する / O(QlogN)
+/// @brief 更新と区間の集約だけを計測して JSON を出力する / O(QlogN)
 template<class Monoid>
 void run(const Options& opt, const vector<Query>& queries) {
     typename Monoid::Tree tree(opt.n);
@@ -275,7 +275,7 @@ void run(const Options& opt, const vector<Query>& queries) {
 }
 }  // namespace
 
-/// @brief モノイドを選択して固定操作列を評価する / O(QlogN)
+/// @brief モノイドを選択して固定の操作列を評価する / O(QlogN)
 int main(int argc, char** argv) {
     try {
         const auto opt = parse_options(argc, argv);

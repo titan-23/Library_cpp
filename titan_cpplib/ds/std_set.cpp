@@ -18,9 +18,9 @@ private:
     T missing;
 
 public:
-    /// @brief 空の集合を作る / missing は -1
+    /// @brief 空の集合を構築する / missing は -1
     StdSet() : missing(-1) {}
-    /// @brief 該当なしの返り値を missing として空の集合を作る
+    /// @brief 該当する要素がないときの返り値を missing として空の集合を構築する
     StdSet(T missing) : missing(missing) {}
     /// @brief 列 a の要素から構築する / O(n log n)
     StdSet(const vector<T>& a, T missing = T()) : s(a.begin(), a.end()), missing(missing) {}

@@ -19,13 +19,14 @@ Distance metric_value(Value value) {
     return (Distance)value;
 }
 
-// 距離関数が euclidean_metric = true を持つとき、ユークリッド距離を SIMD で求める
+// 距離関数の euclidean_metric が true の場合、ユークリッド距離を SIMD で求める
 template <class MetricFn, class = void>
 struct is_euclidean_metric : false_type {};
 template <class MetricFn>
 struct is_euclidean_metric<MetricFn, void_t<decltype(MetricFn::euclidean_metric)>> : bool_constant<MetricFn::euclidean_metric> {};
 
-// 二乗距離が最小の中心と二乗距離を返す。同じなら番号が最小の中心
+// 二乗距離が最小の中心とその二乗距離を返す
+// 二乗距離が等しい場合は番号が最小の中心を返す
 inline pair<int, double> nearest_squared(const double* point, const Columns& centers) {
     using S = Columns::S;
     auto best = S::set1(numeric_limits<double>::infinity());
@@ -39,25 +40,26 @@ inline pair<int, double> nearest_squared(const double* point, const Columns& cen
         index = S::iadd(index, step);
     }
     const auto [value, j] = S::argmin(best, best_index);
-    // どの中心とも距離が +inf のときは、逐次の探索と同じく番号 0 を返す
+    // どの中心との距離も +inf の場合は、逐次の探索と同じく番号 0 を返す
     if (j < 0) return {0, numeric_limits<double>::infinity()};
     return {(int)j, value};
 }
 
-// nearest_two を距離 sqrt(二乗距離) で呼んだときと同じ結果を返す
+// nearest_two を距離 sqrt(二乗距離) で呼び出した場合と同じ結果を返す
 inline void nearest_two_euclidean(const double* point, const Columns& centers, int start, double start_distance,
                                   int& best, double& best_distance, double& second_distance) {
     using S = Columns::S;
     constexpr int L = S::LANES;
     const double inf = numeric_limits<double>::infinity();
-    // 要素ごとに、受け持つ中心のうち距離が最小と 2 番目のものを持つ。second_sq は 2 番目の二乗距離
+    // 要素ごとに、担当する中心のうち距離が最小のものと 2 番目のものを保持する
+    // second_sq は 2 番目の二乗距離である
     auto first = S::set1(inf), second = S::set1(inf), first_sq = S::set1(inf), second_sq = S::set1(inf);
     auto first_index = S::iset1(-1), index = S::iota();
     const auto step = S::iset1(L), start_index = S::iset1(start);
     const auto infinity = S::set1(inf);
     for (int j = 0; j < centers.stride; j += L) {
         auto sq = S::select(S::ieq(index, start_index), infinity, centers.squared(point, j));
-        // 二乗距離が 2 番目以上なら、平方根も 2 番目以上なので何も変わらない
+        // 二乗距離が 2 番目の二乗距離以上の場合は、平方根も 2 番目の距離以上であるため何も変化しない
         if (S::any(S::lt(sq, second_sq))) {
             const auto x = S::sqrt(sq);
             const auto m1 = S::lt(x, first), m2 = S::lt(x, second);
@@ -72,7 +74,7 @@ inline void nearest_two_euclidean(const double* point, const Columns& centers, i
     alignas(32) double f[L], s[L];
     alignas(32) typename S::Idx fi[L];
     S::storeu(f, first), S::storeu(s, second), S::istoreu(fi, first_index);
-    // start、番号の小さい順の各要素の最小、各要素の 2 番目、の順に逐次の nearest_two と同じ規則で併合する
+    // start、番号の小さい順に並べた各要素の最小、各要素の 2 番目という順に、逐次の nearest_two と同じ規則で併合する
     int order[L];
     for (int i = 0; i < L; ++i) order[i] = i;
     sort(order, order + L, [&](int a, int b) { return fi[a] < fi[b]; });
@@ -92,7 +94,8 @@ inline void nearest_two_euclidean(const double* point, const Columns& centers, i
     for (int i = 0; i < L; ++i) if (s[i] < second_distance) second_distance = s[i];
 }
 
-// nextafter(x, +inf) と同じ値を返す。double はビット列の加減で求める
+// nextafter(x, +inf) と同じ値を返す
+// double の場合はビット列の加減算で求める
 template <class Distance>
 Distance next_up(Distance x) {
     if constexpr (is_same_v<Distance, double>) {
@@ -112,7 +115,8 @@ Distance next_down_positive(Distance x) {
     else return nextafter(x, Distance(0));
 }
 
-// 中心が movement だけ動いた後の上界と下界。丸めを考えて 1 ulp 広げる
+// 中心が movement だけ移動した後の上界と下界を返す
+// 丸め誤差を考慮して 1 ulp 広げる
 template <class Distance>
 Distance upper_after_move(Distance value, Distance movement) {
     if (movement == 0) return value;
@@ -126,7 +130,8 @@ Distance lower_after_move(Distance value, Distance movement) {
     return next_down_positive(value - movement);
 }
 
-// centers[start] との距離を既知として、最も近い中心と 2 番目の距離を求める。同じ距離なら start、次に番号の小さい中心を選ぶ
+// centers[start] との距離を既知として、最も近い中心と 2 番目に小さい距離を求める
+// 距離が等しい場合は start、番号の小さい中心の順に優先する
 template <class Distance, class Point, class Center, class MetricFn>
 void nearest_two(const Point& point, const vector<Center>& centers, int start, Distance start_distance,
                  int& best, Distance& best_distance, Distance& second_distance, MetricFn& metric) {
@@ -146,7 +151,7 @@ void nearest_two(const Point& point, const vector<Center>& centers, int start, D
     }
 }
 
-// 距離がユークリッド距離なら SIMD で、そうでなければ nearest_two で、最近傍と 2 番目の中心を探す
+// 距離がユークリッド距離の場合は SIMD で、それ以外の場合は nearest_two で、最も近い中心と 2 番目に近い中心を求める
 template <class Distance, class Point, class Center, class MetricFn>
 class NearestTwo {
     static constexpr bool EUCLIDEAN = is_euclidean_metric<MetricFn>::value && is_same_v<Distance, double>;
@@ -190,7 +195,7 @@ void assign_all_metric(const vector<Point>& points, const vector<Center>& center
     }
 }
 
-// separation[j] は中心 j から他の中心までの最小の距離の半分を 1 ulp 小さくした値
+// separation[j] は、中心 j から他の中心までの距離の最小値の半分を 1 ulp 小さくした値である
 template <class Distance, class Center, class MetricFn>
 void calculate_separation(const vector<Center>& centers, vector<Distance>& separation, MetricFn& metric) {
     int cluster_count = centers.size();
@@ -206,7 +211,7 @@ void calculate_separation(const vector<Center>& centers, vector<Distance>& separ
     }
 }
 
-// 上界が max(下界, separation) 以下の点は、最近傍の探索を省く
+// 上界が max(下界, separation) 以下の点は、最近傍の探索を省略する
 template <class Distance, class Point, class Center, class MetricFn>
 bool assign_hamerly(const vector<Point>& points, const vector<Center>& centers, vector<int>& labels,
                     vector<int>& counts, vector<Distance>& upper, vector<Distance>& lower,
@@ -236,7 +241,8 @@ bool assign_hamerly(const vector<Point>& points, const vector<Center>& centers, 
     return changed;
 }
 
-// 中心の移動量で上界と下界を更新する。空のクラスタを修復したときは上界を求め直し、下界を 0 にする
+// 中心の移動量で上界と下界を更新する
+// 空のクラスタを修復した場合は上界を求め直し、下界を 0 にする
 template <class Distance, class Point, class Center, class MetricFn>
 void update_hamerly_bounds(const vector<Point>& points, const vector<int>& labels, const vector<Center>& old_centers, const vector<Center>& new_centers, vector<Distance>& upper, vector<Distance>& lower, vector<Distance>& movement, bool repaired, MetricFn& metric) {
     int cluster_count = old_centers.size();
@@ -314,7 +320,7 @@ auto run_hamerly(const vector<Point>& points, vector<Center> centers, CostFn& co
 }
 
 /// @brief 中心 initial_centers から Hamerly 法で k-means を行う
-/// 割り当ては metric で決め、cost は total_cost と空のクラスタの修復に使う。metric は三角不等式を満たすこと
+/// 割り当ては metric で決定し、cost は total_cost の計算と空のクラスタの修復に使用する / metric は三角不等式を満たすこと
 template <class Point, class Center, class CostFn, class MetricFn, class CenterFn>
 auto kmeans_hamerly_from_centers(const vector<Point>& points, const vector<Center>& initial_centers, CostFn cost, MetricFn metric, CenterFn center_of, int max_iterations = 100) {
     return kmeans_detail::run_hamerly(points, initial_centers, cost, metric, center_of, max_iterations);
@@ -329,7 +335,7 @@ auto kmeans_hamerly(const vector<Point>& points, int cluster_count, CostFn cost,
     return kmeans_detail::run_hamerly(points, move(centers), cost, metric, center_of, options.max_iterations);
 }
 
-/// @brief 種を変えて kmeans_hamerly を trials 回行い、total_cost が最小の結果を返す
+/// @brief シードを変更して kmeans_hamerly を trials 回行い、total_cost が最小の結果を返す
 template <class Point, class CostFn, class MetricFn, class CenterFn>
 auto kmeans_hamerly_best_of(const vector<Point>& points, int cluster_count, int trials, CostFn cost, MetricFn metric, CenterFn center_of, KMeansOptions options = {}) {
     return kmeans_detail::run_best_of("kmeans_hamerly_best_of", trials, options, [&](const KMeansOptions& current) {

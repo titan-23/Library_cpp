@@ -41,7 +41,7 @@ using ScoreType = int;
 using HashType = unsigned long long;
 const ScoreType INF = 1e9;
 
-/// @brief K 枚のマップで同時に動く方向 / is_moved は実際に動いたマップのビット集合
+/// @brief K 枚のマップで同時に移動する方向 / is_moved は実際に移動したマップのビット集合
 struct Action {
     char dir = 'z';
     short is_moved = 0;
@@ -63,7 +63,7 @@ struct Action {
     string to_string() const { return ""; }
 };
 
-/// @brief K 枚のマップ上の位置と、各マスの訪問回数を持つ状態
+/// @brief K 枚のマップ上の位置と、各マスの訪問回数を保持する状態
 class State {
 private:
     titan23::Random srand;
@@ -127,7 +127,8 @@ public:
     }
 
     /// @brief action を適用したときの評価値とハッシュ値を返す
-    /// 戻すための情報はすべて action に記録する。threshold 以上なら計算を省いてよい
+    /// 元の状態に戻すための情報はすべて action に記録する
+    /// 評価値が threshold 以上なら計算を省略してよい
     tuple<ScoreType, HashType, bool> try_op(Action &action, const ScoreType threshold) const {
         action.is_moved = 0;
         ScoreType s = 0;
@@ -184,7 +185,7 @@ public:
         }
     }
 
-    /// @brief action を戻す
+    /// @brief action を適用する前の状態に戻す
     void rollback(const Action &action) {
         rep(k, K) {
             auto [y, x] = pos[k];
@@ -212,7 +213,7 @@ public:
         }
     }
 
-    /// @brief 現状態から遷移可能な Action を submit に渡す
+    /// @brief 現在の状態から遷移可能な Action を submit に渡す
     template<class Submit>
     void enumerate_actions(const int turn, const Action &last_action, Submit &&submit) const {
         int state = 0b1111;
@@ -249,7 +250,7 @@ Result search(flying_squirrel::BeamParam &param, const bool verbose=false) {
 } // namespace beam_search
 
 
-/// @brief 選んだマップの番号と操作列を出力し、スコアを標準エラー出力に書く
+/// @brief 選択したマップの番号と操作列を標準出力に、スコアを標準エラー出力に出力する
 void print_ans(const vector<beam_search::Action> &ans) {
     for (int i = 0; i < K; ++i) {
         cout << ID[i] << ' ';
@@ -280,7 +281,7 @@ void print_ans(const vector<beam_search::Action> &ans) {
         return {ny, nx};
     };
 
-    // 合成された Action を 1 手ずつの dir 列に展開する
+    // 合成された Action を操作 1 回ごとの dir の列に展開する
     vector<char> dirs;
     dirs.reserve(2500);
     for (const auto &a : ans) {

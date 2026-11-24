@@ -14,7 +14,7 @@
 #include "titan_cpplib/others/simd_int.cpp"
 using namespace std;
 namespace titan23 {
-/// @brief kmeans 系の関数の設定 / max_iterations は反復の上限、seed は K-means++ の乱数の種
+/// @brief kmeans 系の関数の設定 / max_iterations は反復の上限、seed は K-means++ の乱数のシード
 struct KMeansOptions {
     int max_iterations = 100;
     uint32_t seed = 0;
@@ -43,13 +43,14 @@ inline double random_unit(Random& random) {
     return (double)(random.rand_u64() >> 11) / 9007199254740992.0;
 }
 
-// 費用の関数が euclidean_squared = true を持つとき、二乗ユークリッド距離を SIMD で求める
+// コスト関数の euclidean_squared が true の場合、二乗ユークリッド距離を SIMD で求める
 template <class CostFn, class = void>
 struct is_euclidean_squared : false_type {};
 template <class CostFn>
 struct is_euclidean_squared<CostFn, void_t<decltype(CostFn::euclidean_squared)>> : bool_constant<CostFn::euclidean_squared> {};
 
-// 点や中心を軸ごとに並べた表。末尾の詰め物の座標は +inf で、距離も +inf になる
+// 点や中心を軸ごとに並べた表
+// 末尾のパディングの座標は +inf で、距離も +inf になる
 class Columns {
 public:
     using S = SimdVec<double>;
@@ -65,7 +66,8 @@ public:
         for (int j = 0; j < k; ++j) for (int a = 0; a < d; ++a) data[(size_t)a * stride + j] = double(items[j][a]);
     }
 
-    // 要素 j, ..., j + LANES - 1 との二乗距離。軸の順に足し、逐次の計算と同じ値になる
+    // 要素 j, ..., j + LANES - 1 との二乗距離を返す
+    // 軸の順に加算するため、逐次の計算と同じ値になる
     typename S::Vec squared(const double* point, int j) const {
         auto acc = S::set1(0);
         for (int a = 0; a < d; ++a) {
@@ -82,7 +84,7 @@ void load_point(const Point& point, int d, vector<double>& out) {
     for (int a = 0; a < d; ++a) out[a] = double(point[a]);
 }
 
-// クラスタ j の点の番号を members[offsets[j] .. offsets[j + 1]) に番号の昇順で並べる
+// クラスタ j の点の番号を members[offsets[j] .. offsets[j + 1]) に番号の昇順で格納する
 inline void build_members(const vector<int>& labels, const vector<int>& counts, vector<int>& offsets, vector<int>& members, vector<int>& cursor) {
     int n = labels.size(), cluster_count = counts.size();
     offsets.resize(cluster_count + 1);
@@ -94,7 +96,7 @@ inline void build_members(const vector<int>& labels, const vector<int>& counts, 
     for (int i = 0; i < n; ++i) members[cursor[labels[i]]++] = i;
 }
 
-// 空のクラスタに、2 点以上のクラスタの点のうち費用が最大の点を移す
+// 空のクラスタに、2 点以上のクラスタの点のうちコストが最大の点を移動する
 template <class Cost>
 bool repair_empty_clusters(vector<int>& labels, vector<int>& counts, const vector<Cost>& assigned_cost) {
     bool repaired = false;
@@ -134,13 +136,13 @@ void calculate_centers(const vector<Point>& points, int cluster_count, const vec
     }
 }
 
-// 中心の関数が mean_center = true を持つとき、点の番号の順に 1 回だけ読んで平均を求める
+// 中心の関数の mean_center が true の場合、点を番号の順に 1 回だけ参照して平均を求める
 template <class CenterFn, class = void>
 struct is_mean_center : false_type {};
 template <class CenterFn>
 struct is_mean_center<CenterFn, void_t<decltype(CenterFn::mean_center)>> : bool_constant<CenterFn::mean_center> {};
 
-// 各クラスタの和を点の番号の昇順に足すので、members を番号順に足す平均と同じ値になる
+// 各クラスタの和を点の番号の昇順に加算するため、members を番号順に加算して求めた平均と同じ値になる
 template <class Point>
 void calculate_mean_centers(const vector<Point>& points, const vector<int>& labels, const vector<int>& counts, vector<vector<double>>& centers) {
     const size_t d = points[0].size();
@@ -155,7 +157,7 @@ void calculate_mean_centers(const vector<Point>& points, const vector<int>& labe
     }
 }
 
-// 所属から中心を作り直す
+// 所属から中心を求め直す
 template <class Point, class Center, class CenterFn>
 void update_centers(const vector<Point>& points, const vector<int>& labels, const vector<int>& counts, vector<int>& offsets, vector<int>& members, vector<int>& cursor, vector<Center>& centers, CenterFn& center_of) {
     if constexpr (is_mean_center<CenterFn>::value && is_same_v<Center, vector<double>>) {
@@ -166,7 +168,8 @@ void update_centers(const vector<Point>& points, const vector<int>& labels, cons
     }
 }
 
-// 各点を費用が最小の中心に割り当てる。同じ費用なら前のラベル、次に番号の小さい中心を選ぶ
+// 各点をコストが最小の中心に割り当てる
+// コストが等しい場合は前のラベル、番号の小さい中心の順に優先する
 template <class Point, class Center, class CostFn>
 void assign_nearest(const vector<Point>& points, const vector<Center>& centers, const vector<int>& old_labels, vector<int>& new_labels, vector<int>& counts, vector<remove_cvref_t<invoke_result_t<CostFn&, const Point&, const Center&>>>& assigned_cost, CostFn& cost) {
     using Cost = remove_cvref_t<invoke_result_t<CostFn&, const Point&, const Center&>>;
@@ -227,7 +230,8 @@ vector<Center> initialize_kmeans_pp(const vector<Point>& points, int cluster_cou
     using RawCost = remove_cvref_t<invoke_result_t<CostFn&, const Point&, const Center&>>;
     using Weight = conditional_t<is_integral_v<RawCost>, long double, common_type_t<RawCost, double>>;
     check_lloyd_input(points.size(), cluster_count, 1);
-    // 二乗ユークリッド距離なら、距離と商を SIMD でまとめて求める。和は逐次と同じ順に足す
+    // 二乗ユークリッド距離の場合は、距離と商を SIMD でまとめて求める
+    // 和は逐次の計算と同じ順に加算する
     constexpr bool EUCLIDEAN = is_euclidean_squared<CostFn>::value && is_same_v<Center, vector<double>> && is_same_v<Weight, double>;
     using S = Columns::S;
     constexpr int BLOCK = 256;
@@ -256,10 +260,11 @@ vector<Center> initialize_kmeans_pp(const vector<Point>& points, int cluster_cou
     centers.emplace_back(center_of(points, span<const int>(&chosen, 1)));
     while ((int)centers.size() < cluster_count) {
         const Center& newest = centers.back();
-        // total は未選択の点の minimum_cost / maximum の和。maximum が増えたら比で縮め直す
+        // total は未選択の点の minimum_cost / maximum の総和
+        // maximum が増加した場合は total に比を掛けて縮小する
         Weight maximum = 0, total = 0;
         if constexpr (EUCLIDEAN) {
-            // 選んだ点の値も更新するが、以後は読まない
+            // 選択済みの点の値も更新するが、以後は参照しない
             for (int j = 0; j < columns.stride; j += S::LANES) {
                 const auto value = columns.squared(newest.data(), j);
                 const auto current = S::loadu(&minimum_cost[j]);
@@ -341,7 +346,7 @@ vector<Center> initialize_kmeans_pp(const vector<Point>& points, int cluster_cou
     return centers;
 }
 
-// 種を options.seed, options.seed + 1, ... として run を trials 回呼び、total_cost が最小の最初の結果を返す
+// シードを options.seed, options.seed + 1, ... として run を trials 回呼び出し、total_cost が最小の結果のうち最初のものを返す
 template <class Options, class RunFn>
 auto run_best_of(const char* name, int trials, const Options& options, RunFn run) {
     if (trials <= 0) throw invalid_argument(string(name) + ": trials must be positive");
@@ -356,14 +361,14 @@ auto run_best_of(const char* name, int trials, const Options& options, RunFn run
 }
 }
 
-/// @brief 中心 initial_centers から Lloyd 法で k-means を行う / 1 反復で cost を nk 回呼ぶ
-/// cost(point, center) は割り当ての費用、center_of(points, members) は members の中心を返す
+/// @brief 中心 initial_centers から Lloyd 法で k-means を行う / 1 反復で cost を nk 回呼び出す
+/// cost(point, center) は割り当てのコストを返し、center_of(points, members) は members の中心を返す
 template <class Point, class Center, class CostFn, class CenterFn>
 auto kmeans_from_centers(const vector<Point>& points, const vector<Center>& initial_centers, CostFn cost, CenterFn center_of, int max_iterations = 100) {
     return kmeans_detail::run_lloyd(points, initial_centers, cost, center_of, max_iterations);
 }
 
-/// @brief K-means++ で初期化し、Lloyd 法で k-means を行う / 1 反復で cost を nk 回呼ぶ
+/// @brief K-means++ で初期化し、Lloyd 法で k-means を行う / 1 反復で cost を nk 回呼び出す
 template <class Point, class CostFn, class CenterFn>
 auto kmeans(const vector<Point>& points, int cluster_count, CostFn cost, CenterFn center_of, KMeansOptions options = {}) {
     using Center = remove_cvref_t<invoke_result_t<CenterFn&, const vector<Point>&, span<const int>>>;
@@ -372,7 +377,7 @@ auto kmeans(const vector<Point>& points, int cluster_count, CostFn cost, CenterF
     return kmeans_detail::run_lloyd(points, move(centers), cost, center_of, options.max_iterations);
 }
 
-/// @brief 種を変えて kmeans を trials 回行い、total_cost が最小の結果を返す
+/// @brief シードを変更して kmeans を trials 回行い、total_cost が最小の結果を返す
 template <class Point, class CostFn, class CenterFn>
 auto kmeans_best_of(const vector<Point>& points, int cluster_count, int trials, CostFn cost, CenterFn center_of, KMeansOptions options = {}) {
     return kmeans_detail::run_best_of("kmeans_best_of", trials, options, [&](const KMeansOptions& current) {

@@ -9,8 +9,8 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 同じシードでの評価を Wilcoxon 符号順位検定で比べ、既知の最良に有意に劣るパラメータの評価を打ち切る枝刈り器
-/// パラメータごとに report と should_prune を繰り返し、評価を終えたら next_param を呼ぶ
+/// @brief 同じシードでの評価結果を Wilcoxon 符号順位検定で比較し、既知の最良パラメータより有意に劣るパラメータの評価を打ち切るクラス
+/// パラメータごとに report と should_prune を繰り返し、評価を終了したら next_param を呼び出す
 template<typename ScoreType=double>
 class WilcoxonPruner {
 private:
@@ -32,7 +32,7 @@ private:
     vector<pair<double, double>> workspace_diffs;
 
 public:
-     /// @brief 枝刈り器を構築する / seed は [0, max_seeds)、p_threshold は有意水準、is_minimize の既定は最小化
+     /// @brief WilcoxonPruner を構築する / seed は [0, max_seeds)、p_threshold は有意水準、is_minimize の既定は最小化
      WilcoxonPruner(int max_seeds, double p_threshold=0.1, int min_samples=5, bool is_minimize=true)
         : p_threshold(p_threshold), min_samples(min_samples), is_minimize(is_minimize), max_seeds(max_seeds), best_count(0), best_sum(0), now_count(0), now_sum(0) {
         best_scores.assign(max_seeds, 0);
@@ -42,7 +42,7 @@ public:
         workspace_diffs.reserve(max_seeds);
     }
 
-    /// @brief シード seed での評価スコア score を報告する / 同じ seed を再び報告すると上書きする
+    /// @brief シード seed での評価スコア score を報告する / 同じ seed を再び報告すると前回のスコアを置き換える
     void report(int seed, ScoreType score) {
         if (!has_now_score[seed]) {
             has_now_score[seed] = true;
@@ -54,7 +54,7 @@ public:
         now_sum += score;
     }
 
-    /// @brief 現パラメータが最良パラメータより統計的に有意に劣り、枝刈りすべきなら true を返す
+    /// @brief 現在のパラメータが最良パラメータより統計的に有意に劣り、枝刈りすべき場合は true を返す
     bool should_prune() {
         if (best_count == 0 || now_count < min_samples) return false;
         workspace_diffs.clear();
@@ -91,8 +91,8 @@ public:
         return p_value < p_threshold;
     }
 
-    /// @brief 現パラメータの評価を終え、次のパラメータに備える / 枝刈りで終えたなら was_pruned を true にする
-    /// 枝刈りされずに min_samples 個以上のシードを評価し、平均が最良より良いときだけ最良を置き換える
+    /// @brief 現在のパラメータの評価を終了し、次のパラメータの評価に備える / 枝刈りで終了した場合は was_pruned に true を渡す
+    /// 現在のパラメータが枝刈りされずに min_samples 個以上のシードで評価され、平均スコアが最良パラメータより良い場合だけ最良パラメータを置き換える
     void next_param(bool was_pruned) {
         if (!was_pruned && now_count >= min_samples) {
             bool update = false;

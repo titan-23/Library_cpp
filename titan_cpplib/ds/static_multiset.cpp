@@ -20,9 +20,9 @@ private:
 
 public:
     StaticMultiset() : missing(-1), n(0) {}
-    /// @brief 空の多重集合を構築する / missing は要素に使わない値 / O(1)
+    /// @brief 空の多重集合を構築する / missing は要素に使用しない値 / O(1)
     StaticMultiset(T missing) : missing(missing), n(0) {}
-    /// @brief 列 a から構築する / missing は要素に使わない値 / O(nlogn)
+    /// @brief 列 a から構築する / missing は要素に使用しない値 / O(nlogn)
     StaticMultiset(const vector<T> &a, T missing) : data(a), missing(missing) {
         sort(data.begin(), data.end());
         n = (int)data.size();

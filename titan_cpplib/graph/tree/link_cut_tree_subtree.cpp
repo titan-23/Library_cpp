@@ -127,7 +127,7 @@ private:
         }
     }
 
-    // 遅延するのは反転だけなので、g, p, v を push すれば足りる
+    // 遅延させる操作は反転だけであるため、g, p, v を push すれば十分である
     template<bool PULL_ROOT = true>
     void _splay(int v) {
         if (_is_root(v)) {
@@ -175,7 +175,7 @@ private:
     }
 
     void _link(int c, int p) {
-        // c は表現木の根なので、splay すると左の子はない
+        // c は表現木の根であるため、splay した後の c に左の子はない
         _splay(c);
         _expose(p);
         pool[c].p = p;
@@ -229,7 +229,7 @@ public:
         pool.emplace_back(e(), n, 0);
     }
 
-    /// @brief 根から v へのパスを露出する / expose(u) の直後なら u と v の LCA を返す / 償却 O(log n)
+    /// @brief 根から v へのパスを 1 つの補助木にまとめる / expose(u) の直後なら u と v の LCA を返す / 償却 O(log n)
     int expose(int v) {
         assert(0 <= v && v < n);
         return _expose(v);
@@ -253,7 +253,7 @@ public:
         _link(c, p);
     }
 
-    /// @brief c と親の間の辺を切る / c は表現木の根でないこと / 償却 O(log n)
+    /// @brief c と親の間の辺を削除する / c は表現木の根でないこと / 償却 O(log n)
     void cut(int c) {
         assert(0 <= c && c < n);
         _cut(c);
@@ -303,12 +303,12 @@ public:
         return pool[v].all;
     }
 
-    /// @brief u と v が別の連結成分なら辺 (u, v) を張って true を返す / 同じ成分なら false / 償却 O(log n)
+    /// @brief u と v が別の連結成分に属する場合は辺 (u, v) を追加して true を返す / 同じ連結成分に属する場合は false を返す / 償却 O(log n)
     bool merge(int u, int v) {
         assert(0 <= u && u < n && 0 <= v && v < n);
         _evert(u);
         _expose(v);
-        // v を露出した後、異なる 2 頂点が連結なときに限り u に親がある
+        // _expose(v) の後は、u と v が異なる頂点で、かつ連結である場合に限り u に親がある
         if (u == v || pool[u].p != n) return false;
         pool[u].p = v;
         pool[v].r = u;
@@ -316,7 +316,7 @@ public:
         return true;
     }
 
-    /// @brief u と v の間の辺を切る / u と v の間に辺があること / 償却 O(log n)
+    /// @brief u と v の間の辺を削除する / u と v の間に辺があること / 償却 O(log n)
     void split(int u, int v) {
         assert(0 <= u && u < n && 0 <= v && v < n);
         _evert(u);

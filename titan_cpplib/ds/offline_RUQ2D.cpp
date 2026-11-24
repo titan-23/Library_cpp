@@ -29,7 +29,8 @@ private:
     int now;
     vector<vector<int>> buf;
 
-    // x 以上で、今の節点の処理でまだ値を決めていない最小の列を返す。ver で毎回の初期化を省く
+    // x 以上の列のうち、現在のノードの処理でまだ値が確定していない最小の列を返す
+    // ver によって毎回の初期化を省略する
     int find(int x) {
         while (true) {
             int p = (ver[x] == now) ? nxt[x] : x;
@@ -54,7 +55,7 @@ private:
         }
     }
 
-    // セグメント木を根から下り、各列を覆う最後のクエリ番号を mx に持つ
+    // セグメント木を根から葉の方向へたどり、各列を覆う最も新しいクエリの番号を mx に格納する
     void dfs(int node, const vector<int> &acc, int depth, vector<vector<T>> &ans) {
         if (off[node] == off[node+1]) {
             if (node >= sz) {
@@ -103,7 +104,7 @@ public:
         vals.reserve(q);
     }
 
-    /// @brief 矩形 [u, d) x [l, r) を v にする操作を記録する / O(1)
+    /// @brief 矩形 [u, d) x [l, r) の値を v に更新する操作を記録する / O(1)
     void apply(int u, int d, int l, int r, T v) {
         assert(0 <= u && u <= d && d <= h);
         assert(0 <= l && l <= r && r <= w);

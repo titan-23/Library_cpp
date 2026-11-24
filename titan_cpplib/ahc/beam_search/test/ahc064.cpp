@@ -38,12 +38,12 @@ using HashType = unsigned long long;
 const ScoreType INF = 1e18;
 titan23::Random brnd;
 
-// zhs_s[v][i][j]:=値 v が位置 (i, j) にあるときのハッシュ
+// zhs_s[v][i][j] := 値 v が位置 (i, j) にあるときのハッシュ
 HashType zhs_s[N*N][N][MAX_S];
 HashType zhs_t[N*N][N][MAX_T];
 HashType hash_AC;
 
-/// @brief ハッシュ用の乱数表と、完成状態のハッシュ hash_AC を作る
+/// @brief ハッシュ用の乱数表と、完成状態のハッシュ hash_AC を作成する
 void beam_init() {
     rep(i, N*N) rep(j, N) rep(k, MAX_S) zhs_s[i][j][k] = brnd.rand_u64();
     rep(i, N*N) rep(j, N) rep(k, MAX_T) zhs_t[i][j][k] = brnd.rand_u64();
@@ -53,7 +53,7 @@ void beam_init() {
     }
 }
 
-/// @brief S[si] と T[ti] の間で値を移す操作 / si か ti が -1 なら次のターンへ進む
+/// @brief S[si] と T[ti] の間で値を移動する操作 / si か ti が -1 なら次のターンへ進む
 struct Action {
     ScoreType pre_score, nxt_score;
     HashType pre_hash, nxt_hash;
@@ -128,7 +128,7 @@ struct TArray {
     int operator[](int i) const { return data[head + i]; }
 };
 
-/// @brief 各列の S と T の中身と、現在のターンを持つ状態
+/// @brief 各列の S と T の内容と、現在のターンを保持する状態
 class State {
 private:
     ScoreType score;
@@ -158,7 +158,7 @@ public:
         rep(i, N) hash ^= calc_hash_T(i, T[i]);
     }
 
-    /// @brief y が x+1 で、x の 1 の位が 9 でないかを返す
+    /// @brief y が x+1 で、かつ x の 1 の位が 9 でないかどうかを返す
     bool is_consecutive(int x, int y) const {
         if (x % 10 == 9) return false;
         if (y != x+1) return false;
@@ -210,8 +210,9 @@ public:
         return 0;
     }
 
-    /// @brief action を適用した後の評価値、ハッシュ値、完成したかを返す
-    /// action に target_turn と戻すための情報を記録する。thresholds[target_turn] 以上と分かった時点で INF を返す
+    /// @brief action を適用した後の評価値、ハッシュ値、完成したかどうかを返す
+    /// action に target_turn と元の状態に戻すための情報を記録する
+    /// 評価値が thresholds[target_turn] 以上と判明した時点で INF を返す
     tuple<ScoreType, HashType, bool> try_op(Action &action, const vector<ScoreType>& thresholds) const {
         action.pre_score = score;
         action.pre_hash = hash;
@@ -314,7 +315,7 @@ public:
         t = action.nxt_t;
     }
 
-    /// @brief action を戻す
+    /// @brief action を適用する前の状態に戻す
     void rollback(const Action &action) {
         int i = action.si;
         int j = action.ti;
@@ -404,7 +405,7 @@ flying_squirrel::BeamParam gen_param(int max_turn, int beam_width) {
 }
 
 /// @brief 最大ターン数、ビーム幅、制限時間などから BeamParam を返す
-/// is_adjusting は制限時間に合わせて幅を調整するか、clear_hash_every_turn はハッシュ辞書を毎ターン消すかを指定する
+/// is_adjusting は制限時間に合わせて幅を調整するかどうか、clear_hash_every_turn はハッシュ辞書を毎ターン消去するかどうかを指定する
 flying_squirrel::BeamParam gen_param(int max_turn, int beam_width, double time_limit, bool is_adjusting=false, bool clear_hash_every_turn=true) {
     return {max_turn, beam_width, time_limit, is_adjusting, clear_hash_every_turn};
 }

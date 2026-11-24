@@ -32,7 +32,7 @@ public:
             return (left ? left->height : 0) - (right ? right->height : 0);
         }
 
-        /// @brief 子から size と height を計算し直す / O(1)
+        /// @brief 子から size と height を再計算する / O(1)
         constexpr void update() {
             size = 1 + (left ? left->size : 0) + (right ? right->size : 0);
             height = 1 + max((left ? left->height : 0), (right ? right->height : 0));
@@ -45,7 +45,7 @@ private:
     using AVLTreeSetNodePtr = AVLTreeSetNode*;
     AVLTreeSetNodePtr root;
 
-    // 削除の後、node から根へ向かって平衡を直す
+    // 削除の後に node から根へ向かって平衡を回復する
     constexpr void _remove_balance(AVLTreeSetNodePtr node) {
         while (node) {
             AVLTreeSetNodePtr new_node = nullptr;
@@ -80,7 +80,7 @@ private:
         }
     }
 
-    // 挿入の後、node から根へ向かって平衡を直す
+    // 挿入の後に node から根へ向かって平衡を回復する
     constexpr void _add_balance(AVLTreeSetNodePtr node) {
         AVLTreeSetNodePtr new_node = nullptr;
         while (node) {
@@ -117,16 +117,16 @@ private:
     }
 
     public:
-    /// @brief 空の集合を作る / missing は -1
+    /// @brief 空の集合を構築する / missing は -1
     AVLTreeSet() : missing(-1), root(nullptr) {}
-    /// @brief 空の集合を作る / 該当する要素がない探索は missing を返す
+    /// @brief 空の集合を構築する / 該当する要素がない探索は missing を返す
     AVLTreeSet(T missing) : missing(missing), root(nullptr) {}
-    /// @brief a の要素から作る / 重複は除く / O(n log n)
+    /// @brief a の要素から構築する / 重複は除く / O(n log n)
     AVLTreeSet(const vector<T> &a, T missing) : missing(missing) {
         this->root = build(a);
     }
 
-    /// @brief a から木を作り根を返す / 重複は除く / O(n log n)
+    /// @brief a から木を構築して根を返す / 重複は除く / O(n log n)
     AVLTreeSetNodePtr build(vector<T> a) {
         auto _build = [&] (auto &&_build, int l, int r) -> AVLTreeSetNodePtr {
             int mid = (l + r) / 2;
@@ -220,7 +220,7 @@ private:
         return true;
     }
 
-    /// @brief key を削除する / key がある必要がある / O(log n)
+    /// @brief key を削除する / key が存在する必要がある / O(log n)
     void remove(const T &key) {
         AVLTreeSetNodePtr node = find_key(key);
         assert(node);
@@ -418,7 +418,7 @@ private:
         return root ? root->size : 0;
     }
 
-    /// @brief 木の不変条件を assert で調べ、結果を標準出力に書く / デバッグ用
+    /// @brief 木の不変条件を assert で確認し、結果を標準出力に出力する / デバッグ用
     void check() const {
         if (!root) {
             cout << "height=0" << endl;;

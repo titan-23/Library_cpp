@@ -24,13 +24,13 @@ public:
         build();
     }
 
-    /// @brief v を追加する / 他の操作の前に build() が必要
+    /// @brief v を追加する / 他の操作の前に build() を呼び出す必要がある
     void add(const T &v) {
         a.push_back(v);
         built = false;
     }
 
-    /// @brief 重複を除いて整列する / O(n log n)
+    /// @brief 重複を除いてソートする / O(n log n)
     void build() {
         sort(a.begin(), a.end());
         a.erase(unique(a.begin(), a.end()), a.end());

@@ -33,7 +33,7 @@ using HashType = unsigned long long;
 const ScoreType INF = 1e18;
 titan23::Random brnd;
 
-// zhs_s[v][i][j]:=値vが位置(i,j)にあるハッシュ
+// zhs_s[v][i][j]:=値 v が位置 (i,j) にあることを表すハッシュ値
 HashType zhs_s[N*N][N][MAX_S];
 HashType zhs_t[N*N][N][MAX_T];
 HashType hash_AC;

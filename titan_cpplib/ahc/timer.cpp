@@ -15,10 +15,10 @@ private:
     chrono::time_point<chrono::high_resolution_clock> start_timepoint;
 
 public:
-    /// @brief 構築した時刻から計測を始める
+    /// @brief 構築した時刻から計測を開始する
     Timer() : start_timepoint(chrono::high_resolution_clock::now()) {}
 
-    /// @brief 計測の起点を現在の時刻に戻す
+    /// @brief 計測の起点を現在の時刻に再設定する
     void reset() {
         start_timepoint = chrono::high_resolution_clock::now();
     }

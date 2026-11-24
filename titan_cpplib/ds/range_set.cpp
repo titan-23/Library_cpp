@@ -12,16 +12,17 @@ using namespace std;
 // RangeSet
 namespace titan23 {
 
-/// @brief 整数の集合を、互いに素な半開区間の集合として管理する
+/// @brief 整数の集合を互いに素な半開区間の集合として管理する
 /// 値は neg_inf < x < pos_inf を満たすものだけを扱う / 探索に失敗すると neg_inf か pos_inf を返す
-/// 計算量の k は、[l, r) と交差する区間の個数
+/// 計算量の k は [l, r) と交差する区間の個数である
 template<typename T>
 class RangeSet {
 private:
     map<T, T> data;
     long long sum_len;
 
-    // x を含む区間のイテレータを返す。含まないときは data.end() を返す
+    // x を含む区間のイテレータを返す
+    // x を含む区間がないときは data.end() を返す
     auto find_it(const T &x) const {
         auto it = data.upper_bound(x);
         if (it == data.begin()) return data.end();
@@ -30,7 +31,7 @@ private:
         return data.end();
     }
 
-    // 昇順の区間列から構築し、重なりと隣接は併合する / O(n)
+    // 昇順の区間列から構築し、重なる区間と隣接する区間は併合する / O(n)
     void build(const vector<pair<T, T>> &ranges) {
         data.clear();
         sum_len = 0;
@@ -88,7 +89,7 @@ public:
         build(b);
     }
 
-    /// @brief [l, r) を追加し、増えた要素数を返す / 償却 O(logn)
+    /// @brief [l, r) を追加し、増加した要素数を返す / 償却 O(logn)
     long long add(T l, T r) {
         assert(neg_inf < l && l <= r && r <= pos_inf);
         if (l == r) return 0;
@@ -115,12 +116,12 @@ public:
         return sum_len - before;
     }
 
-    /// @brief x を追加し、増えたなら true を返す / 償却 O(logn)
+    /// @brief x を追加し、要素数が増加した場合は true を返す / 償却 O(logn)
     bool add(T x) {
         return add(x, x + 1) > 0;
     }
 
-    /// @brief [l, r) を削除し、減った要素数を返す / 償却 O(logn)
+    /// @brief [l, r) を削除し、減少した要素数を返す / 償却 O(logn)
     long long remove(T l, T r) {
         assert(neg_inf < l && l <= r && r <= pos_inf);
         if (l == r) return 0;
@@ -159,7 +160,7 @@ public:
         return before - sum_len;
     }
 
-    /// @brief x を削除し、減ったなら true を返す / 償却 O(logn)
+    /// @brief x を削除し、要素数が減少した場合は true を返す / 償却 O(logn)
     bool discard(T x) {
         return remove(x, x + 1) > 0;
     }
@@ -176,14 +177,14 @@ public:
         sum_len = 0;
     }
 
-    /// @brief 扱える範囲全体を追加する / O(n)
+    /// @brief 扱う値の範囲全体を追加する / O(n)
     void fill() {
         data.clear();
         data.emplace(neg_inf + 1, pos_inf);
         sum_len = pos_inf - (neg_inf + 1);
     }
 
-    /// @brief x の有無を反転し、反転後に含むなら true を返す / 償却 O(logn)
+    /// @brief x の有無を反転し、反転後に x を含む場合は true を返す / 償却 O(logn)
     bool toggle(T x) {
         assert(neg_inf < x && x < pos_inf);
         if (contains(x)) {
@@ -194,7 +195,7 @@ public:
         return true;
     }
 
-    /// @brief [l, r) の有無を反転し、要素数の増分を返す / O((k+1)logn)
+    /// @brief [l, r) に含まれる各値の有無を反転し、要素数の増分を返す / O((k+1)logn)
     long long flip(T l, T r) {
         assert(neg_inf < l && l <= r && r <= pos_inf);
         if (l == r) return 0;
@@ -267,14 +268,14 @@ public:
         return other.is_subset_of(*this);
     }
 
-    /// @brief x を含む区間を返す / 含まないときは {neg_inf, neg_inf} / O(logn)
+    /// @brief x を含む区間を返す / x を含む区間がないときは {neg_inf, neg_inf} を返す / O(logn)
     pair<T, T> get_range(const T &x) const {
         auto it = find_it(x);
         if (it == data.end()) return {neg_inf, neg_inf};
         return {it->first, it->second};
     }
 
-    /// @brief x を含む区間を返し、なければ右で最初の区間を返す / ないときは {pos_inf, pos_inf} / O(logn)
+    /// @brief x を含む区間を返し、なければ x より右で最も近い区間を返す / どちらもないときは {pos_inf, pos_inf} を返す / O(logn)
     pair<T, T> next_range(const T &x) const {
         auto it = find_it(x);
         if (it != data.end()) return {it->first, it->second};
@@ -283,7 +284,7 @@ public:
         return {it->first, it->second};
     }
 
-    /// @brief x を含む区間を返し、なければ左で最後の区間を返す / ないときは {neg_inf, neg_inf} / O(logn)
+    /// @brief x を含む区間を返し、なければ x より左で最も近い区間を返す / どちらもないときは {neg_inf, neg_inf} を返す / O(logn)
     pair<T, T> prev_range(const T &x) const {
         auto it = data.upper_bound(x);
         if (it == data.begin()) return {neg_inf, neg_inf};
@@ -291,7 +292,7 @@ public:
         return {it->first, it->second};
     }
 
-    /// @brief x を含む極大な空き区間を返す / x が含まれているときは {neg_inf, neg_inf} / O(logn)
+    /// @brief x を含む極大な空き区間を返す / x が含まれているときは {neg_inf, neg_inf} を返す / O(logn)
     pair<T, T> get_gap(const T &x) const {
         assert(neg_inf < x && x < pos_inf);
         T a = neg_inf + 1, b = pos_inf;
@@ -305,7 +306,7 @@ public:
         return {a, b};
     }
 
-    /// @brief x を含む空き区間を返し、なければ右で最初の空き区間を返す / ないときは {pos_inf, pos_inf} / O(logn)
+    /// @brief x を含む空き区間を返し、なければ x より右で最も近い空き区間を返す / どちらもないときは {pos_inf, pos_inf} を返す / O(logn)
     pair<T, T> next_gap(const T &x) const {
         assert(neg_inf < x && x < pos_inf);
         T a = neg_inf + 1, b = pos_inf;
@@ -319,7 +320,7 @@ public:
         return {a, b};
     }
 
-    /// @brief x を含む空き区間を返し、なければ左で最後の空き区間を返す / ないときは {neg_inf, neg_inf} / O(logn)
+    /// @brief x を含む空き区間を返し、なければ x より左で最も近い空き区間を返す / どちらもないときは {neg_inf, neg_inf} を返す / O(logn)
     pair<T, T> prev_gap(const T &x) const {
         assert(neg_inf < x && x < pos_inf);
         T a = neg_inf + 1, b = pos_inf;
@@ -540,7 +541,7 @@ public:
         return (*this - other) | (other - *this);
     }
 
-    /// @brief 扱える範囲での補集合を返す / O(n)
+    /// @brief 扱う値の範囲での補集合を返す / O(n)
     RangeSet complement() const {
         vector<pair<T, T>> res;
         res.reserve(data.size() + 1);

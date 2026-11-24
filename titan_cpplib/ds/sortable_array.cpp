@@ -13,8 +13,8 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 区間ソートができる配列 / T の < と == が定義され、全順序であること
-/// コピーすると正しく動かないので、複製には tovector() を使う
+/// @brief 区間ソートができる配列 / T の < と == が定義され、全順序であることを前提とする
+/// コピーすると正しく動作しないため、複製には tovector() を使用する
 template <class T>
 class SortableArray {
 private:
@@ -122,12 +122,12 @@ private:
         return node;
     }
 
-    // key 以下の部分木と key より大きい部分木に分ける / 返すノードは splay 済み
+    // key 以下の部分木と key より大きい部分木に分割する / 返すノードは splay 済みである
     pair<NodePtr, NodePtr> split(NodePtr node, T key) {
         if (!node) return {nullptr, nullptr};
         node->splay();
         NodePtr nxt = find_splay(node, key);
-        if (!nxt) return {nullptr, node}; // node は splay 済み
+        if (!nxt) return {nullptr, node}; // node は splay 済みである
         NodePtr r = nxt->right;
         nxt->right = nullptr;
         if (r) r->par = nullptr;
@@ -149,9 +149,9 @@ private:
         cerr << "]" << endl;
     }
 
-    // 位置 k の直前で木を切り、k を木の先頭にする
+    // 位置 k の直前で木を分割し、k を木の先頭にする
     void make_kyokai(int k) {
-        // 1 つの木はソート済みなので、キー順と添字順が一致する
+        // 1 つの木の中ではキーがソート済みであるため、キー順と添字順が一致する
         if (k == n) return;
         if (ws.contains(k)) return;
         ws.add(k);
@@ -166,7 +166,7 @@ private:
         p->left = nullptr;
         left->par = nullptr;
         p->update();
-        // assert(left);  // k not in ws より、idxより左に必ず要素がある
+        // assert(left);  // k not in ws より、idx より左に必ず要素がある
         p = left_splay(p);
         if (!is_rev[idx]) { // 反転なし
             nodeptr[idx] = left;
@@ -187,7 +187,7 @@ private:
         return {idx, tree_idx};
     }
 
-    // 2 つの木をキー順を保って併合する
+    // 2 つの木を、キー順を維持して併合する
     NodePtr merge(NodePtr a, NodePtr b) {
         if (!a) return b;
         if (!b) return a;
@@ -215,7 +215,7 @@ private:
         return concat(concat(X, a), b);
     }
 
-    // nodeptr[l, r) の節点から、添字順に並んだ平衡な木を作る
+    // nodeptr[l, r) のノードを添字順に配置した平衡な木を構築する
     NodePtr build(int l, int r) {
         auto _build = [&] (auto &&_build, int L, int R) -> NodePtr {
             int mid = (L + R) / 2;
@@ -237,7 +237,7 @@ private:
 public:
     SortableArray() {}
 
-    /// @brief 長さ N で構築する / 初期値 T{} / O(N)
+    /// @brief 長さ N で構築する / 初期値は T{} / O(N)
     SortableArray(int n) : n(n), ws(n), nodeptr(n), is_rev(n, false) {
         for (int i = 0; i < n; ++i) {
             nodeptr[i] = new Node(T{});
@@ -327,7 +327,7 @@ public:
         int s = 0;
         while (1) {
             int gt = ws.gt(idx);
-            // r != n なら make_kyokai により gt == r で止まる
+            // r != n なら make_kyokai によりループは gt == r で終了する
             if (gt == r || gt == -1) break;
             s += fw.get(gt);
             pre = merge(pre, nodeptr[gt]);

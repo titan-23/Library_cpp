@@ -10,11 +10,11 @@ using namespace std;
 
 namespace titan23 {
 
-// 構築時のバケット数と、バケットを分割する大きさを決める比
+// 構築時のバケット数と、バケットを分割する大きさを定める比
 const int BUCKET_RATIO = 16;
 const int SPLIT_RATIO = 24;
 
-/// @brief 総和を求められる多重集合 / 平方分割で実装する
+/// @brief 総和を求めることができる多重集合 / 平方分割で実装する
 /// 参考: https://github.com/tatyam-prime/SortedSet/blob/main/SortedMultiset.py
 template<typename T>
 class MultisetSum {
@@ -104,7 +104,7 @@ public:
         }
     }
 
-    /// @brief key を 1 個削除し、削除できたかを返す / key がないときも総和から key を引く
+    /// @brief key を 1 個削除し、削除できたかを返す / key がないときも総和から key を減算する
     bool discard(const T &key) {
         S -= key;
         auto [i, pos] = get_pos(key);
@@ -121,12 +121,12 @@ public:
         return true;
     }
 
-    /// @brief key を 1 個削除する / key があることが前提
+    /// @brief key を 1 個削除する / key があることを前提とする
     void remove(const T &key) {
         assert(discard(key));
     }
 
-    /// @brief 昇順 k 番目の要素を返す / 0 <= k < len() が前提
+    /// @brief 昇順 k 番目の要素を返す / 0 <= k < len() を前提とする
     T operator[] (int k) const {
         for (const vector<T> &d : data) {
             if (k < d.size()) return d[k];
@@ -254,7 +254,7 @@ public:
         return sum;
     }
 
-    /// @brief 小さい順に取るとき、総和が w 未満となる最大の個数を返す
+    /// @brief 小さい順に要素を選ぶとき、総和が w 未満となる最大の個数を返す
     int count_by_sum_limit(T w) const {
         int ans = 0;
         for (int i = 0; i < data.size(); ++i) {

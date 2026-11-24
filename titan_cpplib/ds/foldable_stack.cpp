@@ -9,7 +9,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 全要素の総積を O(1) で返すスタック / is_front が true なら新しい要素を左から掛ける
+/// @brief 全要素の総積を O(1) で返すスタック / is_front が true の場合は新しい要素を左から掛ける
 template <class T, T (*op)(T, T), T (*e)(), bool is_front>
 class FoldableStack {
 private:

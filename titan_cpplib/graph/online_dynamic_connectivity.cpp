@@ -10,7 +10,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief Holm-de Lichtenberg-Thorup の方法で、辺の追加と削除を受けながら連結性を答える / 多重辺は辺 ID ごとに区別する
+/// @brief Holm-de Lichtenberg-Thorup の方法で、辺の追加と削除を処理しながら連結性を判定する / 多重辺は辺 ID ごとに区別する
 class OnlineDynamicConnectivity {
 private:
     static constexpr int MAX_LEVELS = 24;
@@ -56,7 +56,7 @@ private:
             uint32_t rm = nodes[x.r].meta;
             uint32_t self = x.meta & SELF_MASK;
             uint32_t all = ((lm | rm) & ALL_MASK) | self << 2;
-            // mark は 2^SIZE_BITS の倍数なので加算後に mask すると size の和だけが残る
+            // mark は 2^SIZE_BITS の倍数であるため、加算後に mask すると size の和だけが残る
             x.meta = ((lm + rm + 1) & SIZE_MASK) | self | all;
         }
 
@@ -154,7 +154,8 @@ private:
             if (finish) pull(v);
         }
 
-        // tour の列から平衡な木を作る。パスでも再帰の深さは O(log n)
+        // tour の列から平衡な木を構築する
+        // 木がパスでも再帰の深さは O(log n)
         int build_tour(const vector<int>& tour, int l, int r, int parent) {
             if (l == r) return 0;
             int mid = (l + r) / 2, v = tour[mid];
@@ -227,7 +228,7 @@ private:
             free_head = slot;
         }
 
-        // splay したら新しい根を、根が変わらなければ 0 を返す
+        // splay した場合は新しい根を返し、根が変化しない場合は 0 を返す
         int set_mark(int v, uint32_t mark, bool on) {
             uint32_t mask = mark << SIZE_BITS;
             if (on) nodes[v].meta |= mask;
@@ -254,7 +255,7 @@ private:
             lower.reserve(r);
         }
 
-        // 全頂点が孤立した状態から、木ごとに Euler tour を線形時間で作る
+        // 全頂点が孤立した状態から、木ごとに Euler tour を線形時間で構築する
         void build_initial(vector<Edge>& edges) {
             assert(pair_count == 0);
             int n = base - 1;
@@ -309,7 +310,8 @@ private:
             if (u == v) return true;
             ++u;
             ++v;
-            // 孤立点なら、大きいかもしれない相手側の tour に触れずに返す
+            // 一方が孤立点であれば、他方の tour を操作せずに返す
+            // 他方の tour は大きい場合がある
             if ((nodes[u].l | nodes[u].r | nodes[u].p) == 0 ||
                 (nodes[v].l | nodes[v].r | nodes[v].p) == 0) return false;
             splay(u);
@@ -350,7 +352,8 @@ private:
             return slot;
         }
 
-        // 小さい方の成分の根を返す。reconnect で再利用する
+        // 小さい方の成分の根を返す
+        // 返した根は reconnect で再利用する
         int cut(int slot) {
             int uv = base + slot * 2, vu = uv + 1;
             splay(uv, false);
@@ -424,7 +427,7 @@ private:
     vector<Edge> edges;
     vector<Forest> forests;
     vector<vector<int>> heads;
-    // 成分が初めて実際に分かれるまで使う、連結成分の写し
+    // 成分が初めて実際に分断されるまで使用する、連結成分のキャッシュ
     vector<int> partition_parent;
     bool partition_cache_valid = true;
 
@@ -437,7 +440,8 @@ private:
         return v;
     }
 
-    // 辺の追加時だけ呼ぶ。写しが有効なら更新する
+    // 辺の追加時だけ呼び出す
+    // キャッシュが有効であれば更新する
     bool merge_partition(int u, int v) {
         if (groups == 1) return false;
         if (!partition_cache_valid) return !forests[0].same(u, v);
@@ -477,7 +481,7 @@ private:
         if (h == -1) forests[lev].set_adj(v, true);
     }
 
-    // 印の更新で森の根が動いたときだけ新しい根を返す
+    // 印の更新で森の根が変化した場合だけ新しい根を返す
     int erase_incidence(int id, int side, int lev) {
         Edge &e = edges[id];
         int v = endpoint(id, side), p = e.inc[side].prv, q = e.inc[side].nxt;
@@ -524,11 +528,11 @@ private:
     void reconnect(int top, const int* small_roots) {
         for (int lev = top; lev >= 0; --lev) {
             int rep = small_roots[lev];
-            // 木でない辺が接していなければ、この階層は飛ばす
+            // 非木辺が接していなければ、この階層はスキップする
             int adjacent = forests[lev].find_mark(rep, Forest::ADJ);
             if (adjacent == -1) continue;
 
-            // 小さい木を昇格する前に候補を 1 本だけ試す
+            // 小さい木の辺を昇格させる前に候補を 1 本だけ試す
             int probe_code = heads[lev][forests[lev].vertex_id(adjacent)];
             int candidate = probe_code >> 1;
             int other_vertex = endpoint(candidate, (probe_code & 1) ^ 1);
@@ -584,7 +588,7 @@ private:
     OnlineDynamicConnectivity(int size, int cap, bool) :
             n(size), groups(size), active(0), issued(0), level_count(1), reserve_cap(cap) {
         assert(size >= 0 && cap >= 0);
-        // Euler tour の一成分は最大 3 * size - 2 ノード
+        // Euler tour の 1 つの成分のノード数は最大 3 * size - 2
         assert(3LL * size - 2 <= (1U << 24) - 1LL);
         for (int x = size; x > 1; x >>= 1) ++level_count;
         assert(level_count <= MAX_LEVELS);
@@ -597,13 +601,13 @@ private:
 public:
     OnlineDynamicConnectivity() : OnlineDynamicConnectivity(0, 0, true) {}
 
-    /// @brief 頂点数 size の空グラフを作る / 動的木は必要になってから作る / O(size)
+    /// @brief 頂点数 size の空グラフを構築する / 動的木は必要になった時点で構築する / O(size)
     explicit OnlineDynamicConnectivity(int size) : OnlineDynamicConnectivity(size, 0, true) {}
 
-    /// @brief 頂点数 size の空グラフを作り、辺 ID cap 個分を予約する / O(size)
+    /// @brief 頂点数 size の空グラフを構築し、辺 ID cap 個分を予約する / O(size)
     OnlineDynamicConnectivity(int size, int cap) : OnlineDynamicConnectivity(size, cap, true) {}
 
-    /// @brief 動的木をまとめて作る / 木の辺を初めて削除するときにも自動で呼ぶ / 初回 O(n + 発行済み ID 数)、以後 O(1)
+    /// @brief 動的木を一括で構築する / 木の辺を初めて削除するときにも自動的に呼び出される / 初回 O(n + 発行済み ID 数)、以後 O(1)
     void prepare_dynamic() {
         if (!forests.empty()) return;
         ensure_level(0);

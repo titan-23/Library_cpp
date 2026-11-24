@@ -18,7 +18,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief BTreeBitVector の木表現 / 最大 127 bit の区画を B 木の葉に並べる
+/// @brief BTreeBitVector の木表現 / 最大 127 bit の区画を B 木の葉に順に格納する
 class BTreeBitVectorCore {
     friend class BTreeBitVector;
 
@@ -34,7 +34,7 @@ private:
     static constexpr int _MAX_HEIGHT = 16;
 
     struct Leaf {
-        // 各区画の中では上位 bit を論理上の先頭に置く
+        // 各区画の中では上位 bit を論理上の先頭とする
         array<uint128, _LEAF_CAP> key;
         array<uint8_t, _LEAF_CAP> bit_len;
         array<uint8_t, _LEAF_CAP> key_total;
@@ -54,7 +54,7 @@ private:
         int total;
         int count;
 
-        // SIMD の探索は未使用の要素も読むので、累積値をすべて初期化する
+        // SIMD の探索は未使用の要素も参照するため、累積値をすべて初期化する
         Internal() : child_size{}, child_total{}, size(0), total(0), count(0) {}
     };
 
@@ -634,7 +634,7 @@ private:
         _rebalance_internal(path, slots, parent_depth, 1);
     }
 
-    // UpdateAncestors が false のときは、呼び出し側が祖先を更新済みとする
+    // UpdateAncestors が false の場合は呼び出し側で祖先を更新済みであることを前提とする
     template<bool UpdateAncestors = true>
     void _pop_leaf_bit(const array<int, _MAX_HEIGHT> &path, const array<int, _MAX_HEIGHT> &slots, const int depth, const int leaf, const int chunk, const int k, const bool bit) {
         Leaf &node = _leaves[leaf];
@@ -885,13 +885,13 @@ private:
     }
 
 public:
-    /// @brief 空のビット列を作る / 領域は初めて使うときに確保する
+    /// @brief 空のビット列を構築する / 領域は初めて使用するときに確保する
     BTreeBitVectorCore() : _root(0), _first(0), _free_leaf_head(0), _free_internal_head(0), _height(0) {}
 
-    /// @brief a から作る / 0 以外の値を 1 とみなす / O(n)
+    /// @brief a から構築する / 0 以外の値を 1 とみなす / O(n)
     BTreeBitVectorCore(const vector<uint8_t> &a) : BTreeBitVectorCore() { _build(a, 0, a.size()); }
 
-    /// @brief a[start, end) から作る / O(end - start)
+    /// @brief a[start, end) から構築する / O(end - start)
     BTreeBitVectorCore(const vector<uint8_t> &a, const int start, const int end) : BTreeBitVectorCore() { _build(a, start, end); }
 
     /// @brief 空にする
@@ -905,7 +905,7 @@ public:
         _height = 0;
     }
 
-    /// @brief 長さ n のビット列に要る節点の領域を予約する
+    /// @brief 長さ n のビット列に必要な節点の領域を確保する
     void reserve(const int n) {
         const int chunks = (n + _SPLIT_W - 1) / _SPLIT_W;
         const int leaves = max(1, (chunks + _LEAF_MIN - 1) / _LEAF_MIN);
@@ -925,7 +925,7 @@ public:
     /// @brief 位置 k の bit を削除して返す / O(log n)
     bool pop(const int k) { return _access_pop_and_rank1(k) & 1; }
 
-    /// @brief 位置 k を bit に変更する / O(log n)
+    /// @brief 位置 k の値を bit に変更する / O(log n)
     void set(int k, const bool bit) {
         assert(0 <= k && k < len());
         array<int, _MAX_HEIGHT> path;
@@ -1205,7 +1205,7 @@ public:
         return {bit, result};
     }
 
-    /// @brief 位置 k を bit に変更し、{変更前の bit, rank1(k)} を返す / O(log n)
+    /// @brief 位置 k の値を bit に変更し、{変更前の bit, rank1(k)} を返す / O(log n)
     pair<bool, int> _access_set_and_rank1(int k, const bool bit) {
         assert(0 <= k && k < len());
         array<int, _MAX_HEIGHT> path;
@@ -1244,7 +1244,7 @@ public:
         return {old, result};
     }
 
-    /// @brief 全体を標準出力に書く / O(n)
+    /// @brief 全体を標準出力に出力する / O(n)
     void print() const {
         const vector<uint8_t> a = tovector();
         cout << "[";
@@ -1264,19 +1264,21 @@ public:
     int len() const { return _root == 0 ? 0 : _node_size(_root, _height); }
 };
 
-/// @brief 挿入と削除ができるビット列 / 短い列は木を作らない小表現で持つ
+/// @brief 挿入と削除ができるビット列 / 短い列は木を使用しない小表現で保持する
 class BTreeBitVector {
 private:
     using uint128 = __uint128_t;
 
     static constexpr int _W = 127;
-    // 木表現から戻す長さ。_W より小さくし、境界付近の更新で確保を繰り返さない
+    // 木表現から小表現へ戻す長さ
+    // _W より小さくして、境界付近の更新で確保が繰り返されることを避ける
     static constexpr int _DEMOTE_W = 96;
     static constexpr uint8_t _TREE_MODE = UINT8_MAX;
 
-    // 論理上の先頭を bit 0 に置く。Core の区画とは向きが逆
+    // 論理上の先頭を bit 0 に配置する
+    // Core の区画とは向きが逆である
     struct Key {
-        // 下位 bit から並べると rank と access が単純になる
+        // 下位 bit から順に格納すると rank と access が単純になる
         uint64_t low;
         uint64_t high;
     };
@@ -1308,7 +1310,7 @@ private:
         return __builtin_bswap64(word);
     }
 
-    // 小表現と区画の bit 順を、bit を 1 個ずつ取り出さずに入れ替える
+    // bit を 1 個ずつ取り出さずに、小表現と区画の間で bit の順序を変換する
     static uint128 _reverse_key(const uint128 key, const int bit_len) {
         if (bit_len == 0) return 0;
         const uint128 reversed = (static_cast<uint128>(_reverse64(static_cast<uint64_t>(key))) << 64)
@@ -1402,7 +1404,7 @@ private:
         _set_key(key);
     }
 
-    // 木表現へ移る
+    // 木表現へ移行する
     [[gnu::noinline]] void _promote(const int capacity = 0) {
         unique_ptr<BTreeBitVectorCore> tree = make_unique<BTreeBitVectorCore>();
         if (_bit_len > 0 || capacity > 0) tree->reserve(max(capacity, int(_bit_len)));
@@ -1438,10 +1440,10 @@ private:
     }
 
 public:
-    /// @brief 空のビット列を作る / O(1)
+    /// @brief 空のビット列を構築する / O(1)
     BTreeBitVector() : _data(), _bit_len(0), _total(0) {}
 
-    /// @brief a から作る / 0 以外の値を 1 とみなす / O(n)
+    /// @brief a から構築する / 0 以外の値を 1 とみなす / O(n)
     BTreeBitVector(const vector<uint8_t> &a) : BTreeBitVector() {
         if (a.size() <= _W) {
             _build_small(a, 0, a.size());
@@ -1451,7 +1453,7 @@ public:
         }
     }
 
-    /// @brief a[start, end) から作る / O(end - start)
+    /// @brief a[start, end) から構築する / O(end - start)
     BTreeBitVector(const vector<uint8_t> &a, const int start, const int end) : BTreeBitVector() {
         if (end - start <= _W) {
             _build_small(a, start, end);
@@ -1470,7 +1472,7 @@ public:
         }
     }
 
-    /// @brief other から移す / O(1)
+    /// @brief other からムーブする / O(1)
     BTreeBitVector(BTreeBitVector &&other) noexcept : _data(), _bit_len(other._bit_len), _total(other._total) {
         if (other._is_tree()) {
             _data.tree = other._data.tree;
@@ -1501,7 +1503,7 @@ public:
         return *this;
     }
 
-    /// @brief other から移して代入する / O(1)
+    /// @brief other からムーブして代入する / O(1)
     BTreeBitVector &operator=(BTreeBitVector &&other) noexcept {
         if (this == &other) return *this;
         if (_is_tree()) delete _data.tree;
@@ -1526,7 +1528,7 @@ public:
         _total = 0;
     }
 
-    /// @brief 長さ n のビット列に要る領域を予約する / n > 127 なら木表現へ移る
+    /// @brief 長さ n のビット列に必要な領域を確保する / n > 127 なら木表現へ移行する
     void reserve(const int n) {
         if (_is_tree()) {
             _data.tree->reserve(n);
@@ -1541,7 +1543,7 @@ public:
     /// @brief 位置 k の bit を削除して返す / O(log n)
     bool pop(const int k) { return _access_pop_and_rank1(k) & 1; }
 
-    /// @brief 位置 k を bit に変更する / O(log n)
+    /// @brief 位置 k の値を bit に変更する / O(log n)
     void set(const int k, const bool bit) {
         if (_is_tree()) {
             _data.tree->set(k, bit);
@@ -1664,7 +1666,7 @@ public:
         return {_bit_at(k), _prefix_total(k)};
     }
 
-    /// @brief 位置 k を bit に変更し、{変更前の bit, rank1(k)} を返す / O(log n)
+    /// @brief 位置 k の値を bit に変更し、{変更前の bit, rank1(k)} を返す / O(log n)
     pair<bool, int> _access_set_and_rank1(const int k, const bool bit) {
         if (_is_tree()) return _data.tree->_access_set_and_rank1(k, bit);
         assert(0 <= k && k < _bit_len);
@@ -1678,7 +1680,7 @@ public:
         return {old, result};
     }
 
-    /// @brief 全体を標準出力に書く / O(n)
+    /// @brief 全体を標準出力に出力する / O(n)
     void print() const {
         const vector<uint8_t> a = tovector();
         cout << "[";

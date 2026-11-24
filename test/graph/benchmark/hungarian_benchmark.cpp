@@ -1,4 +1,5 @@
-// min_cost_assignment の測定。g++ -std=c++20 -O2 -DNDEBUG -I. this_file.cpp -o /tmp/hungarian_bench
+// min_cost_assignment の測定
+// g++ -std=c++20 -O2 -DNDEBUG -I. this_file.cpp -o /tmp/hungarian_bench
 // /tmp/hungarian_bench kind n m [seed]
 // kind: ll (0 以上 1e9 未満), int (1e6 未満), small (10 未満), tie3 (3 未満), neg (負), mul ((i+1)(j+1)), sum (i+j),
 //       dbl ([0, 1) の一様乱数), geo (平面上の点の組の距離)
@@ -55,7 +56,7 @@ int main(int argc, char **argv) {
         for (auto &r : a) for (auto &x : r) x = d(rng);
         run(a, kind, n, m);
     } else if (kind == "geo") {
-        // 2 次元の点の組の距離。AHC で多い形
+        // 2 次元の点の組の距離 / AHC で多く現れる形式
         vector<pair<double, double>> p(n), q(m);
         uniform_real_distribution<double> d(0, 1000);
         for (auto &[x, y] : p) x = d(rng), y = d(rng);

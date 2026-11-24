@@ -9,7 +9,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 総和を求められる多重集合 / 重み平衡木で実装する
+/// @brief 総和を求めることができる多重集合 / 重み平衡木で実装する
 template<typename T>
 class MultisetSum {
 private:
@@ -292,7 +292,7 @@ public:
         return true;
     }
 
-    /// @brief key を最大 val 個削除する / key があることが前提 / O(log n)
+    /// @brief key を最大 val 個削除する / key があることを前提とする / O(log n)
     void remove(const T &key, int val=1) {
         bool update_min = root && key == min_key;
         bool update_max = root && key == max_key;
@@ -430,7 +430,7 @@ public:
         return root ? nodes[root].data : 0;
     }
 
-    /// @brief 小さい順に取るとき、総和が w を超えない最大の個数を返す / O(log n)
+    /// @brief 小さい順に要素を選ぶとき、総和が w を超えない最大の個数を返す / O(log n)
     long long bisect_left_sum(T w) const {
         long long result = 0;
         T remain = w;
@@ -476,7 +476,7 @@ public:
         return get(k);
     }
 
-    /// @brief 昇順 k 番目の要素を 1 個削除して返す / 負の k は末尾から数える / O(log n)
+    /// @brief 昇順 k 番目の要素を 1 個削除して返す / 負の k は末尾からの位置として扱う / O(log n)
     T pop(int k=-1) {
         if (k < 0) k += len();
         T key = get(k);
@@ -525,7 +525,7 @@ public:
         cout << "}" << endl;
     }
 
-    /// @brief 木の不変条件を assert で検査する / デバッグ用
+    /// @brief 木の不変条件を assert で確認する / デバッグ用
     void check() const {
         if (!root) return;
         auto dfs = [&] (auto &&dfs, int node) -> void {

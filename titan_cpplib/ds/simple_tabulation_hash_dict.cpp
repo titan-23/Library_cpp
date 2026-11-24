@@ -13,14 +13,15 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 鍵が u64 の辞書 / simple tabulation hashing を使う / erase を持たない
-/// 計算量は、入力列が内部乱数と独立なときの期待値
+/// @brief キーが u64 の辞書 / simple tabulation hashing を使用する / erase は提供しない
+/// 計算量は入力列が内部の乱数と独立な場合の期待値である
 template<typename V>
 class SimpleTabulationHashDict {
 private:
     using u64 = uint64_t;
 
-    // keys[p] == 0 は空きを表す。鍵 0 の値は vals[cap] に置く
+    // keys[p] == 0 は空きを表す
+    // キー 0 の値は vals[cap] に格納する
     vector<u64> keys;
     vector<V> vals;
     array<array<uint32_t, 256>, 8> tab;
@@ -40,7 +41,7 @@ private:
         return (uint32_t(1) << bits) - 1;
     }
 
-    // tab の各値に、容量に必要な下位 bits 個の乱数 bit を入れる
+    // tab の各値に、容量に必要な下位 bits 個の乱数ビットを設定する
     void init_hash(int bits) {
         random_device rd;
         uniform_int_distribution<uint32_t> dis;
@@ -61,7 +62,7 @@ private:
         hash_bits = bits;
     }
 
-    // 拡張時に、tab の各値へ独立な乱数 bit を 1 つ上位に加える
+    // 拡張時に、tab の各値の上位に独立な乱数ビットを 1 つ追加する
     void add_hash_bit() {
         random_device rd;
         uniform_int_distribution<uint32_t> dis;
@@ -91,7 +92,7 @@ private:
         has_zero = false;
     }
 
-    // 容量を 2 倍にして入れ直す
+    // 容量を 2 倍にして全要素を再挿入する
     void rebuild() {
         vector<u64> old_keys = move(keys);
         vector<V> old_vals = move(vals);
@@ -131,7 +132,7 @@ public:
         init_hash(__builtin_ctz((unsigned)cap));
     }
 
-    /// @brief key の位置と、key があるかを返す / 結果は次の変更操作まで有効 / 期待償却 O(1)
+    /// @brief key の位置と、key が存在するかどうかを返す / 結果は次の変更操作まで有効 / 期待償却 O(1)
     pair<int, bool> get_pos(const u64 &key) const {
         if (key == 0) return {cap, has_zero};
         int p = (int)(hash(key) & msk);
@@ -164,7 +165,7 @@ public:
         return missing;
     }
 
-    /// @brief key があるか判定する / 期待償却 O(1)
+    /// @brief key が存在するかを判定する / 期待償却 O(1)
     bool contains(const u64 key) const {
         return get_pos(key).second;
     }
@@ -210,7 +211,7 @@ public:
         return vals[dat.first];
     }
 
-    /// @brief get_pos(key) の結果 dat を使い、key の値を val にする / 期待償却 O(1)
+    /// @brief get_pos(key) の結果 dat を使用して、key の値を val にする / 期待償却 O(1)
     void inner_set(const pair<int, bool> &dat, const u64 key, V val) {
         vals[dat.first] = move(val);
         if (dat.second) return;
@@ -270,7 +271,7 @@ public:
         if (size * 2 > cap) rebuild();
     }
 
-    /// @brief key があり val が今の値より小さいとき、更新して true を返す / key がなければ val を挿入して false / 期待償却 O(1)
+    /// @brief key が存在し val が現在の値より小さい場合は、値を val に更新して true を返す / key が存在しない場合は val を挿入して false を返す / 期待償却 O(1)
     bool contains_set(const u64 key, const V val) {
         if (key == 0) {
             if (!has_zero) {
@@ -311,7 +312,7 @@ public:
         return res;
     }
 
-    /// @brief (鍵, 値) の組の一覧を返す / O(cap)
+    /// @brief (キー, 値) の組の一覧を返す / O(cap)
     vector<pair<u64, V>> items() const {
         vector<pair<u64, V>> res;
         res.reserve(size);

@@ -94,7 +94,7 @@ int main() {
     assert(counts.get(9) == 1);
     assert(counts.prod(0, 10) == 1);
     assert(counts.all_prod() == 1);
-    // 新旧値の差が型の範囲を超える代入
+    // 新旧の値の差が型の範囲を超える代入
     titan23::SqrtSegmentTreeSum<ll> single(vector<ll>{numeric_limits<ll>::min()});
     single.set(0, numeric_limits<ll>::max());
     verify(single, {numeric_limits<ll>::max()});

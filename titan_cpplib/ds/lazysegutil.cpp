@@ -30,7 +30,8 @@ namespace lazy_segment_tree {
 
     template<typename T> Dat<T> map_add_sum(T f, Dat<T> s) { return {s.val + f * s.size, s.size}; }
 
-    // 区間更新で作用なしを表す値。この値への更新はできない
+    // 区間更新で作用なしを表す値
+    // この値への更新はできない
     template<typename T> const T ID = numeric_limits<T>::max();
 
     template<typename T> T map_set(T f, T s) { return (f == ID<T>) ? s : f; }
@@ -102,7 +103,7 @@ namespace lazy_segment_tree {
     }
     template<typename T> F_Affine<T> id_affine() { return {1, 0}; }
     /// @brief 区間一次関数更新・区間和の遅延セグメント木
-    /// 初期値は `{val, 1}`、更新は `seg.apply(l, r, {a, b});`
+    /// 初期値は `{val, 1}` とし、`seg.apply(l, r, {a, b});` で更新する
     template<typename T>
     using LazySegAffineSum = titan23::LazySegmentTree<
         Dat<T>, op_sum_size<T>, e_sum_size<T>,
@@ -151,7 +152,9 @@ namespace lazy_segment_tree {
     }
     template<typename T> F_SetAdd<T> id_set_add() { return {false, 0, 0}; }
     /// @brief 区間代入・区間加算と区間和・区間最小値・区間最大値の遅延セグメント木
-    /// 初期値は `{val, val, val, 1}`、作用は `F_SetAdd<T>::set(x)` / `F_SetAdd<T>::add(x)`、取得は `seg.prod(l, r).sum` / `.mn` / `.mx`
+    /// 初期値は `{val, val, val, 1}` とする
+    /// 作用には `F_SetAdd<T>::set(x)` または `F_SetAdd<T>::add(x)` を使用する
+    /// `seg.prod(l, r).sum`, `.mn`, `.mx` で値を取得する
     template<typename T>
     using LazySegSetAddStats = titan23::LazySegmentTree<
         Stats<T>, op_stats<T>, e_stats<T>,
@@ -187,7 +190,7 @@ namespace lazy_segment_tree {
     >;
 
     // =========================================================
-    // 区間等差数列加算 / 区間和
+    // 区間等差数列加算・区間和
     // =========================================================
 
     /// @brief 区間和、区間の長さ、添字の和の組
@@ -210,7 +213,8 @@ namespace lazy_segment_tree {
     template<typename T> F_AP<T> comp_ap_add(F_AP<T> f, F_AP<T> g) { return {f.a+g.a, f.b+g.b}; }
     template<typename T> F_AP<T> id_ap_add() { return {0, 0}; }
     /// @brief 区間等差数列加算・区間和の遅延セグメント木
-    /// 初期値は `{val, 1, index}`。初項 x、公差 d の等差数列を加えるには `seg.apply(l, r, {x-l*d, d});`
+    /// 初期値は `{val, 1, index}` とする
+    /// 初項 x、公差 d の等差数列を加えるには `seg.apply(l, r, {x-l*d, d});` を呼び出す
     template<typename T>
     using LazySegAddAPSum = titan23::LazySegmentTree<
         S_AP<T>, op_ap_sum_size<T>, e_ap_sum_size<T>,

@@ -23,9 +23,9 @@ class PersistentWBTree {
     static constexpr Id leaf_bit = Id(1) << 31;
 
 public:
-    /// @brief 全ての木が共有するノード領域 / 値は葉ごとに keys へ置く
+    /// @brief 全ての木が共有するノード領域 / 値は葉ごとに keys に格納する
     struct MemoryAllocator {
-        /// @brief 内部ノード / 子の番号と左部分木の要素数を持つ
+        /// @brief 内部ノード / 子の番号と左部分木の要素数を保持する
         struct Node { Id left, right; SizeType left_size; };
         /// @brief 2^BlockBits 要素ずつのブロックで領域を確保する可変長配列
         template <class U, unsigned BlockBits>
@@ -103,10 +103,10 @@ public:
                 return blocks_[i >> BlockBits][i & block_mask];
             }
 
-            /// @brief 構築済み要素数を返す / O(1)
+            /// @brief 構築済みの要素数を返す / O(1)
             size_t size() const noexcept { return size_; }
 
-            /// @brief 確保済み容量を返す / O(1)
+            /// @brief 確保済みの容量を返す / O(1)
             size_t capacity() const noexcept { return blocks_.size() * block_size; }
 
             /// @brief n 要素分の容量を確保する / O(n)
@@ -161,13 +161,13 @@ public:
         }
 
         /// @brief 領域を再利用する / O(1)
-        /// @note この領域を使う既存の木は無効になる
+        /// @note この領域を使用する既存の木は無効になる
         void reset() { ptr = 1; leaf_ptr = 0; }
 
         /// @brief n 個の内部ノードの容量を確保する / O(n)
         void reserve(size_t n) { nodes.reserve(n); }
 
-        /// @brief 確保済み領域のバイト数を返す / O(1)
+        /// @brief 確保済みの領域のバイト数を返す / O(1)
         size_t capacity_bytes() const {
             return nodes.capacity() * sizeof(Node) + keys.capacity() * sizeof(T);
         }
@@ -336,7 +336,7 @@ public:
         return PersistentWBTree(join(root, other.root, ma.ptr));
     }
 
-    /// @brief 連結した列の先頭 limit 要素までを返す / O(log(N + M))
+    /// @brief 末尾に other を連結した列の先頭 limit 要素までを返す / O(log(N + M))
     PersistentWBTree merge_prefix(PersistentWBTree other, SizeType limit) const {
         assert(limit >= 0);
         const size_t first = ma.ptr;
@@ -371,7 +371,7 @@ public:
         return PersistentWBTree(insert_node(root, k, value, ma.ptr));
     }
 
-    /// @brief 位置 k の値を削除した列と削除値を返す / O(log N)
+    /// @brief 位置 k の値を削除した列と削除した値を返す / O(log N)
     pair<PersistentWBTree, T> pop(SizeType k) const {
         assert(0 <= k && k < len());
         T value;
@@ -411,7 +411,7 @@ public:
         return result;
     }
 
-    /// @brief 平衡条件と部分木サイズを検査する / O(N)
+    /// @brief 平衡条件と部分木のサイズを確認する / O(N)
     void check() const {
         auto dfs = [&](auto&& self, Part p) -> void {
             if (!p.id) { assert(!p.n); return; }

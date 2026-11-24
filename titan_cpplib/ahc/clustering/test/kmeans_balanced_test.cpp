@@ -63,7 +63,7 @@ void verify_result(const vector<Point>& points, const vector<ClusterSizeRange>& 
     assert(abs(total_cost - result.total_cost) <= 1e-9 * max(1.0, total_cost));
     assert(total_flow_cost == result.total_flow_cost);
     if (!result.converged) return;
-    // 収束した割り当ては自身の中心で flow_cost が最小なので、2 点の交換や制約を満たす 1 点の移動で良くならない
+    // 収束した割り当ては結果の中心に対して flow_cost の合計が最小であるため、2 点の交換や制約を満たす 1 点の移動では改善しない
     for (int a = 0; a < n; ++a) for (int b = 0; b < n; ++b) {
         int la = result.labels[a], lb = result.labels[b];
         if (la == lb) continue;

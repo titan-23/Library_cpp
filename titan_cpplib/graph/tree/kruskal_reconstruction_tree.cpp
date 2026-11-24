@@ -15,8 +15,8 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 重みの昇順に連結成分を合併する Kruskal 再構築木 / 非連結なら森
-/// 葉 [0, N) が元の頂点、[N, node_count()) が合併頂点 / T は引数なしの構築、コピー、< による比較ができる型
+/// @brief 重みの昇順に連結成分を合併する Kruskal 再構築木 / 非連結なら森になる
+/// 葉 [0, N) は元の頂点、[N, node_count()) は合併頂点である / T は引数なしの構築、コピー、< による比較ができる型とする
 template<typename T = long long>
 class KruskalReconstructionTree {
 private:
@@ -43,7 +43,7 @@ private:
         dep.assign(total, 0);
         root_id.resize(total);
         ranges.resize(total);
-        // 親の番号が必ず大きいので、再帰せずに根と深さを計算できる
+        // 親の番号は必ず子の番号より大きいので、再帰せずに根と深さを計算できる
         for (int v = total - 1; v >= 0; --v) {
             if (par[v] == -1) {
                 root_id[v] = v;
@@ -67,7 +67,7 @@ private:
             }
         }
 
-        // 葉だけを DFS 順に並べ、各部分木を半開区間にする
+        // 葉だけを DFS 順に並べ、各部分木を半開区間で表す
         leaves.reserve(n);
         vector<int> st(forest_roots.rbegin(), forest_roots.rend());
         while (!st.empty()) {
@@ -88,7 +88,7 @@ private:
     }
 
 public:
-    /// @brief 頂点数 0 の空の森を作る
+    /// @brief 頂点数 0 の空の森を構築する
     KruskalReconstructionTree() = default;
 
     /// @brief 頂点数 n と無向辺 (u, v, weight) の列から構築する / 自己ループと多重辺も可 / O(M log M + M alpha(N) + N log N)
@@ -100,7 +100,7 @@ public:
         weight.reserve(capacity);
         par.assign(n, -1);
         child.assign(n, array<int, 2>{-1, -1});
-        weight.resize(n);  // 葉の値は使わない
+        weight.resize(n);  // 葉の値は使用しない
 
         sort(edges.begin(), edges.end(), [](const auto &a, const auto &b) {
             return get<2>(a) < get<2>(b);
@@ -164,7 +164,7 @@ public:
         return ranges[v].first;
     }
 
-    /// @brief node の子孫の葉が並ぶ leaf_order() 上の半開区間 [l, r) を返す / O(1)
+    /// @brief node の子孫の葉に対応する leaf_order() 上の半開区間 [l, r) を返す / O(1)
     pair<int, int> subtree_range(int node) const {
         check_node(node);
         return ranges[node];
@@ -196,7 +196,7 @@ public:
         return par[u];
     }
 
-    /// @brief 全ての辺を使ったとき元の頂点 u, v が連結かを返す / O(1)
+    /// @brief 全ての辺を使用したとき元の頂点 u, v が連結かを返す / O(1)
     bool same(int u, int v) const {
         check_vertex(u);
         check_vertex(v);

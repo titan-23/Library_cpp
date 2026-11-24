@@ -9,7 +9,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 最小値と最大値を取り出せる両端ヒープ
+/// @brief 最小値と最大値を取り出すことができる両端ヒープ
 template<typename T>
 class DoubleEndedHeap {
 public:

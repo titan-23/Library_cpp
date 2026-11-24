@@ -10,7 +10,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 回文木 (eertree) / 空間O(n), 時間O(nlogσ)
+/// @brief 回文木 (eertree) / 空間 O(n), 時間 O(nlogσ)
 /// 参考: https://math314.hateblo.jp/entry/2016/12/19/005919
 class EerTree {
 private:
@@ -20,7 +20,7 @@ private:
     vector<map<char, int>> child;
     // vector<array<int, 26>> child;
     vector<int> par, len, suffix_link, count, start, suffix_link_dep;
-    vector<int> suff; // suff[i]:= s[:i+1]の最長回文接尾辞の頂点番号
+    vector<int> suff; // suff[i]:= s[:i+1] の最長回文接尾辞の頂点番号
 
     int new_node() {
         int idx = suffix_link.size();
@@ -51,7 +51,7 @@ private:
     }
 
 public:
-    /// @brief 空文字列の回文木を作る / O(1)
+    /// @brief 空文字列の回文木を作成する / O(1)
     EerTree() : n(0), all_count(0) {
         int idx0 = new_node();
         int idx1 = new_node();

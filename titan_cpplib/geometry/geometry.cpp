@@ -14,7 +14,7 @@ using namespace std;
 
 using Real = long double;
 const Real EPS = 1e-9;
-// 以下の比較関数は、差が EPS 未満の 2 値を等しいとみなす
+// 以下の比較関数は差が EPS 未満の 2 つの値を等しいとみなす
 bool almostEqual(Real a, Real b) { return abs(a - b) < EPS; }
 bool lessThan(Real a, Real b) { return a < b && !almostEqual(a, b); }
 bool greaterThan(Real a, Real b) { return a > b && !almostEqual(a, b); }
@@ -33,9 +33,9 @@ struct Point {
   Real dot(const Point& p) const { return x * p.x + y * p.y; }
   /// @brief p との外積を返す
   Real cross(const Point& p) const { return x * p.y - y * p.x; }
-  /// @brief 自身から p1 へのベクトルと、自身から p2 へのベクトルの外積を返す
+  /// @brief 自身から p1 へのベクトルと自身から p2 へのベクトルの外積を返す
   Real cross(const Point& p1, const Point& p2) const { return (p1.x - x) * (p2.y - y) - (p1.y - y) * (p2.x - x); }
-  /// @brief 2 乗ノルムを返す
+  /// @brief ノルムの 2 乗を返す
   Real norm() const { return x * x + y * y; }
   /// @brief ユークリッドノルムを返す
   Real abs() const { return sqrt(norm()); }
@@ -49,7 +49,7 @@ struct Line {
   Point a, b;
   Line() = default;
   Line(const Point& _a, const Point& _b) : a(_a), b(_b) {}
-  /// @brief 直線 Ax + By = C を構築する / A と B の両方が 0 ではいけない
+  /// @brief 直線 Ax + By = C を構築する / A と B の少なくとも一方は 0 以外とする
   Line(const Real& A, const Real& B, const Real& C) {
     if (almostEqual(A, 0)) {
       assert(!almostEqual(B, 0));
@@ -91,7 +91,7 @@ enum Orientation {
   ONLINE_BACK, ONLINE_FRONT, ON_SEGMENT
 };
 /// @brief 3 点 p0, p1, p2 の位置関係を返す
-/// 一直線上では、p2 が p0 の後ろなら ONLINE_BACK、p1 の先なら ONLINE_FRONT、線分 p0p1 上なら ON_SEGMENT
+/// 3 点が一直線上にある場合は、p2, p0, p1 の順に並ぶなら ONLINE_BACK、p0, p1, p2 の順に並ぶなら ONLINE_FRONT、p2 が線分 p0p1 上にあるなら ON_SEGMENT を返す
 Orientation ccw(const Point& p0, const Point& p1, const Point& p2) {
   Point a = p1 - p0;
   Point b = p2 - p0;
@@ -222,7 +222,7 @@ bool isConvex(const vector<Point>& points) {
   }
   return !(has_positive && has_negative);
 }
-/// @brief 凸多角形 hull と点 p の包含関係を返す / 2: p を内部に含む, 1: p が辺上, 0: それ以外 / O(log n)
+/// @brief 凸多角形 hull と点 p の包含関係を返す / 2: p を内部に含む, 1: p が辺上にある, 0: それ以外 / O(log n)
 /// hull の頂点は反時計回りに並べておく必要がある
 int convexPolygonContainsPoint(const vector<Point>& hull, const Point& p) {
   int n = hull.size();
@@ -262,7 +262,7 @@ bool isPointOnPolygon(const vector<Point>& polygon, const Point& p) {
   return false;
 }
 /// @brief 点 p が多角形の内部にあるか判定する
-/// 辺上の点では辺の向きによって結果が変わるので、先に isPointOnPolygon で調べる
+/// 辺上の点では辺の向きによって結果が異なるため、先に isPointOnPolygon で判定する
 bool isPointInsidePolygon(const vector<Point>& polygon, const Point& p) {
   int n = polygon.size();
   bool inPolygon = false;
@@ -274,7 +274,7 @@ bool isPointInsidePolygon(const vector<Point>& polygon, const Point& p) {
   }
   return inPolygon;
 }
-/// @brief 凸包を反時計回りで返す / include_collinear が true なら辺上の点も残す / points は並べ替えられる
+/// @brief 凸包の頂点を反時計回りの順に返す / include_collinear が true なら辺上の点も残す / points はソートされる
 vector<Point> convexHull(vector<Point>& points, bool include_collinear = false) {
   int n = points.size();
   if (n <= 1) return points;
@@ -364,8 +364,8 @@ Real closestPair(vector<Point>& points, int l, int r) {
   }
   return d;
 }
-/// @brief 水平な線分と垂直な線分の交差数を数える / 各線分は軸に平行である必要がある
-/// 同じ y 座標の水平な線分どうしが重なると正しく数えられない
+/// @brief 水平な線分と垂直な線分の交差の個数を求める / 各線分は軸に平行である必要がある
+/// 同じ y 座標の水平な線分どうしが重なる場合は正しい個数を返すとは限らない
 int countIntersections(vector<Segment> segments) {
   struct Event {
     Real x;
@@ -413,7 +413,7 @@ int countIntersections(vector<Segment> segments) {
   }
   return intersectionCount;
 }
-/// @brief 2 円の共通接線の本数を返す / 4: 離れている, 3: 外接, 2: 2 点で交わる, 1: 内接, 0: 一方が他方を含む
+/// @brief 2 円の共通接線の本数を返す / 4: 離れている, 3: 外接する, 2: 2 点で交わる, 1: 内接する, 0: 一方が他方を含む
 int countCirclesIntersection(const Circle& c1, const Circle& c2) {
   Real d =
     sqrt((c1.center.x - c2.center.x) * (c1.center.x - c2.center.x) +
@@ -447,7 +447,7 @@ Circle getCircumCircle(const Point& A, const Point& B, const Point& C) {
   return Circle{center, radius};
 }
 /// @brief 円 c と直線 p1p2 の交点を返す / 接する場合は同じ点を 2 つ返す / (x, y) の昇順
-/// 円と直線は共有点を持つ必要がある
+/// 円と直線は交わるか接している必要がある
 vector<Point> getCircleLineIntersection(const Circle& c, Point p1, Point p2) {
   Real cx = c.center.x, cy = c.center.y, r = c.r;
   Real dx = p2.x - p1.x;
@@ -481,7 +481,7 @@ vector<Point> getCircleLineIntersection(const Circle& c, Point p1, Point p2) {
   }
   return res;
 }
-/// @brief 2 円の交点を返す / 交わらなければ空 / (x, y) の昇順
+/// @brief 2 円の交点を返す / 交わらなければ空を返す / (x, y) の昇順
 vector<Point> getCirclesIntersect(const Circle& c1, const Circle& c2) {
   Real x1 = c1.center.x, y1 = c1.center.y, r1 = c1.r;
   Real x2 = c2.center.x, y2 = c2.center.y, r2 = c2.r;
@@ -505,7 +505,7 @@ vector<Point> getCirclesIntersect(const Circle& c1, const Circle& c2) {
   }
   return res;
 }
-/// @brief 点 p から円 c へ引いた接線の接点を返す / p が円の内部なら空、円周上なら p のみ / (x, y) の昇順
+/// @brief 点 p から円 c へ引いた接線の接点を返す / p が円の内部なら空、円周上なら p のみを返す / (x, y) の昇順
 vector<Point> getTangentLinesFromPoint(const Circle& c, const Point& p) {
   Real cx = c.center.x, cy = c.center.y, r = c.r;
   Real px = p.x, py = p.y;
@@ -531,7 +531,7 @@ vector<Point> getTangentLinesFromPoint(const Circle& c, const Point& p) {
   return res;
 }
 /// @brief 2 円の共通接線を求める / 各線分の a は c1 上の接点 / a の (x, y) の昇順
-/// b は c2 上の接点にならないので使わない
+/// b は c2 上の接点にならないため使用しない
 vector<Segment> getCommonTangentsLine(const Circle& c1, const Circle& c2) {
   Real x1 = c1.center.x, y1 = c1.center.y, r1 = c1.r;
   Real x2 = c2.center.x, y2 = c2.center.y, r2 = c2.r;
@@ -541,7 +541,7 @@ vector<Segment> getCommonTangentsLine(const Circle& c1, const Circle& c2) {
   vector<Segment> tangents;
   // 2 円が一致すると共通接線は無数にある
   if (almostEqual(d, 0) && almostEqual(r1, r2)) return tangents;
-  // 共通内接線。d >= r1 + r2 のとき存在する
+  // 共通内接線は d >= r1 + r2 のとき存在する
   if (greaterThanOrEqual(d, r1 + r2)) {
     Real a = atan2(dy, dx);
     for (int sign : {-1, 1}) {
@@ -554,7 +554,7 @@ vector<Segment> getCommonTangentsLine(const Circle& c1, const Circle& c2) {
       if (almostEqual(d, r1 + r2)) break;
     }
   }
-  // 共通外接線。d >= |r1 - r2| のとき存在する
+  // 共通外接線は d >= |r1 - r2| のとき存在する
   if (greaterThanOrEqual(d, fabs(r1 - r2))) {
     Real a = atan2(dy, dx);
     for (int sign : {-1, 1}) {

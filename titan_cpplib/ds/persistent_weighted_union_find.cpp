@@ -57,7 +57,7 @@ public:
         }
     }
 
-    /// @brief `v[y] - v[x] = w` とし、{矛盾なしか, 新しい uf} を返す / O(log^2 n) 時間 / O(logn) 空間
+    /// @brief `v[y] - v[x] = w` という条件を追加し、{矛盾がないか, 新しい uf} を返す / O(log^2 n) 時間 / O(logn) 空間
     pair<bool, PersistentWeightedUnionFind> unite(int x, int y, T w) const {
         T px = potential(x), py = potential(y);
         int rx = root(x), ry = root(y);
@@ -88,7 +88,7 @@ public:
         return root(x) == root(y);
     }
 
-    /// @brief `v[y] - v[x]` を返す / x と y が同じ集合に属することが前提 / O(log^2 n)
+    /// @brief `v[y] - v[x]` を返す / x と y が同じ集合に属することを前提とする / O(log^2 n)
     T diff(int x, int y) const {
         assert(same(x, y));
         return potential(y) - potential(x);

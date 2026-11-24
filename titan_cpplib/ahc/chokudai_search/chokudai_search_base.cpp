@@ -8,7 +8,7 @@ using namespace std;
 
 namespace flying_squirrel::chokudai_detail {
 
-/// @brief 世代ごとに未展開の候補を持ち、各巡回で各世代の上位 beam_width 個を展開する
+/// @brief 世代ごとに未展開の候補を保持し、各巡回で各世代の上位 beam_width 個を展開する
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF,
          bool variable_turn, bool record_history>
 class Search {
@@ -38,11 +38,12 @@ class Search {
     };
     struct Generation {
         set<Entry> pending;
-        // 展開済みの最良評価も残す。より良い経路が来た場合だけ再展開する。
+        // 展開済みの候補についても最良の評価値を保持する
+        // 同じハッシュ値で評価値がより良い候補が得られた場合だけ再展開する
         unordered_map<HashType, Seen> seen;
     };
 
-    // enumerate_actions 中の submit による追加でも last_action の参照を保つ。
+    // enumerate_actions の実行中に submit でノードを追加しても last_action の参照を維持する
     deque<Node> nodes;
     vector<int> free_nodes, forward_path;
     vector<unique_ptr<Generation>> generations;
@@ -95,7 +96,7 @@ class Search {
         return id;
     }
 
-    // 候補、現在の State、最良解、子からの参照がなくなった枝を反復的に回収する。
+    // 候補、現在の State、最良解、子のいずれからも参照されなくなったノードを、親をたどって反復的に回収する
     void release(int id) {
         while (id != -1 && --nodes[id].refs == 0) {
             int parent = nodes[id].parent;
@@ -111,7 +112,8 @@ class Search {
         best = id;
     }
 
-    // 移動先の所有権を呼び出し側から受け取る。論理 turn ではなく操作数で LCA を求める。
+    // 移動先の所有権を呼び出し側から受け取る
+    // 世代を表す turn ではなく操作数で LCA を求める
     void move_to(State& state, int target) {
         int from = current, to = target;
         forward_path.clear();
@@ -161,7 +163,8 @@ class Search {
         }
         turns_done = max(turns_done, turn);
 
-        // 終了候補も探索を打ち切らず保存する。未完成候補との hash 比較はしない。
+        // 終了条件を満たした候補も、探索を打ち切らずに保存する
+        // 未完成の候補との hash の比較は行わない
         if (finished || turn == max_turn) {
             int& best = finished ? best_finished : best_full;
             bool improves = best == -1 || score < nodes[best].score;
@@ -200,7 +203,7 @@ class Search {
     struct Submitter {
         Search& search;
         State& state;
-        // 保留候補数を制限しないので、途中評価による枝刈りは行わない。
+        // 保留中の候補の数を制限しないため、評価の途中での枝刈りは行わない
         ScoreType threshold() const { return INF; }
         ScoreType threshold(int) const { return INF; }
         void operator()(Action& action) { search.accept(state, action); }
@@ -249,7 +252,8 @@ class Search {
         active_turns.insert(0);
     }
 
-    // BeamParam の int 統計は大量の再巡回で溢れうる。探索には使わず飽和させる。
+    // BeamParam の int 型の統計値は再巡回が多いとオーバーフローし得る
+    // これらの統計値は探索には使用せず、int の最大値で飽和させる
     void timestamp(BeamParam& param, int expanded, double duration) const {
         auto add = [](int value, size_t delta) {
             return (int)min<long long>(numeric_limits<int>::max(), (long long)value + (long long)delta);
@@ -353,7 +357,7 @@ class Search {
     }
 
 public:
-    /// @brief BeamParam で探索する / State と返り値の型はビームサーチと同じで、巡回回数は無制限
+    /// @brief BeamParam で探索する / State と返り値の型はビームサーチと同じ / 巡回回数は制限しない
     template<bool materialize_final_state=true>
     Result search(BeamParam& param, bool verbose=false, const string& history_file="") {
         return run<materialize_final_state>(param, -1, verbose, history_file);

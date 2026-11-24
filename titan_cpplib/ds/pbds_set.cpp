@@ -37,7 +37,7 @@ public:
         return tr.erase(key);
     }
 
-    /// @brief key を削除する / key があることが前提 / O(log N)
+    /// @brief key を削除する / key があることを前提とする / O(log N)
     void remove(const T &key) {
         int erased = tr.erase(key);
         assert(erased > 0);
@@ -95,7 +95,7 @@ public:
         return index(high) - index(low);
     }
 
-    /// @brief 昇順 k 番目の要素を削除して返す / 負の k は末尾から数える / O(log N)
+    /// @brief 昇順 k 番目の要素を削除して返す / 負の k は末尾からの位置として扱う / O(log N)
     T pop(int k = -1) {
         if (k < 0) k += len();
         assert(k >= 0 && k < len());

@@ -194,7 +194,7 @@ vector<vector<int>> product(int m, int repeat) {
     return res;
 }
 
-/// @brief 値集合 a の repeat 個の直積を列挙して f に渡す / O(|a|^repeat)
+/// @brief 値の集合 a の repeat 個の直積を列挙して f に渡す / O(|a|^repeat)
 template<class F>
 void product(const vector<int> &a, int repeat, F f) {
     int m = a.size();
@@ -217,7 +217,7 @@ void product(const vector<int> &a, int repeat, F f) {
     }
 }
 
-/// @brief 値集合 a の repeat 個の直積を全列挙して返す / O(repeat * |a|^repeat)
+/// @brief 値の集合 a の repeat 個の直積を全列挙して返す / O(repeat * |a|^repeat)
 vector<vector<int>> product(const vector<int> &a, int repeat) {
     vector<vector<int>> res;
     product(a, repeat, [&] (const vector<int> &v) { res.emplace_back(v); });
@@ -289,7 +289,7 @@ vector<vector<int>> permutations(int n, int r) {
     return res;
 }
 
-/// @brief n 種類から重複を許して k 個を選ぶ組合せを非減少で f へ渡す / O(C(n+k, k))
+/// @brief n 種類から重複を許して k 個を選ぶ組合せを非減少な列として f へ渡す / O(C(n+k, k))
 template<class F>
 void combinations_with_replacement(int n, int k, F f) {
     assert(k >= 0);
@@ -308,7 +308,7 @@ void combinations_with_replacement(int n, int k, F f) {
     dfs(dfs, 0, 0);
 }
 
-/// @brief n 種類から重複を許して k 個を選ぶ組合せを非減少で全列挙して返す / O(k * C(n+k-1, k))
+/// @brief n 種類から重複を許して k 個を選ぶ組合せを非減少な列として全列挙して返す / O(k * C(n+k-1, k))
 vector<vector<int>> combinations_with_replacement(int n, int k) {
     vector<vector<int>> res;
     combinations_with_replacement(n, k, [&] (const vector<int> &v) { res.emplace_back(v); });

@@ -9,7 +9,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 区間への作用と1点取得を行う双対セグ木
+/// @brief 区間への作用と 1 点取得を行う双対セグメント木
 template <class T,
         class F,
         T (*mapping)(F, T),
@@ -23,7 +23,7 @@ struct DualSegmentTree {
 
     DualSegmentTree() {}
 
-    /// @brief 長さ n で構築する / 初期値は T{} で init は使わない / O(n)
+    /// @brief 長さ n で構築する / 初期値は T{} で、init は使用しない / O(n)
     DualSegmentTree(const int n, const T init) {
         this->_n = n;
         this->_log = bit_length(n);
@@ -127,7 +127,7 @@ struct DualSegmentTree {
         return res;
     }
 
-    /// @brief a[k] を返す / 負の k は末尾から数える / O(log n)
+    /// @brief a[k] を返す / 負の k は末尾からの位置とする / O(log n)
     T get(int k) {
         if (k < 0) k += _n;
         k += _size;
@@ -137,7 +137,7 @@ struct DualSegmentTree {
         return _data[k-_size];
     }
 
-    /// @brief a[k] を v に変更する / 負の k は末尾から数える / O(log n)
+    /// @brief a[k] を v に変更する / 負の k は末尾からの位置とする / O(log n)
     void set(int k, T v) {
         if (k < 0) k += _n;
         k += _size;

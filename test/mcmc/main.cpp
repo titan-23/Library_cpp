@@ -2,12 +2,14 @@
 #include "titan_cpplib/ahc/mcmc.cpp"
 using namespace std;
 
-// 真の X をノイズ付き観測からどれだけ正確に復元できるかを測る。
-//   - K 変数、M 観測。各観測は density 個の非零係数を持つ疎な線形式。
-//   - y = coeffs・X_true + N(0, sigma^2) で生成する。
-//   - 推定平均と X_true の RMSE、最大誤差を出す。
+// 真の X をノイズ付きの観測からどの程度正確に復元できるかを評価する
+//   - 変数は K 個、観測は M 個とする
+//   - 各観測は density 個の非零係数を含む疎な線形式である
+//   - y = coeffs・X_true + N(0, sigma^2) で生成する
+//   - 推定平均と X_true の RMSE、最大誤差を出力する
 //   - z_k = (mean_k - X_true_k) / sqrt(variance_k) の平均と標準偏差で
-//     不確実性の見積りが妥当か (標準正規に近いか) を見る。
+//     不確実性の見積りが妥当かを確認する
+//     z_k の分布が標準正規分布に近い場合に妥当と判断する
 
 mt19937 gen_truth(12345);
 
@@ -26,7 +28,7 @@ Stat run(int K, int M, int density, double sigma) {
     uniform_int_distribution<int> pick(0, K - 1);
 
     for (int m = 0; m < M; ++m) {
-        // 重複しない density 個の変数を選ぶ
+        // 重複しない density 個の変数を選択する
         set<int> idx;
         while ((int)idx.size() < min(density, K)) idx.insert(pick(gen_truth));
         vector<pair<int, double>> coeffs;
@@ -60,10 +62,10 @@ Stat run(int K, int M, int density, double sigma) {
     return s;
 }
 
-// ターンごとに観測を追加し、warm-start の estimate_step とフルバッチ estimate を比べる。
-//   - 毎ターン per_turn 個の観測を両方の推定器に同じ系列で与える。
-//   - estimate_step は前ターンの連鎖を継続するため、少ない反復で済む。
-//   - 各ターンの RMSE と、全ターンの合計時間を出す。
+// ターンごとに観測を追加し、warm-start の estimate_step とフルバッチの estimate を比較する
+//   - 毎ターン per_turn 個の観測を両方の推定器に同じ系列で与える
+//   - estimate_step は前のターンの連鎖を継続するため、少ない反復回数で推定できる
+//   - 各ターンの RMSE と全ターンの合計時間を出力する
 void run_per_turn() {
     int K = 30, density = 3, turns = 20, per_turn = 5;
     double sigma = 0.3;
@@ -125,7 +127,7 @@ int main() {
     struct Case { int M, density; double sigma; };
     vector<Case> cases = {
         {15,  3, 0.1},  // 観測不足 (M < K)
-        {30,  3, 0.1},  // ちょうど (M = K)
+        {30,  3, 0.1},  // 同数      (M = K)
         {60,  3, 0.1},  // 余裕あり (M = 2K)
         {150, 3, 0.1},  // 大量      (M = 5K)
         {150, 3, 0.5},  // ノイズ中

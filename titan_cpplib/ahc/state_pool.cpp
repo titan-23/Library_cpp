@@ -10,7 +10,7 @@ using namespace std;
 // StatePool
 namespace titan23 {
 
-/// @brief T を id で管理し、削除した id を使い回すプール
+/// @brief T を id で管理し、削除した id を再利用するプール
 template<typename T>
 class StatePool {
 private:
@@ -30,7 +30,7 @@ public:
         }
     }
 
-    /// @brief T を n 個確保する / 空のプールに対してだけ呼ぶ
+    /// @brief T を n 個確保する / 空のプールに対してだけ呼び出す
     void init(const int n) {
         for (int i = 0; i < n; ++i) {
             T* state = new T;
@@ -51,7 +51,7 @@ public:
         unused_idx.emplace(id);
     }
 
-    /// @brief T を 1 個割り当て、その id を返す / 未使用の id があれば使い回す
+    /// @brief T を 1 個割り当て、その id を返す / 未使用の id があれば再利用する
     int gen() {
         int state_id;
         if (unused_idx.empty()) {
@@ -65,7 +65,7 @@ public:
         return state_id;
     }
 
-    /// @brief id に対応する T を新しい id へコピーし、コピー先の id を返す / T の copy メソッドを呼ぶ
+    /// @brief id に対応する T を新しい id へコピーし、コピー先の id を返す / T の copy メソッドを呼び出す
     int copy(const int id) {
         int new_id = gen();
         pool[id]->copy(pool[new_id]);

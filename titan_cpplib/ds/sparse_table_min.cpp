@@ -46,7 +46,7 @@ public:
         }
     }
 
-    /// @brief 区間 [l, r) の最小値を返す / 空区間は INT_MAX / O(1)
+    /// @brief 区間 [l, r) の最小値を返す / 空区間では INT_MAX を返す / O(1)
     int prod(const int l, const int r) const {
         assert(0 <= l && l <= r && r <= n);
         if (l == r) return INT_MAX;
@@ -65,7 +65,7 @@ public:
         return n;
     }
 
-    /// @brief 列を標準出力に出す / O(n)
+    /// @brief 列を標準出力に出力する / O(n)
     void print() const {
         cout << '[';
         for (int i = 0; i < n-1; ++i) {

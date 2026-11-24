@@ -13,10 +13,10 @@ namespace titan23 {
 /// 参考: https://topcoder-tomerun.hatenablog.jp/entry/2021/06/12/134643
 class IndexSet {
 public:
-    vector<int> que, pos;  // que は要素の列、pos[v] は que での v の位置で、無ければ -1
+    vector<int> que, pos;  // que は要素の列、pos[v] は que での v の位置で、無ければ -1 とする
 
     IndexSet() {}
-    /// @brief 0 以上 u 未満の整数を入れる空の集合を作る / O(u)
+    /// @brief 0 以上 u 未満の整数を格納する空の集合を作成する / O(u)
     IndexSet(int u) : pos(u, -1) {}
 
     /// @brief v を追加する / O(1)
@@ -26,7 +26,7 @@ public:
         que.push_back(v);
     }
 
-    /// @brief v があれば削除して true を返す / 無ければ false / O(1)
+    /// @brief v があれば削除して true を返す / 無ければ false を返す / O(1)
     bool discard(int v) {
         int p = pos[v];
         if (p == -1) return false;
@@ -38,7 +38,7 @@ public:
         return true;
     }
 
-    /// @brief v を削除する / v があることが前提 / O(1)
+    /// @brief v を削除する / v があることを前提とする / O(1)
     void remove(int v) {
         int p = pos[v];
         assert(p != -1);

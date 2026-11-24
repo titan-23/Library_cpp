@@ -4,7 +4,7 @@
 
 namespace flying_squirrel {
 
-/// @brief Action::target_turn で複数世代先へ進む、状態差分型 ChokudaiSearch
+/// @brief Action::target_turn で複数世代先へ進む、差分更新型の ChokudaiSearch
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
 using ChokudaiSearchTurn = chokudai_detail::Search<ScoreType, HashType, Action, State, INF, true, record_history>;
 

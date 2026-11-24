@@ -33,7 +33,7 @@ void verify_extrema(const Sparse& actual, Dense& reference, const vector<ll>& a,
     assert(actual.node_count() == nodes);
 }
 
-/// @brief 加算とchminとchmaxをdense版および配列と比較する
+/// @brief 加算、chmin、chmax を dense 版および配列と比較する
 template <class Sparse, class Dense, class Transform>
 void check_extrema(bool minimum, Transform transform) {
     mt19937_64 rng(738223);
@@ -130,7 +130,7 @@ void check_stats() {
     }
 }
 
-/// @brief 等差数列加算の式をdense版と配列に照合する
+/// @brief 等差数列の加算の式を dense 版および配列と照合する
 void verify_ap(const sparse::LazySegAddAPSum<ll>& actual,
                dense::LazySegAddAPSum<ll>& reference, const vector<ll>& a) {
     const int n = a.size();
@@ -158,7 +158,7 @@ void verify_ap(const sparse::LazySegAddAPSum<ll>& actual,
     assert(actual.node_count() == nodes);
 }
 
-/// @brief 一様初期値から等差数列を部分加算して照合する
+/// @brief 一様な初期値から開始し、等差数列を一部の区間に加算して照合する
 void check_ap() {
     mt19937_64 rng(192113);
     for (int n : {1, 2, 3, 8, 17}) {
@@ -195,7 +195,7 @@ void check_ap() {
     assert((empty.prod(0, 0) == sparse::e_ap_sum<ll, ll>()));
 }
 
-/// @brief 等差数列用モノイドと作用の法則を確認する
+/// @brief 等差数列用のモノイドと作用の法則を確認する
 void check_ap_laws() {
     using S = sparse::APSum<ll>;
     using F = sparse::APAdd<ll>;
@@ -220,20 +220,20 @@ void check_ap_laws() {
 struct ModNoDivision {
     ll value;
 
-    /// @brief 整数を法101へ写す
+    /// @brief 整数を法 101 での剰余に変換する
     ModNoDivision(ll x = 0) : value((x % 101 + 101) % 101) {}
 
-    /// @brief 法101で加算する
+    /// @brief 法 101 で加算する
     friend ModNoDivision operator+(ModNoDivision a, ModNoDivision b) { return a.value + b.value; }
 
-    /// @brief 法101で乗算する
+    /// @brief 法 101 で乗算する
     friend ModNoDivision operator*(ModNoDivision a, ModNoDivision b) { return a.value * b.value; }
 
     /// @brief 値が等しいか判定する
     bool operator==(ModNoDivision other) const { return value == other.value; }
 };
 
-/// @brief Tの除算を要求しないこととunsignedの長さ0を確認する
+/// @brief T の除算を必要としないことと、unsigned の長さ 0 の場合を確認する
 void check_modular_ap() {
     sparse::LazySegAddAPSum<ModNoDivision, unsigned long long> tree(1000000000ULL, {3, 0, 1});
     tree.all_apply({2, 5});
@@ -245,7 +245,7 @@ void check_modular_ap() {
     assert(value.eval(17) == expected);
 }
 
-/// @brief 巨大座標でも点ごとの初期化なしに等差数列の和を得る
+/// @brief 巨大な座標でも点ごとの初期化なしに等差数列の和を求める
 void check_large_ap() {
     using Wide = __int128_t;
     const ll n = 1000000000000000000LL;
@@ -267,7 +267,7 @@ void check_large_ap() {
     }
 }
 
-/// @brief 傾き0なら巨大な長さでも不要な三角数を計算しないことを確認する
+/// @brief 傾きが 0 なら巨大な長さでも不要な三角数を計算しないことを確認する
 void check_large_constant_ap() {
     const ll n = 1000000000000000000LL;
     sparse::LazySegAddAPSum<ll> zero(n, {0, 0, 1});

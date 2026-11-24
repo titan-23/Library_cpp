@@ -1,12 +1,12 @@
 # print.cpp レビュー
 
-`titan_cpplib/others/print.cpp` のデバッグ出力ユーティリティを確認した。修正すべき点と追加推奨をまとめる。
+`titan_cpplib/others/print.cpp` のデバッグ出力ユーティリティを確認しました。
 
 ## 修正すべき点
 
-### `tuple` の対応が3要素と4要素のみ
+### 3 要素と 4 要素だけに対応する `tuple` の出力
 
-2要素や5要素以上は未対応でコンパイルできない。可変長テンプレートで一本化すると重複も消える。
+2 要素や 5 要素以上には対応しておらず、コンパイルできません。可変長テンプレートで一本化すると、重複した定義もなくなります。
 
 ```cpp
 template<class Tuple, size_t... I>
@@ -22,11 +22,11 @@ ostream& operator<<(ostream& os, const tuple<Ts...>& t) {
 }
 ```
 
-## 追加推奨の機能
+## 追加を推奨する機能
 
 ### 変数名付きデバッグマクロ
 
-使用頻度が高い。`name = value` を `cerr` に出す。
+使用頻度の高いマクロです。`name = value` の形式で `cerr` に出力します。
 
 ```cpp
 #define debug(...) (cerr << to_dim(#__VA_ARGS__) << " = ", debug_out(__VA_ARGS__))
@@ -36,13 +36,13 @@ template<class H, class... T> void debug_out(const H& h, const T&... t) {
 }
 ```
 
-`debug(x, y, v)` で `x, y, v = 3, 5, [1, 2]` のように出る。
+`debug(x, y, v)` を呼び出すと `x, y, v = 3, 5, [1, 2]` のように出力されます。
 
 ## 補足
 
-`operator<<` の各オーバーロードを `namespace titan23` の外、グローバルに置いている。これは std 型に対する ADL を効かせるための妥当な選択。`namespace titan23` に入れると `vector` などの実引数依存探索で見つからなくなる。規約「全コードを `namespace titan23` に」の例外として、この配置は維持してよい。
+`operator<<` の各オーバーロードは `namespace titan23` の外のグローバル名前空間に定義されています。これは std の型に対して ADL を有効にするための妥当な選択です。`namespace titan23` の中に定義すると、`vector` などの実引数依存探索で見つからなくなります。規約「全コードを `namespace titan23` に」の例外として、この配置は維持して問題ありません。
 
 ## 対応の優先度
 
-- 先に直す。`tuple` の可変長化。
-- 併せて入れる。変数名付きデバッグマクロ。
+- 先に修正する項目: `tuple` の可変長化
+- 併せて追加する項目: 変数名付きデバッグマクロ

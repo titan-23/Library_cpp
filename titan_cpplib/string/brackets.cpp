@@ -37,7 +37,7 @@ public:
         seg = titan23::SegmentTree<S, op, e>(a);
     }
 
-    /// @brief 括弧列 s[l, r) が正しい括弧列かどうか判定する / O(logN)
+    /// @brief 括弧列 s[l, r) が正しい括弧列かどうかを判定する / O(logN)
     bool is_valid(int l, int r) const {
         assert(0 <= l && l <= r && r <= n);
         S res = seg.prod(l, r);

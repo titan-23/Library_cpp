@@ -13,7 +13,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 使う位置だけをハッシュ表で持つ 2 次元 Fenwick 木 / 添字は 0 始まり
+/// @brief 使用する位置だけをハッシュ表で保持する 2 次元 Fenwick 木 / 添字は 0 始まり
 template<typename T, typename W>
 struct DynamicFenwickTree2D {
     int _h, _w;
@@ -43,14 +43,14 @@ struct DynamicFenwickTree2D {
         }
     }
 
-    /// @brief (h, w) の値を x にする
+    /// @brief (h, w) の値を x に設定する
     void set(int h, int w, W x) {
         assert(0 <= h && h < _h);
         assert(0 <= w && w < _w);
         add(h, w, x - get(h, w));
     }
 
-    /// @brief [0, h) x [0, w) の和を返す
+    /// @brief [0, h) x [0, w) の総和を返す
     W sum(T h, T w) const {
         assert(0 <= h && h < _h);
         assert(0 <= w && w < _w);
@@ -72,7 +72,7 @@ struct DynamicFenwickTree2D {
         return res;
     }
 
-    /// @brief [h1, h2) x [w1, w2) の和を返す
+    /// @brief [h1, h2) x [w1, w2) の総和を返す
     W sum(T h1, T w1, T h2, T w2) const {
         assert(0 <= h1 && h1 <= h2 && h2 <= _h);
         assert(0 <= w1 && w1 <= w2 && w2 <= _w);

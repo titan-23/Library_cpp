@@ -14,7 +14,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief オフラインの 2 次元点集合で、長方形内の点の値のモノイド積を求める / op は可換であることが前提
+/// @brief オフラインの 2 次元点集合について、長方形内の点の値のモノイド積を求める / op は可換であることが前提
 template<typename T, typename S, S (*op)(S, S), S (*e)()>
 class WaveletMatrix2DMonoid {
 private:
@@ -64,7 +64,7 @@ private:
     }
 
 public:
-    /// @brief 空の集合を作る
+    /// @brief 空の集合を作成する
     WaveletMatrix2DMonoid() : _log(0), _n(0), _built(false) {}
 
     /// @brief 点 (x, y, value) の列から構築する / O(nlog(n))
@@ -73,13 +73,13 @@ public:
         build();
     }
 
-    /// @brief 登録予定の点数を予約する / O(1)
+    /// @brief 登録予定の点の個数分の領域を確保する / O(1)
     void reserve(int capacity) {
         assert(!_built);
         _points.reserve(capacity);
     }
 
-    /// @brief 点 (x, y) に値 value を登録する / 同じ座標への登録は別の点として集約する / build 前に呼ぶ / ならし O(1)
+    /// @brief 点 (x, y) に値 value を登録する / 同じ座標に登録した点は別の点として積に含める / build の前に呼び出す / ならし O(1)
     void add_point(T x, T y, S value) {
         assert(!_built);
         _points.emplace_back(x, y, value);
@@ -155,7 +155,7 @@ public:
         return _range_prod(l, r, lower, upper);
     }
 
-    /// @brief 登録点数を返す / O(1)
+    /// @brief 登録した点の個数を返す / O(1)
     int len() const { return _n; }
 };
 

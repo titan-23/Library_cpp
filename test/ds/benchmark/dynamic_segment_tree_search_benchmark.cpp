@@ -145,7 +145,7 @@ public:
             prefixes[i + 1] = prefixes[i] + values[i] * (xs[i + 1] - xs[i]);
     }
 
-    /// @brief [0,x)の和を返す / O(logQ)
+    /// @brief 区間 [0,x) の和を返す / O(logQ)
     long long prefix(Index x) const {
         if (x == xs.back()) return prefixes.back();
         const auto i = upper_bound(xs.begin(), xs.end(), x) - xs.begin() - 1;

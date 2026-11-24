@@ -10,7 +10,7 @@
 
 using namespace std;
 
-// unordered_set と操作ごとに結果を比べる
+// unordered_set と操作ごとに結果を比較する
 void random_test(const uint64_t seed, const int reserve, const int queries, const uint64_t key_range) {
     mt19937_64 rng(seed);
     titan23::HashSet st = reserve < 0 ? titan23::HashSet() : titan23::HashSet(reserve);
@@ -38,7 +38,7 @@ void random_test(const uint64_t seed, const int reserve, const int queries, cons
     for (const uint64_t key : ref) assert(st.contains(key));
 }
 
-// 下位ビットがそろった鍵や連番など、偏った鍵の列
+// 下位ビットがそろったキーや連番など、偏ったキーの列
 void structured_test() {
     constexpr int N = 200000;
     auto run = [](auto key_at) {
@@ -55,7 +55,7 @@ void structured_test() {
     run([](uint64_t i) { return ~i; });
 }
 
-// clear のあとに同じ集合を使い回す
+// clear の後に同じ集合を再利用する
 void clear_reuse_test() {
     mt19937_64 rng(23);
     titan23::HashSet st(1000);

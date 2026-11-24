@@ -14,7 +14,7 @@ using namespace std;
 
 namespace flying_squirrel {
 
-/// @brief 探索木を tour と leaf の配列で持つ木構造ビームサーチの旧実装
+/// @brief 探索木を tour と leaf の配列で保持する木構造ビームサーチの旧実装
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
 class BeamSearchWithTree {
 private:
@@ -26,7 +26,7 @@ private:
     ScoreType best_finished_score;
     vector<Action> best_finished_path;
 
-    // record_history 用。false なら if constexpr で使用箇所が消え、実行時の負担はない
+    // record_history 用 / false なら if constexpr で使用箇所が除去され、実行時のコストは発生しない
     int node_id_counter;
     vector<HistoryNode<ScoreType, HashType>> history;
     vector<TurnSnapshot> snapshots;
@@ -61,7 +61,7 @@ private:
         }
     }
 
-    // 当該ターンで生き残らなかった status==0 の履歴を 1 に直し、生存 node_id のスナップショットを積む
+    // 当該ターンで生き残らなかった status==0 の履歴の status を 1 に変更し、生き残った node_id のスナップショットを追加する
     void record_turn_survivors(int turn_label) {
         unordered_set<int> survived;
         for (int i = 0; i < (int)candidates.size(); ++i) {
@@ -76,7 +76,7 @@ private:
         snapshots.push_back({turn_label, vector<int>(survived.begin(), survived.end())});
     }
 
-    // 親 leaf へ向かう祖先の action を tour から復元し、dst_end の手前に書き込む
+    // 親 leaf へ向かう祖先の action を tour から復元し、dst_end の手前に格納する
     template<class It>
     inline void copy_tour_path(int parent_leaf, int leaf_end, It dst_end) {
         int prog = 0;

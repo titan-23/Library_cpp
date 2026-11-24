@@ -42,7 +42,7 @@ void check_bound(const EditDistanceQuery &query, int l1, int r1,
 void check_result(const EditDistanceQuery &query, int l1, int r1,
                   int l2, int r2, int distance) {
     assert(query.distance(l1, r1, l2, r2) == distance);
-    // 成功・失敗・再度成功する順番でも内部状態が残らないことを確認する
+    // 成功、失敗、再度の成功の順に呼び出しても内部状態が残らないことを確認する
     for (int k : {INT_MAX, INT_MIN, distance, distance - 1, 0,
                   distance + 1, -1, distance}) {
         check_bound(query, l1, r1, l2, r2, distance, k);
@@ -222,7 +222,7 @@ void test_large_preprocessing_and_small_distances() {
     const EditDistanceQuery query(s, t);
     assert(query.source_size() == n);
     assert(query.target_size() == n);
-    // 同じ範囲同士なら、t に含まれる b の個数が編集距離になる
+    // 同じ範囲同士の場合は t に含まれる b の個数が編集距離になる
     for (const auto &range : vector<pair<int, int>>{
              {0, n}, {0, 123}, {123, 124}, {124, n / 2},
              {n / 2, n}, {n - 1, n}, {n, n}, {100, 90000}}) {
@@ -234,7 +234,7 @@ void test_large_preprocessing_and_small_distances() {
             check_bound(query, left, right, left, right, distance, k);
         }
     }
-    // 長い一致区間の途中に置いた終端を LCE が越えないことを確認する
+    // 長い一致区間の途中に終端がある場合に、LCE が終端を越えないことを確認する
     check_result(query, 1000, 40000, 1001, 40000, 1);
     check_result(query, 2000, 30000, 2005, 30000, 5);
     check_result(query, 0, 1, n - 1, n, 1);
@@ -252,7 +252,7 @@ struct SizedSequence {
 };
 
 void test_size_limit() {
-    // 区切りの 1 要素も含めて int の範囲に収まる必要がある
+    // 区切りの 1 要素を含めた長さの合計が int の範囲に収まる必要がある
     for (const auto &lens : vector<pair<long long, long long>>{
              {INT_MAX, 0}, {0, INT_MAX}, {INT_MAX - 1, 1},
              {INT_MAX / 2, INT_MAX / 2 + 1}}) {

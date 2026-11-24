@@ -16,19 +16,19 @@ using namespace std;
 
 /// @brief TreeGenerator で生成する木の種類
 enum class TreeType {
-    // 基本的にはこれらの種類を使う
+    // 基本的にはこれらの種類を使用する
     Random,     // ラベル付き木から一様に選ぶ
     Line,       // 一直線の木
-    AlmostLine, // 一直線の木+α
-    Uni,        // ウニグラフ。中心から √N 本のパスグラフが生えている
-    Star,       // スターグラフ。中心から長さ 1 のパスグラフが生えている
+    AlmostLine, // 一直線の木に少数の頂点を追加した木
+    Uni,        // ウニグラフ / 中心に √N 本のパスグラフが接続されている
+    Star,       // スターグラフ / 中心に長さ 1 のパスグラフが接続されている
     Balanced,   // 完全二分木
 
-    Centipede,  // ムカデグラフ。一直線の木の各頂点に一つずつ頂点を接続する
-    MultiUni,   // √N 個のウニグラフを無作為につなぐ
-    MultiStar,  // √N 個のスターグラフを無作為につなぐ
-    LongPathDecompositionKiller, // 長さ 1, 3, 5, 7, ... のパスをくっつけていくグラフ
-    Lobster,    // ロブスター木(？)
+    Centipede,  // ムカデグラフ / 一直線の木の各頂点に 1 つずつ頂点を接続する
+    MultiUni,   // √N 個のウニグラフを無作為に接続する
+    MultiStar,  // √N 個のスターグラフを無作為に接続する
+    LongPathDecompositionKiller, // 長さ 1, 3, 5, 7, ... のパスを順に接続したグラフ
+    Lobster,    // ロブスター木 / 定義を満たすかは未確認である
 };
 
 /// @brief 種類を指定して木を生成する
@@ -81,7 +81,7 @@ class TreeGenerator {
         return -1;
     }
 
-    // 頂点番号、辺の向き、辺の順番を無作為に入れ替える / fixed_point なら頂点 0 を動かさない
+    // 頂点番号、辺の向き、辺の順番を無作為に入れ替える / fixed_point なら頂点 0 を固定する
     void tree_shuffle(vector<pair<int, int>> &edges, const bool fixed_point=false) {
         int n = edges.size() + 1;
         vector<int> p(n);
@@ -204,7 +204,7 @@ class TreeGenerator {
         assert(edges.size() == N-1);
     }
 
-    // ウニグラフ。中心から d 本、既定では √N 本のパスグラフが生えている
+    // ウニグラフ / 中心に d 本のパスグラフが接続されている / d を指定しない場合は √N 本とする
     void gen_uni(const int N, vector<pair<int, int>> &edges, int d=-1) {
         if (N <= 1) return;
         if (d == -1) {
@@ -225,7 +225,7 @@ class TreeGenerator {
         }
     }
 
-    // スターグラフ。中心から長さ 1 のパスが生えている
+    // スターグラフ / 中心に長さ 1 のパスが接続されている
     void gen_star(const int N, vector<pair<int, int>> &edges) {
         gen_uni(N, edges, N-1);
     }
@@ -237,7 +237,7 @@ class TreeGenerator {
         }
     }
 
-    // パスグラフ+α。長さ N*9/10 のパスを作り、残りの各頂点をそれより小さい番号の頂点へ無作為につなぐ
+    // パスグラフに少数の頂点を追加した木 / 長さ N*9/10 のパスを作成し、残りの各頂点をそれより小さい番号の頂点へ無作為に接続する
     void gen_almost_line(const int N, vector<pair<int, int>> &edges) {
         int length = max(1, N*9/10);
         for (int i = 0; i < length; ++i) {
@@ -250,7 +250,7 @@ class TreeGenerator {
         }
     }
 
-    // ウニつなぎ。√N 個のウニを作り、無作為につなぐ
+    // √N 個のウニグラフを作成し、無作為に接続する
     void gen_multi_uni(const int N, vector<pair<int, int>> &edges, bool is_star=false) {
         const int uni_cnt = max(1, (int)sqrt(N));
         vector<vector<int>> each_uni(uni_cnt);
@@ -295,12 +295,12 @@ class TreeGenerator {
         }
     }
 
-    // スターつなぎ。√N 個のスターを作り、無作為につなぐ
+    // √N 個のスターグラフを作成し、無作為に接続する
     void gen_multi_star(const int N, vector<pair<int, int>> &edges) {
         return gen_multi_uni(N, edges, true);
     }
 
-    // ムカデグラフ。一直線の木の各頂点に一つずつ頂点を接続する
+    // ムカデグラフ / 一直線の木の各頂点に 1 つずつ頂点を接続する
     void gen_centipede(const int N, vector<pair<int, int>> &edges) {
         for (int i = 0; i < N-1; i += 2) {
             edges.emplace_back(i, i+1);
@@ -320,7 +320,7 @@ class TreeGenerator {
         }
     }
 
-    // 長さ 1, 3, 5, 7, ... のパスをくっつけていく
+    // 長さ 1, 3, 5, 7, ... のパスを順に接続する
     // 参考: https://github.com/yosupo06/library-checker-problems/blob/master/tree/vertex_set_path_composite/gen/long-path-decomposition_killer.cpp
     void gen_long_path_decomposition_killer(const int N, vector<pair<int, int>> &edges) {
         vector<int> roots;
@@ -343,8 +343,8 @@ class TreeGenerator {
 
     // ロブスター木
     void gen_lobster(const int N, vector<pair<int, int>> &edges) {
-        const int path_len = max(1, (int)sqrt(sqrt(N))); // 式の根拠は不明
-        const int D = max(1, (int)sqrt(sqrt(sqrt(N-path_len)))); // 式の根拠は不明
+        const int path_len = max(1, (int)sqrt(sqrt(N))); // 式の根拠は不明である
+        const int D = max(1, (int)sqrt(sqrt(sqrt(N-path_len)))); // 式の根拠は不明である
         vector<pair<int, int>> dia = {{0, 0}};
         for (int i = 0; i < path_len-1; ++i) {
             edges.emplace_back(i, i+1);
@@ -361,7 +361,7 @@ class TreeGenerator {
         }
     }
 
-    // edges が木をなすか調べる
+    // edges が木をなすかを判定する
     bool check(const vector<pair<int, int>> &edges) const {
         int n = edges.size() + 1;
         UnionFind uf(n);
@@ -373,15 +373,15 @@ class TreeGenerator {
     }
 
   public:
-    /// @brief 乱数の種を random_device から取って構築する
+    /// @brief 乱数のシードを random_device から取得して構築する
     TreeGenerator() {}
-    /// @brief 乱数の種 seed で構築する
+    /// @brief 乱数のシード seed で構築する
     TreeGenerator(int seed) {
         TreeRnd = titan23::RandomMT(seed);
     }
 
     /// @brief tree_type の木を N 頂点で生成し、辺集合を返す / 0-indexed
-    /// fixed_point なら根や中心を頂点 0 にする。seed が -1 でなければ乱数の種を設定し直す
+    /// fixed_point なら根や中心を頂点 0 にする / seed が -1 でなければ乱数のシードを再設定する
     vector<pair<int, int>> generate(
         const TreeType tree_type,
         const int N,
@@ -433,7 +433,7 @@ class TreeGenerator {
     }
 
     /// @brief tree_type の木を N 頂点で生成し、辺集合を返す / 1-indexed
-    /// fixed_point なら根や中心を頂点 1 にする。seed が -1 でなければ乱数の種を設定し直す
+    /// fixed_point なら根や中心を頂点 1 にする / seed が -1 でなければ乱数のシードを再設定する
     vector<pair<int, int>> generate_1indexed(
         const TreeType tree_type,
         const int N,
@@ -453,7 +453,7 @@ class TreeGenerator {
         return edges;
     }
 
-    /// @brief N 頂点のラベル付き木を N^(N-2) 通りすべて生成する / 0-indexed / N <= 8 程度
+    /// @brief N 頂点のラベル付き木を N^(N-2) 通りすべて生成する / 0-indexed / N <= 8 程度を想定する
     vector<vector<pair<int, int>>> generate_all_labeled(int N) const {
         if (N <= 0) return {};
         if (N == 1) return {{}};
@@ -499,7 +499,7 @@ class TreeGenerator {
         return res;
     }
 
-    /// @brief N 頂点のラベルなし木をすべて生成する / 0-indexed / N <= 14 程度
+    /// @brief N 頂点のラベルなし木をすべて生成する / 0-indexed / N <= 14 程度を想定する
     vector<vector<pair<int, int>>> generate_all_unlabeled(int N) const {
         if (N <= 0) return {};
         if (N == 1) return {{}};

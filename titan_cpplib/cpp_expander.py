@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # user settings --------------------------------------------------
-# `./titan_cpplib` がある絶対パス
+# `./titan_cpplib` を含むディレクトリの絶対パス
 LIB_PATH = (
     "/mnt/c/Users/titan/src/Library_cpp/",
     "C:\\Users\\titan\\src\\Library_cpp\\",
@@ -30,24 +30,24 @@ class CppExpander:
 
     @staticmethod
     def init_clipboard():
-        """pyperclipを日本語に対応させる"""
+        """pyperclip を日本語に対応させる"""
         for command in ["wl-clipboard", "xclip", "xsel"]:
             if shutil.which(command):
                 pyperclip.set_clipboard(command)
                 break
 
     def __init__(self) -> None:
-        """`CppExpander`をインスタンス化する"""
+        """`CppExpander` をインスタンス化する"""
         self.input_file_path: str = "None"
         self.outputs: list[str] = []
         self.added_file: set[str] = set()
 
     def expand(self, input_file_path: str, output_fie_path: str) -> None:
-        """input_filepathのコードを展開してoutput_fiepathに書き出す
+        """input_filepath のコードを展開して output_fiepath に出力する
 
         Args:
             input_file_path (str): 入力ファイル
-            output_fie_path (str): 出力ファイル / `clip`のとき、クリップボードに貼り付ける
+            output_fie_path (str): 出力ファイル / `clip` のときはクリップボードに貼り付ける
         """
         if not os.path.exists(input_file_path):
             logger.critical(to_red(f'input_file_path : "{input_file_path}" does not exist.'))

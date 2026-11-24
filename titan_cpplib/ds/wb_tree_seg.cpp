@@ -9,7 +9,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 重み平衡木で管理し、区間の総積を求められる列 / op は結合的で、e は op の単位元である必要がある
+/// @brief 重み平衡木で管理し、区間の総積を求めることができる列 / op は結合的で、e は op の単位元である必要がある
 template<class T, T (*op)(T, T), T (*e)()>
 class WBSegTree : private detail::MutableWBSequence<T, op, e> {
     using Base = detail::MutableWBSequence<T, op, e>;
@@ -87,7 +87,7 @@ public:
     /// @brief 要素数を返す / O(1)
     int len() const { return Base::size_of(root); }
 
-    /// @brief 部分木サイズと平衡条件を検査する / O(N)
+    /// @brief 部分木のサイズと平衡条件を確認する / O(N)
     void check() const { Base::check_node(root); }
 
     /// @brief 全要素を標準出力に出力する / O(N)

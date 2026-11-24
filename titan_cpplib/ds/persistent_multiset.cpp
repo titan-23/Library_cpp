@@ -196,7 +196,8 @@ class PersistentMultiset {
         return _split_node_idx(node, node->size-1);
     }
 
-    // l の全キー <= r の全キーが前提。境界の等しいキーは cnt を足して 1 ノードにまとめる
+    // l の全キー <= r の全キーを前提とする
+    // 境界のキーが等しい場合は cnt を合計して 1 ノードにまとめる
     NodePtr _merge_node(NodePtr l, NodePtr r) {
         if ((!l) && (!r)) { return nullptr; }
         if (!l) { return r; }
@@ -211,7 +212,8 @@ class PersistentMultiset {
         return _merge_with_root(l_, root_, r);
     }
 
-    // 最小キーのノードに cnt を加える。最小キーが加算対象のキーであることが前提
+    // 最小キーのノードに cnt を加える
+    // 最小キーが加算対象のキーであることを前提とする
     NodePtr _add_leftmost(NodePtr node, int cnt) {
         node = node->copy();
         node->cnt_subtree += cnt;
@@ -251,7 +253,8 @@ class PersistentMultiset {
         }
     }
 
-    // 小さい方から k 要素を左に分ける。同じキーの途中で切るときはノードを 2 つに分ける
+    // 小さい方から k 要素を左に分ける
+    // 同じキーの途中で区切る場合はノードを 2 つに分ける
     pair<NodePtr, NodePtr> _split_node_cnt(NodePtr node, int k) {
         if (!node) { return {nullptr, nullptr}; }
         int left_cnt = node->left ? node->left->cnt_subtree : 0;
@@ -293,13 +296,13 @@ class PersistentMultiset {
     /// @brief 列 a の要素からなる多重集合を構築する / O(n log n)
     PersistentMultiset(const vector<T> &a) { _build(a); }
 
-    /// @brief other の要素を合わせた多重集合を返す / this の全要素 <= other の全要素が前提 / O(log n)
+    /// @brief other の要素を合わせた多重集合を返す / this の全要素 <= other の全要素を前提とする / O(log n)
     PersistentMultiset<T> merge(PersistentMultiset<T> other) {
         NodePtr root = _merge_node(this->root, other.root);
         return _new(root);
     }
 
-    /// @brief 小さい方から k 要素と残りに分けて返す / 多重度を数える / O(log n)
+    /// @brief 小さい方から k 要素と残りに分けて返す / k は多重度を含めた要素数とする / O(log n)
     pair<PersistentMultiset<T>, PersistentMultiset<T>> split(int k) {
         assert(0 <= k && k <= len());
         auto [l, r] = _split_node_cnt(this->root, k);
@@ -335,7 +338,8 @@ class PersistentMultiset {
     }
 
     /// @brief key を cnt 個削除した多重集合を返す / cnt >= 1 / O(log n)
-    /// cnt が key の個数以上なら key をすべて削除する。key が無ければ変更しない
+    /// cnt が key の個数以上なら key をすべて削除する
+    /// key が無ければ変更しない
     PersistentMultiset<T> remove(T key, int cnt = 1) {
         assert(cnt >= 1);
         NodePtr it = _find_node(key);
@@ -379,7 +383,7 @@ class PersistentMultiset {
         return it ? it->cnt : 0;
     }
 
-    /// @brief 小さい方から k 番目の要素を返す / 0-indexed で多重度を数える / O(log n)
+    /// @brief 小さい方から k 番目の要素を返す / k は 0-indexed で多重度を含めた順位とする / O(log n)
     T get(int k) const {
         assert(0 <= k && k < len());
         NodePtr node = root;
@@ -434,14 +438,14 @@ class PersistentMultiset {
         return k;
     }
 
-    /// @brief 小さい方から k 番目の要素を 1 つ削除した多重集合とその要素を返す / O(log n)
+    /// @brief 小さい方から k 番目の要素を 1 つ削除した多重集合と、その要素を返す / O(log n)
     pair<PersistentMultiset<T>, T> pop(int k) {
         assert(0 <= k && k < len());
         T key = get(k);
         return {remove(key), key};
     }
 
-    /// @brief 全要素を昇順の配列にして返す / O(n)
+    /// @brief 全要素を昇順の配列として返す / O(n)
     vector<T> tovector() const {
         NodePtr node = root;
         stack<NodePtr> s;
@@ -470,7 +474,7 @@ class PersistentMultiset {
         return root ? root->cnt_subtree : 0;
     }
 
-    /// @brief 平衡条件と部分木の集計値を検査する / O(n)
+    /// @brief 平衡条件と部分木の集計値を確認する / O(n)
     void check() const {
         auto rec = [&] (auto &&rec, NodePtr node) -> tuple<int, int, int> {
             int ls = 0, rs = 0, lc = 0, rc = 0;

@@ -98,7 +98,7 @@ private:
 
         int n = a.size();
         _nodes.reserve(_estimated_node_count(n));
-        // 各段で連続したメモリを読むよう、値そのものを振り分ける
+        // 各段で連続したメモリを参照するように、値そのものを振り分ける
         vector<T> values(a), work(n);
         vector<uint8_t> bits(n);
 
@@ -135,7 +135,7 @@ private:
         _root = build(build, _log - 1, 0, n, values, work);
     }
 
-    // 区間が1要素になったら、位置だけを下の段へ写せば足りる
+    // 区間が 1 要素になった後は、下の段での位置だけを求めれば十分である
     T _access_node(int node, int bit, int k) const {
         T result = 0;
         for (; bit >= 0; --bit) {
@@ -151,7 +151,7 @@ private:
         return result;
     }
 
-    // 位置 k の値と x の残りの bit を比べ、最初に異なる bit で止める
+    // 位置 k の値と x の残りの bit を比較し、最初に異なる bit で終了する
     int _compare_node(int node, int bit, int k, const T x) const {
         for (; bit >= 0; --bit) {
             const auto [b, rank1] = _nodes[node].v._access_ans_rank1(k);
@@ -205,7 +205,7 @@ private:
     }
 
 public:
-    /// @brief 各要素が [0, sigma) の空の DynamicWaveletTree を作成する / O(1)
+    /// @brief 要素の範囲が [0, sigma) の空の DynamicWaveletTree を作成する / O(1)
     DynamicWaveletTree(const T sigma)
         : _root(_NIL), _free(_NIL), _sigma(sigma),
           _log(sigma <= 1 ? 0 : bit_length((unsigned long long)(sigma - 1))), _size(0) {
@@ -221,7 +221,7 @@ public:
         _build(a);
     }
 
-    /// @brief 最終的な要素数 expected_size からノードと根のビット列の領域を予約する / 最悪 O(nlog(σ))
+    /// @brief 最終的な要素数 expected_size に応じてノードと根のビット列の領域を確保する / 最悪 O(nlog(σ))
     void reserve(int expected_size) {
         assert(len() <= expected_size);
         _nodes.reserve(_estimated_node_count(expected_size));
@@ -398,12 +398,12 @@ public:
         return right - 1;
     }
 
-    /// @brief 区間 [l, r) で値が [lower, upper) にある最初の位置を返す / なければ -1 / O(log^2(n)log(σ))
+    /// @brief 区間 [l, r) で値が [lower, upper) にある最初の位置を返す / なければ -1 を返す / O(log^2(n)log(σ))
     int next_index_in_value_range(const int l, const int r, const T lower, const T upper) const {
         return range_freq(l, r, lower, upper) == 0 ? -1 : kth_index_in_value_range(l, r, lower, upper, 0);
     }
 
-    /// @brief 区間 [l, r) で値が [lower, upper) にある最後の位置を返す / なければ -1 / O(log^2(n)log(σ))
+    /// @brief 区間 [l, r) で値が [lower, upper) にある最後の位置を返す / なければ -1 を返す / O(log^2(n)log(σ))
     int prev_index_in_value_range(const int l, const int r, const T lower, const T upper) const {
         int count = range_freq(l, r, lower, upper);
         return count == 0 ? -1 : kth_index_in_value_range(l, r, lower, upper, count - 1);
@@ -445,7 +445,7 @@ public:
         return kth_smallest(l, r, r - l - k - 1);
     }
 
-    /// @brief 区間 [l, r) で頻度が高い値を最大 k 種類、(値, 個数) の組で返す / O(p(log(n)+log(p)))、p は訪問ノード数
+    /// @brief 区間 [l, r) で頻度が高い値を最大 k 種類、(値, 個数) の組で返す / O(p(log(n)+log(p)))、p は訪問するノード数
     vector<pair<T, int>> topk(int l, int r, int k) const {
         assert(0 <= l && l <= r && r <= len());
         vector<pair<T, int>> ans;
@@ -455,7 +455,7 @@ public:
         while (!hq.empty() && k > 0) {
             auto [length, x, node, bit, ql, qr] = hq.top();
             hq.pop();
-            // 上位 bit が異なる値どうしは、残りの bit を埋めても大小が変わらない
+            // 上位 bit が異なる値どうしは、残りの bit を埋めても大小関係が変化しない
             if (bit < 0 || length == 1) {
                 if (bit >= 0) x |= _access_node(node, bit, ql);
                 ans.emplace_back(x, length);
@@ -565,7 +565,7 @@ public:
         return select(rank(l, x) + k, x);
     }
 
-    /// @brief k 番目の x の位置を返して削除する / O(log(n)log(σ))
+    /// @brief k 番目の x を削除し、その位置を返す / O(log(n)log(σ))
     int select_remove(int k, const T x) {
         array<int, _MAX_LOG> path;
         array<uint8_t, _MAX_LOG> directions;
@@ -589,7 +589,7 @@ public:
         return k;
     }
 
-    /// @brief 区間 [l, r) で x 未満のうち最大の要素を返す / なければ -1 / O(log(n)log(σ))
+    /// @brief 区間 [l, r) で x 未満のうち最大の要素を返す / なければ -1 を返す / O(log(n)log(σ))
     T prev_value(int l, int r, const T x) const {
         if (l == r || x <= 0) return -1;
         if (x >= _sigma) return _extreme(_root, _log - 1, l, r, 0, true);
@@ -628,7 +628,7 @@ public:
         return _extreme(candidate, candidate_bit, candidate_l, candidate_r, candidate_value, true);
     }
 
-    /// @brief 区間 [l, r) で x 以上のうち最小の要素を返す / なければ -1 / O(log(n)log(σ))
+    /// @brief 区間 [l, r) で x 以上のうち最小の要素を返す / なければ -1 を返す / O(log(n)log(σ))
     T next_value(int l, int r, const T x) const {
         if (l == r || x >= _sigma) return -1;
         if (x <= 0) return _extreme(_root, _log - 1, l, r, 0, false);

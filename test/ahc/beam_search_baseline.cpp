@@ -1,4 +1,4 @@
-/// @brief 標準版との差分検証に使う旧実装
+/// @brief 標準版との差分の検証に使用する旧実装
 #pragma once
 #include <bits/stdc++.h>
 #include "titan_cpplib/others/print.cpp"
@@ -15,7 +15,7 @@ using namespace std;
 
 namespace flying_squirrel {
 
-/// @brief 木上の状態差分を利用して候補を展開するビームサーチ
+/// @brief 木上の状態の差分を利用して候補を展開するビームサーチ
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
 class BeamSearchWithTree {
 private:
@@ -33,7 +33,7 @@ private:
     vector<HistoryNode<ScoreType, HashType>> history;
     vector<TurnSnapshot> snapshots;
 
-    // 1ターン内の try_op 呼び出し回数
+    // 1 ターン内の try_op の呼び出し回数
     int explored_per_turn;
 
     using ActionId = uint64_t;
@@ -64,11 +64,11 @@ private:
     vector<int> next_leaf;
     vector<Action> actions;
 
-    int freed_to;                     // 解放済みの最大深さで result_prefix.size() と一致する
+    int freed_to;                     // 解放済みの最大の深さで result_prefix.size() と一致する
     vector<Action> result_prefix;     // 確定した深さ 1..freed_to の Action
-    vector<vector<Action>> slab_pool; // 解放した世代ブロックの再利用プール
+    vector<vector<Action>> slab_pool; // 解放した世代ごとのブロックを再利用するためのプール
 
-    /// @brief 確定した接頭辞を退避し、参照されなくなった世代ブロックを再利用プールへ移す
+    /// @brief 確定した接頭辞を退避し、参照されなくなった世代ごとのブロックを再利用するためのプールへ移動する
     /// @param L 次世代以降で参照される最小の深さ
     void confirm_and_free(int L) {
         while (freed_to + 1 < L) {
@@ -80,7 +80,7 @@ private:
         }
     }
 
-    /// @brief 生存候補の Action を世代ブロックへ移し、参照用の候補列を構築する
+    /// @brief 生存した候補の Action を世代ごとのブロックへ移動し、参照用の候補列を構築する
     void finalize_generation(int gen) {
         int sz = (int)candidates.size();
         if ((int)gblock.size() <= gen) gblock.resize(gen + 1);
@@ -104,13 +104,13 @@ private:
         for (It it = first; it != last; ++it) dst.push_back(act(*it));
     }
 
-    /// @brief 確定した接頭辞と未確定の trace から終了経路を構築する
+    /// @brief 確定した接頭辞と未確定の trace から終了状態までの経路を構築する
     void build_best_path(int upto) {
         best_finished_path = result_prefix;
         for (int k = freed_to + 1; k <= upto; ++k) best_finished_path.push_back(act(trace[k]));
     }
 
-    /// @brief 探索状態をルートへ戻し、返却経路を適用した最終状態を構築する
+    /// @brief 探索状態をルートへ戻し、返却する経路を適用した最終状態を構築する
     template<bool materialize_final_state>
     unique_ptr<State> build_final_state(State& state, const vector<Action>& result_actions, int current_depth) {
         if constexpr (materialize_final_state) {
@@ -129,13 +129,13 @@ private:
         }
     }
 
-    /// @brief 列挙された Action の評価、終了判定、候補登録を行う
+    /// @brief 列挙された Action の評価、終了判定、候補の登録を行う
     struct Submitter {
         BeamSearchWithTree &bs;
         State &st;
         int parent_leaf, parent_node_id, turn;
 
-        /// @brief 現在の枝刈り閾値を返す
+        /// @brief 現在の枝刈りの閾値を返す
         inline ScoreType threshold() const { return bs.candidates.threshold(); }
 
         inline void operator()(Action &a) {
@@ -200,7 +200,7 @@ private:
         }
     }
 
-    /// @brief 生存候補を記録し、脱落した履歴ノードの状態を更新する
+    /// @brief 生存した候補を記録し、脱落した履歴ノードの状態を更新する
     void record_turn_survivors(int turn_label) {
         unordered_set<int> survived;
         for (int i = 0; i < (int)candidates.size(); ++i) {
@@ -215,8 +215,8 @@ private:
         snapshots.push_back({turn_label, vector<int>(survived.begin(), survived.end())});
     }
 
-    /// @brief 親葉までの差分経路を tour から復元する
-    /// @param dst_end 復元先となる親経路の終端
+    /// @brief 親の葉までの差分の経路を tour から復元する
+    /// @param dst_end 復元先となる親の経路の終端
     template<class It>
     inline void copy_tour_path(int parent_leaf, int leaf_end, It dst_end) {
         int prog = 0;
@@ -235,7 +235,7 @@ private:
 public:
     /// @brief ビームサーチを実行する
     /// @tparam materialize_final_state 最終状態を構築する場合は true
-    /// @param param 探索ターン数とビーム幅の設定
+    /// @param param 探索のターン数とビーム幅の設定
     /// @param verbose ログを出力する場合は true
     /// @param history_file record_history が true のときに履歴を JSON で出力するファイル名
     /// @return 探索結果

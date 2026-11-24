@@ -86,7 +86,7 @@ void test_basic() {
     assert(tree.nearest(0, 0) == 5);
     assert(tree.nearest_dist(0, 0) == 2);
 
-    // 同じIDを再度追加すると個数が増える
+    // 同じ ID を再度追加すると個数が増える
     tree.add(5);
     assert(tree.nearest(0, 0) == 5);
 
@@ -140,11 +140,11 @@ void test_closed_boundaries_and_ties() {
     Tree tree(points);
     tree.add_all();
 
-    // クエリと同じ座標の点は4方向すべてに入り、同距離ではIDが小さい
+    // クエリと同じ座標の点は 4 方向すべてに含まれる / 同距離の場合は ID が小さい方を返す
     assert((tree.nearest_four(0, 0) == array<int, 4>{0, 0, 0, 0}));
     assert(tree.nearest(0, 0) == 0);
 
-    // NE と NW の候補が同距離なら全体でもIDが小さい方を返す
+    // NE と NW の候補が同距離なら全体でも ID が小さい方を返す
     Tree tied({{1, 1}, {-1, 1}});
     tied.add_all();
     assert((tied.nearest_four(0, 0) == array<int, 4>{0, 1, -1, -1}));

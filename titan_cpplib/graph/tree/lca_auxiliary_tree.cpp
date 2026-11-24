@@ -10,7 +10,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 指定した頂点集合の補助木を LCA を用いて作る / 元の木の根は 0
+/// @brief 指定した頂点集合の補助木を LCA を用いて構築する / 元の木の根は 0
 struct LCAAuxiliaryTree {
     int n; vector<int> in, out; LCA tree;
     /// @brief 木 G から前計算する / O(n)
@@ -23,8 +23,8 @@ struct LCAAuxiliaryTree {
         };
         dfs(dfs, 0, -1);
     }
-    /// @brief vs とその LCA からなる補助木を作り、根を返す / O(|vs| log |vs|)
-    /// 辺は親から子の向きで RES に追加する / RES の大きさは n
+    /// @brief vs とその LCA からなる補助木を構築し、根を返す / O(|vs| log |vs|)
+    /// 辺は親から子の向きで RES に追加する / RES の大きさは n であること
     int build(vector<int> vs, vector<vector<int>> &RES) {
         assert((int)RES.size() == n);
         auto cmp = [&] (int x, int y) { return in[x] < in[y]; };

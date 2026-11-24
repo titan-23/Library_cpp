@@ -6,7 +6,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 総和を求められる多重集合 / スプレー木で実装し、ノード領域は全インスタンスで共有する
+/// @brief 総和を求めることができる多重集合 / スプレー木で実装し、ノード領域は全インスタンスで共有する
 template<typename T>
 class MultisetSumSplay {
 private:
@@ -196,7 +196,7 @@ private:
 
 public:
     MultisetSumSplay() : root(0), S(0) {}
-    /// @brief 列 a から構築する / a は昇順であることが前提
+    /// @brief 列 a から構築する / a が昇順であることを前提とする
     MultisetSumSplay(vector<T> a) : S(0) {
         if (a.empty()) {
             root = 0;
@@ -220,13 +220,13 @@ public:
         root = build(build, 0, a.size());
     }
 
-    /// @brief 先頭 k 個とそれ以外に分けた 2 つを返す / 自身は使えなくなり、返り値の all_prod は不定
+    /// @brief 先頭 k 個とそれ以外に分割した 2 つの多重集合を返す / 自身は使用できなくなり、返り値の all_prod は不定になる
     pair<MultisetSumSplay<T>, MultisetSumSplay<T>> split(int k) {
         auto [left, right] = split_node_kth(root, k);
         return {MultisetSumSplay(left), MultisetSumSplay(right)};
     }
 
-    /// @brief other を自身の後ろに連結する / other の要素が全て自身の要素以上であることが前提
+    /// @brief other を自身の後ろに連結する / other の要素が全て自身の要素以上であることを前提とする
     void merge(MultisetSumSplay<T> &other) {
         root = merge_node(root, other.root);
         other.root = nullptr;
@@ -280,7 +280,7 @@ public:
         return false;
     }
 
-    /// @brief key を 1 個削除する / key があることが前提 / 償却 O(log n)
+    /// @brief key を 1 個削除する / key があることを前提とする / 償却 O(log n)
     void remove(const T key) {
         S -= key;
         root = find_splay(root, key);
@@ -351,7 +351,7 @@ public:
         return rec(rec, root);
     }
 
-    /// @brief 小さい順に取るとき、総和が w 未満となる最大の個数を返す / 償却 O(log n)
+    /// @brief 小さい順に要素を選ぶとき、総和が w 未満となる最大の個数を返す / 償却 O(log n)
     int count_sumlim(T w) {
         int ans = 0;
         T now = 0;
@@ -417,7 +417,7 @@ public:
         ma.reserve(cap);
     }
 
-    /// @brief 全要素を削除する / 共有のノード領域を初期化するので、他のインスタンスも無効になる
+    /// @brief 全要素を削除する / 共有のノード領域を初期化するため、他のインスタンスも無効になる
     void clear() {
         ma.reset();
         root = 0;
@@ -443,7 +443,7 @@ public:
         return a;
     }
 
-    /// @brief 要素が昇順に並ぶことを assert で検査する / デバッグ用
+    /// @brief 要素が昇順であることを assert で確認する / デバッグ用
     void test_sorted() const {
         vector<T> a = tovector();
         int n = a.size();
@@ -452,7 +452,7 @@ public:
         }
     }
 
-    /// @brief 親へのリンクの整合性を assert で検査する / デバッグ用
+    /// @brief 親へのリンクの整合性を assert で確認する / デバッグ用
     void test() const {
         auto dfs = [&] (auto &&dfs, int node, int pnode) {
             if (node == 0) return;

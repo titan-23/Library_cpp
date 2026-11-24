@@ -9,7 +9,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 静的な木で、一点更新と距離が区間に入る頂点の和の取得を行う / 更新と prod は O(log^2 N)
+/// @brief 静的な木で、一点更新と、距離が区間に含まれる頂点の値の総和の取得を行う / 更新と prod は O(log^2 N)
 template<typename T>
 class TreeContourSum {
 private:
@@ -164,7 +164,7 @@ public:
         add(v, x - val[v]);
     }
 
-    /// @brief v からの距離が [l, r) の頂点の値の和を返す / O(log^2 N)
+    /// @brief v からの距離が [l, r) の頂点の値の総和を返す / O(log^2 N)
     T prod(int v, int l, int r) const {
         assert(0 <= v && v < len());
         if (l >= r) return T{};

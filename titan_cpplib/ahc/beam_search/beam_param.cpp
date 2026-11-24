@@ -13,11 +13,11 @@ struct BeamParam {
     bool is_adjusting;
 
     /// @brief ターンごとに重複判定用のハッシュを破棄するか
-    /// false のとき、State のハッシュにターンを含めないと、別ターンの候補も重複とみなされる
+    /// false のとき State のハッシュにターンを含めないと、別のターンの候補も重複とみなされる
     bool clear_hash_every_turn;
 
     /// @brief clear_hash_every_turn が false のとき、古いハッシュを破棄するターン間隔 K / 0 なら破棄しない
-    /// 固定深さ版と naive 版だけで使う。保持範囲は最後の破棄から 1〜K ターン分で、直近 K ターンちょうどではない
+    /// 固定深さ版と naive 版だけで使用する / 保持範囲は最後の破棄から 1〜K ターン分であり、ちょうど直近 K ターン分ではない
     int hash_window_turns;
 
     // 通常ターンとメタターンで共用する累積値
@@ -25,33 +25,33 @@ struct BeamParam {
     double time_sum;
     int prev_beam_width;
 
-    // 各ターンの実効幅。ログ出力にだけ使う
+    // 各ターンの実効幅 / ログ出力だけに使用する
     vector<int> width_hist;
 
-    // beam_search_turn.cpp で使う target_turn 進行量の累積値
+    // beam_search_turn.cpp で使用する target_turn の進行量の累積値
     long long target_step_sum;
     long long target_step_count;
 
-    // beam_search_turn.cpp の大域 seen_hash に与える初期容量の目安。0 なら自動で決める
+    // beam_search_turn.cpp の大域 seen_hash に与える初期容量の目安 / 0 なら自動的に決定する
     int seen_hash_capacity_hint;
 
     // 展開のあるメタターンの累積時間 [ms] と回数
     double time_active_sum;
     long long count_active;
 
-    // 展開の有無と target_turn 進行量の EMA
+    // 展開の有無と target_turn の進行量の EMA
     double ema_active_rate;
     double ema_step;
     int meta_sample_count;
 
-    // EMA の平滑化係数。大きいほど直近の値を重く見る
+    // EMA の平滑化係数 / 大きいほど直近の値を重視する
     double ema_alpha_rate;
     double ema_alpha_step;
 
     // 推奨幅に掛ける安全率
     double width_safety_factor;
 
-    // 動的調整を始めるまでのメタターン数
+    // 動的調整を開始するまでのメタターン数
     int calibration_meta_count;
 
     BeamParam() { init(); }
@@ -116,7 +116,7 @@ struct BeamParam {
                         int delta_target) {
         double dt_ms = dt_expand_ms + dt_update_ms;
 
-        // 展開のないターンはビーム幅に依存しないため、分けて計測する
+        // 展開のないターンの所要時間はビーム幅に依存しないため、分けて計測する
         if (applied_w > 0) {
             time_active_sum += dt_ms;
             count_active++;
@@ -195,7 +195,7 @@ struct BeamParam {
         return beam_width;
     }
 
-    /// @brief 累積した平均ビーム幅を標準エラーに出力する
+    /// @brief 累積値から求めた平均ビーム幅を標準エラーに出力する
     /// @deprecated beam_log::end_banner で同じ情報を出力できる
     void report() const {
         cerr << to_bold("BeamParam-report----------------") << endl;

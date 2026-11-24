@@ -43,7 +43,7 @@ class DynamicWaveletMatrix {
         }
     }
 
-    // 段 bit の区間 [l, r) を、値の bit が b である要素の次の段での区間に移す
+    // 段 bit の区間 [l, r) を、値の bit が b である要素が次の段で占める区間に変換する
     void _descend(const int bit, const bool b, int &l, int &r, const int l0, const int r0) const {
         if (b) {
             l += _mid[bit] - l0;
@@ -54,8 +54,8 @@ class DynamicWaveletMatrix {
         }
     }
 
-    // 段 bit 以下だけを見て、空でない区間 [l, r) の最大値 (largest) か最小値を返す
-    // value には上位の段で決まった bit を入れておく
+    // 段 bit 以下だけを参照して、空でない区間 [l, r) の最大値 (largest) か最小値を返す
+    // value には上位の段で定まった bit を設定しておく
     T _extreme(int bit, int l, int r, T value, const bool largest) const {
         for (; bit >= 0; --bit) {
             const auto [l0, r0] = _v[bit]._rank0_pair(l, r);
@@ -67,18 +67,18 @@ class DynamicWaveletMatrix {
     }
 
     public:
-    /// @brief 各要素が [0, sigma) の空の列を作る / O(log(σ))
+    /// @brief 要素の範囲が [0, sigma) の空の列を構築する / O(log(σ))
     DynamicWaveletMatrix(const T sigma)
             : _sigma(sigma), _log(bit_length(sigma-1)), _v(_log), _mid(_log), _size(0) {
     }
 
-    /// @brief 各要素が [0, sigma) の列 a から作る / O(nlog(σ))
+    /// @brief 各要素が [0, sigma) の列 a から構築する / O(nlog(σ))
     DynamicWaveletMatrix(const T sigma, vector<T> &a)
             : _sigma(sigma), _log(bit_length(sigma)), _v(_log), _mid(_log), _size(a.size()) {
         _build(a);
     }
 
-    /// @brief 各段のビット列に n 要素分の領域を予約する
+    /// @brief 各段のビット列に n 要素分の領域を確保する
     void reserve(const int n) {
         for (int i = 0; i < _log; ++i) {
             _v[i].reserve(n);
@@ -121,7 +121,7 @@ class DynamicWaveletMatrix {
     /// @brief 位置 k の値を x に更新する / O(log(n)log(σ))
     void set(int k, T x) {
         assert(0 <= k && k < _size);
-        // 上位の段から元の値と bit が等しい間は、書き換えだけで済む
+        // 上位の段から順に、元の値と x の bit が等しい間はビットの置き換えだけで処理できる
         int bit = _log - 1;
         int old_k = k, new_k = k;
         for (; bit >= 0; --bit) {
@@ -131,14 +131,15 @@ class DynamicWaveletMatrix {
                 k = old_bit ? rank1 + _mid[bit] : k - rank1;
                 continue;
             }
-            // この段で bit が変わる。下の段の位置は、変更前は old_k、変更後は new_k になる
+            // この段で bit が変化する
+            // 下の段の位置は、変更前は old_k、変更後は new_k になる
             old_k = old_bit ? rank1 + _mid[bit] : k - rank1;
             _mid[bit] += new_bit ? -1 : 1;
             new_k = new_bit ? rank1 + _mid[bit] : k - rank1;
             --bit;
             break;
         }
-        // 下の段では、変更前の位置から取り除き、変更後の位置へ挿入する
+        // 下の段では変更前の位置から取り除き、変更後の位置へ挿入する
         for (; bit >= 0; --bit) {
             const int sb = _v[bit]._access_pop_and_rank1(old_k);
             const int s = sb >> 1;
@@ -294,11 +295,11 @@ class DynamicWaveletMatrix {
         return range_freq(l, r, y) - range_freq(l, r, x);
     }
 
-    /// @brief 区間 [l, r) で x 未満のうち最大の要素を返す / なければ -1 / O(log(n)log(σ))
+    /// @brief 区間 [l, r) で x 未満のうち最大の要素を返す / なければ -1 を返す / O(log(n)log(σ))
     T prev_value(int l, int r, T x) const {
         if (l == r || x <= 0) return -1;
         if (x >= _sigma) return _extreme(_log - 1, l, r, 0, true);
-        // x の bit をたどり、x 未満へ分かれられる最後の段を候補として覚える
+        // x の bit をたどり、x 未満の側へ分岐できる最後の段を候補として記録する
         int candidate_bit = -2, candidate_l = 0, candidate_r = 0;
         T value = 0, candidate_value = 0;
         for (int bit = _log-1; bit >= 0 && l < r; --bit) {
@@ -319,11 +320,11 @@ class DynamicWaveletMatrix {
         return _extreme(candidate_bit, candidate_l, candidate_r, candidate_value, true);
     }
 
-    /// @brief 区間 [l, r) で x 以上のうち最小の要素を返す / なければ -1 / O(log(n)log(σ))
+    /// @brief 区間 [l, r) で x 以上のうち最小の要素を返す / なければ -1 を返す / O(log(n)log(σ))
     T next_value(int l, int r, T x) const {
         if (l == r || x >= _sigma) return -1;
         if (x <= 0) return _extreme(_log - 1, l, r, 0, false);
-        // x の bit をたどり、x より大きい側へ分かれられる最後の段を候補として覚える
+        // x の bit をたどり、x より大きい側へ分岐できる最後の段を候補として記録する
         int candidate_bit = -2, candidate_l = 0, candidate_r = 0;
         T value = 0, candidate_value = 0;
         for (int bit = _log-1; bit >= 0 && l < r; --bit) {
@@ -370,12 +371,12 @@ class DynamicWaveletMatrix {
         return right - 1;
     }
 
-    /// @brief 区間 [l, r) で値が [lower, upper) にある最初の位置を返す / なければ -1 / O(log^2(n)log(σ))
+    /// @brief 区間 [l, r) で値が [lower, upper) にある最初の位置を返す / なければ -1 を返す / O(log^2(n)log(σ))
     int next_index_in_value_range(const int l, const int r, const T lower, const T upper) const {
         return range_freq(l, r, lower, upper) == 0 ? -1 : kth_index_in_value_range(l, r, lower, upper, 0);
     }
 
-    /// @brief 区間 [l, r) で値が [lower, upper) にある最後の位置を返す / なければ -1 / O(log^2(n)log(σ))
+    /// @brief 区間 [l, r) で値が [lower, upper) にある最後の位置を返す / なければ -1 を返す / O(log^2(n)log(σ))
     int prev_index_in_value_range(const int l, const int r, const T lower, const T upper) const {
         const int count = range_freq(l, r, lower, upper);
         return count == 0 ? -1 : kth_index_in_value_range(l, r, lower, upper, count - 1);
@@ -384,7 +385,7 @@ class DynamicWaveletMatrix {
     /// @brief 値の列を返す / O(nlog(σ))
     vector<T> tovector() const {
         vector<T> a(_size, 0);
-        // order[p] は、今の段の位置 p にある要素の元の位置
+        // order[p] は現在の段の位置 p にある要素の元の位置を表す
         vector<int> order(_size), work(_size);
         iota(order.begin(), order.end(), 0);
         for (int bit = _log-1; bit >= 0; --bit) {

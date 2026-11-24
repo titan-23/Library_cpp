@@ -9,7 +9,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 文字列の多重集合を持つトライ木 / 文字は B から SIGMA 種類
+/// @brief 文字列の多重集合を保持するトライ木 / 文字は B から SIGMA 種類
 template <char B='a', int SIGMA=26>
 class Trie {
 private:
@@ -32,7 +32,7 @@ private:
     }
 
 public:
-    /// @brief 空のトライ木を作る
+    /// @brief 空のトライ木を作成する
     Trie() {
         root = new_node();
     }
@@ -42,12 +42,12 @@ public:
         return root;
     }
 
-    /// @brief 頂点 v から文字番号 idx で進んだ子の頂点番号を返す / なければ -1 / O(1)
+    /// @brief 頂点 v の文字番号 idx に対応する子の頂点番号を返す / 子がなければ -1 を返す / O(1)
     int get_child(int v, int idx) const {
         return a[v].child[idx];
     }
 
-    /// @brief 頂点 v の文字列を真の接頭辞に持つ文字列の個数を返す / O(1)
+    /// @brief 頂点 v の文字列を真の接頭辞とする文字列の個数を返す / O(1)
     int get_count(int v) const {
         return a[v].count;
     }
@@ -71,7 +71,7 @@ public:
         a[v].stop_count++;
     }
 
-    /// @brief pref の接頭辞のうち、木の中でたどれる最長のものの長さを返す / O(|pref|)
+    /// @brief pref の接頭辞のうち、木の中でたどることができる最長のものの長さを返す / O(|pref|)
     int s_prefix(const string &pref) const {
         int v = root;
         for (int i = 0; i < pref.size(); ++i) {
@@ -106,7 +106,7 @@ public:
         }
     }
 
-    /// @brief pref を接頭辞に持つ文字列をすべて削除し、削除した個数を返す / O(|pref|)
+    /// @brief pref を接頭辞とする文字列をすべて削除し、削除した個数を返す / O(|pref|)
     int erase_prefix(const string &pref) {
         int v = root;
         for (char c : pref) {
@@ -135,7 +135,7 @@ public:
         return remove_cnt;
     }
 
-    /// @brief pref を接頭辞に持つ文字列があるかを返す / O(|pref|)
+    /// @brief pref を接頭辞とする文字列があるかを返す / O(|pref|)
     bool contains_prefix(const string &pref) const {
         int v = root;
         for (char c : pref) {
@@ -159,7 +159,7 @@ public:
         return false;
     }
 
-    /// @brief 各 i (0 <= i <= |s|) について s[:i] を接頭辞に持つ文字列の個数を返す / O(|s|)
+    /// @brief 各 i (0 <= i <= |s|) について s[:i] を接頭辞とする文字列の個数を返す / O(|s|)
     vector<int> count_prefix(const string &s) const {
         int v = root;
         int n = s.size();

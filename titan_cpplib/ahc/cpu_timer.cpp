@@ -9,8 +9,9 @@
 // CpuTimer
 namespace titan23 {
 
-/// @brief プロセスの CPU 時間で計るタイマー / titan23::Timer と同じ使い方
-/// マルチスレッドでは全スレッドの合計になる。取得が数十から数百 ns かかるので、候補ごとには呼ばない
+/// @brief プロセスの CPU 時間を計測するタイマー / 使用方法は titan23::Timer と同じ
+/// マルチスレッドでは全スレッドの合計になる
+/// 取得に数十から数百 ns かかるため、候補ごとには呼び出さないようにする
 class CpuTimer {
 private:
     double start_ms;
@@ -22,7 +23,7 @@ private:
         ULARGE_INTEGER k, u;
         k.LowPart = kernel.dwLowDateTime; k.HighPart = kernel.dwHighDateTime;
         u.LowPart = user.dwLowDateTime;   u.HighPart = user.dwHighDateTime;
-        // FILETIME は 100ns 単位
+        // FILETIME の単位は 100 ns
         return (double)(k.QuadPart + u.QuadPart) * 1e-4;
 #else
         timespec ts;
@@ -32,15 +33,15 @@ private:
     }
 
 public:
-    /// @brief 計測を始める
+    /// @brief 計測を開始する
     CpuTimer() : start_ms(now_ms()) {}
 
-    /// @brief 計測を始め直す
+    /// @brief 計測の起点を現時点に再設定する
     void reset() {
         start_ms = now_ms();
     }
 
-    /// @brief 経過した CPU 時間を ms で返す
+    /// @brief 経過した CPU 時間を ms 単位で返す
     double elapsed() const {
         return now_ms() - start_ms;
     }

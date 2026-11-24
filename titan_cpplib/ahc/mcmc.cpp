@@ -25,20 +25,22 @@ private:
     struct Observation {
         double y;
         double var;
-        vector<pair<int, double>> terms; // (変数index, 係数) の非零項のみ
+        vector<pair<int, double>> terms; // (変数 index, 係数) の非零項のみ
     };
     vector<Observation> observations;
 
-    // 推定用の作業領域。再確保を避けるため呼び出し間で使い回す
+    // 推定用の作業領域
+    // 再確保を避けるため呼び出しをまたいで再利用する
     mutable vector<double> inv_var, post_var, post_sd, errors, sum_X, sum_X2;
     mutable vector<vector<pair<int, double>>> var_obs;
 
-    // estimate_step() 用の連鎖状態。ターンをまたいで引き継ぐ
+    // estimate_step() 用の連鎖の状態
+    // ターンをまたいで引き継ぐ
     vector<double> warm_X;
     mt19937 warm_gen;
     bool warm_inited = false;
 
-    // 反復で変わらない inv_var, var_obs, post_var, post_sd を前計算する
+    // 反復で変化しない inv_var, var_obs, post_var, post_sd を前計算する
     void prepare_buffers() const {
         int N = observations.size();
         inv_var.assign(N, 0.0);
@@ -64,7 +66,7 @@ private:
         }
     }
 
-    // 連鎖状態 X に対応する各観測の残差 error_i = y_i - sum_k(A_{i,k} * X_k) を計算する
+    // 連鎖の状態 X に対応する各観測の残差 error_i = y_i - sum_k(A_{i,k} * X_k) を計算する
     void compute_errors(const vector<double> &X) const {
         int N = observations.size();
         errors.assign(N, 0.0);
@@ -77,7 +79,7 @@ private:
         }
     }
 
-    // X を1回ギブス掃きし、errors を差分更新する
+    // X の全変数をギブスサンプリングで 1 回ずつ更新し、errors を差分更新する
     void gibbs_sweep(vector<double> &X, mt19937 &gen, normal_distribution<double> &std_normal) const {
         for (int k = 0; k < K; ++k) {
             // X_k 以外を固定したときの X_k の条件付き分布の平均を計算する
@@ -98,7 +100,7 @@ private:
         }
     }
 
-    // 連鎖 X を gen で iterations 回回し、burn_in 以降のサンプルから事後分布を求める
+    // 連鎖 X を gen で iterations 回更新し、burn_in 以降のサンプルから事後分布を求める
     EstimationResult run_chain(vector<double> &X, mt19937 &gen, int iterations, int burn_in) const {
         prepare_buffers();
         compute_errors(X);
@@ -140,7 +142,7 @@ public:
         prior_var[index] = sigma * sigma;
     }
 
-    /// @brief 非零の (変数index, 係数) の列 coeffs で観測値 y を疎形式で追加する / sigma は観測ノイズの標準偏差 / O(係数の個数)
+    /// @brief 非零の (変数 index, 係数) の列 coeffs で観測値 y を疎形式で追加する / sigma は観測ノイズの標準偏差 / O(係数の個数)
     void report(double y, const vector<pair<int, double>> &coeffs, double sigma) {
         assert(sigma > 0.0);
         for (const auto &[k, c] : coeffs) {
@@ -159,7 +161,7 @@ public:
         report(y, terms, sigma);
     }
 
-    /// @brief 事前分布から連鎖を始めて推定する / burn_in < iterations / O(iterations * (K + nnz) + N)
+    /// @brief 事前分布から連鎖を開始して推定する / burn_in < iterations / O(iterations * (K + nnz) + N)
     EstimationResult estimate(int iterations, int burn_in = 1000, unsigned int seed = 42) const {
         assert(burn_in < iterations);
         vector<double> X = prior_mu;
@@ -167,8 +169,8 @@ public:
         return run_chain(X, gen, iterations, burn_in);
     }
 
-    /// @brief 前回の連鎖状態から続けて推定する / burn_in < iterations / O(iterations * (K + nnz) + N)
-    /// 初回と reset_chain() の直後は事前分布から始め、そのときだけ seed を使う
+    /// @brief 前回の連鎖の状態から継続して推定する / burn_in < iterations / O(iterations * (K + nnz) + N)
+    /// 初回と reset_chain() の直後は事前分布から開始し、その場合だけ seed を使用する
     EstimationResult estimate_step(int iterations, int burn_in = 200, unsigned int seed = 42) {
         assert(burn_in < iterations);
         if (!warm_inited) {
@@ -179,7 +181,7 @@ public:
         return run_chain(warm_X, warm_gen, iterations, burn_in);
     }
 
-    /// @brief estimate_step() の連鎖を初期化し、次回は事前分布から始める / O(1)
+    /// @brief estimate_step() の連鎖を初期化し、次回は事前分布から開始する / O(1)
     void reset_chain() {
         warm_inited = false;
     }

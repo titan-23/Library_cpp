@@ -14,9 +14,11 @@ using namespace std;
 namespace titan23 {
 namespace dynamic_segment_tree {
 
-// 代表的な演算のop・e・powと、それらを使う動的セグメント木の別名を定める
-// 別名の第1テンプレート引数は値の型で、添字の型は既定でlong long。Initで終わる型は全要素の初期値を指定できる
-// 計算結果が各型の範囲に収まることと、powのnが非負であることを前提とする。Idxの添字とCntの個数もIndex型で持つ
+// 代表的な演算の op, e, pow と、それらを使用する動的セグメント木の別名を定める
+// 別名の第 1 テンプレート引数は値の型で、添字の型は既定で long long になる
+// Init で終わる型は全要素の初期値を指定できる
+// 計算結果が各型の範囲に収まることと、pow の n が非負であることを前提とする
+// Idx の添字と Cnt の個数も Index 型で保持する
 
 /// @brief 和を求める / O(1)
 template <class T> T op_sum(T a, T b) { return a + b; }
@@ -24,7 +26,7 @@ template <class T> T op_sum(T a, T b) { return a + b; }
 /// @brief 和の単位元を返す / O(1)
 template <class T> T e_sum() { return T(0); }
 
-/// @brief 同じ値をn個結合した和を返す / O(1)
+/// @brief 同じ値を n 個結合した和を返す / O(1)
 template <class T, class Index> T pow_sum(T a, Index n) { return a * T(n); }
 
 /// @brief 最小値を求める / O(1)
@@ -33,7 +35,7 @@ template <class T> T op_min(T a, T b) { return min(a, b); }
 /// @brief 最小値の単位元を返す / O(1)
 template <class T> T e_min() { return numeric_limits<T>::max(); }
 
-/// @brief 同じ値をn個結合した最小値を返す / O(1)
+/// @brief 同じ値を n 個結合した最小値を返す / O(1)
 template <class T, class Index> T pow_min(T a, Index n) { return n == 0 ? e_min<T>() : a; }
 
 /// @brief 最大値を求める / O(1)
@@ -42,43 +44,43 @@ template <class T> T op_max(T a, T b) { return max(a, b); }
 /// @brief 最大値の単位元を返す / O(1)
 template <class T> T e_max() { return numeric_limits<T>::lowest(); }
 
-/// @brief 同じ値をn個結合した最大値を返す / O(1)
+/// @brief 同じ値を n 個結合した最大値を返す / O(1)
 template <class T, class Index> T pow_max(T a, Index n) { return n == 0 ? e_max<T>() : a; }
 
-/// @brief 非負のa,bの最大公約数を求める / O(logV)、V=max(1,a,b)
+/// @brief 非負の a, b の最大公約数を求める / O(logV)、V=max(1,a,b)
 template <class T> T op_gcd(T a, T b) { return gcd(a, b); }
 
 /// @brief 最大公約数の単位元を返す / O(1)
 template <class T> T e_gcd() { return T(0); }
 
-/// @brief 同じ値をn個結合した最大公約数を返す / O(1)
+/// @brief 同じ値を n 個結合した最大公約数を返す / O(1)
 template <class T, class Index> T pow_gcd(T a, Index n) { return n == 0 ? e_gcd<T>() : a; }
 
-/// @brief 整数型Tの排他的論理和を求める / O(1)
+/// @brief 整数型 T の排他的論理和を求める / O(1)
 template <class T> T op_xor(T a, T b) { return a ^ b; }
 
 /// @brief 排他的論理和の単位元を返す / O(1)
 template <class T> T e_xor() { return T(0); }
 
-/// @brief 同じ値をn個結合した排他的論理和を返す / O(1)
+/// @brief 同じ値を n 個結合した排他的論理和を返す / O(1)
 template <class T, class Index> T pow_xor(T a, Index n) { return n % 2 ? a : T(0); }
 
-/// @brief 整数型Tの論理和を求める / O(1)
+/// @brief 整数型 T の論理和を求める / O(1)
 template <class T> T op_or(T a, T b) { return a | b; }
 
 /// @brief 論理和の単位元を返す / O(1)
 template <class T> T e_or() { return T(0); }
 
-/// @brief 同じ値をn個結合した論理和を返す / O(1)
+/// @brief 同じ値を n 個結合した論理和を返す / O(1)
 template <class T, class Index> T pow_or(T a, Index n) { return n == 0 ? e_or<T>() : a; }
 
-/// @brief 整数型Tの論理積を求める / O(1)
+/// @brief 整数型 T の論理積を求める / O(1)
 template <class T> T op_and(T a, T b) { return a & b; }
 
 /// @brief 論理積の単位元を返す / O(1)
 template <class T> T e_and() { return ~T(0); }
 
-/// @brief 同じ値をn個結合した論理積を返す / O(1)
+/// @brief 同じ値を n 個結合した論理積を返す / O(1)
 template <class T, class Index> T pow_and(T a, Index n) { return n == 0 ? e_and<T>() : a; }
 
 /// @brief 最小値とその値を取る最小の添字を求める / O(1)
@@ -89,7 +91,7 @@ pair<T, Index> op_min_idx(pair<T, Index> a, pair<T, Index> b) { return min(a, b)
 template <class T, class Index = long long>
 pair<T, Index> e_min_idx() { return {numeric_limits<T>::max(), numeric_limits<Index>::max()}; }
 
-/// @brief 同じ値と添字をn個結合した最小値と添字を返す / O(1)
+/// @brief 同じ値と添字を n 個結合した最小値と添字を返す / O(1)
 template <class T, class Index>
 pair<T, Index> pow_min_idx(pair<T, Index> a, Index n) { return n == 0 ? e_min_idx<T, Index>() : a; }
 
@@ -105,7 +107,7 @@ pair<T, Index> op_max_idx(pair<T, Index> a, pair<T, Index> b) {
 template <class T, class Index = long long>
 pair<T, Index> e_max_idx() { return {numeric_limits<T>::lowest(), numeric_limits<Index>::max()}; }
 
-/// @brief 同じ値と添字をn個結合した最大値と添字を返す / O(1)
+/// @brief 同じ値と添字を n 個結合した最大値と添字を返す / O(1)
 template <class T, class Index>
 pair<T, Index> pow_max_idx(pair<T, Index> a, Index n) { return n == 0 ? e_max_idx<T, Index>() : a; }
 
@@ -120,7 +122,7 @@ pair<T, Index> op_min_cnt(pair<T, Index> a, pair<T, Index> b) {
 template <class T, class Index = long long>
 pair<T, Index> e_min_cnt() { return {numeric_limits<T>::max(), 0}; }
 
-/// @brief 同じ値と個数をn個結合した最小値と個数を返す / O(1)
+/// @brief 同じ値と個数を n 個結合した最小値と個数を返す / O(1)
 template <class T, class Index>
 pair<T, Index> pow_min_cnt(pair<T, Index> a, Index n) {
     return n == 0 ? e_min_cnt<T, Index>() : pair<T, Index>{a.first, a.second * n};
@@ -137,22 +139,22 @@ pair<T, Index> op_max_cnt(pair<T, Index> a, pair<T, Index> b) {
 template <class T, class Index = long long>
 pair<T, Index> e_max_cnt() { return {numeric_limits<T>::lowest(), 0}; }
 
-/// @brief 同じ値と個数をn個結合した最大値と個数を返す / O(1)
+/// @brief 同じ値と個数を n 個結合した最大値と個数を返す / O(1)
 template <class T, class Index>
 pair<T, Index> pow_max_cnt(pair<T, Index> a, Index n) {
     return n == 0 ? e_max_cnt<T, Index>() : pair<T, Index>{a.first, a.second * n};
 }
 
-/// @brief 一次関数a*x+bを表す
+/// @brief 一次関数 a*x+b を表す
 template <class T>
 struct Affine {
     T a, b;
 
-    /// @brief 一次関数a*x+bの値を求める / O(1)
+    /// @brief 一次関数 a*x+b の値を求める / O(1)
     T eval(T x) const { return a * x + b; }
 };
 
-/// @brief 一次関数aの後にbを適用する合成関数を返す / O(1)
+/// @brief 一次関数 a の後に b を適用する合成関数を返す / O(1)
 template <class T>
 Affine<T> op_affine(Affine<T> a, Affine<T> b) {
     return {b.a * a.a, b.a * a.b + b.b};
@@ -161,7 +163,7 @@ Affine<T> op_affine(Affine<T> a, Affine<T> b) {
 /// @brief 値を変更しない一次関数を返す / O(1)
 template <class T> Affine<T> e_affine() { return {T(1), T(0)}; }
 
-/// @brief 同じ一次関数をn回適用する合成関数を二分累乗で返す / O(logn)
+/// @brief 同じ一次関数を n 回適用する合成関数を二分累乗で求める / O(logn)
 template <class T, class Index>
 Affine<T> pow_affine(Affine<T> value, Index n) {
     Affine<T> result = e_affine<T>();
@@ -181,14 +183,14 @@ struct MaxSubSum {
     T suf; // 最大接尾辞和
     T ans; // 空区間を許す最大部分配列和
 
-    /// @brief 空区間の集約値を作る / O(1)
+    /// @brief 空区間の集約値を作成する / O(1)
     MaxSubSum() : sum(0), pre(0), suf(0), ans(0) {}
 
-    /// @brief 値xの1要素から集約値を作る / O(1)
+    /// @brief 値 x の 1 要素から集約値を作成する / O(1)
     MaxSubSum(T x) : sum(x), pre(max(x, T(0))), suf(max(x, T(0))), ans(max(x, T(0))) {}
 };
 
-/// @brief 隣接する2区間の最大部分配列和を結合する / O(1)
+/// @brief 隣接する 2 区間の最大部分配列和を結合する / O(1)
 template <class T>
 MaxSubSum<T> op_max_sub_sum(MaxSubSum<T> a, MaxSubSum<T> b) {
     MaxSubSum<T> result;
@@ -202,7 +204,7 @@ MaxSubSum<T> op_max_sub_sum(MaxSubSum<T> a, MaxSubSum<T> b) {
 /// @brief 最大部分配列和を扱う単位元を返す / O(1)
 template <class T> MaxSubSum<T> e_max_sub_sum() { return {}; }
 
-/// @brief 同じ区間をn個結合した最大部分配列和を返す / O(1)
+/// @brief 同じ区間を n 個結合した最大部分配列和を返す / O(1)
 template <class T, class Index>
 MaxSubSum<T> pow_max_sub_sum(MaxSubSum<T> value, Index n) {
     if (n == 0) return e_max_sub_sum<T>();
@@ -251,25 +253,25 @@ using SegAnd = DynamicSegmentTree<Index, T, op_and<T>, e_and<T>>;
 template <class T, class Index = long long>
 using SegAndInit = DynamicSegmentTreeInit<Index, T, op_and<T>, e_and<T>, pow_and<T, Index>>;
 
-/// @brief 最小値とその値を取る最小の添字を求める / 各要素は{値,添字}で渡す
+/// @brief 最小値とその値を取る最小の添字を求める / 各要素は {値,添字} で渡す
 template <class T, class Index = long long>
 using SegMinIdx = DynamicSegmentTree<Index, pair<T, Index>, op_min_idx<T, Index>, e_min_idx<T, Index>>;
 
-/// @brief SegMinIdxの初期値指定版 / 渡した{値,添字}を全位置で使い、各位置の添字は自動生成しない
+/// @brief 全要素の初期値を指定できる SegMinIdx / 渡した {値,添字} を全位置で使用し、各位置の添字は自動生成しない
 template <class T, class Index = long long>
 using SegMinIdxInit = DynamicSegmentTreeInit<
     Index, pair<T, Index>, op_min_idx<T, Index>, e_min_idx<T, Index>, pow_min_idx<T, Index>>;
 
-/// @brief 最大値とその値を取る最小の添字を求める / 各要素は{値,添字}で渡す
+/// @brief 最大値とその値を取る最小の添字を求める / 各要素は {値,添字} で渡す
 template <class T, class Index = long long>
 using SegMaxIdx = DynamicSegmentTree<Index, pair<T, Index>, op_max_idx<T, Index>, e_max_idx<T, Index>>;
 
-/// @brief SegMaxIdxの初期値指定版 / 渡した{値,添字}を全位置で使い、各位置の添字は自動生成しない
+/// @brief 全要素の初期値を指定できる SegMaxIdx / 渡した {値,添字} を全位置で使用し、各位置の添字は自動生成しない
 template <class T, class Index = long long>
 using SegMaxIdxInit = DynamicSegmentTreeInit<
     Index, pair<T, Index>, op_max_idx<T, Index>, e_max_idx<T, Index>, pow_max_idx<T, Index>>;
 
-/// @brief 最小値とその値を取る要素数を求める / 各要素は{値,1}で渡す
+/// @brief 最小値とその値を取る要素数を求める / 各要素は {値,1} で渡す
 template <class T, class Index = long long>
 using SegMinCnt = DynamicSegmentTree<Index, pair<T, Index>, op_min_cnt<T, Index>, e_min_cnt<T, Index>>;
 
@@ -277,7 +279,7 @@ template <class T, class Index = long long>
 using SegMinCntInit = DynamicSegmentTreeInit<
     Index, pair<T, Index>, op_min_cnt<T, Index>, e_min_cnt<T, Index>, pow_min_cnt<T, Index>>;
 
-/// @brief 最大値とその値を取る要素数を求める / 各要素は{値,1}で渡す
+/// @brief 最大値とその値を取る要素数を求める / 各要素は {値,1} で渡す
 template <class T, class Index = long long>
 using SegMaxCnt = DynamicSegmentTree<Index, pair<T, Index>, op_max_cnt<T, Index>, e_max_cnt<T, Index>>;
 
@@ -285,15 +287,15 @@ template <class T, class Index = long long>
 using SegMaxCntInit = DynamicSegmentTreeInit<
     Index, pair<T, Index>, op_max_cnt<T, Index>, e_max_cnt<T, Index>, pow_max_cnt<T, Index>>;
 
-/// @brief 一次関数の合成を求める / prod(l,r).eval(x)はf_{r-1}(...f_l(x)...)を返す
+/// @brief 一次関数の合成を求める / prod(l,r).eval(x) は f_{r-1}(...f_l(x)...) を返す
 template <class T, class Index = long long>
 using SegAffine = DynamicSegmentTree<Index, Affine<T>, op_affine<T>, e_affine<T>>;
 
-/// @brief SegAffineの初期値指定版 / set・prod・max_right・min_leftはO(log²N)、all_prodはO(logN)
+/// @brief 全要素の初期値を指定できる SegAffine / set, prod, max_right, min_left は O(log²N)、all_prod は O(logN)
 template <class T, class Index = long long>
 using SegAffineInit = DynamicSegmentTreeInit<Index, Affine<T>, op_affine<T>, e_affine<T>, pow_affine<T, Index>>;
 
-/// @brief 最大部分配列和を求める / prod(l,r).ansは空区間を許す最大部分配列和を返す
+/// @brief 最大部分配列和を求める / prod(l,r).ans は空区間を許す最大部分配列和を返す
 template <class T, class Index = long long>
 using SegMaxSubSum = DynamicSegmentTree<Index, MaxSubSum<T>, op_max_sub_sum<T>, e_max_sub_sum<T>>;
 

@@ -7,7 +7,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 標準入力を 2^20 バイトずつ読み込んで解析する入力 / cin や scanf と併用しない
+/// @brief 標準入力を 2^20 バイトずつ読み込んで解析するクラス / cin や scanf と併用しない
 /// 参考: https://qiita.com/nojima/items/57b9d39d7d73362ac883
 class Scanner {
 private:
@@ -35,7 +35,7 @@ private:
 public:
     Scanner(): buffer(1<<20) { do_read(); }
 
-    /// @brief 空白を読み飛ばし、64 bit 符号付き整数を 1 つ読む
+    /// @brief 空白をスキップし、64 bit 符号付き整数を 1 つ読み込む
     int64_t read_int64() {
         int64_t ret = 0, sgn = 1;
         int ch = current_char();
@@ -46,7 +46,7 @@ public:
         return sgn * ret;
     }
 
-    /// @brief 空白を読み飛ばし、1 文字読む
+    /// @brief 空白をスキップし、1 文字読み込む
     char read_char() {
         int ch = current_char();
         while (isspace(ch)) {
@@ -56,7 +56,7 @@ public:
         return ch;
     }
 
-    /// @brief 空白を読み飛ばし、次の空白までの文字列を読む
+    /// @brief 空白をスキップし、次の空白までの文字列を読み込む
     string read_string() {
         string ret;
         int ch = current_char();
@@ -72,5 +72,5 @@ public:
 } scanner;
 } // namespace titan23
 
-/// @brief titan23::scanner から整数を 1 つ読む
+/// @brief titan23::scanner から整数を 1 つ読み込む
 int64_t read_int64() { return titan23::scanner.read_int64(); }

@@ -56,7 +56,7 @@ private:
             uint32_t rm = nodes[x.r].meta;
             uint32_t self = x.meta & SELF_MASK;
             uint32_t all = ((lm | rm) & ALL_MASK) | self << 2;
-            // mark は 2^SIZE_BITS の倍数なので加算後に mask すると size の和だけが残る
+            // mark は 2^SIZE_BITS の倍数であるため、加算後に mask すると size の和だけが残る
             x.meta = ((lm + rm + 1) & SIZE_MASK) | self | all;
         }
 
@@ -501,7 +501,7 @@ private:
     OnlineDynamicConnectivity(int size, int cap, bool) :
             n(size), groups(size), active(0), issued(0), level_count(1), reserve_cap(cap) {
         assert(size >= 0 && cap >= 0);
-        // Euler tour の一成分は最大 3 * size - 2 ノード
+        // Euler tour の 1 つの成分は最大 3 * size - 2 ノードになる
         assert(3LL * size - 2 <= (1U << 24) - 1LL);
         for (int x = size; x > 1; x >>= 1) ++level_count;
         assert(level_count <= MAX_LEVELS);
@@ -514,10 +514,10 @@ private:
 public:
     OnlineDynamicConnectivity() : OnlineDynamicConnectivity(0, 0, true) {}
 
-    // 頂点数 size の空グラフを作る / O(size)
+    // 頂点数 size の空グラフを構築する / O(size)
     explicit OnlineDynamicConnectivity(int size) : OnlineDynamicConnectivity(size, 0, true) {}
 
-    // 頂点数 size の空グラフを作り cap 本分を予約する / O(size)
+    // 頂点数 size の空グラフを構築し、辺 cap 本分の領域を予約する / O(size)
     OnlineDynamicConnectivity(int size, int cap) : OnlineDynamicConnectivity(size, cap, true) {}
 
     // 発行する辺 ID の個数を cap まで予約する

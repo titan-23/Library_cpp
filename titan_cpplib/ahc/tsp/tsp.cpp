@@ -25,7 +25,7 @@ public:
     TspTwoOptMove(TspTwoOptMove&&) = default;
     TspTwoOptMove& operator=(const TspTwoOptMove&) = default;
     TspTwoOptMove& operator=(TspTwoOptMove&&) = default;
-    /// @brief 適用したときの費用の差分を返す
+    /// @brief 適用したときのコストの差分を返す
     Cost delta() const { return delta_; }
 private:
     const void* problem_id_;
@@ -49,7 +49,7 @@ public:
     TspOrOptMove(TspOrOptMove&&) = default;
     TspOrOptMove& operator=(const TspOrOptMove&) = default;
     TspOrOptMove& operator=(TspOrOptMove&&) = default;
-    /// @brief 適用したときの費用の差分を返す
+    /// @brief 適用したときのコストの差分を返す
     Cost delta() const { return delta_; }
 private:
     const void* problem_id_;
@@ -75,7 +75,7 @@ public:
     TspDoubleBridgeMove(TspDoubleBridgeMove&&) = default;
     TspDoubleBridgeMove& operator=(const TspDoubleBridgeMove&) = default;
     TspDoubleBridgeMove& operator=(TspDoubleBridgeMove&&) = default;
-    /// @brief 適用したときの費用の差分を返す
+    /// @brief 適用したときのコストの差分を返す
     Cost delta() const { return delta_; }
 private:
     const void* problem_id_;
@@ -93,8 +93,9 @@ private:
     friend class TspState;
 };
 
-/// @brief 対称 TSP の点数と辺費用関数を保持する / コピーと移動はできない
-/// 辺費用は有限かつ 0 以上で、対称とする。問題は、そこから作った候補表と状態より後に破棄する
+/// @brief 対称 TSP の点数と辺のコストを返す関数を保持する / コピーと移動はできない
+/// 辺のコストは有限かつ 0 以上で、対称とする
+/// 問題は、そこから作った候補表と状態より後に破棄する
 template<class EdgeCost>
 class TspProblem {
 public:
@@ -102,7 +103,7 @@ public:
     static_assert(is_arithmetic_v<Cost>, "TspProblem: Cost must be an arithmetic type");
     static_assert(numeric_limits<Cost>::is_signed, "TspProblem: Cost must be able to represent negative differences");
 
-    /// @brief 点数 node_count と辺費用関数 edge_cost で構築する / node_count >= 1
+    /// @brief 点数 node_count と辺のコストを返す関数 edge_cost で構築する / node_count >= 1
     TspProblem(int node_count, EdgeCost edge_cost)
         : node_count_(node_count), edge_cost_(move(edge_cost)) {
         if (node_count_ <= 0) throw invalid_argument("TspProblem: node_count must be positive");
@@ -114,7 +115,7 @@ public:
 
     /// @brief 点数を返す
     int node_count() const { return node_count_; }
-    /// @brief 辺 (u, v) の費用を返す
+    /// @brief 辺 (u, v) のコストを返す
     Cost edge_cost(int u, int v) const {
 #ifdef TITAN_DEBUG
         if (u < 0 || u >= node_count_ || v < 0 || v >= node_count_) throw out_of_range("TspProblem::edge_cost: node is out of range");
@@ -132,7 +133,7 @@ private:
     EdgeCost edge_cost_;
 };
 
-/// @brief 各点の近傍候補を辺費用の昇順に並べた表 / make_tsp_candidates で作る
+/// @brief 各点の近傍候補を辺のコストの昇順に並べた表 / make_tsp_candidates で作る
 class TspCandidates {
 public:
     TspCandidates(const TspCandidates&) = default;
@@ -167,7 +168,7 @@ public:
     int node_count() const { return node_count_; }
     /// @brief 1 点あたりの候補数を返す
     int candidate_count() const { return candidate_count_; }
-    /// @brief node の候補を返す / 費用が同じなら点番号の小さい順
+    /// @brief node の候補を返す / コストが同じなら点番号の小さい順
     span<const int> operator[](int node) const {
 #ifdef TITAN_DEBUG
         if (node < 0 || node >= node_count_) throw out_of_range("TspCandidates::operator[]: node is out of range");
@@ -221,8 +222,9 @@ TspCandidates make_tsp_candidates(const TspProblem<EdgeCost>& problem, int reque
     return TspCandidates(n, candidate_count, move(candidates), static_cast<const void*>(&problem));
 }
 
-/// @brief 対称 TSP の巡回順、各点の位置、巡回路の費用を持つ状態 / order()[0] は操作で変わらない
-/// 操作は作成元の状態にだけ適用できる。状態を変更、代入、reset すると、それ以前に作った操作は無効になる
+/// @brief 対称 TSP の巡回順、各点の位置、巡回路のコストを保持する状態 / order()[0] は操作で変化しない
+/// 操作は作成元の状態にだけ適用できる
+/// 状態を変更、代入、reset すると、それ以前に作った操作は無効になる
 template<class Cost>
 class TspState {
 public:
@@ -260,7 +262,7 @@ public:
     int node_count() const { return (int)position_.size(); }
     /// @brief 巡回路に含まれる点数を返す
     int size() const { return (int)order_.size(); }
-    /// @brief 巡回順を返す / 末尾に開始点を重ねない
+    /// @brief 巡回順を返す / 末尾に開始点を再び含めない
     const vector<int>& order() const { return order_; }
     /// @brief node の巡回路内の位置を返す / 巡回路に含まれない点は -1
     int position(int node) const {
@@ -269,7 +271,7 @@ public:
 #endif
         return position_[node];
     }
-    /// @brief 巡回路の費用を返す
+    /// @brief 巡回路のコストを返す
     Cost total_cost() const { return total_cost_; }
     /// @brief problem から作った状態なら true を返す
     template<class EdgeCost>
@@ -277,10 +279,10 @@ public:
         return problem_id_ == static_cast<const void*>(&problem);
     }
 
-    /// @brief 区間 [left, right] を反転する 2-opt を作る / 作れない引数なら nullopt / O(1)
+    /// @brief 区間 [left, right] を反転する 2-opt を作る / 作成できない引数なら nullopt / O(1)
     template<class EdgeCost>
     optional<TspTwoOptMove<Cost>> make_two_opt(const TspProblem<EdgeCost>& problem, int left, int right) const;
-    /// @brief 区間 [first, first + length) を変更前の位置 after の直後へ移す Or-opt を作る / reversed なら区間を反転して移す / O(1)
+    /// @brief 区間 [first, first + length) を変更前の位置 after の直後へ移動する Or-opt を作る / reversed なら区間を反転して移動する / O(1)
     template<class EdgeCost>
     optional<TspOrOptMove<Cost>> make_or_opt(const TspProblem<EdgeCost>& problem, int first, int length, int after, bool reversed) const;
     /// @brief 位置 cut1 < cut2 < cut3 < cut4 を始点とする 4 辺を切る Double Bridge を作る / O(1)

@@ -21,7 +21,7 @@ class PersistentWBTree {
 public:
     /// @brief ノード領域を管理する / 番号 0 は番兵
     struct MemoryAllocator {
-        /// @brief 子の番号と部分木サイズを持つ
+        /// @brief 子の番号と部分木サイズを保持する
         struct Node {
             SizeType left, right, size, left_size;
 
@@ -107,7 +107,7 @@ public:
                 return blocks_[i >> BlockBits][i & block_mask];
             }
 
-            /// @brief 構築済み要素数を返す / O(1)
+            /// @brief 構築済みの要素数を返す / O(1)
             size_t size() const noexcept { return size_; }
 
             /// @brief 確保済み容量を返す / O(1)
@@ -164,7 +164,7 @@ public:
             /// @brief i 番目の要素への定数参照を返す / O(1)
             const U& operator[](size_t i) const noexcept { return (*pool)[i].*Member; }
 
-            /// @brief 構築済み要素数を返す / O(1)
+            /// @brief 構築済みの要素数を返す / O(1)
             size_t size() const noexcept { return pool->size(); }
 
             /// @brief 確保済み容量を返す / O(1)
@@ -177,7 +177,7 @@ public:
         View<T, &Slot::key> keys;
         size_t ptr, cap;
 
-        /// @brief 番兵を持つ領域を初期化する / O(1)
+        /// @brief 番兵を含む領域を初期化する / O(1)
         MemoryAllocator() : d{&pool}, keys{&pool}, ptr(1), cap(0) {
             pool.emplace_back(0, 0, 0, T{});
             cap = pool.capacity();
@@ -215,7 +215,7 @@ public:
             return ptr++;
         }
 
-        /// @brief 値 key を持つノードを作成する / 償却 O(1)
+        /// @brief 値 key を保持するノードを作成する / 償却 O(1)
         SizeType new_node(const T& key) {
             if (pool.size() > ptr) {
                 pool[ptr].tree = {0, 0, 1};
@@ -241,10 +241,10 @@ public:
         }
 
         /// @brief 確保済み領域を再利用できる状態に戻す / O(1)
-        /// @note この領域を使う既存の木は無効になる
+        /// @note この領域を使用する既存の木は無効になる
         void reset() { ptr = 1; }
 
-        /// @brief 確保済み領域がほぼ埋まっているか判定する / O(1)
+        /// @brief 確保済み領域の空きがほとんどないか判定する / O(1)
         bool almost_full() const { return (double)ptr > max(1.0, cap * 0.99); }
 
         /// @brief 確保済みノード領域のバイト数を返す / O(1)
@@ -315,7 +315,8 @@ private:
         return u;
     }
 
-    // node は所有済み。子は古い版に属することがある
+    // node は現在の版に属する
+    // 子は古い版に属することがある
     SizeType balance(SizeType node, size_t first) {
         if (weight_left(node) * DELTA < weight_right(node)) {
             SizeType u = own(ma.pool[node].tree.right, first);
@@ -360,7 +361,8 @@ private:
         return pivot;
     }
 
-    // 探索経路だけを複製して挿入する。first は公開操作の開始時の ma.ptr
+    // 探索経路上のノードだけを複製して挿入する
+    // first は公開メソッドの開始時の ma.ptr
     SizeType insert_node(SizeType node, SizeType k, const T &value, size_t first) {
         if (!node) return ma.new_node(value);
         node = own(node, first);
@@ -374,7 +376,7 @@ private:
         return balance(node, first);
     }
 
-    // 端の要素を取り除き、その値を value に入れる
+    // 端の要素を削除し、その値を value に格納する
     SizeType erase_extreme(SizeType node, T &value, bool rightmost, size_t first) {
         const SizeType next = rightmost ? ma.pool[node].tree.right : ma.pool[node].tree.left;
         if (!next) {
@@ -544,7 +546,7 @@ private:
         return _new(insert_node(root, k, key, first));
     }
 
-    /// @brief 位置 k の要素を削除した列と削除値を返す / O(log N)
+    /// @brief 位置 k の要素を削除した列と、削除した値を返す / O(log N)
     pair<PLTM, T> pop(SizeType k) {
         assert(0 <= k && k < len());
         const size_t first = ma.ptr;

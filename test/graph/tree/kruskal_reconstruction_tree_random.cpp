@@ -54,7 +54,7 @@ void check_graph(int n, const vector<tuple<int, int, T>> &edges, const vector<T>
     iota(expected_permutation.begin(), expected_permutation.end(), 0);
     assert(permutation == expected_permutation);
 
-    // 全点対の minimax 距離を Floyd-Warshall で独立に計算する。
+    // 全点対の minimax 距離を Floyd-Warshall で独立に計算する
     vector<vector<optional<T>>> dist(n, vector<optional<T>>(n));
     for (int v = 0; v < n; ++v) dist[v][v] = numeric_limits<T>::lowest();
     for (const auto &[u, v, w] : edges) {
@@ -78,7 +78,7 @@ void check_graph(int n, const vector<tuple<int, int, T>> &edges, const vector<T>
         }
     }
 
-    // 部分木区間が実際の子孫の葉を過不足なく含むことを確認する。
+    // 部分木の区間が実際の子孫の葉を過不足なく含むことを確認する
     vector<int> roots;
     for (int node = 0; node < tree.node_count(); ++node) {
         if (tree.parent(node) == -1) roots.push_back(node);
@@ -111,7 +111,7 @@ void check_graph(int n, const vector<tuple<int, int, T>> &edges, const vector<T>
     }
     assert(tree.roots() == roots);
 
-    // 合併頂点を含む LCA と、非連結な頂点間の -1 を確認する。
+    // 合併頂点を含む LCA と、非連結な頂点間の LCA が -1 であることを確認する
     for (int u = 0; u < tree.node_count(); ++u) {
         vector<bool> ancestor(tree.node_count(), false);
         for (int v = u; v != -1; v = tree.parent(v)) ancestor[v] = true;
@@ -122,7 +122,7 @@ void check_graph(int n, const vector<tuple<int, int, T>> &edges, const vector<T>
         }
     }
 
-    // 各閾値で元のグラフを BFS し、成分の頂点集合そのものと比較する。
+    // 各閾値で元のグラフを BFS で探索し、成分の頂点集合そのものと比較する
     for (T x : thresholds) {
         for (int u = 0; u < n; ++u) {
             const auto expected = reachable(n, edges, u, x);

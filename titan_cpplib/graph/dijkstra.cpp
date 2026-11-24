@@ -8,7 +8,7 @@ using namespace std;
 namespace titan23 {
 
 /// @brief start から各頂点への最短距離を返す / 到達できない頂点は INF / O(n + m log m)
-/// @note G[v] は (行き先, 重み) の組を持ち、重みの型は T とする。重みは非負に限る
+/// @note G[v] の要素は (行き先, 重み) の組で、重みの型は T とする / 重みは非負に限る
 template<typename T>
 vector<T> dijkstra(const vector<vector<pair<int, T>>> &G, const int start, const T INF) {
     const int n = G.size();

@@ -10,7 +10,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 静的な木の距離範囲クエリで共有する添字表
+/// @brief 静的な木の距離範囲クエリで共有する添字の表
 class ContourIndex {
 public:
     int n = 0;

@@ -251,7 +251,7 @@ public:
     }
 
     /// @brief 全ノードと領域を破棄する / O(N)
-    /// @note この領域を使うハンドルは無効になる
+    /// @note この領域を使用するハンドルは無効になる
     void clear() noexcept {
         if constexpr (VectorStorage) {
             std::vector<Slot>().swap(contiguous_);

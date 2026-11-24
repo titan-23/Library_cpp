@@ -16,10 +16,10 @@ private:
     titan23::SegmentTree<T, op, e> seg, rseg;
 
 public:
-    /// @brief hld の上に、全頂点の値を e() として構築する / O(N)
+    /// @brief hld から構築し、全頂点の値を e() とする / O(N)
     HLDSegmentTree(const titan23::HLD &hld) : hld(hld), seg(hld.n), rseg(hld.n) {}
 
-    /// @brief hld の上に、頂点 k の値を a[k] として構築する / O(N)
+    /// @brief hld から構築し、頂点 k の値を a[k] とする / O(N)
     HLDSegmentTree(const titan23::HLD &hld, const vector<T> &a) : hld(hld) {
         vector<T> b = hld.build_list(a);
         this->seg = titan23::SegmentTree<T, op, e>(b);

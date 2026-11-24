@@ -69,7 +69,7 @@ public:
         return n;
     }
 
-    /// @brief 列を標準出力に出す / O(n)
+    /// @brief 列を標準出力に出力する / O(n)
     void print() const {
         cout << '[';
         for (int i = 0; i < n-1; ++i) {

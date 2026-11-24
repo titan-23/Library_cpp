@@ -2,10 +2,10 @@
 
 ## TreeType::Centipede
 
-- ムカデグラフは、一直線の木の各頂点に一つずつ頂点を接続した木である。
-- centipede はムカデの意味である。この語で検索するとムカデの画像が出るので注意する。
-- 検索するなら `centipede graph` がよさそうである。
+- ムカデグラフはパスグラフの各頂点に一つずつ頂点を接続した木です。
+- centipede はムカデを意味します。この語で検索するとムカデの画像が表示されるため注意が必要です。
+- 検索する場合は `centipede graph` が適していると考えられます。
 
 ## gen_lobster の定数
 
-- パスの長さ path_len = max(1, (int)sqrt(sqrt(N))) と、D = max(1, (int)sqrt(sqrt(sqrt(N-path_len)))) の式には根拠がない。元のコメントでは「謎」と書かれていた。
+- パスの長さ path_len = max(1, (int)sqrt(sqrt(N))) と D = max(1, (int)sqrt(sqrt(sqrt(N-path_len)))) の式には根拠がありません。元のコメントには「謎」と記載されていました。

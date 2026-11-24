@@ -20,7 +20,7 @@ private:
 
 public:
     /// @brief A[i] を i からの遷移先、B[i] をその遷移で加算される値として構築する / O(n log LIM)
-    /// 遷移先がなければ A[i] = -1 とする。k <= LIM まで扱う
+    /// 遷移先がない場合は A[i] = -1 とする / k <= LIM まで扱う
     DoublingMonoid(long long LIM, const vector<int> &A, const vector<T> &B) : n(A.size()), log(bit_length(LIM)), lim(LIM) {
         db.resize(max(log, 1), vector<pair<int, T>>(n, {-1, e()}));
         for (int k = 0; k < n; ++k) {
@@ -38,7 +38,7 @@ public:
         }
     }
 
-    /// @brief start から k 回遷移したときの {位置, モノイド積} を返す / 途中で遷移先がなければ位置は -1 / O(log LIM)
+    /// @brief start から k 回遷移したときの {位置, モノイド積} を返す / 途中で遷移先がない場合は位置を -1 とする / O(log LIM)
     pair<int, T> kth(int start, long long k) const {
         assert(0 <= start && start < n);
         assert(0 <= k && k <= lim);

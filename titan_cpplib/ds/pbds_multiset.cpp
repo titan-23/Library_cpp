@@ -57,7 +57,7 @@ public:
         return removed;
     }
 
-    /// @brief key を val 個削除する / key が val 個以上あることが前提 / O(val log n)
+    /// @brief key を val 個削除する / key が val 個以上あることを前提とする / O(val log n)
     void remove(const T &key, int val = 1) {
         for (int i = 0; i < val; ++i) {
             auto it = tr.lower_bound({key, -1});
@@ -114,7 +114,7 @@ public:
         return index(high) - index(low);
     }
 
-    /// @brief 昇順 k 番目の要素を削除して返す / 負の k は末尾から数える / O(log n)
+    /// @brief 昇順 k 番目の要素を削除して返す / 負の k は末尾からの位置として扱う / O(log n)
     T pop(int k = -1) {
         if (k < 0) k += len();
         assert(k >= 0 && k < len());

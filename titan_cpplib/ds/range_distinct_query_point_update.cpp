@@ -12,14 +12,14 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 一点更新に対応し、区間内の異なる値の個数を数える / 0-indexed
+/// @brief 一点更新に対応し、区間内の異なる値の個数を求める / 0-indexed
 /// 値の同一性は operator< で判定する
 template<typename T>
 class PointUpdateRangeDistinctQuery {
 private:
     vector<T> a;
     map<T, std::set<int>> pos;
-    // wm[i] は a[i] と同じ値が直前に現れた位置 +1 で、無ければ 0
+    // wm[i] は a[i] と同じ値が直前に現れた位置 +1 で、なければ 0 とする
     DynamicWaveletTree<int> wm;
 
     static vector<int> build_prev(const vector<T> &a, map<T, std::set<int>> &pos) {
@@ -43,7 +43,7 @@ public:
     /// @brief 区間 [l, r) の異なる値の個数を返す / O(log^2 n)
     int count(const int l, const int r) const {
         assert(0 <= l && l <= r && r <= len());
-        // 区間内で wm[i] <= l となる個数が答え
+        // 区間内で wm[i] <= l となる要素の個数が答えである
         return wm.range_freq(l, r, l + 1);
     }
 

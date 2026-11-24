@@ -52,7 +52,7 @@ private:
     /// @brief 列 a から構築する / O(n)
     MaxHeap(vector<T> a) : a(a) { _heapify(); }
 
-    /// @brief ヒープ条件を保たずに key を追加する / 償却 O(1)
+    /// @brief ヒープ条件を維持せずに key を追加する / 償却 O(1)
     void __push_noheap(const T key) {
         a.emplace_back(key);
     }

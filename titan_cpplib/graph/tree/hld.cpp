@@ -96,12 +96,12 @@ public:
         return res;
     }
 
-    /// @brief v の HLD 順での位置を返す / O(1)
+    /// @brief 頂点 v の HLD 順での位置を返す / O(1)
     int get(int v) const {
         return nodein[v];
     }
 
-    /// @brief u-v パスを、HLD 順の半開区間 [l, r) の列で返す / O(log n)
+    /// @brief u-v パスを HLD 順の半開区間 [l, r) の列で返す / O(log n)
     vector<pair<int, int>> for_each_vertex_path(int u, int v) const {
         vector<pair<int, int>> res;
         while (head[u] != head[v]) {
@@ -114,7 +114,7 @@ public:
         return res;
     }
 
-    /// @brief v の部分木を、HLD 順の半開区間 [l, r) で返す / O(1)
+    /// @brief 頂点 v の部分木を HLD 順の半開区間 [l, r) で返す / O(1)
     pair<int, int> for_each_vertex_subtree(int v) const {
         return {nodein[v], nodeout[v]};
     }

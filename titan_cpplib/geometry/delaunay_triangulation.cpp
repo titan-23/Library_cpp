@@ -40,7 +40,7 @@ struct DelaunayTriangle {
 
 /// @brief ドロネー三角形分割の結果 / 点番号は重複を除いた points の番号
 struct DelaunayResult {
-    /// 重複を除いた点を、入力で最初に現れた順に持つ
+    /// 重複を除いた点を入力で最初に現れた順に保持する
     vector<IntegerPoint> points;
     /// 入力の番号から points の番号への対応
     vector<int> input_to_point;
@@ -50,7 +50,7 @@ struct DelaunayResult {
     vector<DelaunayEdge> edges;
     /// 三角形の列 / 昇順で重複なし
     vector<DelaunayTriangle> triangles;
-    /// 各点に隣接する点の番号を昇順に持つ
+    /// 各点に隣接する点の番号を昇順に保持する
     vector<vector<int>> neighbors;
 };
 
@@ -93,8 +93,8 @@ inline bool triangle_less(const DelaunayTriangle& a, const DelaunayTriangle& b) 
 }
 }
 
-/// @brief 整数座標の点集合のドロネー三角形分割を求める / Boost.Polygon のボロノイ図を使う / O(n log n)
-/// 同じ座標の点は 1 点にまとめる / 使い方は how_to_use_delaunay_voronoi.md にある
+/// @brief 整数座標の点集合のドロネー三角形分割を求める / Boost.Polygon のボロノイ図を使用する / O(n log n)
+/// 同じ座標の点は 1 点にまとめる / 使用方法は how_to_use_delaunay_voronoi.md にある
 inline DelaunayResult delaunay_triangulation(const vector<IntegerPoint>& input_points) {
     if (input_points.size() > (size_t)numeric_limits<int>::max()) throw invalid_argument("delaunay_triangulation: input_points.size() must fit in int");
     DelaunayResult result;
@@ -166,7 +166,7 @@ inline DelaunayResult delaunay_triangulation(const vector<IntegerPoint>& input_p
     return result;
 }
 
-/// @brief get_x, get_y で座標を取り出してドロネー三角形分割を求める
+/// @brief get_x, get_y で座標を取得してドロネー三角形分割を求める
 /// 座標は int に収まる整数である必要がある / 収まらなければ invalid_argument を送出する
 template <class Point, class GetX, class GetY>
 DelaunayResult delaunay_triangulation(const vector<Point>& points, GetX get_x, GetY get_y) {

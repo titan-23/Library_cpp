@@ -195,7 +195,7 @@ class MultisetSum {
 
     MultisetSum(NodePtr root) : root(root) {}
 
-    // leftのsize==k
+    // left の size==k
     pair<NodePtr, NodePtr> split_node_kth(NodePtr node, int k) {
         if (node == nullptr || k <= 0) return make_pair(nullptr, node);
         if (k >= node->size) return make_pair(node, nullptr);
@@ -256,7 +256,7 @@ class MultisetSum {
         cout << "]" << endl;
     }
 
-    /// [l, r)の和
+    /// [l, r) の総和
     T sum(int l, int r) {
         NodePtr a, b, c;
         tie(b, c) = split_node_kth(this->root, r);

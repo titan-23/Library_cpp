@@ -34,9 +34,9 @@ private:
     ActionId best_finished_par_aid;
     Action best_finished_action;
 
-    /// @brief 探索木の巡回列の要素
+    /// @brief 探索木を巡回順に並べた列の要素
     struct TreeNode {
-        int dir_or_leaf_id; // 非負なら葉、負なら巡回の入退場マーカー
+        int dir_or_leaf_id; // 非負なら葉、負なら巡回の行きがけまたは帰りがけを表すマーカー
         int subtree_end; // PRE_ORDER から部分木の直後へスキップするための添字
         ActionId aid; // 同じ辺の PRE_ORDER、POST_ORDER、葉で共有する ID
         int target_turn; // 葉は遷移先ターン、PRE_ORDER は部分木内の最小値
@@ -91,7 +91,7 @@ private:
         string state_info;
         int status;
     };
-    /// @brief record_history 用の、ターンごとの生存ノード一覧
+    /// @brief record_history 用の、ターンごとの生存ノードの一覧
     struct TurnSnapshot {
         int turn;
         vector<int> active_node_ids;
@@ -148,7 +148,7 @@ private:
         int beam_width = 0, entry = 0;
         int s = 1;
         vector<T> seg;
-        bool is_built = false; // ビーム幅に達するまではセグメント木を参照しない
+        bool is_built = false; // 候補数がビーム幅に達するまではセグメント木を参照しない
 
         void set(int k, T v) {
             k += s;
@@ -188,7 +188,7 @@ private:
             }
             auto pos = hash_to_idx.get_pos(hash);
             int idx = hash_to_idx.inner_get(pos, -1);
-            if (idx != -1) { // 同じハッシュはスコアが改善する場合だけ置き換える
+            if (idx != -1) { // 同じハッシュの候補はスコアが改善する場合だけ置き換える
                 if (score < next_beam[idx].score) {
                     is_survived[next_beam[idx].aid] = 0;
                     next_beam[idx] = {par, score, aid, target_turn};
@@ -200,7 +200,7 @@ private:
                 }
                 return -1;
             }
-            if (entry < beam_width) { // ビーム幅に達するまでは末尾に追加する
+            if (entry < beam_width) { // 候補数がビーム幅に達するまでは末尾に追加する
                 int slot = entry;
                 hash_to_idx.inner_set(pos, hash, slot);
                 next_beam[slot] = {par, score, aid, target_turn};
@@ -213,7 +213,7 @@ private:
                 }
                 return slot;
             }
-            // 最も悪い候補を置き換える
+            // スコアが最も悪い候補を置き換える
             auto [_, i] = seg[1];
             is_survived[next_beam[i].aid] = 0;
             next_beam[i] = {par, score, aid, target_turn};
@@ -225,7 +225,7 @@ private:
             return i;
         }
 
-        /// @brief ビーム幅を w にして、候補とハッシュを空にする
+        /// @brief ビーム幅を w に設定し、候補とハッシュを空にする
         void reset(int w) {
             beam_width = w;
             while (s < w) {
@@ -249,18 +249,18 @@ private:
     };
 
     vector<Candidates> cands_pool;
-    vector<int> turn_to_pool_idx; // target_turn から cands_pool への添字。-1 は未確保
+    vector<int> turn_to_pool_idx; // target_turn から cands_pool への添字 / -1 は未確保を表す
     vector<int> free_pool_indices;
     vector<ScoreType> thresholds; // 各ターンで受理できるスコアの上限
     vector<pair<int, bool>> pre_stack; // PRE_ORDER の添字と最小ターンの再計算フラグ
 
     // clear_hash_every_turn が false のとき全ターンで共有する、ハッシュごとの最良候補
-    // より早いターンへの候補か、同じターンでスコアを改善する候補だけを通す
+    // より早いターンへの候補か、同じターンでスコアを改善する候補だけを通過させる
     titan23::HashDict<pair<ScoreType, int>, false> seen_hash;
     bool use_global_seen;
 
-    int min_target_in_tree; // 木にある葉の最小 target_turn
-    int expanded_leaf_count; // この世代で展開した葉数
+    int min_target_in_tree; // 木にある葉の target_turn の最小値
+    int expanded_leaf_count; // この世代で展開した葉の数
 
     /// @brief 動的調整時のビーム幅を残り時間と実測値から求める
     int compute_req_w() {
@@ -269,7 +269,7 @@ private:
         if (param.meta_sample_count < param.calibration_meta_count || !param.cost_model_ready()) {
             return param.beam_width;
         }
-        // 1 世代あたりの進行ターン数は EMA、累積平均の順で見積もり、未計測なら 1 とする
+        // 1 世代あたりに進むターン数は EMA、累積平均の順に優先して見積もり、未計測なら 1 とする
         double ave_step;
         if (param.ema_step > 0.0) {
             ave_step = max(0.5, param.ema_step);
@@ -374,7 +374,7 @@ private:
         }
     }
 
-    /// @brief enumerate_actions が候補登録と枝刈り閾値の取得に使う受け口
+    /// @brief enumerate_actions が候補の登録と枝刈り閾値の取得に使用するオブジェクト
     struct Submitter {
         BeamSearchWithTree& bs;
         State& st;
@@ -709,7 +709,8 @@ private:
 
 public:
     /// @brief 複数ターン先への遷移を含むビームサーチを実行し、探索結果を返す
-    /// materialize_final_state が true なら最終状態も構築する。record_history が true なら history_file に履歴を JSON で書き出す
+    /// materialize_final_state が true なら最終状態も構築する
+    /// record_history が true なら history_file に履歴を JSON 形式で出力する
     template<bool materialize_final_state=true>
     Result search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
         if (param.max_turn <= 0 || param.beam_width <= 0) {

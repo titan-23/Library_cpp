@@ -97,7 +97,7 @@ public:
     /// @brief 要素数を返す / O(1)
     int len() const { return Base::size_of(root); }
 
-    /// @brief 部分木サイズと平衡条件を検査する / O(N)
+    /// @brief 部分木サイズと平衡条件を確認する / O(N)
     void check() const { Base::check_node(root); }
 
     /// @brief 全要素を標準出力に出力する / O(N)

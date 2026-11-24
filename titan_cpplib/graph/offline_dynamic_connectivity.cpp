@@ -56,7 +56,7 @@ public:
         edge_data.reserve(cap);
     }
 
-    /// @brief 現在の時刻から辺 {u, v} を加える / 多重辺も数える
+    /// @brief 現在の時刻から辺 {u, v} を加える / 多重辺は本数で管理する
     void add_edge(const int u, const int v) {
         auto [s, t] = minmax(u, v);
         long long edge = (long long)s<<bit|t;
@@ -73,7 +73,7 @@ public:
         }
     }
 
-    /// @brief 現在の時刻から辺 {u, v} を 1 本除く / 存在する辺に限る
+    /// @brief 現在の時刻から辺 {u, v} を 1 本削除する / 存在する辺に限る
     void delete_edge(const int u, const int v) {
         auto [s, t] = minmax(u, v);
         long long edge = (long long)s<<bit|t;
@@ -90,7 +90,7 @@ public:
         ++query_count;
     }
 
-    /// @brief 各時刻 k について、その時刻の辺を uf に反映して out(k) を呼ぶ / k は next_query を呼んだ回数未満
+    /// @brief 各時刻 k について、その時刻の辺を uf に反映して out(k) を呼び出す / k は next_query の呼び出し回数未満
     template<typename F> // void out(int k) {}
     void run(F &&out) {
         assert(query_count <= q);

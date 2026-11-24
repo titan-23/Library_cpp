@@ -12,7 +12,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief Bitset の計算方式 / Auto は SimdBits の SIMD 実装を使い、Scalar は使わず、Avx2 は常に AVX2 を使う
+/// @brief Bitset の計算方式 / Auto は SimdBits の SIMD 実装を使用し、Scalar は使用せず、Avx2 は常に AVX2 を使用する
 enum class BitsetBackend { Auto, Scalar, Avx2 };
 
 namespace bitset_detail {
@@ -20,7 +20,7 @@ enum class Operation { And, Or, Xor };
 struct Access;
 }  // namespace bitset_detail
 
-/// @brief N ビットの固定長ビット列 / 64bit 単位で持ち、SimdBits で処理する / 計算量の W は ceil(N / 64)、K は入力する Bitset の個数
+/// @brief N ビットの固定長ビット列 / 64 ビット単位で保持し、SimdBits で処理する / 計算量の W は ceil(N / 64) を、K は入力する Bitset の個数を表す
 template <size_t N, BitsetBackend Backend = BitsetBackend::Auto>
 class Bitset {
 public:
@@ -34,32 +34,32 @@ private:
     static_assert(Backend != BitsetBackend::Avx2,
                   "BitsetBackend::Avx2 requires an AVX2 compiler target");
 #endif
-    storage_type words_;  // 初期値は各構築子で与える
+    storage_type words_;  // 初期値は各コンストラクタで与える
 
-    // 全語を書き込む前提で、内部配列を初期化せずに構築するための目印
+    // 全語に値を設定する前提で、内部配列を初期化せずに構築するためのタグ
     struct uninitialized_tag {};
     explicit Bitset(uninitialized_tag) {}
 
     using Simd = SimdBits;
     using vector_type = typename Simd::Vec;
     static constexpr size_t lanes = Simd::LANES;
-    // SimdBits で処理するか。Scalar は使わず、Avx2 は常に使う
+    // SimdBits で処理するか / Scalar では使用せず、Avx2 では常に使用する
     static constexpr bool simd_enabled =
         Backend == BitsetBackend::Avx2 || (Backend == BitsetBackend::Auto && Simd::VECTORIZED);
-    // Vec で処理できる語数。残りの語は 1 語ずつ処理する
+    // Vec で処理できる語数 / 残りの語は 1 語ずつ処理する
     static constexpr size_t vector_words = simd_enabled ? word_count / lanes * lanes : 0;
-    // Auto で count と count_* を SimdBits で処理する最小の語数
+    // Auto の場合に count と count_* を SimdBits で処理する最小の語数
 #if defined(__AVX512VPOPCNTDQ__)
-    // 通常のループがベクトルの popcount になるため、コンパイラに任せる
+    // 通常のループはベクトルの popcount 命令に変換されるため、処理をコンパイラに任せる
     static constexpr size_t simd_count_min = ~size_t{0};
 #elif defined(__AVX2__)
-    // 16 語未満では AVX2 を使わない
+    // 16 語未満では AVX2 を使用しない
     static constexpr size_t simd_count_min = 16;
 #elif defined(__POPCNT__)
-    // SSE2 のビット演算による数え上げは POPCNT 命令より遅い
+    // SSE2 のビット演算で 1 の個数を求める方法は POPCNT 命令より遅い
     static constexpr size_t simd_count_min = ~size_t{0};
 #else
-    // POPCNT 命令がないと std::popcount は関数呼び出しになるため、Vec 1 本分から SIMD を使う
+    // POPCNT 命令がない場合は std::popcount が関数呼び出しになるため、Vec 1 本分の語数から SIMD を使用する
     static constexpr size_t simd_count_min = lanes;
 #endif
     static constexpr bool simd_count =
@@ -87,7 +87,7 @@ private:
         return x;
     }
 
-    // 自身と others を Op で合成した結果を out に書く / out は自身でもよい
+    // 自身と others を Op で合成した結果を out に格納する / out に自身を指定してもよい
     template <bitset_detail::Operation Op, class... Others>
     void combine_into(Bitset &out, const Others &...others) const {
         size_t i = 0;
@@ -108,7 +108,7 @@ private:
         return result;
     }
 
-    // 自身と others を Op で合成し、All なら全ビットが 1 か、そうでなければ 1 があるかを返す
+    // 自身と others を Op で合成し、All の場合は全ビットが 1 であるかを、そうでない場合は 1 のビットがあるかを返す
     template <bitset_detail::Operation Op, bool All, class... Others>
     bool test_impl(const Others &...others) const {
         // All では N 以降のビットを含む末尾の語を除き、全ビットが有効な語だけを Vec で調べる
@@ -136,10 +136,10 @@ private:
                 if (x != 0) return true;
             }
         }
-        return All;  // 空の Bitset では any = false、all = true
+        return All;  // 空の Bitset では any = false、all = true となる
     }
 
-    // シフトを SimdBits で処理するか / active_words はシフト後に値が入る語数
+    // シフトを SimdBits で処理するか / active_words はシフト後に値が格納される語数
     static bool use_simd_shift(size_t active_words) {
         if constexpr (Backend == BitsetBackend::Avx2) return true;
         else if constexpr (simd_enabled) return active_words >= 16;
@@ -175,7 +175,7 @@ private:
         } else {
             if constexpr (simd_enabled) {
                 if (use_simd_shift(word_count - q)) {
-                    // 読み書きが重なるため、両方の入力を読み込んでから書き込む。上位側から処理する
+                    // 読み込み元と格納先の範囲が重なるため、両方の入力を読み込んでから結果を格納する / 上位側から処理する
                     for (; i >= q + lanes + 1; i -= lanes) {
                         const size_t dst = i - lanes;
                         const vector_type a = Simd::loadu(words_.data() + dst - q);
@@ -186,7 +186,7 @@ private:
                     }
                 }
             }
-            // 書き込む語を dst とする。i から q + 1 まで下る
+            // 格納先の語を dst とする / dst を i から q + 1 まで減らしながら処理する
             for (size_t dst = i; dst-- > q + 1;) {
                 const word_type x = (words_[dst - q] << r) | (words_[dst - q - 1] >> (64 - r));
                 if constexpr (Or) words_[dst] |= x;
@@ -232,7 +232,7 @@ private:
         } else {
             if constexpr (simd_enabled) {
                 if (use_simd_shift(limit)) {
-                    // 読み書きが重なるため、両方の入力を読み込んでから書き込む。下位側から処理する
+                    // 読み込み元と格納先の範囲が重なるため、両方の入力を読み込んでから結果を格納する / 下位側から処理する
                     for (; i + lanes < limit; i += lanes) {
                         const vector_type a = Simd::loadu(words_.data() + i + q);
                         const vector_type b = Simd::loadu(words_.data() + i + q + 1);
@@ -267,7 +267,7 @@ public:
         trim();
     }
 
-    /// @brief 64bit 単位の配列から構築する / ビット i は words[i / 64] の下位から i % 64 番目 / N 以降のビットは除く / O(W)
+    /// @brief 64 ビット単位の配列から構築する / ビット i は words[i / 64] の下位から i % 64 番目のビットに対応する / N 以降のビットは除く / O(W)
     static Bitset from_words(const storage_type &words) {
         Bitset result;
         result.words_ = words;
@@ -396,29 +396,29 @@ public:
         return count_impl<bitset_detail::Operation::And>();
     }
 
-    /// @brief 自身と引数の AND に含まれる 1 のビット数を返す / 自身を含めて K 個 / O(KW)
+    /// @brief 自身と引数の AND に含まれる 1 のビット数を返す / K は自身を含めた Bitset の個数 / O(KW)
     template <class... Others>
         requires (same_as<Bitset, Others> && ...)
     size_t count_and(const Bitset &other, const Others &...others) const {
         return count_impl<bitset_detail::Operation::And>(other, others...);
     }
 
-    /// @brief 1 のビットが存在するか返す / O(W)
+    /// @brief 1 のビットが存在するかを返す / O(W)
     bool any() const {
         return test_impl<bitset_detail::Operation::Or, false>();
     }
 
-    /// @brief 全ビットが 0 か返す / O(W)
+    /// @brief 全ビットが 0 であるかを返す / O(W)
     bool none() const {
         return !any();
     }
 
-    /// @brief 全ビットが 1 か返す / 空なら true / O(W)
+    /// @brief 全ビットが 1 であるかを返す / 空の場合は true を返す / O(W)
     bool all() const {
         return test_impl<bitset_detail::Operation::Or, true>();
     }
 
-    /// @brief 自身と other に共通する 1 のビットが存在するか返す / O(W)
+    /// @brief 自身と other に共通する 1 のビットが存在するかを返す / O(W)
     bool intersects(const Bitset &other) const {
         return test_impl<bitset_detail::Operation::And, false>(other);
     }
@@ -441,22 +441,22 @@ public:
         return *this;
     }
 
-    /// @brief 自身を k ビット左シフトする / k >= N なら全ビットを 0 にする / O(W)
+    /// @brief 自身を k ビット左シフトする / k >= N の場合は全ビットを 0 にする / O(W)
     Bitset &operator<<=(const size_t k) {
         return shift_left<false>(k);
     }
 
-    /// @brief 自身を k ビット右シフトする / k >= N なら全ビットを 0 にする / O(W)
+    /// @brief 自身を k ビット右シフトする / k >= N の場合は全ビットを 0 にする / O(W)
     Bitset &operator>>=(const size_t k) {
         return shift_right<false>(k);
     }
 
-    /// @brief a |= a << k を中間 Bitset を作らずに行う / 更新前のビットで計算する / O(W)
+    /// @brief a |= a << k を、中間の Bitset を作成せずに行う / 更新前のビットで計算する / O(W)
     Bitset &or_shift_left(const size_t k) {
         return shift_left<true>(k);
     }
 
-    /// @brief a |= a >> k を中間 Bitset を作らずに行う / 更新前のビットで計算する / O(W)
+    /// @brief a |= a >> k を、中間の Bitset を作成せずに行う / 更新前のビットで計算する / O(W)
     Bitset &or_shift_right(const size_t k) {
         return shift_right<true>(k);
     }
@@ -497,12 +497,12 @@ public:
         return a >>= k;
     }
 
-    /// @brief 全ビットが一致するか返す / O(W)
+    /// @brief 全ビットが一致するかを返す / O(W)
     bool operator==(const Bitset &other) const {
         return words_ == other.words_;
     }
 
-    /// @brief 異なるビットが存在するか返す / O(W)
+    /// @brief 異なるビットが存在するかを返す / O(W)
     bool operator!=(const Bitset &other) const {
         return !(*this == other);
     }
@@ -510,7 +510,7 @@ public:
 
 namespace bitset_detail {
 
-// 自由関数で使う共通処理 / count、any、all は中間 Bitset を作らない
+// 自由関数で使用する共通処理 / count, any, all は中間の Bitset を作成しない
 struct Access {
     template <Operation Op, class Bits, class... Others>
     static Bits combine(const Bits &first, const Others &...others) {
@@ -576,42 +576,42 @@ size_t count_xor(const Bitset<N, B> &first, const Bitset<N, B> &second, const Ot
     return bitset_detail::Access::count<bitset_detail::Operation::Xor>(first, second, others...);
 }
 
-/// @brief 全入力の AND に 1 のビットが存在するか返す / O(KW)
+/// @brief 全入力の AND に 1 のビットが存在するかを返す / O(KW)
 template <size_t N, BitsetBackend B, class... Others>
     requires (same_as<Bitset<N, B>, Others> && ...)
 bool any_and(const Bitset<N, B> &first, const Bitset<N, B> &second, const Others &...others) {
     return bitset_detail::Access::test<bitset_detail::Operation::And, false>(first, second, others...);
 }
 
-/// @brief 全入力の OR に 1 のビットが存在するか返す / O(KW)
+/// @brief 全入力の OR に 1 のビットが存在するかを返す / O(KW)
 template <size_t N, BitsetBackend B, class... Others>
     requires (same_as<Bitset<N, B>, Others> && ...)
 bool any_or(const Bitset<N, B> &first, const Bitset<N, B> &second, const Others &...others) {
     return bitset_detail::Access::test<bitset_detail::Operation::Or, false>(first, second, others...);
 }
 
-/// @brief 全入力の XOR に 1 のビットが存在するか返す / O(KW)
+/// @brief 全入力の XOR に 1 のビットが存在するかを返す / O(KW)
 template <size_t N, BitsetBackend B, class... Others>
     requires (same_as<Bitset<N, B>, Others> && ...)
 bool any_xor(const Bitset<N, B> &first, const Bitset<N, B> &second, const Others &...others) {
     return bitset_detail::Access::test<bitset_detail::Operation::Xor, false>(first, second, others...);
 }
 
-/// @brief 全入力の AND の全ビットが 1 か返す / O(KW)
+/// @brief 全入力の AND の全ビットが 1 であるかを返す / O(KW)
 template <size_t N, BitsetBackend B, class... Others>
     requires (same_as<Bitset<N, B>, Others> && ...)
 bool all_and(const Bitset<N, B> &first, const Bitset<N, B> &second, const Others &...others) {
     return bitset_detail::Access::test<bitset_detail::Operation::And, true>(first, second, others...);
 }
 
-/// @brief 全入力の OR の全ビットが 1 か返す / O(KW)
+/// @brief 全入力の OR の全ビットが 1 であるかを返す / O(KW)
 template <size_t N, BitsetBackend B, class... Others>
     requires (same_as<Bitset<N, B>, Others> && ...)
 bool all_or(const Bitset<N, B> &first, const Bitset<N, B> &second, const Others &...others) {
     return bitset_detail::Access::test<bitset_detail::Operation::Or, true>(first, second, others...);
 }
 
-/// @brief 全入力の XOR の全ビットが 1 か返す / O(KW)
+/// @brief 全入力の XOR の全ビットが 1 であるかを返す / O(KW)
 template <size_t N, BitsetBackend B, class... Others>
     requires (same_as<Bitset<N, B>, Others> && ...)
 bool all_xor(const Bitset<N, B> &first, const Bitset<N, B> &second, const Others &...others) {
@@ -624,19 +624,19 @@ size_t count(const Bitset<N, B> &bits) {
     return bits.count();
 }
 
-/// @brief 1 のビットが存在するか返す / O(W)
+/// @brief 1 のビットが存在するかを返す / O(W)
 template <size_t N, BitsetBackend B>
 bool any(const Bitset<N, B> &bits) {
     return bits.any();
 }
 
-/// @brief 全ビットが 1 か返す / 空なら true / O(W)
+/// @brief 全ビットが 1 であるかを返す / 空の場合は true を返す / O(W)
 template <size_t N, BitsetBackend B>
 bool all(const Bitset<N, B> &bits) {
     return bits.all();
 }
 
-/// @brief 全ビットが 0 か返す / O(W)
+/// @brief 全ビットが 0 であるかを返す / O(W)
 template <size_t N, BitsetBackend B>
 bool none(const Bitset<N, B> &bits) {
     return bits.none();

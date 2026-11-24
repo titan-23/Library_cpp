@@ -70,7 +70,7 @@ inline void check_bounds(const VoronoiBounds& bounds) {
 }
 }
 
-/// @brief 長方形 bounds で切り取ったボロノイ図を返す / 重複点は1点にまとめる / 平均 O(n log n)、最悪 O(n²)
+/// @brief 長方形 bounds で切り取ったボロノイ図を返す / 重複点は 1 点にまとめる / 平均 O(n log n)、最悪 O(n²)
 inline VoronoiResult voronoi_diagram(const vector<IntegerPoint>& input_points, VoronoiBounds bounds) {
     voronoi_internal::check_bounds(bounds);
     VoronoiResult result;

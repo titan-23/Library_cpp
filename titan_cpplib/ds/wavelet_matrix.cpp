@@ -27,7 +27,7 @@ private:
             v[bit] = BitVector(n, [&](const int i) { return (a[i] >> bit) & 1; });
             const int zeros = v[bit].rank0(n);
             mid[bit] = zeros;
-            // 0 の要素を前、1 の要素を後ろへ安定に並べる
+            // ビット bit が 0 の要素を先頭側、1 の要素を末尾側へ安定に並べる
             int zero = 0, one = zeros;
             for (int i = 0; i < n; ++i) {
                 work[(a[i] >> bit) & 1 ? one++ : zero++] = a[i];
@@ -36,7 +36,7 @@ private:
         }
     }
 
-    // 段 bit の区間 [l, r) を、値の bit が b である要素の次の段での区間に移す
+    // 段 bit の区間 [l, r) を、値の bit が b である要素の次の段での区間に更新する
     void _descend(const int bit, const bool b, int &l, int &r, const int l0, const int r0) const {
         if (b) {
             l += mid[bit] - l0;
@@ -47,8 +47,8 @@ private:
         }
     }
 
-    // 段 bit 以下だけを見て、空でない区間 [l, r) の最大値 (largest) か最小値を返す
-    // value には上位の段で決まった bit を入れておく
+    // 段 bit 以下だけを参照して、largest が true なら空でない区間 [l, r) の最大値を、false なら最小値を返す
+    // value には上位の段で定まった bit を設定しておく
     T _extreme(int bit, int l, int r, T value, const bool largest) const {
         for (; bit >= 0; --bit) {
             const int l0 = v[bit].rank0(l), r0 = v[bit].rank0(r);
@@ -62,7 +62,7 @@ private:
 public:
     WaveletMatrix() {}
 
-    /// @brief 値の範囲を [0, sigma) とする空の列を作る
+    /// @brief 値の範囲を [0, sigma) とする空の列を構築する
     WaveletMatrix(const T sigma)
         : sigma(sigma), log(bit_length(sigma-1)), v(log), mid(log), n(0) {}
 
@@ -91,7 +91,7 @@ public:
         return range_count(0, r, x);
     }
 
-    /// @brief k 番目の x の位置を返す / k は 0 から数える / O(log(n)log(σ))
+    /// @brief k 番目の x の位置を返す / k は 0 始まり / O(log(n)log(σ))
     int select(int k, T x) const {
         int s = 0;
         for (int bit = log-1; bit >= 0; --bit) {
@@ -113,13 +113,13 @@ public:
         return s;
     }
 
-    /// @brief 区間 [l, r) にある k 番目の x の位置を返す / k は 0 から数える / O(log(n)log(σ))
+    /// @brief 区間 [l, r) にある k 番目の x の位置を返す / k は 0 始まり / O(log(n)log(σ))
     int range_select(const int l, const int r, const int k, const T x) const {
         assert(0 <= k && k < range_count(l, r, x));
         return select(rank(l, x) + k, x);
     }
 
-    /// @brief a[l, r) で k 番目に小さい値を返す / k は 0 から数える / O(log(σ))
+    /// @brief a[l, r) で k 番目に小さい値を返す / k は 0 始まり / O(log(σ))
     T kth_smallest(int l, int r, int k) const {
         T s = 0;
         for (int bit = log-1; bit >= 0; --bit) {
@@ -138,12 +138,12 @@ public:
         return s;
     }
 
-    /// @brief a[l, r) で k 番目に大きい値を返す / k は 0 から数える / O(log(σ))
+    /// @brief a[l, r) で k 番目に大きい値を返す / k は 0 始まり / O(log(σ))
     T kth_largest(int l, int r, int k) const {
         return kth_smallest(l, r, r-l-k-1);
     }
 
-    /// @brief 区間 [l, r) に過半数を占める値があるかとその値を返す / なければ {false, 0} / O(log(σ))
+    /// @brief 区間 [l, r) で過半数を占める値の有無とその値を返す / なければ {false, 0} / O(log(σ))
     pair<bool, T> has_majority(int l, int r) const {
         assert(0 <= l && l < r && r <= len());
         const int majority = (r - l) / 2 + 1;
@@ -169,7 +169,7 @@ public:
 
     /// @brief a[l, r) の値を出現回数の多い順に、回数とともに最大 k 個返す
     vector<pair<T, int>> topk(int l, int r, int k) const {
-        // 要素は (区間長, 値, 左端, bit) で、区間長の大きい順に取り出す
+        // hq には (区間長, 値, 左端, bit) を格納し、区間長の大きい順に取り出す
         priority_queue<tuple<int, T, int, int>> hq;
         vector<pair<T, int>> ans;
         if (l == r || k <= 0) return ans;
@@ -221,7 +221,7 @@ public:
     T prev_value(int l, int r, T y) const {
         if (l == r || y <= 0) return -1;
         if (y >= sigma) return _extreme(log - 1, l, r, 0, true);
-        // y の bit をたどり、y 未満へ分かれられる最後の段を候補として覚える
+        // y の bit をたどり、y 未満の側へ分岐できる最後の段を候補として記録する
         int candidate_bit = -2, candidate_l = 0, candidate_r = 0;
         T value = 0, candidate_value = 0;
         for (int bit = log-1; bit >= 0 && l < r; --bit) {
@@ -246,7 +246,7 @@ public:
     T next_value(int l, int r, T x) const {
         if (l == r || x >= sigma) return -1;
         if (x <= 0) return _extreme(log - 1, l, r, 0, false);
-        // x の bit をたどり、x より大きい側へ分かれられる最後の段を候補として覚える
+        // x の bit をたどり、x より大きい側へ分岐できる最後の段を候補として記録する
         int candidate_bit = -2, candidate_l = 0, candidate_r = 0;
         T value = 0, candidate_value = 0;
         for (int bit = log-1; bit >= 0 && l < r; --bit) {
@@ -277,7 +277,7 @@ public:
         return r - l;
     }
 
-    /// @brief 区間 [l, r) で値が [lower, upper) にある k 番目の位置を返す / k は 0 から数える / O(log(n)log(σ))
+    /// @brief 区間 [l, r) で値が [lower, upper) にある k 番目の位置を返す / k は 0 始まり / O(log(n)log(σ))
     int kth_index_in_value_range(const int l, const int r, const T lower, const T upper, const int k) const {
         assert(0 <= k && k < range_freq(l, r, lower, upper));
         int left = l;
@@ -304,10 +304,10 @@ public:
         return count == 0 ? -1 : kth_index_in_value_range(l, r, lower, upper, count - 1);
     }
 
-    /// @brief 列を vector にして返す / O(nlog(σ))
+    /// @brief 列を vector に変換して返す / O(nlog(σ))
     vector<T> tovector() const {
         vector<T> result(n, 0);
-        // order[p] は、今の段の位置 p にある要素の元の位置
+        // order[p] は現在の段の位置 p にある要素の元の位置を表す
         vector<int> order(n), work(n);
         iota(order.begin(), order.end(), 0);
         for (int bit = log-1; bit >= 0; --bit) {

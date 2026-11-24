@@ -8,7 +8,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 小さい方から K 個の要素の総積を求められる多重集合 / op, e, inv が可換群をなすことが前提
+/// @brief 小さい方から K 個の要素の総積を求めることができる多重集合 / op, e, inv が可換群をなすことを前提とする
 template<class T, T(*op)(T, T), T(*e)(), T(*inv)(T)>
 class MultisetTopK {
 private:
@@ -57,7 +57,7 @@ public:
         }
     }
 
-    /// @brief 小さい方から K 個の要素の総積を返す / 要素数が K 未満なら全要素の総積
+    /// @brief 小さい方から K 個の要素の総積を返す / 要素数が K 未満なら全要素の総積を返す
     T sum() { 
         rebuild();
         return product;

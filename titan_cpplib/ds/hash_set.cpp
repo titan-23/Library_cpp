@@ -15,17 +15,18 @@ namespace titan23 {
 class HashSet {
 private:
     using u64 = unsigned long long;
-    static constexpr int WINDOW = 4;  // contains で一度に比べる鍵の数
-    static constexpr int PAD = 64;    // 表の末尾の余白
+    static constexpr int WINDOW = 4;  // contains で一度に比較するキーの数
+    static constexpr int PAD = 64;    // ハッシュテーブルの末尾の余白
 
-    vector<u64> keys;  // 長さ cap + PAD。[limit, cap + PAD) は常に 0
+    vector<u64> keys;  // 長さ cap + PAD / [limit, cap + PAD) は常に 0
     u64 msk;  // cap - 1
     int cap, limit;
     int size;
     u64 salt;
     bool has_zero;
 
-    // オブジェクトごとに異なる salt を返す。random_device はスレッドごとに 1 回だけ使う
+    // オブジェクトごとに異なる salt を返す
+    // random_device はスレッドごとに 1 回だけ使用する
     static u64 new_salt() {
         static thread_local u64 state = [] {
             random_device rd;
@@ -37,7 +38,8 @@ private:
         return z ^ (z >> 31);
     }
 
-    // 128 bit の積の上位と下位を xor する。積を変数に置くと GCC 12 で遅くなるので、上位と下位を別の式で求める
+    // 128 bit の積の上位と下位を xor する
+    // 積を変数に格納すると GCC 12 で遅くなるため、上位と下位を別の式で求める
     u64 home(const u64 key) const {
         constexpr u64 K = 0x9e3779b97f4a7c15ULL;
         const u64 x = key ^ salt;
@@ -52,7 +54,7 @@ private:
         keys.assign(c + PAD, 0);
     }
 
-    // 再構築では呼び出し元の挿入を小さく保つため、インライン展開させない
+    // 呼び出し元の挿入処理を小さく抑えるため、再構築はインライン展開させない
     __attribute__((noinline)) void rebuild() {
         const vector<u64> old = move(keys);
         int c = cap;
@@ -65,7 +67,7 @@ private:
                 if (key == 0) continue;
                 u64 p = home(key);
                 while (keys[p] != 0) ++p;
-                if (p >= (u64)limit) {  // 余白を使い切った。容量を増やしてやり直す
+                if (p >= (u64)limit) {  // 余白を使い切ったため、容量を増やして再試行する
                     ok = false;
                     break;
                 }
@@ -81,7 +83,7 @@ public:
         size = 0;
     }
 
-    /// @brief n 要素まで再構築せずに持てる集合を作る
+    /// @brief n 要素まで再構築せずに保持できる集合を作成する
     HashSet(const int n) : salt(new_salt()), has_zero(false) {
         assert(0 <= n && n <= (1 << 28));
         int c = 16;
@@ -91,12 +93,12 @@ public:
     }
 
     /// @brief key があるかを返す / 期待 O(1)
-    // SSE2 だけの環境の -O2 ではインライン展開されないので強制する
+    // SSE2 だけの環境では -O2 でインライン展開されないため、インライン展開を強制する
     __attribute__((always_inline)) bool contains(const u64 key) const {
         if (key == 0) return has_zero;
         const u64 *p = keys.data() + home(key);
         if constexpr (simd_equal_bits_vectorized_v<u64>) {
-            // 窓に鍵があれば、窓に空きがあっても見つかったとしてよい
+            // 比較する WINDOW 個の範囲に key があれば、その範囲に空きがあっても見つかったと判定できる
             while (true) {
                 if (simd_equal_bits<WINDOW>(p, key)) return true;
                 if (simd_equal_bits<WINDOW>(p, u64(0))) return false;
@@ -130,7 +132,8 @@ public:
             if (k == 0) break;
             ++p;
         }
-        // [limit, cap + PAD) は空なので p <= limit。p == limit なら余白を使い切ったので作り直す
+        // [limit, cap + PAD) は空であるため p <= limit が成り立つ
+        // p == limit の場合は余白を使い切ったため再構築する
         keys[p] = key;
         ++size;
         if (size * 2 > cap || p >= (u64)limit) rebuild();

@@ -1,4 +1,4 @@
-// min_cost_assignment と Hungarian を部分集合 DP の総当たりと比べる
+// min_cost_assignment と Hungarian を部分集合 DP の総当たりと比較する
 // g++ -std=c++20 -O2 -I. test/graph/hungarian_random.cpp -o /tmp/hungarian_random && /tmp/hungarian_random
 #include <cassert>
 #include <cmath>
@@ -9,7 +9,7 @@
 #include "titan_cpplib/graph/hungarian.cpp"
 using namespace std;
 
-// 行数 n、列数 m。小さい方の次元を全て割り当てる最小費用 (部分集合 DP)
+// n 行 m 列の行列で、小さい方の次元を全て割り当てる場合の最小コストを部分集合 DP で求める
 template <class T>
 T brute(const vector<vector<T>> &a) {
     int n = a.size(), m = a[0].size();
@@ -68,7 +68,7 @@ int main() {
         validate(b, rb);
         assert(rb.first == brute(b));
         {
-            // 符号なしと long double も逐次の経路で正しく解く
+            // 符号なし整数と long double でも逐次処理で正しい解が得られることを確認する
             long long mn = 0;
             for (auto &r : a) for (auto x : r) mn = min(mn, x);
             vector<vector<unsigned long long>> ua(n, vector<unsigned long long>(m));
@@ -89,7 +89,8 @@ int main() {
         }
         ++checked;
     }
-    // 浮動小数点: 整数値の double は正確に比べられる。一般の値は許容誤差で比べる
+    // 浮動小数点: 整数値の double は正確に比較できる
+    // 一般の値は許容誤差の範囲で比較する
     for (int trial = 0; trial < 50000; ++trial) {
         int n = 1 + rng() % 9, m = 1 + rng() % 9;
         vector<vector<double>> a(n, vector<double>(m));

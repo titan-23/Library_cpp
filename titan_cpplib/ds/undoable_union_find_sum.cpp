@@ -7,7 +7,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 集合ごとに頂点の値の総和を持ち、unite を新しい順に取り消せる Union-Find
+/// @brief 集合ごとに頂点の値の総和を保持し、unite を新しい順に取り消すことができる Union-Find
 template<typename T>
 class UndoableUnionFindSum {
 private:
@@ -28,7 +28,7 @@ public:
         _all_sum(n, e),
         _one_sum(n, e) {}
 
-    /// @brief 直前の unite を 1 回分取り消す / 併合しなかった unite も 1 回と数える / O(1)
+    /// @brief 直前の unite を 1 回分取り消す / 併合しなかった unite も 1 回として扱う / O(1)
     void undo() {
         auto [y, py, all_sum_y] = _history.top();
         _history.pop();

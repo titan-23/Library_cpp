@@ -11,7 +11,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 遅延伝播と区間反転を持つ重み平衡木 / 0-indexed
+/// @brief 遅延伝播と区間反転を扱う重み平衡木 / 0-indexed
 template <class T, class F,
           T (*op)(T, T), T (*mapping)(F, T), F (*composition)(F, F),
           T (*e)(), F (*id)()>
@@ -21,7 +21,7 @@ private:
     using NodePtr = Node*;
     using MyLazyWBTree = LazyWBTree<T, F, op, mapping, composition, e, id>;
     static constexpr int DELTA = 3;  // 左右の重みの比の上限
-    static constexpr int GAMMA = 2;  // 二重回転にするかを決める比
+    static constexpr int GAMMA = 2;  // 二重回転を行うかの判定に使用する比
 
     class Node {
     public:
@@ -42,13 +42,13 @@ private:
         /// @brief 左の子の部分木の大きさに 1 を加えた重みを返す / O(1)
         int weight_left() const { return left_size + 1; }
 
-        /// @brief このノードの左右の重みが平衡条件を満たすか検査する / O(1)
+        /// @brief このノードの左右の重みが平衡条件を満たすかを確認する / O(1)
         void balance_check() const {
             assert(static_cast<long long>(weight_left()) * DELTA >= weight_right());
             assert(static_cast<long long>(weight_right()) * DELTA >= weight_left());
         }
 
-        /// @brief 子の情報から部分木の大きさと総積を更新する / O(1)
+        /// @brief 左右の子をもとに部分木の大きさと総積を更新する / O(1)
         void update() {
             left_size = left ? left->size : 0;
             size = left_size + 1 + (right ? right->size : 0);
@@ -56,14 +56,14 @@ private:
             if (right) data = op(data, right->data);
         }
 
-        /// @brief この部分木に作用を適用し、遅延情報へ合成する / O(1)
+        /// @brief この部分木に作用を適用し、遅延作用に合成する / O(1)
         void apply(const F &action) {
             key = mapping(action, key);
             data = mapping(action, data);
             lazy = composition(action, lazy);
         }
 
-        /// @brief 遅延作用と反転情報を子へ伝播する / O(1)
+        /// @brief 遅延作用と反転フラグを子へ伝播する / O(1)
         void propagate() {
             if (rev) {
                 swap(left, right);
@@ -299,7 +299,7 @@ public:
     LazyWBTree(const vector<T> &values) { _build(values); }
 
     /// @brief other を末尾へ破壊的に結合する / O(log N + log M)
-    /// @note 2 つの木でノードを共有しないこと。other.root は残るが、other は独立した木として再利用できない
+    /// @note 2 つの木でノードを共有しないこと / other.root は残るが、other は独立した木として再利用できない
     void merge(MyLazyWBTree &other) { root = _merge_node(root, other.root); }
 
     /// @brief 先頭 k 要素と残りに破壊的に分割する / O(log N)
@@ -331,10 +331,10 @@ public:
         dfs(dfs, root, l, r);
     }
 
-    /// @brief 全要素の総積を返す / 空の木では e() / O(1)
+    /// @brief 全要素の総積を返す / 空の木では e() を返す / O(1)
     T all_prod() const { return root ? root->data : e(); }
 
-    /// @brief 区間 [l, r) の総積を返す / 空区間では e() / O(log N)
+    /// @brief 区間 [l, r) の総積を返す / 空区間では e() を返す / O(log N)
     T prod(const int l, const int r) {
         assert(0 <= l && l <= r && r <= len());
         if (l == r) return e();
@@ -373,8 +373,8 @@ public:
         return value;
     }
 
-    /// @brief 区間 [l, r) を反転する / O(log N)、木全体なら O(1)
-    /// @note 総積が反転で変わらない場合に使える
+    /// @brief 区間 [l, r) を反転する / O(log N)、木全体の場合は O(1)
+    /// @note 総積が反転によって変化しない場合に使用できる
     void reverse(const int l, const int r) {
         assert(0 <= l && l <= r && r <= len());
         root = _reverse_node(root, l, r);
@@ -430,7 +430,7 @@ public:
     /// @brief 要素列を標準出力に表示する / O(N)
     void print() { cout << *this << endl; }
 
-    /// @brief 要素列を out に書き込む / O(N)
+    /// @brief 要素列を out に出力する / O(N)
     friend ostream& operator<<(ostream &out, LazyWBTree &tree) {
         vector<T> values = tree.tovector();
         out << '[';
@@ -444,7 +444,7 @@ public:
     /// @brief 要素数を返す / O(1)
     int len() const { return root ? root->size : 0; }
 
-    /// @brief 部分木の大きさ、left_size、平衡条件を assert で検査する / O(N)
+    /// @brief 部分木の大きさ、left_size、平衡条件を assert で確認する / O(N)
     void check() const {
         auto dfs = [&](auto &&self, NodePtr node) -> int {
             if (!node) return 0;

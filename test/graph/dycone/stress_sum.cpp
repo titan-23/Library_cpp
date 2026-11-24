@@ -1,6 +1,6 @@
-// DyConeSum の正当性ストレステスト
-// ランダムな操作列を生成し、毎回 DSU を作り直す愚直解と照合する
-// 自己ループ・多重辺・削除後の再追加・成分加算を含む
+// DyConeSum の正当性を確認するストレステスト
+// ランダムな操作列を生成し、毎回 DSU を再構築する愚直解と照合する
+// 自己ループ、多重辺、削除後の再追加、成分への加算を含む
 //
 // g++ -std=c++20 -O2 -Wall -Wextra -I . -o stress_sum test/graph/dycone/stress_sum.cpp
 // ./stress_sum [iters]
@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
 
         // DyConeSum
         titan23::DyConeSum<ll> dc(n, rng());
-        vector<int> qpos; // k 番目のクエリの ops 添字
+        vector<int> qpos; // k 番目のクエリの ops での添字
         for (int i = 0; i < (int)ops.size(); ++i) {
             const Op &o = ops[i];
             switch (o.t) {

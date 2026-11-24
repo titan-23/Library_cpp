@@ -15,14 +15,14 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 挿入・削除・一点変更に対応し、区間内の異なる値の個数を数える / 0-indexed
+/// @brief 挿入、削除、一点変更に対応し、区間内の異なる値の個数を求める / 0-indexed
 /// 値の同一性は operator< で判定する
 template<typename T>
 class DynamicRangeDistinctQuery {
 private:
     struct Block;
 
-    // prev は同じ値が直前に現れた要素で、無ければ nullptr
+    // prev は同じ値が直前に現れた要素で、なければ nullptr とする
     struct Node {
         T val;
         Node *prev;
@@ -32,7 +32,7 @@ private:
         explicit Node(const T &x) : val(x), prev(nullptr), blk(nullptr), idx(0) {}
     };
 
-    // prev はブロック内の要素の prev を Order で整列したもの
+    // prev はブロック内の要素の prev を Order でソートした配列である
     struct Block {
         int idx;
         vector<unique_ptr<Node>> data;
@@ -41,7 +41,8 @@ private:
         explicit Block(const int idx) : idx(idx) {}
     };
 
-    // 列上の位置で比較する。nullptr は全要素より前とみなす
+    // 列上の位置で比較する
+    // nullptr は全要素より前とみなす
     struct Order {
         bool operator()(const Node *a, const Node *b) const {
             if (a == b) return false;
@@ -119,7 +120,8 @@ private:
         }
         left.data.resize(middle);
         blocks.insert(blocks.begin() + idx + 1, move(right));
-        // 比較の前に全要素の順序情報を直す。既存要素同士の前後関係は変わらない
+        // 比較の前に全要素についてブロックの番号とブロック内の添字を更新する
+        // 既存の要素同士の前後関係は変化しない
         _fix_idx(idx + 1);
         _fix_pos(left);
         _fix_pos(*blocks[idx + 1]);
@@ -200,13 +202,13 @@ private:
     }
 
 public:
-    /// @brief 空の列を構築する / bs は正の基準ブロック幅で、既定値は 512 / O(1)
+    /// @brief 空の列を構築する / bs はブロックサイズの基準となる正の整数で、既定値は 512 / O(1)
     explicit DynamicRangeDistinctQuery(const int bs = 512) : _bs(bs), _n(0) {
         assert(bs > 0);
     }
 
     /// @brief 列 a から構築する / O(n log n)
-    /// T にデフォルトコンストラクタや operator== は不要
+    /// T にデフォルトコンストラクタと operator== は必要ない
     explicit DynamicRangeDistinctQuery(const vector<T> &a, const int bs = 512)
         : DynamicRangeDistinctQuery(bs) { _build(a); }
 
@@ -214,7 +216,7 @@ public:
     DynamicRangeDistinctQuery(const DynamicRangeDistinctQuery &other)
         : DynamicRangeDistinctQuery(other.tovector(), other._bs) {}
 
-    /// @brief other の中身を移して構築する / O(1)
+    /// @brief other の内容を移動して構築する / O(1)
     DynamicRangeDistinctQuery(DynamicRangeDistinctQuery &&other) noexcept
         : _bs(other._bs), _n(exchange(other._n, 0)),
           blocks(move(other.blocks)), pos(move(other.pos)) {
@@ -231,7 +233,7 @@ public:
         return *this;
     }
 
-    /// @brief other の中身を移して代入する
+    /// @brief other の内容を移動して代入する
     DynamicRangeDistinctQuery &operator=(DynamicRangeDistinctQuery &&other) noexcept {
         if (this != &other) {
             DynamicRangeDistinctQuery moved(move(other));
@@ -249,7 +251,7 @@ public:
         const Node *first = blocks[idx]->data[off].get();
         int rem = r - l;
         int res = 0;
-        // prev が無いか位置 l より前にある要素を数える
+        // prev が存在しない、または位置 l より前にある要素の個数を求める
         while (rem > 0) {
             const Block &b = *blocks[idx];
             const int take = min(rem, static_cast<int>(b.data.size()) - off);
@@ -272,7 +274,7 @@ public:
     int range_distinct(const int l, const int r) const { return count(l, r); }
 
     /// @brief a[k] を返す / O(n/B)
-    /// 挿入や削除で添字が変わっても、要素のアドレスは変わらない
+    /// 挿入や削除で添字が変化しても、要素のアドレスは変化しない
     const T &access(const int k) const {
         assert(0 <= k && k < _n);
         return _node_at(k)->val;
@@ -295,7 +297,7 @@ public:
         const auto old_next = next(old_it);
         const auto new_next = new_s.lower_bound(node);
         Node *p = new_next == new_s.begin() ? nullptr : *prev(new_next);
-        // 直前出現が変わる要素は高々 3 個
+        // prev が変化する要素は高々 3 個である
         if (old_next != old_s.end()) _set_prev(*old_next, node->prev);
         _set_prev(node, p);
         if (new_next != new_s.end()) _set_prev(*new_next, node);

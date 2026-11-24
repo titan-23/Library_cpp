@@ -136,7 +136,7 @@ public:
     }
 
     /// @brief indices の各位置を v に一括変更した永続配列を返す
-    /// indices の位置は相異なることが前提
+    /// indices の位置が相異なることを前提とする
     PersistentArray<T> multiset_uf(vector<int> indices, T v) const {
         if (indices.empty()) return copy();
         sort(indices.begin(), indices.end());
@@ -164,7 +164,7 @@ public:
         return _new(new_root);
     }
 
-    /// @brief 位置 k を v に変更した永続配列を返す / 時間 O(log n)、領域 O(log n)
+    /// @brief 位置 k の値を v に変更した永続配列を返す / 時間 O(log n)、領域 O(log n)
     PersistentArray<T> set(int k, T v) const{
         assert(0 <= k && k < n);
         assert(root);
@@ -210,7 +210,7 @@ public:
         return _new(root ? ma.copy(root) : 0);
     }
 
-    /// @brief vector にして返す / O(n)
+    /// @brief vector に変換して返す / O(n)
     vector<T> tovector() const {
         vector<T> a(n);
         vector<int> q = {root};

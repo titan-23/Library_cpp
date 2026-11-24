@@ -15,12 +15,12 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief [0,N)を管理する経路圧縮付き動的セグメント木 / ノード数の上限は2^32-1個
-/// Mは保持ノード数、M_otherはコピー元または移動元のノード数を表す
+/// @brief [0,N) を管理する経路圧縮付き動的セグメント木 / ノード数の上限は 2^32-1 個
+/// M は保持しているノード数、M_other はコピー元または移動元のノード数を表す
 template <class IndexType, class T, T (*op)(T, T), T (*e)()>
 class DynamicSegmentTree {
 private:
-    // ノード番号は0が欠損、奇数が葉、正の偶数が分岐
+    // ノード番号の 0 はノードなし、奇数は葉、正の偶数は分岐を表す
     using NodeIndex = uint32_t;
     static constexpr NodeIndex null_node = 0;
 
@@ -30,7 +30,7 @@ private:
         Leaf(T value) : data(move(value)) {}
     };
 
-    // 既存のサイズが32バイトになる型だけ整列を強め、分岐のサイズは増やさない
+    // 元のサイズが 32 バイトになる型だけアラインメントを大きくし、分岐のサイズは増やさない
     struct alignas(sizeof(IndexType) == 8 && sizeof(T) == 8
                        ? 32 : max(alignof(NodeIndex), max(alignof(IndexType), alignof(T)))) Branch {
         NodeIndex left, right;
@@ -64,7 +64,7 @@ private:
         return is_leaf(node) ? leaves_[node >> 1].data : branch_node(node).data;
     }
 
-    // ノードが持つ最大位置の次の位置
+    // ノードが含む最大の位置の次の位置
     IndexType node_hi(NodeIndex node, IndexType node_min) const {
         return is_leaf(node) ? node_min + 1 : branch_node(node).hi;
     }
@@ -74,13 +74,13 @@ private:
         return branch_node(node).split;
     }
 
-    // 未登録区間の集約値として単位元を返す
+    // 値が未設定の区間の集約値として単位元を返す
     T initial_prod(IndexType length) const {
         (void)length;
         return e();
     }
 
-    // 最上位の1ビットだけが立った値
+    // value で 1 である最上位のビットだけを立てた値
     static IndexType highest_bit(IndexType value) {
         assert(value > 0);
         if constexpr (sizeof(IndexType) <= sizeof(unsigned long long)) {
@@ -119,14 +119,14 @@ private:
         return op(node_data(left), node_data(right));
     }
 
-    // 2つの部分木を座標順に結ぶ分岐を追加する
+    // 2 つの部分木のうち座標が小さい方を左の子、大きい方を右の子とする分岐を追加する
     [[gnu::noinline]]
     NodeIndex join_nodes(NodeIndex a, IndexType a_min, NodeIndex b, IndexType b_min) {
         if (b_min < a_min) { swap(a, b); swap(a_min, b_min); }
         return new_node(b_min, node_hi(b, b_min), join_data(a, a_min, b, b_min), a, b);
     }
 
-    // 部分木の位置kを更新し、必要な分岐を追加する
+    // 部分木の位置 k を更新し、必要な分岐を追加する
     NodeIndex inner_set(NodeIndex node, IndexType node_min, IndexType k, T& value) {
         if (node == null_node) return new_node(k, k + 1, move(value));
         if (is_leaf(node)) {
@@ -163,7 +163,7 @@ private:
         return node_data(node);
     }
 
-    // 葉の座標を再読せず、前後の初期値を含む区間を集約する
+    // 葉の座標を再び参照せずに、前後の初期値を含む区間を集約する
     T leaf_prod(NodeIndex node, IndexType node_min, IndexType l, IndexType r) const {
         (void)node_min;
         (void)l;
@@ -171,7 +171,8 @@ private:
         return leaves_[node >> 1].data;
     }
 
-    // 部分木内の[l,r)を集約する。呼び出し元に展開すると遅くなるため展開させない
+    // 部分木内の [l,r) を集約する
+    // 呼び出し元にインライン展開すると遅くなるため、展開させない
     [[gnu::noinline]]
     T inner_prod(NodeIndex node, IndexType node_min, IndexType l, IndexType r) const {
         while (true) {
@@ -184,7 +185,7 @@ private:
             if (l <= node_min && b.hi <= r) return covered_prod(node, node_min, l, r);
             const IndexType split = b.split;
             if ((l < split) & (split < r)) break;
-            // 子の選択を条件付き転送で書ける形にする
+            // 子の選択を条件付き転送で記述できる形にする
             const bool right = split <= l;
             node_min = right ? split : node_min;
             node = right ? b.right : b.left;
@@ -196,7 +197,7 @@ private:
         bool left_done = false, right_done = false;
         // 左端側と右端側の経路を同じループで下る
         while (!(left_done & right_done)) {
-            // 左の子ではl以上を右から結合する
+            // 左の子では l 以上を右から結合する
             if (!left_done) {
                 if (is_leaf(left)) {
                     if (l <= left_min) left_acc = op(leaf_prod(left, left_min, l, left_min + 1), left_acc);
@@ -216,7 +217,7 @@ private:
                     }
                 }
             }
-            // 右の子ではr未満を左から結合する
+            // 右の子では r 未満を左から結合する
             if (!right_done) {
                 if (is_leaf(right)) {
                     right_acc = op(right_acc, leaf_prod(right, right_min, right_min, r));
@@ -238,7 +239,8 @@ private:
         return op(left_acc, right_acc);
     }
 
-    // 判定が失敗する部分木を下り、境界の位置を返す。Forwardなら左から、そうでなければ右から結合する
+    // 判定が偽となる部分木を下り、境界の位置を返す
+    // Forward の場合は左から、そうでない場合は右から結合する
     template <bool Forward, class Predicate>
     IndexType descend_failed(NodeIndex node, IndexType node_min, Predicate& pred, T& acc) const {
         while (!is_leaf(node)) {
@@ -257,7 +259,8 @@ private:
         return Forward ? node_min : node_min + 1;
     }
 
-    // 境界を探す。Forwardならboundary以上を左から、そうでなければboundary未満を右から結合する
+    // 境界を探す
+    // Forward の場合は boundary 以上を左から、そうでない場合は boundary 未満を右から結合する
     template <bool Forward, class Predicate>
     IndexType scan_boundary(IndexType boundary, Predicate& pred) const {
         T acc = e();
@@ -266,7 +269,7 @@ private:
         int count = 0;
         NodeIndex node = root_;
         IndexType node_min = root_min_;
-        bool has_first = false;  // 下りた先のnode全体が最初の候補か
+        bool has_first = false;  // 下りた先の node 全体が最初の候補か
         while (true) {
             if (is_leaf(node)) {
                 has_first = Forward ? boundary <= node_min : node_min < boundary;
@@ -321,10 +324,10 @@ private:
     }
 
 public:
-    /// @brief 長さ0の木を構築する / O(1)
+    /// @brief 長さ 0 の木を構築する / O(1)
     DynamicSegmentTree() = default;
 
-    /// @brief 全要素が単位元の長さnの木を構築する / O(1)
+    /// @brief 全要素が単位元である長さ n の木を構築する / O(1)
     DynamicSegmentTree(const IndexType n) : n_(n) {
         assert(n >= 0);
     }
@@ -335,7 +338,7 @@ public:
     /// @brief 現在の内容を独立したコピーで置き換える / O(M+M_other)
     DynamicSegmentTree& operator=(const DynamicSegmentTree&) = default;
 
-    /// @brief 所有するノードを移し、移動元を空にする / O(1)
+    /// @brief 所有するノードを移動し、移動元を空にする / O(1)
     DynamicSegmentTree(DynamicSegmentTree&& other) noexcept
         : leaves_(move(other.leaves_)), branches_(move(other.branches_)), n_(exchange(other.n_, 0)),
           root_(exchange(other.root_, null_node)), root_min_(exchange(other.root_min_, 0)) {
@@ -343,7 +346,7 @@ public:
         other.branches_.clear();
     }
 
-    /// @brief 現在の内容を破棄してノードを移し、移動元を空にする / O(M)
+    /// @brief 現在の内容を破棄してノードを移動し、移動元を空にする / O(M)
     DynamicSegmentTree& operator=(DynamicSegmentTree&& other) noexcept {
         if (this != &other) {
             leaves_ = move(other.leaves_);
@@ -366,14 +369,14 @@ public:
     /// @brief 保持しているノード数を返す / O(1)
     size_t node_count() const { return leaves_.size() + branches_.size(); }
 
-    /// @brief ノードプールの容量を予約する / O(M) 再確保しなければO(1)
+    /// @brief ノードプールの容量を予約する / O(M)、再確保しない場合は O(1)
     void reserve_nodes(size_t count) {
         assert(count <= static_cast<size_t>(numeric_limits<NodeIndex>::max()));
         leaves_.reserve(count / 2 + count % 2);
         branches_.reserve(count / 2);
     }
 
-    /// @brief 長さと確保済み容量を維持して構築時の初期値に戻す / O(M)
+    /// @brief 長さと確保済みの容量を維持して構築時の初期値に戻す / O(M)
     void clear() {
         leaves_.clear();
         branches_.clear();
@@ -381,14 +384,14 @@ public:
         root_min_ = 0;
     }
 
-    /// @brief 半開区間[l,r)の集約値を返す / O(logN)
+    /// @brief 半開区間 [l,r) の集約値を返す / O(logN)
     T prod(IndexType l, IndexType r) const {
         assert(0 <= l && l <= r && r <= n_);
         if (l == r) return e();
         return root_ == null_node ? initial_prod(r - l) : inner_prod(root_, root_min_, l, r);
     }
 
-    /// @brief k番目の値を返す / O(logN)
+    /// @brief k 番目の値を返す / O(logN)
     T get(IndexType k) const {
         assert(0 <= k && k < n_);
         if (k < root_min_) return e();
@@ -407,7 +410,7 @@ public:
         return e();
     }
 
-    /// @brief k番目の値をvalueに置き換える / 償却O(logN)
+    /// @brief k 番目の値を value に置き換える / 償却 O(logN)
     void set(IndexType k, T value) {
         assert(0 <= k && k < n_);
         const bool empty = root_ == null_node;
@@ -415,8 +418,8 @@ public:
         root_min_ = empty ? k : min(root_min_, k);
     }
 
-    /// @brief pred(prod(l,r))が真となる最大のrを求める / O(logN)
-    /// pred(e())==trueと、区間を右へ伸ばしたときの判定の単調性が必要
+    /// @brief pred(prod(l,r)) が真となる最大の r を求める / O(logN)
+    /// pred(e())==true であることと、区間を右へ伸ばしたときの判定の単調性が必要である
     template <class Predicate>
     IndexType max_right(IndexType l, Predicate&& pred) const {
         assert(0 <= l && l <= n_);
@@ -425,8 +428,8 @@ public:
         return scan_boundary<true>(l, pred);
     }
 
-    /// @brief pred(prod(l,r))が真となる最小のlを求める / O(logN)
-    /// pred(e())==trueと、区間を左へ伸ばしたときの判定の単調性が必要
+    /// @brief pred(prod(l,r)) が真となる最小の l を求める / O(logN)
+    /// pred(e())==true であることと、区間を左へ伸ばしたときの判定の単調性が必要である
     template <class Predicate>
     IndexType min_left(IndexType r, Predicate&& pred) const {
         assert(0 <= r && r <= n_);
@@ -435,11 +438,11 @@ public:
         return scan_boundary<false>(r, pred);
     }
 
-    /// @brief 関数ポインタpredを使って右端の境界を探す / O(logN)
+    /// @brief 関数ポインタ pred を使用して右端の境界を探す / O(logN)
     template <bool (*pred)(T)>
     IndexType max_right(IndexType l) const { return max_right(l, pred); }
 
-    /// @brief 関数ポインタpredを使って左端の境界を探す / O(logN)
+    /// @brief 関数ポインタ pred を使用して左端の境界を探す / O(logN)
     template <bool (*pred)(T)>
     IndexType min_left(IndexType r) const { return min_left(r, pred); }
 

@@ -23,14 +23,16 @@ int padded(const int m) {
     return (m + lanes - 1) / lanes * lanes;
 }
 
-// 左の頂点 n 個を右の頂点 m 個 (n <= m) へ割り当てる最小費用の割当を返す
-// cost は左の頂点ごとに stride 個ずつ並べ、先頭の m 個を使う。stride は padded<T>(m)
+// 左の頂点 n 個を右の頂点 m 個 (n <= m) に割り当てるコスト最小の割当を返す
+// cost には左の頂点ごとに stride 個ずつ値を並べ、各行の先頭の m 個を使用する
+// stride は padded<T>(m)
 template<class T>
 vector<int> solve(const T *cost, const int n, const int m, const int stride) {
     using S = Simd<T>;
     using Idx = typename S::Idx;
     const T INF = numeric_limits<T>::has_infinity ? numeric_limits<T>::infinity() : numeric_limits<T>::max();
-    // u, v はポテンシャル。key[j] は始点から右の頂点 j までの距離に、走査中の距離の累積を足した値
+    // u, v はポテンシャル
+    // key[j] は始点から右の頂点 j までの距離に、走査中に累積した距離を加えた値
     vector<T> u(n), v(stride, T(0)), key(stride, INF);
     vector<Idx> way(stride, -1), active(stride, 0);
     fill(active.begin(), active.begin() + m, Idx(-1));
@@ -88,7 +90,8 @@ vector<int> solve(const T *cost, const int n, const int m, const int stride) {
                 }
             }
             dist = best;
-            // 同じ距離に空いている列があればそちらで終える。空いている列が多いときは探す手間の方が大きい
+            // 同じ距離に未割当の列があれば、その列で探索を終了する
+            // 未割当の列が多い場合は、その列を探すコストの方が大きい
             if (owner[j1] != -1 && (int)free_cols.size() * 4 <= m) {
                 for (const int j : free_cols) {
                     if (key[j] == best) {
@@ -128,7 +131,7 @@ vector<int> solve(const T *cost, const int n, const int m, const int stride) {
 
 }  // namespace hungarian_detail
 
-/// @brief ハンガリアン法による最小費用割当 / 費用は有限で、途中の加減算が T に収まること
+/// @brief ハンガリアン法でコスト最小の割当を求める / コストは有限で、途中の加減算の結果が T の範囲に収まること
 template<typename T>
 class Hungarian {
 private:
@@ -137,7 +140,7 @@ private:
     vector<T> cost;
 
 public:
-    /// @brief U 行 V 列の費用行列を写して持つ / U >= V であること / O(UV)
+    /// @brief U 行 V 列のコスト行列をコピーして保持する / U >= V であること / O(UV)
     Hungarian(const vector<vector<T>> &cost_) : U((int)cost_.size()), V(U ? (int)cost_[0].size() : 0) {
         assert(U >= V);
         assert(all_of(cost_.begin(), cost_.end(), [&](const vector<T> &row) { return (int)row.size() == V; }));
@@ -152,7 +155,7 @@ public:
         }
     }
 
-    /// @brief 全 V 列を相異なる行に割り当てる最小費用と、各行が担当する列を返す / 担当のない行は -1 / O(V^2 U)
+    /// @brief 全 V 列を相異なる行に割り当てる最小コストと、各行が担当する列を返す / 担当する列のない行は -1 / O(V^2 U)
     pair<T, vector<int>> solve() const {
         vector<int> alloc(U, -1);
         T total = 0;
@@ -171,7 +174,7 @@ public:
     }
 };
 
-/// @brief 小さい方の次元を全て割り当てる最小費用と、各行が担当する列を返す / 担当のない行は -1 / n 行 m 列で O(min(n, m)^2 max(n, m))
+/// @brief 行と列のうち少ない方をすべて割り当てる最小コストと、各行が担当する列を返す / 担当する列のない行は -1 / n 行 m 列で O(min(n, m)^2 max(n, m))
 template<typename T>
 pair<T, vector<int>> min_cost_assignment(const vector<vector<T>> &cost) {
     const int n = (int)cost.size();

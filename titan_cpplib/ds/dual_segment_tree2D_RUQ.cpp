@@ -7,10 +7,10 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 矩形への代入と1点取得を行う2次元双対セグ木 / 空間 O(hw + q)、q は apply の回数
+/// @brief 矩形への代入と 1 点取得を行う 2 次元双対セグメント木 / 空間 O(hw + q) / q は apply の回数
 template <class T>
 class DualSegmentTree2DRUQ {
-// #define LARGE_QUERY // クエリの数がnより十分でかいときは有効にすると強いかも
+// #define LARGE_QUERY // クエリの数が n より十分大きい場合は、有効にすると有利になる可能性がある
 
 private:
     int stamp;
@@ -37,7 +37,7 @@ public:
 #endif
     }
 
-    /// @brief 2次元配列 a から構築する / O(hw)
+    /// @brief 2 次元配列 a から構築する / O(hw)
     DualSegmentTree2DRUQ(const vector<vector<T>> a) : stamp(1) {
         h = a.size();
         w = h ? a[0].size() : 0;
@@ -114,7 +114,7 @@ public:
         stamp++;
     }
 
-    /// @brief 全要素を2次元配列で返す / O(hw)
+    /// @brief 全要素を 2 次元配列で返す / O(hw)
     vector<vector<T>> tovector() {
         vector<vector<T>> ans(h, vector<T>(w));
 #ifdef LARGE_QUERY

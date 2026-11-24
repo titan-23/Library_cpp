@@ -126,7 +126,7 @@ public:
         local_id.resize(N);
         P.resize(N, vector<double>(N));
 
-        // 1. デポ以外の都市の座標を K-means 用に集める
+        // 1. デポ以外の都市の座標を K-means 用に収集する
         vector<ElmType> city_coords;
         vector<int> city_ids;
         vector<bool> is_depot(N, false);
@@ -141,7 +141,7 @@ public:
             }
         }
 
-        // 2. デポの座標を初期の中心にする
+        // 2. デポの座標を中心の初期値にする
         vector<ElmType> init_centers;
         for (int sn : START_NODES) {
             init_centers.push_back(YX[sn]);
@@ -157,7 +157,7 @@ public:
             clusters[labels[i]].push_back(city_ids[i]);
         }
 
-        // 5. 各巡回路を貪欲な最近傍法で作る
+        // 5. 各巡回路を貪欲な最近傍法で構築する
         score = 0;
         for (int k = 0; k < K; ++k) {
             int start_node = START_NODES[k];
@@ -211,9 +211,9 @@ public:
         return max_d;
     }
 
-    // threshold を超えたら必ず棄却され、等しければ遷移する
+    // 遷移後のスコアが threshold を超える場合は必ず棄却され、等しい場合は遷移する
     // is_valid を false にすると必ず棄却される
-    // progress は焼きなましの進行度で 0.0 から 1.0
+    // progress は焼きなましの進行度で、0.0 から 1.0 の値をとる
     void modify(const int64_t iter, const ScoreType threshold, const double progress) {
         if (N <= 3) {
             is_valid = false;
@@ -251,7 +251,7 @@ public:
         }
 
         if (changed.type >= 0 && changed.type <= 3) {
-            // ====== 巡回路内の近傍。既存の処理を mTSP 向けに移植した ======
+            // ====== 巡回路内の近傍 / 既存の処理を mTSP 向けに移植した ======
             int r1 = sarnd.randrange(K);
             auto& tr = tours[r1];
             int sz = tr.size();
@@ -288,7 +288,7 @@ public:
             } else if (changed.type == 1 || changed.type == 2) { // Or-opt と反転 Or-opt
                 int L = (changed.type == 1) ? (sarnd.randrange(3) + 1) : (sarnd.randrange(2) + 2);
                 int u_idx = sarnd.randrange(sz - 1) + 1; // 始点 0 を動かさない
-                if (u_idx + L > sz) { is_valid = false; return; } // 配列の末尾をまたぐ区間は使わない
+                if (u_idx + L > sz) { is_valid = false; return; } // 配列の末尾をまたぐ区間は使用しない
 
                 int target_node = (changed.type == 1) ? tr[u_idx] : tr[(u_idx + L - 1) % sz];
                 int cand = nearest_neighbors[target_node][sarnd.randrange(NEIBHORS)];

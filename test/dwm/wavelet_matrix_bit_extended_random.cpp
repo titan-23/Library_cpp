@@ -43,7 +43,7 @@ void run(const uint64_t seed) {
             assert(matrix.kth_index_in_value_range(l, r, lower, upper, k) == positions[k]);
         }
 
-        // prev_value, next_value, range_count, access, kth_smallest を素朴な計算と比べる
+        // prev_value, next_value, range_count, access, kth_smallest を素朴な計算と比較する
         const Key y = rng() % 128;
         Key previous = -1, next = -1;
         int same = 0;

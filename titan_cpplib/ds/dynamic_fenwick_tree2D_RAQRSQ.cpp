@@ -7,11 +7,11 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 矩形加算と矩形和を扱う動的2次元木 / ノードは必要な分だけ作る
+/// @brief 矩形加算と矩形和を扱う動的な 2 次元の木 / ノードは必要な分だけ作成する
 /// x*h*w を W で、h*w を T で計算するため、それぞれの型の範囲に収めること
 template<typename T, typename W>
 struct DynamicFenwicktree2D_RAQRSQ {
-    /// @brief 加えた x、x*w、x*h、x*h*w のそれぞれの和を持つノードの値
+    /// @brief 加えた x、x*w、x*h、x*h*w のそれぞれの和を保持するノードの値
     struct NodeValue {
         W d0 = 0;
         W d1 = 0;
@@ -27,7 +27,7 @@ struct DynamicFenwicktree2D_RAQRSQ {
         }
     };
 
-    /// @brief ノードを配列で持ち、解放した番号を再利用する割り当て器
+    /// @brief ノードを配列で保持し、解放した番号を再利用するアロケータ
     template <typename V>
     struct MemoryAllocator {
         struct Node {
@@ -64,12 +64,12 @@ struct DynamicFenwicktree2D_RAQRSQ {
             return ptr++;
         }
 
-        /// @brief ノード u を再利用できるように戻す / 償却 O(1)
+        /// @brief ノード u を解放し、再利用できるようにする / 償却 O(1)
         void deallocate(T u) {
             unused.push_back(u);
         }
 
-        /// @brief 全ノードを未使用に戻す / この割り当て器を使う木は全て無効になる
+        /// @brief 全ノードを未使用の状態に戻す / このアロケータを使用する木は全て無効になる
         void reset() {
             ptr = 1;
             d[0] = {0, 0, V()};
@@ -77,7 +77,7 @@ struct DynamicFenwicktree2D_RAQRSQ {
         }
     };
 
-    // ノード領域は同じテンプレート引数の全インスタンスで共有する
+    // ノードの領域は、テンプレート引数が同じ全インスタンスで共有する
     static MemoryAllocator<T> out;
     static MemoryAllocator<NodeValue> in;
 
@@ -106,7 +106,7 @@ struct DynamicFenwicktree2D_RAQRSQ {
         return sum_zero_to(h2, w2) - sum_zero_to(h2, w1) - sum_zero_to(h1, w2) + sum_zero_to(h1, w1);
     }
 
-    /// @brief 木が持つノードを解放し、根を初期化する / O(K)、K はノード数
+    /// @brief 木が保持するノードを解放し、根を初期化する / O(K)、K はノード数
     void reset() {
         if (root) {
             free_outer(root);

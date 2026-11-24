@@ -38,7 +38,7 @@ struct Path {
     vector<int> vertices, edges;
 };
 
-// BFS で経路を求めて照合
+// 照合に使用する経路を BFS で求める
 vector<Path> naive_paths(int n, const vector<Edge> &edges, const vector<Query> &queries) {
     vector<vector<Edge>> g(n);
     for (int e = 0; e < (int)edges.size(); ++e) {
@@ -112,7 +112,7 @@ struct ActiveSet {
 
 template <class Mo>
 void check_run(Mo &mo, int n, const vector<Path> &expected) {
-    // run ごとに状態を初期化
+    // run ごとに状態を初期化する
     ActiveSet vertices(n), edges(n - 1);
     vector<int> seen(expected.size());
     auto av = [&] (int v) { vertices.add(v); };
@@ -171,7 +171,7 @@ template <class Mo>
 void check_type(const Graph &g, const vector<Query> &queries,
                 int root, int new_root, bool repeat = true) {
     const int n = g.size();
-    // 辺番号は u < v の走査順
+    // 辺番号は u < v となる辺を走査した順に割り当てる
     vector<Edge> graph_edges;
     for (int u = 0; u < n; ++u) {
         for (int v : g[u]) {

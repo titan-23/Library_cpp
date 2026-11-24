@@ -32,7 +32,7 @@ class PersistentLazyWBTree {
 public:
     /// @brief 全ての木が共有するノード領域
     struct MemoryAllocator {
-        /// @brief 子の番号、反転フラグ、部分木サイズを持つ
+        /// @brief 子の番号、反転フラグ、部分木サイズを保持する
         struct Node {
             Index left : index_bits;
             Index rev : 1;
@@ -45,7 +45,7 @@ public:
             /// @brief オブジェクトを構築する / O(1)
             Node(SizeType l, SizeType r, SizeType s) : left(l), rev(0), right(r), size(s), left_size(0) {}
         };
-        /// @brief 部分木の総積と遅延作用を持つ
+        /// @brief 部分木の総積と遅延作用を保持する
         struct Data {
             T data;
             F lazy;
@@ -272,7 +272,7 @@ public:
         /// @note 同じ領域を共有する他の木は無効になる
         void reset() { ptr = 1; }
 
-        /// @brief 領域がほぼ埋まっているか判定する / O(1)
+        /// @brief 領域の空きがほとんどないか判定する / O(1)
         bool almost_full() const { return (double)ptr > max(1.0, cap * 0.99); }
 
         /// @brief 確保済み領域のバイト数を返す / O(1)
@@ -614,7 +614,7 @@ public:
         return _new(insert_node(root, k, value, ma.ptr));
     }
 
-    /// @brief 位置 k の値を削除した列と削除値を返す / O(log N)
+    /// @brief 位置 k の値を削除した列と、その値を返す / O(log N)
     pair<PLTM, T> pop(SizeType k) {
         assert(0 <= k && k < len());
         T value;
@@ -623,7 +623,7 @@ public:
     }
 
     /// @brief 区間 [l, r) を反転した列を返す / O(log N)
-    /// @note 総積が反転で変化しない場合に使える
+    /// @note 総積が反転で変化しない場合に使用できる
     PLTM reverse(SizeType l, SizeType r) {
         assert(0 <= l && l <= r && r <= len());
         return _new(reverse_node(root, l, r, ma.ptr));
@@ -675,7 +675,7 @@ public:
         }
     }
 
-    /// @brief 全要素を配列にして返す / O(N)
+    /// @brief 全要素を配列として返す / O(N)
     vector<T> tovector() const {
         vector<T> result; result.reserve(len());
         auto dfs = [&](auto &&self, SizeType node, F acc, bool rev) -> void {
@@ -702,7 +702,7 @@ public:
     /// @brief 要素数を返す / O(1)
     SizeType len() const { return size_of(root); }
 
-    /// @brief 部分木サイズと平衡条件を検査する / O(N)
+    /// @brief 部分木サイズと平衡条件を確認する / O(N)
     void check() const {
         auto dfs = [&](auto &&self, SizeType node) -> SizeType {
             const SizeType left = ma.pool[node].tree.left, right = ma.pool[node].tree.right;

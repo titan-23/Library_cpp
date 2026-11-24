@@ -15,7 +15,7 @@ struct HistoryNode {
     ScoreType score;
     HashType hash;
     string action_str; // エスケープせずに出力するため、" と \ を含めない
-    string state_info; // JSON オブジェクトの文字列。空なら {} を出力する
+    string state_info; // JSON オブジェクトの文字列 / 空なら {} を出力する
     int status; // 0: 採用、1: 破棄、2: 無効
 };
 
@@ -25,7 +25,7 @@ struct TurnSnapshot {
     vector<int> active_node_ids;
 };
 
-/// @brief 探索履歴とターンごとの生存ノード一覧を JSON 形式でファイルに書き出す
+/// @brief 探索履歴と、ターンごとにビームに残ったノードの一覧を JSON 形式でファイルに出力する
 template<typename ScoreType, typename HashType>
 void dump_history_json(const string& filename, ScoreType INF, const vector<HistoryNode<ScoreType, HashType>>& history,
                        const vector<TurnSnapshot>& snapshots) {

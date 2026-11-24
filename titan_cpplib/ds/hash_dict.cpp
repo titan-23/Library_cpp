@@ -12,13 +12,13 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 64 bit 整数を鍵とする辞書 / 削除はできない
-/// USE_HASH_FUNC=false では鍵をそのままハッシュ値に使う
+/// @brief 64 bit 整数をキーとする辞書 / 削除はできない
+/// USE_HASH_FUNC=false ではキーをそのままハッシュ値として使用する
 template<typename V, bool USE_HASH_FUNC=true>
 class HashDict {
 private:
     using u64 = uint64_t;
-    static constexpr const uint8_t EMPTY = 0x80;  // meta の空きの印
+    static constexpr const uint8_t EMPTY = 0x80;  // meta で空きを表す値
 
     vector<uint8_t> meta;
     vector<u64> keys;
@@ -75,7 +75,7 @@ public:
         size = 0;
     }
 
-    /// @brief n 要素まで再構築せずに持てる辞書を作る
+    /// @brief n 要素まで再構築せずに保持できる辞書を作成する
     HashDict(const int n) {
         cap = 16;
         while (cap < n * 2) {
@@ -98,7 +98,7 @@ public:
         __m128i match = _mm_set1_epi8(h2);
         __m128i empty_match = _mm_set1_epi8(EMPTY);
 
-        while (true) {  // meta を 16 個ずつ SSE2 で比べる
+        while (true) {  // meta を 16 個ずつ SSE2 で比較する
             __m128i meta_data = _mm_loadu_si128(reinterpret_cast<const __m128i*>(&meta[idx]));
 
             int mask = _mm_movemask_epi8(_mm_cmpeq_epi8(meta_data, match));
@@ -122,14 +122,14 @@ public:
         }
     }
 
-    /// @brief key の値を返す / 無ければ V()
+    /// @brief key の値を返す / 無ければ V() を返す
     V get(const u64 key) const {
         auto [pos, exist_res] = get_pos(key);  // const を付けると GCC の生成コードが遅くなる
         if (!exist_res) return V();
         else return vals[pos];
     }
 
-    /// @brief key の値を返す / 無ければ missing
+    /// @brief key の値を返す / 無ければ missing を返す
     V get(const u64 key, const V missing) const {
         auto [pos, exist_res] = get_pos(key);
         if (!exist_res) return missing;
@@ -141,7 +141,7 @@ public:
         return get_pos(key).second;
     }
 
-    /// @brief get_pos と同じ
+    /// @brief get_pos と同じ結果を返す
     pair<int, bool> pos(const u64 key) const {
         return get_pos(key);
     }
@@ -158,28 +158,28 @@ public:
         }
     }
 
-    /// @brief get_pos の結果から値を返す / 無ければ missing
+    /// @brief get_pos の結果から値を返す / 無ければ missing を返す
     V inner_get(const pair<int, bool> &dat, const V missing) const {
         auto [pos, is_exist] = dat;
         if (!is_exist) return missing;
         return vals[pos];
     }
 
-    /// @brief get_pos の結果から値を返す / 無ければ V()
+    /// @brief get_pos の結果から値を返す / 無ければ V() を返す
     V inner_get(const pair<int, bool> &dat) {
         auto [pos, is_exist] = dat;
         if (!is_exist) return V();
         return vals[pos];
     }
 
-    /// @brief get_pos の結果を使って key の値を val にする / get_pos との間に変更操作を挟まないこと
+    /// @brief get_pos の結果を使用して key の値を val に設定する / get_pos との間に変更操作を挟まないこと
     void inner_set(const pair<int, bool> &dat, const u64 key, const V val) {
         auto [pos, is_exist] = dat;
         vals[pos] = val;
         if (!is_exist) {
             uint8_t h2 = hash(key) & 0x7F;
             meta[pos] = h2;
-            if (pos < 16) meta[cap + pos] = h2;  // 末尾をまたいで 16 個読めるよう、先頭 16 個を末尾に写す
+            if (pos < 16) meta[cap + pos] = h2;  // 末尾をまたいで 16 個を読み込むために、先頭 16 個を末尾にコピーする
             keys[pos] = key;
             ++size;
             if (size * 2 > cap) {
@@ -188,7 +188,7 @@ public:
         }
     }
 
-    /// @brief key の値を val にする
+    /// @brief key の値を val に設定する
     void set(const u64 key, const V val) {
         auto [pos, is_exist] = get_pos(key);
         inner_set({pos, is_exist}, key, val);
@@ -204,7 +204,7 @@ public:
         }
     }
 
-    /// @brief val が今の値より小さければ更新して true を返す / 無ければ挿入して false を返す
+    /// @brief val が現在の値より小さければ更新して true を返す / 無ければ挿入して false を返す
     bool contains_set(const u64 key, const V val) {
         auto [pos, is_exist] = get_pos(key);
         if (is_exist) {
@@ -232,7 +232,7 @@ public:
         return res;
     }
 
-    /// @brief 全ての鍵と値の組を返す / 順序は不定 / O(容量)
+    /// @brief 全てのキーと値の組を返す / 順序は不定 / O(容量)
     vector<pair<u64, V>> items() const {
         vector<pair<u64, V>> res;
         res.reserve(size);
@@ -244,7 +244,7 @@ public:
         return res;
     }
 
-    /// @brief 鍵の昇順に出力する
+    /// @brief キーの昇順に出力する
     friend ostream& operator<<(ostream& os, const HashDict &hd) {
         vector<pair<u64, V>> a = hd.items();
         sort(a.begin(), a.end(), [](const pair<u64, V> &x, const pair<u64, V> &y) { return x.first < y.first; });
@@ -265,7 +265,7 @@ public:
     }
 
     int len() const { return size; }
-    /// @brief inner_len と inner_size は表の容量を返す
+    /// @brief inner_len と inner_size はハッシュテーブルの容量を返す
     int inner_len() const { return cap; }
     int inner_size() const { return cap; }
     bool empty() const { return size == 0; }

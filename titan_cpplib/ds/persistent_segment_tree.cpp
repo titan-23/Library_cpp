@@ -22,7 +22,7 @@ public:
     struct MemoryAllocator {
 
         // #pragma pack(push, 1)
-        /// @brief 左右の子の番号を持つノード
+        /// @brief 左右の子の番号を保持するノード
         struct Node {
             int left, right;
             Node() : left(0), right(0) {}
@@ -47,7 +47,7 @@ public:
             return idx;
         }
 
-        /// @brief 値 key を持つノードを作成して番号を返す / 償却 O(1)
+        /// @brief 値 key を保持するノードを作成して番号を返す / 償却 O(1)
         int new_node(const T key) {
             if (tree.size() > ptr) {
                 tree[ptr] = {0, 0};
@@ -71,12 +71,12 @@ public:
         }
 
         /// @brief 確保済み領域を再利用できる状態に戻す / O(1)
-        /// この領域を使う既存の木は無効になる
+        /// この領域を使用する既存の木は無効になる
         void reset() {
             ptr = 1;
         }
 
-        /// @brief 確保済み領域がほぼ埋まっているか判定する / O(1)
+        /// @brief 確保済み領域の空きがほとんどないか判定する / O(1)
         bool almost_full() const {
             return (double)ptr > max(1.0, cap*0.99);
         }
@@ -144,7 +144,7 @@ private:
         return dfs(dfs, root, 0, len());
     }
 
-    /// @brief 全要素を配列にして返す / O(n)
+    /// @brief 全要素を配列として返す / O(n)
     vector<T> tovector() {
         if (len() == 0) return {};
         vector<T> a(len());
@@ -229,8 +229,8 @@ private:
         cout << "]" << endl;
     }
 
-    /// @brief from の [l, r) を自身の [l, r) に写した木を返す / 自身は変更しない / O(log n)
-    /// from と自身の要素数が等しいことが前提
+    /// @brief from の [l, r) を自身の [l, r) にコピーした木を返す / 自身は変更しない / O(log n)
+    /// from と自身の要素数が等しいことを前提とする
     PSEG copy_from(PSEG &from, int l, int r) {
         assert(0 <= l && l <= r && r <= len());
         auto dfs = [&] (auto &&dfs, int fr, int to, int left, int right) -> int {

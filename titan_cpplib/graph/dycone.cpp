@@ -175,8 +175,8 @@ public:
         Q.emplace_back(QUERY, 0, 0, NEVER);
     }
 
-    /// @brief 更新を順に処理し、`k` 番目の問い合わせ時刻で `void out(int k)` を呼ぶ / 全体で期待 `O((n+q)logn)`
-    /// @note out の中で呼んだ same、size、group_count は、その時刻のグラフに対する値を返す
+    /// @brief 更新を順に処理し、`k` 番目の問い合わせ時刻で `void out(int k)` を呼び出す / 全体で期待 `O((n+q)logn)`
+    /// @note out の中で呼び出した same、size、group_count は、その時刻のグラフに対する値を返す
     template<typename F>
     void run(F &&out) {
         vector<pair<int, int>>().swap(chain);

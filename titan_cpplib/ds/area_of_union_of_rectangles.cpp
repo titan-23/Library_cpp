@@ -8,7 +8,8 @@ using namespace std;
 
 namespace titan23 {
 
-// 遅延セグメント木の演算。S は上位に被覆回数の最小値、下位 31 ビットにその最小値を取る x 方向の長さの和を持つ
+// 遅延セグメント木の演算
+// S は上位ビットに被覆回数の最小値、下位 31 ビットにその最小値を取る x 方向の長さの総和を保持する
 namespace AUR {
 using S = long long;
 using F = int;

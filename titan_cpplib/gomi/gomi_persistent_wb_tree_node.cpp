@@ -10,7 +10,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 永続重み平衡木による列 / 0-indexed / ノードは shared_ptr で持つ
+/// @brief 永続重み平衡木による列 / 0-indexed / ノードは shared_ptr で保持する
 template <class T, typename SizeType=int>
 class PersistentWBTree {
   private:
@@ -215,7 +215,7 @@ class PersistentWBTree {
     /// @brief 列 a から構築する / O(n)
     PersistentWBTree(vector<T> &a) { _build(a); }
 
-    /// @brief 根 root を持つ木を作る / O(1)
+    /// @brief 根を root とする木を作成する / O(1)
     PersistentWBTree(NodePtr root) : root(root) {}
 
     MyPersistentWBTree _new(NodePtr root) {
@@ -255,7 +255,7 @@ class PersistentWBTree {
         return _new(_merge_with_root(s, new_node, t));
     }
 
-    /// @brief 位置 k の値を削除した列と削除値を返す
+    /// @brief 位置 k の値を削除した列と、削除した値を返す
     pair<MyPersistentWBTree, T> pop(SizeType k) {
         assert(0 <= k && k < len());
         auto [s_, t] = _split_node(this->root, k+1);
@@ -322,7 +322,7 @@ class PersistentWBTree {
         return root ? root->size : 0;
     }
 
-    /// @brief 部分木の大きさと平衡条件を検査し、木の高さを標準エラー出力に出す / O(n)
+    /// @brief 部分木の大きさと平衡条件を確認し、木の高さを標準エラー出力に出力する / O(n)
     void check() const {
         auto rec = [&] (auto &&rec, NodePtr node) -> pair<SizeType, int> {
             SizeType ls = 0, rs = 0;

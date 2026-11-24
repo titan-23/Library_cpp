@@ -42,7 +42,7 @@ public:
             }
         }
 
-        /// @brief 子から data, rdata, size を計算し直す
+        /// @brief 子から data, rdata, size を再計算する
         void update() {
             data = key;
             rdata = key;
@@ -161,7 +161,7 @@ public:
         return res;
     }
 
-    /// @brief node を含む木を key 以下の部分木と key より大きい部分木に分ける / key 以下の節点があること
+    /// @brief node を含む木を key 以下の部分木と key より大きい部分木に分割する / key 以下の節点があること
     pair<NodePtr, NodePtr> split(NodePtr node, T key) {
         if (!node) { return {nullptr, nullptr}; }
         node->splay();
@@ -181,7 +181,7 @@ public:
         }
     }
 
-    /// @brief node を含む木を標準エラー出力に出す / デバッグ用
+    /// @brief node を含む木を標準エラー出力に出力する / デバッグ用
     void print(NodePtr node) {
         while (node->par) {
             node = node->par;

@@ -1,18 +1,18 @@
 # ウェーブレット木・行列系の高速化の測定記録
 
-2026-11-13。動的な 3 構造 (DynamicWaveletTree, DynamicWaveletTreeSum, DynamicWaveletMatrix) と、静的なウェーブレット行列 7 種を高速化した。
+2026-11-13 の記録です。動的な 3 構造 (DynamicWaveletTree, DynamicWaveletTreeSum, DynamicWaveletMatrix) と、静的なウェーブレット行列 7 種類を高速化しました。
 
 ## 測定条件
 
-- CPU は AMD Ryzen Threadripper 3990X (Zen 2)、コンパイラは GCC 12.3.0、OS は Linux。
-- オプションは `-std=c++17 -O2 -DNDEBUG -march=native`。動的な 3 構造は、`-march` を付けない既定ビルド (SSE2 まで) でも測った。
-- 変更前は HEAD (`9634bd5`) のヘッダ、変更後は今回の版。同じベンチマークをそれぞれのヘッダでコンパイルした。
-- CPU 4 に固定し、変更前後を交互に 3 回ずつ実行して中央値を取った。
-- 入力は N=Q=300,000、σ=N、一様分布。全体がキャッシュに収まる条件として N=20,000、Q=300,000 も測った。
-- 表の「前 ns」「後 ns」は 1 操作あたりのナノ秒で、最初の条件 (動的版は native、静的版は N=300,000) の値である。「短縮」は `1 - 後 / 前` で、正の値が高速化を表す。右の列は他の条件の短縮率である。
-- チェックサムは、全条件・全操作で変更前後が一致した。
+- CPU は AMD Ryzen Threadripper 3990X (Zen 2)、コンパイラは GCC 12.3.0、OS は Linux です。
+- オプションは `-std=c++17 -O2 -DNDEBUG -march=native` です。動的な 3 構造は、`-march` を付けない既定ビルド (SSE2 まで) でも計測しました。
+- 変更前は HEAD (`9634bd5`) のヘッダ、変更後は今回の版です。同じベンチマークをそれぞれのヘッダでコンパイルしました。
+- CPU 4 に固定し、変更前後を交互に 3 回ずつ実行して中央値を取りました。
+- 入力は N=Q=300,000、σ=N の一様分布です。全体がキャッシュに収まる条件として N=20,000、Q=300,000 も計測しました。
+- 表の「前 ns」「後 ns」は 1 操作あたりのナノ秒で、最初の条件での値です。最初の条件は、動的版では native、静的版では N=300,000 です。「短縮」は `1 - 後 / 前` で、正の値が高速化を表します。「短縮」より右の列は他の条件での短縮率です。
+- チェックサムは、すべての条件と操作で変更前後の値が一致しました。
 
-ベンチマークは次のファイルにある。
+ベンチマークは次のファイルにあります。
 
 - `dynamic_wavelet_tree_speed_benchmark.cpp` と、それを行列用に読み込む `dynamic_wavelet_matrix_speed_benchmark.cpp`
 - `dynamic_wavelet_tree_sum_speed_benchmark.cpp`
@@ -22,46 +22,46 @@
 
 ### 共通の部品
 
-- `others/simd_int.cpp` に、32 bit 整数用の SSE2 段と、`zero`、`sub`、`reduce_add`、`cmpgt_bits` を加えた。固定長の小さい配列向けに `simd_find_first_greater` (番兵を省く `_unchecked` 版と差を比べる `_diff` 版を含む) と `simd_masked_sum` を加えた。
-- `others/bit.cpp` に `select64` を加えた。PDEP は Zen 1/2 ではマイクロコードで実装され、この計算機では 1 回約 45ns かかった。そのため `__znver1__` と `__znver2__` が定義されているときは使わず、popcount による絞り込みと 1 バイトの表引きで求める。
-- `ds/bit_vector.cpp` は、64 bit ごとにビット列とそこまでの 1 の個数を同じブロックに並べ、rank が 1 本のキャッシュ行で済むようにした。select は 256 個ごとの位置の表で二分探索の範囲を絞り、語の中は `select64` で求める。各位置の bit を返す関数から 64 bit ずつ組み立てるコンストラクタも加えた。
+- `others/simd_int.cpp` に、32 bit 整数用の SSE2 の実装と、`zero`、`sub`、`reduce_add`、`cmpgt_bits` を追加しました。固定長の小さい配列向けに `simd_find_first_greater` と `simd_masked_sum` も追加しました。前者には、番兵を省く `_unchecked` 版と差を比較する `_diff` 版があります。
+- `others/bit.cpp` に `select64` を追加しました。PDEP は Zen 1/2 ではマイクロコードで実装されており、この計算機では 1 回あたり約 45 ns かかりました。そのため `__znver1__` または `__znver2__` が定義されている場合は PDEP を使用せず、popcount による絞り込みと 1 バイトの表引きで求めます。
+- `ds/bit_vector.cpp` は、64 bit ごとにビット列とそこまでの 1 の個数を同じブロックに配置し、rank が 1 本のキャッシュラインの参照で完了するようにしました。select は 256 個ごとの位置の表で二分探索の範囲を絞り込み、ワード内の位置は `select64` で求めます。各位置の bit を返す関数から 64 bit ずつ組み立てるコンストラクタも追加しました。
 
 ### 動的な構造
 
-- BTreeBitVector と BTreeBitVectorSum の子の探索を `simd_find_first_greater_unchecked` に置き換えた。BTreeBitVectorSum は、線形走査から SIMD の比較に変わった。
-- BTreeBitVectorSum の葉の部分和は、W が SIMD で扱える整数型のとき `simd_masked_sum` で求める。
-- BTreeBitVector の PDEP は、Zen 1/2 向けのビルドでは使わない。
-- DynamicWaveletTreeSum は、bit 1 以上の段のノードを、BTreeBitVector のビット列と、新しい `ds/b_tree_sum_sequence.cpp` の重みの列に分けた。値の bit が c の要素の重みの和は、子 c の重みの列の区間和として求める。bit 0 の段は BTreeBitVectorSum のままである。
-- DynamicWaveletMatrix のビット列を AVLTreeBitVector から BTreeBitVector に替えた。あわせて次の変更を行った。
-  - 区間の両端の rank0 を、`_rank0_pair` で 1 回の降下にまとめて求める。
-  - select の rank0(n) を、各段の 0 の個数で置き換える。
-  - prev_value と next_value を 1 回の降下で求める。
-  - set は、上位の段で値の bit が等しい間は書き換えだけで済ませる。
+- BTreeBitVector と BTreeBitVectorSum の子の探索を `simd_find_first_greater_unchecked` に置き換えました。BTreeBitVectorSum の子の探索は、線形走査から SIMD の比較に変更されました。
+- BTreeBitVectorSum の葉の部分和は、W が SIMD で扱うことができる整数型の場合は `simd_masked_sum` で求めます。
+- BTreeBitVector の PDEP は、Zen 1/2 向けのビルドでは使用しません。
+- DynamicWaveletTreeSum は、bit 1 以上の段のノードを、BTreeBitVector のビット列と、新しい `ds/b_tree_sum_sequence.cpp` の重みの列に分割しました。値の bit が c である要素の重みの和は、子 c の重みの列の区間和として求めます。bit 0 の段は BTreeBitVectorSum のままです。
+- DynamicWaveletMatrix のビット列を AVLTreeBitVector から BTreeBitVector に変更しました。あわせて次の変更を行いました。
+  - 区間の両端の rank0 を、`_rank0_pair` により 1 回の降下でまとめて求めます。
+  - select の rank0(n) を、各段の 0 の個数で置き換えます。
+  - prev_value と next_value を 1 回の降下で求めます。
+  - set は、上位の段で値の bit が等しい間は bit の設定だけを行います。
 
 ### 静的な構造
 
-- WaveletMatrix、WaveletMatrixSum、WaveletMatrixFenwick、wavelet_matrix_bit.cpp の WaveletMatrix で、次の変更を共通に行った。
-  - range_count と rank は 1 回の降下で求め、区間が空になったら打ち切る。
-  - prev_value と next_value は、降下中に候補を 1 つ覚え、その位置から最大値か最小値をたどる。
-  - select は rank0(n) の代わりに 0 の個数を使う。
-  - tovector は、段ごとに位置の並び替えをたどって復元する。
-- 7 種すべての構築で、BitVector を関数から作るコンストラクタを使う。
+- WaveletMatrix、WaveletMatrixSum、WaveletMatrixFenwick、wavelet_matrix_bit.cpp の WaveletMatrix で、次の変更を共通に行いました。
+  - range_count と rank は 1 回の降下で求め、区間が空になった時点で打ち切ります。
+  - prev_value と next_value は、降下中に候補を 1 つ記録し、その位置から最大値か最小値をたどります。
+  - select は rank0(n) の代わりに 0 の個数を使用します。
+  - tovector は、段ごとに位置の並び替えをたどって復元します。
+- 7 種類すべての構築で、BitVector を関数から作成するコンストラクタを使用します。
 
 ## 採用しなかった変更
 
-- B 木の節点を 64 バイト境界にそろえる案は、Sum 版で 2〜10% 遅くなった。使用量が増えた影響とみられる。非 Sum 版では差が測定の揺れと区別できなかった。
-- 祖先の累積値の更新を配列ごとの SIMD ループにする案は、ループを抜ける分岐の予測外れが増え、更新系が 7〜11% 遅くなった。
-- 重みの列で、葉の部分和を半分を超えたら残りから求める案と、要素の少ない側の和だけを求める案は、どちらも遅くなった。
-- 重みの列の分岐数を 32 にする案は、効果がなかった。
-- BitVector のビット列と累積値を別の配列に戻す案は、N=300,000 で個数の質問が 4〜6% 遅く、和の質問が 2〜5% 速かった。個数の質問を優先して、同じブロックに並べる形を残した。
+- B 木の節点を 64 バイト境界にそろえる案は、Sum 版で 2〜10% 遅くなりました。メモリの使用量が増えた影響と考えられます。非 Sum 版では差を測定のばらつきと区別できませんでした。
+- 祖先の累積値の更新を配列ごとの SIMD ループにする案は、ループを抜ける分岐の予測外れが増え、更新系の操作が 7〜11% 遅くなりました。
+- 重みの列で、半分を超えた場合に葉の部分和を残りから求める案と、要素の少ない側の和だけを求める案は、どちらも遅くなりました。
+- 重みの列の分岐数を 32 にする案は、効果がありませんでした。
+- BitVector のビット列と累積値を別の配列に戻す案は、N=300,000 で個数のクエリが 4〜6% 遅く、和のクエリが 2〜5% 速くなりました。個数のクエリを優先し、同じブロックに配置する形を残しました。
 
 ## 遅くなった操作
 
-- DynamicWaveletTreeSum の weighted_median は 12〜13% 遅い。min_count と max_count は N=300,000 では 13〜15% 速いが、N=20,000 では 11〜18% 遅い。pop は 7〜8%、set は 4〜7% 遅い。これらは、各段で小さいビット列と子の重みの列の 2 つをたどるようになったためである。
-- WaveletMatrixSum と WaveletMatrixFenwick の和の質問は 1〜8% 遅く、N=20,000 の sum_k_smallest は 15% 遅い。2 次元版の sum_k も 6% 遅い。上の BitVector の配置のトレードオフによる。
-- WaveletMatrixFenwick の set_weight と add_weight は 4% 遅い。
-- WaveletMatrix の rank は、N=20,000 では 8% 遅い。N=300,000 では 6% 速い。
-- DynamicWaveletTree の select は、既定ビルドで 4% 遅い。native では PDEP を避けたことで 28% 速くなった。
+- DynamicWaveletTreeSum の weighted_median は 12〜13% 遅くなりました。min_count と max_count は N=300,000 では 13〜15% 速い一方で、N=20,000 では 11〜18% 遅くなっています。pop は 7〜8%、set は 4〜7% 遅くなりました。これらは、各段で小さいビット列と子の重みの列の 2 つをたどるようになったためです。
+- WaveletMatrixSum と WaveletMatrixFenwick の和のクエリは 1〜8% 遅く、N=20,000 の sum_k_smallest は 15% 遅くなりました。2 次元版の sum_k も 6% 遅くなっています。これらは、前述した BitVector の配置のトレードオフによるものです。
+- WaveletMatrixFenwick の set_weight と add_weight は 4% 遅くなりました。
+- WaveletMatrix の rank は、N=20,000 では 8% 遅くなり、N=300,000 では 6% 速くなりました。
+- DynamicWaveletTree の select は、既定ビルドで 4% 遅くなりました。native では PDEP を使用しないようにしたことで 28% 速くなりました。
 
 ## 結果
 
@@ -287,7 +287,7 @@
 
 ## 検証
 
-- `test/dwm/` のランダムテスト 11 本を、`-march=native`、既定ビルド、SIMD を無効にしたビルド (`-U__SSE2__ -U__SSE__ -U__BMI2__`) の 3 構成で実行し、すべて通った。
-- 新しく `bit_vector_random.cpp` と `b_tree_sum_sequence_random.cpp` を加えた。`wavelet_matrix_sum_random.cpp` と `wavelet_matrix_bit_extended_random.cpp` には、WaveletMatrix の prev_value・next_value・range_count・select などを素朴な計算と比べる検査を加えた。追加した検査は HEAD のヘッダでも通る。
-- `select64` は、3 構成で 300 万通りの値を素朴な計算と比べた。
-- 展開スクリプトで 1 ファイルにまとめたコードが、AVX2 ありとなしの両方でコンパイルでき、正しい値を返すことを確かめた。
+- `test/dwm/` のランダムテスト 11 本を、`-march=native`、既定ビルド、SIMD を無効にしたビルド (`-U__SSE2__ -U__SSE__ -U__BMI2__`) の 3 構成で実行し、すべて成功しました。
+- 新しく `bit_vector_random.cpp` と `b_tree_sum_sequence_random.cpp` を追加しました。`wavelet_matrix_sum_random.cpp` と `wavelet_matrix_bit_extended_random.cpp` には、WaveletMatrix の prev_value, next_value, range_count, select などを素朴な計算と比較するテストを追加しました。追加したテストは HEAD のヘッダでも成功します。
+- `select64` は、3 構成で 300 万通りの値を素朴な計算と比較しました。
+- 展開スクリプトで 1 ファイルにまとめたコードが、AVX2 ありとなしの両方でコンパイルでき、正しい値を返すことを確認しました。

@@ -89,7 +89,7 @@ public:
                 other.blocks_.clear();
             }
 
-            /// @brief 現在の N 要素と M ブロックを破棄して移動代入する / O(N + M)
+            /// @brief 現在の N 要素と M ブロックを破棄してムーブ代入する / O(N + M)
             BlockVector& operator=(BlockVector&& other) noexcept {
                 if (this != &other) {
                     clear_storage();
@@ -181,7 +181,7 @@ public:
         View<Data, &Slot::data> data;
         size_t ptr, cap;
 
-        /// @brief 番兵を持つ領域を初期化する / O(1)
+        /// @brief 番兵を含む領域を初期化する / O(1)
         MemoryAllocator() : tree{&pool}, data{&pool}, ptr(1), cap(0) {
             pool.emplace_back(0, 0, 0, T{}, 0);
             cap = pool.capacity();
@@ -192,7 +192,7 @@ public:
             : pool(std::move(other.pool)), tree{&pool}, data{&pool},
               ptr(other.ptr), cap(other.cap) {}
 
-        /// @brief 現在の N 要素と M ブロックを破棄して移動代入する / O(N + M)
+        /// @brief 現在の N 要素と M ブロックを破棄してムーブ代入する / O(N + M)
         MemoryAllocator& operator=(MemoryAllocator&& other) noexcept {
             if (this != &other) {
                 pool = std::move(other.pool);
@@ -219,7 +219,7 @@ public:
             return ptr++;
         }
 
-        /// @brief 値 key を持つノードを作成する / 償却 O(1)
+        /// @brief 値 key を保持するノードを作成する / 償却 O(1)
         SizeType new_node(const T& key) {
             if (pool.size() > ptr) {
                 pool[ptr].tree = {0, 0, 1};
@@ -245,10 +245,10 @@ public:
         }
 
         /// @brief 確保済み領域を再利用できる状態に戻す / O(1)
-        /// @note この領域を使う既存の木は無効になる
+        /// @note この領域を使用する既存の木は無効になる
         void reset() { ptr = 1; }
 
-        /// @brief 確保済み領域がほぼ埋まっているか判定する / O(1)
+        /// @brief 確保済み領域の空きがほとんどないか判定する / O(1)
         bool almost_full() const { return (double)ptr > max(1.0, cap * 0.99); }
 
         /// @brief 確保済みノード領域のバイト数を返す / O(1)
@@ -537,7 +537,7 @@ public:
         return _new(insert_node(root, k, value, ma.ptr));
     }
 
-    /// @brief 位置 k の要素を削除した列と削除値を返す / O(log N)
+    /// @brief 位置 k の要素を削除した列と削除した値を返す / O(log N)
     pair<PLTM, T> pop(SizeType k) {
         assert(0 <= k && k < len());
         T value;
@@ -546,7 +546,7 @@ public:
     }
 
     /// @brief 区間 [l, r) を反転した列を返す / O(log N)
-    /// @note 総積が反転で変化しない場合に使える
+    /// @note 総積が反転で変化しない場合に使用できる
     PLTM reverse(SizeType l, SizeType r) {
         assert(0 <= l && l <= r && r <= len());
         return _new(reverse_node(root, l, r, ma.ptr));
@@ -615,7 +615,7 @@ public:
     /// @brief 要素数を返す / O(1)
     SizeType len() const { return size_of(root); }
 
-    /// @brief 部分木サイズと平衡条件を検査する / O(N)
+    /// @brief 部分木サイズと平衡条件を確認する / O(N)
     void check() const {
         auto dfs = [&](auto &&self, SizeType node) -> SizeType {
             const SizeType left = ma.pool[node].tree.left, right = ma.pool[node].tree.right;

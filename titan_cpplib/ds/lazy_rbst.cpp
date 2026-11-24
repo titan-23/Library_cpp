@@ -10,7 +10,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 遅延伝播と区間反転を持つ RBST / 0-indexed
+/// @brief 遅延伝播と区間反転を扱う RBST / 0-indexed
 template <class T, T (*op)(T, T), T (*e)(),
           class F, T (*mapping)(F, T), F (*composition)(F, F), F (*id)()>
 class LazyRBST {
@@ -328,7 +328,7 @@ public:
         return dfs(dfs, root);
     }
 
-    /// @brief 木を完全に平衡な形に作り直す / O(n)
+    /// @brief 木を完全に平衡な形に再構築する / O(n)
     void rebuild() {
         vector<T> a = tovector();
         _build(a);

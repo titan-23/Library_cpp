@@ -9,7 +9,7 @@ using namespace std;
 
 namespace titan23 {
 
-  /// @brief 作用が可換な双対セグ木
+  /// @brief 作用が可換な双対セグメント木
   template <class T,
             class F,
             T (*mapping)(F, T),
@@ -117,7 +117,7 @@ namespace titan23 {
       return res;
     }
 
-    /// @brief a[k] を返す / 負の k は末尾から数える / O(log n)
+    /// @brief a[k] を返す / 負の k は末尾からの位置とする / O(log n)
     T get(int k) const {
       if (k < 0) k += _n;
       k += _size;
@@ -128,7 +128,7 @@ namespace titan23 {
       return mapping(lazy_f, _data[k-_size]);
     }
 
-    /// @brief a[k] を v に変更する / 負の k は末尾から数える / O(log n)
+    /// @brief a[k] を v に変更する / 負の k は末尾からの位置とする / O(log n)
     void set(int k, T v) {
       if (k < 0) k += _n;
       k += _size;

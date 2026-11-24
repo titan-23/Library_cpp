@@ -8,7 +8,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief Euler Tour Tree による動的木 / 部分木への作用と部分木の和を扱う / 辺のノードも値 e() を持ち作用を受けるので、mapping(f, e()) は e() と同じに扱えること
+/// @brief Euler Tour Tree による動的木 / 部分木への作用と部分木の和を扱う / 辺のノードも値 e() を保持して作用を受けるため、mapping(f, e()) が e() と同等であること
 template <class T,
             T (*op)(T, T),
             T (*e)(),
@@ -220,7 +220,7 @@ class EulerTourTree {
         _init_build(a);
     }
 
-    /// @brief 隣接リスト G から森を構築する / 辺を張る前に呼ぶ / O(n)
+    /// @brief 隣接リスト G から森を構築する / 辺を張る前に呼び出す / O(n)
     void build(vector<vector<int>> &G) {
         vector<int> seen(n, 0);
         vector<long long> a;

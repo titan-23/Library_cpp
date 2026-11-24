@@ -8,7 +8,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief Hoeffding の不等式で、既知の最良より有意に劣るパラメータの評価を打ち切る枝刈り器
+/// @brief Hoeffding の不等式を使用して、既知の最良パラメータより有意に劣るパラメータの評価を打ち切るクラス
 template<typename ScoreType=double>
 class HoeffdingPruner {
 private:
@@ -32,8 +32,8 @@ private:
     double diff_sum;
 
 public:
-    /// @brief 枝刈り器を構築する / seed は [0, max_seeds)、is_minimize の既定は最小化
-    /// score_range は 1 シードでのスコア差の最大幅、delta は最良を誤って枝刈りする確率の上限
+    /// @brief HoeffdingPruner を構築する / seed は [0, max_seeds)、is_minimize の既定は最小化
+    /// score_range は 1 つのシードでのスコア差の最大幅、delta は最良パラメータを誤って枝刈りする確率の上限
     HoeffdingPruner(int max_seeds, double score_range, double delta=0.05, int min_samples=5, bool is_minimize=true)
         : score_range(score_range), delta(delta), min_samples(min_samples), is_minimize(is_minimize), max_seeds(max_seeds),
           best_count(0), best_sum(0), current_count(0), current_sum(0), common_count(0), diff_sum(0.0) {
@@ -44,7 +44,7 @@ public:
         has_current_score.assign(max_seeds, false);
     }
 
-    /// @brief シード seed での評価スコア score を報告する / 同じ seed を再び報告すると上書きする
+    /// @brief シード seed での評価スコア score を報告する / 同じ seed を再び報告すると前回のスコアを置き換える
     void report(int seed, ScoreType score) {
         if (!has_current_score[seed]) {
             has_current_score[seed] = true;
@@ -69,7 +69,7 @@ public:
         current_sum += score;
     }
 
-    /// @brief 現パラメータが最良パラメータより統計的に有意に劣り、枝刈りすべきなら true を返す
+    /// @brief 現在のパラメータが最良パラメータより統計的に有意に劣り、枝刈りすべき場合は true を返す
     bool should_prune() const {
         if (best_count == 0 || common_count < min_samples) return false;
 
@@ -79,8 +79,8 @@ public:
         return mean_diff > epsilon;
     }
 
-    /// @brief 現パラメータの評価を終え、次のパラメータに備える / 枝刈りで終えたなら was_pruned を true にする
-    /// 枝刈りされずに min_samples 個以上のシードを評価し、平均が最良より良いときだけ最良を置き換える
+    /// @brief 現在のパラメータの評価を終了し、次のパラメータの評価に備える / 枝刈りで終了した場合は was_pruned に true を渡す
+    /// 現在のパラメータが枝刈りされずに min_samples 個以上のシードで評価され、平均スコアが最良パラメータより良い場合だけ最良パラメータを置き換える
     void next_param(bool was_pruned) {
         if (!was_pruned && current_count >= min_samples) {
             bool update = false;

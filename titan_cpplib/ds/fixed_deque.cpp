@@ -26,7 +26,7 @@ private:
     int index(int i) const noexcept { return (head + i) & mask; }
 
 public:
-    /// @brief 容量 capacity の空の両端キューを作る / O(capacity)
+    /// @brief 容量 capacity の空の両端キューを作成する / O(capacity)
     explicit FixedDeque(int capacity) : data(get_buffer_capacity(capacity)),
         capacity_(capacity), mask(get_buffer_capacity(capacity) - 1), head(0), size_(0) {}
 
@@ -121,7 +121,7 @@ public:
         size_ = 0;
     }
 
-    /// @brief 先頭から順に並べた要素を 2 つの連続区間に分けて返す / O(1)
+    /// @brief 先頭から順に並べた要素を 2 つの連続区間に分割して返す / O(1)
     pair<span<T>, span<T>> segments() noexcept {
         if (empty()) return {span<T>(), span<T>()};
         int first_size = min(size_, mask + 1 - head);

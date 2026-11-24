@@ -96,7 +96,7 @@ string bin(unsigned long long s) {
     return t;
 }
 
-// 現在の行番号を標準エラー出力に出す
+// 現在の行番号を標準エラー出力に表示する
 #define DEBUG_LINE() (cerr << "[LINE] : " << __LINE__ << endl)
 
 /// @brief __int128_t を 10 進表記の文字列にする

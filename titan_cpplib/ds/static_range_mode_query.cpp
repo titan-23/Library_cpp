@@ -24,7 +24,7 @@ private:
     vector<vector<int>> data;
     vector<vector<pair<int, int>>> bucket_data;
 
-    // bucket_data[i][j] に、ブロック i から j - 1 までの (頻度, 最頻値) を入れる
+    // bucket_data[i][j] に、ブロック i から j - 1 までの (頻度, 最頻値) を格納する
     void _calc_all_blocks() {
         vector<int> freqs(z.len(), 0);
         for (int i = 0; i < bucket_cnt; ++i) {
@@ -47,7 +47,7 @@ private:
         }
     }
 
-    // idx[x] に値 x の出現位置を入れ、inv_idx[i] に idx[a[i]] の中での i の添字を入れる
+    // idx[x] に値 x の出現位置を格納し、inv_idx[i] に idx[a[i]] の中での i の添字を格納する
     void _calc_index() {
         for (int i = 0; i < a.size(); ++i) {
             inv_idx[i] = idx[a[i]].size();

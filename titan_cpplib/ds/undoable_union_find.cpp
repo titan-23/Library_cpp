@@ -7,7 +7,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief unite を新しい順に取り消せる Union-Find
+/// @brief unite を新しい順に取り消すことができる Union-Find
 class UndoableUnionFind {
 private:
     int n, cnt;
@@ -19,7 +19,7 @@ public:
     /// @brief n 頂点で構築する / O(n)
     UndoableUnionFind(int n) : n(n), cnt(n), par(n, -1) {}
 
-    /// @brief 直前の unite を 1 回分取り消す / 併合しなかった unite も 1 回と数える / O(1)
+    /// @brief 直前の unite を 1 回分取り消す / 併合しなかった unite も 1 回として扱う / O(1)
     void undo() {
         auto [y, py] = history.top(); history.pop();
         if (y == -1) return;

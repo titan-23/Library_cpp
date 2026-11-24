@@ -89,7 +89,7 @@ public:
             }
         }
         neg_cycle = !negs.empty();
-        // n は LANES の倍数なので、どの読み書きも全要素を対象にできる
+        // n は LANES の倍数であるため、すべての読み書きで全要素を対象にできる
         const auto v_one = Ops::int_set1(1);
         for (int k : negs) {
             const T *row_k = d.data() + (size_t)k*n;

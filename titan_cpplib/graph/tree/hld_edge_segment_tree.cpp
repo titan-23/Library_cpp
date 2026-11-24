@@ -8,7 +8,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief セグメント木を載せた HLD で、辺に値を持つ / op は非可換でもよい
+/// @brief セグメント木を載せた HLD / 辺ごとに値を保持する / op は非可換でもよい
 template<class T, T (*op)(T, T), T (*e)()>
 class HLDEdgeSegmentTree {
 private:
@@ -16,10 +16,10 @@ private:
     titan23::SegmentTree<T, op, e> seg, rseg;
 
 public:
-    /// @brief hld の上に、全ての辺の値を e() として構築する / O(N)
+    /// @brief hld から構築し、全ての辺の値を e() とする / O(N)
     HLDEdgeSegmentTree(const titan23::HLD &hld) : hld(hld), seg(hld.n), rseg(hld.n) {}
 
-    /// @brief a[k] を辺 (k, par[k]) の値として構築する / a[root] は使わない / O(N)
+    /// @brief a[k] を辺 (k, par[k]) の値として構築する / a[root] は使用しない / O(N)
     HLDEdgeSegmentTree(const titan23::HLD &hld, const vector<T> &a) : hld(hld) {
         vector<T> b = hld.build_list(a);
         this->seg = titan23::SegmentTree<T, op, e>(b);
@@ -27,7 +27,7 @@ public:
         this->rseg = titan23::SegmentTree<T, op, e>(b);
     }
 
-    /// @brief 重み付き隣接リスト G と根から構築する / 各辺の重みは深い側の頂点に持たせる / O(N)
+    /// @brief 重み付き隣接リスト G と根から構築する / 各辺の重みは深い側の頂点が保持する / O(N)
     HLDEdgeSegmentTree(const vector<vector<pair<int, T>>> &G, const int root) {
         int n = G.size();
         vector<vector<int>> g(n);

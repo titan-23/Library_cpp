@@ -15,7 +15,7 @@ namespace titan23 {
 /// @brief 編集操作の種類
 enum class EditOperationType { Insert, Delete, Replace };
 
-/// @brief s を t に変える 1 回の編集操作 / 添字は編集前の s, t の位置
+/// @brief s を t に変換する 1 回の編集操作 / 添字は編集前の s, t の位置
 /// Insert は s[source_index] の直前に t[target_index] を挿入する / Delete は s[source_index] を削除する / Replace は s[source_index] を t[target_index] に置換する
 struct EditOperation {
     EditOperationType type;
@@ -25,7 +25,8 @@ struct EditOperation {
 
 namespace edit_distance_detail {
 
-// 文字列は string_view にし、ほかの列は参照のまま返す。C 文字列は終端 NUL の手前までになる
+// 文字列は string_view に変換し、ほかの列は参照のまま返す
+// C 文字列は終端 NUL の直前までを範囲とする
 template <class Seq>
 decltype(auto) as_sequence(const Seq &s) {
     if constexpr (is_convertible_v<const Seq &, string_view>) {
@@ -43,7 +44,7 @@ int length(const Seq &s) {
     return (int)s.size();
 }
 
-// t を短い列にして、1 行分の DP を持つ
+// t は短い方の列とし、DP は 1 行分だけ保持する
 template <class S, class T>
 int distance(const S &s, const T &t) {
     const int n = edit_distance_detail::length(s), m = edit_distance_detail::length(t);
@@ -62,7 +63,7 @@ int distance(const S &s, const T &t) {
     return dp[m];
 }
 
-// s を短い列にして、幅 2 * lim + 1 以下の帯を走査する
+// s は短い方の列とし、幅 2 * lim + 1 以下の帯を走査する
 template <class S, class T>
 int bounded(const S &s, const T &t, int lim) {
     const int n = edit_distance_detail::length(s), m = edit_distance_detail::length(t);
@@ -84,7 +85,7 @@ int bounded(const S &s, const T &t, int lim) {
     for (int j = 0; j <= r0; ++j) prev[j] = j;
 
     for (int i = 1; i <= n; ++i) {
-        // 距離 k 以下の編集経路は |i-j| <= k の帯から出ない
+        // コストが k 以下の DP 表上の経路は |i-j| <= k の帯に収まる
         const int l = i > lim ? i - lim : 0;
         const int r = i + min(lim, m - i);
         int mn = inf;
@@ -112,8 +113,8 @@ int bounded(const S &s, const T &t, int lim) {
 
 } // namespace edit_distance_detail
 
-/// @brief 挿入・削除・置換を各コスト 1 とした s と t の編集距離を返す / O(nm+n+m), n = |s|, m = |t|
-/// s, t は文字列か、size() と添字アクセスを持つ列で、要素を == で比べる / 長さが INT_MAX 以上なら length_error を送出する
+/// @brief 挿入、削除、置換のコストをそれぞれ 1 とした s と t の編集距離を返す / O(nm+n+m), n = |s|, m = |t|
+/// s, t は文字列か、size() と添字アクセスに対応する列とし、要素は == で比較する / 長さが INT_MAX 以上なら length_error を送出する
 template <class S, class T>
 int edit_distance(const S &s, const T &t) {
     const auto &a = edit_distance_detail::as_sequence(s);
@@ -124,7 +125,7 @@ int edit_distance(const S &s, const T &t) {
 }
 
 /// @brief 編集距離が k 以下ならその値を返し、超えるか k < 0 なら -1 を返す / O((n+1) * min(m+1, 2k+1))
-/// n, m は短い方と長い方の列の長さ / C 文字列では長さの取得に O(n+m) が加わる / 入力の条件は edit_distance と同じ
+/// n, m はそれぞれ短い方と長い方の列の長さ / C 文字列では長さの取得に O(n+m) が加わる / 入力の条件は edit_distance と同じ
 template <class S, class T>
 int edit_distance_bounded(const S &s, const T &t, int k) {
     if (k < 0) return -1;
@@ -147,7 +148,7 @@ bool edit_distance_within(const S &s, const T &t, int k) {
     return titan23::edit_distance_bounded(a, b, k) >= 0;
 }
 
-/// @brief s を t に変える最小個数の編集操作を先頭から順に返す / O((n+1)(m+1)) 時間・空間
+/// @brief s を t に変換する最小個数の編集操作を先頭から順に返す / O((n+1)(m+1)) 時間・空間
 /// n = |s|, m = |t| / 返す操作の個数は編集距離に等しい / 入力の条件は edit_distance と同じ
 template <class S, class T>
 vector<EditOperation> edit_distance_restore(const S &s, const T &t) {
@@ -220,7 +221,8 @@ optional<vector<EditOperation>> edit_distance_restore_bounded(const S &s, const 
     }
 
     const int inf = lim + 1;
-    // 各行の |i-j| <= k の部分だけ保存する。添字の向きを保つため列は交換しない
+    // 各行は |i-j| <= k の部分だけ保存する
+    // 操作の添字と s, t の対応を維持するため、2 つの列は交換しない
     vector<vector<int>> dp(n + 1);
     const auto get = [&](int i, int j) {
         const int l = i > lim ? i - lim : 0;

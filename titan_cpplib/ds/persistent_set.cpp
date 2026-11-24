@@ -229,7 +229,7 @@ class PersistentSet {
     /// @brief 列 a の要素からなる集合を構築する / 重複は除く / O(n log n)
     PersistentSet(const vector<T> &a) { _build(a); }
 
-    /// @brief other の要素を合わせた集合を返す / this の全要素 < other の全要素が前提 / O(log n)
+    /// @brief other の要素を合わせた集合を返す / this の全要素 < other の全要素を前提とする / O(log n)
     PersistentSet<T> merge(PersistentSet<T> other) {
         NodePtr root = _merge_node(this->root, other.root);
         return _new(root);
@@ -325,7 +325,7 @@ class PersistentSet {
         return k;
     }
 
-    /// @brief 小さい方から k 番目の要素を削除した集合とその要素を返す / O(log n)
+    /// @brief 小さい方から k 番目の要素を削除した集合と、その要素を返す / O(log n)
     pair<PersistentSet<T>, T> pop(int k) {
         assert(0 <= k && k < len());
         auto [s_, t] = _split_node_idx(this->root, k+1);
@@ -334,7 +334,7 @@ class PersistentSet {
         return {_new(root), tmp->key};
     }
 
-    /// @brief 全要素を昇順の配列にして返す / O(n)
+    /// @brief 全要素を昇順の配列として返す / O(n)
     vector<T> tovector() const {
         NodePtr node = root;
         stack<NodePtr> s;
@@ -363,7 +363,7 @@ class PersistentSet {
         return root ? root->size : 0;
     }
 
-    /// @brief 平衡条件と部分木サイズを検査する / O(n)
+    /// @brief 平衡条件と部分木サイズを確認する / O(n)
     void check() const {
         auto rec = [&] (auto &&rec, NodePtr node) -> pair<int, int> {
             int ls = 0, rs = 0;

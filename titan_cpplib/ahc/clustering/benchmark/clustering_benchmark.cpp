@@ -31,7 +31,7 @@ struct ClusteringBenchmarkCase {
     vector<int> reference_labels;
 };
 
-/// @brief 名前、点、座標、個数範囲、最良既知費用、参照ラベルを検査する / 誤りがあれば invalid_argument を投げる / O(nd + k)
+/// @brief 名前、点、座標、個数の範囲、既知の最良コスト、参照ラベルを確認する / 誤りがあれば invalid_argument を投げる / O(nd + k)
 inline void check_clustering_benchmark_case(const ClusteringBenchmarkCase& problem) {
     if (problem.name.empty()) throw invalid_argument("clustering benchmark: name must not be empty");
     if (problem.name.find_first_of("\r\n") != string::npos || problem.source.find_first_of("\r\n") != string::npos) throw invalid_argument("clustering benchmark: name and source must be one line");
@@ -86,7 +86,7 @@ inline void check_clustering_benchmark_case(const ClusteringBenchmarkCase& probl
     }
 }
 
-/// @brief path の問題ファイルを読み、検査して返す / 開けなければ runtime_error、形式が違えば invalid_argument を投げる / O(nd + k)
+/// @brief path の問題ファイルを読み込み、内容を確認して返す / ファイルを開くことができない場合は runtime_error、形式が異なる場合は invalid_argument を投げる / O(nd + k)
 inline ClusteringBenchmarkCase read_clustering_benchmark_case(const string& path) {
     ifstream input(path);
     if (!input) throw runtime_error("clustering benchmark: could not open " + path);
@@ -142,7 +142,7 @@ inline ClusteringBenchmarkCase read_clustering_benchmark_case(const string& path
     return problem;
 }
 
-/// @brief problem を検査し、titan_clustering_benchmark_v1 形式で path に書く / O(nd + k)
+/// @brief problem の内容を確認し、titan_clustering_benchmark_v1 形式で path に出力する / O(nd + k)
 inline void write_clustering_benchmark_case(const string& path, const ClusteringBenchmarkCase& problem) {
     check_clustering_benchmark_case(problem);
     ofstream output(path);
@@ -177,20 +177,20 @@ inline void write_clustering_benchmark_case(const string& path, const Clustering
     }
 }
 
-/// @brief 個数範囲に [1, n] 以外のものがあるかを返す / O(k)
+/// @brief 個数の範囲に [1, n] 以外のものがあるかを返す / O(k)
 inline bool clustering_benchmark_has_size_constraints(const ClusteringBenchmarkCase& problem) {
     int point_count = problem.points.size();
     for (auto [lower, upper] : problem.ranges) if (lower != 1 || upper != point_count) return true;
     return false;
 }
 
-/// @brief すべての個数範囲で lower == upper かを返す / O(k)
+/// @brief 個数の範囲がすべて lower == upper を満たすかを返す / O(k)
 inline bool clustering_benchmark_has_exact_sizes(const ClusteringBenchmarkCase& problem) {
     for (auto [lower, upper] : problem.ranges) if (lower != upper) return false;
     return true;
 }
 
-/// @brief 各クラスタの点数を返す / [0, cluster_count) の外のラベルがあれば空の列を返す / O(n + k)
+/// @brief 各クラスタの点数を返す / [0, cluster_count) の範囲外のラベルがあれば空の列を返す / O(n + k)
 inline vector<int> clustering_benchmark_cluster_sizes(const vector<int>& labels, int cluster_count) {
     if (cluster_count <= 0) return {};
     vector<int> sizes(cluster_count);
@@ -212,7 +212,7 @@ inline bool clustering_benchmark_valid_labels(const ClusteringBenchmarkCase& pro
     return true;
 }
 
-/// @brief 各クラスタの平均までの二乗距離の総和を返す / labels が条件を満たさないか double に収まらなければ無限大を返す / O(nd + kd)
+/// @brief 各クラスタの平均までの二乗距離の総和を返す / labels が条件を満たさない場合と、総和が double に収まらない場合は無限大を返す / O(nd + kd)
 inline double clustering_benchmark_cost(const ClusteringBenchmarkCase& problem, const vector<int>& labels) {
     if (!clustering_benchmark_valid_labels(problem, labels)) return numeric_limits<double>::infinity();
     int dimension = problem.points[0].size();
@@ -238,7 +238,7 @@ inline double clustering_benchmark_cost(const ClusteringBenchmarkCase& problem, 
     return (double)cost;
 }
 
-/// @brief labels と reference_labels の調整ランド指数を返す / 空、長さが違う、負のラベルがあるときは NaN を返す / O(n log n)
+/// @brief labels と reference_labels の調整ランド指数を返す / 空の場合、長さが異なる場合、負のラベルがある場合は NaN を返す / O(n log n)
 inline double clustering_benchmark_adjusted_rand_index(const vector<int>& labels, const vector<int>& reference_labels) {
     if (labels.empty() || labels.size() != reference_labels.size()) return numeric_limits<double>::quiet_NaN();
     for (int label : labels) if (label < 0) return numeric_limits<double>::quiet_NaN();

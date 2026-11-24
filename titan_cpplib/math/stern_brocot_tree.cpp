@@ -157,8 +157,8 @@ public:
         return {true, res};
     }
 
-    /// @brief 単調な判定関数 f(p, q) の境界を、分母と分子が d 以下の分数の範囲で探す / O(log d)
-    /// f(0/1) != f(1/0) が前提
+    /// @brief 単調な判定関数 f(p, q) の境界を、分母と分子が d 以下の分数の範囲で探索する / O(log d)
+    /// f(0/1) != f(1/0) を前提とする
     /// 返すノードの p/q は f(0/1) と同じ値を返す最大の分数、r/s は f(1/0) と同じ値を返す最小の分数
     template<class F>
     Node binary_search(F f, T d) {

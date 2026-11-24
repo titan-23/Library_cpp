@@ -49,7 +49,7 @@ public:
         return hq.top();
     }
 
-    /// @brief key を1つ削除する / O(log n) / key はヒープに含まれていること
+    /// @brief key を 1 つ削除する / O(log n) / key はヒープに含まれていること
     void erase(T key) {
         lazy.push(key);
     }
@@ -122,7 +122,7 @@ public:
         return hq.top();
     }
 
-    /// @brief key を1つ削除する / O(log n) / key はヒープに含まれていること
+    /// @brief key を 1 つ削除する / O(log n) / key はヒープに含まれていること
     void erase(T key) {
         lazy.push(key);
     }

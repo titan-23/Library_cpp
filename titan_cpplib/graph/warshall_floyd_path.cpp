@@ -13,7 +13,7 @@ using namespace std;
 namespace titan23 {
 
 /// @brief 経路復元付きの Warshall-Floyd / INF は到達不能を表す / 重みが -INF 未満の辺は -INF として扱う
-/// 負閉路を経由しない頂点対の最短距離は (-INF, INF) に収まること / 外れると到達判定や get_path が正しくなくなる
+/// 負閉路を経由しない頂点対の最短距離は (-INF, INF) に収まること / 範囲外の場合は到達判定や get_path の結果が正しくない
 template<typename T>
 class WarshallFloydPath {
 private:
@@ -39,13 +39,13 @@ private:
 
     T clamp_weight(T w) const { return w < -INF ? -INF : w; }
 
-    // 32/64 bit 以外の T では使わないが、型は定義できるようにしておく
+    // 32/64 bit 以外の T では使用しないが、型は定義できるようにしておく
     using Simd = SimdInt<T, sizeof(T) == 8 ? 8 : 4>;
     using Vec = typename Simd::Vec;
     using Mask = typename Simd::Mask;
     static constexpr bool simd_available = is_integral_v<T> && is_signed_v<T> && (sizeof(T) == 8 || sizeof(T) == 4) && Simd::VECTORIZED;
 
-    // add_dist(a, b) を b の各要素について計算する。a <= INF, -INF <= b < INF を仮定する
+    // add_dist(a, b) を b の各要素について計算する / a <= INF, -INF <= b < INF を仮定する
     Vec add_dist_vec(T a, Vec b) const {
         const Vec v_inf = Simd::set1(INF);
         const Vec v_ninf = Simd::set1(-INF);
@@ -84,7 +84,7 @@ private:
                             Mask finite = Simd::cmpneq(lane, v_kj, v_inf);
                             Vec v_new = dik_ninf ? v_ninf : Simd::blend(Simd::min(Simd::max(Simd::add(v_dik, v_kj), v_ninf), v_inf), Simd::cmpeq(v_kj, v_ninf), v_ninf);
                             Mask upd = Simd::cmpgt(finite, v_ij, v_new);
-                            // n が大きいとメモリ帯域が律速になるので、更新がなければ書き込まない
+                            // n が大きいとメモリ帯域が律速になるため、更新がなければ値を格納しない
                             if (upd) {
                                 Simd::store(row_i+j, upd, v_new);
                                 Simd::int_store(nxt_i+j, upd, v_hop);
@@ -154,7 +154,7 @@ private:
         }
     }
 
-    // add_edge の更新部分。行 i は s に到達できる
+    // add_edge の更新部分 / s に到達できる頂点 i の行だけを更新する
     void add_edge_rows(int s, int t, T w, bool new_negative_cycle) {
         if constexpr (simd_available) {
             if (use_simd()) {
@@ -173,7 +173,7 @@ private:
                         Vec v_from_t = Simd::load(lane, from_t.data()+j);
                         Mask from_neg = Simd::int_nonzero(lane, from_t_neg_inf.data()+j);
                         Mask finite = Simd::cmpneq(lane, v_from_t, v_inf);
-                        // t から j へ負閉路を経由できるか、この行全体が負閉路を経由する
+                        // t から j へ負閉路を経由できる場合か、この行全体が負閉路を経由する場合
                         Mask to_neg = whole_row ? (Mask)(from_neg | finite) : from_neg;
                         if (to_neg) {
                             Simd::int_store(neg_i+j, to_neg, v_one);

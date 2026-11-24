@@ -13,7 +13,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief AVL 木で管理する動的ビットベクトル / 各ノードに最大 127 ビットを詰める
+/// @brief AVL 木で管理する動的ビットベクトル / 各ノードに最大 127 ビットを格納する
 class AVLTreeBitVector {
 private:
     using uint128 = __uint128_t;
@@ -21,7 +21,7 @@ private:
     static constexpr int _W = 127;
     static constexpr int _MAX_HEIGHT = 64;
 
-    // key は bit_len ビットの列で、先頭の要素を最上位ビットに置く
+    // key は bit_len ビットの列で、先頭の要素を最上位ビットに格納する
     struct Node {
         uint128 key;
         int left;
@@ -61,7 +61,7 @@ private:
 
     uint64_t _mask64(const int bit_len) const { return bit_len == 64 ? UINT64_MAX : bit_len == 0 ? 0 : (static_cast<uint64_t>(1) << bit_len) - 1; }
 
-    // 下位 lower_bit_len ビットの上に bit を差し込む
+    // 下位 lower_bit_len ビットの上に bit を挿入する
     uint128 _bit_insert(const uint128 value, const int lower_bit_len, const bool bit) const {
         const uint64_t low = value;
         const uint64_t high = value >> 64;
@@ -289,7 +289,8 @@ private:
         return left;
     }
 
-    // ノード内の k ビット目を削除する。ノードが空になれば直前のノードで置き換える
+    // ノード内の k ビット目を削除する
+    // ノードが空になる場合は直前のノードで置き換える
     void _pop_at_node(array<int, _MAX_HEIGHT> &path, uint64_t directions, int depth, const int node, const int k, const bool removed_bit) {
         Node &target = _nodes[node];
         if (target.bit_len > 1) {
@@ -342,7 +343,7 @@ public:
         _root = 0;
     }
 
-    /// @brief n ビット分のノード領域を予約する
+    /// @brief n ビット分のノードの領域を確保する
     void reserve(const int n) {
         _nodes.reserve((n + _W - 1) / _W + 1);
     }
@@ -353,7 +354,7 @@ public:
     /// @brief 位置 k のビットを削除して返す / O(log n)
     bool pop(const int k) { return _access_pop_and_rank1(k) & 1; }
 
-    /// @brief 位置 k のビットを bit にする / O(log n)
+    /// @brief 位置 k のビットを bit に設定する / O(log n)
     void set(int k, const bool bit) {
         assert(0 <= k && k < len());
         array<int, _MAX_HEIGHT> path;
@@ -676,7 +677,7 @@ public:
         }
     }
 
-    /// @brief 位置 k のビットを bit にし、{変更前のビット, rank1(k)} を返す / O(log n)
+    /// @brief 位置 k のビットを bit に設定し、{変更前のビット, rank1(k)} を返す / O(log n)
     pair<bool, int> _access_set_and_rank1(int k, const bool bit) {
         assert(0 <= k && k < len());
         array<int, _MAX_HEIGHT> path;
@@ -712,7 +713,7 @@ public:
         }
     }
 
-    /// @brief ビット列を標準出力に出す / O(n)
+    /// @brief ビット列を標準出力に出力する / O(n)
     void print() const {
         const vector<uint8_t> a = tovector();
         cout << "[";

@@ -1,8 +1,8 @@
 // 連結性のみの操作列で DyCone と DyConeSum を比較するベンチマーク
-// 同一の操作列を両者に流し、答えの一致検証と実行時間の計測を行う
+// 同一の操作列を両者で実行し、答えが一致することを確認して実行時間を計測する
 //
 // g++ -std=c++20 -O2 -Wall -Wextra -I . -o bench_conn test/graph/dycone/bench_conn.cpp
-// ./bench_conn [n] [q] [seed] [mode]   mode: 0=両方(検証つき) 1=DyCone のみ 2=DyConeSum のみ
+// ./bench_conn [n] [q] [seed] [mode]   mode: 0=両方 (検証つき) 1=DyCone のみ 2=DyConeSum のみ
 
 #include <bits/stdc++.h>
 #include <sys/resource.h>

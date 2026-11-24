@@ -13,8 +13,8 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 点を有効化・無効化できる2次元マンハッタン距離の最近傍探索 / メモリ O(n log(n))
-/// 追加しうる点はすべてコンストラクタで渡す / 点IDは渡した vector の添字 / 同距離ならIDが小さい点を返す
+/// @brief 点の有効化と無効化に対応する 2 次元マンハッタン距離の最近傍探索 / メモリ O(n log(n))
+/// 追加し得る点はすべてコンストラクタで渡す / 点 ID は渡した vector の添字 / 距離が同じ場合は ID が小さい点を返す
 template<typename T>
 class ManhattanNearest {
 public:
@@ -27,7 +27,7 @@ public:
     static constexpr int DIRECTION_COUNT = 4;
 
 private:
-    // x 方向の BIT の各節点に y 順のセグメント木を持ち、y 以上と y 以下の点の最小優先度を求める
+    // x 方向の BIT の節点ごとに y 順のセグメント木を保持し、y 以上と y 以下の点の優先度の最小値を求める
     class PrefixMin2D {
     private:
         static constexpr int INF = numeric_limits<int>::max();
@@ -362,13 +362,13 @@ private:
     }
 
 public:
-    /// @brief 点を持たない状態で構築する
+    /// @brief 点がない状態で構築する
     ManhattanNearest() { build(); }
 
-    /// @brief 点列 ps で構築する / 全点の個数は0から始まる / O(n log(n))
+    /// @brief 点列 ps で構築する / 各点の個数の初期値は 0 / O(n log(n))
     explicit ManhattanNearest(vector<Point> ps) : points(move(ps)) { build(); }
 
-    /// @brief 事前登録した点 id を1個追加する / 同じIDを複数個持てる / O(log^2(n))
+    /// @brief 事前に登録した点 id を 1 個追加する / 同じ ID を複数個保持できる / O(log^2(n))
     void add(int id) {
         int n = points.size();
         if (id < 0 || id >= n) {
@@ -382,7 +382,7 @@ public:
         if (used == n && cached) all = true;
     }
 
-    /// @brief 個数0の全点を1個にする / O(n log(n))
+    /// @brief 個数が 0 の点をすべて 1 個にする / O(n log(n))
     void add_all() {
         int n = points.size();
         trees[EAST].set_all(n, prio, NE, SE, [&](int idx) { return x_rank(idx, EAST); });
@@ -395,7 +395,7 @@ public:
         all = true;
     }
 
-    /// @brief 追加済みの点 id を1個削除する / 個数0なら何もしない / O(log^2(n))
+    /// @brief 追加済みの点 id を 1 個削除する / 個数が 0 の場合は何もしない / O(log^2(n))
     void remove(int id) {
         int n = points.size();
         if (id < 0 || id >= n) {
@@ -410,19 +410,19 @@ public:
         trees[WEST].set(x_rank(id, WEST), id, -1, -1);
     }
 
-    /// @brief 追加済みの全点からマンハッタン距離最小の点のIDを返す / 点がなければ -1 / O(log^2(n))
+    /// @brief 追加済みの点のうちマンハッタン距離が最小の点の ID を返す / 点がない場合は -1 / O(log^2(n))
     int nearest(T x, T y) const {
         return nearest_pair(x, y).first;
     }
 
-    /// @brief 追加済みの全点との最小マンハッタン距離を返す / 点がなければ -1 / O(log^2(n))
+    /// @brief 追加済みの点とのマンハッタン距離の最小値を返す / 点がない場合は -1 / O(log^2(n))
     T nearest_dist(T x, T y) const {
         auto res = nearest_pair(x, y);
         return res.first < 0 ? -1 : res.second;
     }
 
-    /// @brief NE, NW, SW, SE の各閉象限でマンハッタン距離最小の点のIDを返す / 該当なしは -1 / O(log^2(n))
-    /// 象限は境界を含むので、軸上の点やクエリと同じ座標の点は複数方向の答えになりうる
+    /// @brief NE, NW, SW, SE の各閉象限でマンハッタン距離が最小の点の ID を返す / 該当する点がない方向は -1 / O(log^2(n))
+    /// 象限は境界を含むため、軸上の点やクエリと同じ座標の点は複数の方向の答えになり得る
     array<int, DIRECTION_COUNT> nearest_four(T x, T y) const {
         return nearest_four_idx(x, y);
     }

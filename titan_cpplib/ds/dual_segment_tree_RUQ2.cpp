@@ -9,8 +9,8 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 区間代入と1点取得を行う双対セグ木 / 更新値を更新順の配列に持つため空間 O(n + q)、q は更新回数
-/// q が n 以下のとき速いかもしれない
+/// @brief 区間代入と 1 点取得を行う双対セグメント木 / 更新値を更新順の配列に保持するため空間 O(n + q) / q は更新回数
+/// q が n 以下の場合は高速である可能性がある
 template <class T>
 class DualSegmentTreeRUQ {
 private:

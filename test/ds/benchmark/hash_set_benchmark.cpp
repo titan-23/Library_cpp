@@ -1,9 +1,12 @@
 // Example: g++ -std=c++20 -O2 -DNDEBUG -march=native -I. this_file.cpp -o /tmp/hash_set_bench
 // /tmp/hash_set_bench --n 300000
-// 鍵は rnd (乱数) と seq (0, 1, 2, ...) の 2 種類。
-// insert_grow: 容量を指定せずに n 個挿入する。insert_reserved: 容量 n を指定して n 個挿入する。
-// contains_hit / contains_miss: n 要素の集合に q 回問い合わせる。contains_insert_half: 半分が既出の鍵の contains_insert。
-// clear_cycle: clear と n 回の contains_insert を繰り返す。small_sets: 8 要素の集合を作って捨てることを繰り返す。
+// キーは rnd (乱数) と seq (0, 1, 2, ...) の 2 種類である
+// insert_grow: 容量を指定せずに n 個挿入する
+// insert_reserved: 容量 n を指定して n 個挿入する
+// contains_hit / contains_miss: n 要素の集合に q 回問い合わせる
+// contains_insert_half: キーの半分が既出である contains_insert
+// clear_cycle: clear と n 回の contains_insert を繰り返す
+// small_sets: 8 要素の集合の作成と破棄を繰り返す
 #include <chrono>
 #include <cstdint>
 #include <iomanip>

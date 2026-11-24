@@ -16,13 +16,15 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 一様な区間の境界をPatricia木で管理する動的遅延セグメント木 / 管理範囲は[0,N) / 保持ノード数は2^31-1個まで
-/// composition(f,g)はgの後にfを適用する作用で、pow(x,k)はxをk個結合した値を返しpow(x,0)==e()を満たす
+/// @brief 一様な区間の境界を Patricia 木で管理する動的遅延セグメント木 / 管理範囲は [0,N) / 保持できるノード数は 2^31-1 個まで
+/// composition(f,g) は g の後に f を適用する作用を返す
+/// pow(x,k) は x を k 個結合した値を返し、pow(x,0)==e() を満たす
 template <class IndexType, class T, T (*op)(T, T), T (*e)(),
           class F, T (*mapping)(F, T), F (*composition)(F, F), F (*id)(),
           T (*pow)(T, IndexType)>
 class DynamicLazySegmentTree {
-    // ノード番号は0が欠損、奇数が葉、正の偶数が分岐で、右の子の最上位ビットを遅延フラグに使う
+    // ノード番号の 0 はノードなし、奇数は葉、正の偶数は分岐を表す
+    // 右の子の番号の最上位ビットは遅延フラグに使用する
     using NodeId = uint32_t;
     static constexpr NodeId lazy_flag = NodeId(1) << 31;
     static constexpr NodeId none = 0;
@@ -31,7 +33,7 @@ class DynamicLazySegmentTree {
         T data;
         IndexType length;
 
-        /// @brief 葉の区間長と1要素の値を初期化する / O(1)
+        /// @brief 葉の区間長と 1 要素の値を初期化する / O(1)
         Leaf(IndexType length, T&& value) : data(move(value)), length(length) {}
     };
 
@@ -58,7 +60,7 @@ class DynamicLazySegmentTree {
         IndexType split;
         NodeId left, right_and_lazy;
 
-        /// @brief 作用を先頭に置いて分岐情報を初期化する / O(1)
+        /// @brief 作用を先頭に配置した分岐の情報を初期化する / O(1)
         BranchFFirstStorage(IndexType split, T&& value, NodeId left, NodeId right)
             : lazy(id()), data(move(value)), split(split), left(left), right_and_lazy(right) {}
     };
@@ -69,7 +71,7 @@ class DynamicLazySegmentTree {
         F lazy;
         NodeId left, right_and_lazy;
 
-        /// @brief 座標を先頭に置いて分岐情報を初期化する / O(1)
+        /// @brief 座標を先頭に配置した分岐の情報を初期化する / O(1)
         BranchIndexFirstStorage(IndexType split, T&& value, NodeId left, NodeId right)
             : split(split), data(move(value)), lazy(id()), left(left), right_and_lazy(right) {}
     };
@@ -89,14 +91,14 @@ class DynamicLazySegmentTree {
     using BranchIndexFirst = BranchAlternative<BranchIndexFirstStorage>;
     using SmallerAlternative = conditional_t<(sizeof(BranchFFirst) <= sizeof(BranchIndexFirst)),
                                               BranchFFirst, BranchIndexFirst>;
-    // 同サイズなら値を先頭に置く配置を選び、既定型の配置と末尾の余白を維持する
+    // サイズが同じ場合は値を先頭に配置する型を選び、既定の型の配置と末尾のパディングを維持する
     using BranchBase = conditional_t<(sizeof(SmallerAlternative) < sizeof(BranchDataFirst)),
                                      SmallerAlternative, BranchDataFirst>;
 
     struct BranchWithBit : BranchBase {
         unsigned char bit;
 
-        /// @brief 分岐情報と生成後に変わらない分岐ビットを初期化する / O(1)
+        /// @brief 分岐の情報と、生成後に変化しない分岐ビットを初期化する / O(1)
         BranchWithBit(IndexType split, T&& value, NodeId left, NodeId right, unsigned char bit)
             : BranchBase(split, move(value), left, right), bit(bit) {}
     };
@@ -104,7 +106,7 @@ class DynamicLazySegmentTree {
     static constexpr bool cache_branch_bit = sizeof(BranchWithBit) == sizeof(BranchBase);
     using Branch = conditional_t<cache_branch_bit, BranchWithBit, BranchBase>;
 
-    // サイズが64バイトの分岐だけ整列を強め、ノードのサイズは増やさない
+    // サイズが 64 バイトの分岐だけアラインメントを大きくし、ノードのサイズは増やさない
     struct alignas(sizeof(Branch) == 64 ? 64 : alignof(Branch)) StoredBranch : Branch {
         using Branch::Branch;
     };
@@ -124,7 +126,7 @@ class DynamicLazySegmentTree {
     vector<Leaf> leaves;
     vector<StoredBranch> branches;
 
-    /// @brief 番号が一様な区間を表す葉か判定する / O(1)
+    /// @brief ノード p が一様な区間を表す葉か判定する / O(1)
     static bool is_leaf(NodeId p) { return (p & 1) != 0; }
 
     /// @brief 葉の情報への参照を返す / O(1)
@@ -151,13 +153,13 @@ class DynamicLazySegmentTree {
         return branches[(p >> 1) - 1];
     }
 
-    /// @brief Fが等値比較できれば恒等作用か判定し、できなければfalseを返す / O(1)
+    /// @brief F が等値比較できる場合は恒等作用か判定し、できない場合は false を返す / O(1)
     static bool is_identity(const F& f) {
         if constexpr (HasEquality<F>::value) return bool(f == id());
         else return false;
     }
 
-    /// @brief 最上位の1ビットの位置を返す / O(1)
+    /// @brief 値が 1 である最上位のビットの位置を返す / O(1)
     static unsigned char highest_bit(IndexType x) {
         assert(x != 0);
         if constexpr (sizeof(IndexType) <= sizeof(unsigned))
@@ -185,7 +187,7 @@ class DynamicLazySegmentTree {
         } else return highest_bit(node_min ^ b.split);
     }
 
-    /// @brief 一様な区間を表す葉を追加する / 償却O(1)
+    /// @brief 一様な区間を表す葉を追加する / 償却 O(1)
     NodeId new_leaf(IndexType lo, IndexType hi, T value) {
         assert(leaves.size() < lazy_flag / 2);
         const NodeId result = (static_cast<NodeId>(leaves.size()) << 1) | 1;
@@ -207,7 +209,7 @@ class DynamicLazySegmentTree {
         b.data = op(aggregate(b.left), aggregate(right));
     }
 
-    /// @brief 左右の部分木を結ぶ分岐を追加する / 償却O(1)
+    /// @brief 左右の部分木を子とする分岐を追加する / 償却 O(1)
     NodeId new_branch(NodeId left, NodeId right, IndexType left_min, IndexType right_min) {
         assert(branches.size() < lazy_flag / 2 - 1);
         T value = op(aggregate(left), aggregate(right));
@@ -245,7 +247,7 @@ class DynamicLazySegmentTree {
         }
     }
 
-    /// @brief 一様な区間を表す葉を部分木へ挿入し、先頭に入れたときはnode_minも更新する / O(logN)
+    /// @brief 一様な区間を表す葉を部分木へ挿入し、先頭に挿入した場合は node_min も更新する / O(logN)
     NodeId insert_run(NodeId p, IndexType& node_min, Pending added) {
         const IndexType key = added.key;
         if (is_leaf(p)) {
@@ -279,7 +281,7 @@ class DynamicLazySegmentTree {
         return p;
     }
 
-    /// @brief 必要な境界だけを分割して区間更新または点代入を行う / O(logN)
+    /// @brief 必要な境界だけで一様な区間を分割し、区間更新または 1 点の代入を行う / O(logN)
     template <bool Replace>
     NodeId inner_update(NodeId p, IndexType& node_min, IndexType node_hi, IndexType l, IndexType r,
                         const F& f, const T& value, Pending (&added)[2],
@@ -346,7 +348,7 @@ class DynamicLazySegmentTree {
         return p;
     }
 
-    /// @brief 読み取り中に持ち回る作用へノードの遅延作用を合成する / O(1)
+    /// @brief 読み取り中に保持している作用に、ノードの遅延作用を合成する / O(1)
     void carry_lazy(NodeId p, F& carry, bool& has_carry) const {
         const Branch& b = branch(p);
         if (b.has_lazy()) {
@@ -355,8 +357,8 @@ class DynamicLazySegmentTree {
         }
     }
 
-    /// @brief 部分木内の[l,r)を遅延伝播せずに集約する / O(logN)
-    // 呼び出し元へ展開すると遅くなったため展開させない
+    /// @brief 部分木内の [l,r) を遅延伝播せずに集約する / O(logN)
+    // 呼び出し元へインライン展開すると遅くなったため、展開させない
     [[gnu::noinline]]
     T inner_prod(NodeId p, IndexType node_min, IndexType node_hi, IndexType l, IndexType r, F carry, bool has_carry) const {
         while (true) {
@@ -384,7 +386,7 @@ class DynamicLazySegmentTree {
         T left_acc = e(), right_acc = e();
         bool left_done = false, right_done = false;
         while (!(left_done & right_done)) {
-            // 左の子ではl以上を右から結合する
+            // 左の子では l 以上を右から結合する
             if (!left_done) {
                 if (is_leaf(left) || l <= left_min) {
                     T part = is_leaf(left) ? pow(leaf(left).data, left_min + leaf(left).length - l) : branch(left).data;
@@ -405,7 +407,7 @@ class DynamicLazySegmentTree {
                     }
                 }
             }
-            // 右の子ではr未満を左から結合する
+            // 右の子では r 未満を左から結合する
             if (!right_done) {
                 if (is_leaf(right) || right_hi <= r) {
                     T part = is_leaf(right) ? pow(leaf(right).data, r - right_min) : branch(right).data;
@@ -431,7 +433,7 @@ class DynamicLazySegmentTree {
         return op(left_acc, right_acc);
     }
 
-    /// @brief 一様な区間で判定を満たす長さを二分探索する / O(logN)
+    /// @brief 一様な区間で判定が真となる長さを二分探索する / O(logN)
     template <bool Forward, class Pred>
     IndexType search_uniform(const T& key, IndexType length, const T& acc, Pred& pred) const {
         IndexType good = 0, bad = length;
@@ -448,7 +450,7 @@ class DynamicLazySegmentTree {
         return good;
     }
 
-    /// @brief 全体では判定が失敗する部分木から境界の位置を求める / O(logN)
+    /// @brief 全体を結合すると判定が偽となる部分木を下り、境界の位置を求める / O(logN)
     template <bool Forward, class Pred>
     IndexType descend_failed(NodeId p, IndexType node_min, F carry, bool has_carry, T& acc, Pred& pred) const {
         while (!is_leaf(p)) {
@@ -486,7 +488,7 @@ class DynamicLazySegmentTree {
         F carry;
     };
 
-    // Fの既定構築を要求せず、必要な探索状態だけを構築するスタック
+    // F にデフォルトコンストラクタがなくても使用でき、探索状態を必要な分だけ構築するスタック
     class SearchStack {
         alignas(SearchFrame) unsigned char storage[sizeof(SearchFrame) * sizeof(IndexType) * CHAR_BIT];
         unsigned count = 0;
@@ -506,7 +508,7 @@ class DynamicLazySegmentTree {
         /// @brief 探索状態のコピー代入を禁止する
         SearchStack& operator=(const SearchStack&) = delete;
 
-        /// @brief 保存している探索状態を全て破棄する / O(P)、Pは保存している探索状態数
+        /// @brief 保存している探索状態を全て破棄する / O(P)、P は保存している探索状態の数
         ~SearchStack() {
             while (count != 0) entry(--count)->~SearchFrame();
         }
@@ -514,7 +516,7 @@ class DynamicLazySegmentTree {
         /// @brief 探索状態が残っていないか判定する / O(1)
         bool empty() const { return count == 0; }
 
-        /// @brief 未初期化領域に探索状態を構築して追加する / O(1)
+        /// @brief 未初期化の領域に探索状態を構築して追加する / O(1)
         void push(NodeId node, IndexType node_min, const F& carry, bool has_carry) {
             assert(count < sizeof(IndexType) * CHAR_BIT);
             ::new (static_cast<void*>(storage + count * sizeof(SearchFrame))) SearchFrame{node_min, node, has_carry, carry};
@@ -533,7 +535,7 @@ class DynamicLazySegmentTree {
         }
     };
 
-    /// @brief 開始位置まで降り、保存した部分木を順に調べて境界を探す / O(logN)
+    /// @brief 開始位置まで木を下り、保存した部分木を順に調べて境界を探す / O(logN)
     template <bool Forward, class Pred>
     IndexType scan_boundary(NodeId p, IndexType node_min, IndexType node_hi, IndexType boundary,
                             F carry, bool has_carry, T& acc, Pred& pred) const {
@@ -615,16 +617,17 @@ class DynamicLazySegmentTree {
     }
 
 public:
-    // 計算量のNは列の長さ、Mは保持ノード数、M_otherはコピー元またはムーブ元のノード数
-    // 計算量はTとFの演算とpowと述語をO(1)とした値で、ノード追加を含むものは償却計算量
+    // 計算量の N は列の長さ、M は保持しているノード数、M_other はコピー元またはムーブ元のノード数
+    // 計算量は T と F の演算、pow、述語を O(1) とした値である
+    // ノードの追加を含む操作の計算量は償却計算量である
 
-    /// @brief 長さ0の木を構築する / O(1)
+    /// @brief 長さ 0 の木を構築する / O(1)
     DynamicLazySegmentTree() = default;
 
-    /// @brief 全要素が単位元の長さnの木を構築する / O(1)
+    /// @brief 全要素が単位元である長さ n の木を構築する / O(1)
     DynamicLazySegmentTree(IndexType n) : DynamicLazySegmentTree(n, e()) {}
 
-    /// @brief 全要素がinitの長さnの木を構築する / O(1)
+    /// @brief 全要素が init である長さ n の木を構築する / O(1)
     DynamicLazySegmentTree(IndexType n, T init) : n_(n), init_value(move(init)) {
         assert(n >= 0);
         if (n_ > 0) root = new_leaf(0, n_, init_value);
@@ -636,7 +639,7 @@ public:
     /// @brief 現在の内容を独立したコピーで置き換える / O(M+M_other)
     DynamicLazySegmentTree& operator=(const DynamicLazySegmentTree&) = default;
 
-    /// @brief 所有するノードを移し、移動元を空にする / O(1)
+    /// @brief 所有するノードを移動し、移動元を空にする / O(1)
     DynamicLazySegmentTree(DynamicLazySegmentTree&& other)
         : n_(exchange(other.n_, 0)), init_value(move(other.init_value)), root(exchange(other.root, none)),
           leaves(move(other.leaves)), branches(move(other.branches)) {
@@ -644,7 +647,7 @@ public:
         other.branches.clear();
     }
 
-    /// @brief 現在の内容を破棄してノードを移し、移動元を空にする / O(M)
+    /// @brief 現在の内容を破棄してノードを移動し、移動元を空にする / O(M)
     DynamicLazySegmentTree& operator=(DynamicLazySegmentTree&& other) {
         if (this != &other) {
             n_ = exchange(other.n_, 0);
@@ -664,14 +667,14 @@ public:
     /// @brief 保持しているノード数を返す / O(1)
     size_t node_count() const { return leaves.size() + branches.size(); }
 
-    /// @brief ノードプールの容量を予約する / O(M) 再確保しなければO(1)
+    /// @brief ノードプールの容量を予約する / O(M)、再確保しない場合は O(1)
     void reserve_nodes(size_t capacity) {
         assert(capacity < lazy_flag);
         leaves.reserve((capacity + 1) / 2);
         branches.reserve(capacity / 2);
     }
 
-    /// @brief 長さと確保済み容量を維持して構築時の初期値に戻す / O(M)
+    /// @brief 長さと確保済みの容量を維持して構築時の初期値に戻す / O(M)
     void clear() {
         leaves.clear();
         branches.clear();
@@ -681,13 +684,13 @@ public:
     /// @brief 列全体の集約値を返す / O(1)
     T all_prod() const { return root == none ? e() : aggregate(root); }
 
-    /// @brief 半開区間[l,r)の集約値を返す / O(logN)
+    /// @brief 半開区間 [l,r) の集約値を返す / O(logN)
     T prod(IndexType l, IndexType r) const {
         assert(0 <= l && l <= r && r <= n_);
         return l == r ? e() : inner_prod(root, 0, n_, l, r, id(), false);
     }
 
-    /// @brief k番目の値を返す / O(logN)
+    /// @brief k 番目の値を返す / O(logN)
     T get(IndexType k) const {
         assert(0 <= k && k < n_);
         NodeId p = root;
@@ -700,7 +703,7 @@ public:
         return has_carry ? mapping(carry, leaf(p).data) : leaf(p).data;
     }
 
-    /// @brief k番目の値をvalueに置き換える / O(logN)
+    /// @brief k 番目の値を value に置き換える / O(logN)
     void set(IndexType k, T value) {
         assert(0 <= k && k < n_);
         Pending added[2]{};
@@ -710,7 +713,7 @@ public:
         for (unsigned i = 0; i < count; ++i) root = insert_run(root, root_min, added[i]);
     }
 
-    /// @brief 半開区間[l,r)の各要素にfを適用する / O(logN)
+    /// @brief 半開区間 [l,r) の各要素に f を適用する / O(logN)
     void apply(IndexType l, IndexType r, F f) {
         assert(0 <= l && l <= r && r <= n_);
         if (l == r || is_identity(f)) return;
@@ -721,19 +724,19 @@ public:
         for (unsigned i = 0; i < count; ++i) root = insert_run(root, root_min, added[i]);
     }
 
-    /// @brief k番目の値にfを適用する / O(logN)
+    /// @brief k 番目の値に f を適用する / O(logN)
     void apply(IndexType k, F f) {
         assert(0 <= k && k < n_);
         apply(k, k + 1, f);
     }
 
-    /// @brief 全要素にfを適用する / O(1)
+    /// @brief 全要素に f を適用する / O(1)
     void all_apply(F f) {
         if (root != none && !is_identity(f)) apply_node(root, f);
     }
 
-    /// @brief pred(prod(l,r))が真となる最大のrを求める / O(logN)
-    /// pred(e())==trueと、区間を右へ伸ばしたときの判定の単調性が必要
+    /// @brief pred(prod(l,r)) が真となる最大の r を求める / O(logN)
+    /// pred(e())==true であることと、区間を右へ伸ばしたときの判定の単調性が必要である
     template <class Pred>
     IndexType max_right(IndexType l, Pred&& pred) const {
         assert(0 <= l && l <= n_);
@@ -743,8 +746,8 @@ public:
         return inner_max_right(root, 0, l, id(), false, acc, pred);
     }
 
-    /// @brief pred(prod(l,r))が真となる最小のlを求める / O(logN)
-    /// pred(e())==trueと、区間を左へ伸ばしたときの判定の単調性が必要
+    /// @brief pred(prod(l,r)) が真となる最小の l を求める / O(logN)
+    /// pred(e())==true であることと、区間を左へ伸ばしたときの判定の単調性が必要である
     template <class Pred>
     IndexType min_left(IndexType r, Pred&& pred) const {
         assert(0 <= r && r <= n_);
@@ -754,11 +757,11 @@ public:
         return inner_min_left(root, 0, r, id(), false, acc, pred);
     }
 
-    /// @brief 関数ポインタpredを使って右端の境界を探す / O(logN)
+    /// @brief 関数ポインタ pred を使用して右端の境界を探す / O(logN)
     template <bool (*pred)(T)>
     IndexType max_right(IndexType l) const { return max_right(l, pred); }
 
-    /// @brief 関数ポインタpredを使って左端の境界を探す / O(logN)
+    /// @brief 関数ポインタ pred を使用して左端の境界を探す / O(logN)
     template <bool (*pred)(T)>
     IndexType min_left(IndexType r) const { return min_left(r, pred); }
 

@@ -6,8 +6,8 @@
 #include <vector>
 using namespace std;
 namespace titan23 {
-/// @brief 各点の所属、各クラスタの所属点の列、列内の位置を管理する
-/// TITAN_DEBUG を定義すると点とクラスタの番号を検査する
+/// @brief 各点の所属、各クラスタに所属する点の列、列内の位置を管理する
+/// TITAN_DEBUG を定義すると点とクラスタの番号が範囲内かを確認する
 class ClusteringPartition {
 public:
     /// @brief point_count 点を cluster_count 個のクラスタに分ける所属 labels から構築する / O(n + k)
@@ -47,7 +47,7 @@ public:
     }
     /// @brief 全点の所属を返す / O(1)
     const vector<int>& labels() const { return labels_; }
-    /// @brief クラスタ cluster の所属点の列を返す / 順序は更新で変わる / O(1)
+    /// @brief クラスタ cluster に所属する点の列を返す / 順序は更新で変化する / O(1)
     const vector<int>& members(int cluster) const {
 #ifdef TITAN_DEBUG
         check_cluster(cluster);
@@ -55,7 +55,7 @@ public:
         return members_[cluster];
     }
 
-    /// @brief 点 point を target_cluster へ移す / O(1)
+    /// @brief 点 point を target_cluster へ移動する / O(1)
     void move_point(int point, int target_cluster) {
 #ifdef TITAN_DEBUG
         check_point(point);
@@ -92,8 +92,9 @@ public:
         position_in_cluster_[point2] = position1;
     }
 
-    /// @brief point1 を point2 のクラスタへ、point2 を point3 のクラスタへ、point3 を point1 のクラスタへ移す / O(1)
-    /// 3 点の所属は互いに異なること。2 点の所属が同じなら invalid_argument を投げる
+    /// @brief point1 を point2 のクラスタへ、point2 を point3 のクラスタへ、point3 を point1 のクラスタへ移動する / O(1)
+    /// 3 点の所属は互いに異なること
+    /// 2 点の所属が同じなら invalid_argument を投げる
     void cycle_points(int point1, int point2, int point3) {
 #ifdef TITAN_DEBUG
         check_point(point1);

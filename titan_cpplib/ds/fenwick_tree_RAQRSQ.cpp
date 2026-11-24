@@ -7,7 +7,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 区間加算と区間和を扱う Fenwick 木 / 定数倍が軽い
+/// @brief 区間加算と区間和を扱う Fenwick 木 / 定数倍が小さい
 template<typename T>
 class FenwickTreeRAQRSQ {
 private:

@@ -1,5 +1,5 @@
 /// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/gomi/gomi_pseg.cpp
-// 不採用の実装。葉木ではないため
+// 葉木ではないため不採用とした実装
 #include <iostream>
 #include <vector>
 #include "titan_cpplib/others/print.cpp"
@@ -13,7 +13,7 @@ namespace titan23 {
 template<class T, T (*op)(T, T), T (*e)()>
 class PersistentSegmentTree {
 public:
-    /// @brief set が根からの経路を積む作業用スタック
+    /// @brief set が根からの経路上のノードを積む作業用スタック
     static FastStack<int> path;
 
     /// @brief 全ての木が共有するノード領域
@@ -52,7 +52,7 @@ public:
             return idx;
         }
 
-        /// @brief 値 key を持つノードを作成して番号を返す
+        /// @brief 値 key を保持するノードを作成して番号を返す
         int new_node(const T key) {
             if (tree.size() > ptr) {
                 tree[ptr] = {0, 0};
@@ -76,12 +76,12 @@ public:
         }
 
         /// @brief 確保済み領域を再利用できる状態に戻す / O(1)
-        /// この領域を使う既存の木は無効になる
+        /// この領域を使用する既存の木は無効になる
         void reset() {
             ptr = 1;
         }
 
-        /// @brief 確保済み領域がほぼ埋まっているか判定する / O(1)
+        /// @brief 確保済み領域の空きがほとんどないか判定する / O(1)
         bool almost_full() const {
             return (double)ptr > max(1.0, cap*0.99);
         }
@@ -241,7 +241,7 @@ private:
         cout << "]" << endl;
     }
 
-    /// @brief from の [l, r) を自身の [l, r) に写した木を返す / 自身は変更しない
+    /// @brief from の [l, r) を自身の [l, r) にコピーした木を返す / 自身は変更しない
     PSEG copy_from(PSEG &from, int l, int r) {
         assert(0 <= l && l <= r && r <= len());
         auto dfs = [&] (auto &&dfs, int fr, int to, int left, int right) -> int {
@@ -252,7 +252,7 @@ private:
             int mid = (left + right) / 2;
             ma.tree[to].left = dfs(dfs, ma.tree[fr].left,  ma.tree[to].left,  left, mid);
             if (l <= mid && mid < r) {
-                // data と size は後の update で直す
+                // data と size は後の update で求め直す
                 ma.data[to].key = ma.data[fr].key;
             }
             ma.tree[to].right = dfs(dfs, ma.tree[fr].right, ma.tree[to].right, mid+1, right);
@@ -279,7 +279,7 @@ private:
         return os;
     }
 
-    /// @brief 確保済み領域を初期化して tree を作り直す / O(n)
+    /// @brief 確保済み領域を初期化して tree を再構築する / O(n)
     /// 同じ領域を共有する他の木は無効になる
     static void rebuild(PSEG &tree) {
         PSEG::ma.reset();

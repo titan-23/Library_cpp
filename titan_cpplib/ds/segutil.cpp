@@ -12,7 +12,7 @@ using namespace std;
 namespace titan23 {
 namespace segment_tree {
 
-// 以下の op_* と e_* は、各モノイドの演算と単位元
+// 以下の op_* と e_* は各モノイドの演算と単位元である
 template<typename T> T op_max(T s, T t) { return max(s, t); }
 template<typename T> T e_max() { return numeric_limits<T>::lowest(); }
 
@@ -40,7 +40,7 @@ template<typename T> pair<T, int> e_min_idx() { return {numeric_limits<T>::max()
 template<typename T> pair<T, int> op_max_idx(pair<T, int> s, pair<T, int> t) { return tie(t.first, s.second) < tie(s.first, t.second) ? s : t; }
 template<typename T> pair<T, int> e_max_idx() { return {numeric_limits<T>::lowest(), numeric_limits<int>::max()}; }
 
-// 要素は (値, 個数) の組
+// 要素は (値, 個数) の組である
 template<typename T> pair<T, int> op_min_cnt(pair<T, int> s, pair<T, int> t) {
     if (s.first != t.first) return s.first < t.first ? s : t;
     return {s.first, s.second + t.second};
@@ -103,7 +103,7 @@ using SegMin = titan23::SegmentTree<T, op_min<T>, e_min<T>>;
 template<typename T>
 using SegSum = titan23::SegmentTree<T, op_sum<T>, e_sum<T>>;
 
-/// @brief 最大部分配列和のセグメント木 / prod(l, r).ans が区間 [l, r) の最大部分配列和
+/// @brief 最大部分配列和のセグメント木 / prod(l, r).ans が区間 [l, r) の最大部分配列和である
 template<typename T>
 using SegMaxSubSum = titan23::SegmentTree<MaxSubSum<T>, op_max_sub_sum<T>, e_max_sub_sum<T>>;
 
@@ -119,19 +119,19 @@ using SegOr = titan23::SegmentTree<T, op_or<T>, e_or<T>>;
 template<typename T>
 using SegAnd = titan23::SegmentTree<T, op_and<T>, e_and<T>>;
 
-/// @brief 区間 min と、その値を取る最小の添字を返す / 要素は {値, 添字} で持つ
+/// @brief 区間 min と、その値を取る最小の添字を返す / 要素は {値, 添字} で保持する
 template<typename T>
 using SegMinIdx = titan23::SegmentTree<pair<T, int>, op_min_idx<T>, e_min_idx<T>>;
 
-/// @brief 区間 max と、その値を取る最小の添字を返す / 要素は {値, 添字} で持つ
+/// @brief 区間 max と、その値を取る最小の添字を返す / 要素は {値, 添字} で保持する
 template<typename T>
 using SegMaxIdx = titan23::SegmentTree<pair<T, int>, op_max_idx<T>, e_max_idx<T>>;
 
-/// @brief 区間 min とその個数を返す / 要素は {値, 1} で持つ
+/// @brief 区間 min とその個数を返す / 要素は {値, 1} で保持する
 template<typename T>
 using SegMinCnt = titan23::SegmentTree<pair<T, int>, op_min_cnt<T>, e_min_cnt<T>>;
 
-/// @brief 区間 max とその個数を返す / 要素は {値, 1} で持つ
+/// @brief 区間 max とその個数を返す / 要素は {値, 1} で保持する
 template<typename T>
 using SegMaxCnt = titan23::SegmentTree<pair<T, int>, op_max_cnt<T>, e_max_cnt<T>>;
 

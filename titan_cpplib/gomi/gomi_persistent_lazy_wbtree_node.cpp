@@ -10,7 +10,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 遅延作用と区間反転に対応する永続重み平衡木 / 0-indexed / ノードは shared_ptr で持つ
+/// @brief 遅延作用と区間反転に対応する永続重み平衡木 / 0-indexed / ノードは shared_ptr で保持する
 template <class T,
             class F,
             T (*op)(T, T),
@@ -309,7 +309,7 @@ class PersistentLazyWBTree {
         return _new(_merge_with_root(s, new_node, t));
     }
 
-    /// @brief 位置 k の値を削除した列と削除値を返す
+    /// @brief 位置 k の値を削除した列と、削除した値を返す
     pair<MyPersistentLazyWBTree, T> pop(int k) {
         assert(0 <= k && k < len());
         auto [s_, t] = _split_node(this->root, k+1);
@@ -427,7 +427,7 @@ class PersistentLazyWBTree {
         return root ? root->size : 0;
     }
 
-    /// @brief 部分木の大きさと平衡条件を検査し、木の高さを標準エラー出力に出す / O(n)
+    /// @brief 部分木の大きさと平衡条件を確認し、木の高さを標準エラー出力に出力する / O(n)
     void check() const {
         auto rec = [&] (auto &&rec, NodePtr node) -> pair<int, int> {
             int ls = 0, rs = 0;

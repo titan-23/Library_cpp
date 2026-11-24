@@ -162,7 +162,7 @@ public:
         _update_double(pnode, node);
     }
 
-    /// @brief 根から v までのパスを1本の splay 木にまとめる / 返り値は lca で使う
+    /// @brief 根から v までのパスを 1 本の splay 木にまとめる / 返り値は lca で使用する
     int expose(const int v) {
         int pre = v;
         while (arr[v<<2|2] != n) {
@@ -260,7 +260,7 @@ public:
         return size[v];
     }
 
-    /// @brief u と v が別の木なら辺 (u, v) を張って true を返す / 同じ木なら false
+    /// @brief u と v が別の木にある場合は辺 (u, v) を張って true を返す / 同じ木にある場合は false を返す
     bool merge(const int u, const int v) {
         if (same(u, v)) return false;
         evert(u);
@@ -271,7 +271,7 @@ public:
         return true;
     }
 
-    /// @brief u を根にして v と親を結ぶ辺を切り、true を返す / 別の木なら false
+    /// @brief u を根にして v と親を結ぶ辺を切り、true を返す / u と v が別の木にある場合は false を返す
     bool split(const int u, const int v) {
         if (!same(v, u)) return false;
         evert(u);
@@ -279,7 +279,7 @@ public:
         return true;
     }
 
-    /// @brief s から t へのパスで k 番目の頂点を返す / 0-indexed / 範囲外なら -1
+    /// @brief s から t へのパスで k 番目の頂点を返す / 0-indexed / 範囲外の場合は -1 を返す
     int path_kth_elm(int s, int t, int k) {
         evert(s);
         expose(t);

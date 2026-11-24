@@ -13,13 +13,13 @@ def visualize_replica_scores(csv_file):
         sys.exit(1)
 
     try:
-        # 1列目: time_ms, 2列目以降: 各レプリカのスコア
+        # 1 列目: time_ms, 2 列目以降: 各レプリカのスコア
         data = np.loadtxt(csv_file, delimiter=",", skiprows=1)
     except Exception as e:
         print(f"Error: データの読み込みに失敗しました。詳細: {e}")
         sys.exit(1)
 
-    # データが1行しかない場合の次元補正
+    # データが 1 行しかない場合は 2 次元配列に変換する
     if data.ndim == 1:
         data = data.reshape(1, -1)
 
@@ -28,7 +28,7 @@ def visualize_replica_scores(csv_file):
 
     fig, ax = plt.subplots(figsize=(12, 8))
 
-    # カラーマップの設定（レプリカ数が多い場合でも見分けやすいように tab20 を使用）
+    # カラーマップの設定 / レプリカ数が多い場合でも見分けやすいように tab20 を使用する
     # cmap = plt.get_cmap("tab20")
 
     for i in range(num_replicas):
@@ -49,10 +49,10 @@ def visualize_replica_scores(csv_file):
     # ax.legend(bbox_to_anchor=(1.01, 1), loc="upper left")
     ax.grid(True, linestyle="--", alpha=0.6)
 
-    # 序盤のスコアが悪すぎて終盤の変化が見えない場合、Y軸の表示範囲を絞るための設定
-    # 必要に応じて以下のコメントアウトを外して使用してください。
+    # 序盤のスコアが悪すぎて終盤の変化が見えない場合に、Y 軸の表示範囲を絞るための設定
+    # 必要に応じて以下のコメントアウトを解除して使用する
     # y_min = np.min(data[:, 1:])
-    # y_max = np.percentile(data[:, 1:], 90) # 上位10%の悪いスコアを描画範囲から除外
+    # y_max = np.percentile(data[:, 1:], 90) # 上位 10% の悪いスコアを描画範囲から除外する
     # ax.set_ylim(y_min, y_max)
 
     plt.tight_layout()

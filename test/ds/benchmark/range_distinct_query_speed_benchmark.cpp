@@ -13,8 +13,8 @@ using namespace std;
 
 // g++ -std=c++17 -O3 -DNDEBUG -march=native -I. test/ds/benchmark/range_distinct_query_speed_benchmark.cpp -o /tmp/rdq_bench
 // /tmp/rdq_bench [static|point|dynamic|edit] [n=300000] [q=300000] [sigma=n] [block=512]
-// point/dynamic は同じ一点変更・区間クエリ列
-// edit は挿入・削除も混ぜる
+// point と dynamic は一点変更と区間クエリからなる同じクエリ列を使用する
+// edit は挿入と削除も含む
 
 using Clock = chrono::steady_clock;
 

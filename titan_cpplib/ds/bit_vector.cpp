@@ -10,18 +10,18 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief rank と select を扱う静的なビット列 / set の後に build してから問い合わせる
+/// @brief rank と select を扱う静的なビット列 / set の後に build を呼び出してからクエリを実行する
 class BitVector {
 private:
     using u64 = unsigned long long;
 
-    // 64 bit ごとに、ビット列とその直前までの 1 の個数を並べて持つ
+    // 64 bit ごとにビット列とその直前までの 1 の個数を組にして保持する
     struct Block {
         u64 bits;
         u64 acc;
     };
 
-    // select の二分探索の範囲を絞るため、_SELECT_SAMPLE 個ごとの 1 (0) を含むブロックを覚える
+    // select の二分探索の範囲を絞るため、1 と 0 のそれぞれについて _SELECT_SAMPLE 個ごとの出現位置を含むブロックを記録する
     static constexpr int _SELECT_SAMPLE = 256;
 
     int n, bsize;
@@ -60,12 +60,12 @@ private:
     }
 
 public:
-    /// @brief 長さ 0 のビット列を作る
+    /// @brief 長さ 0 のビット列を構築する
     BitVector() : n(0), bsize(0), data(1, {0, 0}) {}
-    /// @brief 全ビットが 0 の長さ n のビット列を作る
+    /// @brief 全ビットが 0 の長さ n のビット列を構築する
     BitVector(const int n) : n(n), bsize((n+63)>>6), data(bsize+1, {0, 0}) {}
 
-    /// @brief i 番目のビットが bit_of(i) である長さ n のビット列を作り、build まで済ませる / O(n)
+    /// @brief i 番目のビットが bit_of(i) である長さ n のビット列を構築し、build も実行する / O(n)
     template<class F>
     BitVector(const int n, F bit_of) : BitVector(n) {
         for (int i = 0; i < bsize; ++i) {
@@ -78,12 +78,12 @@ public:
         build();
     }
 
-    /// @brief k 番目のビットを 1 にする / 問い合わせの前に build が必要 / O(1)
+    /// @brief k 番目のビットを 1 にする / クエリの前に build が必要 / O(1)
     void set(const int k) {
         data[k>>6].bits |= (1ull) << (k & 63);
     }
 
-    /// @brief rank と select のための累積値と索引を作る / O(n)
+    /// @brief rank と select で使用する累積値と索引を構築する / O(n)
     void build() {
         for (int i = 0; i < bsize; ++i) {
             data[i+1].acc = data[i].acc + popcount(data[i].bits);
@@ -98,23 +98,23 @@ public:
         return (data[k>>6].bits >> (k&63)) & 1;
     }
 
-    /// @brief [0, r) に含まれる 0 の個数を返す / O(1)
+    /// @brief 区間 [0, r) に含まれる 0 の個数を返す / O(1)
     int rank0(const int r) const {
         return r - rank1(r);
     }
 
-    /// @brief [0, r) に含まれる 1 の個数を返す / O(1)
+    /// @brief 区間 [0, r) に含まれる 1 の個数を返す / O(1)
     int rank1(const int r) const {
         const Block &b = data[r>>6];
         return b.acc + popcount(b.bits & ((1ull << (r & 63)) - 1));
     }
 
-    /// @brief [0, r) に含まれる v の個数を返す / O(1)
+    /// @brief 区間 [0, r) に含まれる v の個数を返す / O(1)
     int rank(const int r, const bool v) const {
         return v ? rank1(r) : rank0(r);
     }
 
-    /// @brief k 番目の 0 の位置を返す / k は 0 から数え、無ければ -1 / O(log n)
+    /// @brief k 番目の 0 の位置を返す / k は 0 始まりとし、存在しない場合は -1 を返す / O(log n)
     int select0(int k) const {
         if (k < 0 || rank0(n) <= k) return -1;
         // 直前までの 0 の個数が k 以下である最後のブロックを探す
@@ -122,14 +122,14 @@ public:
         return 64 * l + select64(~data[l].bits, k - _zeros_before_block(l));
     }
 
-    /// @brief k 番目の 1 の位置を返す / k は 0 から数え、無ければ -1 / O(log n)
+    /// @brief k 番目の 1 の位置を返す / k は 0 始まりとし、存在しない場合は -1 を返す / O(log n)
     int select1(int k) const {
         if (k < 0 || rank1(n) <= k) return -1;
         const int l = _select_block(hint1, k, [&](const int m) { return _ones_before_block(m); });
         return 64 * l + select64(data[l].bits, k - _ones_before_block(l));
     }
 
-    /// @brief k 番目の v の位置を返す / k は 0 から数え、無ければ -1 / O(log n)
+    /// @brief k 番目の v の位置を返す / k は 0 始まりとし、存在しない場合は -1 を返す / O(log n)
     int select(const int k, const int v) const {
         return v ? select1(k) : select0(k);
     }

@@ -9,7 +9,7 @@ using namespace std;
 // SegmentTree2D
 namespace titan23 {
 
-/// @brief 2 次元セグメント木 / op は可換であること / 空間 O(hw)
+/// @brief 2 次元セグメント木 / op は可換であることを前提とする / 空間計算量は O(hw)
 template <class T, T (*op)(T, T), T (*e)()>
 class SegmentTree2D {
 private:
@@ -19,7 +19,7 @@ private:
 
 public:
     SegmentTree2D() {}
-    /// @brief h × w で構築する / 初期値 e() / O(hw)
+    /// @brief h × w で構築する / 初期値は e() / O(hw)
     SegmentTree2D(int h, int w) : h(h), w(w) {
         hs = 1<<bit_length(h);
         ws = 1<<bit_length(w);

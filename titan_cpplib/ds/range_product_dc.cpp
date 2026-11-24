@@ -8,7 +8,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 静的な列の区間積クエリをまとめて受け取り、分割統治で答える
+/// @brief 静的な列の区間積クエリをまとめて受け取り、分割統治で答えを求める
 /// 参考: https://maspypy.com/分割統治による静的列の区間積クエリ
 template<class T, T (*op)(T, T), T (*e)()>
 class RangeProductDC {

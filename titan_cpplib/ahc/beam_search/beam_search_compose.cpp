@@ -36,10 +36,10 @@ private:
     // 1 ターン内の try_op 呼び出し回数
     int explored_per_turn;
 
-    /// @brief Action 合成の効果を測るための探索カウンタ
+    /// @brief Action 合成の効果を計測するための探索カウンタ
     long long cnt_apply, cnt_rollback;             // 実行した apply_op と rollback の回数
     long long cnt_apply_ghost, cnt_rollback_ghost; // ghost のため省略した回数
-    long long cnt_compose_align;                   // 状態調整に使った apply_op と rollback の合計
+    long long cnt_compose_align;                   // 状態調整に使用した apply_op と rollback の合計
     long long cnt_tour_total, cnt_cand_total;      // tour の要素数と生存候補数の累計
 
     /// @brief Action 合成に関する計測値を出力する
@@ -54,7 +54,7 @@ private:
         cerr << "  cand_total (sum|cand|)=" << cnt_cand_total << endl;
     }
 
-    /// @brief 世代番号とスロット番号を詰めた Action の識別子
+    /// @brief 世代番号とスロット番号を 1 つの整数に格納した Action の識別子
     using ActionId = uint64_t;
     static constexpr int SLOT_BITS = 24;
     static constexpr ActionId SLOT_MASK = (ActionId(1) << SLOT_BITS) - 1;
@@ -66,7 +66,7 @@ private:
         return gblock[(size_t)(id >> SLOT_BITS)][(size_t)(id & SLOT_MASK)];
     }
 
-    /// @brief 世代ブロック内で ghost となった Action の印 / ghost の Action は参照せず、apply_op と rollback もしない
+    /// @brief 世代ブロック内で ghost となった Action を表すフラグ / ghost の Action は参照せず、apply_op と rollback も行わない
     vector<vector<uint8_t>> gblock_ghost;
     vector<vector<uint8_t>> ghost_slab_pool;
     /// @brief 直前世代の葉に対応する ActionId を保持する
@@ -79,7 +79,7 @@ private:
         gblock_ghost[(size_t)(id >> SLOT_BITS)][(size_t)(id & SLOT_MASK)] = 1;
     }
 
-    /// @brief 子が 1 つだけの親の Action を子へ合成し、親を ghost にする / cand は parent_leaf 順に整列済みであること
+    /// @brief 子が 1 つだけの親の Action を子へ合成し、親を ghost にする / cand は parent_leaf 順にソート済みであること
     void compose_pass(int turn, State& s) {
         int n = (int)cand.size();
         int i = 0;
@@ -114,7 +114,7 @@ private:
         }
     }
 
-    /// @brief 現世代の ActionId を次ターンの親葉順で保存する
+    /// @brief 現世代の ActionId を次ターンで親となる葉の順に保存する
     void snapshot_leaf_actions() {
         int n = (int)cand.size();
         prev_leaf_action_ids.resize(n);
@@ -124,7 +124,7 @@ private:
         }
     }
 
-    /// @brief 生存候補 1 つを表す / Action は世代ブロック内の位置で持つ
+    /// @brief 生存候補 1 つを表す / Action は世代ブロック内の位置で保持する
     struct CandIdx {
         int parent_leaf;
         ScoreType score;
@@ -197,7 +197,7 @@ private:
         }
     }
 
-    /// @brief 確定した接頭辞と未確定の trace から終了経路を構築する
+    /// @brief 確定した接頭辞と未確定の trace から完成解までの経路を構築する
     void build_best_path(int upto) {
         best_finished_path = result_prefix;
         for (int k = freed_to + 1; k <= upto; ++k) {
@@ -205,7 +205,7 @@ private:
         }
     }
 
-    /// @brief 探索状態を根へ戻し、返却経路を適用した最終状態を構築する / ghost は適用されていないので戻さない
+    /// @brief 探索状態を根へ戻し、返り値の Action 列を適用した最終状態を構築する / ghost は適用されていないため戻さない
     template<bool materialize_final_state>
     unique_ptr<State> build_final_state(State& state, const vector<Action>& result_actions, int current_depth) {
         if constexpr (materialize_final_state) {
@@ -320,7 +320,7 @@ private:
         snapshots.push_back({turn_label, vector<int>(survived.begin(), survived.end())});
     }
 
-    /// @brief 親葉までの差分経路を tour から復元し、深さ d の Action を dst_base[d] に書く / 未復元の浅い区間だけを写し、共有接頭辞は保つ
+    /// @brief 親の葉までの差分経路を tour から復元し、深さ d の Action を dst_base[d] に格納する / 未復元の浅い区間だけをコピーし、共有接頭辞は変更しない
     template<class It>
     inline void copy_tour_path(int parent_leaf, int leaf_end, It dst_base) {
         int written_floor = INT_MAX; // 復元済み区間の最小深さ
@@ -341,7 +341,7 @@ private:
 
 public:
     /// @brief ビームサーチを実行し、探索結果を返す / materialize_final_state が true なら最終状態も構築する
-    /// record_history が true のとき、履歴を JSON で history_file に書き出す
+    /// record_history が true のとき、履歴を JSON で history_file に出力する
     template<bool materialize_final_state=true>
     Result search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
         if (param.max_turn <= 0 || param.beam_width <= 0) {
@@ -442,7 +442,7 @@ public:
             explored_per_turn = 0;
 
             int li = leaf.size() - 1;
-            int gL = INT_MAX; // 全候補の LCA の深さ。世代ブロックを解放する基準に使う
+            int gL = INT_MAX; // 全候補の LCA の深さ / 世代ブロックを解放する基準に使用する
             int dP_state = eff_depth.back();
 
             if (!cand.empty()) {

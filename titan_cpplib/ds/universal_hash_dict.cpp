@@ -11,8 +11,8 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief u64 キーの連鎖法ハッシュ表 / erase は持たない
-/// USE_HASH_FUNC=false では同じ bucket に k 個集中すると検索が O(k) になる
+/// @brief u64 キーの連鎖法ハッシュ表 / erase は提供しない
+/// USE_HASH_FUNC=false では同じ bucket に k 個のキーが集中すると検索が O(k) になる
 template<typename V, bool USE_HASH_FUNC=true>
 class UniversalHashDict {
 private:
@@ -51,10 +51,10 @@ private:
     }
 
 public:
-    /// @brief 空の表を作る
+    /// @brief 空の表を構築する
     UniversalHashDict() : UniversalHashDict(0) {}
 
-    /// @brief n 要素を入れる前提で領域を確保する / O(n)
+    /// @brief n 要素を格納する前提で領域を確保する / O(n)
     explicit UniversalHashDict(int n) {
         assert(n >= 0);
         while (cap < n * 2) cap *= 2;
@@ -114,7 +114,7 @@ public:
         return dat.second ? nodes[dat.first].val : V{};
     }
 
-    /// @brief get_pos の結果 dat を使い、key の値を val にする / 償却 O(1)
+    /// @brief get_pos の結果 dat を使用して key の値を val に設定する / 償却 O(1)
     void inner_set(const pair<int, bool> &dat, const u64 key, V val) {
         if (dat.second) {
             nodes[dat.first].val = move(val);
@@ -129,7 +129,7 @@ public:
         head[b] = sz++;
     }
 
-    /// @brief key の値を val にする / 期待償却 O(1)
+    /// @brief key の値を val に設定する / 期待償却 O(1)
     void set(const u64 key, V val) {
         const auto dat = get_pos(key);
         inner_set(dat, key, move(val));
@@ -142,7 +142,7 @@ public:
         else inner_set(dat, key, val);
     }
 
-    /// @brief val が今の値より小さければ更新して true を返す / key がなければ val で追加して false を返す / 期待償却 O(1)
+    /// @brief val が現在の値より小さければ更新して true を返す / key がなければ val で追加して false を返す / 期待償却 O(1)
     bool contains_set(const u64 key, const V val) {
         const auto dat = get_pos(key);
         if (!dat.second) {
@@ -170,7 +170,7 @@ public:
         return res;
     }
 
-    /// @brief すべての要素を削除する / bucket 数は保つ / O(size)
+    /// @brief すべての要素を削除する / bucket 数は維持する / O(size)
     void clear() {
         if (empty()) return;
         for (const Node &node : nodes) head[bucket(node.key)] = NONE;

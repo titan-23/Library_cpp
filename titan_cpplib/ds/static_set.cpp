@@ -21,10 +21,10 @@ private:
 public:
     StaticSet() : missing(-1), n(0) {}
 
-    /// @brief 空の集合を構築する / missing は要素に使わない値 / O(1)
+    /// @brief 空の集合を構築する / missing は要素に使用しない値 / O(1)
     StaticSet(T missing) : missing(missing), n(0) {}
 
-    /// @brief 列 a から構築する / missing は要素に使わない値 / O(nlogn)
+    /// @brief 列 a から構築する / missing は要素に使用しない値 / O(nlogn)
     StaticSet(const vector<T> &a, T missing) : data(a), missing(missing) {
         sort(data.begin(), data.end());
         data.erase(unique(data.begin(), data.end()), data.end());

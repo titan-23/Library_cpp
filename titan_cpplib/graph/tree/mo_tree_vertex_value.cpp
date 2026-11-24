@@ -5,7 +5,7 @@
 
 namespace titan23 {
 
-/// @brief パス上の頂点の値を出し入れしてパスクエリを処理する木上の Mo / add と del には頂点番号でなく値を渡す
+/// @brief パス上の頂点の値を追加、削除してパスクエリを処理する木上の Mo / add と del には頂点番号ではなく値を渡す
 template<typename T>
 class MoTreeVertexValue : public MoTreeBase<true> {
 private:
@@ -21,7 +21,7 @@ public:
         : MoTreeBase<true>(G, root), values(values) {}
 
     /// @brief 全クエリを処理する / O(N√Q + QlogQ + (N+Q)α(N))
-    /// add(x), del(x): 頂点値 x の追加・削除 / out(i): クエリ i の回答
+    /// add(x), del(x): 頂点の値 x の追加・削除 / out(i): クエリ i の回答
     template<typename ADD, typename DEL, typename OUT>
     void run(ADD &&add, DEL &&del, OUT &&out) {
         auto noop = [] (int) {};

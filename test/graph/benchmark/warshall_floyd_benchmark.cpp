@@ -1,6 +1,8 @@
 // Example: g++ -std=c++17 -O2 -DNDEBUG -march=native -I. this_file.cpp -o /tmp/wf_bench
 // /tmp/wf_bench --n 600 --q 600
-// build: 密なランダムグラフの構築。build_neg: 負閉路を多く含むグラフの構築。add_edge: 構築後に q 本の辺を追加する。
+// build: 密なランダムグラフの構築
+// build_neg: 負閉路を多く含むグラフの構築
+// add_edge: 構築後に q 本の辺を追加する
 #include <chrono>
 #include <cstdint>
 #include <iomanip>
@@ -37,7 +39,8 @@ Options parse_options(int argc, char **argv) {
     return o;
 }
 
-// 各頂点から out_degree 本の辺を張る。負の辺は negative_percent % の割合で混ぜる
+// 各頂点から out_degree 本の辺を張る
+// 負の辺は negative_percent % の割合で含める
 std::vector<Edge> random_edges(std::mt19937_64 &rng, const int n, const int out_degree, const int negative_percent) {
     std::vector<Edge> edges;
     for (int u = 0; u < n; ++u) {

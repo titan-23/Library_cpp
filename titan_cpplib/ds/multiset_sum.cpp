@@ -10,11 +10,11 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 総和を求められる多重集合 / AVL 木で実装する
+/// @brief 総和を求めることができる多重集合 / AVL 木で実装する
 template<typename T>
 class MultisetSum {
 public:
-    // key を val 個持ち、data に部分木の総和、valsize に部分木の要素数を持つ
+    // key を val 個保持し、data に部分木の総和、valsize に部分木の要素数を格納する
     class MultisetSumNode {
     public:
         using MultisetSumNodePtr = MultisetSumNode*;
@@ -265,7 +265,7 @@ public:
         return true;
     }
 
-    /// @brief key を最大 val 個削除する / key があることが前提 / O(log n)
+    /// @brief key を最大 val 個削除する / key があることを前提とする / O(log n)
     void remove(const T &key, int val=1) {
         MultisetSumNodePtr node = find_key(key);
         assert(node);
@@ -383,7 +383,7 @@ public:
         return k;
     }
 
-    /// @brief 小さい順に取るとき、総和が w を超えない最大の個数を返す / O(log n)
+    /// @brief 小さい順に要素を選ぶとき、総和が w を超えない最大の個数を返す / O(log n)
     long long bisect_left_sum(T w) const {
         long long s = 0;
         MultisetSumNodePtr node = root;
@@ -438,12 +438,12 @@ public:
         return s;
     }
 
-    /// @brief 全要素の総和を返す / 空でないことが前提 / O(1)
+    /// @brief 全要素の総和を返す / 空でないことを前提とする / O(1)
     T all_prod() const {
         return root->data;
     }
 
-    /// @brief 昇順 k 番目の要素を 1 個削除して返す / 0 <= k < len() が前提 / O(log n)
+    /// @brief 昇順 k 番目の要素を 1 個削除して返す / 0 <= k < len() を前提とする / O(log n)
     T pop(int k=-1) {
         MultisetSumNodePtr node = find_kth(k);
         T key = node->key;
@@ -505,7 +505,7 @@ public:
         cout << "}" << endl;
     }
 
-    /// @brief 木の不変条件を assert で検査する / デバッグ用
+    /// @brief 木の不変条件を assert で確認する / デバッグ用
     void check() const {
         if (!root) {
         // cout << "height=0" << endl;

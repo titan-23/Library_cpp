@@ -50,7 +50,7 @@ private:
     static constexpr u64 NTT_INV = 554580198;
     static constexpr size_t NTT_MAX = size_t{1} << 23;
 
-    // digits_ は絶対値の各桁を下位から持ち、値が 0 なら空
+    // digits_ は絶対値の各桁を下位から順に格納し、値が 0 なら空
     int sign_ = 0;
     Digits digits_;
 
@@ -106,7 +106,7 @@ private:
         return res;
     }
 
-    // a >= b が前提
+    // a >= b を前提とする
     static Digits sub_abs(const Digits &a, const Digits &b) {
         assert(cmp_abs(a, b) >= 0);
         Digits res(a.size());
@@ -268,7 +268,7 @@ private:
         const cpp_int y = to_cpp(b.digits_);
         const cpp_int g = boost::multiprecision::gcd(x, y);
         if (g <= numeric_limits<u64>::max()) return BigInt(g.convert_to<u64>());
-        // g が大きいときは、g より小さい商 x / g を変換し、a をそれで割って g を得る
+        // g が大きいときは g より小さい商 x / g を変換し、a をそれで割って g を得る
         if (boost::multiprecision::msb(g) > boost::multiprecision::msb(x) / 2) {
             const cpp_int q = x / g;
             return a / BigInt(q.str());
@@ -986,7 +986,7 @@ public:
     template <integral T>
     requires(!same_as<remove_cv_t<T>, bool>) BigInt(T x) { assign(x); }
 
-    /// @brief 10 進文字列から構築する / 先頭の + または - を許す / 不正な文字列なら invalid_argument を投げる
+    /// @brief 10 進文字列から構築する / 先頭の + または - を許容する / 不正な文字列なら invalid_argument を投げる
     explicit BigInt(string_view s) {
         if (s.empty()) throw invalid_argument("BigInt: empty string");
         size_t l = 0;
@@ -1266,7 +1266,7 @@ public:
 
     friend ostream &operator<<(ostream &os, const BigInt &a) { return os << a.to_string(); }
 
-    /// @brief 空白区切りの 10 進文字列を読む / 不正な文字列なら failbit を立てる
+    /// @brief 空白区切りの 10 進文字列を読み込む / 不正な文字列なら failbit を立てる
     friend istream &operator>>(istream &is, BigInt &a) {
         string s;
         if (!(is >> s)) return is;
@@ -1401,7 +1401,7 @@ inline pair<BigInt::Digits, BigInt::Digits> BigInt::divmod_abs(const Digits &a, 
     return div_knuth(a, b);
 }
 
-/// @brief 商と余りの組を返す / 商は 0 方向に切り捨て、余りは a と同じ符号 / b == 0 なら domain_error を投げる
+/// @brief 商と余りの組を返す / 商は 0 方向に切り捨て、余りの符号は a と同じ / b == 0 なら domain_error を投げる
 inline pair<BigInt, BigInt> divmod(const BigInt &a, const BigInt &b) {
     if (b.sign_ == 0) throw domain_error("BigInt: division by zero");
     if (a.sign_ == 0) return {BigInt(), BigInt()};

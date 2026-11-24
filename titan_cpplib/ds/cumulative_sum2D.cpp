@@ -8,7 +8,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 2次元累積和
+/// @brief 2 次元累積和
 template<typename T>
 class CumulativeSum2D {
 private:

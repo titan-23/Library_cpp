@@ -9,7 +9,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 各ノードが区間の要素を昇順に並べた列と、それに func を適用した値を持つセグメント木
+/// @brief 各ノードが区間の要素を昇順に並べた列と、その列に func を適用した値を保持するセグメント木
 template<class T, class F, F func(const vector<T>&)>
 class MergeSortTree {
 private:
@@ -45,8 +45,9 @@ public:
         }
     }
 
-    /// @brief 区間 [l, r) を覆うノードごとに g(data, func_data) を呼ぶ / 呼ぶ回数は O(log n)
-    /// g は [&] (vector<T> &data, F &func_data) -> void の形にする。引数の & を付け忘れないこと
+    /// @brief 区間 [l, r) を覆うノードごとに g(data, func_data) を呼び出す / 呼び出す回数は O(log n)
+    /// g は [&] (vector<T> &data, F &func_data) -> void の形にする
+    /// 引数の & を付け忘れないこと
     template <class G>
     void prod(int l, int r, G &&g) {
         l += size; r += size;
@@ -63,7 +64,7 @@ public:
         }
     }
 
-    /// @brief 位置 k を含む全ノードの func_data に g を適用する / 呼ぶ回数は O(log n)
+    /// @brief 位置 k を含む全ノードの func_data に g を適用する / 呼び出す回数は O(log n)
     /// g は [&] (F &func_data) -> void の形にする
     template <class G>
     void apply_point(int k, G &&g) {

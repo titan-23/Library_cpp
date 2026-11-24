@@ -53,7 +53,7 @@ private:
 public:
     DynamicAhoCorasick() {}
 
-    /// @brief 文字 B を先頭の文字として、空のパターン集合を作る
+    /// @brief 文字の範囲の先頭を B とし、空のパターン集合を作成する
     DynamicAhoCorasick(char B) : B(B) {}
 
     /// @brief パターン文字列 p を追加する
@@ -77,7 +77,7 @@ public:
             }
         }
         for (const Block &b : neg) if (!b.empty) {
-            // 削除したパターンの出現回数を引く
+            // 削除したパターンの出現回数を減算する
             int now = b.aho.root;
             for (char c : s) {
                 now = b.aho.next(now, c);

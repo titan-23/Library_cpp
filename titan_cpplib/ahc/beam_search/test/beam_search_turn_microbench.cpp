@@ -1,8 +1,8 @@
 /// https://github.com/titan-23/Library_cpp/blob/main/titan_cpplib/ahc/beam_search/test/beam_search_turn_microbench.cpp
-// 軽い State で beam_search_turn.cpp の速度を測る
-// 計測対象は TURN_BEAM_BENCH_BASELINE か TURN_BEAM_BENCH_OPTIMIZED で選ぶ
+// 計算コストの小さい State で beam_search_turn.cpp の速度を計測する
+// 計測対象は TURN_BEAM_BENCH_BASELINE か TURN_BEAM_BENCH_OPTIMIZED で選択する
 // 実行時に --scenario, --width, --max-turn, --branch,
-// --target-gap, --gap-mode (unit/fixed/spread), --action-words (0/8/32) などで設定を上書きできる
+// --target-gap, --gap-mode (unit/fixed/spread), --action-words (0/8/32) などで設定を変更できる
 #include <algorithm>
 #include <array>
 #include <chrono>
@@ -38,7 +38,7 @@ using ScoreType = int64_t;
 using HashType = uint64_t;
 constexpr ScoreType INF = numeric_limits<ScoreType>::max() / 4;
 
-/// @brief 子のターンと親のターンの差の決め方
+/// @brief 子のターンと親のターンの差の決定方法
 enum class GapMode {
     Unit,
     Fixed,
@@ -67,7 +67,7 @@ struct ActionCounters {
     uint64_t destruct = 0;
 };
 
-/// @brief 1 回の探索で数える回数と、try_op に渡された値の digest
+/// @brief 1 回の探索で集計する回数と、try_op に渡された値の digest
 struct RunCounters {
     uint64_t try_ops = 0;
     uint64_t apply_ops = 0;
@@ -85,7 +85,7 @@ struct RunContext {
 RunContext *active_context = nullptr;
 volatile uint64_t benchmark_sink = 0;
 
-/// @brief splitmix64 の変換で value を混ぜた値を返す
+/// @brief splitmix64 の変換を value に適用した値を返す
 uint64_t mix64(uint64_t value) {
     value += 0x9e3779b97f4a7c15ULL;
     value = (value ^ (value >> 30)) * 0xbf58476d1ce4e5b9ULL;
@@ -93,12 +93,12 @@ uint64_t mix64(uint64_t value) {
     return value ^ (value >> 31);
 }
 
-/// @brief digest に value を混ぜる
+/// @brief digest を value で更新する
 void digest_add(uint64_t &digest, uint64_t value) {
     digest = mix64(digest ^ mix64(value));
 }
 
-/// @brief 計測用 Action のデータ / PaddingWords で大きさを変える
+/// @brief 計測用 Action のデータ / PaddingWords でサイズを変更する
 template<size_t PaddingWords>
 struct ActionData {
     uint64_t parent_key = 0;
@@ -116,13 +116,13 @@ struct ActionData {
 template<size_t PaddingWords, bool Instrument>
 struct BenchAction;
 
-/// @brief 回数を数えない計測用 Action
+/// @brief 回数を集計しない計測用 Action
 template<size_t PaddingWords>
 struct BenchAction<PaddingWords, false> : ActionData<PaddingWords> {
     string to_string() const { return std::to_string(this->child_key); }
 };
 
-/// @brief 構築、代入、破棄の回数を数える計測用 Action
+/// @brief 構築、代入、破棄の回数を集計する計測用 Action
 template<size_t PaddingWords>
 struct BenchAction<PaddingWords, true> : ActionData<PaddingWords> {
     using Base = ActionData<PaddingWords>;
@@ -158,7 +158,7 @@ struct BenchAction<PaddingWords, true> : ActionData<PaddingWords> {
     string to_string() const { return std::to_string(this->child_key); }
 };
 
-/// @brief 計測用の軽い State / 各節点から branch 個の子を作る
+/// @brief 計算コストの小さい計測用 State / 各節点から branch 個の子を作成する
 template<size_t PaddingWords, bool Instrument>
 class SyntheticTurnState {
 private:
@@ -190,7 +190,7 @@ private:
         action.child = (uint32_t)child;
         action.target_turn = turn + step_for_child(child);
 
-        // 後に渡す候補ほど良くし、上限つきの候補集合で置き換えが繰り返し起きるようにする
+        // 後に渡す候補ほど評価値を良くし、上限のある候補集合で置き換えが繰り返し発生するようにする
         const uint32_t improvement = (uint32_t)(active_context->scenario->branch - 1 - child);
         action.child_quality = quality + improvement;
         action.child_key = mix64(node_key ^ ((uint64_t)(uint32_t)action.target_turn << 32) ^
@@ -216,7 +216,7 @@ public:
     template<class Submit>
     void enumerate_actions(const Action &, Submit &&submit) const {
         const int branch = active_context->scenario->branch;
-        // Action を 1 個だけ作って使い回し、生成の費用が計測結果を占めないようにする
+        // Action を 1 個だけ作成して再利用し、生成のコストが計測結果の大半を占めないようにする
         Action action;
         for (int child = 0; child < branch; ++child) {
             fill_action(action, child);
@@ -224,7 +224,7 @@ public:
         }
     }
 
-    /// @brief action の評価値と子のキーを返す / action の親が現状態と違えば abort する
+    /// @brief action の評価値と子のキーを返す / action の親が現在の状態と異なれば abort する
     tuple<ScoreType, HashType, bool> try_op(Action &action,
                                             const vector<ScoreType> &thresholds) const {
         if (action.parent_key != node_key || action.parent_turn != turn ||
@@ -245,7 +245,7 @@ public:
         return {action.score, action.child_key, false};
     }
 
-    /// @brief action を適用する / action の親が現状態と違えば abort する
+    /// @brief action を適用する / action の親が現在の状態と異なれば abort する
     void apply_op(const Action &action) {
         if (action.parent_key != node_key || action.parent_turn != turn ||
             action.parent_quality != quality || action.parent_score != score) {
@@ -258,7 +258,7 @@ public:
         turn = action.target_turn;
     }
 
-    /// @brief action を戻す / action の子が現状態と違えば abort する
+    /// @brief action を適用する前の状態に戻す / action の子が現在の状態と異なれば abort する
     void rollback(const Action &action) {
         if (action.child_key != node_key || action.target_turn != turn ||
             action.child_quality != quality || action.score != score) {
@@ -273,7 +273,7 @@ public:
 
     string get_state_info() const { return "{}"; }
 
-    /// @brief 現状態の digest を返す
+    /// @brief 現在の状態の digest を返す
     uint64_t digest() const {
         uint64_t result = mix64(node_key);
         digest_add(result, (uint64_t)score);
@@ -355,13 +355,13 @@ Observation execute_search(const Scenario &scenario) {
     return observation;
 }
 
-/// @brief 1 回の時間計測で try_op がおよそ target_try_ops 回になる反復数を返す / 1 以上 64 以下
+/// @brief 1 回の時間計測での try_op の呼び出し回数がおよそ target_try_ops になる反復数を返す / 返り値は 1 以上 64 以下
 int choose_batch(const Observation &observation, uint64_t target_try_ops) {
     const uint64_t denominator = max<uint64_t>(1, observation.try_ops);
     return (int)clamp<uint64_t>((target_try_ops + denominator - 1) / denominator, 1, 64);
 }
 
-/// @brief 回数を数えずに batch 回探索する
+/// @brief 回数を集計せずに batch 回探索する
 template<size_t PaddingWords>
 void run_timed_batch(const Scenario &scenario, int batch) {
     using Action = BenchAction<PaddingWords, false>;
@@ -383,7 +383,7 @@ void run_timed_batch(const Scenario &scenario, int batch) {
     active_context = nullptr;
 }
 
-/// @brief 回数を記録した結果と、探索 1 回あたりの時間 [ns] の中央値を返す / 回数を数えると結果が変わる場合は例外を投げる
+/// @brief 回数を記録した結果と、探索 1 回あたりの時間 [ns] の中央値を返す / 回数を集計すると結果が変化する場合は例外を投げる
 template<size_t PaddingWords>
 pair<Observation, uint64_t> measure(const Scenario &scenario, int warmup, int repetitions,
                                     uint64_t target_try_ops) {
@@ -455,7 +455,7 @@ vector<Scenario> default_scenarios() {
     };
 }
 
-/// @brief 計測条件を調べ、不正なら例外を投げる
+/// @brief 計測条件を確認し、不正なら例外を投げる
 void validate(const Scenario &scenario) {
     if (scenario.width <= 0 || scenario.max_turn <= 0 || scenario.branch <= 0 ||
         scenario.target_gap <= 0) {
@@ -505,7 +505,7 @@ void print_measurement(const Scenario &scenario, int warmup, int repetitions,
          << setfill(' ') << '\n';
 }
 
-/// @brief action_words に合う PaddingWords で計測する
+/// @brief action_words に対応する PaddingWords で計測する
 void dispatch(const Scenario &scenario, int warmup, int repetitions, uint64_t target_try_ops) {
     if (scenario.action_words == 0) {
         print_measurement<0>(scenario, warmup, repetitions, target_try_ops);

@@ -15,7 +15,7 @@ using namespace std;
 namespace titan23 {
 namespace edit_distance_query_detail {
 
-// 接尾辞配列と LCP 配列の疎テーブルで、2 つの接尾辞の最長共通接頭辞の長さを返す
+// 接尾辞配列と LCP 配列の Sparse Table を使用して、2 つの接尾辞の最長共通接頭辞の長さを返す
 class LCE {
     int n = 0;
     vector<int> rank;
@@ -41,7 +41,7 @@ public:
         vector<int> cnt(n + 1LL, 0);
         rank.resize(n);
 
-        // 各要素をソートし、使われている値を連続した順位へ圧縮する
+        // 各要素をソートし、使用されている値を連続した順位に圧縮する
         for (int symbol : seq) ++cnt[symbol];
         int sum = 0;
         for (int &x : cnt) {
@@ -58,7 +58,7 @@ public:
         }
 
         for (int len = 1; cls < n;) {
-            // 末尾の順位を 0 とし、実際の順位は 1 だけずらす
+            // 末尾より後ろの位置の順位を 0 とし、実際の順位は 1 だけずらす
             const auto key = [&](int idx, bool second) {
                 if (!second) return rank[idx] + 1;
                 return idx < n - len ? rank[idx + len] + 1 : 0;
@@ -88,12 +88,13 @@ public:
             }
             rank.swap(nrank);
             cls = ncls;
-            // 2 * len 要素まで比較済み。次の倍増によるオーバーフローを避ける
+            // 2 * len 要素までの比較が完了している
+            // 次に len を 2 倍にするときのオーバーフローを避ける
             if (len >= n - len) break;
             len *= 2;
         }
 
-        // lcp[r] は sa[r - 1] と sa[r] の LCP で、lcp[0] は使わない
+        // lcp[r] は sa[r - 1] と sa[r] の LCP で、lcp[0] は使用しない
         vector<int> lcp(n, 0);
         int h = 0;
         for (int i = 0; i < n; ++i) {
@@ -139,7 +140,7 @@ public:
 
 } // namespace edit_distance_query_detail
 
-/// @brief 固定した 2 列 s, t の区間同士の編集距離を答える / 各操作のコストは 1 / 列を変えたら作り直す
+/// @brief 固定した 2 つの列 s, t の区間同士の編集距離を求める / 各操作のコストは 1 / 列を変更した場合は再構築する必要がある
 class EditDistanceQuery {
 private:
     int len_s = 0, len_t = 0;
@@ -159,7 +160,7 @@ private:
         if (n == 0 || m == 0) return n + m;
         const int lim = min(k, max(n, m));
         const int offset = len_s + 1 + l2;
-        // LCE が指定された区間の外まで続いても、区間端で打ち切る
+        // LCE が指定された区間の外まで続いても、区間の端で打ち切る
         const auto extend = [&](int x, int d) {
             const int y = x - d;
             if (x == n || y == m) return x;
@@ -169,12 +170,12 @@ private:
         const int init = extend(0, 0);
         if (n == m && init == n) return 0;
         if (lim == 0) return -1;
-        // prev[d - prev_l] は、対角線 d = x-y 上で一致部分を進み終えた最も遠い x
+        // prev[d - prev_l] は対角線 d = x-y 上で一致部分を延長した後の最も遠い x を表す
         vector<int> prev(1, init), now;
         int prev_l = 0, prev_r = 0;
         const int end_d = n - m;
         for (int cost = 1; cost <= lim; ++cost) {
-            // 残りの編集回数で終点の対角線へ戻れない状態も除く
+            // 残りの編集回数では終点の対角線に戻ることができない状態も除外する
             const int64_t rem = lim - cost;
             const int lo = (int)max({
                 -int64_t(cost), -int64_t(m),
@@ -196,7 +197,7 @@ private:
                 if (rep >= 0) x = rep + 1;
                 if (del >= 0) x = max(x, del + 1);
                 if (ins >= 0) x = max(x, ins);
-                // 端を越える遷移は同じ対角線上の端へ切り詰め、高々 cost 回で届く最遠点を保つ
+                // 端を越える遷移は同じ対角線上の端に切り詰め、高々 cost 回で到達できる最遠点を維持する
                 x = min({x, n, m + d});
                 if (x < max(0, d)) continue;
                 x = extend(x, d);
@@ -212,7 +213,7 @@ private:
 
 public:
     /// @brief s, t を前処理する / O(N log N) 時間・空間, N = |s|+|t|+1
-    /// 要素の < は等値比較と整合する狭義弱順序であること / N > INT_MAX なら length_error を送出する / 構築後は元の列を変更しても破棄してもよい
+    /// 要素の < は等値比較と整合する狭義弱順序である必要がある / N > INT_MAX なら length_error を送出する / 構築後は元の列を変更または破棄することができる
     template <class S, class T>
     EditDistanceQuery(const S &s, const T &t) {
         const auto &a = edit_distance_detail::as_sequence(s);
@@ -235,7 +236,7 @@ public:
             return b[i - len_s] < b[j - len_s];
         };
         sort(ord.begin(), ord.end(), cmp);
-        // 0 を区切り専用にし、入力の値は 1 以上へ座標圧縮する
+        // 0 は区切りだけに使用し、入力の値は 1 以上に座標圧縮する
         vector<int> seq(total + 1, 0);
         int rank = 0;
         for (int p = 0; p < total; ++p) {

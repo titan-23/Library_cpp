@@ -16,7 +16,7 @@ struct Random {
     }
 } trnd;
 
-/// @brief 遅延伝播と反転を持つ RBST / ICPC 向けで、多くの操作はコメントアウトしてある
+/// @brief 遅延伝播と反転を扱う RBST / ICPC 向け / 多くの操作はコメントアウトしてある
 template <class T, T (*op)(T, T), T (*e)(),
           class F, T (*mapping)(F, T), F (*composition)(F, F), F (*id)()>
 class LazyRBST {

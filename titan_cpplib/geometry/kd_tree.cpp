@@ -17,9 +17,10 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 任意次元の点からユークリッド距離が近い点を探す k-d 木 / 結果は距離の昇順、同距離なら点番号の昇順
-/// 座標、クエリ、半径、距離の二乗は Scalar の有限値に収まる必要がある / 使い方は how_to_use_kd_tree.md にある
-/// get_coordinate は木が保持する。参照で捕捉したデータは木を使う間は破棄も変更もしない
+/// @brief 任意次元の点からユークリッド距離が近い点を探す k-d 木 / 結果は距離の昇順で、距離が同じ場合は点番号の昇順
+/// 座標、クエリ、半径、距離の二乗は Scalar の有限値に収まる必要がある / 使用方法は how_to_use_kd_tree.md にある
+/// get_coordinate は木が保持する
+/// get_coordinate が参照で捕捉したデータは、木を使用している間は破棄も変更もしてはならない
 template <class Point, class GetCoordinate, class Scalar_ = long double>
 class KdTree {
 public:
@@ -114,7 +115,7 @@ public:
         return points_[id];
     }
 
-    /// @brief 点 q に最も近い点を返す / 点 exclude は除く / 該当なしなら nullopt / 典型 O(d log n)、最悪 O(dn)
+    /// @brief 点 q に最も近い点を返す / 点 exclude は除く / 該当する点がない場合は nullopt / 典型的には O(d log n)、最悪 O(dn)
     optional<Neighbor> nearest_neighbor(const Point& q, int exclude = -1) const {
         check_excluded_index(exclude);
         if (dimension_ == 0) return nullopt;
@@ -136,7 +137,7 @@ public:
         return nearest_neighbor_impl(point_coordinates(id), id);
     }
 
-    /// @brief 点 q に近い順に k 点を返す / 点 exclude は除く / 典型 O(d log n + k(d+log k))、最悪 O(n(d+log k))
+    /// @brief 点 q に近い順に k 点を返す / 点 exclude は除く / 典型的には O(d log n + k(d+log k))、最悪 O(n(d+log k))
     /// k は 0 以上 / 対象の点が k 個未満なら全点を返す
     vector<Neighbor> k_nearest_neighbors(const Point& q, int k, int exclude = -1) const {
         vector<Neighbor> out;
@@ -144,7 +145,7 @@ public:
         return out;
     }
 
-    /// @brief 点 q に近い順に k 点を out へ書き込む / out は空にしてから書き込み、容量は保つ
+    /// @brief 点 q に近い順に k 点を out に格納する / out は空にしてから格納し、容量は維持する
     void k_nearest_neighbors(const Point& q, int k, vector<Neighbor>& out, int exclude = -1) const {
         check_excluded_index(exclude);
         int take = checked_result_count(k, exclude);
@@ -163,7 +164,7 @@ public:
         return out;
     }
 
-    /// @brief 座標列 q に近い順に k 点を out へ書き込む
+    /// @brief 座標列 q に近い順に k 点を out に格納する
     void k_nearest_neighbors(span<const Scalar> q, int k, vector<Neighbor>& out, int exclude = -1) const {
         check_excluded_index(exclude);
         int take = checked_result_count(k, exclude);
@@ -182,7 +183,7 @@ public:
         return out;
     }
 
-    /// @brief 点 id を除き、点 id に近い順に k 点を out へ書き込む
+    /// @brief 点 id を除き、点 id に近い順に k 点を out に格納する
     void k_nearest_neighbors_of(int id, int k, vector<Neighbor>& out) const {
         check_point(id);
         int take = checked_result_count(k, id);
@@ -190,7 +191,7 @@ public:
     }
 
     /// @brief 点 q から距離 radius 以内の点を返す / 境界を含む / sort_by_distance が false なら並べ替えない
-    /// radius は有限かつ 0 以上 / 返す点数を m として典型 O(d log n + dm + m log m)、最悪 O(dn + m log m)
+    /// radius は有限かつ 0 以上 / 返す点数を m として典型的には O(d log n + dm + m log m)、最悪 O(dn + m log m)
     vector<Neighbor> radius_neighbors(const Point& q, Scalar radius, int exclude = -1,
                                       bool sort_by_distance = true) const {
         vector<Neighbor> out;
@@ -198,7 +199,7 @@ public:
         return out;
     }
 
-    /// @brief 点 q から距離 radius 以内の点を out へ書き込む / out は空にしてから書き込み、容量は保つ
+    /// @brief 点 q から距離 radius 以内の点を out に格納する / out は空にしてから格納し、容量は維持する
     void radius_neighbors(const Point& q, Scalar radius, vector<Neighbor>& out, int exclude = -1,
                           bool sort_by_distance = true) const {
         check_excluded_index(exclude);
@@ -219,7 +220,7 @@ public:
         return out;
     }
 
-    /// @brief 座標列 q から距離 radius 以内の点を out へ書き込む
+    /// @brief 座標列 q から距離 radius 以内の点を out に格納する
     void radius_neighbors(span<const Scalar> q, Scalar radius, vector<Neighbor>& out, int exclude = -1,
                           bool sort_by_distance = true) const {
         check_excluded_index(exclude);
@@ -239,7 +240,7 @@ public:
         return out;
     }
 
-    /// @brief 点 id を除き、点 id から距離 radius 以内の点を out へ書き込む
+    /// @brief 点 id を除き、点 id から距離 radius 以内の点を out に格納する
     void radius_neighbors_of(int id, Scalar radius, vector<Neighbor>& out, bool sort_by_distance = true) const {
         check_point(id);
         Scalar radius2 = checked_squared_radius(radius);
@@ -408,7 +409,7 @@ private:
                 out.push_back(candidate);
                 push_heap(out.begin(), out.end(), NeighborLess{});
             } else if (NeighborLess{}(candidate, out.front())) {
-                // 根の置き換えは、下方向への調整1回で済む
+                // 根の置き換えは下方向への調整 1 回で完了する
                 int pos = 0;
                 int size = (int)out.size();
                 while (pos < size / 2) {

@@ -17,7 +17,7 @@ private:
     vector<vector<pair<int, int>>> queries;
 
 public:
-    /// @brief 無向木 G と根 root で初期化 / O(N)
+    /// @brief 無向木 G と根 root で初期化する / O(N)
     OfflineLCA(const vector<vector<int>> &G, int root = 0)
         : n(G.size()), root(root), graph(G), queries(n) {}
 

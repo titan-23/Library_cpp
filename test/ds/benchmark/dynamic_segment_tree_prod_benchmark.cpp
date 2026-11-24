@@ -1,8 +1,13 @@
-// 動的セグメント木の prod などを操作別に測る。g++ -std=c++17 -O2 -DNDEBUG -I. this_file.cpp -o /tmp/dst_prod_bench
+// 動的セグメント木の prod などを操作別に計測する
+// g++ -std=c++17 -O2 -DNDEBUG -I. this_file.cpp -o /tmp/dst_prod_bench
 // /tmp/dst_prod_bench --kind plain|init|lazy --mode prod|prod_short|update|max_right|min_left
-// N=1e9 に K 個の点更新 (lazy は K 個の区間加算) をしてから、Q 回の操作を測る。準備は計測外。
-// prod は両端が一様乱数の区間、prod_short は長さ 1024 以下の区間。update は既存の位置への点更新で、lazy にはない。
-// max_right(l) と min_left(r) は、両端が一様乱数の区間 [l,r) の総和以下という判定で探す。答えはおよそ r と l になる。
+// N=1e9 に K 個の点更新を行ってから Q 回の操作を計測する
+// lazy では点更新の代わりに K 個の区間加算を行う
+// 準備は計測の対象外とする
+// prod は両端が一様乱数の区間、prod_short は長さ 1024 以下の区間を対象とする
+// update は既存の位置への点更新で、lazy にはない
+// max_right(l) と min_left(r) は、両端が一様乱数の区間 [l,r) の総和以下という判定で探索する
+// 答えはおよそ r と l になる
 #include <algorithm>
 #include <chrono>
 #include <cstdint>

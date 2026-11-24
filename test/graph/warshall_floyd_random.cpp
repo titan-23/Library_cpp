@@ -18,14 +18,15 @@ namespace {
 
 using Edge = tuple<int, int, long long>;
 
-// 素朴な Floyd 法による参照解。負閉路で値が際限なく小さくなるのを防ぐため -BIG で打ち切る
+// 素朴な Floyd 法による参照実装
+// 負閉路で値が際限なく小さくなることを防ぐため、-BIG を下限とする
 struct Reference {
     static constexpr long long UNREACHABLE = numeric_limits<long long>::max();
     static constexpr long long BIG = 1000000000000000LL;
     int n;
     vector<vector<long long>> dist;
     vector<vector<int>> neg_inf;
-    vector<vector<long long>> edge;  // 頂点対ごとの最小の辺の重み
+    vector<vector<long long>> edge;  // 頂点対ごとの辺の重みの最小値
     bool neg_cycle = false;
 
     Reference(const int n, const vector<Edge> &edges)
@@ -67,7 +68,8 @@ vector<vector<pair<int, T>>> to_graph(const int n, const vector<Edge> &edges) {
     return graph;
 }
 
-// 負閉路を扱う 3 クラスに共通の検査。inf は「到達不能」を表すそのクラスの値
+// 負閉路を扱う 3 クラスに共通のチェック
+// inf はそのクラスで「到達不能」を表す値
 template<class WF, class T>
 void check_general(const WF &wf, const Reference &ref, const T inf, const bool has_neg_cycle) {
     assert(has_neg_cycle == ref.neg_cycle);
@@ -91,7 +93,7 @@ void check_path(const titan23::WarshallFloydPath<T> &wf, const Reference &ref) {
                 assert(path.empty());
                 continue;
             }
-            // 経路は s から t への辺の列で、重みの和が最短距離に等しい
+            // 経路は s から t への辺の列で、重みの総和が最短距離に等しい
             assert(!path.empty() && path.front() == s && path.back() == t);
             long long total = 0;
             for (int i = 0; i + 1 < (int)path.size(); ++i) {
@@ -111,7 +113,7 @@ void run(const uint64_t seed, const int instances) {
     for (int instance = 0; instance < instances; ++instance) {
         const int n = 1 + rng() % 40;
         const int m = rng() % (3 * n + 1);
-        // 負の辺の割合を変えて、負閉路のない場合とある場合の両方を作る
+        // 負の辺の割合を変更して、負閉路のない場合とある場合の両方を生成する
         const int negative_percent = instance % 3 == 0 ? 0 : instance % 3 == 1 ? 3 : 15;
         auto random_edge = [&](const bool nonnegative) -> Edge {
             const int u = rng() % n, v = rng() % n;

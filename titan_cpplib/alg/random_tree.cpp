@@ -24,9 +24,9 @@ private:
     }
 
 public:
-    /// @brief 乱数の種を random_device から取って構築する
+    /// @brief 乱数のシードを random_device から取得して構築する
     RandomTree() {}
-    /// @brief 乱数の種 seed で構築する
+    /// @brief 乱数のシード seed で構築する
     RandomTree(int seed) : random(seed) {}
 
     /// @brief n 頂点のラベル付き木を一様に選び、その辺集合を返す / O(n log n)
@@ -73,7 +73,7 @@ public:
 
     /// @brief n 頂点の無作為なパスグラフの辺集合を返す / O(n)
     vector<pair<int, int>> gen_path(int n) {
-        // 一様分布になるかは未確認
+        // 一様分布になるかは未確認である
         assert(n >= 0);
         vector<pair<int, int>> edges;
         if (n <= 1) {

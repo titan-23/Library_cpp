@@ -14,14 +14,14 @@ struct ClusterSizeRange {
 /// @brief ClusterSizeRange の別名
 using ClusteringSizeRange = ClusterSizeRange;
 
-/// @brief 個数自由の範囲を返す / 各クラスタは空でなければよく、範囲は [1, point_count]
+/// @brief 点数を制限しない範囲を返す / 各クラスタは空でなければよく、範囲は [1, point_count]
 inline vector<ClusterSizeRange> make_clustering_size_ranges(int cluster_count, int point_count) {
     if (cluster_count <= 0) throw invalid_argument("make_clustering_size_ranges: cluster_count must be positive");
     if (point_count < cluster_count) throw invalid_argument("make_clustering_size_ranges: point_count must be at least cluster_count");
     return vector<ClusterSizeRange>(cluster_count, {1, point_count});
 }
 
-/// @brief 個数固定の範囲を返す / クラスタ i の点数は sizes[i]
+/// @brief 点数を固定した範囲を返す / クラスタ i の点数は sizes[i]
 inline vector<ClusterSizeRange> make_exact_clustering_size_ranges(const vector<int>& sizes) {
     if (sizes.empty()) throw invalid_argument("make_exact_clustering_size_ranges: sizes must not be empty");
     if (sizes.size() > (size_t)numeric_limits<int>::max()) throw invalid_argument("make_exact_clustering_size_ranges: sizes.size() must fit in int");
@@ -34,7 +34,7 @@ inline vector<ClusterSizeRange> make_exact_clustering_size_ranges(const vector<i
     return ranges;
 }
 
-/// @brief ranges が clustering_sa の条件を満たすか検査する / 満たさなければ invalid_argument を投げる
+/// @brief ranges が clustering_sa の条件を満たすかを確認する / 満たさなければ invalid_argument を投げる
 /// 条件は 1 <= lower <= upper <= point_count と、下限の和 <= point_count <= 上限の和
 inline void check_clustering_size_ranges(int point_count, const vector<ClusterSizeRange>& ranges) {
     if (point_count <= 0) throw invalid_argument("clustering: point_count must be positive");

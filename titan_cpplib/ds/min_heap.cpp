@@ -8,7 +8,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 最小値を取り出せる二分ヒープ
+/// @brief 最小値を取り出す二分ヒープ
 template<typename T>
 class MinHeap {
 private:
@@ -73,7 +73,7 @@ public:
         _up(a.size() - 1);
     }
 
-    /// @brief key を追加してから最小の要素を削除して返す / 空でないことが前提 / O(log n)
+    /// @brief key を追加してから最小の要素を削除して返す / 空でないことを前提とする / O(log n)
     T pushpop_min(const T key) {
         if (a[0] >= key) return key;
         T res = a[0];
@@ -82,7 +82,7 @@ public:
         return res;
     }
 
-    /// @brief 最小の要素を削除して返し、そのあと key を追加する / 空でないことが前提 / O(log n)
+    /// @brief 最小の要素を削除して返し、そのあと key を追加する / 空でないことを前提とする / O(log n)
     T replace_min(const T key) {
         T res = a[0];
         a[0] = key;

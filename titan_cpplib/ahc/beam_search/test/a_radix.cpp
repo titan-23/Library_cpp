@@ -35,11 +35,11 @@ using ScoreType = int;
 using HashType = unsigned long long;
 const ScoreType INF = 1e9;
 titan23::Random brnd;
-HashType zhs[10][10][101]; // zhs[i][j][k]:=(i,j)にkがあるときのハッシュ
+HashType zhs[10][10][101]; // zhs[i][j][k] := (i,j) に k があるときのハッシュ
 int revB[101];
 HashType GOAL_HASH;
 
-/// @brief ハッシュ用の乱数表と、各値の目標位置を列優先で数えた表 revB を作る
+/// @brief ハッシュ用の乱数表と、各値の目標位置の列優先での番号を格納した表 revB を作成する
 void beam_init() {
     rep(i, N) rep(j, N) rep(k, N*N+1) {
         zhs[i][j][k] = brnd.rand_u64();
@@ -50,7 +50,7 @@ void beam_init() {
     revB[0] = 0;
 }
 
-/// @brief 合成した Action の 2 手目以降の 1 手 / 途中の状態に戻すための pre_* を持つ
+/// @brief 合成した Action に含まれる 2 番目以降の操作の 1 つ / 途中の状態に戻すための pre_* を保持する
 struct ChainStep {
     char d;
     ScoreType pre_score;
@@ -59,8 +59,8 @@ struct ChainStep {
     int pre_inv_lr;
 };
 
-/// @brief 空きマスを 1 方向に動かす操作 / 合成すると 2 手目以降を chain に持つ
-/// nxt_* は合成した手をすべて適用した後の状態を表す
+/// @brief 空きマスを 1 方向に移動する操作 / 合成した場合は 2 番目以降の操作を chain に保持する
+/// nxt_* は合成した操作をすべて適用した後の状態を表す
 struct Action {
     char d;
     ScoreType pre_score, nxt_score;
@@ -102,7 +102,7 @@ struct Action {
     }
 };
 
-/// @brief N×N のスライドパズルの盤面を持つ状態
+/// @brief N×N のスライドパズルの盤面を保持する状態
 class State {
 private:
     ScoreType score;
@@ -185,8 +185,9 @@ public:
         score += inv_dist;
     }
 
-    /// @brief action を適用した後の評価値、ハッシュ値、完成したかを返す
-    /// 戻すための情報はすべて action に記録する。threshold 以上なら計算を省いてよく、INF を返すと採用されない
+    /// @brief action を適用した後の評価値、ハッシュ値、完成したかどうかを返す
+    /// 元の状態に戻すための情報はすべて action に記録する
+    /// 評価値が threshold 以上なら計算を省略してよく、INF を返すと採用されない
     tuple<ScoreType, HashType, bool> try_op(Action &action, const ScoreType threshold) const {
         action.pre_score = score;
         action.pre_hash = hash;
@@ -257,7 +258,7 @@ public:
         return {nxt_score, nxt_hash, nxt_hash == GOAL_HASH};
     }
 
-    /// @brief 空きマスを d の向きに 1 マス動かす
+    /// @brief 空きマスを d の向きに 1 マス移動する
     void swap_one_forward(char d) {
         int py = y, px = x;
         if (d == 'D') ++y;
@@ -267,7 +268,7 @@ public:
         swap(F[y][x], F[py][px]);
     }
 
-    /// @brief 空きマスを d と逆の向きに 1 マス動かす
+    /// @brief 空きマスを d と逆の向きに 1 マス移動する
     void swap_one_back(char d) {
         int py = y, px = x;
         if (d == 'D') --y;
@@ -287,7 +288,7 @@ public:
         hash = action.nxt_hash;
     }
 
-    /// @brief action を戻す。合成された手は逆順に戻す
+    /// @brief action を適用する前の状態に戻す / 合成された操作は逆順に戻す
     void rollback(const Action &action) {
         for (auto it = action.chain.rbegin(); it != action.chain.rend(); ++it) {
             swap_one_back(it->d);
@@ -299,10 +300,10 @@ public:
         hash = action.pre_hash;
     }
 
-    /// @brief 遷移可能な action を submit に渡す。submit が try_op と候補への追加を行う
+    /// @brief 遷移可能な action を submit に渡す / submit が try_op と候補への追加を行う
     template<class Submit>
     void enumerate_actions(const int turn, const Action &last_action, Submit &&submit) const {
-        // 合成された last_action では、最後の 1 手の方向が chain.back().d にある
+        // 合成された last_action では、最後の操作の方向が chain.back().d に格納されている
         char last_d = last_action.chain.empty() ? last_action.d : last_action.chain.back().d;
         auto rev = [&] () -> char {
             if (turn == 0) return 'Z';
@@ -329,7 +330,7 @@ public:
     }
 
 #if 0
-    /// 旧方式: 遷移可能な Action の vector を actions に入れる
+    /// 旧方式: 遷移可能な Action の vector を actions に格納する
     void enumerate_actions(vector<Action> &actions, const int turn, const Action &last_action, const ScoreType threshold) const {
         auto rev = [&] () -> char {
             if (turn == 0) return 'Z';
@@ -368,7 +369,7 @@ flying_squirrel::BeamParam gen_param(int max_turn, int beam_width) {
 }
 
 /// @brief 最大ターン数、ビーム幅、制限時間などから BeamParam を返す
-/// is_adjusting は制限時間に合わせて幅を調整するか、clear_hash_every_turn はハッシュ辞書を毎ターン消すかを指定する
+/// is_adjusting は制限時間に合わせて幅を調整するかどうか、clear_hash_every_turn はハッシュ辞書を毎ターン消去するかどうかを指定する
 flying_squirrel::BeamParam gen_param(int max_turn, int beam_width, double time_limit, bool is_adjusting=false, bool clear_hash_every_turn=true) {
     return {max_turn, beam_width, time_limit, is_adjusting, clear_hash_every_turn};
 }

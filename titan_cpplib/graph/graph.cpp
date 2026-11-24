@@ -13,7 +13,7 @@ using namespace std;
 
 namespace titan23 {
 
-    /// @brief 隣接リストで持つグラフ / add_edge は u -> v の向きだけ加える
+    /// @brief 隣接リストで保持するグラフ / add_edge は u -> v の向きの辺だけを加える
     class Graph {
       private:
         int n;
@@ -35,7 +35,7 @@ namespace titan23 {
             E.emplace_back(w, u, v);
         }
 
-        /// @brief 隣接リストの写しを返す
+        /// @brief 隣接リストのコピーを返す
         vector<vector<int>> get_G() const {
             return G;
         }
@@ -50,7 +50,7 @@ namespace titan23 {
             return res;
         }
 
-        /// @brief 二部グラフかを返す / 無向グラフは辺を両向きに加えておく / O(n + m)
+        /// @brief 二部グラフかを返す / 無向グラフでは辺を両向きに加えておく / O(n + m)
         bool is_bipartite() {
             vector<int> col(n, -1);
             for (int v = 0; v < n; ++v) {
@@ -80,7 +80,7 @@ namespace titan23 {
             return true;
         }
 
-        /// @brief start からの距離を返す / 届かない頂点は -1 / O(n + m)
+        /// @brief start からの距離を返す / 到達できない頂点は -1 / O(n + m)
         vector<int> bfs(const int start) {
             vector<int> dist(n, -1);
             queue<int> todo;
@@ -98,7 +98,7 @@ namespace titan23 {
             return dist;
         }
 
-        /// @brief s から t への最短路の頂点列を返す / 届かなければ空 / O(n + m)
+        /// @brief s から t への最短路の頂点列を返す / 到達できなければ空 / O(n + m)
         vector<int> bfs_path(int s, int t) {
             vector<int> prev(n, -1);
             vector<int> dist(n, inf);

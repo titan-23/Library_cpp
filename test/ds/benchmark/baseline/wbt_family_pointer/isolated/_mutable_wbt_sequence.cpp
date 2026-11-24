@@ -9,7 +9,7 @@
 namespace titan23::detail {
 
 template<class T, bool Aggregate> struct WBAggregate {
-    /// @brief 集約値を持たない補助オブジェクトを構築する / O(1)
+    /// @brief 集約値を保持しない補助オブジェクトを構築する / O(1)
     explicit WBAggregate(const T&) {}
 };
 
@@ -30,7 +30,7 @@ protected:
         Node *left = nullptr, *right = nullptr;
         int size = 1, left_size = 0;
 
-        /// @brief 値 value を持つ葉ノードを構築する / O(1)
+        /// @brief 値 value を保持する葉ノードを構築する / O(1)
         explicit Node(const T& value) : WBAggregate<T, aggregate>(value), key(value) {}
 
         /// @brief 子の情報から部分木サイズと集約値を再計算する / O(1)
@@ -46,16 +46,16 @@ protected:
         /// @brief 子の情報から部分木サイズと集約値を再計算する / O(1)
         void _update() { update(); }
 
-        /// @brief 左部分木の重み（要素数 + 1）を返す / O(1)
+        /// @brief 左部分木の重み (要素数 + 1) を返す / O(1)
         int weight_left() const { return left_size + 1; }
 
-        /// @brief 右部分木の重み（要素数 + 1）を返す / O(1)
+        /// @brief 右部分木の重み (要素数 + 1) を返す / O(1)
         int weight_right() const { return size - left_size; }
 
         /// @brief 左部分木の重みが占める割合を返す / O(1)
         double balance() const { return double(left_size + 1) / (size + 1.0); }
 
-        /// @brief このノードの左右の重みが平衡条件を満たすか検査する / O(1)
+        /// @brief このノードの左右の重みが平衡条件を満たすか確認する / O(1)
         void balance_check() const {
             assert(1LL * weight_left() * DELTA >= weight_right());
             assert(1LL * weight_right() * DELTA >= weight_left());

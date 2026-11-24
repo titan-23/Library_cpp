@@ -52,7 +52,7 @@ void test_basic() {
     check("abc", "abxc", 1, true);
     check("kitten", "sitting", 2, false);
     check("kitten", "sitting", 3, true);
-    // 隣接文字の交換は1操作ではない
+    // 隣接文字の交換は 1 操作ではない
     check("ab", "ba", 1, false);
     check("ab", "ba", 2, true);
     check_thresholds("abcdefgh", "ijklmnop");
@@ -162,7 +162,7 @@ void test_long_small_thresholds() {
         check(s, t, k, false);
     }
 
-    // 同じ長さでも、挿入と削除で帯の端まで移動して戻る場合
+    // 同じ長さでも、挿入と削除で帯の端まで移動して戻る場合を確認する
     s = "b" + string(n, 'a');
     t = string(n, 'a') + "b";
     check(s, t, 1, false);

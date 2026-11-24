@@ -8,7 +8,7 @@
 using namespace std;
 
 namespace titan23 {
-/// @brief 複数パターンを照合する Aho-Corasick 法のオートマトン / 文字は B から 26 種類
+/// @brief 複数のパターンを照合する Aho-Corasick 法のオートマトン / 文字は B から 26 種類
 class AhoCorasick {
 private:
     char B;
@@ -27,7 +27,7 @@ public:
 
     AhoCorasick() {}
 
-    /// @brief 文字 B を先頭の文字として、根だけのオートマトンを作る
+    /// @brief 文字の範囲の先頭を B とし、根だけのオートマトンを作成する
     AhoCorasick(char B) : B(B), node(1), root(0), trie(1), failtree(1) {
         node[0].fail = 0;
     }
@@ -55,7 +55,7 @@ public:
         return v;
     }
 
-    /// @brief 失敗辺と遷移表を作り、cnt を失敗辺に沿って足し込む / パターンを追加し終えてから 1 回だけ呼ぶ
+    /// @brief 失敗辺と遷移表を作成し、cnt を失敗辺に沿って加算する / すべてのパターンを追加した後に 1 回だけ呼び出す
     void build() {
         queue<int> todo;
         for (int i = 0; i < 26; ++i) {
@@ -92,7 +92,7 @@ public:
         }
     }
 
-    /// @brief 頂点 v から文字 c で遷移した先の頂点番号を返す / build 後に使う / O(1)
+    /// @brief 頂点 v から文字 c で遷移した先の頂点番号を返す / build の後に使用する / O(1)
     int next(int v, char c) const {
         return node[v].child[c-B];
     }

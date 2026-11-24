@@ -37,14 +37,14 @@ public:
         Q.reserve(q);
     }
 
-    /// @brief 区間 [l, r) を v にする操作を記録する / O(1)
+    /// @brief 区間 [l, r) の値を v に更新する操作を記録する / O(1)
     void apply(int l, int r, T v) {
         assert(0 <= l && l <= r && r <= n);
         Q.emplace_back(l, r, v);
     }
 
     /// @brief 記録した操作をまとめて適用し、結果の列を返す / O(n+qα(n))
-    /// 適用後は記録を消し、結果の列を次の初期値にする
+    /// 適用後は記録を削除し、結果の列を次の初期値にする
     vector<T> tovector() {
         iota(nxt.begin(), nxt.end(), 0);
         for (int i = (int)Q.size()-1; i >= 0; --i) {

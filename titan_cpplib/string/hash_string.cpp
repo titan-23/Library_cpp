@@ -9,7 +9,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief mod 2^61-1 のローリングハッシュの基数と累乗表を持つ / HashString で共有する
+/// @brief mod 2^61-1 のローリングハッシュの基数と累乗表を保持する / HashString で共有する
 /// 参考: https://qiita.com/keymoon/items/11fac5627672a6d6a9f6
 class HashStringBase {
 public:
@@ -20,7 +20,7 @@ public:
     u64 base, invpow;
     vector<u64> powb, invb;
 
-    /// @brief a * b を MOD で割った余りを返す / a, b < MOD の前提 / O(1)
+    /// @brief a * b を MOD で割った余りを返す / a, b < MOD を前提とする / O(1)
     static u64 mul(u64 a, u64 b) {
         u128 t = (u128)a * b;
         t = (t>>61) + (t&MOD);
@@ -48,7 +48,7 @@ public:
         return res;
     }
 
-    /// @brief 基数を乱択し、長さ n までの累乗表を作る / O(n)
+    /// @brief 基数をランダムに選択し、長さ n までの累乗表を作成する / O(n)
     HashStringBase(int n = 0) : n(n) {
         std::mt19937 rand(std::random_device{}());
         u64 base = std::uniform_int_distribution<>(414123123, 1000000000)(rand);
@@ -63,7 +63,7 @@ public:
         }
     }
 
-    /// @brief 累乗表を cap 個伸ばす / O(cap)
+    /// @brief 累乗表に cap 個の要素を追加する / O(cap)
     void extend(const int cap) {
         assert(cap >= 0);
         int pre_cap = powb.size();
@@ -80,7 +80,7 @@ public:
         return powb.size();
     }
 
-    /// @brief ハッシュが h1 の列の後ろに、ハッシュが h2 で長さ k の列をつなげた列のハッシュを返す
+    /// @brief ハッシュが h1 の列の後ろに、ハッシュが h2 で長さ k の列を連結した列のハッシュを返す
     u64 unite(u64 h1, u64 h2, int k) {
         if (k >= get_cap()) extend(k - get_cap() + 1);
         u64 t = mul(h1, powb[k]) + h2;
@@ -89,7 +89,7 @@ public:
     }
 };
 
-/// @brief 文字列の区間のハッシュを返す / 1 文字の更新もできる / 文字は 'a' 以上を前提とする
+/// @brief 文字列の区間のハッシュを返す / 1 文字の更新にも対応する / 文字は 'a' 以上を前提とする
 class HashString {
 private:
     using u64 = unsigned long long;
@@ -121,7 +121,7 @@ public:
         seg = titan23::SegmentTree<u64, HashString::op, HashString::e>(data);
     }
 
-    /// @brief s[l, r) のハッシュを返す / set を呼ぶ前は O(1)、呼んだ後は O(log n)
+    /// @brief s[l, r) のハッシュを返す / set を呼び出す前は O(1)、呼び出した後は O(log n)
     u64 get(int l, int r) const {
         assert(0 <= l && l <= r && r <= n);
         if (used_seg) {

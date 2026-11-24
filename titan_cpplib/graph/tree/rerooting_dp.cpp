@@ -72,7 +72,7 @@ vector<T> rerooting_dp(const vector<vector<pair<int, E>>> &G) {
 T apply_vertex(T dp_x, int v) {}
        v            } return
  --------------   }
-|  /   |   \  |   } dp_x (mergeしたもの)
+|  /   |   \  |   } dp_x (merge したもの)
 | o    o    o |
 | △   △   △ |
  --------------
@@ -83,19 +83,19 @@ T apply_edge(T dp_x, E e, int x, int v) {}
   x | } dp_x  }
   △|
 
-using T = int; // dpの型
+using T = int; // dp の型
 using E = int; // 辺の型
 
-// 辺込みの部分木のdp値dp_xに頂点vを付加する
+// 辺を含めた部分木の dp 値 dp_x に頂点 v を付加する
 T apply_vertex(T dp_x, int v) {}
 
-// 辺込みの部分木のdp値s,tを結合する
+// 辺を含めた部分木の dp 値 s, t を結合する
 T merge(T s, T t) {}
 
-// 部分木のdp値dp_xに辺edgeを付加する 頂点xの親がv
+// 部分木の dp 値 dp_x に辺 edge を付加する / 頂点 x の親は v である
 T apply_edge(T dp_x, E edge, int x, int v) {}
 
-// dp値の単位元
+// dp 値の単位元
 T e() {}
 */
 } // namespace titan23

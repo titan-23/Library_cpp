@@ -8,7 +8,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief y の範囲が狭いときの 2 次元セグメント木 / x 方向は必要な節点だけを作る / op は可換であること
+/// @brief y の範囲が狭いときの 2 次元セグメント木 / x 方向は必要な節点だけを作成する / op は可換であること
 template <class IndexType, class T, T (*op)(T, T), T (*e)()>
 class SparseSegmentTree2DFAST {
 private:
@@ -77,7 +77,7 @@ public:
         new_node_x(); // 番兵
     }
 
-    /// @brief 節点 cap 個分の領域を予約する
+    /// @brief 節点 cap 個分の領域を確保する
     void reserve(int cap) {
         X.reserve(cap);
     }

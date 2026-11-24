@@ -13,22 +13,22 @@
 #include "titan_cpplib/ahc/clustering/kmeans_hamerly.cpp"
 using namespace std;
 namespace titan23 {
-/// @brief emeans の設定 / 既定値は原論文と異なり、K-means++ で初期化し Hamerly 法で仕上げる
+/// @brief emeans の設定 / 既定値は原論文と異なり、K-means++ で初期化し、最後に Hamerly 法を行う
 /// 参考: https://arxiv.org/abs/2611.09501
 struct EMeansOptions {
     int epochs = 3;
-    int batch_size = 0;               // 0 なら n, k, 次元, epochs から決める
-    double alpha0 = 0;               // 0 なら n, k, バッチの点数, epochs から決める
-    double revival_threshold = -1;   // -1 なら d <= 2 で 0、それ以外で 0.1
+    int batch_size = 0;               // 0 なら n, k, 次元, epochs から決定する
+    double alpha0 = 0;               // 0 なら n, k, バッチの点数, epochs から決定する
+    double revival_threshold = -1;   // -1 なら d <= 2 の場合は 0、それ以外は 0.1 とする
     bool kmeans_pp = true;
-    int warmup_iterations = 0;       // EMA の前に行う Hamerly 法の反復の上限。0 なら行わない
-    int polish_iterations = 100;     // 0 なら最後の周回の所属を返す
+    int warmup_iterations = 0;       // EMA の前に行う Hamerly 法の反復の上限 / 0 なら行わない
+    int polish_iterations = 100;     // 0 なら最後のエポックの所属を返す
     uint32_t seed = 0;
 };
 
 namespace emeans_detail {
 struct SquaredDistance {
-    // K-means++ の初期化はこの印があると、同じ値を SIMD で求める
+    // この定数が true の場合、K-means++ の初期化は同じ値を SIMD で求める
     static constexpr bool euclidean_squared = true;
     template <class Point, class Center>
     double operator()(const Point& point, const Center& center) const {
@@ -42,7 +42,7 @@ struct SquaredDistance {
 };
 
 struct Metric {
-    // Hamerly 法はこの印があると、同じ値を SIMD で求める
+    // この定数が true の場合、Hamerly 法は同じ値を SIMD で求める
     static constexpr bool euclidean_metric = true;
     template <class Point, class Center>
     double operator()(const Point& point, const Center& center) const {
@@ -51,7 +51,7 @@ struct Metric {
 };
 
 struct Mean {
-    // 中心の計算はこの印があると、点を番号の順に 1 回だけ読んで同じ値を求める
+    // この定数が true の場合、中心の計算は点を番号の順に 1 回だけ参照して同じ値を求める
     static constexpr bool mean_center = true;
     template <class Point>
     vector<double> operator()(const vector<Point>& points, span<const int> members) const {
@@ -104,7 +104,7 @@ inline void revive(vector<vector<double>>& centers, vector<double>& mass, double
     vector<pair<double, int>> donors;
     donors.reserve(k - unused.size());
     for (int j = 0; j < k; ++j) if (mass[j] >= threshold && mass[j] > 0) {
-        // 独立な Gumbel 鍵を使った重み付き非復元抽出
+        // 独立な Gumbel キーを使用した重み付き非復元抽出
         double u = max(kmeans_detail::random_unit(random), numeric_limits<double>::min());
         donors.emplace_back(log(mass[j]) - log(-log(u)), j);
     }
@@ -183,7 +183,8 @@ KMeansResult<vector<double>, double> run(const vector<Point>& points, vector<vec
         }
     }
     iterations += step;
-    // 最後の周回の所属で中心を求め直す。重複点や再配置で空いたクラスタも埋める
+    // 最後のエポックの所属で中心を求め直す
+    // 重複点や再配置で空になったクラスタには点を移動する
     counts.assign(k, 0);
     for (int label : labels) ++counts[label];
     if (find(counts.begin(), counts.end(), 0) != counts.end()) {
@@ -223,7 +224,7 @@ auto emeans_from_centers(const vector<Point>& points, const vector<Center>& init
     return emeans_detail::run(points, move(centers), options);
 }
 
-/// @brief points を cluster_count 個のクラスタに分け、二乗距離の総和を小さくする / 1 <= cluster_count <= n
+/// @brief points を cluster_count 個のクラスタに分割し、二乗距離の総和を小さくする / 1 <= cluster_count <= n
 template <class Point>
 auto emeans(const vector<Point>& points, int cluster_count, EMeansOptions options = {}) {
     emeans_detail::check_input(points, cluster_count, options);
@@ -245,7 +246,7 @@ auto emeans(const vector<Point>& points, int cluster_count, EMeansOptions option
     return emeans_detail::run(points, move(centers), options);
 }
 
-/// @brief 種 seed, seed + 1, ... で trials 回 emeans を行い、費用が最小の結果を返す
+/// @brief シード seed, seed + 1, ... で trials 回 emeans を行い、コストが最小の結果を返す
 template <class Point>
 auto emeans_best_of(const vector<Point>& points, int cluster_count, int trials, EMeansOptions options = {}) {
     return kmeans_detail::run_best_of("emeans_best_of", trials, options, [&](const EMeansOptions& current) {

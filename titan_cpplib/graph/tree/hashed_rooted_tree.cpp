@@ -32,7 +32,7 @@ private:
 public:
     using HashType = u64;
     HashedRootedTree() {}
-    /// @brief 根 root の木 G から求める / seed = -1 なら random_device で種を決める / 別の木と比べるときは同じ seed を使う / O(n)
+    /// @brief 根 root の木 G から各部分木のハッシュ値を求める / seed = -1 なら random_device でシードを決定する / 別の木と比較するときは同じ seed を使用する / O(n)
     HashedRootedTree(vector<vector<int>> G, int root, int seed=-1) {
         int n = G.size();
         hs.resize(n, 1);

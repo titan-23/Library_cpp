@@ -20,7 +20,7 @@ private:
 public:
     SegmentTree() {}
 
-    /// @brief 長さ n で構築する / 初期値 e() / O(n)
+    /// @brief 長さ n で構築する / 初期値は e() / O(n)
     SegmentTree(const int n) {
         _build(n);
     }
@@ -153,7 +153,7 @@ public:
         return os;
     }
 
-    /// @brief a[k] を v に遅延的に変更する / 次に lazy_all_prod() を呼ぶまで反映されない
+    /// @brief a[k] を v に遅延的に変更する / 次に lazy_all_prod() を呼び出すまで反映されない
     void lazy_set(int k, T v) {
         k += _size;
         data[k] = v;

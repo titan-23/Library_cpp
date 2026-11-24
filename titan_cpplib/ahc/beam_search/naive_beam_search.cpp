@@ -13,7 +13,8 @@ using namespace std;
 namespace flying_squirrel {
 
 /// @brief 状態をノードごとに複製する単純なビームサーチ
-/// State は init(), try_op(), apply_op(), enumerate_actions() を実装する。INF は無効なスコアを表し、-INF も表現できる必要がある
+/// State は init(), try_op(), apply_op(), enumerate_actions() を実装する
+/// INF は無効なスコアを表し、-INF も表現できる必要がある
 template<typename ScoreType, typename HashType, class Action, class State, ScoreType INF, bool record_history=false>
 class NaiveBeamSearch {
 private:
@@ -92,7 +93,7 @@ private:
         }
 
         /// @brief 次ターンに向けて候補を初期化する
-        /// clear_hash が false のとき、hash_window_turns ターンごとにハッシュを破棄する。0 なら破棄しない
+        /// clear_hash が false のときは hash_window_turns ターンごとにハッシュを破棄する / hash_window_turns が 0 の場合は破棄しない
         void reset(int turn, int w, bool clear_hash, int hash_window_turns = 0) {
             beam_width = w;
             while (s < w) {
@@ -130,7 +131,7 @@ private:
         }
     } candidates;
 
-    /// @brief 行動列の復元に使う履歴ノード
+    /// @brief 行動列の復元に使用する履歴ノード
     struct HistoryNode {
         int parent_id;
         Action action;

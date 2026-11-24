@@ -14,7 +14,7 @@
 using namespace std;
 using ll = long long;
 
-// 所有権を持つ型でも再確保や作用の持ち回りで移動済みの値を読まないことを確認する
+// 所有権を保持する型でも、再確保や作用の受け渡しで移動済みの値を参照しないことを確認する
 struct Owned {
     unique_ptr<array<ll, 2>> payload;
 
@@ -45,7 +45,7 @@ Owned own_e() { return {0, 0}; }
 
 Owned own_pow(Owned value, ll count) { return {value.sum() * count, value.len() * count}; }
 
-// 作用もデフォルト構築と等値比較を提供せず、移動時には元の所有権を手放す
+// 作用もデフォルト構築と等値比較を提供せず、移動時には移動元が所有権を放棄する
 struct Action {
     inline static int live = 0;
     unique_ptr<array<ll, 2>> payload;
@@ -209,7 +209,7 @@ void search_stack_lifetime_test() {
     for (ll& value : expected) ++value;
     const int live = Action::live;
     int right_failures = 0, left_failures = 0;
-    // 探索途中で述語が例外を投げても生の領域に構築した全作用を破棄する
+    // 探索の途中で述語が例外を投げても、生の領域に構築したすべての作用を破棄する
     for (int failure = 1; failure < 20; ++failure) {
         int calls = 0;
         try {
@@ -332,7 +332,7 @@ void large_aggregate_test(ll n) {
         values[lower_bound(edges.begin(), edges.end(), k) - edges.begin()] = 4;
     }
 
-    // 少数の一様区間を直接走査し、64 bitに収まらない集約値と境界を照合する
+    // 少数の一様な区間を直接走査し、64 bit に収まらない集約値と境界を照合する
     const auto verify = [&](const WideTree& actual, const vector<ll>& expected) {
         const auto count = actual.node_count();
         const auto reference_prod = [&](ll l, ll r) {

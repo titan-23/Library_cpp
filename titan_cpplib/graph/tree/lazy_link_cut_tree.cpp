@@ -154,7 +154,7 @@ private:
         }
     }
 
-    // 子を変える前に g, p, v を push する / PULL_ROOT=false は直後に v を再計算する呼び出し元だけが使う
+    // 子を変更する前に g, p, v を push する / PULL_ROOT=false は直後に v を再計算する呼び出し元だけが使用する
     template<bool PULL_ROOT = true>
     void _splay(int v) {
         if (_is_root(v)) {
@@ -213,7 +213,7 @@ public:
         pool.emplace_back(e(), n, 0);
     }
 
-    /// @brief 根から v へのパスを露出する / expose(u) の直後なら u と v の LCA を返す / 償却 O(log n)
+    /// @brief 根から v へのパスを 1 つの補助木にまとめる / expose(u) の直後なら u と v の LCA を返す / 償却 O(log n)
     int expose(int v) {
         assert(0 <= v && v < n);
         return _expose(v);
@@ -278,15 +278,15 @@ public:
         _toggle(v);
     }
 
-    /// @brief u と v が別の連結成分なら辺 (u, v) を張って true を返す / 同じ成分なら根を変えずに false / 償却 O(log n)
+    /// @brief u と v が別の連結成分なら辺 (u, v) を張って true を返す / 同じ成分なら根を変更せずに false を返す / 償却 O(log n)
     bool merge(int u, int v) {
         assert(0 <= u && u < n && 0 <= v && v < n);
         if (u == v) return false;
         _expose(u);
         _expose(v);
-        // 失敗時は表現木の根を変えない
+        // 失敗時は表現木の根を変更しない
         if (pool[u].p != n) return false;
-        // 成分が異なるので、v を露出しても u は露出したまま
+        // 成分が異なるため、v を expose しても u を expose した状態は維持される
         _toggle(u);
         pool[u].p = v;
         pool[v].r = u;

@@ -30,7 +30,7 @@ class PersistentLazyWBTree {
 public:
     /// @brief ノード領域を管理する / 番号 0 は番兵
     struct MemoryAllocator {
-        /// @brief 子の番号、反転フラグ、部分木サイズを持つ
+        /// @brief 子の番号、反転フラグ、部分木サイズを保持する
         struct Node {
             Index left : index_bits;
             Index rev : 1;
@@ -43,7 +43,7 @@ public:
             /// @brief 子と部分木サイズを設定する / O(1)
             Node(SizeType l, SizeType r, SizeType s) : left(l), rev(0), right(r), size(s), left_size(0) {}
         };
-        /// @brief 値、部分木の総積、遅延中の作用を持つ
+        /// @brief 値、部分木の総積、遅延作用を保持する
         struct Data {
             T key, data;
             F lazy;
@@ -205,7 +205,7 @@ public:
         View<Data, &Slot::data> data;
         size_t ptr, cap;
 
-        /// @brief 番兵を持つ領域を初期化する / O(1)
+        /// @brief 番兵を含む領域を初期化する / O(1)
         MemoryAllocator() : tree{&pool}, data{&pool}, ptr(1), cap(0) {
             pool.emplace_back(0, 0, 0, T{}, T{}, F{}, 0);
             cap = pool.capacity();
@@ -245,7 +245,7 @@ public:
             return ptr++;
         }
 
-        /// @brief 値 key と作用 f を持つノードを作成して番号を返す / 償却 O(1)
+        /// @brief 値 key と作用 f を保持するノードを作成して番号を返す / 償却 O(1)
         SizeType new_node(const T& key, const F& f) {
             if (ptr >= (uint64_t(1) << index_bits)) throw length_error("node index overflow");
             if (pool.size() > ptr) {
@@ -273,7 +273,7 @@ public:
         /// @note 同じ領域を共有する他の木は無効になる
         void reset() { ptr = 1; }
 
-        /// @brief 領域がほぼ埋まっているか判定する / O(1)
+        /// @brief 領域の空きがほとんどないか判定する / O(1)
         bool almost_full() const { return (double)ptr > max(1.0, cap * 0.99); }
 
         /// @brief 確保済み領域のバイト数を返す / O(1)
@@ -319,7 +319,7 @@ private:
         return node && static_cast<size_t>(node) < first ? ma.copy(node) : node;
     }
 
-    // 反転と作用を子へ伝播する。node は所有済みであること
+    // 反転と作用を子へ伝播する / node は新しい版に属していること
     void propagate(SizeType node, size_t first) {
         assert(static_cast<size_t>(node) >= first);
         const bool rev = ma.pool[node].tree.rev;
@@ -751,7 +751,7 @@ private:
         return _new(insert_node(root, k, key, first));
     }
 
-    /// @brief 位置 k の値を削除した列と削除値を返す / O(log N)
+    /// @brief 位置 k の値を削除した列と、削除した値を返す / O(log N)
     pair<PLTM, T> pop(SizeType k) {
         assert(0 <= k && k < len());
         const size_t first = ma.ptr;
@@ -761,7 +761,7 @@ private:
     }
 
     /// @brief 区間 [l, r) を反転した列を返す / O(log N)
-    /// @note 総積が反転で変化しない場合に使える
+    /// @note 総積が反転で変化しない場合に使用できる
     PLTM reverse(SizeType l, SizeType r) {
         assert(0 <= l && l <= r && r <= len());
         return _new(reverse_node(root, l, r, ma.ptr));
@@ -853,7 +853,7 @@ private:
         return ma.pool[root].tree.size;
     }
 
-    /// @brief 部分木サイズと平衡条件を検査する / O(N)
+    /// @brief 部分木サイズと平衡条件を確認する / O(N)
     void check() const {
         auto rec = [&] (auto &&rec, SizeType node) -> pair<SizeType, SizeType> {
             SizeType ls = 0, rs = 0;

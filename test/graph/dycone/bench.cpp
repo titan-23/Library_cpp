@@ -1,8 +1,8 @@
-// DyConeSum とセグ木 DFS 版 (OfflineDynamicConnectivitySum) の比較ベンチマーク
-// 同一のランダム操作列を両者に流し、答えの一致検証と実行時間の計測を行う
+// DyConeSum とセグメント木 DFS 版 (OfflineDynamicConnectivitySum) の比較ベンチマーク
+// 同一のランダムな操作列を両者で実行し、答えが一致することを確認して実行時間を計測する
 //
 // g++ -std=c++20 -O2 -Wall -Wextra -I . -o bench test/graph/dycone/bench.cpp
-// ./bench [n] [q] [seed] [mode]   mode: 0=両方(検証つき) 1=DyConeSum のみ 2=セグ木 DFS のみ
+// ./bench [n] [q] [seed] [mode]   mode: 0=両方 (検証つき) 1=DyConeSum のみ 2=セグメント木 DFS のみ
 
 #include <bits/stdc++.h>
 #include <sys/resource.h>

@@ -9,7 +9,7 @@ using namespace std;
 
 namespace titan23 {
 
-/// @brief 近傍探索の結果1件 / 点番号 index と距離の二乗 squared_distance を持つ
+/// @brief 近傍探索の結果 1 件 / 点番号 index と距離の二乗 squared_distance を保持する
 template <class T>
 struct KdNeighborT {
     int index;
@@ -24,7 +24,8 @@ using KdNeighbor = KdNeighborT<long double>;
 
 namespace detail {
 
-// 座標を To へ変換する。有限でない値や To に収まらない値なら invalid_argument を投げる
+// 座標を To へ変換する
+// 有限でない値や To に収まらない値の場合は invalid_argument を投げる
 template <class To, class From>
 To kd_checked_coordinate(const From& value, const char* message) {
     using Value = remove_cv_t<remove_reference_t<From>>;

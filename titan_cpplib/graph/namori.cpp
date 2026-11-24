@@ -14,7 +14,7 @@ namespace titan23 {
 
 using u64 = unsigned long long;
 
-/// @brief なもりグラフをサイクルと、サイクル上の各頂点を根とする木に分ける / 連結で N = M の無向グラフを扱う
+/// @brief なもりグラフを、サイクルとサイクル上の各頂点を根とする木に分解する / 連結で N = M の無向グラフを対象とする
 class Namori {
 private:
     int n;
@@ -45,7 +45,7 @@ private:
 public:
     Namori() : n(0) {}
 
-    /// @brief 隣接リスト G から分解する / 各辺は両端に入れ、自己ループは同じ頂点に 2 回入れる / 条件を満たさなければ invalid_argument / O(n)
+    /// @brief 隣接リスト G から分解する / 各辺は両端点の隣接リストに格納し、自己ループは同じ頂点の隣接リストに 2 回格納する / 条件を満たさなければ invalid_argument / O(n)
     Namori(const vector<vector<int>> &G) : n(G.size()), G(G) {
         if (n == 0) throw invalid_argument("Namori: graph must not be empty");
         vector<int> deg(n, 0);
@@ -59,7 +59,7 @@ public:
         for (int v = 0; v < n; ++v) {
             if (deg[v] != (int)G[v].size()) throw invalid_argument("Namori: adjacency lists must be symmetric");
         }
-        // 次数1の頂点を削っていき、残った頂点がサイクル
+        // 次数 1 の頂点を順に削除し、残った頂点をサイクルとする
         queue<int> todo;
         for (int v = 0; v < n; ++v) if (deg[v] == 1) todo.push(v);
         is_cycle.resize(n, true);
@@ -119,7 +119,7 @@ public:
         if ((int)cycle.size() != cycle_cnt) throw invalid_argument("Namori: graph must have exactly one cycle");
     }
 
-    /// @brief 同型判定用のハッシュ値を返す / 比べる 2 つのグラフには同じ seed を使う / O(n)
+    /// @brief 同型判定用のハッシュ値を返す / 比較する 2 つのグラフには同じ seed を使用する / O(n)
     u64 get_hash(int seed) const {
         mt19937_64 rnd(seed);
         uniform_int_distribution<u64> dist(47, MOD-1);
@@ -127,7 +127,8 @@ public:
         for (u64 &r : R) r = dist(rnd);
         u64 base = uniform_int_distribution<u64>(414123123, 1000000000)(rnd);
 
-        // 木のハッシュ hs[v] = prod_{子 x} (R[height[x]] + hs[x]) を求める。height は葉が 1
+        // 木のハッシュ hs[v] = prod_{子 x} (R[height[x]] + hs[x]) を求める
+        // height は葉を 1 とする
         vector<u64> hs(n, 1);
         vector<int> height(n, 1), parent(n, -1), order;
         order.reserve(n);
@@ -141,7 +142,7 @@ public:
                     order.push_back(x);
                 }
             }
-            // 幅優先順の逆順に見れば、子は親より先に確定する
+            // 幅優先順の逆順に処理すると、子は親より先に確定する
             for (int i = (int)order.size()-1; i > begin; --i) {
                 int x = order[i], p = parent[x];
                 hs[p] = mul(hs[p], mod(R[height[x]] + hs[x]));
@@ -149,7 +150,7 @@ public:
             }
         }
 
-        // 木のハッシュをサイクル順に並べた列 H の、回転と反転のうち最小のローリングハッシュを返す
+        // 木のハッシュをサイクル順に並べた列 H について、回転と反転で得られる列のローリングハッシュの最小値を返す
         int c = cycle.size();
         vector<u64> H(2*c);
         for (int i = 0; i < c; ++i) H[i] = H[i+c] = hs[cycle[i]];

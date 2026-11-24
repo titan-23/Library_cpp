@@ -19,7 +19,7 @@ struct dijkstra_path {
     dijkstra_path() {}
 
     /// @brief s からの最短距離と経路を計算する / O(n + m log m)
-    /// @note G[v] は (行き先, 重み) の組を持つ。重みは非負に限る。到達できない頂点の距離は INF になる
+    /// @note G[v] の要素は (行き先, 重み) の組とする / 重みは非負に限る / 到達できない頂点の距離は INF になる
     dijkstra_path(const vector<vector<pair<int, T>>> &G, int s, T INF) :
             n(G.size()), INF(INF), prev(n, -1), dist(n, INF) {
         dist[s] = 0;

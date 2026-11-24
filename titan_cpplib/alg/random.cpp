@@ -68,7 +68,7 @@ public:
         return begin + (((uint64_t)_xor128() * (end-begin)) >> 32);
     }
 
-    /// @brief [0, u64_MAX] の乱数を返す / Zobrist hash などでの使用を想定
+    /// @brief [0, u64_MAX] の乱数を返す / Zobrist hash などでの使用を想定している
     constexpr uint64_t rand_u64() {
         return ((uint64_t)_xor128() << 32) | _xor128();
     }
@@ -105,7 +105,7 @@ public:
         return {u, v};
     }
 
-    /// @brief a から重複なしで cnt 個を無作為に選んで返す / 選んだ要素を a の先頭へ移すので a は書き換わる / O(cnt)
+    /// @brief a から重複なしで cnt 個を無作為に選んで返す / 選んだ要素を a の先頭へ移動するため a は変更される / O(cnt)
     vector<int> rand_vec(const int cnt, vector<int> &a) {
         int n = a.size();
         for (int i = 0; i < cnt; ++i) {
@@ -132,7 +132,7 @@ public:
         }
     }
 
-    /// @brief a をその場で無作為に並べ替える / O(n)
+    /// @brief a 自体を無作為に並べ替える / O(n)
     template <typename T>
     void shuffle(vector<T> &a) {
         shuffle(a.begin(), a.end());

@@ -11,13 +11,14 @@ template<typename T>
 struct LinearEquation {
     bool solvable;             // 解が存在するか
     int rank;                  // 係数行列 A の階数
-    vector<T> x;               // 特殊解。solvable のとき長さ m、そうでなければ空
-    vector<vector<T>> kernel;  // 核の基底。自由変数ごとに 1 本あり、各長さ m
-    // 一般解は x + sum_i t_i * kernel[i] で、t_i は任意。kernel が空なら解は一意
+    vector<T> x;               // 特殊解 / solvable のとき長さ m、そうでなければ空
+    vector<vector<T>> kernel;  // 核の基底 / 自由変数ごとに 1 本あり、各ベクトルの長さは m
+    // 一般解は x + sum_i t_i * kernel[i] で、t_i は任意 / kernel が空なら解は一意
 };
 
 /// @brief 連立一次方程式 Ax = b を掃き出し法で解く / A は n 行 m 列 / O(nm min(n, m) + m^2)
-/// T は浮動小数点数型か modint などの体とする。整数型では T(1) / a が切り捨てられ、正しく解けない
+/// T は浮動小数点数型か modint などの体とする
+/// 整数型では T(1) / a が切り捨てられ、正しく解くことができない
 template<typename T>
 LinearEquation<T> linear_equation(vector<vector<T>> A, vector<T> b, const double eps = 1e-9) {
     int n = A.size();

@@ -5,7 +5,7 @@
 #include <cassert>
 using namespace std;
 
-// LinkCutTreeSum(可換)
+// LinkCutTreeSum (可換)
 namespace titan23 {
 
 template <class T,

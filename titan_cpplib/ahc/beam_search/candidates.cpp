@@ -14,7 +14,7 @@ struct BeamCandidate {
     int parent_leaf;
     ScoreType score;
     Action action;
-    int node_id = -1; // 履歴記録用
+    int node_id = -1; // 履歴の記録用
 };
 
 /// @brief ハッシュの重複を除き、上位候補をビーム幅まで保持する
@@ -56,10 +56,10 @@ public:
 
     int size() const { return entry; }
 
-    /// @brief 枝刈りの閾値を返す / ビーム幅に達するまでは INF、以降は保持中の最悪スコア
+    /// @brief 枝刈りの閾値を返す / 候補数がビーム幅に達するまでは INF、以降は保持中の候補のうち最も悪いスコアを返す
     ScoreType threshold() const { return entry < beam_width ? INF : seg[1].first; }
 
-    /// @brief 候補を追加し、採用されたら true を返す / node_id は履歴記録用で比較には使わない
+    /// @brief 候補を追加し、採用された場合は true を返す / node_id は履歴の記録用で比較には使用しない
     bool push(ScoreType score, HashType hash, int parent_leaf, Action action, int node_id = -1) {
         if (is_built && score >= seg[1].first) {
             return false;
@@ -99,7 +99,7 @@ public:
         return true;
     }
 
-    /// @brief 採用が決まった候補だけ make() で Action を生成する
+    /// @brief 採用が確定した候補だけ make() で Action を生成する
     template<class Make>
     bool push_lazy(ScoreType score, HashType hash, int parent_leaf, Make &&make, int node_id = -1) {
         if (is_built && score >= seg[1].first) {
@@ -150,7 +150,8 @@ public:
     }
 
     /// @brief 次ターンに向けて候補を初期化する
-    /// clear_hash が false のとき、hash_window_turns ターンごとにハッシュを破棄する。0 なら破棄しない
+    /// clear_hash が false のときは hash_window_turns ターンごとにハッシュを破棄する
+    /// hash_window_turns が 0 なら破棄しない
     void reset(int turn, int w, bool clear_hash, int hash_window_turns = 0) {
         beam_width = w;
         while (s < w) {
@@ -169,7 +170,7 @@ public:
         } else {
             bool periodic_clear = hash_window_turns > 0 && (turn % hash_window_turns == 0);
             if (periodic_clear) func.clear();
-            // 前ターンの生存候補は、定期破棄時も予約済みとして引き継ぐ
+            // 前ターンの生存候補は、ハッシュを定期的に破棄する場合も予約済みとして引き継ぐ
             for (int i = 0; i < entry; ++i) {
                 func.set(hashidx[i], -2);
             }
@@ -201,13 +202,13 @@ struct BeamCandidateFlat {
     ScoreType score;
     HashType hash;
     ActionId aid;
-    int node_id = -1; // 履歴記録用
+    int node_id = -1; // 履歴の記録用
 };
 
 /// @brief 候補の格納位置と、置き換えられた ActionId を表す
 struct PushResult {
     int slot; // 棄却時は -1
-    ActionId evicted_aid; // 置き換えなしなら BAD_ID_FLAT
+    ActionId evicted_aid; // 置き換えがない場合は BAD_ID_FLAT
 };
 
 /// @brief Action を ID で参照し、ハッシュの重複排除と上位候補の保持を行う
@@ -249,10 +250,10 @@ public:
 
     int size() const { return entry; }
 
-    /// @brief 枝刈りの閾値を返す / ビーム幅に達するまでは INF、以降は保持中の最悪スコア
+    /// @brief 枝刈りの閾値を返す / 候補数がビーム幅に達するまでは INF、以降は保持中の候補のうち最も悪いスコアを返す
     ScoreType threshold() const { return entry < beam_width ? INF : seg[1].first; }
 
-    /// @brief 呼び出し側で確保した aid を持つ候補を追加する / 棄却時は slot が -1、置換時は evicted_aid に旧 ActionId を返す
+    /// @brief 呼び出し側で確保した aid を保持する候補を追加する / 棄却時は slot に -1、置換時は evicted_aid に置換前の ActionId を返す
     /// 棄却された aid と、置き換えられた evicted_aid は呼び出し側が解放する
     PushResult push(ScoreType score, HashType hash, int parent_leaf, ActionId aid, int node_id = -1) {
         if (is_built && score >= seg[1].first) {
@@ -297,7 +298,8 @@ public:
     }
 
     /// @brief 次ターンに向けて候補を初期化する
-    /// clear_hash が false のとき、hash_window_turns ターンごとにハッシュを破棄する。0 なら破棄しない
+    /// clear_hash が false のときは hash_window_turns ターンごとにハッシュを破棄する
+    /// hash_window_turns が 0 なら破棄しない
     void reset(int turn, int w, bool clear_hash, int hash_window_turns = 0) {
         beam_width = w;
         while (s < w) {
@@ -316,7 +318,7 @@ public:
         } else {
             bool periodic_clear = hash_window_turns > 0 && (turn % hash_window_turns == 0);
             if (periodic_clear) func.clear();
-            // 前ターンの生存候補は、定期破棄時も予約済みとして引き継ぐ
+            // 前ターンの生存候補は、ハッシュを定期的に破棄する場合も予約済みとして引き継ぐ
             for (int i = 0; i < entry; ++i) {
                 func.set(hashidx[i], -2);
             }

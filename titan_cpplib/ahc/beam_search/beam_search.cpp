@@ -39,7 +39,7 @@ private:
         return gblock[(size_t)depth][(size_t)slot];
     }
 
-    /// @brief 生存候補 1 つを表す / Action は世代ブロック内の位置で持つ
+    /// @brief 生存候補 1 つを表す / Action は世代ブロック内の位置で保持する
     struct CandIdx {
         int parent_leaf;
         ScoreType score;
@@ -73,7 +73,7 @@ private:
         }
     }
 
-    /// @brief 生存候補の Action を世代ブロックへ直接ムーブ構築し、参照用の候補列を構築する
+    /// @brief 生存候補の Action を世代ブロックへ直接ムーブ構築し、参照用の候補列を作成する
     void finalize_generation(int gen) {
         int sz = (int)candidates.size();
         assert(sz >= 0 && (uint64_t)sz <= numeric_limits<Slot>::max());
@@ -100,7 +100,7 @@ private:
         for (It it = first; it != last; ++it, ++depth) dst.push_back(act(depth, *it));
     }
 
-    /// @brief 確定した接頭辞と未確定の trace から終了経路を構築する
+    /// @brief 確定した接頭辞と未確定の trace から完成解までの経路を構築する
     void build_best_path(int upto) {
         best_finished_path = result_prefix;
         for (int depth = freed_to + 1; depth <= upto; ++depth) {
@@ -108,7 +108,7 @@ private:
         }
     }
 
-    /// @brief 探索状態を根へ戻し、返却経路を適用した最終状態を構築する
+    /// @brief 探索状態を根へ戻し、返り値の Action 列を適用した最終状態を構築する
     template<bool materialize_final_state>
     unique_ptr<State> build_final_state(State& state, const vector<Action>& result_actions, int current_depth) {
         if constexpr (materialize_final_state) {
@@ -214,7 +214,7 @@ private:
         snapshots.push_back({turn_label, vector<int>(survived.begin(), survived.end())});
     }
 
-    /// @brief 親葉までの差分経路を tour から復元する / dst_end は復元先となる親経路の終端
+    /// @brief 親の葉までの差分経路を tour から復元する / dst_end は復元先となる親経路の終端
     template<class It>
     inline void copy_tour_path(int parent_leaf, int leaf_end, It dst_end) {
         int progress = 0;
@@ -232,7 +232,7 @@ private:
 
 public:
     /// @brief ビームサーチを実行し、探索結果を返す / materialize_final_state が true なら最終状態も構築する
-    /// record_history が true のとき、履歴を JSON で history_file に書き出す
+    /// record_history が true のとき、履歴を JSON で history_file に出力する
     template<bool materialize_final_state=true>
     Result search(BeamParam &param, const bool verbose=false, const string& history_file = "") {
         if (param.max_turn <= 0 || param.beam_width <= 0) {

@@ -65,7 +65,7 @@ struct WBIndexHandle {
     /// @brief ノードがあるか判定する / O(1)
     friend bool operator!=(std::nullptr_t, WBIndexHandle a) noexcept { return a.index != 0; }
 
-    /// @brief この型のノード領域を返す / O(1)
+    /// @brief この型のノード用の領域を返す / O(1)
     static pool_type& storage() {
         if (!pool_) initialize();
         return *pool_;
@@ -233,7 +233,7 @@ public:
     }
 
     /// @brief 全ノードと領域を破棄する / O(N)
-    /// @note この領域を使うハンドルは無効になる
+    /// @note この領域を使用するハンドルは無効になる
     void clear() noexcept {
         for (std::uint32_t i = 0; i < used_; ++i) {
             auto& current = slot(i);
