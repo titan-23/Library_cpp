@@ -34,10 +34,16 @@ using namespace titan23;
 | `flat_bitboard.cpp` | 盤面全体を 1 つの整数で保持する Bitboard |
 | `edge_wall_bitboard.cpp` | セル間に壁がある Bitboard |
 | `mirror_grid.cpp` | 鏡とブロックを配置するグリッド |
+| [local_connectivity.cpp](local_connectivity.cpp) | 色付き盤面の周囲 8 マスから、1 マスを削除した後の連結性を局所的に判定する |
+| [euler_contribution.cpp](euler_contribution.cpp) | 2 × 2 の配置からオイラー数の 4 倍に対する寄与を求める |
 
 `grid_common.cpp` と `row_bitboard_base.cpp` は、ほかのファイルが include する共通部品です。内容は[グリッドの共通部品](docs/grid_common.md)に記載しています。`clear()` と `fill()` の廃止など、以前の版からの変更点も同じ文書に記載しています。
 
 [一般 Grid の設計案](docs/design.md)は、セルの型を限定しない `Grid<Cell>` の設計案であり、未実装です。
+
+### 色付き盤面の探索
+
+[盤面の 1 マス変更に対する連結性判定と差分評価](docs/local_update_tips.md)では、4 近傍と 8 近傍での連結性判定、削除候補の更新、空きマスの次数による評価、色間の接触辺数と周長、穴の個数を扱います。
 
 ## 共通の注意点
 
